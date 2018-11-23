@@ -1,0 +1,19 @@
+{
+  "production" : {
+    "db": {
+      "username": "username",
+      "password": "aa123456",
+      "cloud_link":"waiviomock-shard-00-00-qmnp7.gcp.mongodb.net:27017,waiviomock-shard-00-01-qmnp7.gcp.mongodb.net:27017,waiviomock-shard-00-02-qmnp7.gcp.mongodb.net:27017/waivio?ssl=true&replicaSet=waiviomock-shard-0&authSource=admin&retryWrites=true"
+    },
+    "nodeUrl": "https://api.steemit.com/"
+  },
+
+  "development": {
+    "db": {
+      "username": "username",
+      "password": "aa123456",
+      "cloud_link":"waiviomock-shard-00-00-qmnp7.gcp.mongodb.net:27017,waiviomock-shard-00-01-qmnp7.gcp.mongodb.net:27017,waiviomock-shard-00-02-qmnp7.gcp.mongodb.net:27017/waivio?ssl=true&replicaSet=waiviomock-shard-0&authSource=admin&retryWrites=true"
+    },
+    "nodeUrl": "https://api.steemit.com/"
+  }
+}
