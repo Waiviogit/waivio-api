@@ -13,11 +13,11 @@ apiRoutes.use('/api', userRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
-wobjRoutes.route('/wobject/:wObjectTag')
+wobjRoutes.route('/wobject/:authorPermlink')
     .get(WobjController.show);
-wobjRoutes.route('/wobject/:wObjectTag/posts')
+wobjRoutes.route('/wobject/:authorPermlink/posts')
     .post(WobjController.posts);
-wobjRoutes.route('/wobject/:wObjectTag/followers')
+wobjRoutes.route('/wobject/:authorPermlink/followers')
     .post(WobjController.followers);
 
 userRoutes.route('/user')

@@ -10,10 +10,10 @@ const create = async function (data) {
     }
 };
 
-const getByTag = async function (data) {
+const getOne = async function (data) {      //get one wobject by authorPermlink
     try {
-        let wObject = await WObjectModel.findOne({'tag': data.tag})
-            .populate('children', 'tag')
+        let wObject = await WObjectModel.findOne({'authorPermlink': data.authorPermlink})
+            .populate('children', 'authorPermlink')
             .populate('users', 'name wObjects profile_image')
             .select(' -_id -fields._id')
             .lean();
@@ -29,18 +29,18 @@ const getByTag = async function (data) {
 const getAll = async function (data) {
     try {
         let wObjects = await WObjectModel
-            .find(data.tags ? {'tag': {$in: data.tags}} : {})
-            .populate('children', 'tag')
+            .find(data.authorPermlinks ? {'authorPermlink': {$in: data.authorPermlinks}} : {})
+            .populate('children', 'authorPermlink')
             .populate('users', 'name wObjects profile_image')
             .select(' -_id -followersNames -fields._id')
             .sort({weight: -1})
             .lean();
-            const beginIndex = data.startTag ? wObjects.map(item => item.tag).indexOf(data.startTag) + 1 : 0;
+            const beginIndex = data.startAuthorPermlink ? wObjects.map(item => item.authorPermlink).indexOf(data.startAuthorPermlink) + 1 : 0;
             wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
-            wObject.children = wObject.children.map(item => item.tag);  //correct format of children
+            wObject.children = wObject.children.map(item => item.authorPermlink);  //correct format of children
             wObject.user_count = wObject.users.length;                  //add field user count
             wObject.users = wObject.users.filter((item, index) => index < data.userLimit);
             formatFields(wObject, data.locale);
@@ -55,7 +55,7 @@ const getAll = async function (data) {
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
-        let currentObj = user.wObjects.find((item) => item.tag === wObject.tag);
+        let currentObj = user.wObjects.find((item) => item.authorPermlink === wObject.authorPermlink);
         return {
             name: user.name,
             profile_image: user.profile_image,
@@ -88,4 +88,4 @@ const formatFields = function(wObject, locale){
         return resArr;
     }, temp);
 };    // get best fields(avatarImage, name, location and link) in location, or just best field if is not field in location
-module.exports = {create, getAll, getByTag};
+module.exports = {create, getAll, getOne};
