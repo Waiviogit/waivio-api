@@ -7,7 +7,9 @@ const index = async function (req, res, next) {
     const{wObjectsData, error} = await Wobj.getAll({
         userLimit: req.body.userLimit ? req.body.userLimit : 5,
         locale: req.body.locale ? req.body.locale : 'en-US',
-        tags: req.body.tags
+        tags: req.body.tags,
+        limit: req.body.limit ? req.body.limit: 30 ,          //field for infinite scroll
+        startTag: req.body.startTag     //field for infinite scroll
     });
     if(error){
         return next(error);

@@ -28,12 +28,15 @@ const getByTag = async function (data) {
 
 const getAll = async function (data) {
     try {
-        const wObjects = await WObjectModel
+        let wObjects = await WObjectModel
             .find(data.tags ? {'tag': {$in: data.tags}} : {})
             .populate('children', 'tag')
             .populate('users', 'name wObjects profile_image')
             .select(' -_id -followersNames -fields._id')
+            .sort({weight: -1})
             .lean();
+            const beginIndex = data.startTag ? wObjects.map(item => item.tag).indexOf(data.startTag) + 1 : 0;
+            wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
