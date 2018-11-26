@@ -7,9 +7,9 @@ const index = async function (req, res, next) {
     const{wObjectsData, error} = await Wobj.getAll({
         userLimit: req.body.userLimit ? req.body.userLimit : 5,
         locale: req.body.locale ? req.body.locale : 'en-US',
-        tags: req.body.tags,
+        authorPermlinks: req.body.authorPermlinks,
         limit: req.body.limit ? req.body.limit: 30 ,          //field for infinite scroll
-        startTag: req.body.startTag     //field for infinite scroll
+        startAuthorPermlink: req.body.startAuthorPermlink     //field for infinite scroll
     });
     if(error){
         return next(error);
@@ -19,7 +19,7 @@ const index = async function (req, res, next) {
 
 const show = async function (req, res, next) {
     data = {
-        tag: req.params.wObjectTag,
+        authorPermlink: req.params.authorPermlink,
         limit: req.query.postLimit
     };
     const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
@@ -31,10 +31,10 @@ const show = async function (req, res, next) {
 
 const posts = async function (req, res, next) {
     const data = {
-        tag: req.params.wObjectTag,
+        authorPermlink: req.params.authorPermlink,  //for wObject
         limit: req.body.limit,
-        startAuthor: req.body.startAuthor,
-        startPermlink: req.body.startPermlink
+        startAuthor: req.body.startAuthor,          //for posts
+        startPermlink: req.body.startPermlink       //for posts
     };
     const {posts, steemError} = await postsUtil.getPostsByTrending(data);
     if (steemError) {
@@ -45,7 +45,7 @@ const posts = async function (req, res, next) {
 
 const followers = async function (req, res, next){
     const data = {
-        tag: req.params.wObjectTag,
+        authorPermlink: req.params.authorPermlink,
         startFollower: req.body.startFollower,
         limit: req.body.limit ? req.body.limit : 30
     };
@@ -58,7 +58,7 @@ const followers = async function (req, res, next){
 
 const create = async function (req, res, next) {
     const {wObject, error} = await Wobj.create({
-        tag: req.body.tag,
+        authorPermlink: req.body.authorPermlink,
         weight: req.body.weight,
         fields: req.body.fields,
         parents: req.body.parents

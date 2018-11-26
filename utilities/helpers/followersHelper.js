@@ -2,7 +2,7 @@ const WObjectModel = require('../../database').models.WObject;
 
 const getFollowers = async (data)=> {
     try {
-        let {followers = []} = await WObjectModel.findOne({'tag': data.tag})
+        let {followers = []} = await WObjectModel.findOne({'authorPermlink': data.authorPermlink})
             .populate('followers', 'name profile_image')
             .lean();
         const begin =  data.startFollower && followers.find(item=>item.name===data.startFollower) ?
