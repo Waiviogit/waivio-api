@@ -59,6 +59,7 @@ const followers = async function (req, res, next){
 const search = async function (req, res, next){
     const data = {
         string: req.body.searchString,
+        limit: req.body.limit ? req.body.limit : 10,
         locale: req.body.locale ? req.body.locale : 'en-US'
     };
     const {wObjectsData, error} = await Wobj.search(data);
