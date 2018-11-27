@@ -22,6 +22,7 @@ const search = async function (data) {
                     }
             })
             .sort({weight:-1})
+            .limit(data.limit)
             .select('-_id -fields._id')
             .lean();
         wObjects.forEach((wObject) => {
