@@ -19,6 +19,9 @@ wobjRoutes.route('/wobject/:authorPermlink/posts')
     .post(WobjController.posts);
 wobjRoutes.route('/wobject/:authorPermlink/followers')
     .post(WobjController.followers);
+wobjRoutes.route('/wobjectSearch')
+    .post(WobjController.search);
+
 
 userRoutes.route('/user')
     .get(UserController.index)

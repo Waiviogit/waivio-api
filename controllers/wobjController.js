@@ -56,6 +56,18 @@ const followers = async function (req, res, next){
     res.status(200).json(result);
 };
 
+const search = async function (req, res, next){
+    const data = {
+        string: req.body.searchString,
+        locale: req.body.locale ? req.body.locale : 'en-US'
+    };
+    const {wObjectsData, error} = await Wobj.search(data);
+    if(error){
+        return next(error);
+    }
+    res.status(200).json(wObjectsData);
+}
+
 const create = async function (req, res, next) {
     const {wObject, error} = await Wobj.create({
         authorPermlink: req.body.authorPermlink,
@@ -69,4 +81,4 @@ const create = async function (req, res, next) {
     res.status(200).json(wObject._doc);
 };
 
-module.exports = {index, create, show, posts, followers};
+module.exports = {index, create, show, posts, followers, search};

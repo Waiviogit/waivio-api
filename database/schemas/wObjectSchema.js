@@ -9,7 +9,7 @@ const WObjectSchema = new Schema({
         parents: [String],
         fields: [{
             name: {type: String, index: true},
-            body: String,
+            body: {type: String, index: true},
             weight: Number,
             locale: String,
             author: String,       //author+permlink is link to comment with appendObject

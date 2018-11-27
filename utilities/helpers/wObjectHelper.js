@@ -8,7 +8,7 @@ const combinedWObjectData = async (data) => {
 
         const names = wObjectData.fields
             .filter(item => item.locale==='en-US' && item.name==='name');
-        data.tag = names ? _.maxBy(names, 'weight').body : '';
+        data.tag = names.length ? _.maxBy(names, 'weight').body : 'life';
         //tag for search posts in blockchain as most popularity field name in en-US locale
 
         const {posts} = await postsUtil.getPostsByTrending(data);  //get posts from blockchain
