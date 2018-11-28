@@ -67,7 +67,18 @@ const search = async function (req, res, next){
         return next(error);
     }
     res.status(200).json(wObjectsData);
-}
+};
+
+const fields = async function (req, res, next) {
+    const data = {
+        authorPermlink: req.params.authorPermlink
+    };
+    const {fieldsData, error} = await Wobj.getFields(data);
+    if(error){
+        return next(error);
+    }
+    res.status(200).json(fieldsData);
+};
 
 const create = async function (req, res, next) {
     const {wObject, error} = await Wobj.create({
@@ -82,4 +93,4 @@ const create = async function (req, res, next) {
     res.status(200).json(wObject._doc);
 };
 
-module.exports = {index, create, show, posts, followers, search};
+module.exports = {index, create, show, posts, followers, search, fields};
