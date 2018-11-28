@@ -107,6 +107,18 @@ const getAll = async function (data) {
     }
 };
 
+const getFields = async function (data) {
+    try {
+        const wObject = await WObjectModel
+            .findOne({'authorPermlink': data.authorPermlink})
+            .select('fields')
+            .lean();
+        return {fieldsData: _.orderBy(wObject.fields, ['weight'],['desc'])}
+    } catch (error) {
+        return {error}
+    }
+};
+
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
@@ -142,4 +154,4 @@ const formatFields = function (wObject, locale, requireFields) {
         return resArr;
     }, temp);
 };    // get best fields(avatarImage, name, location and link) in location, or just best field if is have no field in locale
-module.exports = {create, getAll, getOne, search};
+module.exports = {create, getAll, getOne, search, getFields};
