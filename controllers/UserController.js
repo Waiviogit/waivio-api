@@ -23,8 +23,8 @@ const create = async function (req, res, next) {
     const {user, error} = await User.create({
         name: req.body.name,
         profile_image: req.body.profile_image,
-        wObjects: req.body.wObjects,
-        readLocales: req.body.readLocales
+        w_objects: req.body.w_objects,
+        read_locales: req.body.read_locales
     });
     if (error) {
         res.send({error});

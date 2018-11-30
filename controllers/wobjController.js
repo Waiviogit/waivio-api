@@ -5,11 +5,11 @@ const followersHelper = require('../utilities/helpers').followersHelper;
 
 const index = async function (req, res, next) {
     const{wObjectsData, error} = await Wobj.getAll({
-        userLimit: req.body.userLimit ? req.body.userLimit : 5,
+        user_limit: req.body.user_limit ? req.body.user_limit : 5,
         locale: req.body.locale ? req.body.locale : 'en-US',
-        authorPermlinks: req.body.authorPermlinks,
+        author_permlinks: req.body.author_permlinks,
         limit: req.body.limit ? req.body.limit: 30 ,          //field for infinite scroll
-        startAuthorPermlink: req.body.startAuthorPermlink     //field for infinite scroll
+        start_author_permlink: req.body.start_author_permlink     //field for infinite scroll
     });
     if(error){
         return next(error);
@@ -19,8 +19,8 @@ const index = async function (req, res, next) {
 
 const show = async function (req, res, next) {
     data = {
-        authorPermlink: req.params.authorPermlink,
-        limit: req.query.postLimit
+        author_permlink: req.params.authorPermlink,
+        locale: req.query.locale
     };
     const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
     if (error) {
@@ -31,10 +31,10 @@ const show = async function (req, res, next) {
 
 const posts = async function (req, res, next) {
     const data = {
-        authorPermlink: req.params.authorPermlink,  //for wObject
+        author_permlink: req.params.authorPermlink,  //for wObject
         limit: req.body.limit,
-        startAuthor: req.body.startAuthor,          //for posts
-        startPermlink: req.body.startPermlink       //for posts
+        start_author: req.body.start_author,          //for posts
+        start_permlink: req.body.start_permlink       //for posts
     };
     const {posts, steemError} = await postsUtil.getPostsByTrending(data);
     if (steemError) {
@@ -45,8 +45,8 @@ const posts = async function (req, res, next) {
 
 const followers = async function (req, res, next){
     const data = {
-        authorPermlink: req.params.authorPermlink,
-        startFollower: req.body.startFollower,
+        author_permlink: req.params.authorPermlink,
+        start_follower: req.body.start_follower,
         limit: req.body.limit ? req.body.limit : 30
     };
     const {result, error} = await followersHelper.getFollowers(data);
@@ -58,7 +58,7 @@ const followers = async function (req, res, next){
 
 const search = async function (req, res, next){
     const data = {
-        string: req.body.searchString,
+        string: req.body.search_string,
         limit: req.body.limit ? req.body.limit : 10,
         locale: req.body.locale ? req.body.locale : 'en-US'
     };
@@ -71,7 +71,7 @@ const search = async function (req, res, next){
 
 const fields = async function (req, res, next) {
     const data = {
-        authorPermlink: req.params.authorPermlink
+        author_permlink: req.params.authorPermlink
     };
     const {fieldsData, error} = await Wobj.getFields(data);
     if(error){
@@ -82,7 +82,7 @@ const fields = async function (req, res, next) {
 
 const create = async function (req, res, next) {
     const {wObject, error} = await Wobj.create({
-        authorPermlink: req.body.authorPermlink,
+        author_permlink: req.body.author_permlink,
         fields: req.body.fields,
         app: req.body.app,
         community: req.body.community,
@@ -96,7 +96,7 @@ const create = async function (req, res, next) {
 
 const addField = async function (req, res, next) {
     const {result, error} = await Wobj.addField({
-        authorPermlink: req.params.authorPermlink,
+        author_permlink: req.params.authorPermlink,
         name: req.body.field.name,
         body: req.body.field.body,
         locale: req.body.field.locale,
