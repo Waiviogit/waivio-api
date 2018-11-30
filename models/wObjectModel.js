@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const addField = async function (data) {
     try {
-        await WObjectModel.update({authorPermlink: data.authorPermlink},
+        await WObjectModel.update({author_permlink: data.author_permlink},
             {
                 $push:
                     {
@@ -64,13 +64,13 @@ const search = async function (data) {
 
 const getOne = async function (data) {      //get one wobject by authorPermlink
     try {
-        let wObject = await WObjectModel.findOne({'authorPermlink': data.authorPermlink})
-            .populate('children', 'authorPermlink')
-            .populate('users', 'name wObjects profile_image')
+        let wObject = await WObjectModel.findOne({'author_permlink': data.author_permlink})
+            .populate('children', 'author_permlink')
+            .populate('users', 'name w_objects profile_image')
             .select(' -_id -fields._id')
             .lean();
         formatUsers(wObject);
-        wObject.followersCount = wObject.followersNames ? wObject.followersNames.length : 0;
+        wObject.followers_count = wObject.followers_names ? wObject.followers_names.length : 0;
         const requireFields = [
             {name: 'name'},
             {name: 'descriptionShort'},
@@ -100,13 +100,13 @@ const getOne = async function (data) {      //get one wobject by authorPermlink
 const getAll = async function (data) {
     try {
         let wObjects = await WObjectModel
-            .find(data.authorPermlinks ? {'authorPermlink': {$in: data.authorPermlinks}} : {})
-            .populate('children', 'authorPermlink')
-            .populate('users', 'name wObjects profile_image')
-            .select(' -_id -followersNames -fields._id')
+            .find(data.author_permlinks ? {'author_permlink': {$in: data.author_permlinks}} : {})
+            .populate('children', 'author_permlink')
+            .populate('users', 'name w_objects profile_image')
+            .select(' -_id -followers_names -fields._id')
             .sort({weight: -1})
             .lean();
-        const beginIndex = data.startAuthorPermlink ? wObjects.map(item => item.authorPermlink).indexOf(data.startAuthorPermlink) + 1 : 0;
+        const beginIndex = data.start_author_permlink ? wObjects.map(item => item.author_permlink).indexOf(data.start_author_permlink) + 1 : 0;
         wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
         const requireFields = [
@@ -116,9 +116,9 @@ const getAll = async function (data) {
             {name: 'locationCity'}];
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
-            wObject.children = wObject.children.map(item => item.authorPermlink);  //correct format of children
+            wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
             wObject.user_count = wObject.users.length;                  //add field user count
-            wObject.users = wObject.users.filter((item, index) => index < data.userLimit);
+            wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
             formatFields(wObject, data.locale, requireFields);
         });
 
@@ -131,7 +131,7 @@ const getAll = async function (data) {
 const getFields = async function (data) {
     try {
         const wObject = await WObjectModel
-            .findOne({'authorPermlink': data.authorPermlink})
+            .findOne({'author_permlink': data.author_permlink})
             .select('fields')
             .lean();
         return {fieldsData: _.orderBy(wObject.fields, ['weight'], ['desc'])}

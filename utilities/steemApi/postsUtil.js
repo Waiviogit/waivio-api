@@ -8,8 +8,8 @@ const getPostsByTrending = async (data) => {
         const posts = await client.database.getDiscussions('trending', {
             limit: data.limit,
             tag: data.tag,
-            start_author: data.startAuthor,
-            start_permlink: data.startPermlink
+            start_author: data.start_author,
+            start_permlink: data.start_permlink
         });
         return {posts: posts};
     } catch (error) {

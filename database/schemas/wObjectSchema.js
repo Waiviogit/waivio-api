@@ -5,7 +5,7 @@ const WObjectSchema = new Schema({
         app: {type: String},
         community: {type: String},
         object_type: {type: String},
-        authorPermlink: {type: String, index: true, unique: true, required: true},  //unique identity for wobject, link to create object POST
+        author_permlink: {type: String, index: true, unique: true, required: true},  //unique identity for wobject, link to create object POST
         weight: {type: Number, index: true, default: 1},  //value in STEEM(or WVIO) as a summ of rewards, index for quick sort
         parents: {type: [String], default: []},
         fields: [{
@@ -16,7 +16,7 @@ const WObjectSchema = new Schema({
             author: {type: String},     //
             permlink: {type: String}    //author+permlink is link to appendObject COMMENT(or to create object post if it's first field)
         }],
-        followersNames: {type: [String], default: []}
+        followers_names: {type: [String], default: []}
     },
     {
         toObject: {virtuals: true}, timestamps: true
@@ -24,22 +24,22 @@ const WObjectSchema = new Schema({
 
 WObjectSchema.virtual('followers', {
     ref: 'User',
-    localField: 'followersNames',
+    localField: 'followers_names',
     foreignField: 'name',
     justOne: false
 });
 
 WObjectSchema.virtual('children', {
     ref: 'wobject',
-    localField: 'authorPermlink',
+    localField: 'author_permlink',
     foreignField: 'parents',
     justOne: false
 });
 
 WObjectSchema.virtual('users', {
     ref: 'User',
-    localField: 'authorPermlink',
-    foreignField: 'wObjects.authorPermlink',
+    localField: 'author_permlink',
+    foreignField: 'w_objects.author_permlink',
     justOne: false
 });
 

@@ -4,12 +4,12 @@ const Schema = mongoose.Schema;
 const UserSchema = new Schema({
     name: {type: String, index: true, unique: true},
     profile_image: String,
-    wObjects:[{
-        authorPermlink:String,
+    w_objects:[{
+        author_permlink:String,
         weight: Number,  //Object Shares, value in STEEM(or WVIO) coin
         rank: Number     //Object Expertise, value from 1 to 99
     }],
-    readLocales:[String]
+    read_locales:[String]
 },{timestamps: true});
 const UserModel = mongoose.model('User', UserSchema);
 
