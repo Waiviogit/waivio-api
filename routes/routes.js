@@ -13,8 +13,13 @@ apiRoutes.use('/api', userRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
+
+wobjRoutes.route('/wobjectCreate')
+    .post(WobjController.create);
+
 wobjRoutes.route('/wobject/:authorPermlink')
-    .get(WobjController.show);
+    .get(WobjController.show)
+    .post(WobjController.addField);
 wobjRoutes.route('/wobject/:authorPermlink/posts')
     .post(WobjController.posts);
 wobjRoutes.route('/wobject/:authorPermlink/followers')

@@ -1,6 +1,27 @@
 const WObjectModel = require('../database').models.WObject;
 const _ = require('lodash');
 
+const addField = async function (data) {
+    try {
+        await WObjectModel.update({authorPermlink: data.authorPermlink},
+            {
+                $push:
+                    {
+                        fields: {
+                            name: data.name,
+                            body: data.body,
+                            locale: data.locale,
+                            author: data.author,
+                            permlink: data.permlink
+                        }
+                    }
+            });
+        return {result: true};
+    } catch (error) {
+        return {error}
+    }
+};
+
 const create = async function (data) {
     const newWObject = new WObjectModel(data);
     try {
@@ -113,7 +134,7 @@ const getFields = async function (data) {
             .findOne({'authorPermlink': data.authorPermlink})
             .select('fields')
             .lean();
-        return {fieldsData: _.orderBy(wObject.fields, ['weight'],['desc'])}
+        return {fieldsData: _.orderBy(wObject.fields, ['weight'], ['desc'])}
     } catch (error) {
         return {error}
     }
@@ -154,4 +175,4 @@ const formatFields = function (wObject, locale, requireFields) {
         return resArr;
     }, temp);
 };    // get best fields(avatarImage, name, location and link) in location, or just best field if is have no field in locale
-module.exports = {create, getAll, getOne, search, getFields};
+module.exports = {create, addField, getAll, getOne, search, getFields};

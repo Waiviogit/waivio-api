@@ -83,14 +83,30 @@ const fields = async function (req, res, next) {
 const create = async function (req, res, next) {
     const {wObject, error} = await Wobj.create({
         authorPermlink: req.body.authorPermlink,
-        weight: req.body.weight,
         fields: req.body.fields,
-        parents: req.body.parents
+        app: req.body.app,
+        community: req.body.community,
+        object_type: req.body.object_type
     });
     if (error) {
         return next(error);
     }
-    res.status(200).json(wObject._doc);
+    res.status(200).json(wObject);
 };
 
-module.exports = {index, create, show, posts, followers, search, fields};
+const addField = async function (req, res, next) {
+    const {result, error} = await Wobj.addField({
+        authorPermlink: req.params.authorPermlink,
+        name: req.body.field.name,
+        body: req.body.field.body,
+        locale: req.body.field.locale,
+        author: req.body.field.author,
+        permlink: req.body.field.permlink
+    });
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(result);
+};
+
+module.exports = {index, create, addField, show, posts, followers, search, fields};

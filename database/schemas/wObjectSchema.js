@@ -2,25 +2,27 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const WObjectSchema = new Schema({
-        app: String,
-        community: String,
-        authorPermlink: {type: String, index: true, unique: true, required: true},  //unique identity for wobject
-        weight: {type: Number, index: true},  //value in STEEM(or WVIO) as a summ of rewards, index for quick sort
-        parents: [String],
+        app: {type: String},
+        community: {type: String},
+        object_type: {type: String},
+        authorPermlink: {type: String, index: true, unique: true, required: true},  //unique identity for wobject, link to create object POST
+        weight: {type: Number, index: true, default: 1},  //value in STEEM(or WVIO) as a summ of rewards, index for quick sort
+        parents: {type: [String], default: []},
         fields: [{
-            name: {type: String, index: true},
-            body: {type: String, index: true},
-            weight: Number,
-            locale: String,
-            author: String,       //author+permlink is link to comment with appendObject
-            permlink: String}],
-        followersNames: [String]
+            name: {type: String, index: true, required: true},
+            body: {type: String, index: true, required: true},
+            weight: {type: Number, default: 1},
+            locale: {type: String, default: 'en-US'},
+            author: {type: String},     //
+            permlink: {type: String}    //author+permlink is link to appendObject COMMENT(or to create object post if it's first field)
+        }],
+        followersNames: {type: [String], default: []}
     },
     {
         toObject: {virtuals: true}, timestamps: true
     });
 
-WObjectSchema.virtual('followers',{
+WObjectSchema.virtual('followers', {
     ref: 'User',
     localField: 'followersNames',
     foreignField: 'name',
