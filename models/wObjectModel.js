@@ -62,7 +62,7 @@ const search = async function (data) {
     }
 };
 
-const getOne = async function (data) {      //get one wobject by authorPermlink
+const getOne = async function (data) {      //get one wobject by author_permlink
     try {
         let wObject = await WObjectModel.findOne({'author_permlink': data.author_permlink})
             .populate('children', 'author_permlink')
@@ -143,7 +143,7 @@ const getFields = async function (data) {
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
-        let currentObj = user.wObjects.find((item) => item.authorPermlink === wObject.authorPermlink);
+        let currentObj = user.w_objects.find((item) => item.author_permlink=== wObject.author_permlink);
         return {
             name: user.name,
             profile_image: user.profile_image,

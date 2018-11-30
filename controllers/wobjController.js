@@ -19,7 +19,7 @@ const index = async function (req, res, next) {
 
 const show = async function (req, res, next) {
     data = {
-        author_permlink: req.params.author_permlink,
+        author_permlink: req.params.authorPermlink,
         locale: req.query.locale
     };
     const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
@@ -31,7 +31,7 @@ const show = async function (req, res, next) {
 
 const posts = async function (req, res, next) {
     const data = {
-        author_permlink: req.params.author_permlink,  //for wObject
+        author_permlink: req.params.authorPermlink,  //for wObject
         limit: req.body.limit,
         start_author: req.body.start_author,          //for posts
         start_permlink: req.body.start_permlink       //for posts
@@ -45,7 +45,7 @@ const posts = async function (req, res, next) {
 
 const followers = async function (req, res, next){
     const data = {
-        author_permlink: req.params.author_permlink,
+        author_permlink: req.params.authorPermlink,
         start_follower: req.body.start_follower,
         limit: req.body.limit ? req.body.limit : 30
     };
@@ -71,7 +71,7 @@ const search = async function (req, res, next){
 
 const fields = async function (req, res, next) {
     const data = {
-        author_permlink: req.params.author_permlink
+        author_permlink: req.params.authorPermlink
     };
     const {fieldsData, error} = await Wobj.getFields(data);
     if(error){
@@ -96,7 +96,7 @@ const create = async function (req, res, next) {
 
 const addField = async function (req, res, next) {
     const {result, error} = await Wobj.addField({
-        author_permlink: req.params.author_permlink,
+        author_permlink: req.params.authorPermlink,
         name: req.body.field.name,
         body: req.body.field.body,
         locale: req.body.field.locale,
