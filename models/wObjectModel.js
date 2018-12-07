@@ -71,26 +71,27 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .lean();
         formatUsers(wObject);
         wObject.followers_count = wObject.followers_names ? wObject.followers_names.length : 0;
-        const requireFields = [
-            {name: 'name'},
-            {name: 'descriptionShort'},
-            {name: 'descriptionFull'},
-            {name: 'locationCountry'},
-            {name: 'locationCity'},
-            {name: 'locationStreet'},
-            {name: 'locationAccomodation'},
-            {name: 'locationGPS'},
-            {name: 'postCode'},
-            {name: 'link'},
-            {name: 'linkFacebook'},
-            {name: 'linkTwitter'},
-            {name: 'linkYoutube'},
-            {name: 'linkInstagram'},
-            {name: 'linkVk'},
-            {name: 'avatarImage'},
-            {name: 'backgroundImage'}
+        const requiredFields = [
+            'name',
+            'descriptionShort',
+            'descriptionFull',
+            'locationCountry',
+            'locationCity',
+            'locationStreet',
+            'locationAccomodation',
+            'locationGPS',
+            'postCode',
+            'link',
+            'linkFacebook',
+            'linkTwitter',
+            'linkYoutube',
+            'linkInstagram',
+            'linkVk',
+            'avatarImage',
+            'backgroundImage',
         ];
-        formatFields(wObject, data.locale, requireFields);
+        getRequiredFields(wObject, requiredFields);
+
         return {wObjectData: wObject};
     } catch (error) {
         return {error};
@@ -175,4 +176,9 @@ const formatFields = function (wObject, locale, requireFields) {
         return resArr;
     }, temp);
 };    // get best fields(avatarImage, name, location and link) in location, or just best field if is have no field in locale
+
+const getRequiredFields = function(wObject, requiredFields){
+    wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
+};
+
 module.exports = {create, addField, getAll, getOne, search, getFields};
