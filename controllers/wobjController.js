@@ -109,4 +109,4 @@ const addField = async function (req, res, next) {
     res.status(200).json(result);
 };
 
-module.exports = {index, create, addField, show, posts, followers, search, fields};
+module.exports = {index, create, addField, show, posts, search, fields};
