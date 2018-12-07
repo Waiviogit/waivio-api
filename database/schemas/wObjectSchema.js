@@ -21,6 +21,13 @@ const WObjectSchema = new Schema({
         toObject: {virtuals: true}, timestamps: true
     });
 
+WObjectSchema.virtual('followers',{
+    ref: 'User',
+    localField: 'author_permlink',
+    foreignField: 'objects_follow',
+    justOne: false
+});
+
 WObjectSchema.virtual('children', {
     ref: 'wobject',
     localField: 'author_permlink',
