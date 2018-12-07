@@ -22,7 +22,8 @@ const show = async function (req, res, next) {
         author_permlink: req.params.authorPermlink,
         locale: req.query.locale
     };
-    const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
+    // const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
+    const {wObjectData, error} = await Wobj.getOne(data);
     if (error) {
         return next(error);
     }
@@ -43,18 +44,18 @@ const posts = async function (req, res, next) {
     res.status(200).json(posts)
 };
 
-// const followers = async function (req, res, next){
-//     const data = {
-//         author_permlink: req.params.authorPermlink,
-//         start_follower: req.body.start_follower,
-//         limit: req.body.limit ? req.body.limit : 30
-//     };
-//     const {result, error} = await followersHelper.getFollowers(data);
-//     if (error) {
-//         return next(error);
-//     }
-//     res.status(200).json(result);
-// };
+const followers = async function (req, res, next){
+    const data = {
+        author_permlink: req.params.authorPermlink,
+        skip: req.body.skip ? req.body.skip : 0,
+        limit: req.body.limit ? req.body.limit : 30
+    };
+    const {result, error} = await followersHelper.getFollowers(data);
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(result);
+};
 
 const search = async function (req, res, next){
     const data = {
@@ -109,4 +110,4 @@ const addField = async function (req, res, next) {
     res.status(200).json(result);
 };
 
-module.exports = {index, create, addField, show, posts, followers, search, fields};
+module.exports = {index, create, addField, show, posts, search, fields, followers};
