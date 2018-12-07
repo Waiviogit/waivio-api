@@ -1,7 +1,7 @@
 const {Wobj} = require('../models');
 const postsUtil = require('../utilities/steemApi').postsUtil;
 const wObjectHelper = require('../utilities/helpers').wObjectHelper;
-const followersHelper = require('../utilities/helpers').followersHelper;
+// const followersHelper = require('../utilities/helpers').followersHelper;
 
 const index = async function (req, res, next) {
     const{wObjectsData, error} = await Wobj.getAll({
@@ -22,7 +22,8 @@ const show = async function (req, res, next) {
         author_permlink: req.params.authorPermlink,
         locale: req.query.locale
     };
-    const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
+    // const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
+    const {wObjectData, error} = await Wobj.getOne(data);
     if (error) {
         return next(error);
     }
