@@ -22,8 +22,8 @@ wobjRoutes.route('/wobject/:authorPermlink')
     .post(WobjController.addField);
 wobjRoutes.route('/wobject/:authorPermlink/posts')
     .post(WobjController.posts);
-wobjRoutes.route('/wobject/:authorPermlink/followers')
-    .post(WobjController.followers);
+// wobjRoutes.route('/wobject/:authorPermlink/followers')
+//     .post(WobjController.followers);
 wobjRoutes.route('/wobject/:authorPermlink/fields')
     .post(WobjController.fields);
 wobjRoutes.route('/wobjectSearch')
@@ -35,5 +35,7 @@ userRoutes.route('/user')
     .post(UserController.create);
 userRoutes.route('/user/:userName')
     .get(UserController.show);
+userRoutes.route('/user/:userName/following_objects')
+    .post(UserController.objects_follow);
 
 module.exports = apiRoutes;

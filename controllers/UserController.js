@@ -27,10 +27,21 @@ const create = async function (req, res, next) {
         read_locales: req.body.read_locales
     });
     if (error) {
-        res.send({error});
         return next(error);
     }
     res.status(200).json(user._doc);
 };
 
-module.exports = {index, create, show};
+const objects_follow = async function (req, res, next) {
+    const data = {
+        name: req.params.userName,
+        locale: req.body.locale ? req.body.locale : 'en-US'
+    };
+    const {wobjects, error} = await User.getObjectsFollow(data);
+    if(error){
+        return next(error);
+    }
+    res.status(200).json(wobjects);
+};
+
+module.exports = {index, create, show, objects_follow};

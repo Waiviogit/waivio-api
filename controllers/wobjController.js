@@ -43,18 +43,18 @@ const posts = async function (req, res, next) {
     res.status(200).json(posts)
 };
 
-const followers = async function (req, res, next){
-    const data = {
-        author_permlink: req.params.authorPermlink,
-        start_follower: req.body.start_follower,
-        limit: req.body.limit ? req.body.limit : 30
-    };
-    const {result, error} = await followersHelper.getFollowers(data);
-    if (error) {
-        return next(error);
-    }
-    res.status(200).json(result);
-};
+// const followers = async function (req, res, next){
+//     const data = {
+//         author_permlink: req.params.authorPermlink,
+//         start_follower: req.body.start_follower,
+//         limit: req.body.limit ? req.body.limit : 30
+//     };
+//     const {result, error} = await followersHelper.getFollowers(data);
+//     if (error) {
+//         return next(error);
+//     }
+//     res.status(200).json(result);
+// };
 
 const search = async function (req, res, next){
     const data = {
