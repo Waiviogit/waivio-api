@@ -1,4 +1,5 @@
 const UserModel = require('../database').models.User;
+const {wObjectHelper} = require('../utilities/helpers');
 
 const getOne = async function (name) {
     try {
@@ -25,4 +26,23 @@ const create = async function (data) {
     }
 };
 
-module.exports = {create, getAll, getOne};
+const getObjectsFollow = async function (data) {
+    try {
+        const user = await UserModel.findOne({name: data.name})
+            .populate('full_objects_follow')        //fill objects about full info
+            .lean();
+        const requireFields = [
+            {name: 'avatarImage'},
+            {name: 'name'},
+            {name: 'link'},
+            {name: 'locationCity'}];
+        user.full_objects_follow.forEach((wObject)=>{
+            wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
+        });
+        return {wobjects: user.full_objects_follow}
+    } catch (error) {
+        return {error}
+    }
+};
+
+module.exports = {create, getAll, getOne, getObjectsFollow};

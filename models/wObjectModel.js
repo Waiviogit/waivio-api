@@ -70,7 +70,6 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .select(' -_id -fields._id')
             .lean();
         formatUsers(wObject);
-        wObject.followers_count = wObject.followers_names ? wObject.followers_names.length : 0;
         const requiredFields = [
             'name',
             'descriptionShort',
@@ -104,7 +103,7 @@ const getAll = async function (data) {
             .find(data.author_permlinks ? {'author_permlink': {$in: data.author_permlinks}} : {})
             .populate('children', 'author_permlink')
             .populate('users', 'name w_objects profile_image')
-            .select(' -_id -followers_names -fields._id')
+            .select(' -_id -fields._id')
             .sort({weight: -1})
             .lean();
         const beginIndex = data.start_author_permlink ? wObjects.map(item => item.author_permlink).indexOf(data.start_author_permlink) + 1 : 0;
