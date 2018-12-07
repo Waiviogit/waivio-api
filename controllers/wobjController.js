@@ -1,7 +1,7 @@
 const {Wobj} = require('../models');
 const postsUtil = require('../utilities/steemApi').postsUtil;
 const wObjectHelper = require('../utilities/helpers').wObjectHelper;
-// const followersHelper = require('../utilities/helpers').followersHelper;
+const followersHelper = require('../utilities/helpers').followersHelper;
 
 const index = async function (req, res, next) {
     const{wObjectsData, error} = await Wobj.getAll({
@@ -44,18 +44,18 @@ const posts = async function (req, res, next) {
     res.status(200).json(posts)
 };
 
-// const followers = async function (req, res, next){
-//     const data = {
-//         author_permlink: req.params.authorPermlink,
-//         start_follower: req.body.start_follower,
-//         limit: req.body.limit ? req.body.limit : 30
-//     };
-//     const {result, error} = await followersHelper.getFollowers(data);
-//     if (error) {
-//         return next(error);
-//     }
-//     res.status(200).json(result);
-// };
+const followers = async function (req, res, next){
+    const data = {
+        author_permlink: req.params.authorPermlink,
+        skip: req.body.skip ? req.body.skip : 0,
+        limit: req.body.limit ? req.body.limit : 30
+    };
+    const {result, error} = await followersHelper.getFollowers(data);
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(result);
+};
 
 const search = async function (req, res, next){
     const data = {
@@ -110,4 +110,4 @@ const addField = async function (req, res, next) {
     res.status(200).json(result);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields};
+module.exports = {index, create, addField, show, posts, search, fields, followers};
