@@ -1,4 +1,5 @@
 const WObjectModel = require('../database').models.WObject;
+const {wObjectHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 
 const addField = async function (data) {
@@ -53,7 +54,7 @@ const search = async function (data) {
             {name: 'link'},
             {name: 'locationCity'}];
         wObjects.forEach((wObject) => {
-            formatFields(wObject, data.locale, requireFields);
+            wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
 
         return {wObjectsData: wObjects};
@@ -124,7 +125,7 @@ const getAll = async function (data) {
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
             wObject.user_count = wObject.users.length;                  //add field user count
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
-            formatFields(wObject, data.locale, requireFields);
+            wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
 
         return {wObjectsData: wObjects};
@@ -148,7 +149,7 @@ const getFields = async function (data) {
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
-        let currentObj = user.w_objects.find((item) => item.author_permlink=== wObject.author_permlink);
+        let currentObj = user.w_objects.find((item) => item.author_permlink === wObject.author_permlink);
         return {
             name: user.name,
             profile_image: user.profile_image,
@@ -159,29 +160,7 @@ const formatUsers = function (wObject) {
     wObject.users = _.orderBy(wObject.users, ['rank'], ['desc']);  //order users by rank
 };
 
-const formatFields = function (wObject, locale, requireFields) {
-    const temp = _.reduce(wObject.fields, (resArr, field) => {
-        const currResField = resArr.find(item => item.name === field.name);
-        if (currResField && (!currResField.weight || currResField.weight < field.weight)) {
-            resArr = resArr.map(item => item.name === field.name ? field : item);
-        }
-        return resArr;
-    }, requireFields).filter(item => item.weight);
-
-    wObject.fields = _.reduce(wObject.fields, (resArr, field) => {
-        const currResField = resArr.find(item => item.name === field.name);
-        if (currResField) {
-            if (currResField.locale !== locale && field.locale === locale) {
-                resArr = resArr.map(item => item.name === field.name ? field : item);
-            } else if (currResField.locale === locale && currResField.weight < field.weight && field.locale === locale) {
-                resArr = resArr.map(item => item.name === field.name ? field : item);
-            }
-        }
-        return resArr;
-    }, temp);
-};    // get best fields(avatarImage, name, location and link) in location, or just best field if is have no field in locale
-
-const getRequiredFields = function(wObject, requiredFields){
+const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
