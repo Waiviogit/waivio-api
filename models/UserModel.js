@@ -31,7 +31,7 @@ const getObjectsFollow = async function (data) {
         const user = await UserModel.findOne({name: data.name})
             .populate({
                 path: 'full_objects_follow',
-                options:{
+                options: {
                     limit: data.limit,
                     skip: data.skip,
                     sort: {weight: -1},
@@ -40,12 +40,15 @@ const getObjectsFollow = async function (data) {
             })                              //fill array author_permlink-s full info about wobject
             .select('objects_follow -_id')
             .lean();
+        if (!user.full_objects_follow) {
+            return {wobjects: []}
+        }
         const requireFields = [
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
             {name: 'locationCity'}];
-        user.full_objects_follow.forEach((wObject)=>{
+        user.full_objects_follow.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
         return {wobjects: user.full_objects_follow}
