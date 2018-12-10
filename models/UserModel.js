@@ -29,7 +29,16 @@ const create = async function (data) {
 const getObjectsFollow = async function (data) {
     try {
         const user = await UserModel.findOne({name: data.name})
-            .populate('full_objects_follow')        //fill objects about full info
+            .populate({
+                path: 'full_objects_follow',
+                options:{
+                    limit: data.limit,
+                    skip: data.skip,
+                    sort: {weight: -1},
+                    select: '-_id '
+                }
+            })                              //fill array author_permlink-s full info about wobject
+            .select('objects_follow -_id')
             .lean();
         const requireFields = [
             {name: 'avatarImage'},
