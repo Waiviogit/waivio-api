@@ -3,7 +3,12 @@ const {wObjectHelper} = require('../utilities/helpers');
 
 const getOne = async function (name) {
     try {
-        return {user: await UserModel.findOne({name: name}).lean()};
+        const user = await UserModel.findOne({name: name}).lean();
+        if (!user) {
+            return {}
+        }
+        user.objects_following_count = user.objects_follow.length;
+        return {user}
     } catch (error) {
         return {error}
     }
