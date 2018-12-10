@@ -68,7 +68,12 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .populate('children', 'author_permlink')
             .populate('users', 'name w_objects profile_image')
             .select(' -_id -fields._id')
+            .populate('followers', 'name')
             .lean();
+
+        wObject.followers_count = wObject.followers.length;
+        delete wObject.followers;
+
         formatUsers(wObject);
         const requiredFields = [
             'name',
