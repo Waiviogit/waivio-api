@@ -40,7 +40,7 @@ const getObjectsFollow = async function (data) {
             })                              //fill array author_permlink-s full info about wobject
             .select('objects_follow -_id')
             .lean();
-        if (!user.full_objects_follow) {
+        if (!user || !user.full_objects_follow) {
             return {wobjects: []}
         }
         const requireFields = [
