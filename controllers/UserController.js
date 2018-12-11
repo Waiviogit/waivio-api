@@ -11,13 +11,11 @@ const index = async function (req, res, next) {
 };
 
 const show = async function (req, res, next) {
-
-    // const {userData, error} = await userHelper.combinedUserData(req.params.userName);
-    const {user, error} = await User.getOne(req.params.userName);
+    const {userData, error} = await User.getOne(req.params.userName);
     if (error) {
         return next(error);
     }
-    res.status(200).json(user);
+    res.status(200).json(userData);
 };
 
 const create = async function (req, res, next) {
