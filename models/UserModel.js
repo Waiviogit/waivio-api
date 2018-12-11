@@ -5,14 +5,13 @@ const {wObjectHelper} = require('../utilities/helpers');
 const getOne = async function (name) {
     try {
         const {userData, err} = await userSteemUtil.getAccount(name);   //get user data from STEEM blockchain
-        if(err){
-            return{error}
+        if (err) {
+            return {error}
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
-        if (!user) {
-            return {}
+        if (user) {
+            user.objects_following_count = user.objects_follow.length;
         }
-        user.objects_following_count = user.objects_follow.length;
         Object.assign(userData, user);                                  //combine data from db and blockchain
         return {userData}
     } catch (error) {
