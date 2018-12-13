@@ -1,17 +1,18 @@
 const {Wobj} = require('../models');
+const {Post} = require('../models');
 const postsUtil = require('../utilities/steemApi').postsUtil;
 const wObjectHelper = require('../utilities/helpers').wObjectHelper;
 const followersHelper = require('../utilities/helpers').followersHelper;
 
 const index = async function (req, res, next) {
-    const{wObjectsData, error} = await Wobj.getAll({
+    const {wObjectsData, error} = await Wobj.getAll({
         user_limit: req.body.user_limit ? req.body.user_limit : 5,
         locale: req.body.locale ? req.body.locale : 'en-US',
         author_permlinks: req.body.author_permlinks,
-        limit: req.body.limit ? req.body.limit: 30 ,          //field for infinite scroll
+        limit: req.body.limit ? req.body.limit : 30,          //field for infinite scroll
         start_author_permlink: req.body.start_author_permlink     //field for infinite scroll
     });
-    if(error){
+    if (error) {
         return next(error);
     }
     res.status(200).json(wObjectsData);
@@ -32,19 +33,18 @@ const show = async function (req, res, next) {
 
 const posts = async function (req, res, next) {
     const data = {
-        author_permlink: req.params.authorPermlink,  //for wObject
-        limit: req.body.limit,
-        start_author: req.body.start_author,          //for posts
-        start_permlink: req.body.start_permlink       //for posts
+        author_permlink: req.params.authorPermlink,             //for wObject
+        limit: req.body.limit ? req.body.limit : 30,            //
+        start_id: req.body.start_id                             //for infinite scroll
     };
-    const {posts, steemError} = await postsUtil.getPostsByTrending(data);
-    if (steemError) {
-        return next(steemError);
+    const {posts, error} = await Post.getByObject(data);
+    if (error) {
+        return next(error);
     }
     res.status(200).json(posts)
 };
 
-const followers = async function (req, res, next){
+const followers = async function (req, res, next) {
     const data = {
         author_permlink: req.params.authorPermlink,
         skip: req.body.skip ? req.body.skip : 0,
@@ -57,14 +57,14 @@ const followers = async function (req, res, next){
     res.status(200).json(result);
 };
 
-const search = async function (req, res, next){
+const search = async function (req, res, next) {
     const data = {
         string: req.body.search_string,
         limit: req.body.limit ? req.body.limit : 10,
         locale: req.body.locale ? req.body.locale : 'en-US'
     };
     const {wObjectsData, error} = await Wobj.search(data);
-    if(error){
+    if (error) {
         return next(error);
     }
     res.status(200).json(wObjectsData);
@@ -75,7 +75,7 @@ const fields = async function (req, res, next) {
         author_permlink: req.params.authorPermlink
     };
     const {fieldsData, error} = await Wobj.getFields(data);
-    if(error){
+    if (error) {
         return next(error);
     }
     res.status(200).json(fieldsData);
