@@ -1,7 +1,10 @@
 const mongoose = require('mongoose');
+const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
+
 const Schema = mongoose.Schema;
 
 const PostSchema = new Schema({
+    id: {type: Number},
     author: {type: String},
     permlink: {type: String},
     parent_author: {type: String, default: ''},
@@ -22,9 +25,19 @@ const PostSchema = new Schema({
         author_permlink: {type: String, index: true},
         percent: {type: Number}
     }]
-}, {timestamps: true});
+}, {
+    toObject: {virtuals: true},
+    toJSON: {virtuals: true},
+    timestamps: true
+});
 
-PostSchema.index({author: 1, permlink: 1},{unique: true});
+PostSchema.virtual('post_id').get(function() {
+    return this.id;
+});
+
+PostSchema.plugin(mongooseLeanVirtuals);
+
+PostSchema.index({author: 1, permlink: 1}, {unique: true});
 
 const PostModel = mongoose.model('Post', PostSchema);
 
