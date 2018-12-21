@@ -79,8 +79,10 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         formatUsers(wObject);
         const requiredFields = [
             'name',
+            'description',
             'descriptionShort',
             'descriptionFull',
+            'location',
             'locationCountry',
             'locationCity',
             'locationStreet',

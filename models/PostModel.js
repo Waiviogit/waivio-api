@@ -10,7 +10,7 @@ const getByObject = async function (data) {
             .sort({_id: -1})
             .where('_id').lt(data.start_id ? data.start_id : new mongoose.mongo.ObjectId())
             .limit(data.limit)
-            .lean();
+            .lean({virtuals: true});
 
         return {posts}
     } catch (error) {
