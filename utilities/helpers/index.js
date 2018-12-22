@@ -1,4 +1,5 @@
 module.exports = {
     wObjectHelper: require('./wObjectHelper'),
-    followersHelper: require('./followersHelper')
+    followersHelper: require('./followersHelper'),
+    rankHelper: require('./rankHelper')
 };

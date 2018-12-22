@@ -1,6 +1,8 @@
 const UserModel = require('../database').models.User;
 const userSteemUtil = require('../utilities/steemApi').userUtil;
 const {wObjectHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
+const wObjectModel = require('../database/schemas/wObjectSchema');
 
 const getOne = async function (name) {
     try {
@@ -9,6 +11,17 @@ const getOne = async function (name) {
             return {error}
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
+
+        await rankHelper.calculate(user.w_objects);
+        // await Promise.all(user.w_objects.map(async (wobject) => {       //add rank in wobject to users
+        //     const wobj = await wObjectModel.findOne({'author_permlink': wobject.author_permlink}).lean();
+        //     let rank = rankHelper.calculate(wobject.weight, wobj.weight);
+        //     if(rank<1){
+        //         rank = 1;
+        //     }
+        //     wobject.rank = rank > 99 ? 99 : rank;
+        // }));
+
         if (user) {
             user.objects_following_count = user.objects_follow.length;
         }

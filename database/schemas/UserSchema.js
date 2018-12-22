@@ -7,7 +7,7 @@ const UserSchema = new Schema({
     w_objects: [{
         author_permlink: String,
         weight: Number,  //Object Shares, value in STEEM(or WVIO) coin
-        rank: Number     //Object Expertise, value from 1 to 99
+        // rank: Number     //Object Expertise, value from 1 to 99
     }],
     read_locales: [String],
     objects_follow: {type: [String], default: []} //arr of author_permlink of objects what user following
@@ -19,6 +19,7 @@ UserSchema.virtual('full_objects_follow', { //get full structure of objects inst
     foreignField: 'author_permlink',
     justOne: false
 });
+
 
 const UserModel = mongoose.model('User', UserSchema);
 
