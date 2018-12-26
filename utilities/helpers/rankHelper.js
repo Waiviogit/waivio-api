@@ -1,12 +1,6 @@
 const wObjectModel = require('../../database/schemas/wObjectSchema');
 
-
-//calculate by Brier Score algorithm
-// const calculate = (weight, total) => {
-//     return (100 - Math.ceil(Math.pow((weight / total) - 1, 2) * 99))
-// };
-
-const calculate = async (wobjects)=>{      //wobjects - array of objects(author_permlink and weight)
+const calculateForWobjects = async (wobjects)=>{   //wobjects - array of objects(author_permlink and weight), calculate for user entity
     await Promise.all(wobjects.map(async (wobject) => {
         const wobj = await wObjectModel.findOne({'author_permlink': wobject.author_permlink}).select('weight').lean();
         let rank = (100 - Math.ceil(Math.pow((wobject.weight / wobj.weight) - 1, 2) * 99));
@@ -17,5 +11,14 @@ const calculate = async (wobjects)=>{      //wobjects - array of objects(author_
     }));
 };
 
+const calculateForUsers = async (users, totalWeight)=>{//users - array of user and weight in specified wobject
+    users.forEach(user=>{
+        let rank = (100 - Math.ceil(Math.pow((user.weight / totalWeight) - 1, 2) * 99));    //super magic alg
+        if(rank<1){
+            rank = 1;
+        }
+        user.rank = rank > 99 ? 99 : rank;
+    })
+};
 
-module.exports = {calculate};
+module.exports = {calculateForWobjects, calculateForUsers};
