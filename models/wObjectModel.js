@@ -1,5 +1,6 @@
 const WObjectModel = require('../database').models.WObject;
 const {wObjectHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 
 const addField = async function (data) {
@@ -156,10 +157,11 @@ const formatUsers = function (wObject) {
         return {
             name: user.name,
             profile_image: user.profile_image,
-            weight: currentObj.weight,
-            rank: currentObj.rank
+            weight: currentObj.weight
         }
     });    //format users data
+    rankHelper.calculateForUsers(wObject.users, wObject.weight);    //add rank in wobject for each user
+
     wObject.users = _.orderBy(wObject.users, ['rank'], ['desc']);  //order users by rank
 };
 
