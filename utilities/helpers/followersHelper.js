@@ -1,4 +1,4 @@
-const WObjectModel = require('../../database').models.WObject;
+const WObjectModel = require('../../database/schemas/wObjectSchema');
 
 const getFollowers = async (data) => {
     try {

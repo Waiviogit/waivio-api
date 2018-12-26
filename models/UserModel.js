@@ -1,6 +1,7 @@
 const UserModel = require('../database').models.User;
 const userSteemUtil = require('../utilities/steemApi').userUtil;
 const {wObjectHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
 
 const getOne = async function (name) {
     try {
@@ -9,6 +10,9 @@ const getOne = async function (name) {
             return {error}
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
+
+        await rankHelper.calculateForWobjects(user.w_objects);     //add rank to wobjects in user
+
         if (user) {
             user.objects_following_count = user.objects_follow.length;
         }
