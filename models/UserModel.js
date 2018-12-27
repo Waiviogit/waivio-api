@@ -10,7 +10,9 @@ const getOne = async function (name) {
             return {error}
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
-
+        if (!user) {
+            return {userData}
+        }
         await rankHelper.calculateForUserWobjects(user.w_objects);     //add rank to wobjects in user
 
         if (user) {
