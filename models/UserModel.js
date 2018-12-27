@@ -11,7 +11,7 @@ const getOne = async function (name) {
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
 
-        await rankHelper.calculateForWobjects(user.w_objects);     //add rank to wobjects in user
+        await rankHelper.calculateForUserWobjects(user.w_objects);     //add rank to wobjects in user
 
         if (user) {
             user.objects_following_count = user.objects_follow.length;
