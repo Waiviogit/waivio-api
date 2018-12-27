@@ -53,8 +53,8 @@ const search = async function (data) {
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'locationCity'},
-            {name: 'descriptionShort'}];
+            {name: 'location'},
+            {name: 'description'}];
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
@@ -127,7 +127,8 @@ const getAll = async function (data) {
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'locationCity'}];
+            {name: 'location'},
+            {name: 'description'}];
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
