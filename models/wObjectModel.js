@@ -59,6 +59,8 @@ const search = async function (data) {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
 
+        await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobjects
+
         return {wObjectsData: wObjects};
     } catch (error) {
         return {error}
@@ -73,6 +75,8 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .select(' -_id -fields._id')
             .populate('followers', 'name')
             .lean();
+
+        await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
         delete wObject.followers;
@@ -131,6 +135,8 @@ const getAll = async function (data) {
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
+
+        await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobject
 
         return {wObjectsData: wObjects};
     } catch (error) {

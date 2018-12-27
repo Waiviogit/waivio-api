@@ -11,7 +11,7 @@ const getOne = async function (name) {
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
 
-        await rankHelper.calculateForWobjects(user.w_objects);     //add rank to wobjects in user
+        await rankHelper.calculateForUserWobjects(user.w_objects);     //add rank to wobjects in user
 
         if (user) {
             user.objects_following_count = user.objects_follow.length;
@@ -40,7 +40,7 @@ const create = async function (data) {
     }
 };
 
-const getObjectsFollow = async function (data) {
+const getObjectsFollow = async function (data) {        //list of wobjects which specified user is follow
     try {
         const user = await UserModel.findOne({name: data.name})
             .populate({
@@ -65,6 +65,9 @@ const getObjectsFollow = async function (data) {
         user.full_objects_follow.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
+
+        await rankHelper.calculateWobjectRank(user.full_objects_follow);    //calculate rank for wobject
+
         return {wobjects: user.full_objects_follow}
     } catch (error) {
         return {error}
