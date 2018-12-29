@@ -1,5 +1,5 @@
 const {User} = require('../models');
-const {userHelper} = require('../utilities/helpers');
+const {wObjectHelper} = require('../utilities/helpers');
 
 const index = async function (req, res, next) {
     const {UserData, error} = await User.getAll();
@@ -46,4 +46,17 @@ const objects_follow = async function (req, res, next) {
     res.status(200).json(wobjects);
 };
 
-module.exports = {index, create, show, objects_follow};
+const objects_feed = async function (req, res, next) {
+    const {posts, error} = await wObjectHelper.userFeedByObjects({
+        user: req.params.userName,
+        skip: req.body.skip ? req.body.skip : 0,
+        limit: req.body.limit ? req.body.limit : 30,
+
+    });
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(posts);
+};
+
+module.exports = {index, create, show, objects_follow, objects_feed};
