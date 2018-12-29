@@ -37,5 +37,7 @@ userRoutes.route('/user/:userName')
     .get(UserController.show);
 userRoutes.route('/user/:userName/following_objects')
     .post(UserController.objects_follow);
+userRoutes.route('/user/:userName/objects_feed')
+    .post(UserController.objects_feed);
 
 module.exports = apiRoutes;

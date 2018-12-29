@@ -18,5 +18,19 @@ const getByObject = async function (data) {
     }
 };
 
+const getFeedByObjects = async function (data) {        //data include objects(array of strings), limit, skip
+    try {
+        const posts = await PostModel
+            .find({'wobjects.author_permlink': {$in: data.objects}})
+            .sort({_id: -1})
+            .skip(data.skip)
+            .limit(data.limit)
+            .lean();
+        return {posts}
+    } catch (error) {
+        return {error}
+    }
+};
 
-module.exports = {getByObject};
+
+module.exports = {getByObject, getFeedByObjects};
