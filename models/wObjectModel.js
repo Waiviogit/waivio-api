@@ -1,5 +1,6 @@
 const WObjectModel = require('../database').models.WObject;
 const {wObjectHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 
 const addField = async function (data) {
@@ -52,11 +53,13 @@ const search = async function (data) {
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'locationCity'},
-            {name: 'descriptionShort'}];
+            {name: 'location'},
+            {name: 'description'}];
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
+
+        await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobjects
 
         return {wObjectsData: wObjects};
     } catch (error) {
@@ -72,6 +75,8 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .select(' -_id -fields._id')
             .populate('followers', 'name')
             .lean();
+
+        await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
         delete wObject.followers;
@@ -122,7 +127,8 @@ const getAll = async function (data) {
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'locationCity'}];
+            {name: 'location'},
+            {name: 'description'}];
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
@@ -130,6 +136,8 @@ const getAll = async function (data) {
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
+
+        await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobject
 
         return {wObjectsData: wObjects};
     } catch (error) {
@@ -156,10 +164,11 @@ const formatUsers = function (wObject) {
         return {
             name: user.name,
             profile_image: user.profile_image,
-            weight: currentObj.weight,
-            rank: currentObj.rank
+            weight: currentObj.weight
         }
     });    //format users data
+    rankHelper.calculateForUsers(wObject.users, wObject.weight);    //add rank in wobject for each user
+
     wObject.users = _.orderBy(wObject.users, ['rank'], ['desc']);  //order users by rank
 };
 

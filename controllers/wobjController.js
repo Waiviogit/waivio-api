@@ -50,11 +50,11 @@ const followers = async function (req, res, next) {
         skip: req.body.skip ? req.body.skip : 0,
         limit: req.body.limit ? req.body.limit : 30
     };
-    const {result, error} = await followersHelper.getFollowers(data);
+    const {followers, error} = await followersHelper.getFollowers(data);
     if (error) {
         return next(error);
     }
-    res.status(200).json(result);
+    res.status(200).json(followers);
 };
 
 const search = async function (req, res, next) {

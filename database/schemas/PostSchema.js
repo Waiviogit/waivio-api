@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const Schema = mongoose.Schema;
 
@@ -30,12 +29,6 @@ const PostSchema = new Schema({
     toJSON: {virtuals: true},
     timestamps: true
 });
-
-PostSchema.virtual('post_id').get(function() {
-    return this.id;
-});
-
-PostSchema.plugin(mongooseLeanVirtuals);
 
 PostSchema.index({author: 1, permlink: 1}, {unique: true});
 

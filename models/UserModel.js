@@ -1,6 +1,7 @@
 const UserModel = require('../database').models.User;
 const userSteemUtil = require('../utilities/steemApi').userUtil;
 const {wObjectHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
 
 const getOne = async function (name) {
     try {
@@ -9,6 +10,11 @@ const getOne = async function (name) {
             return {error}
         }
         const user = await UserModel.findOne({name: name}).lean();      //get user data from db
+        if (!user) {
+            return {userData}
+        }
+        await rankHelper.calculateForUserWobjects(user.w_objects);     //add rank to wobjects in user
+
         if (user) {
             user.objects_following_count = user.objects_follow.length;
         }
@@ -36,7 +42,7 @@ const create = async function (data) {
     }
 };
 
-const getObjectsFollow = async function (data) {
+const getObjectsFollow = async function (data) {        //list of wobjects which specified user is follow
     try {
         const user = await UserModel.findOne({name: data.name})
             .populate({
@@ -61,6 +67,9 @@ const getObjectsFollow = async function (data) {
         user.full_objects_follow.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
+
+        await rankHelper.calculateWobjectRank(user.full_objects_follow);    //calculate rank for wobject
+
         return {wobjects: user.full_objects_follow}
     } catch (error) {
         return {error}
