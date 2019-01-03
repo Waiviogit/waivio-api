@@ -157,6 +157,18 @@ const getFields = async function (data) {
     }
 };
 
+const getGalleryItems = async function (data){
+    try{
+        const wobject = await WObjectModel.findOne({author_permlink: data.author_permlink})
+            .select('fields')
+            .lean();
+        const galleryItems = wobject.fields.find(field=>field.name==='galleryItem');
+        return {galleryItems}
+    }  catch (error) {
+        return {error}
+    }
+};
+
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
@@ -176,4 +188,4 @@ const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
-module.exports = {create, addField, getAll, getOne, search, getFields};
+module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems};

@@ -26,6 +26,8 @@ wobjRoutes.route('/wobject/:authorPermlink/followers')
     .post(WobjController.followers);
 wobjRoutes.route('/wobject/:authorPermlink/fields')
     .post(WobjController.fields);
+wobjRoutes.route('/wobject/:authorPermlink/gallery')
+    .get(WobjController.gallery);
 wobjRoutes.route('/wobjectSearch')
     .post(WobjController.search);
 

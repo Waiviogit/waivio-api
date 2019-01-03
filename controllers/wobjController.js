@@ -110,4 +110,14 @@ const addField = async function (req, res, next) {
     res.status(200).json(result);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers};
+const gallery = async function (req, res, next) {
+    const {galleryItems, error} = await Wobj.getGalleryItems({
+        author_permlink: req.params.authorPermlink
+    });
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(galleryItems);
+};
+
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery};
