@@ -162,7 +162,7 @@ const getGalleryItems = async function (data){
         const wobject = await WObjectModel.findOne({author_permlink: data.author_permlink})
             .select('fields')
             .lean();
-        const galleryItems = wobject.fields.find(field=>field.name==='galleryItem');
+        const galleryItems = wobject.fields.filter(field=>field.name==='galleryItem');
         return {galleryItems}
     }  catch (error) {
         return {error}
