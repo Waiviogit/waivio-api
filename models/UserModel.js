@@ -63,7 +63,7 @@ const getObjectsFollow = async function (data) {        //list of wobjects which
             {name: 'avatarImage'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'locationCity'}];
+            {name: 'address'}];
         user.full_objects_follow.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
