@@ -27,7 +27,7 @@ const calculateForUsers = async (users, totalWeight) => { //users - array of use
 
 //calculate wobjects rank dependent on sum of all wobjects weight
 const calculateWobjectRank = async (wobjects) => {  //calculate object rank for each in array
-    const [{total_weight}] = await wObjectModel.aggregate([{$match: {weight: {$gte: 1}}},
+    const [{total_weight = 0}] = await wObjectModel.aggregate([{$match: {weight: {$gte: 1}}},
         {
             $group: {
                 _id: null,

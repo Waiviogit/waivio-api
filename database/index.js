@@ -1,6 +1,6 @@
 const config = require('../config');
 const mongoose = require('mongoose');
-const URI = `mongodb://${config.db.username}:${config.db.password}@${config.db.cloud_link}`;
+const URI =  `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 mongoose.connect(URI)
     .then(() => console.log('connection successful!'))
     .catch((error) => console.log(error));
