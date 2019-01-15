@@ -1,4 +1,5 @@
 const WObjectModel = require('../database').models.WObject;
+const createError = require('http-errors');
 const {wObjectHelper} = require('../utilities/helpers');
 const {rankHelper} = require('../utilities/helpers');
 const _ = require('lodash');
@@ -78,6 +79,9 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .select(' -_id -fields._id')
             .populate('followers', 'name')
             .lean();
+        if(!wObject){
+            return {error: createError(404, 'wobject not found')}
+        }
 
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
