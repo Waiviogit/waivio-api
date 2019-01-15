@@ -162,7 +162,8 @@ const getGalleryItems = async function (data){
             .select('fields')
             .lean();
         const galleryItems = wobject.fields.filter(field=>field.name==='galleryItem');
-        return {galleryItems}
+        const galleryAlbums = wobject.fields.filter(field=>field.name==='galleryAlbum');
+        return {galleryItems, galleryAlbums}
     }  catch (error) {
         return {error}
     }
