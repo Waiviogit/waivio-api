@@ -60,7 +60,7 @@ const getObjectsFollow = async function (data) {        //list of wobjects which
             return {wobjects: []}
         }
         const requireFields = [
-            {name: 'avatarImage'},
+            {name: 'avatar'},
             {name: 'name'},
             {name: 'link'},
             {name: 'address'}];

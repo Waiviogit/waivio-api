@@ -55,10 +55,10 @@ const search = async function (data) {
         }
 
         const requireFields = [
-            {name: 'avatarImage'},
+            {name: 'avatar'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'descriptionShort'}];
+            {name: 'title'}];
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
@@ -91,13 +91,13 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         formatUsers(wObject);
         const requiredFields = [
             'name',
-            'descriptionShort',
-            'descriptionFull',
+            'title',
+            'description',
             'address',
             'link',
-            'position',
-            'avatarImage',
-            'backgroundImage',
+            'map',
+            'avatar',
+            'background',
         ];
         getRequiredFields(wObject, requiredFields);
 
@@ -123,11 +123,11 @@ const getAll = async function (data) {
         wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
         const requireFields = [
-            {name: 'avatarImage'},
+            {name: 'avatar'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'position'},
-            {name: 'descriptionShort'}];
+            {name: 'map'},
+            {name: 'title'}];
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
