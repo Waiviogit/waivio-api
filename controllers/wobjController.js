@@ -1,9 +1,6 @@
 const {Wobj} = require('../models');
 const {Post} = require('../models');
-// const postsUtil = require('../utilities/steemApi').postsUtil;
-// const wObjectHelper = require('../utilities/helpers').wObjectHelper;
 const followersHelper = require('../utilities/helpers').followersHelper;
-const galleryHelper = require('../utilities/helpers/galleryHelper');
 
 const index = async function (req, res, next) {
     const {wObjectsData, error} = await Wobj.getAll({

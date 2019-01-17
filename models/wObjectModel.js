@@ -82,6 +82,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
+        wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
 
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
