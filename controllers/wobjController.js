@@ -112,11 +112,13 @@ const addField = async function (req, res, next) {
 };
 
 const gallery = async function (req, res, next) {
-    // const {galleryItems, error} = await Wobj.getGalleryItems({
-    //     author_permlink: req.params.authorPermlink
-    // });
-    const {galleryAlbums} = await galleryHelper.getGallery({author_permlink: req.params.authorPermlink});
-    res.status(200).json(galleryAlbums);
+    const {gallery, error} = await Wobj.getGalleryItems({
+        author_permlink: req.params.authorPermlink
+    });
+    if(error){
+        return next(error)
+    }
+    res.status(200).json(gallery);
 };
 
 module.exports = {index, create, addField, show, posts, search, fields, followers, gallery};

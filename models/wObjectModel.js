@@ -50,7 +50,7 @@ const search = async function (data) {
             .limit(data.limit)
             .select('-_id -fields._id')
             .lean();
-        if(!wObjects || wObjects.length === 0){
+        if (!wObjects || wObjects.length === 0) {
             return {wObjectsData: []};
         }
 
@@ -79,7 +79,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .select(' -_id -fields._id')
             .populate('followers', 'name')
             .lean();
-        if(!wObject){
+        if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
 
@@ -156,15 +156,74 @@ const getFields = async function (data) {
     }
 };
 
-const getGalleryItems = async function (data){
-    try{
-        const wobject = await WObjectModel.findOne({author_permlink: data.author_permlink})
-            .select('fields')
-            .lean();
-        const galleryItems = wobject.fields.filter(field=>field.name==='galleryItem');
-        const galleryAlbums = wobject.fields.filter(field=>field.name==='galleryAlbum');
-        return {galleryItems, galleryAlbums}
-    }  catch (error) {
+const getGalleryItems = async function (data) {
+    try {
+        const gallery = await WObjectModel.aggregate([
+            {
+                $match:
+                    {
+                        author_permlink: data.author_permlink
+                    }
+            },
+            {
+                $unwind: '$fields'
+            },
+            {
+                $match:
+                    {
+                        $or: [
+                            {"fields.name": 'galleryItem'},
+                            {"fields.name": 'galleryAlbum'}
+                        ]
+
+                    }
+            },
+            {
+                $replaceRoot:
+                    {
+                        newRoot: '$fields'
+                    }
+            },
+            {
+                $group: {
+                    _id: '$id',
+                    items: {
+                        $push: '$$ROOT'
+                    }
+                }
+            },
+            {
+                $replaceRoot: {
+                    newRoot: {
+                        $mergeObjects: [
+                            {
+                                $arrayElemAt: [
+                                    {
+                                        $filter: {
+                                            input: '$items',
+                                            as: 'item',
+                                            cond: {$eq: ['$$item.name', 'galleryAlbum']}
+                                        }
+                                    },
+                                    0
+                                ]
+                            },
+                            {
+                                items: {
+                                    $filter: {
+                                        input: '$items',
+                                        as: 'item',
+                                        cond: {$eq: ['$$item.name', 'galleryItem']}
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+        ]);
+        return {gallery};
+    } catch (error) {
         return {error}
     }
 };
@@ -189,3 +248,68 @@ const getRequiredFields = function (wObject, requiredFields) {
 };
 
 module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems};
+
+// db.wobjects.aggregate([
+//     {
+//         $match:
+//             {
+//                 default_name: "Green forest"
+//             }
+//     },
+//     {
+//         $unwind: '$fields'
+//     },
+//     {
+//         $match:
+//             {
+//                 $or: [
+//                     {"fields.name": 'galleryItem'},
+//                     {"fields.name": 'galleryAlbum'}
+//                 ]
+//
+//             }
+//     },
+//     {
+//         $replaceRoot:
+//             {
+//                 newRoot: '$fields'
+//             }
+//     },
+//     {
+//         $group: {
+//             _id: '$id',
+//             items: {
+//                 $push: '$$ROOT'
+//             }
+//         }
+//     },
+//     {
+//         $replaceRoot: {
+//             newRoot: {
+//                 $mergeObjects: [
+//                     {
+//                         $arrayElemAt: [
+//                             {
+//                                 $filter: {
+//                                     input: '$items',
+//                                     as: 'item',
+//                                     cond: {$eq: ['$$item.name', 'galleryAlbum']}
+//                                 }
+//                             },
+//                             0
+//                         ]
+//                     },
+//                     {
+//                         items: {
+//                             $filter: {
+//                                 input: '$items',
+//                                 as: 'item',
+//                                 cond: {$eq: ['$$item.name', 'galleryItem']}
+//                             }
+//                         }
+//                     }
+//                 ]
+//             }
+//         }
+//     }
+// ]).pretty()
