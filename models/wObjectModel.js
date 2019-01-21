@@ -38,13 +38,17 @@ const search = async function (data) {
     try {
         const wObjects = await WObjectModel
             .find({
-                'fields':
-                    {
-                        $elemMatch: {
-                            'name': 'name',
-                            'body': {$regex: `^${data.string}`, $options: 'i'}
+                $or: [{
+                    'fields':
+                        {
+                            $elemMatch: {
+                                'name': 'name',
+                                'body': {$regex: `${data.string}`, $options: 'i'}
+                            }
                         }
-                    }
+                },{
+                    'author_permlink':{$regex:`${data.string}`, $options: 'i'}
+                }]
             })
             .sort({weight: -1})
             .limit(data.limit)
