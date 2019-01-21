@@ -96,6 +96,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             'description',
             'address',
             'link',
+            'website',
             'map',
             'avatar',
             'background',
