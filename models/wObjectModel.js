@@ -58,7 +58,8 @@ const search = async function (data) {
             {name: 'avatar'},
             {name: 'name'},
             {name: 'link'},
-            {name: 'title'}];
+            {name: 'title'},
+            {name: 'background'}];
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
         });
