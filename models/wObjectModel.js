@@ -3,6 +3,7 @@ const createError = require('http-errors');
 const {wObjectHelper} = require('../utilities/helpers');
 const {rankHelper} = require('../utilities/helpers');
 const _ = require('lodash');
+const {requiredFields} = require('../utilities/constants');
 
 const addField = async function (data) {
     try {
@@ -58,14 +59,9 @@ const search = async function (data) {
             return {wObjectsData: []};
         }
 
-        const requireFields = [
-            {name: 'avatar'},
-            {name: 'name'},
-            {name: 'link'},
-            {name: 'title'},
-            {name: 'background'}];
+        const fields = requiredFields.map(item => ({ name:item }));
         wObjects.forEach((wObject) => {
-            wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
+            wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
 
         await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobjects
@@ -95,17 +91,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         delete wObject.followers;
 
         formatUsers(wObject);
-        const requiredFields = [
-            'name',
-            'title',
-            'description',
-            'address',
-            'link',
-            'website',
-            'map',
-            'avatar',
-            'background',
-        ];
+
         getRequiredFields(wObject, requiredFields);
 
         return {wObjectData: wObject};
@@ -129,18 +115,13 @@ const getAll = async function (data) {
         const beginIndex = data.start_author_permlink ? wObjects.map(item => item.author_permlink).indexOf(data.start_author_permlink) + 1 : 0;
         wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
-        const requireFields = [
-            {name: 'avatar'},
-            {name: 'name'},
-            {name: 'link'},
-            {name: 'map'},
-            {name: 'title'}];
+        const fields = requiredFields.map(item => ({name: item}));
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
             wObject.user_count = wObject.users.length;                  //add field user count
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
-            wObjectHelper.formatRequireFields(wObject, data.locale, requireFields);
+            wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
 
         await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobject
@@ -157,7 +138,7 @@ const getFields = async function (data) {
             .findOne({'author_permlink': data.author_permlink})
             .select('fields')
             .lean();
-        return {fieldsData: _.orderBy(wObject.fields, ['weight'], ['desc'])}
+        return {fieldsData: wObject ? _.orderBy(wObject.fields, ['weight'], ['desc']):[]}
     } catch (error) {
         return {error}
     }
@@ -255,68 +236,3 @@ const getRequiredFields = function (wObject, requiredFields) {
 };
 
 module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems};
-
-// db.wobjects.aggregate([
-//     {
-//         $match:
-//             {
-//                 default_name: "Green forest"
-//             }
-//     },
-//     {
-//         $unwind: '$fields'
-//     },
-//     {
-//         $match:
-//             {
-//                 $or: [
-//                     {"fields.name": 'galleryItem'},
-//                     {"fields.name": 'galleryAlbum'}
-//                 ]
-//
-//             }
-//     },
-//     {
-//         $replaceRoot:
-//             {
-//                 newRoot: '$fields'
-//             }
-//     },
-//     {
-//         $group: {
-//             _id: '$id',
-//             items: {
-//                 $push: '$$ROOT'
-//             }
-//         }
-//     },
-//     {
-//         $replaceRoot: {
-//             newRoot: {
-//                 $mergeObjects: [
-//                     {
-//                         $arrayElemAt: [
-//                             {
-//                                 $filter: {
-//                                     input: '$items',
-//                                     as: 'item',
-//                                     cond: {$eq: ['$$item.name', 'galleryAlbum']}
-//                                 }
-//                             },
-//                             0
-//                         ]
-//                     },
-//                     {
-//                         items: {
-//                             $filter: {
-//                                 input: '$items',
-//                                 as: 'item',
-//                                 cond: {$eq: ['$$item.name', 'galleryItem']}
-//                             }
-//                         }
-//                     }
-//                 ]
-//             }
-//         }
-//     }
-// ]).pretty()
