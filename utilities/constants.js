@@ -6,6 +6,7 @@ const requiredFields = [
     'background',
     'address',
     'description',
-    'map'
+    'map',
+    'link'
 ];
 module.exports = {requiredFields}
