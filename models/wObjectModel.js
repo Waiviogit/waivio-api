@@ -102,8 +102,13 @@ const getOne = async function (data) {      //get one wobject by author_permlink
 
 const getAll = async function (data) {
     try {
+        const findParams = {};
+        if(data.author_permlinks && Array.isArray(data.author_permlinks) && data.author_permlinks.length)
+            findParams.author_permlink = {$in:data.author_permlinks};
+        if(data.object_types && Array.isArray(data.object_types) && data.object_types.length)
+            findParams.object_type = {$in:data.object_types};
         let wObjects = await WObjectModel
-            .find(data.author_permlinks ? {'author_permlink': {$in: data.author_permlinks}} : {})
+            .find(findParams)
             .populate('children', 'author_permlink')
             .populate('users', 'name w_objects profile_image')
             .select(' -_id -fields._id')
