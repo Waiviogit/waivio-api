@@ -238,7 +238,7 @@ const formatUsers = function (wObject) {
     });    //format users data
     rankHelper.calculateForUsers(wObject.users, wObject.weight);    //add rank in wobject for each user
 
-    wObject.users = _.orderBy(wObject.users, ['rank'], ['desc']);  //order users by rank
+    wObject.users = _.orderBy(wObject.users, ['weight'], ['desc']);  //order users by rank
 };
 
 const getRequiredFields = function (wObject, requiredFields) {
