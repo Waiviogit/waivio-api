@@ -8,6 +8,7 @@ const index = async function (req, res, next) {
         locale: req.body.locale ? req.body.locale : 'en-US',
         author_permlinks: req.body.author_permlinks,
         object_types: req.body.object_types,
+        required_fields: req.body.required_fields,
         limit: req.body.limit ? req.body.limit : 30,          //field for infinite scroll
         start_author_permlink: req.body.start_author_permlink     //field for infinite scroll
     });

@@ -121,7 +121,11 @@ const getAll = async function (data) {
         const beginIndex = data.start_author_permlink ? wObjects.map(item => item.author_permlink).indexOf(data.start_author_permlink) + 1 : 0;
         wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
-        const fields = requiredFields.map(item => ({name: item}));
+        let required_fields = [...requiredFields];
+        if(data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
+            required_fields.push(...data.required_fields); //add additional fields to returning
+        const fields = required_fields.map(item => ({name: item}));
+
         wObjects.forEach((wObject) => {
             formatUsers(wObject);
             wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
