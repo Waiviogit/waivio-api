@@ -93,7 +93,12 @@ const getOne = async function (data) {      //get one wobject by author_permlink
 
         formatUsers(wObject);
 
-        getRequiredFields(wObject, requiredFields);
+        let required_fields = [...requiredFields];
+        if (data.required_fields && ((Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString)) || _.isString(data.required_fields)))
+            if (_.isString(data.required_fields)) required_fields.push(data.required_fields);
+            else required_fields.push(...data.required_fields); //add additional fields to returning
+
+        getRequiredFields(wObject, required_fields);
 
         return {wObjectData: wObject};
     } catch (error) {
