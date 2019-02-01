@@ -40,7 +40,7 @@ const getAllPosts = async function (data) {
         const posts = await PostModel
             .find({})
             .sort({_id: -1})
-            .where('_id').lt(data.start_id ? data.start_id : new mongoose.mongo.ObjectId())
+            .where('_id').lte(data.start_id ? data.start_id : new mongoose.mongo.ObjectId())
             .limit(data.limit)
             .lean();
         return {posts}
