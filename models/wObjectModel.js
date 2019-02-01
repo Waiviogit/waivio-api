@@ -76,7 +76,11 @@ const getOne = async function (data) {      //get one wobject by author_permlink
     try {
         let wObject = await WObjectModel.findOne({'author_permlink': data.author_permlink})
             .populate('children', 'author_permlink')
-            .populate('users', 'name w_objects profile_image')
+            .populate({
+                path: 'users',
+                select: 'name w_objects profile_image',
+                options: {limit: 50}
+            })
             .select(' -_id -fields._id')
             .populate('followers', 'name')
             .lean();

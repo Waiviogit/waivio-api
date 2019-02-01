@@ -47,8 +47,8 @@ const posts = async function (req, res, next) {
 
 const feed = async function (req, res, next) {
     const data = {
-        limit: req.body.limit ? req.body.limit : 30,
-        skip: req.body.skip ? req.body.skip : 0
+        limit: req.body.limit ? req.body.limit : 30,            //
+        start_id: req.body.start_id                             //for infinite scroll
     };
     const {posts, error} = await Post.getAllPosts(data);
     if (error) {
