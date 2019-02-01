@@ -34,9 +34,9 @@ const userFeedByObjects = async function (data) {
     if (!user) {
         return [];
     }
-    data = {
-        objects: user.objects_follow
-    };
+    data.objects = user.objects_follow;
+
+
     const {posts, error} = await Post.getFeedByObjects(data);
     if (error) {
         return {error}

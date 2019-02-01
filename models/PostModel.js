@@ -21,7 +21,10 @@ const getByObject = async function (data) {
 const getFeedByObjects = async function (data) {        //data include objects(array of strings), limit, skip
     try {
         const posts = await PostModel
-            .find({'wobjects.author_permlink': {$in: data.objects}})
+            .find({$or:[
+                    {'wobjects.author_permlink': {$in: data.objects}},
+                    {'author':data.user}
+                ]})
             .sort({_id: -1})
             .skip(data.skip)
             .limit(data.limit)
