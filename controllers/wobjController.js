@@ -45,6 +45,18 @@ const posts = async function (req, res, next) {
     res.status(200).json(posts)
 };
 
+const feed = async function (req, res, next) {
+    const data = {
+        limit: req.body.limit ? req.body.limit : 30,
+        skip: req.body.skip ? req.body.skip : 0
+    };
+    const {posts, error} = await Post.getAllPosts(data);
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(posts);
+};
+
 const followers = async function (req, res, next) {
     const data = {
         author_permlink: req.params.authorPermlink,
@@ -115,10 +127,10 @@ const gallery = async function (req, res, next) {
     const {gallery, error} = await Wobj.getGalleryItems({
         author_permlink: req.params.authorPermlink
     });
-    if(error){
+    if (error) {
         return next(error)
     }
     res.status(200).json(gallery);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery};
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed};

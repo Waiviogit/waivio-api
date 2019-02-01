@@ -30,6 +30,8 @@ wobjRoutes.route('/wobject/:authorPermlink/gallery')
     .get(WobjController.gallery);
 wobjRoutes.route('/wobjectSearch')
     .post(WobjController.search);
+wobjRoutes.route('/wobjectsFeed')
+    .post(WobjController.feed);
 
 
 userRoutes.route('/user')

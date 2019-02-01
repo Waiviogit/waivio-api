@@ -32,5 +32,18 @@ const getFeedByObjects = async function (data) {        //data include objects(a
     }
 };
 
+const getAllPosts = async function (data) {
+    try {
+        const posts = await PostModel
+            .find({})
+            .sort({_id: -1})
+            .skip(data.skip)
+            .limit(data.limit)
+            .lean();
+        return {posts}
+    } catch (error) {
+        return {error}
+    }
+};
 
-module.exports = {getByObject, getFeedByObjects};
+module.exports = {getByObject, getFeedByObjects, getAllPosts};
