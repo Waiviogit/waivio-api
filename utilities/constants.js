@@ -8,6 +8,6 @@ const requiredFields = [
     'description',
     'map',
     'link',
-    'hashtag'
+    'tag'
 ];
 module.exports = {requiredFields}
