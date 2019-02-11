@@ -79,7 +79,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .populate({
                 path: 'users',
                 select: 'name w_objects profile_image',
-                options: {limit: 50}
+                options: {sort: {'w_objects.weight': -1},  limit: 50}
             })
             .select(' -_id -fields._id')
             .populate('followers', 'name')
@@ -89,7 +89,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
-
+        // wObject.parents = wObject.fields.filter(field=>field.name === 'parent')
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
@@ -120,7 +120,11 @@ const getAll = async function (data) {
         let wObjects = await WObjectModel
             .find(findParams)
             .populate('children', 'author_permlink')
-            .populate('users', 'name w_objects profile_image')
+            .populate({
+                path: 'users',
+                select: 'name w_objects profile_image',
+                options: {sort: {'w_objects.weight': -1}}
+            })
             .select(' -_id -fields._id')
             .sort({weight: -1})
             .lean();
