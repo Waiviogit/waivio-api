@@ -181,6 +181,14 @@ const getGalleryItems = async function (data) {
                             {items: {$filter: {input: '$items',as: 'item',cond: {$eq: ['$$item.name', 'galleryItem']}}}}
                         ]}}}
         ]);
+        const rootAlbum = {id: data.author_permlink, name: 'galleryAlbum',body:'Photos', items:[]};
+        for(const i in gallery) {
+            if (!gallery[i].id) {
+                gallery[i] = {...rootAlbum, ...gallery[i]};
+                return {gallery}
+            }
+        }
+        gallery.push(rootAlbum);
         return {gallery};
     } catch (error) {
         return {error}
