@@ -75,7 +75,8 @@ const search = async function (data) {
 const getOne = async function (data) {      //get one wobject by author_permlink
     try {
         let wObject = await WObjectModel.findOne({'author_permlink': data.author_permlink})
-            .populate('children', 'author_permlink')
+            .populate('parent_objects')
+            .populate('child_objects')
             .populate({
                 path: 'users',
                 select: 'name w_objects profile_image',
@@ -89,7 +90,6 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
-        // wObject.parents = wObject.fields.filter(field=>field.name === 'parent')
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
@@ -103,6 +103,8 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             else required_fields.push(...data.required_fields); //add additional fields to returning
 
         getRequiredFields(wObject, required_fields);
+        wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
+        wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
 
         return {wObjectData: wObject};
     } catch (error) {
@@ -119,7 +121,6 @@ const getAll = async function (data) {
             findParams.object_type = {$in:data.object_types};
         let wObjects = await WObjectModel
             .find(findParams)
-            .populate('children', 'author_permlink')
             .populate({
                 path: 'users',
                 select: 'name w_objects profile_image',
@@ -140,8 +141,7 @@ const getAll = async function (data) {
         const fields = required_fields.map(item => ({name: item}));
 
         wObjects.forEach((wObject) => {
-            formatUsers(wObject);
-            wObject.children = wObject.children.map(item => item.author_permlink);  //correct format of children
+            // formatUsers(wObject);
             wObject.user_count = wObject.users.length;                  //add field user count
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
@@ -170,68 +170,16 @@ const getFields = async function (data) {
 const getGalleryItems = async function (data) {
     try {
         const gallery = await WObjectModel.aggregate([
-            {
-                $match:
-                    {
-                        author_permlink: data.author_permlink
-                    }
-            },
-            {
-                $unwind: '$fields'
-            },
-            {
-                $match:
-                    {
-                        $or: [
-                            {"fields.name": 'galleryItem'},
-                            {"fields.name": 'galleryAlbum'}
-                        ]
-
-                    }
-            },
-            {
-                $replaceRoot:
-                    {
-                        newRoot: '$fields'
-                    }
-            },
-            {
-                $group: {
-                    _id: '$id',
-                    items: {
-                        $push: '$$ROOT'
-                    }
-                }
-            },
-            {
-                $replaceRoot: {
-                    newRoot: {
-                        $mergeObjects: [
-                            {
-                                $arrayElemAt: [
-                                    {
-                                        $filter: {
-                                            input: '$items',
-                                            as: 'item',
-                                            cond: {$eq: ['$$item.name', 'galleryAlbum']}
-                                        }
-                                    },
-                                    0
-                                ]
-                            },
-                            {
-                                items: {
-                                    $filter: {
-                                        input: '$items',
-                                        as: 'item',
-                                        cond: {$eq: ['$$item.name', 'galleryItem']}
-                                    }
-                                }
-                            }
-                        ]
-                    }
-                }
-            }
+            {$match:{author_permlink: data.author_permlink}},
+            {$unwind: '$fields'},
+            {$match:{$or: [{"fields.name": 'galleryItem'},
+                            {"fields.name": 'galleryAlbum'}]}},
+            {$replaceRoot:{newRoot: '$fields'}},
+            {$group: {_id: '$id',items: {$push: '$$ROOT'}}},
+            {$replaceRoot: {newRoot: {$mergeObjects: [
+                            {$arrayElemAt: [{$filter: {input: '$items',as: 'item',cond: {$eq: ['$$item.name', 'galleryAlbum']}}},0]},
+                            {items: {$filter: {input: '$items',as: 'item',cond: {$eq: ['$$item.name', 'galleryItem']}}}}
+                        ]}}}
         ]);
         return {gallery};
     } catch (error) {
