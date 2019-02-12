@@ -103,8 +103,8 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             else required_fields.push(...data.required_fields); //add additional fields to returning
 
         getRequiredFields(wObject, required_fields);
-        wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
-        wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
+        if(wObject.parent_objects) wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
+        if(wObject.child_objects) wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
 
         return {wObjectData: wObject};
     } catch (error) {
