@@ -128,12 +128,12 @@ const getAll = async function (data) {
             })
             .select(' -_id -fields._id')
             .sort({weight: -1})
+            .skip(data.skip)
+            .limit(data.limit)
             .lean();
         if (!wObjects || wObjects.length === 0) {
             return {wObjectsData: []};
         }
-        const beginIndex = data.start_author_permlink ? wObjects.map(item => item.author_permlink).indexOf(data.start_author_permlink) + 1 : 0;
-        wObjects = wObjects.slice(beginIndex, beginIndex + data.limit);
 
         let required_fields = [...requiredFields];
         if(data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
