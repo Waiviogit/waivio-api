@@ -90,6 +90,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
+        wObject.photos_count = wObject.fields.filter(field=>field.name==='galleryItem').length;
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
