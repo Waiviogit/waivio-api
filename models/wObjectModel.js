@@ -1,7 +1,7 @@
 const WObjectModel = require('../database').models.WObject;
 const createError = require('http-errors');
 const {wObjectHelper} = require('../utilities/helpers');
-const {rankHelper} = require('../utilities/helpers');
+const {rankHelper, catalogFormatHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 const {requiredFields} = require('../utilities/constants');
 
@@ -196,6 +196,21 @@ const getGalleryItems = async function (data) {
     }
 };
 
+const getCatalog = async function (author_permlink) {
+    try {
+        const fields = await WObjectModel.aggregate([
+            {$match:{$and:[{author_permlink: author_permlink},{object_type:'catalog'}]}},
+            {$unwind:'$fields'},
+            {$replaceRoot:{newRoot:'$fields'}},
+            {$match:{$or:[{name:'catalogItem'},{name:'objectLink'}]}}
+        ]);
+        const catalog = catalogFormatHelper.format(fields);
+        return{catalog}
+    } catch (error) {
+        return {error}
+    }
+};
+
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
@@ -215,4 +230,4 @@ const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
-module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems};
+module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getCatalog};

@@ -133,4 +133,11 @@ const gallery = async function (req, res, next) {
     res.status(200).json(gallery);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed};
+const catalog = async function (req, res, next){
+    const {catalog, error} = await Wobj.getCatalog(req.params.authorPermlink);
+    if(error)
+        return next(error);
+    res.status(200).json(catalog);
+};
+
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, catalog};
