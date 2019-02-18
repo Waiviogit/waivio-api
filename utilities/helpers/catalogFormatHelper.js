@@ -10,7 +10,7 @@ const format = (items = []) => {
 
 const fillChildCatalog = (catalogs, items, objectLinks) => {
     for (const catalog of catalogs) {
-        catalog.objectLinks = objectLinks.filter(o => o.catalog_item === catalog.permlink) || [] ;
+        catalog.object_links = objectLinks.filter(o => o.catalog_item === catalog.permlink) || [] ;
         const childCatalogs = items.filter(item => item.parent === catalog.permlink) || [];
         catalog.items = _.isEmpty(childCatalogs) ? [] : fillChildCatalog(childCatalogs, items, objectLinks);
     }
