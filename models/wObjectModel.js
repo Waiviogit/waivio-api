@@ -206,7 +206,15 @@ const getCatalog = async function (author_permlink) {
             {$match:{$and:[{author_permlink: author_permlink},{object_type:'catalog'}]}},
             {$unwind:'$fields'},
             {$replaceRoot:{newRoot:'$fields'}},
-            {$match:{$or:[{name:'catalogItem'},{name:'objectLink'}]}}
+            {$match:{$or:[{name:'catalogItem'},{name:'objectLink'}]}},
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField:'body',
+                    foreignField: 'author_permlink',
+                    as:'wobject'
+                }
+            }
         ]);
         const catalog = catalogFormatHelper.format(fields);
         return{catalog}

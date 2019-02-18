@@ -1,6 +1,11 @@
 const _ = require('lodash');
 
 const format = (items = []) => {
+    items.forEach(item => {
+        if (_.isEmpty(item.wobject))
+            delete item.wobject;
+        else item.wobject = item.wobject[0];
+    });
     const objectLinks = items.filter(item => item.name === 'objectLink');
     items = _.reject(items, i => i.name === 'objectLink');
     const catalogs = items.filter(item => item.parent === '') || [];
