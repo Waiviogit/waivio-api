@@ -88,6 +88,10 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
+        if(wObject.object_type === 'catalog'){
+            const {catalog} = await getCatalog(data.author_permlink);
+            wObject.catalog = catalog;
+        }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
         wObject.photos_count = wObject.fields.filter(field=>field.name==='galleryItem').length;
