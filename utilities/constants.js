@@ -1,4 +1,4 @@
-const requiredFields = [
+const REQUIREDFIELDS = [
     'name',
     'title',
     'website',
@@ -8,6 +8,7 @@ const requiredFields = [
     'description',
     'map',
     'link',
-    'tag'
+    'tag',
+    'phone'
 ];
-module.exports = {requiredFields}
+module.exports = {REQUIREDFIELDS}

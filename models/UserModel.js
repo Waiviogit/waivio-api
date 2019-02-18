@@ -2,7 +2,7 @@ const UserModel = require('../database').models.User;
 const userSteemUtil = require('../utilities/steemApi').userUtil;
 const {wObjectHelper} = require('../utilities/helpers');
 const {rankHelper} = require('../utilities/helpers');
-const {requiredFields} = require('../utilities/constants');
+const {REQUIREDFIELDS} = require('../utilities/constants');
 
 const getOne = async function (name) {
     try {
@@ -60,7 +60,7 @@ const getObjectsFollow = async function (data) {        //list of wobjects which
         if (!user || !user.full_objects_follow) {
             return {wobjects: []}
         }
-        const fields = requiredFields.map(item => ({name:item}));
+        const fields = REQUIREDFIELDS.map(item => ({name:item}));
         user.full_objects_follow.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });

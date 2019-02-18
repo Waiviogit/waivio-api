@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const {REQUIREDFIELDS} = require('../constants');
+const wObjectHelper = require('./wObjectHelper');
 
 const format = (items = []) => {
     items.forEach(item => {
@@ -7,6 +9,12 @@ const format = (items = []) => {
         else item.wobject = item.wobject[0];
     });
     const objectLinks = items.filter(item => item.name === 'objectLink');
+
+    const fields = REQUIREDFIELDS.map(item => ({ name:item }));
+    objectLinks.forEach((objectLink) => {
+        wObjectHelper.formatRequireFields(objectLink.wobject, 'en-US', fields);
+    });
+
     items = _.reject(items, i => i.name === 'objectLink');
     const catalogs = items.filter(item => item.parent === '') || [];
     items = _.reject(items, i => i.name === '');

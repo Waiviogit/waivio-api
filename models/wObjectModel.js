@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const {wObjectHelper} = require('../utilities/helpers');
 const {rankHelper, catalogFormatHelper} = require('../utilities/helpers');
 const _ = require('lodash');
-const {requiredFields} = require('../utilities/constants');
+const {REQUIREDFIELDS} = require('../utilities/constants');
 
 const addField = async function (data) {
     try {
@@ -59,7 +59,7 @@ const search = async function (data) {
             return {wObjectsData: []};
         }
 
-        const fields = requiredFields.map(item => ({ name:item }));
+        const fields = REQUIREDFIELDS.map(item => ({ name:item }));
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
@@ -102,7 +102,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
 
         formatUsers(wObject);
 
-        let required_fields = [...requiredFields];
+        let required_fields = [...REQUIREDFIELDS];
         if (data.required_fields && ((Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString)) || _.isString(data.required_fields)))
             if (_.isString(data.required_fields)) required_fields.push(data.required_fields);
             else required_fields.push(...data.required_fields); //add additional fields to returning
@@ -140,7 +140,7 @@ const getAll = async function (data) {
             return {wObjectsData: []};
         }
 
-        let required_fields = [...requiredFields];
+        let required_fields = [...REQUIREDFIELDS];
         if(data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
             required_fields.push(...data.required_fields); //add additional fields to returning
         const fields = required_fields.map(item => ({name: item}));
@@ -222,6 +222,8 @@ const getCatalog = async function (author_permlink) {
         return {error}
     }
 };
+
+
 
 const formatUsers = function (wObject) {
 
