@@ -5,35 +5,35 @@ const {rankHelper, catalogFormatHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
-// const addField = async function (data) {
-//     try {
-//         await WObjectModel.update({author_permlink: data.author_permlink},
-//             {
-//                 $push:
-//                     {
-//                         fields: {
-//                             name: data.name,
-//                             body: data.body,
-//                             locale: data.locale,
-//                             author: data.author,
-//                             permlink: data.permlink
-//                         }
-//                     }
-//             });
-//         return {result: true};
-//     } catch (error) {
-//         return {error}
-//     }
-// };
-//
-// const create = async function (data) {
-//     const newWObject = new WObjectModel(data);
-//     try {
-//         return {wObject: await newWObject.save()};
-//     } catch (error) {
-//         return {error}
-//     }
-// };
+const addField = async function (data) {
+    try {
+        await WObjectModel.update({author_permlink: data.author_permlink},
+            {
+                $push:
+                    {
+                        fields: {
+                            name: data.name,
+                            body: data.body,
+                            locale: data.locale,
+                            author: data.author,
+                            permlink: data.permlink
+                        }
+                    }
+            });
+        return {result: true};
+    } catch (error) {
+        return {error}
+    }
+};
+
+const create = async function (data) {
+    const newWObject = new WObjectModel(data);
+    try {
+        return {wObject: await newWObject.save()};
+    } catch (error) {
+        return {error}
+    }
+};
 
 const search = async function (data) {
     try {

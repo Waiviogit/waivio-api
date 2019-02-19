@@ -94,34 +94,34 @@ const fields = async function (req, res, next) {
     res.status(200).json(fieldsData);
 };
 
-// const create = async function (req, res, next) {
-//     const {wObject, error} = await Wobj.create({
-//         author_permlink: req.body.author_permlink,
-//         fields: req.body.fields,
-//         app: req.body.app,
-//         community: req.body.community,
-//         object_type: req.body.object_type
-//     });
-//     if (error) {
-//         return next(error);
-//     }
-//     res.status(200).json(wObject);
-// };
-//
-// const addField = async function (req, res, next) {
-//     const {result, error} = await Wobj.addField({
-//         author_permlink: req.params.authorPermlink,
-//         name: req.body.field.name,
-//         body: req.body.field.body,
-//         locale: req.body.field.locale,
-//         author: req.body.field.author,
-//         permlink: req.body.field.permlink
-//     });
-//     if (error) {
-//         return next(error);
-//     }
-//     res.status(200).json(result);
-// };
+const create = async function (req, res, next) {
+    const {wObject, error} = await Wobj.create({
+        author_permlink: req.body.author_permlink,
+        fields: req.body.fields,
+        app: req.body.app,
+        community: req.body.community,
+        object_type: req.body.object_type
+    });
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(wObject);
+};
+
+const addField = async function (req, res, next) {
+    const {result, error} = await Wobj.addField({
+        author_permlink: req.params.authorPermlink,
+        name: req.body.field.name,
+        body: req.body.field.body,
+        locale: req.body.field.locale,
+        author: req.body.field.author,
+        permlink: req.body.field.permlink
+    });
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(result);
+};
 
 const gallery = async function (req, res, next) {
     const {gallery, error} = await Wobj.getGalleryItems({
