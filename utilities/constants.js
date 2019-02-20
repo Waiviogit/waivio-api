@@ -9,6 +9,7 @@ const REQUIREDFIELDS = [
     'map',
     'link',
     'tag',
-    'phone'
+    'phone',
+    'email'
 ];
 module.exports = {REQUIREDFIELDS}
