@@ -1,4 +1,4 @@
-const {client} = require('./index');
+const {client} = require('./steem');
 
 const getPostsByTrending = async (data) => {
     try {
