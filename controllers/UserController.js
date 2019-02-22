@@ -72,4 +72,17 @@ const feed = async function (req, res, next) {
     res.status(200).json(result);
 };
 
-module.exports = {index, create, show, objects_follow, objects_feed, feed};
+const userObjectsShares = async function(req, res, next){
+    const {wobjects, error} = await User.getUserObjectsShares({
+        name: req.params.userName,
+        limit: req.body.limit || 30,
+        skip: req.body.skip || 0,
+        locale: req.body.locale || 'en-US'
+    });
+    if(error){
+        return next(error);
+    }
+    res.status(200).json(wobjects);
+};
+
+module.exports = {index, create, show, objects_follow, objects_feed, feed, userObjectsShares};

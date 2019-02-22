@@ -73,4 +73,29 @@ const getObjectsFollow = async function (data) {        //list of wobjects which
     }
 };
 
-module.exports = {create, getAll, getOne, getObjectsFollow};
+const getUserObjectsShares = async function (data) {
+    try {
+        const wobjects = await UserModel.aggregate([
+            {$match: {name: data.name}},
+            {$unwind: '$w_objects'},
+            {$skip: data.skip},
+            {$limit: data.limit},
+            {$replaceRoot: {newRoot: '$w_objects'}},
+            {$lookup: {from: 'wobjects',
+                    localField: 'author_permlink',
+                    foreignField: 'author_permlink',
+                    as: 'wobject'}},
+            {$replaceRoot: {newRoot: {$arrayElemAt: ['$wobject', 0]}}}
+        ]);
+        let required_fields = [...REQUIREDFIELDS];
+        const fields = required_fields.map(item => ({name: item}));
+        wobjects.forEach((wObject) => {
+            wObjectHelper.formatRequireFields(wObject, data.locale, fields);
+        });
+        return {wobjects};
+    } catch (error) {
+        return {error}
+    }
+};
+
+module.exports = {create, getAll, getOne, getObjectsFollow, getUserObjectsShares};
