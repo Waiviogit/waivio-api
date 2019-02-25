@@ -15,6 +15,7 @@
     "http-errors": "~1.6.2",
     "lodash": "^4.17.11",
     "mongoose": "^5.3.5",
-    "morgan": "~1.9.0"
+    "morgan": "~1.9.0",
+    "mongoose-lean-virtuals": "^0.3.4"
   }
 }

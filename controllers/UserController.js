@@ -1,5 +1,5 @@
 const {User} = require('../models');
-const {wObjectHelper} = require('../utilities/helpers');
+const {userFeedHelper} = require('../utilities/helpers');
 
 const index = async function (req, res, next) {
     const {UserData, error} = await User.getAll();
@@ -47,11 +47,10 @@ const objects_follow = async function (req, res, next) {
 };
 
 const objects_feed = async function (req, res, next) {
-    const {posts, error} = await wObjectHelper.userFeedByObjects({
+    const {posts, error} = await userFeedHelper.feedByObjects({
         user: req.params.userName,
         skip: req.body.skip ? req.body.skip : 0,
-        limit: req.body.limit ? req.body.limit : 30,
-
+        limit: req.body.limit ? req.body.limit : 30
     });
     if (error) {
         return next(error);
@@ -59,4 +58,30 @@ const objects_feed = async function (req, res, next) {
     res.status(200).json(posts);
 };
 
-module.exports = {index, create, show, objects_follow, objects_feed};
+const feed = async function (req, res, next) {
+    const {result, error} = await userFeedHelper.getCombinedFeed({
+        user: req.params.userName,
+        limit: req.body.limit || 20,
+        count_with_wobj: req.body.count_with_wobj || 0,
+        last_author: req.body.last_author || '',
+        last_permlink: req.body.last_permlink || ''
+    });
+    if (error)
+        return next(error);
+    res.status(200).json(result);
+};
+
+const userObjectsShares = async function(req, res, next){
+    const {wobjects, error} = await User.getUserObjectsShares({
+        name: req.params.userName,
+        limit: req.body.limit || 30,
+        skip: req.body.skip || 0,
+        locale: req.body.locale || 'en-US'
+    });
+    if(error){
+        return next(error);
+    }
+    res.status(200).json(wobjects);
+};
+
+module.exports = {index, create, show, objects_follow, objects_feed, feed, userObjectsShares};

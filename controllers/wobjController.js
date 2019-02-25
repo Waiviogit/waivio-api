@@ -1,16 +1,16 @@
 const {Wobj} = require('../models');
 const {Post} = require('../models');
-const postsUtil = require('../utilities/steemApi').postsUtil;
-const wObjectHelper = require('../utilities/helpers').wObjectHelper;
 const followersHelper = require('../utilities/helpers').followersHelper;
 
 const index = async function (req, res, next) {
     const {wObjectsData, error} = await Wobj.getAll({
-        user_limit: req.body.user_limit ? req.body.user_limit : 5,
-        locale: req.body.locale ? req.body.locale : 'en-US',
+        user_limit: req.body.user_limit || 5,
+        locale: req.body.locale || 'en-US',
         author_permlinks: req.body.author_permlinks,
-        limit: req.body.limit ? req.body.limit : 30,          //field for infinite scroll
-        start_author_permlink: req.body.start_author_permlink     //field for infinite scroll
+        object_types: req.body.object_types,
+        required_fields: req.body.required_fields,
+        limit: req.body.limit || 30,          //field for infinite scroll
+        skip: req.body.skip || 0
     });
     if (error) {
         return next(error);
@@ -21,7 +21,8 @@ const index = async function (req, res, next) {
 const show = async function (req, res, next) {
     data = {
         author_permlink: req.params.authorPermlink,
-        locale: req.query.locale
+        locale: req.query.locale,
+        required_fields: req.query.required_fields,
     };
     // const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
     const {wObjectData, error} = await Wobj.getOne(data);
@@ -35,13 +36,26 @@ const posts = async function (req, res, next) {
     const data = {
         author_permlink: req.params.authorPermlink,             //for wObject
         limit: req.body.limit ? req.body.limit : 30,            //
-        start_id: req.body.start_id                             //for infinite scroll
+        start_id: req.body.start_id,                            //for infinite scroll
+        locale: req.body.locale || 'en-US'
     };
     const {posts, error} = await Post.getByObject(data);
     if (error) {
         return next(error);
     }
     res.status(200).json(posts)
+};
+
+const feed = async function (req, res, next) {
+    const data = {
+        limit: req.body.limit ? req.body.limit : 30,            //
+        start_id: req.body.start_id                             //for infinite scroll
+    };
+    const {posts, error} = await Post.getAllPosts(data);
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(posts);
 };
 
 const followers = async function (req, res, next) {
@@ -111,13 +125,20 @@ const addField = async function (req, res, next) {
 };
 
 const gallery = async function (req, res, next) {
-    const {galleryItems, error} = await Wobj.getGalleryItems({
+    const {gallery, error} = await Wobj.getGalleryItems({
         author_permlink: req.params.authorPermlink
     });
     if (error) {
-        return next(error);
+        return next(error)
     }
-    res.status(200).json(galleryItems);
+    res.status(200).json(gallery);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery};
+const catalog = async function (req, res, next){
+    const {catalog, error} = await Wobj.getCatalog(req.params.authorPermlink);
+    if(error)
+        return next(error);
+    res.status(200).json(catalog);
+};
+
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, catalog};

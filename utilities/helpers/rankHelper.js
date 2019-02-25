@@ -3,6 +3,10 @@ const wObjectModel = require('../../database/schemas/wObjectSchema');
 const calculateForUserWobjects = async (wobjects) => {   //wobjects - array of objects(author_permlink and weight)
     await Promise.all(wobjects.map(async (wobject) => {     //calculate user rank in each wobject
         const wobj = await wObjectModel.findOne({'author_permlink': wobject.author_permlink}).select('weight').lean();
+        if(!wobj){      //if author_permlink incorrect and can't find specified wobj, just write rank:0
+            wobject.rank = 0;
+            return;
+        }
         let rank = brierScore(wobject.weight, wobj.weight);
         if (rank < 1) {
             rank = 1;
@@ -23,7 +27,7 @@ const calculateForUsers = async (users, totalWeight) => { //users - array of use
 
 //calculate wobjects rank dependent on sum of all wobjects weight
 const calculateWobjectRank = async (wobjects) => {  //calculate object rank for each in array
-    const [{total_weight}] = await wObjectModel.aggregate([{$match: {weight: {$gte: 1}}},
+    const [{total_weight = 0}] = await wObjectModel.aggregate([{$match: {weight: {$gte: 1}}},
         {
             $group: {
                 _id: null,

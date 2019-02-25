@@ -28,8 +28,12 @@ wobjRoutes.route('/wobject/:authorPermlink/fields')
     .post(WobjController.fields);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')
     .get(WobjController.gallery);
+wobjRoutes.route('/wobject/:authorPermlink/catalog')
+    .get(WobjController.catalog);
 wobjRoutes.route('/wobjectSearch')
     .post(WobjController.search);
+wobjRoutes.route('/wobjectsFeed')
+    .post(WobjController.feed);
 
 
 userRoutes.route('/user')
@@ -41,5 +45,9 @@ userRoutes.route('/user/:userName/following_objects')
     .post(UserController.objects_follow);
 userRoutes.route('/user/:userName/objects_feed')
     .post(UserController.objects_feed);
+userRoutes.route('/user/:userName/feed')
+    .post(UserController.feed);
+userRoutes.route('/user/:userName/objects_shares')
+    .post(UserController.userObjectsShares);
 
 module.exports = apiRoutes;

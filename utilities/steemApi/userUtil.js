@@ -1,6 +1,4 @@
-const {Client} = require('dsteem');
-const config = require('../../config');
-const client = new Client(config.nodeUrl);
+const {client} = require('./steem');
 
 const getAccount = async (name) => {
     try {
