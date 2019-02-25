@@ -36,7 +36,8 @@ const posts = async function (req, res, next) {
     const data = {
         author_permlink: req.params.authorPermlink,             //for wObject
         limit: req.body.limit ? req.body.limit : 30,            //
-        start_id: req.body.start_id                             //for infinite scroll
+        start_id: req.body.start_id,                            //for infinite scroll
+        locale: req.body.locale || 'en-US'
     };
     const {posts, error} = await Post.getByObject(data);
     if (error) {

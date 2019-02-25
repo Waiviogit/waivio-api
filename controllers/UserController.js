@@ -1,6 +1,5 @@
 const {User} = require('../models');
-const {wObjectHelper, userFeedHelper} = require('../utilities/helpers');
-const {postsUtil} = require('../utilities/steemApi');
+const {userFeedHelper} = require('../utilities/helpers');
 
 const index = async function (req, res, next) {
     const {UserData, error} = await User.getAll();
@@ -48,7 +47,7 @@ const objects_follow = async function (req, res, next) {
 };
 
 const objects_feed = async function (req, res, next) {
-    const {posts, error} = await wObjectHelper.userFeedByObjects({
+    const {posts, error} = await userFeedHelper.feedByObjects({
         user: req.params.userName,
         skip: req.body.skip ? req.body.skip : 0,
         limit: req.body.limit ? req.body.limit : 30

@@ -223,8 +223,6 @@ const getCatalog = async function (author_permlink) {
     }
 };
 
-
-
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {

@@ -1,9 +1,10 @@
 const {postsUtil} = require('../steemApi');
-const wObjectHelper = require('./wObjectHelper');
+const {User} = require('../../database').models;
+const Post = require('../../models/PostModel');
 const _ = require('lodash');
 
 const getCombinedFeed = async function ({user, limit, count_with_wobj, last_author, last_permlink}) {
-    const from_wobj_follow = await wObjectHelper.userFeedByObjects({user, limit, skip: count_with_wobj});
+    const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj});
     if (!from_wobj_follow || from_wobj_follow.error)
         return {error: from_wobj_follow.error};
     const from_user_follow = await postsUtil.getPostsByFeed({
@@ -27,4 +28,23 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, last_auth
     return{result:{posts:combined_feed,count_with_wobj,last_permlink, last_author}}
 };
 
-module.exports = {getCombinedFeed}
+/**
+ * @param data include user, limit, skip
+ * @returns {Promise<void>} return array of posts
+ */
+const feedByObjects = async function (data) {
+    const user = await User.findOne({name: data.user}).lean();      //get user data from db
+    if (!user) {
+        return [];
+    }
+    data.objects = user.objects_follow;
+
+
+    const {posts, error} = await Post.getFeedByObjects(data);
+    if (error) {
+        return {error}
+    }
+    return {posts}
+};
+
+module.exports = {getCombinedFeed, feedByObjects};
