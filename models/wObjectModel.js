@@ -227,6 +227,36 @@ const getCatalog = async function (author_permlink) {
     }
 };
 
+const getObjectExpertise = async function(data){    //data include author_permlink, skip, limit
+    try{
+        const users = await WObjectModel.aggregate([
+            {$match: {author_permlink: data.author_permlink}},
+            {
+                $lookup: {
+                    from: 'users',
+                    localField: 'author_permlink',
+                    foreignField: 'w_objects.author_permlink',
+                    as: 'object_expertise'
+                }
+            },
+            {$unwind: '$object_expertise'},
+            {$unwind: '$object_expertise.w_objects'},
+            {$match: {'object_expertise.w_objects.author_permlink': data.author_permlink}},
+            {$replaceRoot: {newRoot: '$object_expertise'}},
+            {$sort:{w_objects:-1}},
+            {$skip:data.skip},
+            {$limit:data.limit},
+            {$project: {_id:0,name:1,weight:'$w_objects.weight'}}
+        ]);
+        const wObject = await WObjectModel.findOne({author_permlink:data.author_permlink}).select('weight').lean();
+
+        rankHelper.calculateForUsers(users, wObject.weight);    //add rank in wobject for each user
+        return {users}
+    } catch (error) {
+        return {error}
+    }
+};
+
 const formatUsers = function (wObject) {
 
     wObject.users = wObject.users.map((user) => {
@@ -246,4 +276,4 @@ const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
-module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getCatalog};
+module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getCatalog, getObjectExpertise};
