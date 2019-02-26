@@ -72,7 +72,7 @@ const feed = async function (req, res, next) {
 };
 
 const userObjectsShares = async function(req, res, next){
-    const {wobjects, error} = await User.getUserObjectsShares({
+    const {objects_shares, error} = await User.getUserObjectsShares({
         name: req.params.userName,
         limit: req.body.limit || 30,
         skip: req.body.skip || 0,
@@ -81,7 +81,7 @@ const userObjectsShares = async function(req, res, next){
     if(error){
         return next(error);
     }
-    res.status(200).json(wobjects);
+    res.status(200).json(objects_shares);
 };
 
 module.exports = {index, create, show, objects_follow, objects_feed, feed, userObjectsShares};
