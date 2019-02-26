@@ -39,16 +39,20 @@ const search = async function (data) {
     try {
         const wObjects = await WObjectModel
             .find({
-                $or: [{
-                    'fields':
-                        {
-                            $elemMatch: {
-                                'name': 'name',
-                                'body': {$regex: `${data.string}`, $options: 'i'}
+                $and: [{
+                    $or: [{
+                        'fields':
+                            {
+                                $elemMatch: {
+                                    'name': 'name',
+                                    'body': {$regex: `${data.string}`, $options: 'i'}
+                                }
                             }
-                        }
-                },{
-                    'author_permlink':{$regex:`${data.string}`, $options: 'i'}
+                    }, {
+                        'author_permlink': {$regex: `${data.string}`, $options: 'i'}
+                    }]
+                }, {
+                    object_type: {$regex: `${data.object_type || '.+'}`, $options: 'i'}
                 }]
             })
             .sort({weight: -1})
@@ -80,7 +84,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .populate({
                 path: 'users',
                 select: 'name w_objects profile_image',
-                options: {sort: {'w_objects.weight': -1},  limit: 50}
+                options: {sort: {'w_objects.weight': -1},  limit: 10}
             })
             .select(' -_id -fields._id')
             .populate('followers', 'name')
