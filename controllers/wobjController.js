@@ -75,7 +75,8 @@ const search = async function (req, res, next) {
     const data = {
         string: req.body.search_string,
         limit: req.body.limit ? req.body.limit : 10,
-        locale: req.body.locale ? req.body.locale : 'en-US'
+        locale: req.body.locale ? req.body.locale : 'en-US',
+        object_type: req.body.object_type
     };
     const {wObjectsData, error} = await Wobj.search(data);
     if (error) {
