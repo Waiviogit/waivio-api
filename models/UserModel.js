@@ -78,6 +78,7 @@ const getUserObjectsShares = async function (data) {
         const wobjects = await UserModel.aggregate([
             {$match: {name: data.name}},
             {$unwind: '$w_objects'},
+            {$sort:{'w_objects.weight': -1}},
             {$skip: data.skip},
             {$limit: data.limit},
             {$replaceRoot: {newRoot: '$w_objects'}},
@@ -107,7 +108,8 @@ const getUserObjectsShares = async function (data) {
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
         rankHelper.calculateForUserWobjects(wobjects, true);
-        return {wobjects};
+        const user = await UserModel.findOne({name: data.name}).lean();      //get user data from db
+        return {objects_shares:{wobjects, wobjects_count: user.w_objects.length}};
     } catch (error) {
         return {error}
     }
