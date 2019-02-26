@@ -1,18 +1,26 @@
 const wObjectModel = require('../../database/schemas/wObjectSchema');
 
-const calculateForUserWobjects = async (wobjects) => {   //wobjects - array of objects(author_permlink and weight)
-    await Promise.all(wobjects.map(async (wobject) => {     //calculate user rank in each wobject
-        const wobj = await wObjectModel.findOne({'author_permlink': wobject.author_permlink}).select('weight').lean();
-        if(!wobj){      //if author_permlink incorrect and can't find specified wobj, just write rank:0
-            wobject.rank = 0;
-            return;
-        }
-        let rank = brierScore(wobject.weight, wobj.weight);
-        if (rank < 1) {
-            rank = 1;
-        }
-        wobject.rank = rank > 99 ? 99 : rank;
-    }));
+const calculateForUserWobjects = async (wobjects, withWobjWeight) => {   //wobjects - array of objects(author_permlink and weight)
+    if (withWobjWeight) {
+        wobjects.map(wobject => {
+            let rank = brierScore(wobject.user_weight, wobject.weight);
+            if (rank < 1) rank = 1;
+            wobject.rank = rank > 99 ? 99 : rank;
+        });
+    } else {
+        await Promise.all(wobjects.map(async (wobject) => {     //calculate user rank in each wobject
+            const wobj = await wObjectModel.findOne({'author_permlink': wobject.author_permlink}).select('weight').lean();
+            if (!wobj) {      //if author_permlink incorrect and can't find specified wobj, just write rank:0
+                wobject.rank = 0;
+                return;
+            }
+            let rank = brierScore(wobject.weight, wobj.weight);
+            if (rank < 1) {
+                rank = 1;
+            }
+            wobject.rank = rank > 99 ? 99 : rank;
+        }));
+    }
 };
 
 const calculateForUsers = async (users, totalWeight) => { //users - array of user and weight in specified wobject

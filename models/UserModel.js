@@ -85,13 +85,28 @@ const getUserObjectsShares = async function (data) {
                     localField: 'author_permlink',
                     foreignField: 'author_permlink',
                     as: 'wobject'}},
-            {$replaceRoot: {newRoot: {$arrayElemAt: ['$wobject', 0]}}}
+            {$unwind: '$wobject'},
+            {$project:{
+                    'wobject.user_weight':'$weight',
+                    'wobject.is_posting_open': 1,
+                    'wobject.is_extending_open': 1,
+                    'wobject.author_permlink': 1,
+                    'wobject.object_type': 1,
+                    'wobject.default_name': 1,
+                    'wobject.author': 1,
+                    'wobject.creator': 1,
+                    'wobject.app': 1,
+                    'wobject.fields': 1,
+                    'wobject.weight': 1
+                }},
+            {$replaceRoot:{newRoot:'$wobject'}}
         ]);
         let required_fields = [...REQUIREDFIELDS];
         const fields = required_fields.map(item => ({name: item}));
         wobjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
+        rankHelper.calculateForUserWobjects(wobjects, true);
         return {wobjects};
     } catch (error) {
         return {error}
