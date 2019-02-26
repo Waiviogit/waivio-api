@@ -142,4 +142,16 @@ const catalog = async function (req, res, next){
     res.status(200).json(catalog);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, catalog};
+const objectExpertise = async function (req, res, next){
+    const data = {
+        author_permlink: req.params.authorPermlink,
+        skip: req.body.skip || 0,
+        limit: req.body.limit || 5
+    };
+    const {users, error} = await Wobj.getObjectExpertise(data);
+    if(error)
+        return next(error);
+    res.status(200).json(users);
+};
+
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, catalog, objectExpertise};
