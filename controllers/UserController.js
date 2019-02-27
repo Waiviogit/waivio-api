@@ -63,8 +63,8 @@ const feed = async function (req, res, next) {
         user: req.params.userName,
         limit: req.body.limit || 20,
         count_with_wobj: req.body.count_with_wobj || 0,
-        last_author: req.body.last_author || '',
-        last_permlink: req.body.last_permlink || ''
+        start_author: req.body.start_author || '',
+        start_permlink: req.body.start_permlink || ''
     });
     if (error)
         return next(error);
