@@ -28,8 +28,8 @@ wobjRoutes.route('/wobject/:authorPermlink/fields')
     .post(WobjController.fields);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')
     .get(WobjController.gallery);
-wobjRoutes.route('/wobject/:authorPermlink/catalog')
-    .get(WobjController.catalog);
+wobjRoutes.route('/wobject/:authorPermlink/list')
+    .get(WobjController.list);
 wobjRoutes.route('/wobject/:authorPermlink/object_expertise')
     .post(WobjController.objectExpertise);
 wobjRoutes.route('/wobjectSearch')
