@@ -1,7 +1,7 @@
 const WObjectModel = require('../database').models.WObject;
 const createError = require('http-errors');
 const {wObjectHelper} = require('../utilities/helpers');
-const {rankHelper, catalogFormatHelper} = require('../utilities/helpers');
+const {rankHelper} = require('../utilities/helpers');
 const _ = require('lodash');
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
@@ -92,9 +92,9 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
-        if(wObject.object_type === 'catalog'){
-            const {catalog} = await getCatalog(data.author_permlink);
-            wObject.catalog = catalog;
+        if(wObject.object_type === 'list'){
+            const {wobjects} = await getList(data.author_permlink);
+            wObject.listItems = wobjects;
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
@@ -204,13 +204,13 @@ const getGalleryItems = async function (data) {
     }
 };
 
-const getCatalog = async function (author_permlink) {
+const getList = async function (author_permlink) {
     try {
-        const fields = await WObjectModel.aggregate([
-            {$match:{$and:[{author_permlink: author_permlink},{object_type:'catalog'}]}},
+        const wobjects = await WObjectModel.aggregate([
+            {$match:{$and:[{author_permlink: author_permlink},{object_type:'list'}]}},
             {$unwind:'$fields'},
             {$replaceRoot:{newRoot:'$fields'}},
-            {$match:{$or:[{name:'catalogItem'},{name:'objectLink'}]}},
+            {$match:{name:'listItem'}},
             {
                 $lookup: {
                     from: 'wobjects',
@@ -218,10 +218,14 @@ const getCatalog = async function (author_permlink) {
                     foreignField: 'author_permlink',
                     as:'wobject'
                 }
+            },
+            {
+                $replaceRoot:{newRoot:{$arrayElemAt:['$wobject',0]}}
             }
         ]);
-        const catalog = catalogFormatHelper.format(fields);
-        return{catalog}
+        await rankHelper.calculateWobjectRank(wobjects);
+        wobjects.forEach((wObject)=>getRequiredFields(wObject, [...REQUIREDFIELDS]));
+        return{wobjects}
     } catch (error) {
         return {error}
     }
@@ -276,4 +280,4 @@ const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
-module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getCatalog, getObjectExpertise};
+module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise};

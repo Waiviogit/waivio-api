@@ -135,11 +135,11 @@ const gallery = async function (req, res, next) {
     res.status(200).json(gallery);
 };
 
-const catalog = async function (req, res, next){
-    const {catalog, error} = await Wobj.getCatalog(req.params.authorPermlink);
+const list = async function (req, res, next){
+    const {wobjects, error} = await Wobj.getList(req.params.authorPermlink);
     if(error)
         return next(error);
-    res.status(200).json(catalog);
+    res.status(200).json(wobjects);
 };
 
 const objectExpertise = async function (req, res, next){
@@ -154,4 +154,4 @@ const objectExpertise = async function (req, res, next){
     res.status(200).json(users);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, catalog, objectExpertise};
+module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, list, objectExpertise};

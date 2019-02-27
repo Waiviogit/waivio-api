@@ -36,12 +36,7 @@ const calculateForUsers = async (users, totalWeight) => { //users - array of use
 //calculate wobjects rank dependent on sum of all wobjects weight
 const calculateWobjectRank = async (wobjects) => {  //calculate object rank for each in array
     const [{total_weight = 0}] = await wObjectModel.aggregate([{$match: {weight: {$gte: 1}}},
-        {
-            $group: {
-                _id: null,
-                total_weight: {$sum: '$weight'}
-            }
-        }]);
+        {$group: {_id: null,total_weight: {$sum: '$weight'}}}]);
     wobjects.forEach(wobject => {
         let rank = brierScore(wobject.weight, total_weight);
         if (rank < 1) {
