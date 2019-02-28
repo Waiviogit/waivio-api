@@ -1,15 +1,18 @@
 const {
     WobjController,
-    UserController
+    UserController,
+    PostController
 } = require('../controllers');
 const express = require('express');
 
 const apiRoutes = express.Router();
 const wobjRoutes = express.Router();
 const userRoutes = express.Router();
+const postRoutes = express.Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
+apiRoutes.use('/api', postRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
@@ -51,5 +54,9 @@ userRoutes.route('/user/:userName/feed')
     .post(UserController.feed);
 userRoutes.route('/user/:userName/objects_shares')
     .post(UserController.userObjectsShares);
+postRoutes.route('/post/:author/:permlink')
+    .get(PostController.show);
+
+
 
 module.exports = apiRoutes;

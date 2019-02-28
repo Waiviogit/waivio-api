@@ -1,7 +1,7 @@
 const WObjectModel = require('../database').models.WObject;
 const createError = require('http-errors');
-const {wObjectHelper} = require('../utilities/helpers');
-const {rankHelper} = require('../utilities/helpers');
+const wObjectHelper = require('../utilities/helpers/wObjectHelper');
+const rankHelper = require('../utilities/helpers/rankHelper');
 const _ = require('lodash');
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
