@@ -8,14 +8,14 @@ const getPostObjects = async function (author = '', permlink = '') {
     if (!redisResult) {
         return
     } else if (redisResult.wobjects) {
-        let wobjs;
+        let wobjs;      //list of wobjects on post with percents
         try {
             wobjs = JSON.parse(redisResult.wobjects)
         } catch (e) {
             console.log(e);
         }
         if (Array.isArray(wobjs)) {
-            const {wObjectsData} = await Wobj.getAll({
+            const {wObjectsData, error} = await Wobj.getAll({
                 author_permlinks: wobjs.map(w => w.author_permlink),
                 skip: 0,
                 limit: 100,

@@ -1,4 +1,3 @@
-const {Post} = require('../models');
 const {postHelper} = require('../utilities/helpers');
 
 const show = async function (req, res, next) {
