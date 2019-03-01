@@ -1,15 +1,18 @@
 const {
     WobjController,
-    UserController
+    UserController,
+    PostController
 } = require('../controllers');
 const express = require('express');
 
 const apiRoutes = express.Router();
 const wobjRoutes = express.Router();
 const userRoutes = express.Router();
+const postRoutes = express.Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
+apiRoutes.use('/api', postRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
@@ -37,7 +40,6 @@ wobjRoutes.route('/wobjectSearch')
 wobjRoutes.route('/wobjectsFeed')
     .post(WobjController.feed);
 
-
 userRoutes.route('/user')
     .get(UserController.index)
     .post(UserController.create);
@@ -51,5 +53,12 @@ userRoutes.route('/user/:userName/feed')
     .post(UserController.feed);
 userRoutes.route('/user/:userName/objects_shares')
     .post(UserController.userObjectsShares);
+
+postRoutes.route('/post/:author/:permlink')
+    .get(PostController.show);
+postRoutes.route('/post')
+    .post(PostController.getPostsByCategory);
+
+
 
 module.exports = apiRoutes;

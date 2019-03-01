@@ -1,7 +1,7 @@
 const WObjectModel = require('../database').models.WObject;
 const createError = require('http-errors');
-const {wObjectHelper} = require('../utilities/helpers');
-const {rankHelper} = require('../utilities/helpers');
+const wObjectHelper = require('../utilities/helpers/wObjectHelper');
+const rankHelper = require('../utilities/helpers/rankHelper');
 const _ = require('lodash');
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
@@ -124,22 +124,32 @@ const getOne = async function (data) {      //get one wobject by author_permlink
 const getAll = async function (data) {
     try {
         const findParams = {};
-        if(data.author_permlinks && Array.isArray(data.author_permlinks) && data.author_permlinks.length)
-            findParams.author_permlink = {$in:data.author_permlinks};
-        if(data.object_types && Array.isArray(data.object_types) && data.object_types.length)
-            findParams.object_type = {$in:data.object_types};
-        let wObjects = await WObjectModel
-            .find(findParams)
-            .populate({
-                path: 'users',
-                select: 'name w_objects profile_image',
-                options: {sort: {'w_objects.weight': -1}}
-            })
-            .select(' -_id -fields._id')
-            .sort({weight: -1})
-            .skip(data.skip)
-            .limit(data.limit)
-            .lean();
+        if (data.author_permlinks && Array.isArray(data.author_permlinks) && data.author_permlinks.length)
+            findParams.author_permlink = {$in: data.author_permlinks};
+        if (data.object_types && Array.isArray(data.object_types) && data.object_types.length)
+            findParams.object_type = {$in: data.object_types};
+        let wObjects;
+        if (data.user_limit !== 0) {
+            wObjects = await WObjectModel
+                .find(findParams)
+                .populate({
+                    path: 'users',
+                    select: 'name w_objects profile_image',
+                    options: {sort: {'w_objects.weight': -1}, limit: data.user_limit}
+                })
+                .select(' -_id -fields._id')
+                .sort({weight: -1})
+                .skip(data.skip)
+                .limit(data.limit)
+                .lean();
+        } else {
+            wObjects = await WObjectModel.aggregate([
+                {$match: findParams},
+                {$sort: {weight: -1}},
+                {$skip: data.skip},
+                {$limit: data.limit}
+            ]);
+        }
         if (!wObjects || wObjects.length === 0) {
             return {wObjectsData: []};
         }
@@ -150,7 +160,7 @@ const getAll = async function (data) {
         const fields = required_fields.map(item => ({name: item}));
 
         wObjects.forEach((wObject) => {
-            // formatUsers(wObject);
+            wObject.users = wObject.users || [];
             wObject.user_count = wObject.users.length;                  //add field user count
             wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
