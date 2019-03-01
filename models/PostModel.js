@@ -1,5 +1,6 @@
 const PostModel = require('../database').models.Post;
 const wObjectHelper = require('../utilities/helpers/wObjectHelper');
+const rankHelper = require('../utilities/helpers/rankHelper');
 const mongoose = require('mongoose');
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
@@ -17,7 +18,7 @@ const getByObject = async function (data) {     //data include author_permlink, 
                     foreignField: 'author_permlink',
                     as: 'fullObjects'}}
         ]);
-        posts = fillObjects(posts);
+        posts = await fillObjects(posts);
         return {posts}
     } catch (error) {
         return {error}
@@ -39,7 +40,7 @@ const getFeedByObjects = async function (data) {        //data include objects(a
                     foreignField: 'author_permlink',
                     as: 'fullObjects'}}
         ]);
-        posts = fillObjects(posts);
+        posts = await fillObjects(posts);
         return {posts}
     } catch (error) {
         return {error}
@@ -58,22 +59,23 @@ const getAllPosts = async function (data) {
                     foreignField: 'author_permlink',
                     as: 'fullObjects'}}
         ]);
-        posts = fillObjects(posts);
+        posts = await fillObjects(posts);
         return {posts}
     } catch (error) {
         return {error}
     }
 };
 
-const fillObjects = (posts, locale = 'en-US') => {
+const fillObjects = async (posts, locale = 'en-US') => {
     const fields = REQUIREDFIELDS.map(item => ({name: item}));
-    posts.forEach((post) => {
-        post.wobjects.forEach((wObject)  => {
+    for(const post of posts) {
+        for(let wObject of post.wobjects){
             wObject = Object.assign(wObject, post.fullObjects.find(i => i.author_permlink === wObject.author_permlink));
             wObjectHelper.formatRequireFields(wObject, locale, fields);
-        });
+        }
+        await rankHelper.calculateWobjectRank(post.wobjects); //calculate rank for wobject
         delete post['fullObjects'];
-    });
+    }
     return posts;
 };
 
