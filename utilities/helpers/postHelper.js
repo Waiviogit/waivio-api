@@ -32,7 +32,7 @@ const getPostObjects = async function (author = '', permlink = '') {
 
 const getPost = async function (author, permlink) {
     const {post, error} = await postsUtil.getPost(author, permlink);
-    if(!post || error)
+    if (!post || error)
         return {error};
     const postWobjects = await getPostObjects(author, permlink);
     if (Array.isArray(postWobjects) && !_.isEmpty(postWobjects)) {
@@ -41,4 +41,22 @@ const getPost = async function (author, permlink) {
     return {post};
 };
 
-module.exports = {getPostObjects, getPost}
+const getPostsByCategory = async function (data) {
+    const {posts, error} = await postsUtil.getPostsByCategory(data);
+    if (error) {
+        return {error}
+    }
+    if (!posts || posts.error)
+        return {error:{status: 404, message:posts.error.message}};
+    for (const post of posts) {
+        let postWobjects;
+        if (post && post.author && post.permlink)
+            postWobjects = await getPostObjects(post.author, post.permlink);
+        if (Array.isArray(postWobjects) && !_.isEmpty(postWobjects)) {
+            post.wobjects = postWobjects;
+        }
+    }
+    return {posts}
+};
+
+module.exports = {getPostObjects, getPost, getPostsByCategory}

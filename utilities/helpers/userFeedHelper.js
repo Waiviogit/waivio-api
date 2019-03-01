@@ -8,8 +8,9 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj}); //posts from db
     if (!from_wobj_follow || from_wobj_follow.error)
         return {error: from_wobj_follow.error};
-    const from_user_follow = await postsUtil.getPostsByFeed({
-        user,
+    const from_user_follow = await postsUtil.getPostsByCategory({
+        category: 'feed',
+        tag: user,
         limit,
         start_author: start_author,
         start_permlink: start_permlink

@@ -6,7 +6,19 @@ const show = async function (req, res, next) {
         return next(error)
     }
     res.status(200).json(post);
-
 };
 
-module.exports = {show};
+const getPostsByCategory = async function (req, res, next) {
+    const {posts, error} = await postHelper.getPostsByCategory({
+        category: req.body.category || 'trending',
+        tag: req.body.tag,
+        limit: req.body.limit || 20,
+        start_author: req.body.start_author,
+        start_permlink: req.body.start_permlink
+    });
+    if (error)
+        return next(error);
+    res.status(200).json(posts);
+};
+
+module.exports = {show, getPostsByCategory};
