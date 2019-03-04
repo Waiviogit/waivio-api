@@ -7,7 +7,7 @@ const formatRequireFields = function (wObject, locale, requireFields) {
             resArr = resArr.map(item => item.name === field.name ? field : item);
         }
         return resArr;
-    }, requireFields).filter(item => item.weight);
+    }, requireFields).filter(item => !_.isNil(item.weight));
 
     wObject.fields = _.reduce(wObject.fields, (resArr, field) => {
         const currResField = resArr.find(item => item.name === field.name);
