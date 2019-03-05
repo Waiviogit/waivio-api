@@ -93,8 +93,9 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             return {error: createError(404, 'wobject not found')}
         }
         if(wObject.object_type === 'list'){
-            const {wobjects} = await getList(data.author_permlink);
+            const {wobjects, sortCustom} = await getList(data.author_permlink);
             wObject.listItems = wobjects;
+            wObject.sortCustom = sortCustom;
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
@@ -216,11 +217,11 @@ const getGalleryItems = async function (data) {
 
 const getList = async function (author_permlink) {
     try {
-        const wobjects = await WObjectModel.aggregate([
+        const fields = await WObjectModel.aggregate([
             {$match:{$and:[{author_permlink: author_permlink},{object_type:'list'}]}},
             {$unwind:'$fields'},
             {$replaceRoot:{newRoot:'$fields'}},
-            {$match:{name:'listItem'}},
+            {$match:{$or:[{name:'listItem'},{name:'sortCustom'}]}},
             {
                 $lookup: {
                     from: 'wobjects',
@@ -228,14 +229,13 @@ const getList = async function (author_permlink) {
                     foreignField: 'author_permlink',
                     as:'wobject'
                 }
-            },
-            {
-                $replaceRoot:{newRoot:{$arrayElemAt:['$wobject',0]}}
             }
         ]);
+        const sortCustomField = _.maxBy(fields.filter(field=>field.name==='sortCustom'),'weight');
+        const wobjects = _.map(fields.filter(field=>field.name==='listItem'),field=>field.wobject[0]);
         await rankHelper.calculateWobjectRank(wobjects);
         wobjects.forEach((wObject)=>getRequiredFields(wObject, [...REQUIREDFIELDS]));
-        return{wobjects}
+        return{wobjects, sortCustom: JSON.parse(_.get(sortCustomField,'body','[]'))}
     } catch (error) {
         return {error}
     }
