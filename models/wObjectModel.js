@@ -78,6 +78,7 @@ const search = async function (data) {
 
 const getOne = async function (data) {      //get one wobject by author_permlink
     try {
+        let required_fields = [...REQUIREDFIELDS];
         let wObject = await WObjectModel.findOne({'author_permlink': data.author_permlink})
             .populate('parent_objects')
             .populate('child_objects')
@@ -96,6 +97,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             const {wobjects, sortCustom} = await getList(data.author_permlink);
             wObject.listItems = wobjects;
             wObject.sortCustom = sortCustom;
+            required_fields.push('sortCustom');
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
@@ -107,7 +109,6 @@ const getOne = async function (data) {      //get one wobject by author_permlink
 
         formatUsers(wObject);
 
-        let required_fields = [...REQUIREDFIELDS];
         if (data.required_fields && ((Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString)) || _.isString(data.required_fields)))
             if (_.isString(data.required_fields)) required_fields.push(data.required_fields);
             else required_fields.push(...data.required_fields); //add additional fields to returning
