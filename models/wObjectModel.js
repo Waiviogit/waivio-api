@@ -97,7 +97,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             const {wobjects, sortCustom} = await getList(data.author_permlink);
             wObject.listItems = wobjects;
             wObject.sortCustom = sortCustom;
-            required_fields.push('sortCustom');
+            required_fields.push('sortCustom','listItem');
         }
         wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
         wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
