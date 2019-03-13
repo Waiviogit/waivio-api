@@ -10,6 +10,7 @@ const REQUIREDFIELDS = [
     'link',
     'tag',
     'phone',
-    'email'
+    'email',
+    'rating'
 ];
 module.exports = {REQUIREDFIELDS}
