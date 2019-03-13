@@ -56,7 +56,7 @@ userRoutes.route('/user/:userName/objects_shares')
 
 postRoutes.route('/post/:author/:permlink')
     .get(PostController.show);
-postRoutes.route('/post')
+postRoutes.route('/posts')
     .post(PostController.getPostsByCategory);
 
 
