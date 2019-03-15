@@ -93,7 +93,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
-        if(wObject.object_type === 'list'){
+        if(wObject.object_type.toLowerCase() === 'list'){
             const {wobjects, sortCustom} = await getList(data.author_permlink);
             wObject.listItems = wobjects;
             wObject.sortCustom = sortCustom;
@@ -219,7 +219,7 @@ const getGalleryItems = async function (data) {
 const getList = async function (author_permlink) {
     try {
         const fields = await WObjectModel.aggregate([
-            {$match:{$and:[{author_permlink: author_permlink},{object_type:'list'}]}},
+            {$match:{author_permlink: author_permlink}},
             {$unwind:'$fields'},
             {$replaceRoot:{newRoot:'$fields'}},
             {$match:{$or:[{name:'listItem'},{name:'sortCustom'}]}},
