@@ -14,6 +14,7 @@ module.exports = { Mongoose: mongoose,
     models: {
         WObject: require('./schemas/wObjectSchema'),
         User: require('./schemas/UserSchema'),
-        Post: require('./schemas/PostSchema')
+        Post: require('./schemas/PostSchema'),
+        App: require('./schemas/AppSchema')
     }
 };

@@ -1,5 +1,6 @@
 module.exports = {
     WobjController: require('./wobjController'),
     PostController: require('./postController'),
-    UserController: require('./UserController')
+    UserController: require('./UserController'),
+    AppController: require('./appController')
 };
