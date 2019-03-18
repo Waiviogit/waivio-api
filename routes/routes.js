@@ -64,5 +64,7 @@ objectTypeRoutes.route('/objectTypes')
     .post(ObjectTypeController.index);
 objectTypeRoutes.route('/objectTypesSearch')
     .post(ObjectTypeController.search);
+objectTypeRoutes.route('/objectType/:objectTypeName')
+    .get(ObjectTypeController.show);
 
 module.exports = apiRoutes;

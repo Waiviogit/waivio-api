@@ -10,6 +10,14 @@ const index = async (req, res, next) => {
     res.status(200).json(objectTypes);
 };
 
+const show = async (req, res, next) => {
+    const {objectType, error} = await ObjectType.getOne({name: req.params.objectTypeName});
+    if (error) {
+        return next(error);
+    }
+    res.status(200).json(objectType);
+};
+
 const search = async (req, res, next) => {
     const {objectTypes, error} = await ObjectType.search({
         string: req.body.search_string,
@@ -22,4 +30,4 @@ const search = async (req, res, next) => {
     res.status(200).json(objectTypes);
 };
 
-module.exports = {index, search}
+module.exports = {index, search, show}
