@@ -233,7 +233,7 @@ const getList = async function (author_permlink) {
             }
         ]);
         const sortCustomField = _.maxBy(fields.filter(field => field.name === 'sortCustom'), 'weight');
-        const wobjects = _.map(fields.filter(field => field.name === 'listItem'), field => field.wobject[0]);
+        const wobjects = _.compact(_.map(fields.filter(field => field.name === 'listItem'), field => field.wobject[0]));
         await rankHelper.calculateWobjectRank(wobjects);
         wobjects.forEach((wObject) => {
             if (wObject.object_type.toLowerCase() === 'list') {
