@@ -1,18 +1,25 @@
 const {postsUtil} = require('../steemApi');
 const {User} = require('../../database').models;
 const Post = require('../../models/PostModel');
+const {getPostObjects} = require('./postHelper');
 const _ = require('lodash');
 
 const getCombinedFeed = async function ({user, limit, count_with_wobj, start_author, start_permlink}) {
-    const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj});
+    const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj}); //posts from db
     if (!from_wobj_follow || from_wobj_follow.error)
         return {error: from_wobj_follow.error};
-    const from_user_follow = await postsUtil.getPostsByFeed({
-        user,
+    const from_user_follow = await postsUtil.getPostsByCategory({
+        category: 'feed',
+        tag: user,
         limit,
         start_author: start_author,
         start_permlink: start_permlink
-    });
+    });                                                                                 //posts from blockchain
+    for (const post of from_user_follow.posts) {          //for each post from user following add wobjects if it exist
+        const postWobjects = await getPostObjects(post.author, post.permlink);
+        if (postWobjects)
+            from_user_follow.posts.wobjects = postWobjects;
+    }
     if (!from_user_follow || from_user_follow.error)
         return {error: from_user_follow.error};
     let combined_feed = _.uniqWith([...from_user_follow.posts, ...from_wobj_follow.posts],
@@ -21,11 +28,11 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     combined_feed = combined_feed.slice(0, limit);
     count_with_wobj += _.countBy(combined_feed, (post) => !!post._id).true;
     const last_from_user_follow = _.findLast(combined_feed, (p) => !!p.post_id);
-    if(last_from_user_follow){
+    if (last_from_user_follow) {
         start_author = last_from_user_follow.author;
         start_permlink = last_from_user_follow.permlink;
     }
-    return{result:{posts:combined_feed,count_with_wobj,start_permlink, start_author}}
+    return {result: {posts: combined_feed, count_with_wobj, start_permlink, start_author}}
 };
 
 /**
