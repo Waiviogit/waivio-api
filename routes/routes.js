@@ -1,7 +1,8 @@
 const {
     WobjController,
     UserController,
-    PostController
+    PostController,
+    ObjectTypeController
 } = require('../controllers');
 const express = require('express');
 
@@ -9,17 +10,17 @@ const apiRoutes = express.Router();
 const wobjRoutes = express.Router();
 const userRoutes = express.Router();
 const postRoutes = express.Router();
+const objectTypeRoutes = express.Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
 apiRoutes.use('/api', postRoutes);
+apiRoutes.use('/api', objectTypeRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
-
 wobjRoutes.route('/wobjectCreate')
     .post(WobjController.create);
-
 wobjRoutes.route('/wobject/:authorPermlink')
     .get(WobjController.show)
     .post(WobjController.addField);
@@ -59,6 +60,7 @@ postRoutes.route('/post/:author/:permlink')
 postRoutes.route('/posts')
     .post(PostController.getPostsByCategory);
 
-
+objectTypeRoutes.route('/objectTypes')
+    .post(ObjectTypeController.index);
 
 module.exports = apiRoutes;
