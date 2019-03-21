@@ -26,7 +26,7 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
         (x, y) => x.author === y.author && x.permlink === y.permlink);
     combined_feed = _.orderBy(combined_feed, ['created'], ['desc']);
     combined_feed = combined_feed.slice(0, limit);
-    count_with_wobj += _.countBy(combined_feed, (post) => !!post._id).true;
+    count_with_wobj += _.countBy(combined_feed, (post) => !!post._id).true || 0;
     const last_from_user_follow = _.findLast(combined_feed, (p) => !!p.post_id);
     if (last_from_user_follow) {
         start_author = last_from_user_follow.author;
