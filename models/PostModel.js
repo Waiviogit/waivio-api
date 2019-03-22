@@ -52,13 +52,16 @@ const getAllPosts = async function (data) {
 
         let posts = await PostModel.aggregate([
             {$sort: {_id: -1}},
-            {$match: {_id: {$lt: data.start_id ? new mongoose.mongo.ObjectId(data.start_id) : new mongoose.mongo.ObjectId()}}},
+            {$skip: data.skip},
             {$limit: data.limit},
-            {$lookup: {
+            {
+                $lookup: {
                     from: 'wobjects',
                     localField: 'wobjects.author_permlink',
                     foreignField: 'author_permlink',
-                    as: 'fullObjects'}}
+                    as: 'fullObjects'
+                }
+            }
         ]);
         posts = await fillObjects(posts);
         return {posts}
