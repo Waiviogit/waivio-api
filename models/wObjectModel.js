@@ -63,7 +63,7 @@ const search = async function (data) {
             return {wObjectsData: []};
         }
 
-        const fields = REQUIREDFIELDS.map(item => ({ name:item }));
+        const fields = REQUIREDFIELDS.map(item => ({name: item}));
         wObjects.forEach((wObject) => {
             wObjectHelper.formatRequireFields(wObject, data.locale, fields);
         });
@@ -85,7 +85,7 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             .populate({
                 path: 'users',
                 select: 'name w_objects profile_image',
-                options: {sort: {'w_objects.weight': -1},  limit: 10}
+                options: {sort: {'w_objects.weight': -1}, limit: 10}
             })
             .select(' -_id -fields._id')
             .populate('followers', 'name')
@@ -93,15 +93,15 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (!wObject) {
             return {error: createError(404, 'wobject not found')}
         }
-        if(wObject.object_type.toLowerCase() === 'list'){
+        if (wObject.object_type.toLowerCase() === 'list') {
             const {wobjects, sortCustom} = await getList(data.author_permlink);
             wObject.listItems = wobjects;
             wObject.sortCustom = sortCustom;
-            required_fields.push('sortCustom','listItem');
+            required_fields.push('sortCustom', 'listItem');
         }
-        wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'],['asc']).slice(0,3);
-        wObject.albums_count = wObject.fields.filter(field=>field.name==='galleryAlbum').length;
-        wObject.photos_count = wObject.fields.filter(field=>field.name==='galleryItem').length;
+        wObject.preview_gallery = _.orderBy(wObject.fields.filter(field => field.name === 'galleryItem'), ['weight'], ['asc']).slice(0, 3);
+        wObject.albums_count = wObject.fields.filter(field => field.name === 'galleryAlbum').length;
+        wObject.photos_count = wObject.fields.filter(field => field.name === 'galleryItem').length;
         await rankHelper.calculateWobjectRank([wObject]); //calculate rank for wobject
 
         wObject.followers_count = wObject.followers.length;
@@ -114,8 +114,8 @@ const getOne = async function (data) {      //get one wobject by author_permlink
             else required_fields.push(...data.required_fields); //add additional fields to returning
 
         getRequiredFields(wObject, required_fields);
-        if(wObject.parent_objects) wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
-        if(wObject.child_objects) wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
+        if (wObject.parent_objects) wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
+        if (wObject.child_objects) wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
 
         return {wObjectData: wObject};
     } catch (error) {
@@ -157,7 +157,7 @@ const getAll = async function (data) {
         }
 
         let required_fields = [...REQUIREDFIELDS];
-        if(data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
+        if (data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
             required_fields.push(...data.required_fields); //add additional fields to returning
         const fields = required_fields.map(item => ({name: item}));
 
@@ -182,7 +182,7 @@ const getFields = async function (data) {
             .findOne({'author_permlink': data.author_permlink})
             .select('fields')
             .lean();
-        return {fieldsData: wObject ? _.orderBy(wObject.fields, ['weight'], ['desc']):[]}
+        return {fieldsData: wObject ? _.orderBy(wObject.fields, ['weight'], ['desc']) : []}
     } catch (error) {
         return {error}
     }
@@ -226,24 +226,29 @@ const getList = async function (author_permlink) {
             {
                 $lookup: {
                     from: 'wobjects',
-                    localField:'body',
+                    localField: 'body',
                     foreignField: 'author_permlink',
-                    as:'wobject'
+                    as: 'wobject'
                 }
             }
         ]);
-        const sortCustomField = _.maxBy(fields.filter(field=>field.name==='sortCustom'),'weight');
-        const wobjects = _.map(fields.filter(field=>field.name==='listItem'),field=>field.wobject[0]);
+        const sortCustomField = _.maxBy(fields.filter(field => field.name === 'sortCustom'), 'weight');
+        const wobjects = _.compact(_.map(fields.filter(field => field.name === 'listItem'), field => field.wobject[0]));
         await rankHelper.calculateWobjectRank(wobjects);
-        wobjects.forEach((wObject)=>getRequiredFields(wObject, [...REQUIREDFIELDS]));
-        return{wobjects, sortCustom: JSON.parse(_.get(sortCustomField,'body','[]'))}
+        wobjects.forEach((wObject) => {
+            if (wObject.object_type.toLowerCase() === 'list') {
+                wObject.listItemsCount = wObject.fields.filter(f => f.name === 'listItem').length;
+            }
+            getRequiredFields(wObject, [...REQUIREDFIELDS]);
+        });
+        return {wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]'))}
     } catch (error) {
         return {error}
     }
 };
 
-const getObjectExpertise = async function(data){    //data include author_permlink, skip, limit
-    try{
+const getObjectExpertise = async function (data) {    //data include author_permlink, skip, limit
+    try {
         const users = await WObjectModel.aggregate([
             {$match: {author_permlink: data.author_permlink}},
             {
@@ -258,12 +263,12 @@ const getObjectExpertise = async function(data){    //data include author_permli
             {$unwind: '$object_expertise.w_objects'},
             {$match: {'object_expertise.w_objects.author_permlink': data.author_permlink}},
             {$replaceRoot: {newRoot: '$object_expertise'}},
-            {$sort:{w_objects:-1}},
-            {$skip:data.skip},
-            {$limit:data.limit},
-            {$project: {_id:0,name:1,weight:'$w_objects.weight'}}
+            {$sort: {w_objects: -1}},
+            {$skip: data.skip},
+            {$limit: data.limit},
+            {$project: {_id: 0, name: 1, weight: '$w_objects.weight'}}
         ]);
-        const wObject = await WObjectModel.findOne({author_permlink:data.author_permlink}).select('weight').lean();
+        const wObject = await WObjectModel.findOne({author_permlink: data.author_permlink}).select('weight').lean();
 
         rankHelper.calculateForUsers(users, wObject.weight);    //add rank in wobject for each user
         return {users}

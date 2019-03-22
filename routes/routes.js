@@ -2,6 +2,7 @@ const {
     WobjController,
     UserController,
     PostController,
+    ObjectTypeController
     AppController
 } = require('../controllers');
 const express = require('express');
@@ -11,11 +12,13 @@ const wobjRoutes = express.Router();
 const userRoutes = express.Router();
 const postRoutes = express.Router();
 const appRoutes = express.Router();
+const objectTypeRoutes = express.Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
 apiRoutes.use('/api', postRoutes);
 apiRoutes.use('/api', appRoutes);
+apiRoutes.use('/api', objectTypeRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
@@ -62,6 +65,11 @@ postRoutes.route('/posts')
 
 appRoutes.route('/app/:appName')
     .get(AppController.show);
-
+objectTypeRoutes.route('/objectTypes')
+    .post(ObjectTypeController.index);
+objectTypeRoutes.route('/objectTypesSearch')
+    .post(ObjectTypeController.search);
+objectTypeRoutes.route('/objectType/:objectTypeName')
+    .get(ObjectTypeController.show);
 
 module.exports = apiRoutes;

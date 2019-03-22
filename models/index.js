@@ -1,6 +1,7 @@
 module.exports = {
     Wobj: require('./wObjectModel'),
     User: require('./UserModel'),
-    Post: require('./PostModel'),
     App: require('./AppModel')
+    Post: require('./PostModel'),
+    ObjectType: require('./ObjectTypeModel')
 };
