@@ -19,7 +19,7 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     for (const post of from_user_follow.posts) {          //for each post from user following add wobjects if it exist
         const postWobjects = await getPostObjects(post.author, post.permlink);
         if (postWobjects)
-            from_user_follow.post.wobjects = postWobjects; //??????????? post.wobjects = postWobjects;
+            post.wobjects = postWobjects; //??????????? post.wobjects = postWobjects;
     }
     if (!from_user_follow || from_user_follow.error)
         return {error: from_user_follow.error};
