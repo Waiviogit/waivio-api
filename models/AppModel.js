@@ -1,11 +1,8 @@
-const AppModel = require('../database').models.App;
+const App = require('../database').models.App;
 
 const getOne = async ({name}) => {
     try {
-        const app = await AppModel.findOne({name}).lean();
-        if (!app) {
-            return {error: {status: 404, message: 'App not found!'}}
-        }
+        const app = await App.findOne({name}).lean();
         if (!app) {
             throw {error: {status: 404, message: 'App not found!'}}
         }

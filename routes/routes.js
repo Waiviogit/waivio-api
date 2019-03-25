@@ -2,7 +2,7 @@ const {
     WobjController,
     UserController,
     PostController,
-    ObjectTypeController
+    ObjectTypeController,
     AppController
 } = require('../controllers');
 const express = require('express');
