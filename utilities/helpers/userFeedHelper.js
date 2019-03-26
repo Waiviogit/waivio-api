@@ -10,11 +10,11 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
         if (filter.byApp) {
             const {app, error: appError} = await App.getOne({name: filter.byApp});
             if (appError) {
-                return {error:appError}
+                return {error: appError}
             }
             const {followings, error: steemError} = await userUtil.getFollowingsList(user);
-            if(steemError || followings.error){
-                return{error:steemError || followings.error}
+            if (steemError || followings.error) {
+                return {error: steemError || followings.error}
             }
             const userDb = await User.findOne({name: user}).lean();
             const {posts} = await Post.getByUserAndApp(app.supported_objects, followings.map(f => f.following), userDb.objects_follow || [], limit, count_with_wobj);

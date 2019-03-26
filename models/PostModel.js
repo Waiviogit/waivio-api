@@ -108,7 +108,7 @@ const fillObjects = async (posts, locale = 'en-US') => {
 
 const getByUserAndApp = async (appWobjects, usersFollows, wobjectsFollows, limit, skip) => {
     try {
-        const posts = await PostModel.aggregate([
+        let posts = await PostModel.aggregate([
             {
                 $match: {
                     $and: [
@@ -124,8 +124,17 @@ const getByUserAndApp = async (appWobjects, usersFollows, wobjectsFollows, limit
             },
             {$sort:{_id:-1}},
             {$skip: skip},
-            {$limit: limit}
+            {$limit: limit},
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'wobjects.author_permlink',
+                    foreignField: 'author_permlink',
+                    as: 'fullObjects'
+                }
+            }
         ]);
+        posts = await fillObjects(posts);
         return {posts}
     } catch (error) {
         return {error}
