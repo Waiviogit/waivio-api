@@ -35,7 +35,7 @@ const show = async function (req, res, next) {
 const posts = async function (req, res, next) {
     const data = {
         author_permlink: req.params.authorPermlink,             //for wObject
-        limit: req.body.limit ? req.body.limit : 30,            //
+        limit: req.body.limit || 30,            //
         start_id: req.body.start_id,                            //for infinite scroll
         locale: req.body.locale || 'en-US'
     };
@@ -48,6 +48,7 @@ const posts = async function (req, res, next) {
 
 const feed = async function (req, res, next) {
     const data = {
+        filter: req.body.filter,
         limit: req.body.limit || 30,            //
         skip: req.body.skip || 0                //for infinite scroll
     };

@@ -1,10 +1,26 @@
-const {postsUtil} = require('../steemApi');
+const {postsUtil, userUtil} = require('../steemApi');
 const {User} = require('../../database').models;
 const Post = require('../../models/PostModel');
+const App = require('../../models/AppModel');
 const {getPostObjects} = require('./postHelper');
 const _ = require('lodash');
 
-const getCombinedFeed = async function ({user, limit, count_with_wobj, start_author, start_permlink}) {
+const getCombinedFeed = async function ({user, limit, count_with_wobj, start_author, start_permlink, filter}) {
+    if (filter) {
+        if (filter.byApp) {
+            const {app, error: appError} = await App.getOne({name: filter.byApp});
+            if (appError) {
+                return {error:appError}
+            }
+            const {followings, error: steemError} = await userUtil.getFollowingsList(user);
+            if(steemError || followings.error){
+                return{error:steemError || followings.error}
+            }
+            const userDb = await User.findOne({name: user}).lean();
+            const {posts} = await Post.getByUserAndApp(app.supported_objects, followings.map(f => f.following), userDb.objects_follow || [], limit, count_with_wobj);
+            return {result: {posts, count_with_wobj: count_with_wobj + posts.length}}
+        }
+    }
     const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj}); //posts from db
     if (!from_wobj_follow || from_wobj_follow.error)
         return {error: from_wobj_follow.error};
@@ -19,7 +35,7 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     for (const post of from_user_follow.posts) {          //for each post from user following add wobjects if it exist
         const postWobjects = await getPostObjects(post.author, post.permlink);
         if (postWobjects)
-            post.wobjects = postWobjects; //??????????? post.wobjects = postWobjects;
+            post.wobjects = postWobjects;
     }
     if (!from_user_follow || from_user_follow.error)
         return {error: from_user_follow.error};
