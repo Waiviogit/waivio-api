@@ -64,7 +64,8 @@ const feed = async function (req, res, next) {
         limit: req.body.limit || 20,
         count_with_wobj: req.body.count_with_wobj || 0,
         start_author: req.body.start_author || '',
-        start_permlink: req.body.start_permlink || ''
+        start_permlink: req.body.start_permlink || '',
+        filter: req.body.filter
     });
     if (error)
         return next(error);

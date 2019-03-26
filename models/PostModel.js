@@ -106,5 +106,31 @@ const fillObjects = async (posts, locale = 'en-US') => {
     return posts;
 };
 
+const getByUserAndApp = async (appWobjects, usersFollows, wobjectsFollows, limit, skip) => {
+    try {
+        const posts = await PostModel.aggregate([
+            {
+                $match: {
+                    $and: [
+                        {'wobjects.author_permlink': {$in: appWobjects}},
+                        {
+                            $or: [
+                                {'wobjects.author_permlink': {$in: wobjectsFollows}},
+                                {author: {$in: usersFollows}}
+                            ]
+                        }
+                    ]
+                }
+            },
+            {$sort:{_id:-1}},
+            {$skip: skip},
+            {$limit: limit}
+        ]);
+        return {posts}
+    } catch (error) {
+        return {error}
+    }
+};
 
-module.exports = {getByObject, getFeedByObjects, getAllPosts};
+
+module.exports = {getByObject, getFeedByObjects, getAllPosts, getByUserAndApp};
