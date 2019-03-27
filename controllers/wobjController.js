@@ -23,6 +23,7 @@ const show = async function (req, res, next) {
         author_permlink: req.params.authorPermlink,
         locale: req.query.locale,
         required_fields: req.query.required_fields,
+        user: req.query.user
     };
     // const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
     const {wObjectData, error} = await Wobj.getOne(data);
