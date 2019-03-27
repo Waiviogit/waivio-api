@@ -117,8 +117,14 @@ const getOne = async function (data) {      //get one wobject by author_permlink
         if (wObject.parent_objects) wObject.parent_objects.forEach(parent => getRequiredFields(parent, required_fields));
         if (wObject.child_objects) wObject.child_objects.forEach(child => getRequiredFields(child, required_fields));
 
-        if(data.user){
-            wObject.userWeight = await wObjectHelper.getUserSharesInWobj(data.user, data.author_permlink);
+        if (data.user) {
+            wObject.user = {weight: await wObjectHelper.getUserSharesInWobj(data.user, data.author_permlink)};
+            wObject.user.name = data.user;
+            if (wObject.user.weight) {
+                rankHelper.calculateForUsers([wObject.user], wObject.weight);
+            } else {
+                wObject.user.rank = 0;
+            }
         }
         return {wObjectData: wObject};
     } catch (error) {
