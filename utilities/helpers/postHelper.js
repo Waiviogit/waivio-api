@@ -1,4 +1,5 @@
 const Wobj = require('../../models/wObjectModel');
+const {Post} = require('../../database').models;
 const {postsUtil} = require('../steemApi');
 const {redisGetter} = require('../redis');
 const _ = require('lodash');
@@ -31,12 +32,16 @@ const getPostObjects = async function (author = '', permlink = '') {
 };
 
 const getPost = async function (author, permlink) {
-    const {post, error} = await postsUtil.getPost(author, permlink);
+    let {post, error} = await postsUtil.getPost(author, permlink);
     if (!post || error)
         return {error};
     const postWobjects = await getPostObjects(author, permlink);
     if (Array.isArray(postWobjects) && !_.isEmpty(postWobjects)) {
         post.wobjects = postWobjects;
+    }
+    const postFromDb = await Post.findOne({author, permlink}).lean();
+    if(postFromDb){
+        post = Object.assign(postFromDb, post);
     }
     return {post};
 };
