@@ -27,14 +27,13 @@ const getOne = async function (name) {
     }
 };
 
-const getAll = async function () {
+const getAll = async function ({limit, skip}) {
     try {
-        return {UserData: await UserModel.find()};
+        return {UserData: await UserModel.find().skip(skip).limit(limit).lean()};
     } catch (error) {
         return {error}
     }
 };
-
 const create = async function (data) {
     const newUser = new UserModel(data);
     try {

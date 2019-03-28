@@ -2,7 +2,10 @@ const {User} = require('../models');
 const {userFeedHelper} = require('../utilities/helpers');
 
 const index = async function (req, res, next) {
-    const {UserData, error} = await User.getAll();
+    const {UserData, error} = await User.getAll({
+        limit: req.query.limit || 20,
+        skip: req.query.skip || 0
+    });
     if (error) {
         res.json({error});
         return next(error);
