@@ -3,11 +3,10 @@ const {userFeedHelper} = require('../utilities/helpers');
 
 const index = async function (req, res, next) {
     const {UserData, error} = await User.getAll({
-        limit: req.query.limit || 20,
-        skip: req.query.skip || 0
+        limit: Number(req.query.limit) || 20,
+        skip: Number(req.query.skip) || 0
     });
     if (error) {
-        res.json({error});
         return next(error);
     }
     res.status(200).json(UserData);
