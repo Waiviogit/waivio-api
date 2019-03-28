@@ -3,6 +3,7 @@ const userSteemUtil = require('../utilities/steemApi').userUtil;
 const {wObjectHelper} = require('../utilities/helpers');
 const {rankHelper} = require('../utilities/helpers');
 const {REQUIREDFIELDS} = require('../utilities/constants');
+const _ = require('lodash');
 
 const getOne = async function (name) {
     try {
@@ -109,7 +110,7 @@ const getUserObjectsShares = async function (data) {
         });
         rankHelper.calculateForUserWobjects(wobjects, true);
         const user = await UserModel.findOne({name: data.name}).lean();      //get user data from db
-        return {objects_shares:{wobjects, wobjects_count: user.w_objects.length}};
+        return {objects_shares: {wobjects, wobjects_count: _.get(user, 'w_objects.length', 0)}};
     } catch (error) {
         return {error}
     }
