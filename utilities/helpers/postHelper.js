@@ -47,18 +47,25 @@ const getPost = async function (author, permlink) {
 };
 
 const getPostsByCategory = async function (data) {
-    const {posts, error} = await postsUtil.getPostsByCategory(data);
+    let {posts, error} = await postsUtil.getPostsByCategory(data);
     if (error) {
         return {error}
     }
     if (!posts || posts.error)
-        return {error:{status: 404, message:posts.error.message}};
-    for (const post of posts) {
+        return {error: {status: 404, message: posts.error.message}};
+    for (let post of posts) {
         let postWobjects;
         if (post && post.author && post.permlink)
             postWobjects = await getPostObjects(post.author, post.permlink);
         if (Array.isArray(postWobjects) && !_.isEmpty(postWobjects)) {
             post.wobjects = postWobjects;
+        }
+        const postFromDb = await Post.findOne({author: post.author, permlink: post.permlink}).lean();
+        if (postFromDb) {
+            const tempPost = Object.assign(postFromDb, post);
+            for (const key in tempPost) {
+                post[key] = tempPost[key];
+            }
         }
     }
     return {posts}
