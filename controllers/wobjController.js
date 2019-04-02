@@ -76,7 +76,8 @@ const followers = async function (req, res, next) {
 const search = async function (req, res, next) {
     const data = {
         string: req.body.search_string,
-        limit: req.body.limit ? req.body.limit : 10,
+        limit: req.body.limit || 10,
+        skip: req.body.skip || 0,
         locale: req.body.locale ? req.body.locale : 'en-US',
         object_type: req.body.object_type
     };

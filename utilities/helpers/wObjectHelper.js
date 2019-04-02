@@ -21,7 +21,7 @@ const formatRequireFields = function (wObject, locale, requireFields) {
         }
         return resArr;
     }, temp);
-};    // get best fields(avatarImage, name, location and link) in location, or just best field if is have no field in locale
+};    // get best fields(avatarImage, name, location and link) in locale, or just best field if is have no field in locale
 
 const getUserSharesInWobj = async (name, author_permlink) => {
     const [userObjectShare] = await User.aggregate([
