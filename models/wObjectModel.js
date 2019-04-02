@@ -182,22 +182,25 @@ const getAll = async function (data) {
             return {wObjectsData: []};
         }
 
-        await Promise.all(wObjects.map(async ( wobject ) => {
-            wobject.users = await UserModel.aggregate([
-                { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
-                { $unwind: '$w_objects' },
-                { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
-                { $sort: { 'w_objects.weight': -1 } },
-                { $limit: data.user_limit },
-                {
-                    $project: {
-                        _id: 0,
-                        name: 1,
-                        weight: '$w_objects.weight',
+        if(data.user_limit) {
+            await Promise.all(wObjects.map(async ( wobject ) => {
+                wobject.users = await UserModel.aggregate([
+                    { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
+                    { $unwind: '$w_objects' },
+                    { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
+                    { $sort: { 'w_objects.weight': -1 } },
+                    { $limit: data.user_limit },
+                    {
+                        $project: {
+                            _id: 0,
+                            name: 1,
+                            weight: '$w_objects.weight',
+                        },
                     },
-                },
-            ])      //can be moved to user model
-        }))
+                ])      //can be moved to user model
+            }))
+
+        }
 
         wObjects.forEach((wObject) => {
             wObject.users = wObject.users || [];
