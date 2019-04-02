@@ -35,44 +35,57 @@ const create = async function (data) {
     }
 };
 
-const search = async function (data) {
+const search = async function (data){
     try {
-        const wObjects = await WObjectModel
-            .find({
-                $and: [{
-                    $or: [{
-                        'fields':
-                            {
-                                $elemMatch: {
-                                    'name': 'name',
-                                    'body': {$regex: `${data.string}`, $options: 'i'}
-                                }
-                            }
+        const wObjects = await WObjectModel.aggregate([
+            {
+                $match: {
+                    $and: [{
+                        $or: [{
+                            'fields':
+                                {
+                                    $elemMatch: {
+                                        'name': 'name',
+                                        'body': { $regex: `${data.string}`, $options: 'i' },
+                                    },
+                                },
+                        }, {
+                            'author_permlink': { $regex: `${data.string}`, $options: 'i' },
+                        }],
                     }, {
-                        'author_permlink': {$regex: `${data.string}`, $options: 'i'}
-                    }]
-                }, {
-                    object_type: {$regex: `${data.object_type || '.+'}`, $options: 'i'}
-                }]
-            })
-            .sort({weight: -1})
-            .limit(data.limit)
-            .select('-_id -fields._id')
-            .lean();
-        if (!wObjects || wObjects.length === 0) {
-            return {wObjectsData: []};
+                        object_type: { $regex: `${data.object_type || '.+'}`, $options: 'i' },
+                    }],
+                },
+            },
+            { $sort: { weight: -1 } },
+            { $limit: data.limit || 10 },
+            { $skip: data.skip || 0 },
+            {
+                $addFields: {
+                    'fields': {
+                        $filter: {
+                            input: '$fields',
+                            as: 'field',
+                            cond: {
+                                $in: ['$$field.name', REQUIREDFIELDS],
+                            },
+                        },
+                    },
+                },
+            },
+        ])
+        if(!wObjects || wObjects.length === 0) {
+            return { wObjectsData: [] }
         }
+        wObjects.forEach(wobject => {
+            wobject.fields = _.orderBy(wobject.fields, ['weight'], ['desc'])
+        })
 
-        const fields = REQUIREDFIELDS.map(item => ({name: item}));
-        wObjects.forEach((wObject) => {
-            wObjectHelper.formatRequireFields(wObject, data.locale, fields);
-        });
+        await rankHelper.calculateWobjectRank(wObjects) //calculate rank for wobjects
 
-        await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobjects
-
-        return {wObjectsData: wObjects};
+        return { wObjectsData: wObjects }
     } catch (error) {
-        return {error}
+        return { error }
     }
 };
 
