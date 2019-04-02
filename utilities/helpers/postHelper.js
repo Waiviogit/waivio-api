@@ -23,9 +23,11 @@ const getPostObjects = async function (author = '', permlink = '') {
                 user_limit: 0,
                 locale: 'en-US'
             });
-            wObjectsData.forEach(w => {
-                w = Object.assign(w, wobjs.find(wobj => wobj.author_permlink === w.author_permlink));
-            });
+            if(wObjectsData && Array.isArray(wObjectsData)) {
+                wObjectsData.forEach(w => {
+                    w = Object.assign(w, wobjs.find(wobj => wobj.author_permlink === w.author_permlink));
+                });
+            }
             return wObjectsData;
         }
     }
