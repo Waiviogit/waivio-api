@@ -1,4 +1,5 @@
 const WObjectModel = require('../database').models.WObject;
+const UserModel = require('../database').models.User;
 const createError = require('http-errors');
 const wObjectHelper = require('../utilities/helpers/wObjectHelper');
 const rankHelper = require('../utilities/helpers/rankHelper');
@@ -152,42 +153,56 @@ const getAll = async function (data) {
             findParams.author_permlink = {$in: data.author_permlinks};
         if (data.object_types && Array.isArray(data.object_types) && data.object_types.length)
             findParams.object_type = {$in: data.object_types};
-        let wObjects;
-        if (data.user_limit !== 0) {
-            wObjects = await WObjectModel
-                .find(findParams)
-                .populate({
-                    path: 'users',
-                    select: 'name w_objects profile_image',
-                    options: {sort: {'w_objects.weight': -1}, limit: data.user_limit}
-                })
-                .select(' -_id -fields._id')
-                .sort({weight: -1})
-                .skip(data.skip)
-                .limit(data.limit)
-                .lean();
-        } else {
-            wObjects = await WObjectModel.aggregate([
-                {$match: findParams},
-                {$sort: {weight: -1}},
-                {$skip: data.skip},
-                {$limit: data.limit}
-            ]);
-        }
-        if (!wObjects || wObjects.length === 0) {
-            return {wObjectsData: []};
-        }
 
         let required_fields = [...REQUIREDFIELDS];
         if (data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length && data.required_fields.every(_.isString))
             required_fields.push(...data.required_fields); //add additional fields to returning
-        const fields = required_fields.map(item => ({name: item}));
+
+        const wObjects = await WObjectModel.aggregate([
+            { $match: findParams },
+            { $sort: { weight: -1 } },
+            { $skip: data.skip },
+            { $limit: data.limit },
+            {
+                $addFields: {
+                    'fields':{
+                        $filter:{
+                            input: '$fields',
+                            as:'field',
+                            cond:{
+                                $in:['$$field.name', required_fields]
+                            }
+                        }
+                    }
+                }
+            }
+        ])
+
+        if (!wObjects || wObjects.length === 0) {
+            return {wObjectsData: []};
+        }
+
+        await Promise.all(wObjects.map(async ( wobject ) => {
+            wobject.users = await UserModel.aggregate([
+                { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
+                { $unwind: '$w_objects' },
+                { $match: { 'w_objects.author_permlink': wobject.author_permlink } },
+                { $sort: { 'w_objects.weight': -1 } },
+                { $limit: data.user_limit },
+                {
+                    $project: {
+                        _id: 0,
+                        name: 1,
+                        weight: '$w_objects.weight',
+                    },
+                },
+            ])      //can be moved to user model
+        }))
 
         wObjects.forEach((wObject) => {
             wObject.users = wObject.users || [];
             wObject.user_count = wObject.users.length;                  //add field user count
-            wObject.users = wObject.users.filter((item, index) => index < data.user_limit);
-            wObjectHelper.formatRequireFields(wObject, data.locale, fields);
+            wObjectHelper.formatRequireFields(wObject, data.locale, required_fields.map(item=>({name: item})));
         });
 
         await rankHelper.calculateWobjectRank(wObjects); //calculate rank for wobject
