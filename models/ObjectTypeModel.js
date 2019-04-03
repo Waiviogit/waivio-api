@@ -1,9 +1,10 @@
 const {ObjectType} = require('../database').models;
 const {REQUIREDFIELDS} = require('../utilities/constants');
 
-const getAll = async ({limit, skip, wobjects_count}) => {
-    try {
-        const objectTypes = await ObjectType.aggregate([
+const getAll = async ({limit, skip, wobjects_count = 3}) => {
+    let objectTypes
+	try {
+        objectTypes = await ObjectType.aggregate([
             {$skip: skip},
             {$limit: limit},
             {
@@ -18,7 +19,7 @@ const getAll = async ({limit, skip, wobjects_count}) => {
                             },
                         },
                         { $sort: { weight: -1 } },
-                        { $limit: wobjects_count || 3 },
+						{ $limit: wobjects_count + 1 },
                         {
                             $addFields: {
                                 'fields':{
@@ -36,10 +37,17 @@ const getAll = async ({limit, skip, wobjects_count}) => {
                 }
             }
         ]);
-        return {objectTypes}
     } catch (e) {
         return {error: e}
     }
+    for(const type of objectTypes){
+    	if(type.related_wobjects.length === wobjects_count + 1){
+    		type.hasMoreWobjects = true;
+    		type.related_wobjects = type.related_wobjects.slice(0,wobjects_count)
+		}
+	}
+
+	return {objectTypes}
 };
 
 const search = async ({string, limit, skip}) => {
