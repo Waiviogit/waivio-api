@@ -17,7 +17,7 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
                 return {error: steemError || followings.error}
             }
             const userDb = await User.findOne({name: user}).lean();
-            const {posts} = await Post.getByUserAndApp(app.supported_objects, followings.map(f => f.following), userDb.objects_follow || [], limit, count_with_wobj);
+            const {posts} = await Post.getByUserAndApp(app.supported_objects, followings.map(f => f.following), userDb ? userDb.objects_follow : [], limit, count_with_wobj);
             return {result: {posts, count_with_wobj: count_with_wobj + posts.length}}
         }
     }
