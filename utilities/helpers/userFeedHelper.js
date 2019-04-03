@@ -46,8 +46,8 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
 
     let tempCombFeed = _.orderBy([...from_wobj_follow.posts, ...from_user_follow.posts], ['created'], ['desc']);
     tempCombFeed = tempCombFeed.slice(0, _.findLastIndex(tempCombFeed, {
-        'author': _.last(combined_feed).author,
-        'permlink': _.last(combined_feed).permlink
+        'author': _.get(_.last(combined_feed),'author'),
+        'permlink': _.get(_.last(combined_feed),'permlink')
     }) + 1);
 
     count_with_wobj += _.countBy(tempCombFeed, (post) => !!post._id).true || 0;
