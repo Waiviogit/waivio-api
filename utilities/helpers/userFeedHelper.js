@@ -24,6 +24,9 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     const from_wobj_follow = await feedByObjects({user, limit, skip: count_with_wobj}); //posts from db
     if (!from_wobj_follow || from_wobj_follow.error)
         return {error: from_wobj_follow.error};
+    if(!Array.isArray(from_wobj_follow.posts)){
+        from_wobj_follow.posts = [];
+    }
     let from_user_follow = await postsUtil.getPostsByCategory({
         category: 'feed',
         tag: user,
@@ -59,10 +62,6 @@ const getCombinedFeed = async function ({user, limit, count_with_wobj, start_aut
     return {result: {posts: combined_feed, count_with_wobj, start_permlink, start_author}}
 };
 
-/**
- * @param data include user, limit, skip
- * @returns {Promise<void>} return array of posts
- */
 const feedByObjects = async function (data) {
     const user = await User.findOne({name: data.user}).lean();      //get user data from db
     if (!user) {
