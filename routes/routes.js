@@ -22,8 +22,6 @@ apiRoutes.use('/api', objectTypeRoutes);
 
 wobjRoutes.route('/wobject')
     .post(WobjController.index);
-wobjRoutes.route('/wobjectCreate')
-    .post(WobjController.create);
 wobjRoutes.route('/wobject/:authorPermlink')
     .get(WobjController.show)
     .post(WobjController.addField);
@@ -45,8 +43,7 @@ wobjRoutes.route('/wobjectsFeed')
     .post(WobjController.feed);
 
 userRoutes.route('/user')
-    .get(UserController.index)
-    .post(UserController.create);
+    .get(UserController.index);
 userRoutes.route('/user/:userName')
     .get(UserController.show);
 userRoutes.route('/user/:userName/following_objects')

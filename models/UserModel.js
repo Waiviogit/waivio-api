@@ -34,14 +34,6 @@ const getAll = async function ({limit, skip}) {
         return {error}
     }
 };
-const create = async function (data) {
-    const newUser = new UserModel(data);
-    try {
-        return {user: await newUser.save()};
-    } catch (error) {
-        return {error}
-    }
-};
 
 const getObjectsFollow = async function (data) {        //list of wobjects which specified user is follow
     try {
@@ -78,7 +70,7 @@ const getUserObjectsShares = async function (data) {
         const wobjects = await UserModel.aggregate([
             {$match: {name: data.name}},
             {$unwind: '$w_objects'},
-            {$sort:{'w_objects.weight': -1}},
+            {$sort:{'w_objects.weight': -1, 'w_objects._id': -1}},
             {$skip: data.skip},
             {$limit: data.limit},
             {$replaceRoot: {newRoot: '$w_objects'}},
@@ -115,4 +107,4 @@ const getUserObjectsShares = async function (data) {
     }
 };
 
-module.exports = {create, getAll, getOne, getObjectsFollow, getUserObjectsShares};
+module.exports = {getAll, getOne, getObjectsFollow, getUserObjectsShares};

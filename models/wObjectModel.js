@@ -27,15 +27,6 @@ const addField = async function (data) {
     }
 };
 
-const create = async function (data) {
-    const newWObject = new WObjectModel(data);
-    try {
-        return {wObject: await newWObject.save()};
-    } catch (error) {
-        return {error}
-    }
-};
-
 const search = async function (data){
     try {
         const wObjects = await WObjectModel.aggregate([
@@ -336,4 +327,4 @@ const getRequiredFields = function (wObject, requiredFields) {
     wObject.fields = wObject.fields.filter(item => requiredFields.includes(item.name));
 };
 
-module.exports = {create, addField, getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise};
+module.exports = {addField, getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise};
