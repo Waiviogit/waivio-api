@@ -143,4 +143,4 @@ const objectExpertise = async function (req, res, next){
     res.status(200).json(users);
 };
 
-module.exports = {index, create, addField, show, posts, search, fields, followers, gallery, feed, list, objectExpertise};
+module.exports = {index, addField, show, posts, search, fields, followers, gallery, feed, list, objectExpertise};
