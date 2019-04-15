@@ -34,14 +34,6 @@ const getAll = async function ({limit, skip}) {
         return {error}
     }
 };
-const create = async function (data) {
-    const newUser = new UserModel(data);
-    try {
-        return {user: await newUser.save()};
-    } catch (error) {
-        return {error}
-    }
-};
 
 const getObjectsFollow = async function (data) {        //list of wobjects which specified user is follow
     try {
@@ -115,4 +107,4 @@ const getUserObjectsShares = async function (data) {
     }
 };
 
-module.exports = {create, getAll, getOne, getObjectsFollow, getUserObjectsShares};
+module.exports = {getAll, getOne, getObjectsFollow, getUserObjectsShares};
