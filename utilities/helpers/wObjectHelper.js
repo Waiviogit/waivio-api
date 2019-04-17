@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const {User} = require('../../database').models;
+const {UserWobjects} = require('../../database').models;
 
 const formatRequireFields = function (wObject, locale, requireFields) {
     const temp = _.reduce(wObject.fields, (resArr, field) => {
@@ -23,17 +23,10 @@ const formatRequireFields = function (wObject, locale, requireFields) {
     }, temp);
 };    // get best fields(avatarImage, name, location and link) in locale, or just best field if is have no field in locale
 
-const getUserSharesInWobj = async (name, author_permlink) => {
-    const [userObjectShare] = await User.aggregate([
-        {$match: {name}},
-        {$unwind: '$w_objects'},
-        {
-            $match: {'w_objects.author_permlink': author_permlink}
-        },
-        {$replaceRoot: {newRoot: '$w_objects'}}
-    ]);
-    return _.get(userObjectShare,'weight') || 0
-};
+const getUserSharesInWobj = async ( name, author_permlink ) => {
+	const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }).select('-_id weight')
+	return userObjectShare || 0
+}
 
 
 module.exports = {formatRequireFields, getUserSharesInWobj};

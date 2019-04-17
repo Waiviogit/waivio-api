@@ -23,7 +23,7 @@ const calculateForUserWobjects = async (wobjects, withWobjWeight) => {   //wobje
     }
 };
 
-const calculateForUsers = async (users, totalWeight) => { //users - array of user and weight in specified wobject
+const calculateForUsers = (users, totalWeight) => { //users - array of user and weight in specified wobject
     users.forEach(user => {                               //calculate rank for each user in wobject
         let rank = brierScore(user.weight, totalWeight);
         if (rank < 1) {
