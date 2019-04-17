@@ -11,6 +11,9 @@ const REQUIREDFIELDS = [
     'tag',
     'phone',
     'email',
-    'rating'
+    'rating',
+    'parent',
+    'tagcloud',
+    'price'
 ];
 module.exports = {REQUIREDFIELDS}
