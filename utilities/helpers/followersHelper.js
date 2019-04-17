@@ -1,4 +1,5 @@
 const WObjectModel = require('../../database/schemas/wObjectSchema');
+const UserWobjects = require('../../database/schemas/UserWobjectsSchema');
 const rankHelper = require('./rankHelper');
 
 const getFollowers = async (data) => {
@@ -10,22 +11,24 @@ const getFollowers = async (data) => {
                     limit: data.limit,
                     sort: {name: 1},
                     skip: data.skip,
-                    select: 'name profile_image w_objects'
+                    select: 'name'
                 }
             })
             .lean();
-        formatWobjectFollowers(wObject);
+        await formatWobjectFollowers(wObject);
         return {followers: wObject.followers}
     } catch (error) {
         return {error}
     }
 };
 
-const formatWobjectFollowers = (wObject) => {
-    wObject.followers = wObject.followers.map((follower) => {
-        let wobj = follower.w_objects.find(wobj => wobj.author_permlink === wObject.author_permlink);
-        return {name: follower.name, weight: wobj ? wobj.weight : 0}
-    });
+const formatWobjectFollowers = async (wObject) => {
+    for(const follower of wObject.followers){
+        let userWobj = await UserWobjects.findOne({user_name: follower.name, author_permlink: wObject.author_permlink}).lean();
+        follower.weight = userWobj ? userWobj.weight : 0;
+        delete follower.objects_follow;
+        delete follower._id;
+    }
     rankHelper.calculateForUsers(wObject.followers, wObject.weight);
 };
 

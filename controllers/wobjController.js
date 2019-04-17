@@ -19,7 +19,7 @@ const index = async function (req, res, next) {
 };
 
 const show = async function (req, res, next) {
-    data = {
+    const data = {
         author_permlink: req.params.authorPermlink,
         locale: req.query.locale,
         required_fields: req.query.required_fields,
@@ -97,21 +97,6 @@ const fields = async function (req, res, next) {
         return next(error);
     }
     res.status(200).json(fieldsData);
-};
-
-const addField = async function (req, res, next) {
-    const {result, error} = await Wobj.addField({
-        author_permlink: req.params.authorPermlink,
-        name: req.body.field.name,
-        body: req.body.field.body,
-        locale: req.body.field.locale,
-        author: req.body.field.author,
-        permlink: req.body.field.permlink
-    });
-    if (error) {
-        return next(error);
-    }
-    res.status(200).json(result);
 };
 
 const gallery = async function (req, res, next) {
