@@ -24,7 +24,6 @@ wobjRoutes.route('/wobject')
     .post(WobjController.index);
 wobjRoutes.route('/wobject/:authorPermlink')
     .get(WobjController.show)
-    .post(WobjController.addField);
 wobjRoutes.route('/wobject/:authorPermlink/posts')
     .post(WobjController.posts);
 wobjRoutes.route('/wobject/:authorPermlink/followers')
