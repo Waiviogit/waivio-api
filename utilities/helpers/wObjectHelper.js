@@ -24,8 +24,8 @@ const formatRequireFields = function (wObject, locale, requireFields) {
 };    // get best fields(avatarImage, name, location and link) in locale, or just best field if is have no field in locale
 
 const getUserSharesInWobj = async ( name, author_permlink ) => {
-	const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }).select('-_id weight')
-	return userObjectShare || 0
+	const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }).select('-_id weight').lean();
+	return _.get(userObjectShare, 'weight') || 0
 }
 
 
