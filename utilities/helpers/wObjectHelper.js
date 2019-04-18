@@ -25,7 +25,7 @@ const formatRequireFields = function (wObject, locale, requireFields) {
 
 const getUserSharesInWobj = async ( name, author_permlink ) => {
 	const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }).select('-_id weight').lean();
-	return userObjectShare.weight || 0
+	return _.get(userObjectShare, 'weight') || 0
 }
 
 
