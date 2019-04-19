@@ -1,76 +1,83 @@
-const {User} = require('../models');
-const {userFeedHelper} = require('../utilities/helpers');
+const { User } = require( '../models' );
+const { userFeedHelper } = require( '../utilities/helpers' );
 
-const index = async function (req, res, next) {
-    const {UserData, error} = await User.getAll({
-        limit: Number(req.query.limit) || 20,
-        skip: Number(req.query.skip) || 0
-    });
-    if (error) {
-        return next(error);
+const index = async function ( req, res, next ) {
+    const { UserData, error } = await User.getAll( {
+        limit: Number( req.query.limit ) || 20,
+        skip: Number( req.query.skip ) || 0
+    } );
+
+    if ( error ) {
+        return next( error );
     }
-    res.status(200).json(UserData);
+    res.status( 200 ).json( UserData );
 };
 
-const show = async function (req, res, next) {
-    const {userData, error} = await User.getOne(req.params.userName);
-    if (error) {
-        return next(error);
+const show = async function ( req, res, next ) {
+    const { userData, error } = await User.getOne( req.params.userName );
+
+    if ( error ) {
+        return next( error );
     }
-    res.status(200).json(userData);
+    res.status( 200 ).json( userData );
 };
 
-const objects_follow = async function (req, res, next) {
+const objects_follow = async function ( req, res, next ) {
     const data = {
         name: req.params.userName,
         locale: req.body.locale ? req.body.locale : 'en-US',
         limit: req.body.limit ? req.body.limit : 50,
         skip: req.body.skip ? req.body.skip : 0
     };
-    const {wobjects, error} = await User.getObjectsFollow(data);
-    if (error) {
-        return next(error);
+    const { wobjects, error } = await User.getObjectsFollow( data );
+
+    if ( error ) {
+        return next( error );
     }
-    res.status(200).json(wobjects);
+    res.status( 200 ).json( wobjects );
 };
 
-const objects_feed = async function (req, res, next) {
-    const {posts, error} = await userFeedHelper.feedByObjects({
+const objects_feed = async function ( req, res, next ) {
+    const { posts, error } = await userFeedHelper.feedByObjects( {
         user: req.params.userName,
         skip: req.body.skip ? req.body.skip : 0,
         limit: req.body.limit ? req.body.limit : 30
-    });
-    if (error) {
-        return next(error);
+    } );
+
+    if ( error ) {
+        return next( error );
     }
-    res.status(200).json(posts);
+    res.status( 200 ).json( posts );
 };
 
-const feed = async function (req, res, next) {
-    const {result, error} = await userFeedHelper.getCombinedFeed({
+const feed = async function ( req, res, next ) {
+    const { result, error } = await userFeedHelper.getCombinedFeed( {
         user: req.params.userName,
         limit: req.body.limit || 20,
         count_with_wobj: req.body.count_with_wobj || 0,
         start_author: req.body.start_author || '',
         start_permlink: req.body.start_permlink || '',
         filter: req.body.filter
-    });
-    if (error)
-        return next(error);
-    res.status(200).json(result);
+    } );
+
+    if ( error ) {
+        return next( error );
+    }
+    res.status( 200 ).json( result );
 };
 
-const userObjectsShares = async function(req, res, next){
-    const {objects_shares, error} = await User.getUserObjectsShares({
+const userObjectsShares = async function( req, res, next ) {
+    const { objects_shares, error } = await User.getUserObjectsShares( {
         name: req.params.userName,
         limit: req.body.limit || 30,
         skip: req.body.skip || 0,
         locale: req.body.locale || 'en-US'
-    });
-    if(error){
-        return next(error);
+    } );
+
+    if( error ) {
+        return next( error );
     }
-    res.status(200).json(objects_shares);
+    res.status( 200 ).json( objects_shares );
 };
 
-module.exports = {index, show, objects_follow, objects_feed, feed, userObjectsShares};
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares };

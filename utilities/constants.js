@@ -16,4 +16,5 @@ const REQUIREDFIELDS = [
     'tagcloud',
     'price'
 ];
-module.exports = {REQUIREDFIELDS}
+
+module.exports = { REQUIREDFIELDS };
