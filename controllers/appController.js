@@ -1,14 +1,15 @@
-const {App} = require('../models');
+const { App } = require( '../models' );
 
-const show = async (req, res, next) => {
+const show = async( req, res, next ) => {
     const data = {
         name: req.params.appName || 'waiviodev'
     };
-    const {app, error} = await App.findOne(data);
-    if (error) {
-        return next(error);
+    const { app, error } = await App.findOne( data );
+
+    if( error ) {
+        return next( error );
     }
-    res.status(200).json(app);
+    res.status( 200 ).json( app );
 };
 
-module.exports = {show}
+module.exports = { show };

@@ -1,13 +1,14 @@
-const {ObjectType} = require('../database').models;
-const {REQUIREDFIELDS} = require('../utilities/constants');
-const {postsUtil} = require('../utilities/steemApi');
+const { ObjectType } = require( '../database' ).models;
+const { REQUIREDFIELDS } = require( '../utilities/constants' );
+const { postsUtil } = require( '../utilities/steemApi' );
 
-const getAll = async ({limit, skip, wobjects_count = 3}) => {
-    let objectTypes
-	try {
-        objectTypes = await ObjectType.aggregate([
-            {$skip: skip},
-            {$limit: limit},
+const getAll = async ( { limit, skip, wobjects_count = 3 } ) => {
+    let objectTypes;
+
+    try {
+        objectTypes = await ObjectType.aggregate( [
+            { $skip: skip },
+            { $limit: limit },
             {
                 $lookup: {
                     from: 'wobjects',
@@ -16,19 +17,19 @@ const getAll = async ({limit, skip, wobjects_count = 3}) => {
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ['$object_type', '$$object_type_name'] },
-                            },
+                                $expr: { $eq: [ '$object_type', '$$object_type_name' ] }
+                            }
                         },
                         { $sort: { weight: -1 } },
-						{ $limit: wobjects_count + 1 },
+                        { $limit: wobjects_count + 1 },
                         {
                             $addFields: {
-                                'fields':{
-                                    $filter:{
+                                'fields': {
+                                    $filter: {
                                         input: '$fields',
-                                        as:'field',
-                                        cond:{
-                                            $in:['$$field.name', REQUIREDFIELDS]
+                                        as: 'field',
+                                        cond: {
+                                            $in: [ '$$field.name', REQUIREDFIELDS ]
                                         }
                                     }
                                 }
@@ -37,40 +38,41 @@ const getAll = async ({limit, skip, wobjects_count = 3}) => {
                     ]
                 }
             }
-        ]);
-    } catch (e) {
-        return {error: e}
+        ] );
+    } catch ( e ) {
+        return { error: e };
     }
-    for(const type of objectTypes){
-    	if(type.related_wobjects.length === wobjects_count + 1){
-    		type.hasMoreWobjects = true;
-    		type.related_wobjects = type.related_wobjects.slice(0,wobjects_count)
-		}
-	}
-
-	return {objectTypes}
-};
-
-const search = async ({string, limit, skip}) => {
-    try {
-        if (!string) {
-            throw {status: 422, message: 'Search string is empty'};
+    for( const type of objectTypes ) {
+        if( type.related_wobjects.length === wobjects_count + 1 ) {
+            type.hasMoreWobjects = true;
+            type.related_wobjects = type.related_wobjects.slice( 0, wobjects_count );
         }
-        const objectTypes = await ObjectType.aggregate([
-            {$match: {name: {$regex: `${string}`, $options: 'i'}}},
-            {$skip: skip},
-            {$limit: limit}
-        ]);
-        return {objectTypes}
-    } catch (e) {
-        return {error: e}
+    }
+
+    return { objectTypes };
+};
+
+const search = async ( { string, limit, skip } ) => {
+    try {
+        if ( !string ) {
+            throw { status: 422, message: 'Search string is empty' };
+        }
+        const objectTypes = await ObjectType.aggregate( [
+            { $match: { name: { $regex: `${string}`, $options: 'i' } } },
+            { $skip: skip },
+            { $limit: limit }
+        ] );
+
+        return { objectTypes };
+    } catch ( e ) {
+        return { error: e };
     }
 };
 
-const getOne = async ({name, wobjects_count = 3}) => {
+const getOne = async ( { name, wobjects_count = 3 } ) => {
     try {
         // const objectType = await ObjectType.findOne({name: name}).lean();
-        const [objectType] = await ObjectType.aggregate([
+        const [ objectType ] = await ObjectType.aggregate( [
             { $match: { name } },
             {
                 $lookup: {
@@ -80,19 +82,19 @@ const getOne = async ({name, wobjects_count = 3}) => {
                     pipeline: [
                         {
                             $match: {
-                                $expr: { $eq: ['$object_type', '$$object_type_name'] },
-                            },
+                                $expr: { $eq: [ '$object_type', '$$object_type_name' ] }
+                            }
                         },
                         { $sort: { weight: -1 } },
                         { $limit: wobjects_count + 1 },
                         {
                             $addFields: {
-                                'fields':{
-                                    $filter:{
+                                'fields': {
+                                    $filter: {
                                         input: '$fields',
-                                        as:'field',
-                                        cond:{
-                                            $in:['$$field.name', REQUIREDFIELDS]
+                                        as: 'field',
+                                        cond: {
+                                            $in: [ '$$field.name', REQUIREDFIELDS ]
                                         }
                                     }
                                 }
@@ -101,23 +103,24 @@ const getOne = async ({name, wobjects_count = 3}) => {
                     ]
                 }
             }
-        ])
+        ] );
 
-        if (!objectType) {
-            throw {status: 404, message: 'Object Type not found!'}
+        if ( !objectType ) {
+            throw { status: 404, message: 'Object Type not found!' };
         }
-        if(objectType.related_wobjects.length === wobjects_count + 1){
+        if( objectType.related_wobjects.length === wobjects_count + 1 ) {
             objectType.hasMoreWobjects = true;
-            objectType.related_wobjects = objectType.related_wobjects.slice(0,wobjects_count)
+            objectType.related_wobjects = objectType.related_wobjects.slice( 0, wobjects_count );
         }
-        const {post} = await postsUtil.getPost(objectType.author, objectType.permlink)
-        if(post && post.body){
+        const { post } = await postsUtil.getPost( objectType.author, objectType.permlink );
+
+        if( post && post.body ) {
             objectType.body = post.body;
         }
-        return {objectType}
-    } catch (e) {
-        return {error: e}
+        return { objectType };
+    } catch ( e ) {
+        return { error: e };
     }
 };
 
-module.exports = {getAll, search, getOne}
+module.exports = { getAll, search, getOne };
