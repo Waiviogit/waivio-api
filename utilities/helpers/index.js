@@ -3,5 +3,6 @@ module.exports = {
     followersHelper: require( './followersHelper' ),
     rankHelper: require( './rankHelper' ),
     userFeedHelper: require( './userFeedHelper' ),
-    postHelper: require( './postHelper' )
+    postHelper: require( './postHelper' ),
+    generalSearchHelper: require( './generalSearchHelper' )
 };

@@ -17,14 +17,15 @@ const search = async function ( data ) {
                                 {
                                     $elemMatch: {
                                         'name': 'name',
-                                        'body': { $regex: `${data.string}`, $options: 'i' }
+                                        'body': { $regex: `${'^' + data.string}`, $options: 'i' }
                                     }
                                 }
-                        }, {
-                            'author_permlink': { $regex: `${data.string}`, $options: 'i' }
+                        },
+                        { // if 4-th symbol is "-" - search by "author_permlink" too
+                            'author_permlink': { $regex: `${_.get( data.string, '[3]' ) === '-' ? '^' + data.string : '_'}`, $options: 'i' }
                         } ]
                     }, {
-                        object_type: { $regex: `${data.object_type || '.+'}`, $options: 'i' }
+                        object_type: { $regex: `^${data.object_type || '.+'}`, $options: 'i' }
                     } ]
                 }
             },

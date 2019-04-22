@@ -23,4 +23,14 @@ const getFollowingsList = async ( name ) => {
     }
 };
 
-module.exports = { getAccount, getFollowingsList };
+const searchUserByName = async ( name, limit = 20 ) => {
+    try{
+        const accounts = await client.call( 'condencer_api', 'get_account_reputations', [ name, limit ] );
+
+        return { accounts };
+    } catch ( e ) {
+        return { error: e };
+    }
+};
+
+module.exports = { getAccount, getFollowingsList, searchUserByName };
