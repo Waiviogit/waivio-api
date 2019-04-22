@@ -1,5 +1,5 @@
 const { User } = require( '../models' );
-const { userFeedHelper } = require( '../utilities/helpers' );
+const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
 
 const index = async function ( req, res, next ) {
     const { UserData, error } = await User.getAll( {
@@ -80,4 +80,16 @@ const userObjectsShares = async function( req, res, next ) {
     res.status( 200 ).json( objects_shares );
 };
 
-module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares };
+const generalSearch = async function( req, res, next ) {
+    const data = {
+        searchString: req.body.string,
+        userLimit: req.body.userLimit,
+        wobjectsLimit: req.body.wobjectsLimit,
+        objectsTypeLimit: req.body.objectsTypeLimit
+    };
+    const result = await generalSearchHelper.search( data );
+
+    res.status( 200 ).json( result );
+};
+
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, generalSearch };
