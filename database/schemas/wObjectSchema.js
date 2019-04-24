@@ -12,7 +12,7 @@ const WObjectSchema = new Schema( {
     author: { type: String, required: true },
     author_permlink: { type: String, index: true, unique: true, required: true }, // unique identity for wobject, link to create object POST
     weight: { type: Number, index: true, default: 1 }, // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
-    parents: { type: [ String ], default: [] },
+    parent: { type: String, default: '' },
     children: { type: [ String ], default: [] },
     fields: [ {
         name: { type: String, index: true },
@@ -41,13 +41,6 @@ WObjectSchema.virtual( 'followers', {
     ref: 'User',
     localField: 'author_permlink',
     foreignField: 'objects_follow',
-    justOne: false
-} );
-
-WObjectSchema.virtual( 'parent_objects', {
-    ref: 'wobject',
-    localField: 'parents',
-    foreignField: 'author_permlink',
     justOne: false
 } );
 
