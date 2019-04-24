@@ -17,4 +17,9 @@ const REQUIREDFIELDS = [
     'price'
 ];
 
-module.exports = { REQUIREDFIELDS };
+const REQUIREFIELDS_PARENT = [
+    'name',
+    'avatar'
+];
+
+module.exports = { REQUIREDFIELDS, REQUIREFIELDS_PARENT };

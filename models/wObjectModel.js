@@ -4,7 +4,7 @@ const createError = require( 'http-errors' );
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const rankHelper = require( '../utilities/helpers/rankHelper' );
 const _ = require( 'lodash' );
-const { REQUIREDFIELDS } = require( '../utilities/constants' );
+const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../utilities/constants' );
 
 const search = async function ( data ) {
     try {
@@ -44,6 +44,14 @@ const search = async function ( data ) {
                         }
                     }
                 }
+            },
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'parent',
+                    foreignField: 'author_permlink',
+                    as: 'parent'
+                }
             }
         ] );
 
@@ -52,6 +60,16 @@ const search = async function ( data ) {
         }
         wObjects.forEach( ( wobject ) => {
             wobject.fields = _.orderBy( wobject.fields, [ 'weight' ], [ 'desc' ] );
+
+            // format parent field
+            if( Array.isArray( wobject.parent ) ) {
+                if( _.isEmpty( wobject.parent ) ) {
+                    wobject.parent = '';
+                } else {
+                    wobject.parent = wobject.parent[ 0 ];
+                    getRequiredFields( wobject.parent, REQUIREFIELDS_PARENT );
+                }
+            }
         } );
 
         await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobjects
@@ -93,8 +111,26 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
                     foreignField: 'objects_follow',
                     as: 'followers'
                 }
+            },
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'parent',
+                    foreignField: 'author_permlink',
+                    as: 'parent'
+                }
             }
         ] );
+
+        // format parent field
+        if( Array.isArray( wObject.parent ) ) {
+            if( _.isEmpty( wObject.parent ) ) {
+                wObject.parent = '';
+            } else {
+                wObject.parent = wObject.parent[ 0 ];
+                getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
+            }
+        }
 
         if ( !wObject ) {
             return { error: createError( 404, 'wobject not found' ) };
@@ -181,6 +217,14 @@ const getAll = async function ( data ) {
                         }
                     }
                 }
+            },
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'parent',
+                    foreignField: 'author_permlink',
+                    as: 'parent'
+                }
             }
         ] );
 
@@ -209,6 +253,16 @@ const getAll = async function ( data ) {
             wObject.users = wObject.users || [];
             wObject.user_count = wObject.users.length; // add field user count
             wObjectHelper.formatRequireFields( wObject, data.locale, required_fields.map( ( item ) => ( { name: item } ) ) );
+
+            // format parent field
+            if( Array.isArray( wObject.parent ) ) {
+                if( _.isEmpty( wObject.parent ) ) {
+                    wObject.parent = '';
+                } else {
+                    wObject.parent = wObject.parent[ 0 ];
+                    getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
+                }
+            }
         } );
 
         await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobject
