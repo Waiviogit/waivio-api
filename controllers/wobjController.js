@@ -3,7 +3,7 @@ const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
 
 const index = async function ( req, res, next ) {
-    const { wObjectsData, error } = await Wobj.getAll( {
+    const { wObjectsData, hasMore, error } = await Wobj.getAll( {
         user_limit: req.body.user_limit || 5,
         locale: req.body.locale || 'en-US',
         author_permlinks: req.body.author_permlinks,
@@ -16,7 +16,7 @@ const index = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wObjectsData );
+    res.status( 200 ).json( { wobjects: wObjectsData, hasMore } );
 };
 
 const show = async function ( req, res, next ) {
