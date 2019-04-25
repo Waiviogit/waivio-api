@@ -200,11 +200,11 @@ const getAll = async function ( data ) {
             required_fields.push( ...data.required_fields );
         } // add additional fields to returning
 
-        const wObjects = await WObjectModel.aggregate( [
+        let wObjects = await WObjectModel.aggregate( [
             { $match: findParams },
             { $sort: { weight: -1 } },
             { $skip: data.skip },
-            { $limit: data.limit },
+            { $limit: data.limit + 1 },
             {
                 $addFields: {
                     'fields': {
@@ -228,8 +228,13 @@ const getAll = async function ( data ) {
             }
         ] );
 
+        let hasMore = false;
+
         if ( !wObjects || wObjects.length === 0 ) {
             return { wObjectsData: [] };
+        } else if ( wObjects.length === data.limit + 1 ) {
+            hasMore = true;
+            wObjects = wObjects.slice( 0, data.limit );
         }
 
         if( data.user_limit ) {
@@ -267,7 +272,7 @@ const getAll = async function ( data ) {
 
         await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobject
 
-        return { wObjectsData: wObjects };
+        return { wObjectsData: wObjects, hasMore };
     } catch ( error ) {
         return { error };
     }
