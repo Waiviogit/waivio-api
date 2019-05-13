@@ -1,5 +1,8 @@
 const config = require( '../../config' );
 const { Client } = require( 'dsteem' );
-const client = new Client( config.nodeUrl );
+const steemUrl = config.nodeUrl || 'https://api.steemit.com';
 
-module.exports = { client };
+const client = new Client( steemUrl );
+const clientAnyx = new Client( 'https://anyx.io' );
+
+module.exports = { client, clientAnyx };

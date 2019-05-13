@@ -53,7 +53,7 @@ const getAll = async ( { limit, skip, wobjects_count = 3 } ) => {
     return { objectTypes };
 };
 
-const search = async ( { string, limit, skip } ) => {
+const search = async ( { string, limit = 20, skip = 0 } ) => {
     try {
         if ( !string ) {
             throw { status: 422, message: 'Search string is empty' };
@@ -120,18 +120,19 @@ const getOne = async ( { name, wobjects_count = 3 } ) => {
         if( objectType.related_wobjects.length === wobjects_count + 1 ) {
             objectType.hasMoreWobjects = true;
             objectType.related_wobjects = objectType.related_wobjects.slice( 0, wobjects_count );
-            objectType.related_wobjects.forEach( ( wobject ) => {
-                // format wobjects parent field
-                if( Array.isArray( wobject.parent ) ) {
-                    if( _.isEmpty( wobject.parent ) ) {
-                        wobject.parent = '';
-                    } else {
-                        wobject.parent = wobject.parent[ 0 ];
-                        wobject.fields = wobject.fields.filter( ( item ) => REQUIREFIELDS_PARENT.includes( item.name ) );
-                    }
-                }
-            } );
         }
+        console.log();
+        objectType.related_wobjects.forEach( ( wobject ) => {
+            // format wobjects parent field
+            if( Array.isArray( wobject.parent ) ) {
+                if( _.isEmpty( wobject.parent ) ) {
+                    wobject.parent = '';
+                } else {
+                    wobject.parent = wobject.parent[ 0 ];
+                    wobject.parent.fields = wobject.parent.fields.filter( ( item ) => REQUIREFIELDS_PARENT.includes( item.name ) );
+                }
+            }
+        } );
 
         const { post } = await postsUtil.getPost( objectType.author, objectType.permlink );
 
