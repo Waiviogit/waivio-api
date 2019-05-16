@@ -1,17 +1,22 @@
 const PostModel = require( '../database' ).models.Post;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
+const { getWobjFeedCondition } = require( '../utilities/helpers/postHelper' );
 const rankHelper = require( '../utilities/helpers/rankHelper' );
-const mongoose = require( 'mongoose' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
 
 
-const getByObject = async function ( data ) { // data include author_permlink, limit, start_id, locale
+const getByObject = async function ( data ) { // data include author_permlink, limit, skip, locale
+    let { condition, error: conditionError } = await getWobjFeedCondition( data.author_permlink );
+
+    if( conditionError ) {
+        return { error: conditionError };
+    }
     try {
         let posts = await PostModel.aggregate( [
-            { $match: { 'wobjects.author_permlink': data.author_permlink } },
+            condition,
             { $sort: { _id: -1 } },
-            { $match: { _id: { $lt: data.start_id ? new mongoose.mongo.ObjectId( data.start_id ) : new mongoose.mongo.ObjectId() } } },
+            { $skip: data.skip },
             { $limit: data.limit },
             {
                 $lookup: {
