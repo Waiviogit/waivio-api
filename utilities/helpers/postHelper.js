@@ -86,4 +86,46 @@ const getPostsByCategory = async function( data ) {
     return { posts };
 };
 
-module.exports = { getPostObjects, getPost, getPostsByCategory };
+// Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
+const getWobjFeedCondition = async ( author_permlink ) => {
+    const { wObjectData, error } = await Wobj.getOne( { author_permlink } );
+
+    if( error ) {
+        return { error };
+    } else if ( !wObjectData.newsFilter ) {
+        return { condition: { $match: { 'wobjects.author_permlink': author_permlink } } };
+    }
+    const newsFilter = wObjectData.newsFilter;
+
+    if( !newsFilter.allowList && !newsFilter.ignoreList ) {
+        return { error: { message: 'Format not exist all require fields' } };
+    }
+    let firstCond, secondCond;
+
+    if( Array.isArray( newsFilter.allowList ) && !_.isEmpty( newsFilter.allowList ) && _.some( newsFilter.allowList, ( rule ) => Array.isArray( rule ) && rule.length ) ) {
+        const orCondArr = [ { 'wobjects.author_permlink': author_permlink } ];
+
+        newsFilter.allowList.forEach( ( allowRule ) => {
+            if( Array.isArray( allowRule ) && allowRule.length ) {
+                orCondArr.push(
+                    {
+                        'wobjects.author_permlink': {
+                            $all: allowRule
+                        }
+                    } );
+            }
+        } );
+        firstCond = { $or: orCondArr };
+    } else {
+        firstCond = { 'wobjects.author_permlink': author_permlink };
+    }
+    secondCond = {
+        'wobjects.author_permlink': {
+            $nin: Array.isArray( newsFilter.ignoreList ) ? newsFilter.ignoreList : []
+        }
+    };
+
+    return { condition: { $match: { $and: [ firstCond, secondCond ] } } };
+};
+
+module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition };

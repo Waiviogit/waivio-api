@@ -31,5 +31,4 @@ const getUserSharesInWobj = async ( name, author_permlink ) => {
     return _.get( userObjectShare, 'weight' ) || 0;
 };
 
-
 module.exports = { formatRequireFields, getUserSharesInWobj };

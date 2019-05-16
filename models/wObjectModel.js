@@ -17,7 +17,7 @@ const search = async function ( data ) {
                                 {
                                     $elemMatch: {
                                         'name': 'name',
-                                        'body': { $regex: `${'^' + data.string}`, $options: 'i' }
+                                        'body': { $regex: `\\b${data.string}.*\\b`, $options: 'i' }
                                     }
                                 }
                         },
@@ -122,6 +122,10 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
             }
         ] );
 
+        if ( !wObject ) {
+            return { error: createError( 404, 'wobject not found' ) };
+        }
+
         // format parent field
         if( Array.isArray( wObject.parent ) ) {
             if( _.isEmpty( wObject.parent ) ) {
@@ -130,10 +134,6 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
                 wObject.parent = wObject.parent[ 0 ];
                 getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
             }
-        }
-
-        if ( !wObject ) {
-            return { error: createError( 404, 'wobject not found' ) };
         }
         if ( wObject.object_type.toLowerCase() === 'list' ) {
             const { wobjects, sortCustom } = await getList( data.author_permlink );
