@@ -13,7 +13,7 @@ const REQUIREDFIELDS = [
     'email',
     'rating',
     'parent',
-    'tagcloud',
+    'tagCloud',
     'price'
 ];
 
