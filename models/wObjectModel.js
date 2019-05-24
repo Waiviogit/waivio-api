@@ -370,6 +370,18 @@ const getObjectExpertise = async function ( data ) { // data include author_perm
     }
 };
 
+const fromAggregation = async function( pipeline ) {
+    try{
+        const wobjects = await WObjectModel.aggregate[ pipeline ];
+
+        if( !wobjects || _.isEmpty( wobjects ) ) {
+            return { error: { status: 404, message: 'Wobjects not found!' } };
+        }
+    } catch ( error ) {
+        return { error };
+    }
+};
+
 const formatUsers = function ( wObject ) {
     rankHelper.calculateForUsers( wObject.users, wObject.weight ); // add rank in wobject for each user
     wObject.users = _.orderBy( wObject.users, [ 'weight' ], [ 'desc' ] ); // order users by rank
@@ -379,4 +391,4 @@ const getRequiredFields = function ( wObject, requiredFields ) {
     wObject.fields = wObject.fields.filter( ( item ) => requiredFields.includes( item.name ) );
 };
 
-module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise };
+module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise, fromAggregation };
