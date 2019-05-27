@@ -66,7 +66,7 @@ objectTypeRoutes.route( '/objectTypes' )
 objectTypeRoutes.route( '/objectTypesSearch' )
     .post( ObjectTypeController.search );
 objectTypeRoutes.route( '/objectType/:objectTypeName' )
-    .get( ObjectTypeController.show );
+    .post( ObjectTypeController.show );
 
 userRoutes.route( '/generalSearch' )
     .post( UserController.generalSearch );

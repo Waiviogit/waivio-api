@@ -372,11 +372,12 @@ const getObjectExpertise = async function ( data ) { // data include author_perm
 
 const fromAggregation = async function( pipeline ) {
     try{
-        const wobjects = await WObjectModel.aggregate[ pipeline ];
+        const wobjects = await WObjectModel.aggregate( [ ...pipeline ] ) ;
 
         if( !wobjects || _.isEmpty( wobjects ) ) {
             return { error: { status: 404, message: 'Wobjects not found!' } };
         }
+        return { wobjects };
     } catch ( error ) {
         return { error };
     }
