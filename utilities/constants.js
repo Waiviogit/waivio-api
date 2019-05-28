@@ -14,7 +14,9 @@ const REQUIREDFIELDS = [
     'rating',
     'parent',
     'tagCloud',
-    'price'
+    'price',
+    'button',
+    'workTime'
 ];
 
 const REQUIREFIELDS_PARENT = [
