@@ -110,7 +110,6 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0 } 
 };
 
 const getObjectType = async ( { name = '', filter, wobjLimit, wobjSkip } ) => {
-    console.log();
     const { objectType, error: objTypeError } = await ObjectType.getOne( { name: name } );
 
     if( objTypeError ) {
@@ -137,10 +136,34 @@ const getObjectType = async ( { name = '', filter, wobjLimit, wobjSkip } ) => {
             }
         }
     } );
+
+    objectType.filters = await getFilters( name );
     // const { post } = await postsUtil.getPost( objectType.author, objectType.permlink );
     // if( post && post.body ) { objectType.body = post.body }
     return { objectType };
 
+};
+
+const getFilters = async( object_type ) => {
+    const resFilters = {};
+    const { wobjects: wobjectsWithMap } = await Wobj.fromAggregation( [
+        {
+            $match: {
+                $and: [
+                    { object_type },
+                    { map: { $exists: true } }
+                ]
+            }
+        }, {
+            $project: {
+                _id: 1
+            }
+        } ] );
+
+    if( !_.isEmpty( wobjectsWithMap ) ) {
+        resFilters.map = [ 'map' ];
+    }
+    return resFilters;
 };
 
 module.exports = { getObjectType };
