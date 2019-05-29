@@ -37,7 +37,7 @@ const validateInput = ( filter ) => {
     return true;
 };
 
-// find wobjects by specified filters(withMap, map)
+// find wobjects by specified filters(map)
 const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0 } ) => {
     const aggregationPipeline = [];
 
@@ -61,11 +61,6 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0 } 
             object_type: objectType
         }
     } );
-    if ( filter && filter.withMap ) {
-        aggregationPipeline.push( {
-            $match: { map: { $exists: true } }
-        } );
-    }
     // ///////////////////////////// ///
     // place here additional filters ///
     // ///////////////////////////// ///
@@ -141,7 +136,6 @@ const getObjectType = async ( { name = '', filter, wobjLimit, wobjSkip } ) => {
     // const { post } = await postsUtil.getPost( objectType.author, objectType.permlink );
     // if( post && post.body ) { objectType.body = post.body }
     return { objectType };
-
 };
 
 const getFilters = async( object_type ) => {
