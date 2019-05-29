@@ -16,7 +16,9 @@ const REQUIREDFIELDS = [
     'tagCloud',
     'price',
     'button',
-    'workTime'
+    'workTime',
+    'chartid',
+    'newsFilter'
 ];
 
 const REQUIREFIELDS_PARENT = [
