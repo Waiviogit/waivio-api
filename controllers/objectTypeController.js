@@ -1,4 +1,5 @@
 const { ObjectType } = require( '../models' );
+const { objectTypeHelper } = require( '../utilities/helpers' );
 
 const index = async ( req, res, next ) => {
     const { objectTypes, error } = await ObjectType.getAll( {
@@ -14,9 +15,11 @@ const index = async ( req, res, next ) => {
 };
 
 const show = async ( req, res, next ) => {
-    const { objectType, error } = await ObjectType.getOne( {
+    const { objectType, error } = await objectTypeHelper.getObjectType( {
         name: req.params.objectTypeName,
-        wobjects_count: Number( req.query.wobjects_count ) || 3
+        wobjLimit: req.body.wobjects_count || 30,
+        wobjSkip: req.body.wobjects_skip || 0,
+        filter: req.body.filter
     } );
 
     if( error ) {

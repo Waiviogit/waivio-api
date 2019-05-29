@@ -4,5 +4,6 @@ module.exports = {
     rankHelper: require( './rankHelper' ),
     userFeedHelper: require( './userFeedHelper' ),
     postHelper: require( './postHelper' ),
-    generalSearchHelper: require( './generalSearchHelper' )
+    generalSearchHelper: require( './generalSearchHelper' ),
+    objectTypeHelper: require( './objectTypeHelper' )
 };
