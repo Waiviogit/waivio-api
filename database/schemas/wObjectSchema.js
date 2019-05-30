@@ -17,7 +17,7 @@ const WObjectSchema = new Schema(
         children: { type: [ String ], default: [] },
         fields: [ {
             name: { type: String, index: true },
-            body: { type: String, index: true },
+            body: { type: String },
             weight: { type: Number, default: 1 },
             locale: { type: String, default: 'en-US' },
             creator: { type: String },
