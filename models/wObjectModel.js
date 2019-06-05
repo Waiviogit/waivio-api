@@ -192,6 +192,8 @@ const getAll = async function ( data ) {
         }
         if ( data.object_types && Array.isArray( data.object_types ) && data.object_types.length ) {
             findParams.object_type = { $in: data.object_types };
+        } else if ( data.exclude_object_types && Array.isArray( data.exclude_object_types ) && data.exclude_object_types.length ) {
+            findParams.object_type = { $nin: data.exclude_object_types };
         }
 
         let required_fields = [ ...REQUIREDFIELDS ];
