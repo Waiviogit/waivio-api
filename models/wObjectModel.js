@@ -25,7 +25,7 @@ const search = async function ( data ) {
                             'author_permlink': { $regex: `${_.get( data.string, '[3]' ) === '-' ? '^' + data.string : '_'}`, $options: 'i' }
                         } ]
                     }, {
-                        object_type: { $regex: `^${data.object_type || '.+'}`, $options: 'i' }
+                        object_type: { $regex: `^${data.object_type || '.+'}$`, $options: 'i' }
                     } ]
                 }
             },
