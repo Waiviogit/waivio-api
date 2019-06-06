@@ -135,10 +135,11 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
                 getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
             }
         }
-        if ( wObject.object_type.toLowerCase() === 'list' ) {
+        if ( await isFieldExist( { author_permlink: data.author_permlink, fieldName: 'listItem' } ) ) {
             const { wobjects, sortCustom } = await getList( data.author_permlink );
+            const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
 
-            wObject.listItems = wobjects;
+            wObject[ keyName ] = wobjects;
             wObject.sortCustom = sortCustom;
             required_fields.push( 'sortCustom', 'listItem' );
         }
@@ -392,6 +393,16 @@ const formatUsers = function ( wObject ) {
 
 const getRequiredFields = function ( wObject, requiredFields ) {
     wObject.fields = wObject.fields.filter( ( item ) => requiredFields.includes( item.name ) );
+};
+
+const isFieldExist = async ( { author_permlink, fieldName } ) => {
+    try {
+        const wobj = await WObjectModel.findOne( { author_permlink, 'fields.name': fieldName } ).lean();
+
+        return !!wobj;
+    } catch ( error ) {
+        return { error };
+    }
 };
 
 module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise, fromAggregation };
