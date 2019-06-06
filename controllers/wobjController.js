@@ -8,6 +8,7 @@ const index = async function ( req, res, next ) {
         locale: req.body.locale || 'en-US',
         author_permlinks: req.body.author_permlinks,
         object_types: req.body.object_types,
+        exclude_object_types: req.body.exclude_object_types,
         required_fields: req.body.required_fields,
         limit: req.body.limit || 30, // field for infinite scroll
         skip: req.body.skip || 0
