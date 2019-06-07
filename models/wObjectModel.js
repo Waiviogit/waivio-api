@@ -135,6 +135,7 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
                 getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
             }
         }
+        // format listItems field
         if ( await isFieldExist( { author_permlink: data.author_permlink, fieldName: 'listItem' } ) ) {
             const { wobjects, sortCustom } = await getList( data.author_permlink );
             const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
@@ -143,6 +144,7 @@ const getOne = async function ( data ) { // get one wobject by author_permlink
             wObject.sortCustom = sortCustom;
             required_fields.push( 'sortCustom', 'listItem' );
         }
+        // format gallery and adding rank of wobject
         wObject.preview_gallery = _.orderBy( wObject.fields.filter( ( field ) => field.name === 'galleryItem' ), [ 'weight' ], [ 'asc' ] ).slice( 0, 3 );
         wObject.albums_count = wObject.fields.filter( ( field ) => field.name === 'galleryAlbum' ).length;
         wObject.photos_count = wObject.fields.filter( ( field ) => field.name === 'galleryItem' ).length;
@@ -340,7 +342,9 @@ const getList = async function ( author_permlink ) {
             }
         ] );
         const sortCustomField = _.maxBy( fields.filter( ( field ) => field.name === 'sortCustom' ), 'weight' );
-        const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' ), ( field ) => field.wobject[ 0 ] ) );
+        const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' ), ( field ) => {
+            return { ...field.wobject[ 0 ], alias: field.alias };
+        } ) );
 
         await rankHelper.calculateWobjectRank( wobjects );
         wobjects.forEach( ( wObject ) => {
