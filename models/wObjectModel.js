@@ -342,7 +342,7 @@ const getList = async function ( author_permlink ) {
             }
         ] );
         const sortCustomField = _.maxBy( fields.filter( ( field ) => field.name === 'sortCustom' ), 'weight' );
-        const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' ), ( field ) => {
+        const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' && !_.isEmpty( field.wobject ) ), ( field ) => {
             return { ...field.wobject[ 0 ], alias: field.alias };
         } ) );
 
