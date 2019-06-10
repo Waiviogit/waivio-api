@@ -1,18 +1,25 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
+const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
-    const { wObjectsData, hasMore, error } = await Wobj.getAll( {
-        user_limit: req.body.user_limit || 5,
-        locale: req.body.locale || 'en-US',
-        author_permlinks: req.body.author_permlinks,
-        object_types: req.body.object_types,
-        exclude_object_types: req.body.exclude_object_types,
-        required_fields: req.body.required_fields,
-        limit: req.body.limit || 30, // field for infinite scroll
-        skip: req.body.skip || 0
-    } );
+    const value = validators.validate(
+        {
+            user_limit: req.body.user_limit,
+            locale: req.body.locale,
+            author_permlinks: req.body.author_permlinks,
+            object_types: req.body.object_types,
+            exclude_object_types: req.body.exclude_object_types,
+            required_fields: req.body.required_fields,
+            limit: req.body.limit,
+            skip: req.body.skip
+        }, validators.wobject.indexSchema, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { wObjectsData, hasMore, error } = await Wobj.getAll( value );
 
     if ( error ) {
         return next( error );
@@ -21,14 +28,18 @@ const index = async function ( req, res, next ) {
 };
 
 const show = async function ( req, res, next ) {
-    const data = {
-        author_permlink: req.params.authorPermlink,
-        locale: req.query.locale,
-        required_fields: req.query.required_fields,
-        user: req.query.user
-    };
-    // const {wObjectData, error} = await wObjectHelper.combinedWObjectData(data);
-    const { wObjectData, error } = await Wobj.getOne( data );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink,
+            locale: req.query.locale,
+            required_fields: req.query.required_fields,
+            user: req.query.user
+        }, validators.wobject.showSchema, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { wObjectData, error } = await Wobj.getOne( value );
 
     if ( error ) {
         return next( error );
@@ -37,13 +48,18 @@ const show = async function ( req, res, next ) {
 };
 
 const posts = async function ( req, res, next ) {
-    const data = {
-        author_permlink: req.params.authorPermlink, // for wObject
-        limit: req.body.limit || 30, //
-        skip: req.body.skip || 0, // for infinite scroll
-        locale: req.body.locale || 'en-US'
-    };
-    const { posts: wobjectPosts, error } = await Post.getByObject( data );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink,
+            limit: req.body.limit,
+            skip: req.body.skip,
+            locale: req.body.locale
+        }, validators.wobject.postsScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { posts: wobjectPosts, error } = await Post.getByObject( value );
 
     if ( error ) {
         return next( error );
@@ -52,12 +68,17 @@ const posts = async function ( req, res, next ) {
 };
 
 const feed = async function ( req, res, next ) {
-    const data = {
-        filter: req.body.filter,
-        limit: req.body.limit || 30, //
-        skip: req.body.skip || 0 // for infinite scroll
-    };
-    const { posts: AllPosts, error } = await Post.getAllPosts( data );
+    const value = validators.validate(
+        {
+            filter: req.body.filter,
+            limit: req.body.limit,
+            skip: req.body.skip
+        }, validators.wobject.feedScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { posts: AllPosts, error } = await Post.getAllPosts( value );
 
     if ( error ) {
         return next( error );
@@ -66,12 +87,17 @@ const feed = async function ( req, res, next ) {
 };
 
 const followers = async function ( req, res, next ) {
-    const data = {
-        author_permlink: req.params.authorPermlink,
-        skip: req.body.skip ? req.body.skip : 0,
-        limit: req.body.limit ? req.body.limit : 30
-    };
-    const { followers: wobjectFollowers, error } = await followersHelper.getFollowers( data );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink,
+            skip: req.body.skip,
+            limit: req.body.limit
+        }, validators.wobject.followersScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { followers: wobjectFollowers, error } = await followersHelper.getFollowers( value );
 
     if ( error ) {
         return next( error );
@@ -80,14 +106,19 @@ const followers = async function ( req, res, next ) {
 };
 
 const search = async function ( req, res, next ) {
-    const data = {
-        string: req.body.search_string,
-        limit: req.body.limit || 10,
-        skip: req.body.skip || 0,
-        locale: req.body.locale ? req.body.locale : 'en-US',
-        object_type: req.body.object_type
-    };
-    const { wObjectsData, error } = await Wobj.search( data );
+    const value = validators.validate(
+        {
+            string: req.body.search_string,
+            limit: req.body.limit,
+            skip: req.body.skip,
+            locale: req.body.locale,
+            object_type: req.body.object_type
+        }, validators.wobject.searchScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { wObjectsData, error } = await Wobj.search( value );
 
     if ( error ) {
         return next( error );
@@ -96,10 +127,15 @@ const search = async function ( req, res, next ) {
 };
 
 const fields = async function ( req, res, next ) {
-    const data = {
-        author_permlink: req.params.authorPermlink
-    };
-    const { fieldsData, error } = await Wobj.getFields( data );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink
+        }, validators.wobject.fieldsScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { fieldsData, error } = await Wobj.getFields( value );
 
     if ( error ) {
         return next( error );
@@ -108,9 +144,17 @@ const fields = async function ( req, res, next ) {
 };
 
 const gallery = async function ( req, res, next ) {
-    const { gallery: wobjectGallery, error } = await Wobj.getGalleryItems( {
-        author_permlink: req.params.authorPermlink
-    } );
+
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink
+        }, validators.wobject.galleryScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+
+    const { gallery: wobjectGallery, error } = await Wobj.getGalleryItems( value );
 
     if ( error ) {
         return next( error );
@@ -119,7 +163,15 @@ const gallery = async function ( req, res, next ) {
 };
 
 const list = async function ( req, res, next ) {
-    const { wobjects, error } = await Wobj.getList( req.params.authorPermlink );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink
+        }, validators.wobject.listScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { wobjects, error } = await Wobj.getList( value.author_permlink );
 
     if( error ) {
         return next( error );
@@ -128,12 +180,17 @@ const list = async function ( req, res, next ) {
 };
 
 const objectExpertise = async function ( req, res, next ) {
-    const data = {
-        author_permlink: req.params.authorPermlink,
-        skip: req.body.skip || 0,
-        limit: req.body.limit || 5
-    };
-    const { users, error } = await Wobj.getObjectExpertise( data );
+    const value = validators.validate(
+        {
+            author_permlink: req.params.authorPermlink,
+            skip: req.body.skip,
+            limit: req.body.limit
+        }, validators.wobject.objectExpertiseScheme, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { users, error } = await Wobj.getObjectExpertise( value );
 
     if( error ) {
         return next( error );
