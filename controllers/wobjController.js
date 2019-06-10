@@ -1,6 +1,7 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
+const { objectExperts } = require( '../utilities/operations' ).wobject;
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
