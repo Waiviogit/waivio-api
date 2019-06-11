@@ -88,14 +88,14 @@ const getPostsByCategory = async function( data ) {
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ( author_permlink ) => {
-    const { wObjectData, error } = await Wobj.getOne( { author_permlink } );
+    const { wObject, error } = await Wobj.getOne( author_permlink );
 
     if( error ) {
         return { error };
-    } else if ( !wObjectData.newsFilter ) {
+    } else if ( !wObject.newsFilter ) {
         return { condition: { $match: { 'wobjects.author_permlink': author_permlink } } };
     }
-    const newsFilter = wObjectData.newsFilter;
+    const newsFilter = wObject.newsFilter;
 
     if( !newsFilter.allowList && !newsFilter.ignoreList ) {
         return { error: { message: 'Format not exist all require fields' } };
