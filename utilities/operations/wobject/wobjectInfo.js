@@ -5,15 +5,24 @@ const rankHelper = require( '../../helpers/rankHelper' );
 const wObjectHelper = require( '../../helpers/wObjectHelper' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
-const formatUsers = async ( { author_permlink, weight } ) => {
+const getExperts = async ( { author_permlink, weight, username } ) => {
+    if( username ) {
+        let { experts: [ user = undefined ] = [], error: userError } = await getWobjExperts( { author_permlink, limit: 5, username } );
+
+        if( userError ) {
+            return { error: userError };
+        }
+        return { user };
+    }
+
     let { experts: users = [], error } = await getWobjExperts( { author_permlink, limit: 5 } );
 
-    if( !error ) {
-        rankHelper.calculateForUsers( users, weight ); // add rank in wobject for each user
-        users = _.orderBy( users, [ 'weight' ], [ 'desc' ] ); // order users by rank
-        return { users };
+    if( error ) {
+        return { error };
     }
-    return { error };
+    rankHelper.calculateForUsers( users, weight ); // add rank in wobject for each user
+    users = _.orderBy( users, [ 'weight' ], [ 'desc' ] ); // order users by rank
+    return { users };
 };
 
 const getOne = async ( data ) => { // get one wobject by author_permlink
@@ -53,7 +62,7 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
     wObject.followers_count = wObject.followers.length;
     delete wObject.followers;
 
-    const { users } = await formatUsers( { author_permlink: data.author_permlink, weight: wObject.weight } );
+    const { users } = await getExperts( { author_permlink: data.author_permlink, weight: wObject.weight } );
 
     wObject.users = users;
 
@@ -75,13 +84,11 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
     }
 
     if ( data.user ) {
-        wObject.user = { weight: await wObjectHelper.getUserSharesInWobj( data.user, data.author_permlink ) };
-        wObject.user.name = data.user;
-        if ( wObject.user.weight ) {
-            rankHelper.calculateForUsers( [ wObject.user ], wObject.weight );
-        } else {
-            wObject.user.rank = 0;
-        }
+        const { user } = await getExperts( { author_permlink: data.author_permlink, weight: wObject.weight, username: data.user } );
+
+        wObject.user = user;
+
+        wObject.users = users;
     }
     return { wobjectData: wObject };
 

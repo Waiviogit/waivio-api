@@ -22,7 +22,7 @@ const makeSwitchBranches = ( wobjects ) => {
     } );
 };
 
-const makePipeline = ( { multipliers, skip = 0, limit = 30 } ) => {
+const makePipeline = ( { multipliers, skip = 0, limit = 30, username } ) => {
     const switchBranches = makeSwitchBranches( multipliers );
 
     const pipeline = [
@@ -52,10 +52,13 @@ const makePipeline = ( { multipliers, skip = 0, limit = 30 } ) => {
         { $project: { _id: 0, name: '$_id', weight: '$totalWeight' } }
     ];
 
+    if( username ) {
+        pipeline[ 0 ].$match.user_name = username;
+    }
     return pipeline;
 };
 
-const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30 } ) => {
+const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30, username } ) => {
     let wobj;
 
     try{
@@ -76,7 +79,7 @@ const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30 } ) => {
         return { experts };
     }
     const multipliers = getMultipliers( wobj.newsFilter );
-    const pipeline = makePipeline( { multipliers, skip, limit } );
+    const pipeline = makePipeline( { multipliers, skip, limit, username } );
     const { result: experts, error: aggregationError } = await UserWobjects.aggregate( pipeline );
 
     if( aggregationError ) {
