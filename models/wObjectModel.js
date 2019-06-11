@@ -359,24 +359,6 @@ const getList = async function ( author_permlink ) {
     }
 };
 
-const getObjectExpertise = async function ( data ) { // data include author_permlink, skip, limit
-    try {
-        const users = await UserWobjectsModel.aggregate( [
-            { $match: { author_permlink: data.author_permlink } },
-            { $sort: { weight: -1 } },
-            { $skip: data.skip },
-            { $limit: data.limit },
-            { $project: { _id: 0, name: '$user_name', weight: 1 } }
-        ] );
-        const wObject = await WObjectModel.findOne( { author_permlink: data.author_permlink } ).select( 'weight' ).lean();
-
-        rankHelper.calculateForUsers( users, wObject.weight ); // add rank in wobject for each user
-        return { users };
-    } catch ( error ) {
-        return { error };
-    }
-};
-
 const fromAggregation = async function( pipeline ) {
     try{
         const wobjects = await WObjectModel.aggregate( [ ...pipeline ] ) ;
@@ -409,4 +391,4 @@ const isFieldExist = async ( { author_permlink, fieldName } ) => {
     }
 };
 
-module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, getObjectExpertise, fromAggregation };
+module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, fromAggregation };

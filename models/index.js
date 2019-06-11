@@ -3,5 +3,6 @@ module.exports = {
     User: require( './UserModel' ),
     App: require( './AppModel' ),
     Post: require( './PostModel' ),
-    ObjectType: require( './ObjectTypeModel' )
+    ObjectType: require( './ObjectTypeModel' ),
+    UserWobjects: require( './UserWobjects' )
 };
