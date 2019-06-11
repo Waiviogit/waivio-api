@@ -191,12 +191,12 @@ const objectExpertise = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { users, error } = await Wobj.getObjectExpertise( value );
+    const { experts, error } = await objectExperts.getWobjExperts( value );
 
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( users );
+    res.status( 200 ).json( experts );
 };
 
 module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise };

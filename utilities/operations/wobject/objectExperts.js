@@ -1,5 +1,6 @@
 const { UserWobjects } = require( '../../../models' );
 const { WObject } = require( '../../../database' ).models;
+const _ = require( 'lodash' );
 
 const getMultipliers = ( newsFilter ) => {
     const array = _.flatten( newsFilter.allowList );
@@ -8,7 +9,7 @@ const getMultipliers = ( newsFilter ) => {
 
     return values.map( ( value ) => ( {
         author_permlink: value,
-        multiplier: ( _.filter( data.allowList, ( items ) => _.includes( items, value ) ).length ) / count
+        multiplier: ( _.filter( newsFilter.allowList, ( items ) => _.includes( items, value ) ).length ) / count
     } ) );
 };
 
@@ -25,10 +26,7 @@ const makePipeline = ( { multipliers, skip = 0, limit = 30 } ) => {
     const switchBranches = makeSwitchBranches( multipliers );
 
     const pipeline = [
-        {
-            $match: {
-                author_permlink: { $in: multipliers.map( ( w ) => w.author_permlink ) }
-            }
+        { $match: { author_permlink: { $in: multipliers.map( ( w ) => w.author_permlink ) } }
         },
         {
             $group: {
@@ -50,7 +48,8 @@ const makePipeline = ( { multipliers, skip = 0, limit = 30 } ) => {
         },
         { $sort: { totalWeight: -1 } },
         { $skip: skip },
-        { $limit: limit }
+        { $limit: limit },
+        { $project: { _id: 0, name: '$_id', weight: '$totalWeight' } }
     ];
 
     return pipeline;
