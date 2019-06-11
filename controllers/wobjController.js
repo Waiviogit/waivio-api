@@ -1,7 +1,7 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
-const { objectExperts } = require( '../utilities/operations' ).wobject;
+const { objectExperts, wobjectInfo } = require( '../utilities/operations' ).wobject;
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -40,12 +40,12 @@ const show = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { wObjectData, error } = await Wobj.getOne( value );
+    const { wobjectData, error } = await wobjectInfo.getOne( value );
 
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wObjectData );
+    res.status( 200 ).json( wobjectData );
 };
 
 const posts = async function ( req, res, next ) {
