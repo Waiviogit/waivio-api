@@ -7,7 +7,7 @@ const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
 const getExperts = async ( { author_permlink, weight, username } ) => {
     if( username ) {
-        let { experts: [ user = undefined ] = [], error: userError } = await getWobjExperts( { author_permlink, limit: 5, username } );
+        let { experts: [ user = undefined ] = [], error: userError } = await getWobjExperts( { author_permlink, limit: 1, username } );
 
         if( userError ) {
             return { error: userError };
@@ -84,11 +84,10 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
     }
 
     if ( data.user ) {
-        const { user } = await getExperts( { author_permlink: data.author_permlink, weight: wObject.weight, username: data.user } );
+        const { user = { weight: 0, name: data.user } } = await getExperts( { author_permlink: data.author_permlink, weight: wObject.weight, username: data.user } );
 
         wObject.user = user;
-
-        wObject.users = users;
+        wObject.user.rank = 0;
     }
     return { wobjectData: wObject };
 

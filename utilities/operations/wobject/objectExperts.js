@@ -71,6 +71,15 @@ const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30, username
         return { error };
     }
     if( !wobj.newsFilter ) {
+        if( username ) {
+            const { experts, error } = await UserWobjects.getByWobject( { author_permlink, skip, limit, username } );
+
+            if( error ) {
+                return { error };
+            }
+            return { experts };
+
+        }
         const { experts, error } = await UserWobjects.getByWobject( { author_permlink, skip, limit } );
 
         if( error ) {
