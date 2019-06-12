@@ -13,15 +13,21 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const getByWobject = async( { author_permlink, skip = 0, limit = 30 } ) => {
+const getByWobject = async( { author_permlink, skip = 0, limit = 30, username } ) => {
     try {
-        const experts = await UserWobjects.aggregate( [
+        const pipeline = [
             { $match: { author_permlink } },
             { $sort: { weight: -1 } },
             { $skip: skip },
             { $limit: limit },
             { $project: { _id: 0, name: '$user_name', weight: 1 } }
-        ] );
+        ];
+
+        if( username ) {
+            pipeline[ 0 ].$match.user_name = username;
+        }
+
+        const experts = await UserWobjects.aggregate( pipeline );
 
         if( !experts ) {
             return { error: { status: 404, message: 'Not found!' } };

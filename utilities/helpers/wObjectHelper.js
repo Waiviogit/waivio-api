@@ -32,3 +32,4 @@ const getUserSharesInWobj = async ( name, author_permlink ) => {
 };
 
 module.exports = { formatRequireFields, getUserSharesInWobj };
+
