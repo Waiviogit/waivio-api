@@ -1,11 +1,12 @@
 const { Wobj } = require( '../../../models' );
 const wObjectHelper = require( '../../helpers/wObjectHelper' );
 const UserWobjectsModel = require( '../../../database' ).models.UserWobjects;
-const { REQUIREFIELDS_PARENT } = require( '../../constants' );
+const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 const rankHelper = require( '../../helpers/rankHelper' );
 const _ = require( 'lodash' );
 
 const getMany = async ( data ) => {
+    data.required_fields = _.uniq( [ ...data.required_fields, ...REQUIREDFIELDS ] );
     const { wObjectsData: wObjects, hasMore, error } = await Wobj.getAll( data );
 
     if( error ) {
@@ -31,8 +32,7 @@ const getMany = async ( data ) => {
     wObjects.forEach( ( wObject ) => {
         wObject.users = wObject.users || [];
         wObject.user_count = wObject.users.length; // add field user count
-        // wObjectHelper.formatRequireFields( wObject, data.locale, required_fields.map( ( item ) => ( { name: item } ) ) );
-
+        wObjectHelper.formatRequireFields( wObject, data.locale, data.required_fields.map( ( item ) => ( { name: item } ) ) );
         // format parent field
         if( Array.isArray( wObject.parent ) ) {
             if( _.isEmpty( wObject.parent ) ) {

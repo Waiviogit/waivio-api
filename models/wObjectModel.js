@@ -114,7 +114,6 @@ const getAll = async function ( data ) {
     const findParams = {};
     let pipeline = [];
     let hasMore = false;
-    let required_fields = [ ...REQUIREDFIELDS ];
     let wObjects;
 
     if ( data.author_permlinks && Array.isArray( data.author_permlinks ) && data.author_permlinks.length ) {
@@ -125,9 +124,6 @@ const getAll = async function ( data ) {
     } else if ( data.exclude_object_types && Array.isArray( data.exclude_object_types ) && data.exclude_object_types.length ) {
         findParams.object_type = { $nin: data.exclude_object_types };
     }
-    if ( data.required_fields && Array.isArray( data.required_fields ) && data.required_fields.length && data.required_fields.every( _.isString ) ) {
-        required_fields.push( ...data.required_fields );
-    } // add additional fields to returning
     pipeline.push( ...[
         { $match: findParams },
         { $sort: { weight: -1 } },
@@ -145,7 +141,7 @@ const getAll = async function ( data ) {
                         input: '$fields',
                         as: 'field',
                         cond: {
-                            $in: [ '$$field.name', required_fields ]
+                            $in: [ '$$field.name', data.required_fields ]
                         }
                     }
                 }
