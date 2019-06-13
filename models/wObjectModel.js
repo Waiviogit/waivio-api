@@ -1,7 +1,5 @@
 const WObjectModel = require( '../database' ).models.WObject;
-const UserWobjectsModel = require( '../database' ).models.UserWobjects;
 const createError = require( 'http-errors' );
-const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const rankHelper = require( '../utilities/helpers/rankHelper' );
 const _ = require( 'lodash' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../utilities/constants' );
@@ -112,100 +110,69 @@ const getOne = async function ( author_permlink ) { // get one wobject by author
 };
 
 const getAll = async function ( data ) {
+
+    const findParams = {};
+    let pipeline = [];
+    let hasMore = false;
+    let wObjects;
+
+    if ( data.author_permlinks && Array.isArray( data.author_permlinks ) && data.author_permlinks.length ) {
+        findParams.author_permlink = { $in: data.author_permlinks };
+    }
+    if ( data.object_types && Array.isArray( data.object_types ) && data.object_types.length ) {
+        findParams.object_type = { $in: data.object_types };
+    } else if ( data.exclude_object_types && Array.isArray( data.exclude_object_types ) && data.exclude_object_types.length ) {
+        findParams.object_type = { $nin: data.exclude_object_types };
+    }
+    pipeline.push( ...[
+        { $match: findParams },
+        { $sort: { weight: -1 } },
+        { $skip: data.sample ? 0 : data.skip },
+        { $limit: data.sample ? 100 : data.limit + 1 }
+    ] );
+    if( data.sample ) {
+        pipeline.push( { $sample: { size: 5 } } );
+    }
+    pipeline.push( ...[
+        {
+            $addFields: {
+                'fields': {
+                    $filter: {
+                        input: '$fields',
+                        as: 'field',
+                        cond: {
+                            $in: [ '$$field.name', data.required_fields ]
+                        }
+                    }
+                }
+            }
+        },
+        {
+            $lookup: {
+                from: 'wobjects',
+                localField: 'parent',
+                foreignField: 'author_permlink',
+                as: 'parent'
+            }
+        }
+    ] );
     try {
-        const findParams = {};
+        const { wobjects, error } = await fromAggregation( pipeline );
 
-        if ( data.author_permlinks && Array.isArray( data.author_permlinks ) && data.author_permlinks.length ) {
-            findParams.author_permlink = { $in: data.author_permlinks };
+        if( error ) {
+            return { error };
         }
-        if ( data.object_types && Array.isArray( data.object_types ) && data.object_types.length ) {
-            findParams.object_type = { $in: data.object_types };
-        } else if ( data.exclude_object_types && Array.isArray( data.exclude_object_types ) && data.exclude_object_types.length ) {
-            findParams.object_type = { $nin: data.exclude_object_types };
-        }
-
-        let required_fields = [ ...REQUIREDFIELDS ];
-
-        if ( data.required_fields && Array.isArray( data.required_fields ) && data.required_fields.length && data.required_fields.every( _.isString ) ) {
-            required_fields.push( ...data.required_fields );
-        } // add additional fields to returning
-
-        let wObjects = await WObjectModel.aggregate( [
-            { $match: findParams },
-            { $sort: { weight: -1 } },
-            { $skip: data.skip },
-            { $limit: data.limit + 1 },
-            {
-                $addFields: {
-                    'fields': {
-                        $filter: {
-                            input: '$fields',
-                            as: 'field',
-                            cond: {
-                                $in: [ '$$field.name', required_fields ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: 'wobjects',
-                    localField: 'parent',
-                    foreignField: 'author_permlink',
-                    as: 'parent'
-                }
-            }
-        ] );
-
-        let hasMore = false;
-
-        if ( !wObjects || wObjects.length === 0 ) {
-            return { wObjectsData: [] };
-        } else if ( wObjects.length === data.limit + 1 ) {
-            hasMore = true;
-            wObjects = wObjects.slice( 0, data.limit );
-        }
-
-        if( data.user_limit ) {
-            await Promise.all( wObjects.map( async ( wobject ) => {
-                wobject.users = await UserWobjectsModel.aggregate( [
-                    { $match: { author_permlink: wobject.author_permlink } },
-                    { $sort: { weight: -1 } },
-                    { $limit: data.user_limit },
-                    {
-                        $project: {
-                            _id: 0,
-                            name: '$user_name',
-                            weight: 1
-                        }
-                    }
-                ] );
-            } ) );
-        } // assign top users to each of wobject
-
-        wObjects.forEach( ( wObject ) => {
-            wObject.users = wObject.users || [];
-            wObject.user_count = wObject.users.length; // add field user count
-            wObjectHelper.formatRequireFields( wObject, data.locale, required_fields.map( ( item ) => ( { name: item } ) ) );
-
-            // format parent field
-            if( Array.isArray( wObject.parent ) ) {
-                if( _.isEmpty( wObject.parent ) ) {
-                    wObject.parent = '';
-                } else {
-                    wObject.parent = wObject.parent[ 0 ];
-                    getRequiredFields( wObject.parent, REQUIREFIELDS_PARENT );
-                }
-            }
-        } );
-
-        await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobject
-
-        return { wObjectsData: wObjects, hasMore };
+        wObjects = wobjects;
     } catch ( error ) {
         return { error };
     }
+    if ( !wObjects || wObjects.length === 0 ) {
+        return { wObjectsData: [] };
+    } else if ( wObjects.length === data.limit + 1 ) {
+        hasMore = true;
+        wObjects = wObjects.slice( 0, data.limit );
+    }
+    return { wObjectsData: wObjects, hasMore };
 };
 
 const getFields = async function ( data ) {
