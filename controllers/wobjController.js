@@ -1,7 +1,7 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
-const { objectExperts, wobjectInfo } = require( '../utilities/operations' ).wobject;
+const { objectExperts, wobjectInfo, getManyObjects } = require( '../utilities/operations' ).wobject;
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -14,13 +14,14 @@ const index = async function ( req, res, next ) {
             exclude_object_types: req.body.exclude_object_types,
             required_fields: req.body.required_fields,
             limit: req.body.limit,
-            skip: req.body.skip
+            skip: req.body.skip,
+            sample: req.body.sample
         }, validators.wobject.indexSchema, next );
 
     if( !value ) {
         return ;
     }
-    const { wObjectsData, hasMore, error } = await Wobj.getAll( value );
+    const { wObjectsData, hasMore, error } = await getManyObjects.getMany( value );
 
     if ( error ) {
         return next( error );

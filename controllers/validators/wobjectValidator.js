@@ -15,7 +15,8 @@ exports.indexSchema = Joi.object().keys( {
     author_permlinks: Joi.array().items( Joi.string() ),
     object_types: Joi.array().items( Joi.string() ),
     exclude_object_types: Joi.array().items( Joi.string() ),
-    required_fields: Joi.array().items( Joi.string() )
+    required_fields: Joi.array().items( Joi.string() ).default( [] ),
+    sample: Joi.boolean()
 } );
 
 exports.postsScheme = Joi.object().keys( {

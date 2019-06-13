@@ -1,4 +1,5 @@
 module.exports = {
     objectExperts: require( './objectExperts' ),
-    wobjectInfo: require( './wobjectInfo' )
+    wobjectInfo: require( './wobjectInfo' ),
+    getManyObjects: require( './getManyObjects' )
 };
