@@ -41,7 +41,7 @@ wobjRoutes.route( '/wobjectSearch' )
 wobjRoutes.route( '/wobjectsFeed' )
     .post( WobjController.feed );
 
-userRoutes.route( '/user' )
+userRoutes.route( '/users' )
     .get( UserController.index );
 userRoutes.route( '/user/:userName' )
     .get( UserController.show );

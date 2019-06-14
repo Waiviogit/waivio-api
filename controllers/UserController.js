@@ -1,16 +1,25 @@
 const { User } = require( '../models' );
 const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
+const { getManyUsers } = require( '../utilities/operations/user' );
+const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
-    const { UserData, error } = await User.getAll( {
-        limit: Number( req.query.limit ) || 20,
-        skip: Number( req.query.skip ) || 0
-    } );
+    const value = validators.validate(
+        {
+            limit: req.query.limit,
+            skip: req.query.skip,
+            sample: req.query.sample
+        }, validators.wobject.indexSchema, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { users, error } = await getManyUsers.getUsers( value );
 
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( UserData );
+    res.status( 200 ).json( users );
 };
 
 const show = async function ( req, res, next ) {
