@@ -10,6 +10,7 @@
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
     "cors": "^2.8.4",
+    "cron": "^1.7.1",
     "debug": "~2.6.9",
     "dsteem": "^0.10.1",
     "express": "~4.16.0",

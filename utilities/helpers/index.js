@@ -5,5 +5,6 @@ module.exports = {
     userFeedHelper: require( './userFeedHelper' ),
     postHelper: require( './postHelper' ),
     generalSearchHelper: require( './generalSearchHelper' ),
-    objectTypeHelper: require( './objectTypeHelper' )
+    objectTypeHelper: require( './objectTypeHelper' ),
+    updateTopUsers: require( './updateTopUsers' )
 };

@@ -13,4 +13,26 @@ const getOne = async ( { name } ) => {
     }
 };
 
-module.exports = { getOne };
+const setTopUsers = async ( { users } ) => {
+    try {
+        await App.updateOne( { name: 'waivio' }, { $set: { top_users: users } } );
+        return { result: true };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+const aggregate = async ( pipeline ) => {
+    try {
+        const result = await App.aggregate( pipeline );
+
+        if( !result ) {
+            return { error: { status: 404, message: 'Not found!' } };
+        }
+        return { result };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getOne, setTopUsers, aggregate };
