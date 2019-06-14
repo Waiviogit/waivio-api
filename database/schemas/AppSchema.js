@@ -10,7 +10,11 @@ const AppSchema = new Schema( {
         required_fields: { type: [ String ], default: [] }
 
     } ],
-    supported_objects: { type: [ String ], index: true, default: [] }
+    supported_objects: { type: [ String ], index: true, default: [] },
+    top_users: [ {
+        name: { type: String },
+        weight: { type: Number }
+    } ]
 }, { timestamps: true } );
 
 const AppModel = mongoose.model( 'App', AppSchema );
