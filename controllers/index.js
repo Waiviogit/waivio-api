@@ -3,5 +3,6 @@ module.exports = {
     PostController: require( './postController' ),
     ObjectTypeController: require( './objectTypeController' ),
     UserController: require( './UserController' ),
-    AppController: require( './appController' )
+    AppController: require( './appController' ),
+    ImageController: require( './imageController' )
 };
