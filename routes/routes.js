@@ -3,7 +3,8 @@ const {
     UserController,
     PostController,
     ObjectTypeController,
-    AppController
+    AppController,
+    ImageController
 } = require( '../controllers' );
 const { Router } = require( 'express' );
 
@@ -61,6 +62,8 @@ postRoutes.route( '/posts' )
 
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );
+appRoutes.route( '/image' )
+    .post( ImageController.saveImage );
 objectTypeRoutes.route( '/objectTypes' )
     .post( ObjectTypeController.index );
 objectTypeRoutes.route( '/objectTypesSearch' )
