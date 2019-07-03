@@ -5,7 +5,6 @@ const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
 
-
 const getByObject = async function ( data ) { // data include author_permlink, limit, skip, locale
     let { condition, error: conditionError } = await getWobjFeedCondition( data.author_permlink );
 
@@ -152,6 +151,5 @@ const getByUserAndApp = async ( appWobjects, usersFollows, wobjectsFollows, limi
         return { error };
     }
 };
-
 
 module.exports = { getByObject, getFeedByObjects, getAllPosts, getByUserAndApp };
