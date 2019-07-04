@@ -26,7 +26,7 @@ exports.up = async function up ( done ) {
                 await image.uploadInS3( base64, fileName, '_small' );
                 await image.uploadInS3( base64, fileName, '_medium' );
                 await WObject.updateOne( {
-                    _id: imageFields[ 0 ]._id,
+                    _id: imageField._id,
                     'fields._id': imageField.field._id
                 }, {
                     $set: {
