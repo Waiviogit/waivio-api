@@ -37,4 +37,4 @@ const base64ByUrl = async( url ) => {
         .then( ( response ) => new Buffer( response.data, 'binary' ).toString( 'base64' ) );
 };
 
-module.exports = { prepareImage };
+module.exports = { prepareImage, base64ByUrl };
