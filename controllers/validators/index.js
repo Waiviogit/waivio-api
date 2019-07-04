@@ -2,6 +2,7 @@ const Joi = require( 'joi' );
 
 module.exports = {
     wobject: require( './wobjectValidator' ),
+    user: require( './userValidator' ),
     validate: ( data, schema, next ) => {
         const result = Joi.validate( data, schema );
 

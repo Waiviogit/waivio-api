@@ -38,7 +38,16 @@ const getByWobject = async( { author_permlink, skip = 0, limit = 30, username } 
     }
 };
 
+const countDocuments = async ( condition ) => {
+    try {
+        return { count: await UserWobjects.countDocuments( condition ) };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
 module.exports = {
     aggregate,
-    getByWobject
+    getByWobject,
+    countDocuments
 };

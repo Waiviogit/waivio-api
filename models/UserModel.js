@@ -1,5 +1,4 @@
 const UserModel = require( '../database' ).models.User;
-const UserWobjects = require( '../database' ).models.UserWobjects;
 const userSteemUtil = require( '../utilities/steemApi' ).userUtil;
 const { wObjectHelper } = require( '../utilities/helpers' );
 const { rankHelper } = require( '../utilities/helpers' );
@@ -69,40 +68,4 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
     }
 };
 
-const getUserObjectsShares = async function ( data ) {
-    try {
-        const wobjects = await UserWobjects.aggregate( [
-            { $match: { user_name: data.name } },
-            { $sort: { weight: -1 } },
-            { $skip: data.skip },
-            { $limit: data.limit },
-            {
-                $lookup: {
-                    from: 'wobjects',
-                    localField: 'author_permlink',
-                    foreignField: 'author_permlink',
-                    as: 'wobject'
-                }
-            },
-            { $unwind: '$wobject' },
-            {
-                $addFields: {
-                    'wobject.user_weight': '$weight'
-                }
-            },
-            { $replaceRoot: { newRoot: '$wobject' } }
-        ] ).option( { hint: { user_name: 1 } } );
-        let required_fields = [ ...REQUIREDFIELDS ];
-        const fields = required_fields.map( ( item ) => ( { name: item } ) );
-
-        wobjects.forEach( ( wObject ) => {
-            wObjectHelper.formatRequireFields( wObject, data.locale, fields );
-        } );
-        await rankHelper.calculateForUserWobjects( wobjects, true );
-        return { objects_shares: { wobjects, wobjects_count: await UserWobjects.countDocuments( { user_name: data.name } ) } };
-    } catch ( error ) {
-        return { error };
-    }
-};
-
-module.exports = { getAll, getOne, getObjectsFollow, getUserObjectsShares };
+module.exports = { getAll, getOne, getObjectsFollow };

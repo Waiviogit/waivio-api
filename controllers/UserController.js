@@ -1,6 +1,6 @@
 const { User } = require( '../models' );
 const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
-const { getManyUsers } = require( '../utilities/operations/user' );
+const { getManyUsers, objectsShares } = require( '../utilities/operations/user' );
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -9,7 +9,7 @@ const index = async function ( req, res, next ) {
             limit: req.query.limit,
             skip: req.query.skip,
             sample: req.query.sample
-        }, validators.wobject.indexSchema, next );
+        }, validators.user.indexSchema, next );
 
     if( !value ) {
         return ;
@@ -76,12 +76,22 @@ const feed = async function ( req, res, next ) {
 };
 
 const userObjectsShares = async function( req, res, next ) {
-    const { objects_shares, error } = await User.getUserObjectsShares( {
-        name: req.params.userName,
-        limit: req.body.limit || 30,
-        skip: req.body.skip || 0,
-        locale: req.body.locale || 'en-US'
-    } );
+
+    const value = validators.validate(
+        {
+            name: req.params.userName,
+            limit: req.body.limit || 30,
+            skip: req.body.skip || 0,
+            locale: req.body.locale || 'en-US',
+            exclude_object_types: req.body.exclude_object_types,
+            object_types: req.body.object_types
+        }, validators.user.objectsSharesSchema, next );
+
+    if( !value ) {
+        return ;
+    }
+
+    const { objects_shares, error } = await objectsShares.getUserObjectsShares( value );
 
     if( error ) {
         return next( error );
