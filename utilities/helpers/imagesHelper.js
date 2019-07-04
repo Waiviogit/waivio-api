@@ -11,7 +11,7 @@ const prepareImage = async ( req ) => {
                 reject( err );
                 return;
             }
-            resolve( { blobImage: files.image, imageUrl: fields.imageUrl } );
+            resolve( { blobImage: files.file, imageUrl: fields.imageUrl } );
         } );
     } );
     let base64 = null;
