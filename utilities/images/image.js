@@ -1,5 +1,4 @@
 const AWS = require( 'aws-sdk' );
-const config = require( '../../config' );
 const sharp = require( 'sharp' );
 
 class Image {
@@ -18,7 +17,7 @@ class Image {
             }
         } );
     }
-    async uploadInS3 ( { base64, fileName, size = '' } ) {
+    async uploadInS3 ( base64, fileName, size = '' ) {
         if ( base64 ) {
             const buffer = new Buffer( base64, 'base64' );
             const body = await this.resizeImage( { buffer, size } );
