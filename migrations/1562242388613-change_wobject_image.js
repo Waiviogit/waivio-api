@@ -22,7 +22,7 @@ exports.up = async function up ( done ) {
 
             if ( error ) {
                 console.log( error );
-            } else{
+            } else if( imageUrl ) {
                 await image.uploadInS3( base64, fileName, '_small' );
                 await image.uploadInS3( base64, fileName, '_medium' );
                 await WObject.updateOne( {
