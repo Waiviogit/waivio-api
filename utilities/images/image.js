@@ -27,6 +27,7 @@ class Image {
                     if ( err ) {
                         resolve( { error: `Error upload image:${err}` } );
                     } if ( data ) {
+                        console.log(data.Location);
                         resolve( { imageUrl: data.Location } );
                     }
                 } );
