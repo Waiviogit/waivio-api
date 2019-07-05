@@ -115,7 +115,11 @@ const getAll = async function ( data ) {
     let pipeline = [];
     let hasMore = false;
     let wObjects;
+    let required_fields = [ ...REQUIREDFIELDS ];
 
+    if( data.required_fields && Array.isArray( data.required_fields ) && data.required_fields.length ) {
+        required_fields.push( ...data.required_fields );
+    }
     if ( data.author_permlinks && Array.isArray( data.author_permlinks ) && data.author_permlinks.length ) {
         findParams.author_permlink = { $in: data.author_permlinks };
     }
@@ -141,7 +145,7 @@ const getAll = async function ( data ) {
                         input: '$fields',
                         as: 'field',
                         cond: {
-                            $in: [ '$$field.name', data.required_fields ]
+                            $in: [ '$$field.name', required_fields ]
                         }
                     }
                 }
