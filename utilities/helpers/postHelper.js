@@ -18,7 +18,7 @@ const getPostObjects = async function( author = '', permlink = '' ) {
             console.log( e );
         }
         if( Array.isArray( wobjs ) && !_.isEmpty( wobjs ) ) {
-            const { wObjectsData } = await Wobj.getAll( {
+            const { wObjectsData, error } = await Wobj.getAll( {
                 author_permlinks: wobjs.map( ( w ) => w.author_permlink ),
                 skip: 0,
                 limit: 100,
