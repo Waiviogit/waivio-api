@@ -33,10 +33,38 @@ const makePipeline = ( { name, skip, limit, object_types, exclude_object_types }
     return pipeline;
 };
 
+const makeCountPipeline = ( { name, object_types, exclude_object_types } ) => {
+    let pipeline = [
+        { $match: { user_name: name } },
+        {
+            $lookup: {
+                from: 'wobjects',
+                localField: 'author_permlink',
+                foreignField: 'author_permlink',
+                as: 'wobject'
+            }
+        },
+        { $unwind: '$wobject' },
+        {
+            $count: 'count'
+        }
+    ];
+
+    if( object_types || exclude_object_types ) {
+        pipeline.splice( 3, 0, {
+            $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } }
+        } );
+    }
+    return pipeline;
+};
+
 
 const getUserObjectsShares = async ( data ) => {
 
+    console.time( 'GET WOBJECTS:' );
     const { result: wobjects, error: userWobjectsError } = await UserWobjects.aggregate( makePipeline( data ) );
+
+    console.timeEnd( 'GET WOBJECTS:' );
 
     if ( userWobjectsError ) {
         return { error: userWobjectsError };
@@ -49,14 +77,16 @@ const getUserObjectsShares = async ( data ) => {
         wObjectHelper.formatRequireFields( wObject, data.locale, fields );
     } );
     await rankHelper.calculateForUserWobjects( wobjects, true );
-    const { count: wobjects_count, error } = await UserWobjects.countDocuments( { user_name: data.name } );
+    console.time( 'GET COUNT:' );
+    const { result: [ countResult ], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
+
+    console.timeEnd( 'GET COUNT:' );
 
     if ( error ) {
         return { error };
     }
 
-    return { objects_shares: { wobjects, wobjects_count } };
+    return { objects_shares: { wobjects, wobjects_count: countResult.count } };
 };
 
 module.exports = { getUserObjectsShares };
-
