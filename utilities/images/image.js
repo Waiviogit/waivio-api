@@ -19,19 +19,24 @@ class Image {
     }
     async uploadInS3 ( base64, fileName, size = '' ) {
         if ( base64 ) {
-            const buffer = new Buffer( base64, 'base64' );
-            const body = await this.resizeImage( { buffer, size } );
+            try{
+                const buffer = new Buffer( base64, 'base64' );
+                const body = await this.resizeImage( { buffer, size } );
 
-            return new Promise( ( resolve ) => {
-                this._s3.upload( { Body: body, Key: `${fileName}${size}` }, ( err, data ) => {
-                    if ( err ) {
-                        resolve( { error: `Error upload image:${err}` } );
-                    } if ( data ) {
-                        console.log(data.Location);
-                        resolve( { imageUrl: data.Location } );
-                    }
+                return new Promise( ( resolve ) => {
+                    this._s3.upload( { Body: body, Key: `${fileName}${size}` }, ( err, data ) => {
+                        if ( err ) {
+                            resolve( { error: `Error upload image:${err}` } );
+                        } if ( data ) {
+                            // console.log(data.Location);
+                            resolve( { imageUrl: data.Location } );
+                        }
+                    } );
                 } );
-            } );
+            } catch ( error ) {
+                return { error: error };
+            }
+
         }
         return { error: 'Error parse image' };
 
