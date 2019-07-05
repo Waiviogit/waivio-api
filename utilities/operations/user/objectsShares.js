@@ -61,10 +61,7 @@ const makeCountPipeline = ( { name, object_types, exclude_object_types } ) => {
 
 const getUserObjectsShares = async ( data ) => {
 
-    console.time( 'GET WOBJECTS:' );
     const { result: wobjects, error: userWobjectsError } = await UserWobjects.aggregate( makePipeline( data ) );
-
-    console.timeEnd( 'GET WOBJECTS:' );
 
     if ( userWobjectsError ) {
         return { error: userWobjectsError };
@@ -77,10 +74,7 @@ const getUserObjectsShares = async ( data ) => {
         wObjectHelper.formatRequireFields( wObject, data.locale, fields );
     } );
     await rankHelper.calculateForUserWobjects( wobjects, true );
-    console.time( 'GET COUNT:' );
     const { result: [ countResult ], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
-
-    console.timeEnd( 'GET COUNT:' );
 
     if ( error ) {
         return { error };

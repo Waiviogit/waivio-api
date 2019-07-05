@@ -1,28 +1,11 @@
 const UserModel = require( '../database' ).models.User;
-const userSteemUtil = require( '../utilities/steemApi' ).userUtil;
 const { wObjectHelper } = require( '../utilities/helpers' );
 const { rankHelper } = require( '../utilities/helpers' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 
 const getOne = async function ( name ) {
     try {
-        const { userData, err } = await userSteemUtil.getAccount( name ); // get user data from STEEM blockchain
-
-        if ( err ) {
-            return { error };
-        }
-        const user = await UserModel.findOne( { name: name } ).lean(); // get user data from db
-
-        if ( !user ) {
-            return { userData };
-        }
-        // await rankHelper.calculateForUserWobjects(user.w_objects);       //add rank to wobjects in user
-
-        if ( user ) {
-            user.objects_following_count = user.objects_follow.length;
-        }
-        Object.assign( userData, user ); // combine data from db and blockchain
-        return { userData };
+        return { user: await UserModel.findOne( { name: name } ).lean() };
     } catch ( error ) {
         return { error };
     }
@@ -68,4 +51,17 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow };
+const aggregate = async ( pipeline ) => {
+    try {
+        const result = await UserModel.aggregate( pipeline );
+
+        if( !result ) {
+            return { error: { status: 404, message: 'Not found!' } };
+        }
+        return { result };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getObjectsFollow, aggregate };
