@@ -8,6 +8,15 @@
     "nodeUrl": "https://api.steemit.com/"
   },
 
+  "staging": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waivio"
+    },
+    "nodeUrl": "https://api.steemit.com/"
+  },
+
   "development": {
     "db": {
       "host": "localhost",

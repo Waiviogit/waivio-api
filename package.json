@@ -6,6 +6,8 @@
     "start": "node ./bin/www"
   },
   "dependencies": {
+    "aws-sdk": "^2.478.0",
+    "axios": "^0.19.0",
     "bluebird": "^3.5.3",
     "body-parser": "^1.18.3",
     "cookie-parser": "~1.4.3",
@@ -14,6 +16,8 @@
     "debug": "~2.6.9",
     "dsteem": "^0.10.1",
     "express": "~4.16.0",
+    "formidable": "^1.2.1",
+    "fs": "^0.0.1-security",
     "http-errors": "~1.6.2",
     "joi": "^14.3.1",
     "lodash": "^4.17.11",
@@ -21,12 +25,9 @@
     "mongoose-lean-virtuals": "^0.3.4",
     "morgan": "~1.9.0",
     "redis": "^2.8.0",
-    "aws-sdk": "^2.478.0",
     "sharp": "^0.22.1",
     "uuid": "^3.3.2",
-    "formidable": "^1.2.1",
-    "fs": "^0.0.1-security",
-    "axios": "^0.19.0"
+    "migrate-mongoose": "^3.2.2"
   },
   "devDependencies": {
     "eslint": "^5.16.0"

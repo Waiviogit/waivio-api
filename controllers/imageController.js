@@ -6,13 +6,13 @@ const saveImage = async function ( req, res ) {
     const { imageUrl, error } = await image.uploadInS3( base64, fileName );
 
     if ( error ) {
-        res.status( 422 ).send( { error: error } );
+        return res.status( 422 ).send( { error: error } );
     }
     if( !req.query.notResizing ) {
         await image.uploadInS3( base64, fileName, '_small' );
         await image.uploadInS3( base64, fileName, '_medium' );
     }
-    res.status( 200 ).json( { image: imageUrl } );
+    return res.status( 200 ).json( { image: imageUrl } );
 };
 
 module.exports = { saveImage };
