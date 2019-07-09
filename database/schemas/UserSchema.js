@@ -8,7 +8,8 @@ const UserSchema = new Schema( {
     objects_follow: { type: [ String ], default: [] }, // arr of author_permlink of objects what user following
     users_follow: { type: [ String ], default: [] }, // arr of users which user follow
     json_metadata: { type: String, default: '' },
-    app_settings: { type: Object, default: [] } // custom settings like night_mode, default percent of vote etc.
+    app_settings: { type: Object, default: [] }, // custom settings like night_mode, default percent of vote etc.
+    count_posts: { type: Number, default: 0, index: true }
 }, { timestamps: true } );
 
 UserSchema.virtual( 'full_objects_follow', { // get full structure of objects instead only author_permlink
