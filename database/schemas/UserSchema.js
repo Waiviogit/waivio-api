@@ -10,7 +10,7 @@ const UserSchema = new Schema( {
     json_metadata: { type: String, default: '' },
     wobjects_weight: { type: Number, default: 0 }, // sum of weight of all wobjects
     count_posts: { type: Number, default: 0, index: true },
-    app_settings: { type: Object, default: [] }, // custom settings like night_mode, default percent of vote etc.
+    app_settings: { type: Object, default: [] } // custom settings like night_mode, default percent of vote etc.
 }, { timestamps: true } );
 
 UserSchema.index( { wobjects_weight: -1 } );
