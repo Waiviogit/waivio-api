@@ -1,5 +1,6 @@
 const PostModel = require( '../database' ).models.Post;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
+const postHelper = require( '../utilities/helpers/postHelper' );
 const { getWobjFeedCondition } = require( '../utilities/helpers/postHelper' );
 const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
@@ -27,6 +28,7 @@ const getByObject = async function ( data ) { // data include author_permlink, l
             }
         ] );
 
+        await postHelper.addAuthorWobjectsWeight( posts );
         posts = await fillObjects( posts );
         return { posts };
     } catch ( error ) {

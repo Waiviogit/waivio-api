@@ -1,4 +1,5 @@
 const Wobj = require( '../../models/wObjectModel' );
+const User = require( '../../models/UserModel' );
 const { Post } = require( '../../database' ).models;
 const { postsUtil } = require( '../steemApi' );
 const { redisGetter } = require( '../redis' );
@@ -83,6 +84,7 @@ const getPostsByCategory = async function( data ) {
             }
         }
     }
+    await addAuthorWobjectsWeight( posts );
     return { posts };
 };
 
@@ -128,4 +130,17 @@ const getWobjFeedCondition = async ( author_permlink ) => {
     return { condition: { $match: { $and: [ firstCond, secondCond ] } } };
 };
 
-module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition };
+const addAuthorWobjectsWeight = async ( posts = [] ) => {
+    const names = posts.map( ( p ) => p.author );
+    const { result: users, error } = await User.aggregate( [ { $match: { name: { $in: names } } }, { $project: { name: 1, wobjects_weight: 1 } } ] );
+
+    if( error || !users ) {
+        console.error( error || 'Get Users wobjects_weight no result!' );
+        return;
+    }
+    posts.forEach( ( post ) => {
+        post.author_wobjects_weight = users.find( ( user ) => user.name === post.author ).wobjects_weight;
+    } );
+};
+
+module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight };

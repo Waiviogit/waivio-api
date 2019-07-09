@@ -1,6 +1,6 @@
 const UserModel = require( '../database' ).models.User;
-const { wObjectHelper } = require( '../utilities/helpers' );
-const { rankHelper } = require( '../utilities/helpers' );
+const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
+const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 
 const getOne = async function ( name ) {
