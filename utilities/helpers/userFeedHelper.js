@@ -2,7 +2,7 @@ const { postsUtil, userUtil } = require( '../steemApi' );
 const { User } = require( '../../database' ).models;
 const Post = require( '../../models/PostModel' );
 const App = require( '../../models/AppModel' );
-const { getPostObjects } = require( './postHelper' );
+const { getPostObjects, addAuthorWobjectsWeight } = require( './postHelper' );
 const _ = require( 'lodash' );
 
 const getCombinedFeed = async function ( { user, limit, count_with_wobj, start_author, start_permlink, filter } ) {
@@ -71,6 +71,8 @@ const getCombinedFeed = async function ( { user, limit, count_with_wobj, start_a
         start_author = last_from_user_follow.author;
         start_permlink = last_from_user_follow.permlink;
     }
+    // add to each author of post field "wobjects_weight"
+    await addAuthorWobjectsWeight( combined_feed );
     return { result: { posts: combined_feed, count_with_wobj, start_permlink, start_author } };
 };
 
