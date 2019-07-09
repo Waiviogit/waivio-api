@@ -8,8 +8,8 @@ const UserSchema = new Schema( {
     objects_follow: { type: [ String ], default: [] }, // arr of author_permlink of objects what user following
     users_follow: { type: [ String ], default: [] }, // arr of users which user follow
     json_metadata: { type: String, default: '' },
-    wobjects_weight: { type: Number, default: 0 } // sum of weight of all wobjects
-    count_posts: { type: Number, default: 0, index: true }
+    wobjects_weight: { type: Number, default: 0 }, // sum of weight of all wobjects
+    count_posts: { type: Number, default: 0, index: true },
     app_settings: { type: Object, default: [] }, // custom settings like night_mode, default percent of vote etc.
 }, { timestamps: true } );
 
