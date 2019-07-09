@@ -12,6 +12,8 @@ const UserSchema = new Schema( {
     wobjects_weight: { type: Number, default: 0 } // sum of weight of all wobjects
 }, { timestamps: true } );
 
+UserSchema.index( { wobjects_weight: -1 } );
+
 UserSchema.virtual( 'full_objects_follow', { // get full structure of objects instead only author_permlink
     ref: 'wobject',
     localField: 'objects_follow',
