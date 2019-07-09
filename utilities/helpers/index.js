@@ -6,6 +6,5 @@ module.exports = {
     postHelper: require( './postHelper' ),
     generalSearchHelper: require( './generalSearchHelper' ),
     objectTypeHelper: require( './objectTypeHelper' ),
-    updateTopUsers: require( './updateTopUsers' ),
     imagesHelper: require( './imagesHelper' )
 };
