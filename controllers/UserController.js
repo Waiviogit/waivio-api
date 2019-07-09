@@ -1,6 +1,6 @@
 const { User } = require( '../models' );
 const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
-const { getManyUsers, objectsShares } = require( '../utilities/operations/user' );
+const { getManyUsers, objectsShares, getOneUser } = require( '../utilities/operations/user' );
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -23,7 +23,7 @@ const index = async function ( req, res, next ) {
 };
 
 const show = async function ( req, res, next ) {
-    const { userData, error } = await User.getOne( req.params.userName );
+    const { userData, error } = await getOneUser.getOne( req.params.userName );
 
     if ( error ) {
         return next( error );
