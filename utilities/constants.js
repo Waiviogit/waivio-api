@@ -19,7 +19,8 @@ const REQUIREDFIELDS = [
     'workTime',
     'chartid',
     'newsFilter',
-    'pageContent'
+    'pageContent',
+    'status'
 ];
 
 const REQUIREFIELDS_PARENT = [
