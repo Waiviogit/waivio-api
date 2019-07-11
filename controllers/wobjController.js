@@ -26,7 +26,9 @@ const index = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( { wobjects: wObjectsData, hasMore } );
+    // res.status( 200 ).json( { wobjects: wObjectsData, hasMore } );
+    res.result = { status: 200, json: { wobjects: wObjectsData, hasMore } };
+    next();
 };
 
 const show = async function ( req, res, next ) {

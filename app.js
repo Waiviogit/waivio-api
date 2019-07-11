@@ -3,14 +3,16 @@ const morgan = require( 'morgan' );
 const cors = require( 'cors' );
 const bodyParser = require( 'body-parser' );
 const { routes } = require( './routes' );
+const { moderateWobjects } = require( './utilities/operations/moderation' );
 
 const app = express();
 
 app.use( cors() );
 app.use( bodyParser.json() );
-app.use( bodyParser.urlencoded( { extended: true } ) )
+app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( morgan( 'dev' ) );
 app.use( '/', routes );
+app.use( '/', moderateWobjects.moderate );
 
 // error handler
 app.use( ( err, req, res, next ) => {
