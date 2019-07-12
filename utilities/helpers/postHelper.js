@@ -139,7 +139,7 @@ const addAuthorWobjectsWeight = async ( posts = [] ) => {
         return;
     }
     posts.forEach( ( post ) => {
-        post.author_wobjects_weight = users.find( ( user ) => user.name === post.author ).wobjects_weight;
+        post.author_wobjects_weight = _.get( users.find( ( user ) => user.name === post.author ), 'wobjects_weight' );
     } );
 };
 

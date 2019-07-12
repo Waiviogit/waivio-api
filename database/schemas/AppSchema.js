@@ -4,7 +4,10 @@ const Schema = mongoose.Schema;
 const AppSchema = new Schema( {
     name: { type: String, index: true, unique: true },
     admin: { type: String, index: true, required: true },
-    moderators: { type: [ String ], default: [] },
+    moderators: [ {
+        name: { type: String },
+        author_permlinks: { type: [ String ] }
+    } ],
     supported_object_types: [ {
         object_type: { type: String, index: true },
         required_fields: { type: [ String ], default: [] }
