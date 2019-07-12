@@ -1,6 +1,7 @@
 const UserWobjects = require( '../../../models/UserWobjects' );
 const User = require( '../../../models/UserModel' );
 const { userUtil: userSteemUtil } = require( '../../steemApi' );
+const _ = require( 'lodash' );
 
 const makePipeline = ( { name } ) => {
     let pipeline = [
@@ -47,7 +48,7 @@ const getOne = async function ( name ) {
     if ( !user ) {
         return { userData };
     }
-    user.objects_shares_count = user.objects_shares[ 0 ].count;
+    user.objects_shares_count = _.get( user, 'objects_shares[ 0 ].count' );;
     delete user.objects_shares;
 
     Object.assign( userData, user ); // combine data from db and blockchain

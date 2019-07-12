@@ -13,23 +13,55 @@ exports.moderate = async ( req, res, next ) => {
     const { app, error: getAppErr } = await getApp( req );
 
     if( getAppErr && !app ) {
-        console.error( getAppErr );
+        console.error( getAppErr || 'No app found!' );
         next();
     }
-    const { wobjects_path } = schema.find( ( s ) => s.path === req.route.path && s.method === req.method );
-    const wobjects_data = res.result.json[ wobjects_path ];
+    const current_schema = schema.find( ( s ) => s.path === req.route.path && s.method === req.method );
 
-    console.log( req );
+    switch( current_schema.case ) {
+        case 1:
+            // root result is single wobject
+            res.result.json = validateWobject( res.result.json, app.moderators );
+            break;
+        case 2:
+            // root result is array of wobjects
+            res.result.json = validateWobjects( res.result.json, app.moderators );
+            break;
+        case 3:
+            // root result is Object with array obj wobjects
+            res.result.json[ current_schema.wobjects_path ] = validateWobjects(
+                res.result.json[ current_schema.wobjects_path ],
+                app.moderators
+            );
+            break;
+        case 4:
+            // root result is array of objects (ex. posts), where each has prop array of wobjects
+            res.result.json = validateWobjectsEmbeddedArray(
+                res.result.json,
+                app.moderators,
+                current_schema.wobjects_path
+            );
+            break;
+        case 5:
+            // root result is array of fields (gallery, list, fields)
+            res.result.json = validateFields( { author_permlink: req.params.authorPermlink, fields: res.result.json }, app.moderators );
+            break;
+    }
+    next();
 };
 
+/**
+ * Get app name from request headers and find app with specified name in database
+ * @param {Object} req instance of current request
+ * @returns {Object} app, error
+ */
 const getApp = async ( req ) => {
     const app_name = _.get( req, 'headers.app' );
 
     if( !app_name ) {
         return;
     }
-    return await App.getOne( { name: app_name } );
-
+    return App.getOne( { name: app_name } );
 };
 
 /*
@@ -47,7 +79,18 @@ const validateWobjects = ( wobjects, moderators ) => {
         wobject.fields = validateFields( wobject, moderators );
         return wobject;
     } );
+};
 
+const validateWobject = ( wobject, moderators ) => {
+    wobject.fields = validateFields( wobject, moderators );
+    return wobject;
+};
+
+const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 'wobjects' ) => {
+    return root_array.map( ( root_doc ) => {
+        root_doc[ wobjects_path ] = validateWobjects( root_doc[ wobjects_path ], moderators );
+        return root_doc;
+    } );
 };
 
 /**
@@ -60,7 +103,7 @@ const validateWobjects = ( wobjects, moderators ) => {
 const validateFields = ( wobject, moderators ) => {
     return wobject.fields.map( ( field ) => {
         for( const vote of field.active_votes ) {
-            const moderator = moderators.find( ( m ) => m.name === vote.voter );
+            const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.include( wobject.author_permlink ) );
 
             if( moderator ) {
                 switch( true ) {

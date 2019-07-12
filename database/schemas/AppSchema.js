@@ -6,7 +6,7 @@ const AppSchema = new Schema( {
     admin: { type: String, index: true, required: true },
     moderators: [ {
         name: { type: String },
-        author_permlinks: { type: [ String ] }
+        author_permlinks: { type: [ String ], default: [] }
     } ],
     supported_object_types: [ {
         object_type: { type: String, index: true },
