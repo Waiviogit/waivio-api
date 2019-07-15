@@ -19,7 +19,8 @@ const index = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( users );
+    res.result = { status: 200, json: users };
+    next();
 };
 
 const show = async function ( req, res, next ) {
@@ -28,7 +29,8 @@ const show = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( userData );
+    res.result = { status: 200, json: userData };
+    next();
 };
 
 const objects_follow = async function ( req, res, next ) {
@@ -43,7 +45,8 @@ const objects_follow = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjects );
+    res.result = { status: 200, json: wobjects };
+    next();
 };
 
 const objects_feed = async function ( req, res, next ) {
@@ -56,7 +59,8 @@ const objects_feed = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( posts );
+    res.result = { status: 200, json: posts };
+    next();
 };
 
 const feed = async function ( req, res, next ) {
@@ -72,7 +76,8 @@ const feed = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( result );
+    res.result = { status: 200, json: result };
+    next();
 };
 
 const userObjectsShares = async function( req, res, next ) {
@@ -96,7 +101,8 @@ const userObjectsShares = async function( req, res, next ) {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( objects_shares );
+    res.result = { status: 200, json: objects_shares };
+    next();
 };
 
 const generalSearch = async function( req, res, next ) {
@@ -108,7 +114,8 @@ const generalSearch = async function( req, res, next ) {
     };
     const result = await generalSearchHelper.search( data );
 
-    res.status( 200 ).json( result );
+    res.result = { status: 200, json: result };
+    next();
 };
 
 module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, generalSearch };

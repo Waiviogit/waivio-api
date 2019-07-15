@@ -26,7 +26,6 @@ const index = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    // res.status( 200 ).json( { wobjects: wObjectsData, hasMore } );
     res.result = { status: 200, json: { wobjects: wObjectsData, hasMore } };
     next();
 };
@@ -48,7 +47,6 @@ const show = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    // res.status( 200 ).json( wobjectData );
     res.result = { status: 200, json: wobjectData };
     next();
 };
@@ -70,7 +68,8 @@ const posts = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectPosts );
+    res.result = { status: 200, json: wobjectPosts };
+    next();
 };
 
 const feed = async function ( req, res, next ) {
@@ -89,7 +88,8 @@ const feed = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( AllPosts );
+    res.result = { status: 200, json: AllPosts };
+    next();
 };
 
 const followers = async function ( req, res, next ) {
@@ -108,7 +108,8 @@ const followers = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectFollowers );
+    res.result = { status: 200, json: wobjectFollowers };
+    next();
 };
 
 const search = async function ( req, res, next ) {
@@ -129,7 +130,8 @@ const search = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wObjectsData );
+    res.result = { status: 200, json: wObjectsData };
+    next();
 };
 
 const fields = async function ( req, res, next ) {
@@ -146,7 +148,9 @@ const fields = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( fieldsData );
+    res.result = { status: 200, json: fieldsData };
+    req.author_permlink = req.params.authorPermlink;
+    next();
 };
 
 const gallery = async function ( req, res, next ) {
@@ -165,7 +169,9 @@ const gallery = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectGallery );
+    res.result = { status: 200, json: wobjectGallery };
+    req.author_permlink = req.params.authorPermlink;
+    next();
 };
 
 const list = async function ( req, res, next ) {
@@ -182,7 +188,8 @@ const list = async function ( req, res, next ) {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjects );
+    res.result = { status: 200, json: wobjects };
+    next();
 };
 
 const objectExpertise = async function ( req, res, next ) {
@@ -201,7 +208,8 @@ const objectExpertise = async function ( req, res, next ) {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( experts );
+    res.result = { status: 200, json: experts };
+    next();
 };
 
 module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise };

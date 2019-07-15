@@ -6,7 +6,8 @@ const show = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( post );
+    res.result = { status: 200, json: post };
+    next();
 };
 
 const getPostsByCategory = async function ( req, res, next ) {
@@ -21,7 +22,8 @@ const getPostsByCategory = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( posts );
+    res.result = { status: 200, json: posts };
+    next();
 };
 
 module.exports = { show, getPostsByCategory };

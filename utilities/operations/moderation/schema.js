@@ -18,11 +18,6 @@ exports.schema = [
         wobjects_path: 'wobjects'
     },
     {
-        path: '/wobject/:authorPermlink/fields',
-        method: 'POST',
-        case: 5
-    },
-    {
         path: '/wobjectsFeed',
         method: 'POST',
         case: 4
@@ -30,7 +25,7 @@ exports.schema = [
     {
         path: '/wobjectSearch',
         method: 'POST',
-        case: 5
+        case: 2
     },
     {
         path: '/wobject/:authorPermlink/fields',
@@ -39,8 +34,10 @@ exports.schema = [
     },
     {
         path: '/wobject/:authorPermlink/gallery',
-        method: 'POST',
-        case: 5
+        method: 'GET',
+        case: 2,
+        fields_path: 'items',
+        author_permlink_path: 'id'
     },
     {
         path: '/wobject/:authorPermlink/list',
@@ -81,26 +78,26 @@ exports.schema = [
     },
     {
         path: '/posts',
-        method: 'post',
+        method: 'POST',
         case: 4,
         wobjects_path: 'wobjects'
     },
     // object_type controller
     {
         path: '/objectTypes',
-        method: 'post',
+        method: 'POST',
         case: 4,
         wobjects_path: 'related_wobjects'
     },
     {
         path: '/objectTypesSearch',
-        method: 'post',
+        method: 'POST',
         case: 4,
         wobjects_path: 'related_wobjects'
     },
     {
         path: '/objectType/:objectTypeName',
-        method: 'post',
+        method: 'POST',
         case: 3,
         wobjects_path: 'related_wobjects'
     }

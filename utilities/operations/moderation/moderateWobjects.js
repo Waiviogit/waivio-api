@@ -12,11 +12,16 @@ exports.moderate = async ( req, res, next ) => {
     */
     const { app, error: getAppErr } = await getApp( req );
 
-    if( getAppErr && !app ) {
-        console.error( getAppErr || 'No app found!' );
+    if( getAppErr || !app ) {
         next();
+        return;
     }
     const current_schema = schema.find( ( s ) => s.path === req.route.path && s.method === req.method );
+
+    if( !current_schema ) {
+        next();
+        return;
+    }
 
     switch( current_schema.case ) {
         case 1:
@@ -25,7 +30,12 @@ exports.moderate = async ( req, res, next ) => {
             break;
         case 2:
             // root result is array of wobjects
-            res.result.json = validateWobjects( res.result.json, app.moderators );
+            res.result.json = validateWobjects(
+                res.result.json,
+                app.moderators,
+                current_schema.author_permlink_path,
+                current_schema.fields_path
+            );
             break;
         case 3:
             // root result is Object with array obj wobjects
@@ -44,7 +54,7 @@ exports.moderate = async ( req, res, next ) => {
             break;
         case 5:
             // root result is array of fields (gallery, list, fields)
-            res.result.json = validateFields( { author_permlink: req.params.authorPermlink, fields: res.result.json }, app.moderators );
+            res.result.json = validateFields( { author_permlink: req.author_permlink, fields: res.result.json }, app.moderators );
             break;
     }
     next();
@@ -59,7 +69,7 @@ const getApp = async ( req ) => {
     const app_name = _.get( req, 'headers.app' );
 
     if( !app_name ) {
-        return;
+        return {};
     }
     return App.getOne( { name: app_name } );
 };
@@ -72,11 +82,13 @@ Validation (moderation) means that to every field in each returned wobject which
  * Moderate wobjects by specified moderators
  * @param {Array} wobjects
  * @param {Array} moderators
+ * @param {string} ap_path, custom location of author_permlink, default is "author_permlink"
+ * @param {string} fields_path, custom location of fields, default is "fields"
  * @returns {Array} New array of wobjects.
  */
-const validateWobjects = ( wobjects, moderators ) => {
+const validateWobjects = ( wobjects, moderators, ap_path = 'author_permlink', fields_path = 'fields' ) => {
     return wobjects.map( ( wobject ) => {
-        wobject.fields = validateFields( wobject, moderators );
+        wobject[ fields_path ] = validateFields( wobject, moderators, ap_path, fields_path );
         return wobject;
     } );
 };
@@ -88,7 +100,9 @@ const validateWobject = ( wobject, moderators ) => {
 
 const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 'wobjects' ) => {
     return root_array.map( ( root_doc ) => {
-        root_doc[ wobjects_path ] = validateWobjects( root_doc[ wobjects_path ], moderators );
+        if( root_doc[ wobjects_path ] ) {
+            root_doc[ wobjects_path ] = validateWobjects( root_doc[ wobjects_path ], moderators );
+        }
         return root_doc;
     } );
 };
@@ -98,12 +112,14 @@ const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 
  * Check every field in wobject to exist UpVote or DownVote from moderators, if UpVote exists => field marks some special key("upvotedByModerator") which indicate high priority of this field, else if DownVote exists => field remove from wobject fields
  * @param {Object}  wobject
  * @param {Array}   moderators
+ * @param {string} ap_path, custom location of author_permlink, default is "author_permlink"
+ * @param {string} fields_path, custom location of fields, default is "fields"
  * @returns {Array} New array of moderated fields
  */
-const validateFields = ( wobject, moderators ) => {
-    return wobject.fields.map( ( field ) => {
+const validateFields = ( wobject, moderators, ap_path = 'author_permlink', fields_path = 'fields' ) => {
+    return wobject[ fields_path ].map( ( field ) => {
         for( const vote of field.active_votes ) {
-            const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.includes( wobject.author_permlink ) );
+            const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.includes( wobject[ ap_path ] ) );
 
             if( moderator ) {
                 switch( true ) {
