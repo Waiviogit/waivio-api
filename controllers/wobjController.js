@@ -48,7 +48,9 @@ const show = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectData );
+    // res.status( 200 ).json( wobjectData );
+    res.result = { status: 200, json: wobjectData };
+    next();
 };
 
 const posts = async function ( req, res, next ) {

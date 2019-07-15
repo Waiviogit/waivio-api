@@ -75,7 +75,7 @@ Validation (moderation) means that to every field in each returned wobject which
  * @returns {Array} New array of wobjects.
  */
 const validateWobjects = ( wobjects, moderators ) => {
-    return map( ( wobject ) => {
+    return wobjects.map( ( wobject ) => {
         wobject.fields = validateFields( wobject, moderators );
         return wobject;
     } );
@@ -103,7 +103,7 @@ const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 
 const validateFields = ( wobject, moderators ) => {
     return wobject.fields.map( ( field ) => {
         for( const vote of field.active_votes ) {
-            const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.include( wobject.author_permlink ) );
+            const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.includes( wobject.author_permlink ) );
 
             if( moderator ) {
                 switch( true ) {

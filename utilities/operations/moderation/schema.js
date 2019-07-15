@@ -1,8 +1,10 @@
 exports.schema = [
+    // wobject controller
     {
         path: '/wobject',
         method: 'POST',
-        case: 2
+        case: 3,
+        wobjects_path: 'wobjects'
     },
     {
         path: '/wobject/:authorPermlink',
@@ -19,5 +21,87 @@ exports.schema = [
         path: '/wobject/:authorPermlink/fields',
         method: 'POST',
         case: 5
+    },
+    {
+        path: '/wobjectsFeed',
+        method: 'POST',
+        case: 4
+    },
+    {
+        path: '/wobjectSearch',
+        method: 'POST',
+        case: 5
+    },
+    {
+        path: '/wobject/:authorPermlink/fields',
+        method: 'POST',
+        case: 5
+    },
+    {
+        path: '/wobject/:authorPermlink/gallery',
+        method: 'POST',
+        case: 5
+    },
+    {
+        path: '/wobject/:authorPermlink/list',
+        method: 'POST',
+        case: 2
+    },
+    // user controller
+    {
+        path: '/user/:userName/following_objects',
+        method: 'POST',
+        case: 2
+    },
+    {
+        path: '/user/:userName/objects_feed',
+        method: 'POST',
+        case: 4,
+        wobjects_path: 'wobjects'
+    },
+    {
+        path: '/user/:userName/objects_shares',
+        method: 'POST',
+        case: 3,
+        wobjects_path: 'wobjects'
+    },
+    // general search
+    {
+        path: '/generalSearch',
+        method: 'POST',
+        case: 3,
+        wobjects_path: 'wobjects'
+    },
+    // post controller
+    {
+        path: '/post/:author/:permlink',
+        method: 'GET',
+        case: 3,
+        wobjects_path: 'wobjects'
+    },
+    {
+        path: '/posts',
+        method: 'post',
+        case: 4,
+        wobjects_path: 'wobjects'
+    },
+    // object_type controller
+    {
+        path: '/objectTypes',
+        method: 'post',
+        case: 4,
+        wobjects_path: 'related_wobjects'
+    },
+    {
+        path: '/objectTypesSearch',
+        method: 'post',
+        case: 4,
+        wobjects_path: 'related_wobjects'
+    },
+    {
+        path: '/objectType/:objectTypeName',
+        method: 'post',
+        case: 3,
+        wobjects_path: 'related_wobjects'
     }
 ];

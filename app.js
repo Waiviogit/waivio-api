@@ -14,7 +14,10 @@ app.use( morgan( 'dev' ) );
 app.use( '/', routes );
 // Moderate wobjects depend on app moderators before send
 app.use( '/', moderateWobjects.moderate );
-
+// Last middleware which send data from "res.result.json" to client
+app.use( ( req, res, next ) => {
+    res.status( res.result.status || 200 ).json( res.result.json );
+} );
 // error handler
 app.use( ( err, req, res, next ) => {
     // set locals, only providing error in development
@@ -24,6 +27,5 @@ app.use( ( err, req, res, next ) => {
     // render the error page
     res.status( err.status || 500 ).json( { message: err.message } );
 } );
-
 
 module.exports = app;

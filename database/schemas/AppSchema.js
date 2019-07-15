@@ -5,7 +5,7 @@ const AppSchema = new Schema( {
     name: { type: String, index: true, unique: true },
     admin: { type: String, index: true, required: true },
     moderators: [ {
-        name: { type: String },
+        name: { type: String, required: true },
         author_permlinks: { type: [ String ], default: [] }
     } ],
     supported_object_types: [ {
@@ -13,6 +13,14 @@ const AppSchema = new Schema( {
         required_fields: { type: [ String ], default: [] }
 
     } ],
+    blacklists: {
+        wobjects: [],
+        posts: {
+            author: { type: String, require: true },
+            permlink: { type: String, require: true }
+        },
+        users: []
+    },
     supported_objects: { type: [ String ], index: true, default: [] }
 }, { timestamps: true } );
 
