@@ -15,10 +15,10 @@ const AppSchema = new Schema( {
     } ],
     blacklists: {
         wobjects: [],
-        posts: {
-            author: { type: String, require: true },
-            permlink: { type: String, require: true }
-        },
+        posts: [ {
+            author: { type: String, required: true },
+            permlink: { type: String, required: true }
+        } ],
         users: []
     },
     supported_objects: { type: [ String ], index: true, default: [] }
