@@ -13,15 +13,6 @@ const getOne = async ( { name } ) => {
     }
 };
 
-const setTopUsers = async ( { users } ) => {
-    try {
-        await App.updateOne( { name: 'waivio' }, { $set: { top_users: users } } );
-        return { result: true };
-    } catch ( error ) {
-        return { error };
-    }
-};
-
 const aggregate = async ( pipeline ) => {
     try {
         const result = await App.aggregate( pipeline );
@@ -35,4 +26,4 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-module.exports = { getOne, setTopUsers, aggregate };
+module.exports = { getOne, aggregate };
