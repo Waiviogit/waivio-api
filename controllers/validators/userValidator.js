@@ -33,9 +33,6 @@ exports.objectsFeedSchema = Joi.object().keys( {
 exports.feedSchema = Joi.object().keys( {
     name: Joi.string().required(),
     limit: Joi.number().min( 0 ).max( 50 ).default( 20 ),
-    count_with_wobj: Joi.number().min( 0 ).default( 0 ),
-    start_author: Joi.string(),
-    start_permlink: Joi.string(),
     filter: Joi.object().keys( {
         byApp: Joi.string()
     } )

@@ -77,9 +77,6 @@ const feed = async function ( req, res, next ) {
     const value = validators.validate( {
         name: req.params.userName,
         limit: req.body.limit,
-        count_with_wobj: req.body.count_with_wobj,
-        start_author: req.body.start_author,
-        start_permlink: req.body.start_permlink,
         filter: req.body.filter
     }, validators.user.feedSchema, next );
 
