@@ -5,6 +5,7 @@ const { getWobjFeedCondition } = require( '../utilities/helpers/postHelper' );
 const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
+const _ = require( 'lodash' );
 
 const getByObject = async function ( data ) { // data include author_permlink, limit, skip, locale
     let { condition, error: conditionError } = await getWobjFeedCondition( data.author_permlink );
@@ -15,7 +16,7 @@ const getByObject = async function ( data ) { // data include author_permlink, l
     try {
         let posts = await PostModel.aggregate( [
             condition,
-            { $sort: { _id: -1 } },
+            { $sort: { createdAt: -1 } },
             { $skip: data.skip },
             { $limit: data.limit },
             {
@@ -46,7 +47,7 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
                         { author: data.user } ]
                 }
             },
-            { $sort: { _id: -1 } },
+            { $sort: { createdAt: -1 } },
             { $skip: data.skip },
             { $limit: data.limit },
             {
@@ -69,7 +70,7 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
 const getAllPosts = async function ( data ) {
     try {
         const aggregatePipeline = [
-            { $sort: { _id: -1 } },
+            { $sort: { createdAt: -1 } },
             { $skip: data.skip },
             { $limit: data.limit },
             {
@@ -104,54 +105,31 @@ const getAllPosts = async function ( data ) {
     }
 };
 
-const fillObjects = async ( posts, locale = 'en-US' ) => {
+const fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObjects' ) => {
     const fields = REQUIREDFIELDS.map( ( item ) => ( { name: item } ) );
 
     for ( const post of posts ) {
         for ( let wObject of post.wobjects ) {
-            wObject = Object.assign( wObject, post.fullObjects.find( ( i ) => i.author_permlink === wObject.author_permlink ) );
+            wObject = Object.assign( wObject, post[ wobjects_path ].find( ( i ) => i.author_permlink === wObject.author_permlink ) );
             wObjectHelper.formatRequireFields( wObject, locale, fields );
         }
         await rankHelper.calculateWobjectRank( post.wobjects ); // calculate rank for wobject
-        delete post.fullObjects;
+        delete post[ wobjects_path ];
     }
     return posts;
 };
 
-const getByUserAndApp = async ( appWobjects, usersFollows, wobjectsFollows, limit, skip ) => {
+const aggregate = async ( pipeline ) => {
     try {
-        let posts = await PostModel.aggregate( [
-            {
-                $match: {
-                    $and: [
-                        { 'wobjects.author_permlink': { $in: appWobjects } },
-                        {
-                            $or: [
-                                { 'wobjects.author_permlink': { $in: wobjectsFollows } },
-                                { author: { $in: usersFollows } }
-                            ]
-                        }
-                    ]
-                }
-            },
-            { $sort: { _id: -1 } },
-            { $skip: skip },
-            { $limit: limit },
-            {
-                $lookup: {
-                    from: 'wobjects',
-                    localField: 'wobjects.author_permlink',
-                    foreignField: 'author_permlink',
-                    as: 'fullObjects'
-                }
-            }
-        ] );
+        const posts = await PostModel.aggregate( pipeline );
 
-        posts = await fillObjects( posts );
+        if( _.isEmpty( posts ) ) {
+            return { error: { status: 404, message: 'Posts not found!' } };
+        }
         return { posts };
     } catch ( error ) {
         return { error };
     }
 };
 
-module.exports = { getByObject, getFeedByObjects, getAllPosts, getByUserAndApp };
+module.exports = { getByObject, getFeedByObjects, getAllPosts, aggregate, fillObjects };
