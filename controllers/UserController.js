@@ -1,6 +1,6 @@
 const { User } = require( '../models' );
 const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
-const { getManyUsers, objectsShares, getOneUser } = require( '../utilities/operations/user' );
+const { getManyUsers, objectsShares, getOneUser, getUserFeed } = require( '../utilities/operations/user' );
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -75,23 +75,20 @@ const objects_feed = async function ( req, res, next ) {
 
 const feed = async function ( req, res, next ) {
     const value = validators.validate( {
-        user: req.params.userName,
+        name: req.params.userName,
         limit: req.body.limit,
-        count_with_wobj: req.body.count_with_wobj,
-        start_author: req.body.start_author,
-        start_permlink: req.body.start_permlink,
         filter: req.body.filter
     }, validators.user.feedSchema, next );
 
     if( !value ) {
         return ;
     }
-    const { result, error } = await userFeedHelper.getCombinedFeed( value );
+    const { posts, error } = await getUserFeed.getFeed( value );
 
     if ( error ) {
         return next( error );
     }
-    res.result = { status: 200, json: result };
+    res.result = { status: 200, json: posts };
     next();
 };
 
