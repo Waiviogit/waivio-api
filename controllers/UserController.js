@@ -76,6 +76,7 @@ const objects_feed = async function ( req, res, next ) {
 const feed = async function ( req, res, next ) {
     const value = validators.validate( {
         name: req.params.userName,
+        skip: req.body.skip,
         limit: req.body.limit,
         filter: req.body.filter
     }, validators.user.feedSchema, next );
