@@ -51,6 +51,11 @@ exports.schema = [
         case: 2
     },
     {
+        path: '/user/:userName/feed',
+        method: 'POST',
+        case: 4
+    },
+    {
         path: '/user/:userName/objects_feed',
         method: 'POST',
         case: 4,
