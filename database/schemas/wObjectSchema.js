@@ -13,6 +13,7 @@ const WObjectSchema = new Schema(
         author: { type: String, required: true },
         author_permlink: { type: String, index: true, unique: true, required: true }, // unique identity for wobject, link to create object POST
         weight: { type: Number, default: 1 }, // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
+        count_posts: { type: Number, default: 0 },
         parent: { type: String, default: '' },
         children: { type: [ String ], default: [] },
         fields: [ {
