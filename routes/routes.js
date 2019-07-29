@@ -4,7 +4,8 @@ const {
     PostController,
     ObjectTypeController,
     AppController,
-    ImageController
+    ImageController,
+    globalSearchController
 } = require( '../controllers' );
 const { Router } = require( 'express' );
 
@@ -72,6 +73,6 @@ objectTypeRoutes.route( '/objectType/:objectTypeName' )
     .post( ObjectTypeController.show );
 
 userRoutes.route( '/generalSearch' )
-    .post( UserController.generalSearch );
+    .post( globalSearchController.globalSearch );
 
 module.exports = apiRoutes;

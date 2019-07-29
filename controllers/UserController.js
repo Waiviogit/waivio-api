@@ -1,5 +1,5 @@
 const { User } = require( '../models' );
-const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
+const { userFeedHelper } = require( '../utilities/helpers' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed } = require( '../utilities/operations/user' );
 const validators = require( './validators' );
 
@@ -118,21 +118,4 @@ const userObjectsShares = async function( req, res, next ) {
     next();
 };
 
-const generalSearch = async function( req, res, next ) {
-    const value = validators.validate( {
-        searchString: req.body.string,
-        userLimit: req.body.userLimit,
-        wobjectsLimit: req.body.wobjectsLimit,
-        objectsTypeLimit: req.body.objectsTypeLimit
-    }, validators.user.generalSearchSchema, next );
-
-    if( !value ) {
-        return ;
-    }
-    const result = await generalSearchHelper.search( value );
-
-    res.result = { status: 200, json: result };
-    next();
-};
-
-module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, generalSearch };
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares };

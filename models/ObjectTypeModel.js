@@ -82,4 +82,17 @@ const getOne = async ( { name } ) => {
     }
 };
 
-module.exports = { getAll, search, getOne };
+const aggregate = async ( pipeline = [] ) => {
+    try {
+        const result = await ObjectType.aggregate( pipeline );
+
+        if( !result ) {
+            return { error: { status: 404, message: 'Not found!' } };
+        }
+        return { result };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, search, getOne, aggregate };

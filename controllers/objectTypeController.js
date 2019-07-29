@@ -1,5 +1,6 @@
 const { ObjectType } = require( '../models' );
 const { objectTypeHelper } = require( '../utilities/helpers' );
+const { searchObjectTypes } = require( '../utilities/operations/search/searchTypes' );
 
 const index = async ( req, res, next ) => {
     const { objectTypes, error } = await ObjectType.getAll( {
@@ -31,7 +32,7 @@ const show = async ( req, res, next ) => {
 };
 
 const search = async ( req, res, next ) => {
-    const { objectTypes, error } = await ObjectType.search( {
+    const { objectTypes, error } = await searchObjectTypes( {
         string: req.body.search_string,
         skip: req.body.skip || 0,
         limit: req.body.limit || 30
