@@ -38,3 +38,8 @@ exports.feedSchema = Joi.object().keys( {
         byApp: Joi.string()
     } )
 } );
+
+exports.searchSchema = Joi.object().keys( {
+    searchString: Joi.string().required(),
+    limit: Joi.number().min( 0 ).max( 100 ).default( 20 )
+} );

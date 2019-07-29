@@ -55,6 +55,8 @@ userRoutes.route( '/user/:userName/feed' )
     .post( UserController.feed );
 userRoutes.route( '/user/:userName/objects_shares' )
     .post( UserController.userObjectsShares );
+userRoutes.route( '/users/search' )
+    .get( UserController.searchUsers );
 
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
