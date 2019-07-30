@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 
 const UserSchema = new Schema( {
     name: { type: String, index: true, unique: true },
+    alias: { type: String },
     profile_image: { type: String },
     read_locales: { type: [ String ], default: [] },
     objects_follow: { type: [ String ], default: [] }, // arr of author_permlink of objects what user following
