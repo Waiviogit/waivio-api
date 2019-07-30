@@ -1,6 +1,7 @@
 const { User } = require( '../models' );
-const { userFeedHelper, generalSearchHelper } = require( '../utilities/helpers' );
+const { userFeedHelper } = require( '../utilities/helpers' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed } = require( '../utilities/operations/user' );
+const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -118,21 +119,24 @@ const userObjectsShares = async function( req, res, next ) {
     next();
 };
 
-const generalSearch = async function( req, res, next ) {
-    const value = validators.validate( {
-        searchString: req.body.string,
-        userLimit: req.body.userLimit,
-        wobjectsLimit: req.body.wobjectsLimit,
-        objectsTypeLimit: req.body.objectsTypeLimit
-    }, validators.user.generalSearchSchema, next );
+const searchUsers = async ( req, res, next ) => {
+    const value = validators.validate(
+        {
+            searchString: req.query.searchString,
+            limit: req.query.limit
+        }, validators.user.searchSchema, next );
 
     if( !value ) {
         return ;
     }
-    const result = await generalSearchHelper.search( value );
 
-    res.result = { status: 200, json: result };
+    const { users, error } = await searchByUsers( { ...value, string: value.searchString } );
+
+    if( error ) {
+        return next( error );
+    }
+    res.result = { status: 200, json: users };
     next();
 };
 
-module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, generalSearch };
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers };
