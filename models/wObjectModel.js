@@ -294,4 +294,4 @@ const isFieldExist = async ( { author_permlink, fieldName } ) => {
     }
 };
 
-module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };
+module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };

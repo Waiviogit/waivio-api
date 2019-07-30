@@ -74,7 +74,7 @@ const getUserObjectsShares = async ( data ) => {
         wObjectHelper.formatRequireFields( wObject, data.locale, fields );
     } );
     await rankHelper.calculateForUserWobjects( wobjects, true );
-    const { result: [ countResult = 0 ] = [], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
+    const { result: [ countResult = { count: 0 } ] = [], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
 
     if ( error ) {
         return { error };

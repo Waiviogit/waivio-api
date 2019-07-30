@@ -2,6 +2,7 @@ const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
 const { objectExperts, wobjectInfo, getManyObjects } = require( '../utilities/operations' ).wobject;
+const { wobjects: { searchWobjects } } = require( '../utilities/operations' ).search;
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -125,12 +126,12 @@ const search = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { wObjectsData, error } = await Wobj.search( value );
+    const { wobjects, error } = await searchWobjects( value );
 
     if ( error ) {
         return next( error );
     }
-    res.result = { status: 200, json: wObjectsData };
+    res.result = { status: 200, json: wobjects };
     next();
 };
 
