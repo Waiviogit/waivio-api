@@ -1,6 +1,6 @@
 const { User } = require( '../models' );
 const { userFeedHelper, authoriseUser } = require( '../utilities/helpers' );
-const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata } = require( '../utilities/operations/user' );
+const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getMetadata } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -15,7 +15,7 @@ const index = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { users, error } = await getManyUsers.getUsers( value );
+    const { users, error } = await getManyUsers( value );
 
     if ( error ) {
         return next( error );
@@ -28,7 +28,7 @@ const show = async function ( req, res, next ) {
     const value = validators.validate( req.params.userName, validators.user.showSchema, next );
 
     await authoriseUser.authorise( value );
-    const { userData, error } = await getOneUser.getOne( value );
+    const { userData, error } = await getOneUser( value );
 
     if ( error ) {
         return next( error );
@@ -49,10 +49,21 @@ const updateUserMetadata = async function ( req, res, next ) {
     const { error: authError } = await authoriseUser.authorise( value.user_name );
 
     if( authError ) return next( authError );
-    const { user_metadata, error } = await updateMetadata.update( value );
+    const { user_metadata, error } = await updateMetadata( value );
 
     if ( error ) return next( error );
-    res.result = { status: 200, json: user_metadata };
+    res.result = { status: 200, json: { user_metadata } };
+    next();
+};
+
+const getUserMetadata = async function ( req, res, next ) {
+    const { error: authError } = await authoriseUser.authorise( req.params.userName );
+
+    if( authError ) return next( authError );
+    const { user_metadata, error } = await getMetadata( req.params.userName );
+
+    if ( error ) return next( error );
+    res.result = { status: 200, json: { user_metadata } };
     next();
 };
 
@@ -106,7 +117,7 @@ const feed = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { posts, error } = await getUserFeed.getFeed( value );
+    const { posts, error } = await getUserFeed( value );
 
     if ( error ) {
         return next( error );
@@ -160,4 +171,4 @@ const searchUsers = async ( req, res, next ) => {
     next();
 };
 
-module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata };
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata, getUserMetadata };

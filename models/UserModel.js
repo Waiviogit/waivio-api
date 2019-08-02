@@ -64,11 +64,13 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const updateOne = async ( condition, updateData ) => {
+const updateOne = async ( condition, updateData = {} ) => {
     try {
-        const updatedUser = await UserModel.findOneAndUpdate( condition, updateData, { new: true } ).select( '+user_metadata' );
+        const user = await UserModel
+            .findOneAndUpdate( condition, updateData, { upsert: true, new: true, setDefaultsOnInsert: true } )
+            .select( '+user_metadata' );
 
-        return { user: updatedUser };
+        return { user };
     } catch ( error ) {
         return { error };
     }

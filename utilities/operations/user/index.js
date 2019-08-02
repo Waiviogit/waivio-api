@@ -3,5 +3,6 @@ module.exports = {
     objectsShares: require( './objectsShares' ),
     getOneUser: require( './getOneUser' ),
     getUserFeed: require( './getUserFeed' ),
-    updateMetadata: require( './updateMetadata' )
+    updateMetadata: require( './updateMetadata' ),
+    getMetadata: require( './getUserMetadata' )
 };
