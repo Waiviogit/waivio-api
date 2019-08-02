@@ -53,7 +53,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
 
 const aggregate = async ( pipeline ) => {
     try {
-        const result = await UserModel.aggregate( pipeline );
+        const result = await UserModel.aggregate( pipeline ).exec();
 
         if( !result ) {
             return { error: { status: 404, message: 'Not found!' } };

@@ -1,3 +1,4 @@
+const { getNamespace } = require( 'cls-hooked' );
 const mongoose = require( 'mongoose' );
 const Schema = mongoose.Schema;
 const { LANGUAGES } = require( '../../utilities/constants' );
@@ -38,13 +39,12 @@ const UserSchema = new Schema( {
     name: { type: String, index: true, unique: true },
     alias: { type: String },
     profile_image: { type: String },
-    read_locales: { type: [ String ], default: [] },
     objects_follow: { type: [ String ], default: [] }, // arr of author_permlink of objects what user following
     users_follow: { type: [ String ], default: [] }, // arr of users which user follow
     json_metadata: { type: String, default: '' },
     wobjects_weight: { type: Number, default: 0 }, // sum of weight of all wobjects
     count_posts: { type: Number, default: 0, index: true },
-    user_metadata: { type: UserMetadataSchema, default: () => ( {} ) }
+    user_metadata: { type: UserMetadataSchema, default: () => ( {} ), select: false }
 }, { timestamps: true } );
 
 UserSchema.index( { wobjects_weight: -1 } );
@@ -56,6 +56,13 @@ UserSchema.virtual( 'full_objects_follow', { // get full structure of objects in
     justOne: false
 } );
 
+UserSchema.pre( 'aggregate', function () {
+    const session = getNamespace( 'request-session' );
+
+    if( !session.get( 'authorised_user' ) ) {
+        this.pipeline().push( { $project: { user_metadata: 0 } } );
+    }
+} );
 
 const UserModel = mongoose.model( 'User', UserSchema );
 

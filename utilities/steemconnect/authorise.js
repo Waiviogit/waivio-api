@@ -10,8 +10,7 @@ exports.authoriseUser = async ( token ) => {
         return { error: { message: '"token" must exist!' } };
     }
     const api = sc2.Initialize( {
-        accessToken: token,
-        app: 'busy'
+        accessToken: token
     } );
     let user;
 
