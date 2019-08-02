@@ -6,12 +6,13 @@ const { routes } = require( './routes' );
 const { moderateWobjects } = require( './utilities/operations/moderation' );
 const { createNamespace } = require( 'cls-hooked' );
 const session = createNamespace( 'request-session' );
-
 const app = express();
 
-app.use( ( req, res, next ) => session.run( () => next() ) );
-app.use( cors() );
 app.use( bodyParser.json() );
+app.use( ( req, res, next ) => {
+    session.run( () => next() );
+} );
+app.use( cors() );
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( morgan( 'dev' ) );
 // write to store user steemconnect access_token if it exist

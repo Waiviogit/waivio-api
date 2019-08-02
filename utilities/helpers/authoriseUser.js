@@ -7,6 +7,7 @@ exports.authorise = async ( username ) => {
 
     if( token_user_name && token_user_name === username ) {
         session.set( 'authorised_user', username );
-        console.log();
+        return {};
     }
+    return { error: { status: 401, message: 'Token not valid!' } };
 };

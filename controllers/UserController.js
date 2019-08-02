@@ -1,6 +1,6 @@
 const { User } = require( '../models' );
 const { userFeedHelper, authoriseUser } = require( '../utilities/helpers' );
-const { getManyUsers, objectsShares, getOneUser, getUserFeed } = require( '../utilities/operations/user' );
+const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -34,6 +34,25 @@ const show = async function ( req, res, next ) {
         return next( error );
     }
     res.result = { status: 200, json: userData };
+    next();
+};
+
+const updateUserMetadata = async function ( req, res, next ) {
+    const value = validators.validate( {
+        user_name: req.params.userName,
+        user_metadata: req.body.user_metadata
+    }, validators.user.updateMetadataSchema, next );
+
+    if( !value ) {
+        return ;
+    }
+    const { error: authError } = await authoriseUser.authorise( value.user_name );
+
+    if( authError ) return next( authError );
+    const { user_metadata, error } = await updateMetadata.update( value );
+
+    if ( error ) return next( error );
+    res.result = { status: 200, json: user_metadata };
     next();
 };
 
@@ -141,4 +160,4 @@ const searchUsers = async ( req, res, next ) => {
     next();
 };
 
-module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers };
+module.exports = { index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata };

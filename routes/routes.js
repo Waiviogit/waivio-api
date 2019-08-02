@@ -57,6 +57,8 @@ userRoutes.route( '/user/:userName/objects_shares' )
     .post( UserController.userObjectsShares );
 userRoutes.route( '/users/search' )
     .get( UserController.searchUsers );
+userRoutes.route( '/user/:userName/updateMetadata' )
+    .put( UserController.updateUserMetadata );
 
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );

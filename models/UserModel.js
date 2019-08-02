@@ -64,4 +64,14 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow, aggregate };
+const updateOne = async ( condition, updateData ) => {
+    try {
+        const updatedUser = await UserModel.findOneAndUpdate( condition, updateData, { new: true } ).select( '+user_metadata' );
+
+        return { user: updatedUser };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getObjectsFollow, aggregate, updateOne };
