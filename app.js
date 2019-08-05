@@ -17,7 +17,7 @@ app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( morgan( 'dev' ) );
 // write to store user steemconnect access_token if it exist
 app.use( ( req, res, next ) => {
-    session.set( 'access_token', req.headers.access_token );
+    session.set( 'access-token', req.headers.access_token );
     next();
 } );
 app.use( '/', routes );
