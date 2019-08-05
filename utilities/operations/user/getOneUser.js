@@ -55,4 +55,4 @@ const getOne = async function ( name ) {
     return { userData };
 };
 
-module.exports = { getOne };
+module.exports = getOne;

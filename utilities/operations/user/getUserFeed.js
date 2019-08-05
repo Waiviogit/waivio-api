@@ -46,4 +46,4 @@ const getFeed = async function ( { name, limit = 20, skip = 0 } ) {
     return { posts };
 };
 
-module.exports = { getFeed };
+module.exports = getFeed;

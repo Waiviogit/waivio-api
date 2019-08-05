@@ -53,7 +53,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
 
 const aggregate = async ( pipeline ) => {
     try {
-        const result = await UserModel.aggregate( pipeline );
+        const result = await UserModel.aggregate( pipeline ).exec();
 
         if( !result ) {
             return { error: { status: 404, message: 'Not found!' } };
@@ -64,4 +64,16 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow, aggregate };
+const updateOne = async ( condition, updateData = {} ) => {
+    try {
+        const user = await UserModel
+            .findOneAndUpdate( condition, updateData, { upsert: true, new: true, setDefaultsOnInsert: true } )
+            .select( '+user_metadata' );
+
+        return { user };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getObjectsFollow, aggregate, updateOne };
