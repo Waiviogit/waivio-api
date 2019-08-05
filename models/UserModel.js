@@ -31,7 +31,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
                     select: '-_id '
                 }
             } ) // fill array author_permlink-s full info about wobject
-            .select( 'objects_follow -_id' )
+            .select( 'objects_follow' )
             .lean();
 
         if ( !user || !user.full_objects_follow ) {
