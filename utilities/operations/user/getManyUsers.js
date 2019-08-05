@@ -23,6 +23,4 @@ const getUsers = async ( { limit, skip, sample } ) => {
     return { users };
 };
 
-module.exports = {
-    getUsers
-};
+module.exports = getUsers;
