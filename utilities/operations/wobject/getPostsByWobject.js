@@ -1,12 +1,13 @@
 const { Wobj, Post } = require( '../../../models' );
 const { WOBJECT_LATEST_POSTS_COUNT } = require( '../../constants' );
 const { postHelper } = require( '../../helpers' );
+const _ = require( 'lodash' );
 
 const makePipeline = async ( data ) => {
     let { condition, error: conditionError } = await getWobjFeedCondition( data );
 
     if ( conditionError ) return { error: conditionError };
-    return [
+    const pipeline = [
         condition,
         { $sort: { _id: -1 } },
         { $skip: data.skip },
@@ -20,10 +21,12 @@ const makePipeline = async ( data ) => {
             }
         }
     ];
+
+    return { pipeline };
 };
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ( { author_permlink, skip, limit } ) => {
-    let { wobjects: [ wObject ], error } = await Wobj.fromAggregation( [ { $match: { author_permlink: author_permlink } } ] );
+    let { wobjects: [ wObject = {} ] = [], error } = await Wobj.fromAggregation( [ { $match: { author_permlink: author_permlink } } ] );
 
     if( error ) return { error };
 
@@ -68,7 +71,9 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit } ) => {
 };
 
 module.exports = async ( data ) => {
-    const pipeline = await makePipeline( data );
+    const { pipeline, error: pipelineError } = await makePipeline( data );
+
+    if( pipelineError ) return { error: pipelineError };
     let { posts, error } = await Post.aggregate( pipeline );
 
     if( error ) return { error };
