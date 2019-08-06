@@ -1,7 +1,7 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
-const { objectExperts, wobjectInfo, getManyObjects } = require( '../utilities/operations' ).wobject;
+const { objectExperts, wobjectInfo, getManyObjects, getPostsByWobject } = require( '../utilities/operations' ).wobject;
 const { wobjects: { searchWobjects } } = require( '../utilities/operations' ).search;
 const validators = require( './validators' );
 
@@ -64,7 +64,7 @@ const posts = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { posts: wobjectPosts, error } = await Post.getByObject( value );
+    const { posts: wobjectPosts, error } = await getPostsByWobject( value );
 
     if ( error ) {
         return next( error );
