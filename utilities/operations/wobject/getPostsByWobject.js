@@ -23,13 +23,13 @@ const makePipeline = async ( data ) => {
 };
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ( { author_permlink, skip, limit } ) => {
-    const { wObject, error } = await Wobj.getOne( author_permlink );
+    let { wobjects: [ wObject ], error } = await Wobj.fromAggregation( [ { $match: { author_permlink: author_permlink } } ] );
 
     if( error ) return { error };
 
     if ( !wObject.newsFilter ) {
         if( !skip && limit <= WOBJECT_LATEST_POSTS_COUNT ) {
-            return { condition: { $match: { _id: { $in: [ ...wObject.latest_posts ] } } } };
+            return { condition: { $match: { _id: { $in: [ ...wObject.latest_posts || [] ] } } } };
         }
         return { condition: { $match: { 'wobjects.author_permlink': author_permlink } } };
     }
