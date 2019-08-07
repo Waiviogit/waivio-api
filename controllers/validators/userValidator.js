@@ -79,10 +79,9 @@ exports.updateMetadataSchema = Joi.object().keys( {
             body: Joi.string(),
             jsonMetadata: Joi.object(),
             lastUpdated: Joi.number(),
-            parentAuthor: Joi.string().default( '' ),
+            parentAuthor: Joi.string().allow(''),
             parentPermlink: Joi.string(),
-            permlink: Joi.string(),
-            reward: Joi.string()
+            permlink: Joi.string()
         } ).unknown( true )
         ).default( [] )
     } )
