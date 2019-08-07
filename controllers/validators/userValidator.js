@@ -81,6 +81,7 @@ exports.updateMetadataSchema = Joi.object().keys( {
             isUpdating: Joi.boolean(),
             upvote: Joi.boolean().optional(),
             body: Joi.string(),
+            originalBody: Joi.string(),
             jsonMetadata: Joi.object(),
             lastUpdated: Joi.number(),
             parentAuthor: Joi.string().allow( '' ),

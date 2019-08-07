@@ -27,6 +27,7 @@ const UserMetadataSchema = new Schema( {
             upvote: { type: Boolean },
             isUpdating: { type: Boolean },
             body: { type: String },
+            originalBody: { type: String },
             jsonMetadata: { type: Object },
             lastUpdated: { type: Number },
             parentAuthor: { type: String },
