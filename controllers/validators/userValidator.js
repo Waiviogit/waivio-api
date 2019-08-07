@@ -73,6 +73,7 @@ exports.updateMetadataSchema = Joi.object().keys( {
             votingPower: false
         } ),
         drafts: Joi.array().items( Joi.object().keys( {
+            _id: Joi.string(),
             draftId: Joi.string(),
             title: Joi.string(),
             author: Joi.string(),
