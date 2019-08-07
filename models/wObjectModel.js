@@ -235,19 +235,31 @@ const getList = async function ( author_permlink ) {
                     foreignField: 'author_permlink',
                     as: 'wobject'
                 }
-            }
+            },
+            { $unwind: { path: '$wobject', preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'wobject.parent',
+                    foreignField: 'author_permlink',
+                    as: 'wobject.parent'
+                }
+            },
+            { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } }
         ] );
         const sortCustomField = _.maxBy( fields.filter( ( field ) => field.name === 'sortCustom' ), 'weight' );
         const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' && !_.isEmpty( field.wobject ) ), ( field ) => {
-            return { ...field.wobject[ 0 ], alias: field.alias };
+            return { ...field.wobject, alias: field.alias };
         } ) );
 
-        await rankHelper.calculateWobjectRank( wobjects );
         wobjects.forEach( ( wObject ) => {
             if ( wObject.object_type.toLowerCase() === 'list' ) {
                 wObject.listItemsCount = wObject.fields.filter( ( f ) => f.name === 'listItem' ).length;
             }
             getRequiredFields( wObject, [ ...REQUIREDFIELDS ] );
+            if( wObject && wObject.parent ) {
+                getRequiredFields( wObject.parent, [ ...REQUIREFIELDS_PARENT ] );
+            }
         } );
         return { wobjects, sortCustom: JSON.parse( _.get( sortCustomField, 'body', '[]' ) ) };
     } catch ( error ) {
@@ -282,4 +294,4 @@ const isFieldExist = async ( { author_permlink, fieldName } ) => {
     }
 };
 
-module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };
+module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };

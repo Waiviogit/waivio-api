@@ -45,7 +45,11 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
 
     // format listItems field
     if ( await Wobj.isFieldExist( { author_permlink: data.author_permlink, fieldName: 'listItem' } ) ) {
-        const { wobjects, sortCustom } = await Wobj.getList( data.author_permlink );
+        const { wobjects, sortCustom, error: listError } = await Wobj.getList( data.author_permlink );
+
+        if( listError ) {
+            console.error( listError );
+        }
         const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
 
         wObject[ keyName ] = wobjects;

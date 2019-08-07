@@ -1,5 +1,6 @@
 const { ObjectType } = require( '../models' );
 const { objectTypeHelper } = require( '../utilities/helpers' );
+const { searchObjectTypes } = require( '../utilities/operations/search/searchTypes' );
 
 const index = async ( req, res, next ) => {
     const { objectTypes, error } = await ObjectType.getAll( {
@@ -11,7 +12,8 @@ const index = async ( req, res, next ) => {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( objectTypes );
+    res.result = { status: 200, json: objectTypes };
+    next();
 };
 
 const show = async ( req, res, next ) => {
@@ -25,11 +27,12 @@ const show = async ( req, res, next ) => {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( objectType );
+    res.result = { status: 200, json: objectType };
+    next();
 };
 
 const search = async ( req, res, next ) => {
-    const { objectTypes, error } = await ObjectType.search( {
+    const { objectTypes, error } = await searchObjectTypes( {
         string: req.body.search_string,
         skip: req.body.skip || 0,
         limit: req.body.limit || 30
@@ -38,7 +41,8 @@ const search = async ( req, res, next ) => {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( objectTypes );
+    res.result = { status: 200, json: objectTypes };
+    next();
 };
 
 module.exports = { index, search, show };
