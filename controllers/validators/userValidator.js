@@ -79,10 +79,11 @@ exports.updateMetadataSchema = Joi.object().keys( {
             body: Joi.string(),
             jsonMetadata: Joi.object(),
             lastUpdated: Joi.number(),
-            parentAuthor: Joi.string(),
+            parentAuthor: Joi.string().default( '' ),
             parentPermlink: Joi.string(),
             permlink: Joi.string(),
             reward: Joi.string()
-        } ) ).default( [] )
+        } ).unknown( true )
+        ).default( [] )
     } )
 } );
