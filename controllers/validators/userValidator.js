@@ -82,7 +82,7 @@ exports.updateMetadataSchema = Joi.object().keys( {
             upvote: Joi.boolean().optional(),
             body: Joi.string(),
             jsonMetadata: Joi.object(),
-            lastUpdated: [ Joi.string(), Joi.number() ],
+            lastUpdated: Joi.number(),
             parentAuthor: Joi.string().allow( '' ),
             parentPermlink: Joi.string(),
             permlink: Joi.string(),
