@@ -73,16 +73,22 @@ exports.updateMetadataSchema = Joi.object().keys( {
             votingPower: false
         } ),
         drafts: Joi.array().items( Joi.object().keys( {
+            _id: Joi.string(),
+            draftId: Joi.string(),
             title: Joi.string(),
             author: Joi.string(),
             beneficiary: Joi.boolean().default( false ),
+            isUpdating: Joi.boolean(),
+            upvote: Joi.boolean().optional(),
             body: Joi.string(),
+            originalBody: Joi.string(),
             jsonMetadata: Joi.object(),
             lastUpdated: Joi.number(),
             parentAuthor: Joi.string().allow( '' ),
             parentPermlink: Joi.string(),
-            permlink: Joi.string()
-        } ).pattern( /./, Joi.string() )
+            permlink: Joi.string(),
+            reward: Joi.string().optional()
+        } )
         ).default( [] )
     } )
 } );

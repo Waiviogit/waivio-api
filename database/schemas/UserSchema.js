@@ -21,9 +21,13 @@ const UserMetadataSchema = new Schema( {
     drafts: {
         type: [ {
             title: { type: String },
+            draftId: { type: String },
             author: { type: String },
             beneficiary: { type: Boolean, default: true },
+            upvote: { type: Boolean },
+            isUpdating: { type: Boolean },
             body: { type: String },
+            originalBody: { type: String },
             jsonMetadata: { type: Object },
             lastUpdated: { type: Number },
             parentAuthor: { type: String },
