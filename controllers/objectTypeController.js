@@ -1,17 +1,20 @@
 const { ObjectType } = require( '../models' );
 const { objectTypeHelper } = require( '../utilities/helpers' );
 const { searchObjectTypes } = require( '../utilities/operations/search/searchTypes' );
+const { getAll } = require( '../utilities/operations/objectType' );
+const validators = require( './validators' );
 
 const index = async ( req, res, next ) => {
-    const { objectTypes, error } = await ObjectType.getAll( {
-        limit: req.body.limit || 30,
-        skip: req.body.skip || 0,
-        wobjects_count: req.body.wobjects_count || 3
-    } );
+    const value = validators.validate( {
+        limit: req.body.limit,
+        skip: req.body.skip,
+        wobjects_count: req.body.wobjects_count
+    }, validators.objectType.indexSchema, next );
 
-    if( error ) {
-        return next( error );
-    }
+    if( !value ) return;
+    const { objectTypes, error } = await getAll( value );
+
+    if( error ) return next( error );
     res.result = { status: 200, json: objectTypes };
     next();
 };
