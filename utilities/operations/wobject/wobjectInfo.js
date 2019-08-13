@@ -2,7 +2,6 @@ const { Wobj } = require( '../../../models' );
 const { getWobjExperts } = require( './objectExperts' );
 const _ = require( 'lodash' );
 const rankHelper = require( '../../helpers/rankHelper' );
-const wObjectHelper = require( '../../helpers/wObjectHelper' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
 const getExperts = async ( { author_permlink, weight, username } ) => {

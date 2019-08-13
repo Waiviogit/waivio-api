@@ -69,3 +69,4 @@ exports.LANGUAGES = [ 'en-US',
     'auto'
 ];
 exports.WOBJECT_LATEST_POSTS_COUNT = 30;
+exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;

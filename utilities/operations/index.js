@@ -1,5 +1,6 @@
 module.exports = {
     wobject: require( './wobject' ),
     user: require( './user' ),
-    search: require( './search' )
+    search: require( './search' ),
+    objectType: require( './objectType' )
 };
