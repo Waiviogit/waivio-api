@@ -1,3 +1,4 @@
 module.exports = {
-    updateTopWobjects: require( './updateTopWobjects' )
+    updateTopWobjects: require( './updateTopWobjects' ),
+    getAll: require( './getAllObjectTypes' )
 };
