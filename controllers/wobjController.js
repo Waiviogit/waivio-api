@@ -36,8 +36,7 @@ const show = async function ( req, res, next ) {
         {
             author_permlink: req.params.authorPermlink,
             locale: req.query.locale,
-            required_fields: req.query.required_fields,
-            user: req.query.user
+            required_fields: req.query.required_fields
         }, validators.wobject.showSchema, next );
 
     if( !value ) {
@@ -198,18 +197,19 @@ const objectExpertise = async function ( req, res, next ) {
         {
             author_permlink: req.params.authorPermlink,
             skip: req.body.skip,
-            limit: req.body.limit
+            limit: req.body.limit,
+            user: req.body.user
         }, validators.wobject.objectExpertiseScheme, next );
 
     if( !value ) {
         return ;
     }
-    const { experts, error } = await objectExperts.getWobjExperts( value );
+    const { experts, user_expert, error } = await objectExperts.getWobjExperts( value );
 
     if( error ) {
         return next( error );
     }
-    res.result = { status: 200, json: experts };
+    res.result = { status: 200, json: { users: experts, user: user_expert } };
     next();
 };
 
