@@ -36,6 +36,13 @@ PostSchema.virtual( 'post_id' ).get( function () {
     return this.id;
 } );
 
+PostSchema.virtual( 'fullObjects', {
+    ref: 'wobject',
+    localField: 'wobjects.author_permlink',
+    foreignField: 'author_permlink',
+    justOne: false
+} );
+
 PostSchema.plugin( mongooseLeanVirtuals );
 
 PostSchema.index( { author: 1, permlink: 1 }, { unique: true } );

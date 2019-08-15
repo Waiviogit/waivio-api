@@ -2,7 +2,6 @@ const PostModel = require( '../database' ).models.Post;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const postHelper = require( '../utilities/helpers/postHelper' );
 const { getWobjFeedCondition } = require( '../utilities/helpers/postHelper' );
-const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
 const _ = require( 'lodash' );
@@ -113,7 +112,6 @@ const fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObject
             wObject = Object.assign( wObject, post[ wobjects_path ].find( ( i ) => i.author_permlink === wObject.author_permlink ) );
             wObjectHelper.formatRequireFields( wObject, locale, fields );
         }
-        await rankHelper.calculateWobjectRank( post.wobjects ); // calculate rank for wobject
         delete post[ wobjects_path ];
     }
     return posts;
@@ -132,4 +130,24 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-module.exports = { getByObject, getFeedByObjects, getAllPosts, aggregate, fillObjects };
+const getByFollowLists = async ( { users, author_permlinks, skip, limit } ) => {
+    try {
+        const posts = await PostModel.find(
+            {
+                $or: [ { author: { $in: users } }, { 'wobjects.author_permlink': { $in: author_permlinks } } ]
+            } )
+            .sort( { createdAt: -1 } )
+            .skip( skip )
+            .limit( limit )
+            .populate( { path: 'fullObjects', select: '-latest_posts' } ).lean();
+
+        if( _.isEmpty( posts ) ) {
+            return { error: { status: 404, message: 'Posts not found!' } };
+        }
+        return { posts };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getByObject, getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists };

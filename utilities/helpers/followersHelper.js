@@ -1,6 +1,5 @@
 const WObjectModel = require( '../../database/schemas/wObjectSchema' );
 const UserWobjects = require( '../../database/schemas/UserWobjectsSchema' );
-const rankHelper = require( './rankHelper' );
 
 const getFollowers = async ( data ) => {
     try {
@@ -31,7 +30,6 @@ const formatWobjectFollowers = async ( wObject ) => {
         delete follower.objects_follow;
         delete follower._id;
     }
-    rankHelper.calculateForUsers( wObject.followers, wObject.weight );
 };
 
 module.exports = { getFollowers };
