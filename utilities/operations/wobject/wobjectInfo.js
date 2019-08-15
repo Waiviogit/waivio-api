@@ -1,7 +1,6 @@
 const { Wobj } = require( '../../../models' );
 const { getWobjExperts } = require( './objectExperts' );
 const _ = require( 'lodash' );
-const rankHelper = require( '../../helpers/rankHelper' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
 const getExperts = async ( { author_permlink, weight, username } ) => {
@@ -19,8 +18,7 @@ const getExperts = async ( { author_permlink, weight, username } ) => {
     if( error ) {
         return { error };
     }
-    rankHelper.calculateForUsers( users, weight ); // add rank in wobject for each user
-    users = _.orderBy( users, [ 'weight' ], [ 'desc' ] ); // order users by rank
+    users = _.orderBy( users, [ 'weight' ], [ 'desc' ] ); // order users by weight
     return { users };
 };
 
@@ -55,13 +53,11 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
         wObject.sortCustom = sortCustom;
         required_fields.push( 'sortCustom', 'listItem' );
     }
-    // format gallery and adding rank of wobject
+    // format gallery
     wObject.preview_gallery = _.orderBy( wObject.fields.filter( ( field ) => field.name === 'galleryItem' ), [ 'weight' ], [ 'asc' ] ).slice( 0, 3 );
     wObject.albums_count = wObject.fields.filter( ( field ) => field.name === 'galleryAlbum' ).length;
     wObject.photos_count = wObject.fields.filter( ( field ) => field.name === 'galleryItem' ).length;
 
-    // add rank for current Wobject
-    await rankHelper.calculateWobjectRank( [ wObject ] ); // calculate rank for wobject
     wObject.followers_count = wObject.followers.length;
     delete wObject.followers;
 
@@ -90,7 +86,6 @@ const getOne = async ( data ) => { // get one wobject by author_permlink
         const { user = { weight: 0, name: data.user } } = await getExperts( { author_permlink: data.author_permlink, weight: wObject.weight, username: data.user } );
 
         wObject.user = user;
-        wObject.user.rank = 0;
     }
     return { wobjectData: wObject };
 

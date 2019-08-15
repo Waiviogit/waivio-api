@@ -1,6 +1,5 @@
 const UserModel = require( '../database' ).models.User;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
-const rankHelper = require( '../utilities/helpers/rankHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 
 const getOne = async function ( name ) {
@@ -42,8 +41,6 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
         user.full_objects_follow.forEach( ( wObject ) => {
             wObjectHelper.formatRequireFields( wObject, data.locale, fields );
         } );
-
-        await rankHelper.calculateWobjectRank( user.full_objects_follow ); // calculate rank for wobject
 
         return { wobjects: user.full_objects_follow };
     } catch ( error ) {
