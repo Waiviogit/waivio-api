@@ -36,7 +36,7 @@ exports.feedSchema = Joi.object().keys( {
     limit: Joi.number().min( 0 ).max( 50 ).default( 20 ),
     skip: Joi.number().min( 0 ).default( 0 ),
     filter: Joi.object().keys( {
-        byApp: Joi.string()
+        byApp: Joi.string().allow('')
     } )
 } );
 
