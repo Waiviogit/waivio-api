@@ -1,5 +1,4 @@
 const { Wobj } = require( '../../../models' );
-const { rankHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
@@ -70,7 +69,6 @@ const formatWobjects = async ( wObjects ) => {
     wObjects.forEach( ( wobject ) => {
         wobject.fields = wobject.fields.filter( ( item ) => REQUIREFIELDS_PARENT.includes( item.name ) );
     } );
-    await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobjects
 };
 
 exports.searchWobjects = async ( { string, object_type, limit, skip } ) => {
