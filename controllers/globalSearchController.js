@@ -6,7 +6,8 @@ const globalSearchController = async function( req, res, next ) {
         searchString: req.body.string,
         userLimit: req.body.userLimit,
         wobjectsLimit: req.body.wobjectsLimit,
-        objectsTypeLimit: req.body.objectsTypeLimit
+        objectsTypeLimit: req.body.objectsTypeLimit,
+        sortByApp: req.body.sortByApp
     }, validators.generalSearch.generalSearchSchema, next );
 
     if( !value ) {
