@@ -1,8 +1,8 @@
-const { Wobj } = require( '../../../models' );
+const { Wobj, App } = require( '../../../models' );
 const _ = require( 'lodash' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
-const makePipeline = ( { string, object_type, limit, skip } ) => {
+const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects } ) => {
     return [
         {
             $match: {
@@ -24,7 +24,17 @@ const makePipeline = ( { string, object_type, limit, skip } ) => {
                 } ]
             }
         },
-        { $sort: { weight: -1 } },
+        {
+            $addFields: {
+                crucial_wobject: {
+                    $cond: {
+                        if: { $in: [ '$author_permlink', crucial_wobjects ] },
+                        then: 1, else: 0
+                    }
+                }
+            }
+        },
+        { $sort: { crucial_wobject: -1, weight: -1 } },
         { $limit: limit || 10 },
         { $skip: skip || 0 },
         {
@@ -71,9 +81,19 @@ const formatWobjects = async ( wObjects ) => {
     } );
 };
 
-exports.searchWobjects = async ( { string, object_type, limit, skip } ) => {
+exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp } ) => {
+    // get count of wobjects grouped by object_types
     const { wobjects: wobjectsCounts, error: getWobjCountError } = await Wobj.fromAggregation( makeCountPipeline( { string } ) );
-    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip } ) );
+    let crucial_wobjects = [];
+
+    if( sortByApp ) {
+        // change priority for some wobjects by specified App
+        const { app } = await App.getOne( { name: sortByApp } );
+
+        crucial_wobjects = _.get( app, 'supported_objects' );
+    }
+    // get wobjects
+    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip, crucial_wobjects } ) );
 
     await formatWobjects( wobjects );
     return { wobjects, wobjectsCounts, error: getWobjCountError || getWobjError };
