@@ -45,6 +45,7 @@ exports.searchScheme = Joi.object().keys( {
     skip: Joi.number().integer().min( 0 ).default( 0 ),
     string: Joi.string().allow( '' ),
     locale: Joi.string().default( 'en-US' ),
+    sortByApp: Joi.string().allow( '' ).default( null ),
     object_type: Joi.string()
 } );
 
