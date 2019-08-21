@@ -214,4 +214,18 @@ const objectExpertise = async function ( req, res, next ) {
     next();
 };
 
-module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise };
+const getByField = async function ( req, res, next ) {
+    const value = validators.validate( {
+        fieldName: req.query.fieldName,
+        fieldBody: req.query.fieldBody
+    }, validators.wobject.getByFieldScheme, next );
+
+    if( !value ) return;
+    const { wobjects, error } = await Wobj.getByField( value );
+
+    if( error ) return next( error );
+    res.result = { status: 200, json: wobjects };
+    next();
+};
+
+module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise, getByField };
