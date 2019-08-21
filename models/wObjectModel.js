@@ -219,4 +219,15 @@ const isFieldExist = async ( { author_permlink, fieldName } ) => {
     }
 };
 
-module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };
+const getByField = async ( { fieldName, fieldBody } ) => {
+    try {
+        const wobjects = await WObjectModel.find( { 'fields.name': fieldName, 'fields.body': fieldBody } ).lean();
+
+        if( _.isEmpty( wobjects ) ) return { error: { status: 404, message: 'Wobjects not found!' } };
+        return { wobjects };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist, getByField };
