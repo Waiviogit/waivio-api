@@ -2,30 +2,23 @@ const { Wobj, ObjectType } = require( '../../../models' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 const _ = require( 'lodash' );
 
-// latitude must be an number in range -90..90, longitude in -180..180, radius - positive number
-const getMapCondition = async ( { latitude, longitude, radius = 1000 } ) => {
-    if ( !latitude || !longitude ) {
-        return { error: { status: 422, message: 'Latitude and Longitude must exist!' } };
-    } else if ( latitude < -90 || latitude > 90 || longitude < -180 || longitude > 180 ) {
-        return { error: { status: 422, message: 'Latitude and Longitude must be in correct range!' } };
-    } else if ( radius < 0 ) {
-        return { error: { status: 422, message: 'Radius must be positive number!' } };
-    }
-    const aggrCondition = [
-        {
-            $geoNear: {
-                near: { type: 'Point', coordinates: [ longitude, latitude ] },
-                distanceField: 'distance',
-                maxDistance: radius,
-                spherical: true
-            }
-        }
-    ];
+// // latitude must be an number in range -90..90, longitude in -180..180, radius - positive number
+// const getMapCondition = async ( { latitude, longitude, radius = 1000 } ) => {
+//     const aggrCondition = [
+//         {
+//             $geoNear: {
+//                 near: { type: 'Point', coordinates: [ longitude, latitude ] },
+//                 distanceField: 'proximity',
+//                 maxDistance: radius,
+//                 spherical: true
+//             }
+//         }
+//     ];
+//
+//     return { aggrCondition };
+// };
 
-    return { aggrCondition };
-};
-
-const validateInput = ( filter ) => {
+const validateInput = ( { filter, sort } ) => {
     if ( filter ) {
         // validate map filter
         if ( filter.map ) {
@@ -37,25 +30,29 @@ const validateInput = ( filter ) => {
         // validate another specific filters //
         // ///////////////////////////////// //
     }
+    if( sort ) {
+        if ( sort === 'proximity' && !_.get( filter, 'map' ) ) return false;
+    }
     return true;
 };
 
-const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, sortBy = 'weight' } ) => {
+const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, sort = 'weight' } ) => {
     const aggregationPipeline = [];
 
-    if ( !validateInput( filter ) ) {
-        return { error: { status: 422, message: 'Filter is not valid!' } };
+    if ( !validateInput( { filter, sort } ) ) {
+        return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
     }
-    if ( filter && filter.map ) {
-        const { aggrCondition: mapCond, error: mapError } = await getMapCondition( {
-            latitude: filter.map.coordinates[ 0 ],
-            longitude: filter.map.coordinates[ 1 ],
-            radius: filter.map.radius
-        } );
 
+    if ( filter && filter.map ) {
+        aggregationPipeline.push( {
+            $geoNear: {
+                near: { type: 'Point', coordinates: [ filter.map.coordinates[ 1 ], filter.map.coordinates[ 0 ] ] },
+                distanceField: 'proximity',
+                maxDistance: filter.map.radius,
+                spherical: true
+            }
+        } );
         delete filter.map;
-        if ( mapError ) return { error: mapError };
-        aggregationPipeline.push( ...mapCond );
     }
     aggregationPipeline.push( {
         $match: {
@@ -75,7 +72,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
         }
     }
     aggregationPipeline.push(
-        { $sort: { [ sortBy ]: -1 } },
+        { $sort: { [ sort ]: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
@@ -91,11 +88,11 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
     return { wobjects };
 };
 
-module.exports = async ( { name, filter, wobjLimit, wobjSkip } ) => {
+module.exports = async ( { name, filter, wobjLimit, wobjSkip, sort } ) => {
     const { objectType, error: objTypeError } = await ObjectType.getOne( { name: name } );
 
     if( objTypeError ) return { error: objTypeError };
-    const { wobjects, error: wobjError } = await getWobjWithFilters( { objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip } );
+    const { wobjects, error: wobjError } = await getWobjWithFilters( { objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort } );
 
     if( wobjError ) return { error: wobjError };
     objectType.related_wobjects = wobjects;

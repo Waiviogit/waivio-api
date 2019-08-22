@@ -11,6 +11,7 @@ exports.showSchema = Joi.object().keys( {
     name: Joi.string().required(),
     wobjLimit: Joi.number().min( 0 ).default( 30 ),
     wobjSkip: Joi.number().min( 0 ).default( 0 ),
+    sort: Joi.string().valid( 'weight', 'proximity' ).default( 'weight' ),
     filter: Joi.object( { map: Joi.object().keys( {
         coordinates: Joi.array()
             .ordered( [
