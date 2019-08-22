@@ -27,11 +27,15 @@ const getMapCondition = async ( { latitude, longitude, radius = 1000 } ) => {
 
 const validateInput = ( filter ) => {
     if ( filter ) {
+        // validate map filter
         if ( filter.map ) {
             if ( !filter.map.coordinates || !Array.isArray( filter.map.coordinates ) || filter.map.coordinates.length !== 2 || !filter.map.radius ) {
                 return false;
             }
         }
+        // ///////////////////////////////// //
+        // validate another specific filters //
+        // ///////////////////////////////// //
     }
     return true;
 };
@@ -49,6 +53,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
             radius: filter.map.radius
         } );
 
+        delete filter.map;
         if ( mapError ) return { error: mapError };
         aggregationPipeline.push( ...mapCond );
     }
@@ -57,22 +62,30 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
             object_type: objectType
         }
     } );
-    // ///////////////////////////// ///
-    // place here additional filters ///
-    // ///////////////////////////// ///
+    if( !_.isEmpty( filter ) ) {
+        // ///////////////////////////// ///
+        // place here additional filters ///
+        // ///////////////////////////// ///
+        for( const filterItem in filter ) {
+            for( const filterValue of filter[ filterItem ] ) {
+                aggregationPipeline.push(
+                    { $match: { fields: { $elemMatch: { name: filterItem, body: filterValue } } } }
+                );
+            }
+        }
+    }
     aggregationPipeline.push(
-        { $sort: sortBy === 'weight' ? { weight: -1 } : { distance: -1 } },
+        { $sort: { [ sortBy ]: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
         { $lookup: { from: 'wobjects', localField: 'parent', foreignField: 'author_permlink', as: 'parent' } },
         { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } } );
+    // get wobjects by pipeline
     const { wobjects, error: aggrError } = await Wobj.fromAggregation( aggregationPipeline );
 
     if( aggrError ) {
-        if( aggrError.status === 404 ) {
-            return { wobjects: [] };
-        }
+        if( aggrError.status === 404 ) return { wobjects: [] };
         return { error: aggrError };
     }
     return { wobjects };
@@ -85,8 +98,10 @@ module.exports = async ( { name, filter, wobjLimit, wobjSkip } ) => {
     const { wobjects, error: wobjError } = await getWobjWithFilters( { objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip } );
 
     if( wobjError ) return { error: wobjError };
+    objectType.related_wobjects = wobjects;
     if( objectType.related_wobjects.length === wobjLimit + 1 ) {
         objectType.hasMoreWobjects = true;
         objectType.related_wobjects = objectType.related_wobjects.slice( 0, wobjLimit );
     }
+    return { objectType };
 };

@@ -1,7 +1,5 @@
-const { ObjectType } = require( '../models' );
-const { objectTypeHelper } = require( '../utilities/helpers' );
 const { searchObjectTypes } = require( '../utilities/operations/search/searchTypes' );
-const { getAll } = require( '../utilities/operations/objectType' );
+const { getAll, getOne } = require( '../utilities/operations/objectType' );
 const validators = require( './validators' );
 
 const index = async ( req, res, next ) => {
@@ -20,12 +18,15 @@ const index = async ( req, res, next ) => {
 };
 
 const show = async ( req, res, next ) => {
-    const { objectType, error } = await objectTypeHelper.getObjectType( {
+    const value = validators.validate( {
         name: req.params.objectTypeName,
-        wobjLimit: req.body.wobjects_count || 30,
-        wobjSkip: req.body.wobjects_skip || 0,
+        wobjLimit: req.body.wobjects_count,
+        wobjSkip: req.body.wobjects_skip,
         filter: req.body.filter
-    } );
+    }, validators.objectType.showSchema, next );
+
+    if( !value ) return;
+    const { objectType, error } = await getOne( value );
 
     if( error ) {
         return next( error );
