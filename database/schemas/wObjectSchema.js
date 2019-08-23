@@ -43,7 +43,8 @@ const WObjectSchema = new Schema(
                 type: [ Number ] // First element - longitude(-180..180), second element - latitude(-90..90)
             } // [longitude, latitude]
         },
-        latest_posts: { type: [ mongoose.Schema.ObjectId ], default: [] } // always keep last N posts to quick build wobject feed
+        latest_posts: { type: [ mongoose.Schema.ObjectId ], default: [] }, // always keep last N posts to quick build wobject feed
+        status: { type: Object }
     },
     {
         toObject: { virtuals: true }, timestamps: true
