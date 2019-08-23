@@ -22,12 +22,11 @@ const makeSwitchBranches = ( wobjects ) => {
     } );
 };
 
-const makePipeline = ( { multipliers, skip = 0, limit = 30, username } ) => {
+const makePipeline = ( { multipliers, skip = 0, limit = 30, user } ) => {
     const switchBranches = makeSwitchBranches( multipliers );
 
     const pipeline = [
-        { $match: { author_permlink: { $in: multipliers.map( ( w ) => w.author_permlink ) } }
-        },
+        { $match: { author_permlink: { $in: multipliers.map( ( w ) => w.author_permlink ) } } },
         {
             $group: {
                 _id: '$user_name',
@@ -52,49 +51,47 @@ const makePipeline = ( { multipliers, skip = 0, limit = 30, username } ) => {
         { $project: { _id: 0, name: '$_id', weight: '$totalWeight' } }
     ];
 
-    if( username ) {
-        pipeline[ 0 ].$match.user_name = username;
-    }
+    if( user ) pipeline[ 0 ].$match.user_name = user;
     return pipeline;
 };
 
-const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30, username } ) => {
+const getWobjExperts = async ( { author_permlink, skip = 0, limit = 30, user } ) => {
     let wobj;
+    let user_expert;
 
     try{
         wobj = await WObject.findOne( { author_permlink } ).lean();
-
-        if( !wobj ) {
-            return { error: { status: 404, message: 'Wobject not found!' } };
-        }
+        if( !wobj ) return { error: { status: 404, message: 'Wobject not found!' } };
     } catch ( error ) {
         return { error };
     }
+
     if( !wobj.newsFilter ) {
-        if( username ) {
-            const { experts, error } = await UserWobjects.getByWobject( { author_permlink, skip, limit, username } );
+        if( user ) {
+            const { experts, error } = await UserWobjects.getByWobject( { author_permlink, skip, limit, username: user } );
 
-            if( error ) {
-                return { error };
-            }
-            return { experts };
-
+            if( error ) return { error };
+            user_expert = _.get( experts, '[0]' );
         }
         const { experts, error } = await UserWobjects.getByWobject( { author_permlink, skip, limit } );
 
-        if( error ) {
-            return { error };
-        }
-        return { experts };
+        if( error ) return { error };
+        return { experts, user_expert };
     }
+
     const multipliers = getMultipliers( wobj.newsFilter );
-    const pipeline = makePipeline( { multipliers, skip, limit, username } );
+    const pipeline = makePipeline( { multipliers, skip, limit } );
     const { result: experts, error: aggregationError } = await UserWobjects.aggregate( pipeline );
 
-    if( aggregationError ) {
-        return { error: aggregationError };
+    if( aggregationError ) return { error: aggregationError };
+    if( user ) {
+        const user_pipeline = makePipeline( { multipliers, skip, limit, user } );
+        const { experts: experts_by_user_name, error } = await UserWobjects.aggregate( user_pipeline );
+
+        if( error ) return { error };
+        user_expert = _.get( experts_by_user_name, '[0]' );
     }
-    return { experts };
+    return { experts, user_expert };
 };
 
 module.exports = { getWobjExperts };
