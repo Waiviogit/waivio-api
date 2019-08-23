@@ -56,7 +56,7 @@ exports.objectExpertiseScheme = Joi.object().keys( {
     limit: Joi.number().integer().min( 1 ).max( 100 ).default( 5 ),
     skip: Joi.number().integer().min( 0 ).default( 0 ),
     author_permlink: Joi.string().required(),
-    user: Joi.string().default( null )
+    user: Joi.string().allow( '' ).default( null )
 } );
 
 exports.getByFieldScheme = Joi.object().keys( {
