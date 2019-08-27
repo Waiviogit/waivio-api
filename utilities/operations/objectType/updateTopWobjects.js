@@ -23,7 +23,7 @@ const job = new CronJob( '0 */30  * * * *', async () => {
     // update TOP wobjects for each ObjectType every 30 minutes
     await updateObjectTypes();
     console.log( 'Updating top wobjects by ObjectType finished!' );
-}, null, true, null, null, true );
+}, null, true, null, null, false );
 
 job.start();
 module.exports = updateObjectTypes;
