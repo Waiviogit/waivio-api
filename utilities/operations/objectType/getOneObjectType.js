@@ -1,22 +1,7 @@
 const { Wobj, ObjectType } = require( '../../../models' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
+const LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];
 const _ = require( 'lodash' );
-
-// // latitude must be an number in range -90..90, longitude in -180..180, radius - positive number
-// const getMapCondition = async ( { latitude, longitude, radius = 1000 } ) => {
-//     const aggrCondition = [
-//         {
-//             $geoNear: {
-//                 near: { type: 'Point', coordinates: [ longitude, latitude ] },
-//                 distanceField: 'proximity',
-//                 maxDistance: radius,
-//                 spherical: true
-//             }
-//         }
-//     ];
-//
-//     return { aggrCondition };
-// };
 
 const validateInput = ( { filter, sort } ) => {
     if ( filter ) {
@@ -72,7 +57,17 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
         }
     }
     aggregationPipeline.push(
-        { $sort: { [ sort ]: -1 } },
+        {
+            $addFields: {
+                priority: {
+                    $cond: {
+                        if: { $in: [ '$status.title', LOW_PRIORITY_STATUS_FLAGS ] },
+                        then: 0, else: 1
+                    }
+                }
+            }
+        },
+        { $sort: { priority: -1, [ sort ]: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
