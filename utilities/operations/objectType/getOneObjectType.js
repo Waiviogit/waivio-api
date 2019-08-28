@@ -1,5 +1,5 @@
 const { Wobj, ObjectType } = require( '../../../models' );
-const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
+const { REQUIREDFIELDS } = require( '../../constants' );
 const LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];
 const _ = require( 'lodash' );
 
@@ -50,9 +50,12 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
         // ///////////////////////////// ///
         for( const filterItem in filter ) {
             for( const filterValue of filter[ filterItem ] ) {
-                aggregationPipeline.push(
-                    { $match: { fields: { $elemMatch: { name: filterItem, body: filterValue } } } }
-                );
+                let cond = { $match: { fields: { $elemMatch: { name: filterItem, body: filterValue } } } };
+                // additional filter for field "rating"
+                if( filterItem === 'rating' ) {
+                    cond.$match.fields.$elemMatch.rating_votes = { $exists: true, $not: { $size: 0 } };
+                }
+                aggregationPipeline.push( cond );
             }
         }
     }
@@ -67,7 +70,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
                 }
             }
         },
-        { $sort: { priority: -1, [ sort ]: -1 } },
+        { $sort: { priority: -1, [ sort ]: -1, _id: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
