@@ -4,7 +4,8 @@ const {
     PostController,
     ObjectTypeController,
     AppController,
-    ImageController
+    ImageController,
+    globalSearchController
 } = require( '../controllers' );
 const { Router } = require( 'express' );
 
@@ -41,6 +42,8 @@ wobjRoutes.route( '/wobjectSearch' )
     .post( WobjController.search );
 wobjRoutes.route( '/wobjectsFeed' )
     .post( WobjController.feed );
+wobjRoutes.route( '/wobjectsByField' )
+    .get( WobjController.getByField );
 
 userRoutes.route( '/users' )
     .get( UserController.index );
@@ -54,6 +57,11 @@ userRoutes.route( '/user/:userName/feed' )
     .post( UserController.feed );
 userRoutes.route( '/user/:userName/objects_shares' )
     .post( UserController.userObjectsShares );
+userRoutes.route( '/users/search' )
+    .get( UserController.searchUsers );
+userRoutes.route( '/user/:userName/userMetadata' )
+    .put( UserController.updateUserMetadata )
+    .get( UserController.getUserMetadata );
 
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
@@ -72,6 +80,6 @@ objectTypeRoutes.route( '/objectType/:objectTypeName' )
     .post( ObjectTypeController.show );
 
 userRoutes.route( '/generalSearch' )
-    .post( UserController.generalSearch );
+    .post( globalSearchController.globalSearch );
 
 module.exports = apiRoutes;

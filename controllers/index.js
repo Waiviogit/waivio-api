@@ -4,5 +4,6 @@ module.exports = {
     ObjectTypeController: require( './objectTypeController' ),
     UserController: require( './UserController' ),
     AppController: require( './appController' ),
-    ImageController: require( './imageController' )
+    ImageController: require( './imageController' ),
+    globalSearchController: require( './globalSearchController' )
 };

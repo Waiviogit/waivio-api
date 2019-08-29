@@ -1,6 +1,5 @@
 const UserModel = require( '../database' ).models.User;
-const { wObjectHelper } = require( '../utilities/helpers' );
-const { rankHelper } = require( '../utilities/helpers' );
+const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 
 const getOne = async function ( name ) {
@@ -31,7 +30,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
                     select: '-_id '
                 }
             } ) // fill array author_permlink-s full info about wobject
-            .select( 'objects_follow -_id' )
+            .select( 'objects_follow' )
             .lean();
 
         if ( !user || !user.full_objects_follow ) {
@@ -43,8 +42,6 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
             wObjectHelper.formatRequireFields( wObject, data.locale, fields );
         } );
 
-        await rankHelper.calculateWobjectRank( user.full_objects_follow ); // calculate rank for wobject
-
         return { wobjects: user.full_objects_follow };
     } catch ( error ) {
         return { error };
@@ -53,7 +50,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
 
 const aggregate = async ( pipeline ) => {
     try {
-        const result = await UserModel.aggregate( pipeline );
+        const result = await UserModel.aggregate( pipeline ).exec();
 
         if( !result ) {
             return { error: { status: 404, message: 'Not found!' } };
@@ -64,4 +61,16 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow, aggregate };
+const updateOne = async ( condition, updateData = {} ) => {
+    try {
+        const user = await UserModel
+            .findOneAndUpdate( condition, updateData, { upsert: true, new: true, setDefaultsOnInsert: true } )
+            .select( '+user_metadata' );
+
+        return { user };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getObjectsFollow, aggregate, updateOne };

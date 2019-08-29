@@ -4,7 +4,9 @@ const Schema = mongoose.Schema;
 const ObjectTypeSchema = new Schema( {
     name: { type: String, index: true, required: true },
     author: { type: String, require: true },
-    permlink: { type: String, require: true }
+    permlink: { type: String, require: true },
+    top_wobjects: { type: [ String ], default: [] },
+    weight: { type: Number, default: 0 } // value in STEEM(or WVIO) as a sum of rewards, index for quick sort
 },
 {
     toObject: { virtuals: true }, timestamps: true

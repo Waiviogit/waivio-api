@@ -1,7 +1,8 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
-const { objectExperts, wobjectInfo, getManyObjects } = require( '../utilities/operations' ).wobject;
+const { objectExperts, wobjectInfo, getManyObjects, getPostsByWobject } = require( '../utilities/operations' ).wobject;
+const { wobjects: { searchWobjects } } = require( '../utilities/operations' ).search;
 const validators = require( './validators' );
 
 const index = async function ( req, res, next ) {
@@ -26,7 +27,8 @@ const index = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( { wobjects: wObjectsData, hasMore } );
+    res.result = { status: 200, json: { wobjects: wObjectsData, hasMore } };
+    next();
 };
 
 const show = async function ( req, res, next ) {
@@ -34,8 +36,7 @@ const show = async function ( req, res, next ) {
         {
             author_permlink: req.params.authorPermlink,
             locale: req.query.locale,
-            required_fields: req.query.required_fields,
-            user: req.query.user
+            required_fields: req.query.required_fields
         }, validators.wobject.showSchema, next );
 
     if( !value ) {
@@ -46,7 +47,8 @@ const show = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectData );
+    res.result = { status: 200, json: wobjectData };
+    next();
 };
 
 const posts = async function ( req, res, next ) {
@@ -61,12 +63,13 @@ const posts = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { posts: wobjectPosts, error } = await Post.getByObject( value );
+    const { posts: wobjectPosts, error } = await getPostsByWobject( value );
 
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectPosts );
+    res.result = { status: 200, json: wobjectPosts };
+    next();
 };
 
 const feed = async function ( req, res, next ) {
@@ -85,7 +88,8 @@ const feed = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( AllPosts );
+    res.result = { status: 200, json: AllPosts };
+    next();
 };
 
 const followers = async function ( req, res, next ) {
@@ -104,7 +108,8 @@ const followers = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectFollowers );
+    res.result = { status: 200, json: wobjectFollowers };
+    next();
 };
 
 const search = async function ( req, res, next ) {
@@ -114,18 +119,20 @@ const search = async function ( req, res, next ) {
             limit: req.body.limit,
             skip: req.body.skip,
             locale: req.body.locale,
-            object_type: req.body.object_type
+            object_type: req.body.object_type,
+            sortByApp: req.body.sortByApp
         }, validators.wobject.searchScheme, next );
 
     if( !value ) {
         return ;
     }
-    const { wObjectsData, error } = await Wobj.search( value );
+    const { wobjects, error } = await searchWobjects( value );
 
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wObjectsData );
+    res.result = { status: 200, json: wobjects };
+    next();
 };
 
 const fields = async function ( req, res, next ) {
@@ -142,7 +149,9 @@ const fields = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( fieldsData );
+    res.result = { status: 200, json: fieldsData };
+    req.author_permlink = req.params.authorPermlink;
+    next();
 };
 
 const gallery = async function ( req, res, next ) {
@@ -161,7 +170,9 @@ const gallery = async function ( req, res, next ) {
     if ( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjectGallery );
+    res.result = { status: 200, json: wobjectGallery };
+    req.author_permlink = req.params.authorPermlink;
+    next();
 };
 
 const list = async function ( req, res, next ) {
@@ -178,7 +189,8 @@ const list = async function ( req, res, next ) {
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( wobjects );
+    res.result = { status: 200, json: wobjects };
+    next();
 };
 
 const objectExpertise = async function ( req, res, next ) {
@@ -186,18 +198,34 @@ const objectExpertise = async function ( req, res, next ) {
         {
             author_permlink: req.params.authorPermlink,
             skip: req.body.skip,
-            limit: req.body.limit
+            limit: req.body.limit,
+            user: req.body.user
         }, validators.wobject.objectExpertiseScheme, next );
 
     if( !value ) {
         return ;
     }
-    const { experts, error } = await objectExperts.getWobjExperts( value );
+    const { experts, user_expert, error } = await objectExperts.getWobjExperts( value );
 
     if( error ) {
         return next( error );
     }
-    res.status( 200 ).json( experts );
+    res.result = { status: 200, json: { users: experts, user: user_expert } };
+    next();
 };
 
-module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise };
+const getByField = async function ( req, res, next ) {
+    const value = validators.validate( {
+        fieldName: req.query.fieldName,
+        fieldBody: req.query.fieldBody
+    }, validators.wobject.getByFieldScheme, next );
+
+    if( !value ) return;
+    const { wobjects, error } = await Wobj.getByField( value );
+
+    if( error ) return next( error );
+    res.result = { status: 200, json: wobjects };
+    next();
+};
+
+module.exports = { index, show, posts, search, fields, followers, gallery, feed, list, objectExpertise, getByField };

@@ -12,7 +12,7 @@ class Image {
             params: {
                 Bucket: 'waivio',
                 ACL: 'public-read',
-                ContentType: 'image/jpeg',
+                ContentType: 'image/webp',
                 ContentEncoding: 'base64'
             }
         } );

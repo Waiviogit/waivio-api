@@ -1,6 +1,6 @@
 const UserWobjects = require( '../../../models/UserWobjects' );
 const { REQUIREDFIELDS } = require( '../../constants' );
-const { wObjectHelper, rankHelper } = require( '../../helpers' );
+const { wObjectHelper } = require( '../../helpers' );
 
 const makePipeline = ( { name, skip, limit, object_types, exclude_object_types } ) => {
     let pipeline = [
@@ -73,8 +73,7 @@ const getUserObjectsShares = async ( data ) => {
     wobjects.forEach( ( wObject ) => {
         wObjectHelper.formatRequireFields( wObject, data.locale, fields );
     } );
-    await rankHelper.calculateForUserWobjects( wobjects, true );
-    const { result: [ countResult = 0 ] = [], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
+    const { result: [ countResult = { count: 0 } ] = [], error } = await UserWobjects.aggregate( makeCountPipeline( data ) );
 
     if ( error ) {
         return { error };

@@ -1,82 +1,7 @@
 const WObjectModel = require( '../database' ).models.WObject;
 const createError = require( 'http-errors' );
-const rankHelper = require( '../utilities/helpers/rankHelper' );
 const _ = require( 'lodash' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../utilities/constants' );
-
-const search = async function ( data ) {
-    try {
-        const wObjects = await WObjectModel.aggregate( [
-            {
-                $match: {
-                    $and: [ {
-                        $or: [ {
-                            'fields':
-                                {
-                                    $elemMatch: {
-                                        'name': 'name',
-                                        'body': { $regex: `\\b${data.string}.*\\b`, $options: 'i' }
-                                    }
-                                }
-                        },
-                        { // if 4-th symbol is "-" - search by "author_permlink" too
-                            'author_permlink': { $regex: `${_.get( data.string, '[3]' ) === '-' ? '^' + data.string : '_'}`, $options: 'i' }
-                        } ]
-                    }, {
-                        object_type: { $regex: `^${data.object_type || '.+'}$`, $options: 'i' }
-                    } ]
-                }
-            },
-            { $sort: { weight: -1 } },
-            { $limit: data.limit || 10 },
-            { $skip: data.skip || 0 },
-            {
-                $addFields: {
-                    'fields': {
-                        $filter: {
-                            input: '$fields',
-                            as: 'field',
-                            cond: {
-                                $in: [ '$$field.name', REQUIREDFIELDS ]
-                            }
-                        }
-                    }
-                }
-            },
-            {
-                $lookup: {
-                    from: 'wobjects',
-                    localField: 'parent',
-                    foreignField: 'author_permlink',
-                    as: 'parent'
-                }
-            }
-        ] );
-
-        if( !wObjects || wObjects.length === 0 ) {
-            return { wObjectsData: [] };
-        }
-        wObjects.forEach( ( wobject ) => {
-            wobject.fields = _.orderBy( wobject.fields, [ 'weight' ], [ 'desc' ] );
-
-            // format parent field
-            if( Array.isArray( wobject.parent ) ) {
-                if( _.isEmpty( wobject.parent ) ) {
-                    wobject.parent = '';
-                } else {
-                    wobject.parent = wobject.parent[ 0 ];
-                    getRequiredFields( wobject.parent, REQUIREFIELDS_PARENT );
-                }
-            }
-        } );
-
-        await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobjects
-
-        return { wObjectsData: wObjects };
-    } catch ( error ) {
-        return { error };
-    }
-};
 
 const getOne = async function ( author_permlink ) { // get one wobject by author_permlink
     try {
@@ -235,19 +160,31 @@ const getList = async function ( author_permlink ) {
                     foreignField: 'author_permlink',
                     as: 'wobject'
                 }
-            }
+            },
+            { $unwind: { path: '$wobject', preserveNullAndEmptyArrays: true } },
+            {
+                $lookup: {
+                    from: 'wobjects',
+                    localField: 'wobject.parent',
+                    foreignField: 'author_permlink',
+                    as: 'wobject.parent'
+                }
+            },
+            { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } }
         ] );
         const sortCustomField = _.maxBy( fields.filter( ( field ) => field.name === 'sortCustom' ), 'weight' );
         const wobjects = _.compact( _.map( fields.filter( ( field ) => field.name === 'listItem' && !_.isEmpty( field.wobject ) ), ( field ) => {
-            return { ...field.wobject[ 0 ], alias: field.alias };
+            return { ...field.wobject, alias: field.alias };
         } ) );
 
-        await rankHelper.calculateWobjectRank( wobjects );
         wobjects.forEach( ( wObject ) => {
             if ( wObject.object_type.toLowerCase() === 'list' ) {
                 wObject.listItemsCount = wObject.fields.filter( ( f ) => f.name === 'listItem' ).length;
             }
             getRequiredFields( wObject, [ ...REQUIREDFIELDS ] );
+            if( wObject && wObject.parent ) {
+                getRequiredFields( wObject.parent, [ ...REQUIREFIELDS_PARENT ] );
+            }
         } );
         return { wobjects, sortCustom: JSON.parse( _.get( sortCustomField, 'body', '[]' ) ) };
     } catch ( error ) {
@@ -282,4 +219,15 @@ const isFieldExist = async ( { author_permlink, fieldName } ) => {
     }
 };
 
-module.exports = { getAll, getOne, search, getFields, getGalleryItems, getList, fromAggregation, isFieldExist };
+const getByField = async ( { fieldName, fieldBody } ) => {
+    try {
+        const wobjects = await WObjectModel.find( { 'fields.name': fieldName, 'fields.body': fieldBody } ).lean();
+
+        if( _.isEmpty( wobjects ) ) return { error: { status: 404, message: 'Wobjects not found!' } };
+        return { wobjects };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist, getByField };

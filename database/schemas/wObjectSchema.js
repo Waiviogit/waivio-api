@@ -12,7 +12,8 @@ const WObjectSchema = new Schema(
         creator: { type: String, required: true },
         author: { type: String, required: true },
         author_permlink: { type: String, index: true, unique: true, required: true }, // unique identity for wobject, link to create object POST
-        weight: { type: Number, index: true, default: 1 }, // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
+        weight: { type: Number, default: 1 }, // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
+        count_posts: { type: Number, default: 0 },
         parent: { type: String, default: '' },
         children: { type: [ String ], default: [] },
         fields: [ {
@@ -41,7 +42,9 @@ const WObjectSchema = new Schema(
             coordinates: {
                 type: [ Number ] // First element - longitude(-180..180), second element - latitude(-90..90)
             } // [longitude, latitude]
-        }
+        },
+        latest_posts: { type: [ mongoose.Schema.ObjectId ], default: [] }, // always keep last N posts to quick build wobject feed
+        status: { type: Object }
     },
     {
         toObject: { virtuals: true }, timestamps: true
@@ -49,6 +52,7 @@ const WObjectSchema = new Schema(
 );
 
 WObjectSchema.index( { map: '2dsphere' } );
+WObjectSchema.index( { weight: -1 } );
 
 WObjectSchema.virtual( 'followers', {
     ref: 'User',
@@ -70,7 +74,6 @@ WObjectSchema.virtual( 'users', {
     foreignField: 'w_objects.author_permlink',
     justOne: false
 } );
-
 
 const wObjectModel = mongoose.model( 'wobject', WObjectSchema );
 

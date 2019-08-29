@@ -1,26 +1,21 @@
-const App = require( '../../../models/AppModel' );
+const { User } = require( '../../../models' );
 
 const makePipeline = ( { limit, skip, sample } ) => {
     const pipeline = [
-        { $match: { name: 'waivio' } },
-        { $unwind: '$top_users' },
+        { $sort: { wobjects_weight: -1 } },
         { $skip: sample ? 0 : skip },
-        { $limit: sample ? 100 : limit },
-        { $replaceRoot: { newRoot: '$top_users' } },
-        { $lookup: { from: 'users', localField: 'name', foreignField: 'name', as: 'user_data' } },
-        { $unwind: '$user_data' },
-        { $project: { _id: 0, name: 1, weight: 1, json_metadata: '$user_data.json_metadata' } }
+        { $limit: sample ? 100 : limit }
     ];
 
     if( sample ) {
-        pipeline.splice( 4, 0, { $sample: { size: 5 } } );
+        pipeline.push( { $sample: { size: 5 } } );
     }
     return pipeline;
 };
 
 const getUsers = async ( { limit, skip, sample } ) => {
     const pipeline = makePipeline( { limit, skip, sample } );
-    const { result: users, error } = await App.aggregate( pipeline );
+    const { result: users, error } = await User.aggregate( pipeline );
 
     if( error ) {
         return { error };
@@ -28,6 +23,4 @@ const getUsers = async ( { limit, skip, sample } ) => {
     return { users };
 };
 
-module.exports = {
-    getUsers
-};
+module.exports = getUsers;

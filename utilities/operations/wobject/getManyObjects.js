@@ -2,7 +2,6 @@ const { Wobj } = require( '../../../models' );
 const wObjectHelper = require( '../../helpers/wObjectHelper' );
 const UserWobjectsModel = require( '../../../database' ).models.UserWobjects;
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
-const rankHelper = require( '../../helpers/rankHelper' );
 const _ = require( 'lodash' );
 
 const getMany = async ( data ) => {
@@ -43,8 +42,6 @@ const getMany = async ( data ) => {
             }
         }
     } );
-
-    await rankHelper.calculateWobjectRank( wObjects ); // calculate rank for wobject
 
     return { wObjectsData: wObjects, hasMore };
 };

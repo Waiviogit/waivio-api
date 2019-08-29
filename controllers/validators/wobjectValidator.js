@@ -3,8 +3,7 @@ const Joi = require( 'joi' );
 exports.showSchema = Joi.object().keys( {
     author_permlink: Joi.string().required(),
     locale: Joi.string(),
-    required_fields: [ Joi.string() ],
-    user: Joi.string()
+    required_fields: [ Joi.string() ]
 } );
 
 exports.indexSchema = Joi.object().keys( {
@@ -45,6 +44,7 @@ exports.searchScheme = Joi.object().keys( {
     skip: Joi.number().integer().min( 0 ).default( 0 ),
     string: Joi.string().allow( '' ),
     locale: Joi.string().default( 'en-US' ),
+    sortByApp: Joi.string().allow( '' ).default( null ),
     object_type: Joi.string()
 } );
 
@@ -55,5 +55,11 @@ exports.fieldsScheme = exports.galleryScheme = exports.listScheme = Joi.object()
 exports.objectExpertiseScheme = Joi.object().keys( {
     limit: Joi.number().integer().min( 1 ).max( 100 ).default( 5 ),
     skip: Joi.number().integer().min( 0 ).default( 0 ),
-    author_permlink: Joi.string().required()
+    author_permlink: Joi.string().required(),
+    user: Joi.string().allow( '' ).default( null )
+} );
+
+exports.getByFieldScheme = Joi.object().keys( {
+    fieldName: Joi.string().required(),
+    fieldBody: Joi.string().required()
 } );
