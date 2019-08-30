@@ -1,6 +1,5 @@
 const { Wobj, ObjectType } = require( '../../../models' );
-const { REQUIREDFIELDS } = require( '../../constants' );
-const LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];
+const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require( '../../constants' );
 const _ = require( 'lodash' );
 
 const validateInput = ( { filter, sort } ) => {
