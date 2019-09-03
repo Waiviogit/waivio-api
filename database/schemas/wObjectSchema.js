@@ -47,7 +47,7 @@ const WObjectSchema = new Schema(
         status: { type: Object }
     },
     {
-        toObject: { virtuals: true }, timestamps: true
+        toObject: { virtuals: true }, timestamps: true, strict: false
     }
 );
 
