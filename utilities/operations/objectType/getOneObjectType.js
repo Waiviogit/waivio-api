@@ -52,7 +52,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
                 let cond = { $match: { fields: { $elemMatch: { name: filterItem, body: filterValue } } } };
                 // additional filter for field "rating"
                 if( filterItem === 'rating' ) {
-                    cond.$match.fields.$elemMatch.rating_votes = { $exists: true, $not: { $size: 0 } };
+                    cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
                 }
                 aggregationPipeline.push( cond );
             }
