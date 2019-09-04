@@ -120,7 +120,8 @@ const search = async function ( req, res, next ) {
             skip: req.body.skip,
             locale: req.body.locale,
             object_type: req.body.object_type,
-            sortByApp: req.body.sortByApp
+            sortByApp: req.body.sortByApp,
+            forParent: req.body.forParent
         }, validators.wobject.searchScheme, next );
 
     if( !value ) {

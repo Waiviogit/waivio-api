@@ -2,26 +2,22 @@ const { Wobj, App } = require( '../../../models' );
 const _ = require( 'lodash' );
 const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
 
-const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects } ) => {
+const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects, forParent } ) => {
     return [
         {
             $match: {
-                $and: [ {
-                    $or: [ {
-                        'fields':
-                            {
-                                $elemMatch: {
-                                    'name': 'name',
-                                    'body': { $regex: `\\b${string}.*\\b`, $options: 'i' }
-                                }
-                            }
+                $and: [
+                    {
+                        $or: [
+                            // search matching in every "name" field
+                            { 'fields': { $elemMatch: { 'name': 'name', 'body': { $regex: `\\b${string}.*\\b`, $options: 'i' } } } },
+                            // if 4-th symbol is "-" - search by "author_permlink" too
+                            { 'author_permlink': { $regex: `${_.get( string, '[3]' ) === '-' ? '^' + string : '_'}`, $options: 'i' } }
+                        ]
                     },
-                    { // if 4-th symbol is "-" - search by "author_permlink" too
-                        'author_permlink': { $regex: `${_.get( string, '[3]' ) === '-' ? '^' + string : '_'}`, $options: 'i' }
-                    } ]
-                }, {
-                    object_type: { $regex: `^${object_type || '.+'}$`, $options: 'i' }
-                } ]
+                    { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+                    { parent: { $regex: `^${forParent || '.*'}$`, $options: 'i' } }
+                ]
             }
         },
         {
@@ -81,7 +77,7 @@ const formatWobjects = async ( wObjects ) => {
     } );
 };
 
-exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp } ) => {
+exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp, forParent } ) => {
     // get count of wobjects grouped by object_types
     const { wobjects: wobjectsCounts, error: getWobjCountError } = await Wobj.fromAggregation( makeCountPipeline( { string } ) );
     let crucial_wobjects = [];
@@ -93,7 +89,7 @@ exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp }
         crucial_wobjects = _.get( app, 'supported_objects' );
     }
     // get wobjects
-    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip, crucial_wobjects } ) );
+    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip, crucial_wobjects, forParent } ) );
 
     await formatWobjects( wobjects );
     return { wobjects, wobjectsCounts, error: getWobjCountError || getWobjError };
