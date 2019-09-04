@@ -69,7 +69,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
                 }
             }
         },
-        { $sort: { priority: -1, [ sort ]: -1, _id: -1 } },
+        { $sort: { priority: -1, [ sort ]: sort !== 'proximity' ? -1 : 1, _id: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
