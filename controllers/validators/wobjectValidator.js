@@ -45,7 +45,8 @@ exports.searchScheme = Joi.object().keys( {
     string: Joi.string().allow( '' ),
     locale: Joi.string().default( 'en-US' ),
     sortByApp: Joi.string().allow( '' ).default( null ),
-    object_type: Joi.string()
+    object_type: Joi.string(),
+    forParent: Joi.string().invalid( '' )
 } );
 
 exports.fieldsScheme = exports.galleryScheme = exports.listScheme = Joi.object().keys( {
