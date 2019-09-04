@@ -12,12 +12,16 @@ exports.showSchema = Joi.object().keys( {
     wobjLimit: Joi.number().min( 0 ).default( 30 ),
     wobjSkip: Joi.number().min( 0 ).default( 0 ),
     sort: Joi.string().valid( 'weight', 'proximity' ).default( 'weight' ),
-    filter: Joi.object( { map: Joi.object().keys( {
-        coordinates: Joi.array()
-            .ordered( [
-                Joi.number() .min( -90 ) .max( 90 ),
-                Joi.number() .min( -180 ) .max( 180 )
-            ] ),
-        radius: Joi.number().min( 0 )
-    } ) } ).pattern( /.+/, Joi.array().items( Joi.string() ) )
+    filter: Joi.object( {
+        map: Joi.object().keys( {
+            coordinates: Joi
+                .array()
+                .ordered( [
+                    Joi.number() .min( -90 ) .max( 90 ),
+                    Joi.number() .min( -180 ) .max( 180 )
+                ] ),
+            radius: Joi.number().min( 0 )
+        } ),
+        searchString: Joi.string().invalid( '' )
+    } ).pattern( /.+/, Joi.array().items( Joi.string() ) )
 } );
