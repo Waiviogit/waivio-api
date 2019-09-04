@@ -26,7 +26,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
     if ( !validateInput( { filter, sort } ) ) {
         return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
     }
-
+    // special filter map
     if ( filter && filter.map ) {
         aggregationPipeline.push( {
             $geoNear: {
@@ -43,6 +43,20 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
             object_type: objectType
         }
     } );
+    // special filter searchString
+    if( _.get( filter, 'searchString' ) ) {
+        aggregationPipeline.push( {
+            $match: {
+                $or: [
+                    { 'fields': { $elemMatch: { 'name': 'name', 'body': { $regex: `\\b${filter.searchString}.*\\b`, $options: 'i' } } } },
+                    { // if 4-th symbol is "-" - search by "author_permlink" too
+                        'author_permlink': { $regex: `${_.get( filter.searchString, '[3]' ) === '-' ? '^' + filter.searchString : '_'}`, $options: 'i' }
+                    }
+                ]
+            }
+        } );
+        delete filter.searchString;
+    }
     if( !_.isEmpty( filter ) ) {
         // ///////////////////////////// ///
         // place here additional filters ///
