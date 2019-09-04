@@ -44,6 +44,8 @@ wobjRoutes.route( '/wobjectsFeed' )
     .post( WobjController.feed );
 wobjRoutes.route( '/wobjectsByField' )
     .get( WobjController.getByField );
+wobjRoutes.route( '/wobject/:authorPermlink/child_wobjects' )
+    .get( WobjController.getChildWobjects );
 
 userRoutes.route( '/users' )
     .get( UserController.index );

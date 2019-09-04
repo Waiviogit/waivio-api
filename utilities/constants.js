@@ -26,6 +26,10 @@ exports.REQUIREFIELDS_PARENT = [
     'name',
     'avatar'
 ];
+exports.REQUIREFIELDS_CHILD = [
+    'name',
+    'avatar'
+];
 exports.LANGUAGES = [ 'en-US',
     'id-ID',
     'ms-MY',
