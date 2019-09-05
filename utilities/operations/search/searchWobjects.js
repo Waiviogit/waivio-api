@@ -15,22 +15,17 @@ const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects, for
                             { 'author_permlink': { $regex: `${_.get( string, '[3]' ) === '-' ? '^' + string : '_'}`, $options: 'i' } }
                         ]
                     },
-                    { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-                    { parent: { $regex: `^${forParent || '.*'}$`, $options: 'i' } }
+                    { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } }
                 ]
             }
         },
         {
             $addFields: {
-                crucial_wobject: {
-                    $cond: {
-                        if: { $in: [ '$author_permlink', crucial_wobjects ] },
-                        then: 1, else: 0
-                    }
-                }
+                crucial_wobject: { $cond: { if: { $in: [ '$author_permlink', crucial_wobjects ] }, then: 1, else: 0 } },
+                priority: { $cond: { if: { $eq: [ '$parent', forParent ] }, then: 1, else: 0 } }
             }
         },
-        { $sort: { crucial_wobject: -1, weight: -1 } },
+        { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
         { $limit: limit || 10 },
         { $skip: skip || 0 },
         {
