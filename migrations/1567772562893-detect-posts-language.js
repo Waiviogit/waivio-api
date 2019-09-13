@@ -47,7 +47,9 @@ const languageList = {
  * Make any changes you need to make to the database here
  */
 exports.up = async function up ( done ) {
-    let cursor = Post.find().limit( 1000 ).cursor( { batchSize: 1000 } );
+    let cursor = Post.find().cursor( { batchSize: 1000 } );
+    let success_count = 0;
+    let fail_count = 0;
 
     await cursor.eachAsync( async ( doc ) => {
         let post = doc.toObject();
@@ -57,9 +59,14 @@ exports.up = async function up ( done ) {
 
         const res = await Post.update( { author: post.author, permlink: post.permlink }, { $set: { language: language } } );
         if( res.nModified ) {
-            console.log( `For post ${post.author}/${post.permlink} language is: ${language}` );
+            success_count++;
+            console.log( success_count );
+        } else {
+            fail_count++;
+            console.error( fail_count );
         }
     } );
+    console.log( `${success_count} posts successfully updated with language!\n${fail_count} posts fails on update.` );
     done();
 };
 
