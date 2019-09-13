@@ -54,8 +54,12 @@ exports.up = async function up ( done ) {
     await cursor.eachAsync( async ( doc ) => {
         let post = doc.toObject();
         const postAuthor = await User.findOne( { name: post.author }, { _id: 0, read_locales: 1, 'user_metadata.settings': 1 } ).lean();
-        const userLocales = new Set( [ ..._.get( postAuthor, 'read_locales' ), ..._.get( postAuthor, 'user_metadata.settings.postLocales' ), _.get( postAuthor, 'user_metadata.settings.locale' ) ] );
-        const language = detectPostLanguage( post.title, post.body, Array.from( userLocales ) );
+        const userLocales = new Set( [
+            ..._.get( postAuthor, 'read_locales', [] ),
+            ..._.get( postAuthor, 'user_metadata.settings.postLocales', [] ),
+            _.get( postAuthor, 'user_metadata.settings.locale' )
+        ] );
+        const language = detectPostLanguage( post.title, post.body, _.compact( Array.from( userLocales ) ) );
 
         const res = await Post.update( { author: post.author, permlink: post.permlink }, { $set: { language: language } } );
         if( res.nModified ) {
@@ -92,7 +96,7 @@ const detectPostLanguage = ( title, body, userLanguages = [] ) => {
     // if lib didn't match any language ¯\_(ツ)_/¯
     if ( _.isEmpty( existLanguages ) ) {
         // chose language from author language, english has priority
-        if ( _.isEmpty( userLanguages ) || ( userLanguages.length === 1 && _.get( userLanguages, '[0]' === 'auto' ) ) ) {
+        if ( _.isEmpty( userLanguages ) || ( userLanguages.length === 1 && _.get( userLanguages, '[0]' ) === 'auto' ) ) {
             return 'en-US';
         }
         if ( userLanguages.includes( 'en-US' ) ) {
