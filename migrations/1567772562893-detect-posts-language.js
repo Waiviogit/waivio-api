@@ -64,10 +64,10 @@ exports.up = async function up ( done ) {
         const res = await Post.update( { author: post.author, permlink: post.permlink }, { $set: { language: language } } );
         if( res.nModified ) {
             success_count++;
-            console.log( success_count );
+            if( success_count % 5000 === 0 ) console.log( success_count + 'Posts successfully localise' );
         } else {
             fail_count++;
-            console.error( fail_count );
+            if( fail_count % 5000 === 0 )console.error( fail_count );
         }
     } );
     console.log( `${success_count} posts successfully updated with language!\n${fail_count} posts fails on update.` );
@@ -85,8 +85,8 @@ exports.down = async function down( done ) {
 
 const detectPostLanguage = ( title, body, userLanguages = [] ) => {
     // remove HTML tags from title/body and make single string to detect language
-    let str = title.replace( /<\/?[^>]+(>|$)/g, '' ) + '\n';
-    str += body.replace( /<\/?[^>]+(>|$)/g, '' );
+    let str = title.replace( /(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))/g, '' ) + '\n';
+    str += body.replace( /(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))/g, '' );
     // get all possible languages from supported by us
     let existLanguages = franc.all( str, { only: Object.values( languageList ) } );
     existLanguages = existLanguages.map( ( item ) => ( {
