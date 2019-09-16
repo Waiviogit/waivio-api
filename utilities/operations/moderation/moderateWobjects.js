@@ -86,8 +86,8 @@ Validation (moderation) means that to every field in each returned wobject which
  * @param {string} fields_path, custom location of fields, default is "fields"
  * @returns {Array} New array of wobjects.
  */
-const validateWobjects = ( wobjects, moderators, ap_path = 'author_permlink', fields_path = 'fields' ) => {
-    return wobjects.map( ( wobject ) => {
+const validateWobjects = ( wobjects = [], moderators, ap_path = 'author_permlink', fields_path = 'fields' ) => {
+    return _.map( wobjects, ( wobject ) => {
         wobject[ fields_path ] = validateFields( wobject, moderators, ap_path, fields_path );
         return wobject;
     } );
