@@ -4,5 +4,6 @@ module.exports = {
     userFeedHelper: require( './userFeedHelper' ),
     postHelper: require( './postHelper' ),
     imagesHelper: require( './imagesHelper' ),
-    authoriseUser: require( './authoriseUser' )
+    authoriseUser: require( './authoriseUser' ),
+    userLocalesHelper: require( './userLocalesHelper' )
 };
