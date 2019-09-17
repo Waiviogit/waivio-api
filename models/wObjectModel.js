@@ -233,7 +233,7 @@ const getByField = async ( { fieldName, fieldBody } ) => {
 const getChildWobjects = async ( { skip, limit, author_permlink } ) => {
     try {
         const wobjects = await WObjectModel.find( { parent: author_permlink } ).sort( { weight: -1, _id: -1 } ).skip( skip ).limit( limit ).lean();
-        if( _.isEmpty( wobjects ) ) return { error: { status: 404, message: 'Wobjects not found!' } };
+        if( _.isEmpty( wobjects ) ) return { wobjects: [] };
         return { wobjects };
     } catch ( error ) {
         return { error };
