@@ -2,8 +2,8 @@ const { client } = require( './steem' );
 
 const getPostsByCategory = async ( data ) => { // data include tag(user if blog), category(trending/blog/new/hot), limit, start author/permlink
     try {
-        if ( ![ 'trending', 'created', 'hot', 'blog', 'feed' ].includes( data.category ) ) {
-            return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed!' } };
+        if ( ![ 'trending', 'created', 'hot', 'blog', 'feed', 'promoted' ].includes( data.category ) ) {
+            return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
         }
         const posts = await client.database.getDiscussions( data.category, {
             limit: data.limit || 20,
