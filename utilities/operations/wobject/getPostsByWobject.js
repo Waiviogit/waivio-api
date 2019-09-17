@@ -1,10 +1,12 @@
 const { Wobj, Post } = require( '../../../models' );
 const { WOBJECT_LATEST_POSTS_COUNT } = require( '../../constants' );
-const { postHelper } = require( '../../helpers' );
+const { postHelper, userLocalesHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
 const makePipeline = async ( data ) => {
-    let { condition, error: conditionError } = await getWobjFeedCondition( data );
+    const { user_locales, error: userError } = await userLocalesHelper.getUserLocales( data.user_name );
+    if( userError ) return { error: userError };
+    let { condition, error: conditionError } = await getWobjFeedCondition( { ...data, user_locales } );
 
     if ( conditionError ) return { error: conditionError };
     const pipeline = [
@@ -25,22 +27,26 @@ const makePipeline = async ( data ) => {
     return { pipeline };
 };
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
-const getWobjFeedCondition = async ( { author_permlink, skip, limit } ) => {
+const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_locales } ) => {
+    let condition = {};
     let { wobjects: [ wObject = {} ] = [], error } = await Wobj.fromAggregation( [ { $match: { author_permlink: author_permlink } } ] );
 
     if( error ) return { error };
 
     if ( !wObject.newsFilter ) {
-        if( !skip && limit <= WOBJECT_LATEST_POSTS_COUNT ) {
+        if( !skip && limit <= WOBJECT_LATEST_POSTS_COUNT && !user_locales ) {
+            // if wobject have no newsFilter and count of posts less than cashed count => get posts from cashed array
             return { condition: { $match: { _id: { $in: [ ...wObject.latest_posts || [] ] } } } };
         }
-        return { condition: { $match: { 'wobjects.author_permlink': author_permlink } } };
+        condition = { $match: { 'wobjects.author_permlink': author_permlink } };
+        if( user_locales ) condition.$match.language = { $in: user_locales };
+        return { condition };
     }
 
     const newsFilter = wObject.newsFilter;
 
     if( !newsFilter.allowList && !newsFilter.ignoreList ) {
-        return { error: { message: 'Format not exist all require fields' } };
+        return { error: { message: 'Format not include all required fields' } };
     }
     let firstCond, secondCond;
 
@@ -66,11 +72,13 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit } ) => {
             $nin: Array.isArray( newsFilter.ignoreList ) ? newsFilter.ignoreList : []
         }
     };
-
-    return { condition: { $match: { $and: [ firstCond, secondCond ] } } };
+    condition = { $match: { $and: [ firstCond, secondCond ] } };
+    if( user_locales ) condition.$match.$and.push( { language: { $in: user_locales } } );
+    return { condition };
 };
 
 module.exports = async ( data ) => {
+    // data: { author_permlink, limit, skip, user_name }
     const { pipeline, error: pipelineError } = await makePipeline( data );
 
     if( pipelineError ) return { error: pipelineError };
