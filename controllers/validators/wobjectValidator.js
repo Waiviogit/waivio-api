@@ -22,7 +22,7 @@ exports.postsScheme = Joi.object().keys( {
     author_permlink: Joi.string().required(),
     limit: Joi.number().integer().min( 1 ).max( 100 ).default( 30 ),
     skip: Joi.number().integer().min( 0 ).default( 0 ),
-    locale: Joi.string().default( 'en-US' )
+    user_name: Joi.string()
 } );
 
 exports.feedScheme = Joi.object().keys( {
