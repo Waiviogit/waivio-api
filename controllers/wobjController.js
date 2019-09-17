@@ -57,7 +57,7 @@ const posts = async function ( req, res, next ) {
             author_permlink: req.params.authorPermlink,
             limit: req.body.limit,
             skip: req.body.skip,
-            user_name: req.body.user_name
+            user_languages: req.body.user_languages
         }, validators.wobject.postsScheme, next );
 
     if( !value ) {

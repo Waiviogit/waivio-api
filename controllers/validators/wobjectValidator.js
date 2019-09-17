@@ -1,4 +1,5 @@
 const Joi = require( 'joi' );
+const { LANGUAGES } = require( '../../utilities/constants' );
 
 exports.showSchema = Joi.object().keys( {
     author_permlink: Joi.string().required(),
@@ -22,7 +23,7 @@ exports.postsScheme = Joi.object().keys( {
     author_permlink: Joi.string().required(),
     limit: Joi.number().integer().min( 1 ).max( 100 ).default( 30 ),
     skip: Joi.number().integer().min( 0 ).default( 0 ),
-    user_name: Joi.string()
+    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [] )
 } );
 
 exports.feedScheme = Joi.object().keys( {
