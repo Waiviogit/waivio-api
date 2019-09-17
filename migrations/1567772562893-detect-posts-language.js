@@ -3,6 +3,7 @@ const { Post, User } = require( '../database' ).models;
 const franc = require( 'franc-min' );
 const _ = require( 'lodash' );
 
+const regular_exp = /(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))|(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/g;
 const languageList = {
     'en-US': 'eng',
     'id-ID': 'ind',
@@ -85,8 +86,8 @@ exports.down = async function down( done ) {
 
 const detectPostLanguage = ( title, body, userLanguages = [] ) => {
     // remove HTML tags from title/body and make single string to detect language
-    let str = title.replace( /(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))/g, '' ) + '\n';
-    str += body.replace( /(?:!?\[(.*?)\]\((.*?)\))|(<\/?[^>]+(>|$))/g, '' );
+    let str = title.replace( regular_exp, '' ) + '\n';
+    str += body.replace( regular_exp, '' );
     // get all possible languages from supported by us
     let existLanguages = franc.all( str, { only: Object.values( languageList ) } );
     existLanguages = existLanguages.map( ( item ) => ( {
