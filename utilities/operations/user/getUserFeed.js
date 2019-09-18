@@ -1,7 +1,7 @@
 const { User, Post } = require( '../../../models' );
 const { postHelper } = require( '../../helpers' );
 
-const getFeed = async function ( { name, limit = 20, skip = 0 } ) {
+const getFeed = async function ( { name, limit = 20, skip = 0, user_languages } ) {
     const { user, error: userError } = await User.getOne( name );
 
     if( userError || !user ) {
@@ -11,7 +11,7 @@ const getFeed = async function ( { name, limit = 20, skip = 0 } ) {
     let { posts, error: postsError } = await Post.getByFollowLists( {
         users: user.users_follow,
         author_permlinks: user.objects_follow,
-        skip, limit
+        user_languages, skip, limit
     } );
 
     if( postsError ) return { error: postsError };
