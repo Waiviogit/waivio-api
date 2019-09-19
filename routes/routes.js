@@ -80,6 +80,8 @@ objectTypeRoutes.route( '/objectTypesSearch' )
     .post( ObjectTypeController.search );
 objectTypeRoutes.route( '/objectType/:objectTypeName' )
     .post( ObjectTypeController.show );
+objectTypeRoutes.route( '/objectType/:objectTypeName/expertise' )
+    .get( ObjectTypeController.expertise );
 
 userRoutes.route( '/generalSearch' )
     .post( globalSearchController.globalSearch );

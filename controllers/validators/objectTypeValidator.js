@@ -1,5 +1,5 @@
 const Joi = require( 'joi' );
-const { OBJECT_TYPE_TOP_WOBJECTS_COUNT } = require( '../../utilities/constants' );
+const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, OBJECT_TYPE_TOP_EXPERTS_COUNT } = require( '../../utilities/constants' );
 
 exports.indexSchema = Joi.object().keys( {
     limit: Joi.number().min( 0 ),
@@ -24,4 +24,10 @@ exports.showSchema = Joi.object().keys( {
         } ),
         searchString: Joi.string().invalid( '' )
     } ).pattern( /.+/, Joi.array().items( Joi.string() ) )
+} );
+
+exports.expertsSchema = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().min( 0 ).max( OBJECT_TYPE_TOP_EXPERTS_COUNT ).default(5),
+    skip: Joi.number().min( 0 ).max( OBJECT_TYPE_TOP_EXPERTS_COUNT - 1 ).default( 0 )
 } );
