@@ -1,5 +1,5 @@
 const { searchObjectTypes } = require( '../utilities/operations/search/searchTypes' );
-const { getAll, getOne } = require( '../utilities/operations/objectType' );
+const { getAll, getOne, getExperts } = require( '../utilities/operations/objectType' );
 const validators = require( './validators' );
 
 const index = async ( req, res, next ) => {
@@ -50,4 +50,20 @@ const search = async ( req, res, next ) => {
     next();
 };
 
-module.exports = { index, search, show };
+const expertise = async ( req, res, next ) => {
+    const value = validators.validate( {
+        name: req.params.objectTypeName,
+        limit: req.query.limit,
+        skip: req.query.skip
+    }, validators.objectType.expertsSchema, next );
+
+    if( !value ) return;
+    const { users, error } = await getExperts( value );
+
+    if( error ) return next( error );
+    res.result = { status: 200, json: users };
+    next();
+};
+
+
+module.exports = { index, search, show, expertise };
