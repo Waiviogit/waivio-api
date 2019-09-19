@@ -59,3 +59,4 @@ const job = new CronJob( '0 0  */12 * * *', async () => {
 
 job.start();
 
+module.exports = updateObjectTypeExperts;
