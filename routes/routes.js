@@ -44,6 +44,8 @@ wobjRoutes.route( '/wobjectsFeed' )
     .post( WobjController.feed );
 wobjRoutes.route( '/wobjectsByField' )
     .get( WobjController.getByField );
+wobjRoutes.route( '/wobject/:authorPermlink/child_wobjects' )
+    .get( WobjController.getChildWobjects );
 
 userRoutes.route( '/users' )
     .get( UserController.index );
@@ -78,6 +80,8 @@ objectTypeRoutes.route( '/objectTypesSearch' )
     .post( ObjectTypeController.search );
 objectTypeRoutes.route( '/objectType/:objectTypeName' )
     .post( ObjectTypeController.show );
+objectTypeRoutes.route( '/objectType/:objectTypeName/expertise' )
+    .get( ObjectTypeController.expertise );
 
 userRoutes.route( '/generalSearch' )
     .post( globalSearchController.globalSearch );

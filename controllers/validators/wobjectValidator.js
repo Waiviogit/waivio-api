@@ -1,4 +1,5 @@
 const Joi = require( 'joi' );
+const { LANGUAGES } = require( '../../utilities/constants' );
 
 exports.showSchema = Joi.object().keys( {
     author_permlink: Joi.string().required(),
@@ -22,7 +23,7 @@ exports.postsScheme = Joi.object().keys( {
     author_permlink: Joi.string().required(),
     limit: Joi.number().integer().min( 1 ).max( 100 ).default( 30 ),
     skip: Joi.number().integer().min( 0 ).default( 0 ),
-    locale: Joi.string().default( 'en-US' )
+    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [] )
 } );
 
 exports.feedScheme = Joi.object().keys( {
@@ -45,7 +46,8 @@ exports.searchScheme = Joi.object().keys( {
     string: Joi.string().allow( '' ),
     locale: Joi.string().default( 'en-US' ),
     sortByApp: Joi.string().allow( '' ).default( null ),
-    object_type: Joi.string()
+    object_type: Joi.string(),
+    forParent: Joi.string().invalid( '' ).allow( null )
 } );
 
 exports.fieldsScheme = exports.galleryScheme = exports.listScheme = Joi.object().keys( {
@@ -62,4 +64,10 @@ exports.objectExpertiseScheme = Joi.object().keys( {
 exports.getByFieldScheme = Joi.object().keys( {
     fieldName: Joi.string().required(),
     fieldBody: Joi.string().required()
+} );
+
+exports.getChildWobjects = Joi.object().keys( {
+    limit: Joi.number().integer().min( 1 ).max( 100 ).default( 30 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
+    author_permlink: Joi.string().required()
 } );

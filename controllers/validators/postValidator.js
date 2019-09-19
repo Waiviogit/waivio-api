@@ -6,7 +6,7 @@ exports.showSchema = Joi.object().keys( {
 } );
 
 exports.getPostsByCategorySchema = Joi.object().keys( {
-    category: Joi.string().valid( [ 'trending', 'created', 'hot', 'blog', 'feed' ] ).default( 'trending' ),
+    category: Joi.string().valid( [ 'trending', 'created', 'hot', 'blog', 'feed', 'promoted' ] ).default( 'trending' ),
     tag: Joi.string(),
     limit: Joi.number().min( 0 ).max( 50 ).default( 20 ),
     start_author: Joi.string(),

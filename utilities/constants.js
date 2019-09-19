@@ -26,6 +26,10 @@ exports.REQUIREFIELDS_PARENT = [
     'name',
     'avatar'
 ];
+exports.REQUIREFIELDS_CHILD = [
+    'name',
+    'avatar'
+];
 exports.LANGUAGES = [ 'en-US',
     'id-ID',
     'ms-MY',
@@ -70,3 +74,5 @@ exports.LANGUAGES = [ 'en-US',
 ];
 exports.WOBJECT_LATEST_POSTS_COUNT = 30;
 exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
+exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
+exports.LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];

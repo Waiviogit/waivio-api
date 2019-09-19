@@ -1,6 +1,5 @@
 const { Wobj, ObjectType } = require( '../../../models' );
-const { REQUIREDFIELDS } = require( '../../constants' );
-const LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];
+const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require( '../../constants' );
 const _ = require( 'lodash' );
 
 const validateInput = ( { filter, sort } ) => {
@@ -27,7 +26,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
     if ( !validateInput( { filter, sort } ) ) {
         return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
     }
-
+    // special filter map
     if ( filter && filter.map ) {
         aggregationPipeline.push( {
             $geoNear: {
@@ -44,6 +43,20 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
             object_type: objectType
         }
     } );
+    // special filter searchString
+    if( _.get( filter, 'searchString' ) ) {
+        aggregationPipeline.push( {
+            $match: {
+                $or: [
+                    { 'fields': { $elemMatch: { 'name': 'name', 'body': { $regex: `\\b${filter.searchString}.*\\b`, $options: 'i' } } } },
+                    { // if 4-th symbol is "-" - search by "author_permlink" too
+                        'author_permlink': { $regex: `${_.get( filter.searchString, '[3]' ) === '-' ? '^' + filter.searchString : '_'}`, $options: 'i' }
+                    }
+                ]
+            }
+        } );
+        delete filter.searchString;
+    }
     if( !_.isEmpty( filter ) ) {
         // ///////////////////////////// ///
         // place here additional filters ///
@@ -53,7 +66,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
                 let cond = { $match: { fields: { $elemMatch: { name: filterItem, body: filterValue } } } };
                 // additional filter for field "rating"
                 if( filterItem === 'rating' ) {
-                    cond.$match.fields.$elemMatch.rating_votes = { $exists: true, $not: { $size: 0 } };
+                    cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
                 }
                 aggregationPipeline.push( cond );
             }
@@ -70,7 +83,7 @@ const getWobjWithFilters = async ( { objectType, filter, limit = 30, skip = 0, s
                 }
             }
         },
-        { $sort: { priority: -1, [ sort ]: -1, _id: -1 } },
+        { $sort: { priority: -1, [ sort ]: sort !== 'proximity' ? -1 : 1, _id: -1 } },
         { $skip: skip },
         { $limit: limit },
         { $addFields: { 'fields': { $filter: { input: '$fields', as: 'field', cond: { $in: [ '$$field.name', REQUIREDFIELDS ] } } } } },
