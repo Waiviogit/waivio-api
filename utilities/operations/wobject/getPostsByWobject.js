@@ -1,28 +1,26 @@
 const { Wobj, Post } = require( '../../../models' );
+const { Post: PostModel } = require( '../../../database' ).models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require( '../../constants' );
 const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
-const makePipeline = async ( data ) => {
+const getPosts = async ( data ) => {
     let { condition, error: conditionError } = await getWobjFeedCondition( { ...data } );
 
     if ( conditionError ) return { error: conditionError };
-    const pipeline = [
-        condition,
-        { $sort: { _id: -1 } },
-        { $skip: data.skip },
-        { $limit: data.limit },
-        {
-            $lookup: {
-                from: 'wobjects',
-                localField: 'wobjects.author_permlink',
-                foreignField: 'author_permlink',
-                as: 'fullObjects'
-            }
-        }
-    ];
+    let posts = [];
+    try {
+        posts = await PostModel.find( condition )
+            .sort( { _id: -1 } )
+            .skip( data.skip )
+            .limit( data.limit )
+            .populate( 'fullObjects' )
+            .lean();
+    } catch ( error ) {
+        return { error };
+    }
 
-    return { pipeline };
+    return { posts };
 };
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_languages } ) => {
@@ -34,10 +32,10 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_langua
     if ( !wObject.newsFilter ) {
         if( !skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty( user_languages ) ) {
             // if wobject have no newsFilter and count of posts less than cashed count => get posts from cashed array
-            return { condition: { $match: { _id: { $in: [ ...wObject.latest_posts || [] ] } } } };
+            return { condition: { _id: { $in: [ ...wObject.latest_posts || [] ] } } };
         }
-        condition = { $match: { 'wobjects.author_permlink': author_permlink } };
-        if( !_.isEmpty( user_languages ) ) condition.$match.language = { $in: user_languages };
+        condition = { 'wobjects.author_permlink': author_permlink };
+        if( !_.isEmpty( user_languages ) ) condition.language = { $in: user_languages };
         return { condition };
     }
 
@@ -70,19 +68,16 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_langua
             $nin: Array.isArray( newsFilter.ignoreList ) ? newsFilter.ignoreList : []
         }
     };
-    condition = { $match: { $and: [ firstCond, secondCond ] } };
-    if( !_.isEmpty( user_languages ) ) condition.$match.$and.push( { language: { $in: user_languages } } );
+    condition = { $and: [ firstCond, secondCond ] };
+    if( !_.isEmpty( user_languages ) ) condition.$and.push( { language: { $in: user_languages } } );
     return { condition };
 };
 
 module.exports = async ( data ) => {
     // data: { author_permlink, limit, skip, user_name }
-    const { pipeline, error: pipelineError } = await makePipeline( data );
+    let { posts, error: getPostsError } = await getPosts( data );
+    if( getPostsError ) return { error: getPostsError };
 
-    if( pipelineError ) return { error: pipelineError };
-    let { posts, error } = await Post.aggregate( pipeline );
-
-    if( error ) return { error };
     await postHelper.addAuthorWobjectsWeight( posts );
     posts = await Post.fillObjects( posts );
     return { posts };
