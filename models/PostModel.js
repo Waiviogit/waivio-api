@@ -1,40 +1,8 @@
 const PostModel = require( '../database' ).models.Post;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
-const postHelper = require( '../utilities/helpers/postHelper' );
-const { getWobjFeedCondition } = require( '../utilities/helpers/postHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
 const _ = require( 'lodash' );
-
-const getByObject = async function ( data ) { // data include author_permlink, limit, skip, locale
-    let { condition, error: conditionError } = await getWobjFeedCondition( data.author_permlink );
-
-    if( conditionError ) {
-        return { error: conditionError };
-    }
-    try {
-        let posts = await PostModel.aggregate( [
-            condition,
-            { $sort: { createdAt: -1 } },
-            { $skip: data.skip },
-            { $limit: data.limit },
-            {
-                $lookup: {
-                    from: 'wobjects',
-                    localField: 'wobjects.author_permlink',
-                    foreignField: 'author_permlink',
-                    as: 'fullObjects'
-                }
-            }
-        ] );
-
-        await postHelper.addAuthorWobjectsWeight( posts );
-        posts = await fillObjects( posts );
-        return { posts };
-    } catch ( error ) {
-        return { error };
-    }
-}; // return posts feed by one specified wobject
 
 const getFeedByObjects = async function ( data ) { // data include objects(array of strings), limit, skip, locale, user
     try {
@@ -46,7 +14,7 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
                         { author: data.user } ]
                 }
             },
-            { $sort: { createdAt: -1 } },
+            { $sort: { _id: -1 } },
             { $skip: data.skip },
             { $limit: data.limit },
             {
@@ -69,7 +37,7 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
 const getAllPosts = async function ( data ) {
     try {
         const aggregatePipeline = [
-            { $sort: { createdAt: -1 } },
+            { $sort: { _id: -1 } },
             { $skip: data.skip },
             { $limit: data.limit },
             {
@@ -151,4 +119,4 @@ const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_la
     }
 };
 
-module.exports = { getByObject, getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists };
+module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists };
