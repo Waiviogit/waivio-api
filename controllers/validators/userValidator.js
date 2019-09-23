@@ -21,20 +21,20 @@ exports.showSchema = Joi.string().required();
 exports.objectsFollowSchema = Joi.object().keys( {
     name: Joi.string().required(),
     locale: Joi.string().default( 'en-US' ),
-    limit: Joi.number().min( 0 ).max( 100 ).default( 50 ),
-    skip: Joi.number().min( 0 ).default( 0 )
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 50 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
 } );
 
 exports.objectsFeedSchema = Joi.object().keys( {
     user: Joi.string().required(),
-    limit: Joi.number().min( 0 ).max( 50 ).default( 30 ),
-    skip: Joi.number().min( 0 ).default( 0 )
+    limit: Joi.number().integer().min( 0 ).max( 50 ).default( 30 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
 } );
 
 exports.feedSchema = Joi.object().keys( {
     name: Joi.string().required(),
-    limit: Joi.number().min( 0 ).max( 50 ).default( 20 ),
-    skip: Joi.number().min( 0 ).default( 0 ),
+    limit: Joi.number().integer().min( 0 ).max( 50 ).default( 20 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
     filter: Joi.object().keys( {
         byApp: Joi.string().allow( '' )
     } ),
@@ -43,7 +43,7 @@ exports.feedSchema = Joi.object().keys( {
 
 exports.searchSchema = Joi.object().keys( {
     searchString: Joi.string().required(),
-    limit: Joi.number().min( 0 ).max( 100 ).default( 20 )
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 20 )
 } );
 
 exports.updateMetadataSchema = Joi.object().keys( {
