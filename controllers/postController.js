@@ -1,4 +1,5 @@
 const { postHelper } = require( '../utilities/helpers' );
+const {getPostsByCategory} = require( '../utilities/operations' ).post;
 const validators = require( './validators' );
 
 const show = async function ( req, res, next ) {
@@ -31,7 +32,7 @@ const getPostsByCategory = async function ( req, res, next ) {
     if( !value ) {
         return;
     }
-    const { posts, error } = await postHelper.getPostsByCategory( value );
+    const { posts, error } = await getPostsByCategory( value );
 
     if ( error ) {
         return next( error );
