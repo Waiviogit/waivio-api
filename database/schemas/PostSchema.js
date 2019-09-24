@@ -22,7 +22,7 @@ const PostSchema = new Schema( {
         weight: { type: Number, required: true }
     } ],
     wobjects: [ {
-        author_permlink: { type: String, index: true },
+        author_permlink: { type: String },
         percent: { type: Number },
         tagged: { type: String }
     } ],
@@ -47,6 +47,8 @@ PostSchema.virtual( 'fullObjects', {
 PostSchema.plugin( mongooseLeanVirtuals );
 
 PostSchema.index( { author: 1, permlink: 1 }, { unique: true } );
+PostSchema.index( { author: 1, language: 1 } );
+PostSchema.index( { 'wobjects.author_permlink': 1, _id: 1 } );
 
 const PostModel = mongoose.model( 'Post', PostSchema );
 
