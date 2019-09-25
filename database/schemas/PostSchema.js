@@ -26,7 +26,8 @@ const PostSchema = new Schema( {
         percent: { type: Number },
         tagged: { type: String }
     } ],
-    language: { type: String, default: 'en-US' }
+    language: { type: String, default: 'en-US' },
+    author_weight: { type: Number }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
