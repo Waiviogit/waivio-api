@@ -76,3 +76,5 @@ exports.WOBJECT_LATEST_POSTS_COUNT = 30;
 exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
 exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
 exports.LOW_PRIORITY_STATUS_FLAGS = [ 'relisted', 'unavailable' ];
+exports.DAYS_FOR_HOT_FEED = 3;
+exports.DAYS_FOR_TRENDING_FEED = 7;
