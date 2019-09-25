@@ -1,4 +1,5 @@
 const { postHelper } = require( '../utilities/helpers' );
+const { getPostsByCategory } = require( '../utilities/operations' ).post;
 const validators = require( './validators' );
 
 const show = async function ( req, res, next ) {
@@ -19,19 +20,19 @@ const show = async function ( req, res, next ) {
     next();
 };
 
-const getPostsByCategory = async function ( req, res, next ) {
+const getByCategory = async function ( req, res, next ) {
     const value = validators.validate( {
         category: req.body.category,
         tag: req.body.tag,
         limit: req.body.limit,
-        start_author: req.body.start_author,
-        start_permlink: req.body.start_permlink
+        skip: req.body.skip,
+        user_languages: req.body.user_languages
     }, validators.post.getPostsByCategorySchema, next );
 
     if( !value ) {
         return;
     }
-    const { posts, error } = await postHelper.getPostsByCategory( value );
+    const { posts, error } = await getPostsByCategory( value );
 
     if ( error ) {
         return next( error );
@@ -40,4 +41,4 @@ const getPostsByCategory = async function ( req, res, next ) {
     next();
 };
 
-module.exports = { show, getPostsByCategory };
+module.exports = { show, getByCategory };
