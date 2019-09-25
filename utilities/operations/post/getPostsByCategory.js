@@ -39,6 +39,11 @@ const makeConditions = ( { category, tag, user_languages } ) => {
 };
 
 module.exports = async ( { category, tag, skip, limit, user_languages } ) => {
+
+    // #stub for trending feed
+    if( category === 'trending' ) return { posts: [] };
+    // #stub for trending feed
+
     const { cond, sort } = makeConditions( { category, tag, user_languages } );
     let posts = [];
     try {
