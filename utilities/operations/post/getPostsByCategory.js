@@ -2,7 +2,7 @@ const ObjectId = require( 'mongoose' ).Types.ObjectId;
 const { Post } = require( '../../../database' ).models;
 const { Post: PostService } = require( '../../../models' );
 const { postHelper } = require( '../../helpers' );
-const { DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED } = require( '../../constants' );
+const { DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE } = require( '../../constants' );
 const _ = require( 'lodash' );
 
 const objectIdFromDaysBefore = ( daysCount ) => {
@@ -12,7 +12,8 @@ const objectIdFromDaysBefore = ( daysCount ) => {
     startDate.setSeconds( 0 );
     startDate.setMinutes( 0 );
     startDate.setHours( 0 );
-    return new ObjectId( Math.floor( startDate.getTime() / 1000 ).toString( 16 ) + '0000000000000000' );
+    let str = Math.floor( startDate.getTime() / 1000 ).toString( 16 ) + '0000000000000000';
+    return new ObjectId( str );
 };
 
 const makeConditions = ( { category, tag, user_languages } ) => {
@@ -30,20 +31,18 @@ const makeConditions = ( { category, tag, user_languages } ) => {
             cond = { _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_HOT_FEED ) } };
             sort = { children: -1 };
             break;
-        // case 'trending':
-        //     cond = { _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) } }; // to do (: add filter by 50 % top users(by waivio rating)
-        //     sort = {net_rshares:1};
+        case 'trending':
+            cond = {
+                author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
+                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) }
+            };
+            sort = { net_rshares: -1 };
     }
     if( !_.isEmpty( user_languages ) ) cond.language = { $in: user_languages };
-    return{ cond, sort };
+    return { cond, sort };
 };
 
 module.exports = async ( { category, tag, skip, limit, user_languages } ) => {
-
-    // #stub for trending feed
-    if( category === 'trending' ) return { posts: [] };
-    // #stub for trending feed
-
     const { cond, sort } = makeConditions( { category, tag, user_languages } );
     let posts = [];
     try {
