@@ -68,7 +68,7 @@ userRoutes.route( '/user/:userName/userMetadata' )
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
 postRoutes.route( '/posts' )
-    .post( PostController.getPostsByCategory );
+    .post( PostController.getByCategory );
 
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );

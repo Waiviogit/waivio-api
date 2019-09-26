@@ -1,4 +1,5 @@
 const Joi = require( 'joi' );
+const { LANGUAGES } = require( '../../utilities/constants' );
 
 exports.showSchema = Joi.object().keys( {
     author: Joi.string().required(),
@@ -6,9 +7,9 @@ exports.showSchema = Joi.object().keys( {
 } );
 
 exports.getPostsByCategorySchema = Joi.object().keys( {
-    category: Joi.string().valid( [ 'trending', 'created', 'hot', 'blog', 'feed', 'promoted' ] ).default( 'trending' ),
+    category: Joi.string().valid( [ 'trending', 'created', 'hot', 'blog' ] ).default( 'trending' ),
     tag: Joi.string(),
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
     limit: Joi.number().integer().min( 0 ).max( 50 ).default( 20 ),
-    start_author: Joi.string(),
-    start_permlink: Joi.string()
+    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [] )
 } );
