@@ -93,3 +93,10 @@ exports.updateMetadataSchema = Joi.object().keys( {
         ).default( [] )
     } )
 } );
+
+exports.blogSchema = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 20 ),
+    start_author: Joi.string().allow( '' ).default( '' ),
+    start_permlink: Joi.string().allow( '' ).default( '' )
+} );

@@ -12,7 +12,7 @@ const getPostsByCategory = async ( data ) => { // data include tag(user if blog)
             start_permlink: data.start_permlink
         } );
 
-        return { posts: posts };
+        return { posts };
     } catch ( error ) {
         return { error };
     }
