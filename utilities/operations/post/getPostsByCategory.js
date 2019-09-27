@@ -16,14 +16,10 @@ const objectIdFromDaysBefore = ( daysCount ) => {
     return new ObjectId( str );
 };
 
-const makeConditions = ( { category, tag, user_languages } ) => {
+const makeConditions = ( { category, user_languages } ) => {
     let cond = {};
     let sort = {};
     switch ( category ) {
-        case 'blog':
-            cond = { author: tag };
-            sort = { _id: -1 };
-            break;
         case 'created':
             sort = { _id: -1 };
             break;
@@ -42,8 +38,8 @@ const makeConditions = ( { category, tag, user_languages } ) => {
     return { cond, sort };
 };
 
-module.exports = async ( { category, tag, skip, limit, user_languages } ) => {
-    const { cond, sort } = makeConditions( { category, tag, user_languages } );
+module.exports = async ( { category, skip, limit, user_languages } ) => {
+    const { cond, sort } = makeConditions( { category, user_languages } );
     let posts = [];
     try {
         posts = await Post
