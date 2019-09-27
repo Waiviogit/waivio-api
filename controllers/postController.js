@@ -23,7 +23,6 @@ const show = async function ( req, res, next ) {
 const getByCategory = async function ( req, res, next ) {
     const value = validators.validate( {
         category: req.body.category,
-        tag: req.body.tag,
         limit: req.body.limit,
         skip: req.body.skip,
         user_languages: req.body.user_languages
