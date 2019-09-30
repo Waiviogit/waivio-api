@@ -22,8 +22,7 @@ module.exports = async ( { limit, skip, wobjects_count = 3 } ) => {
     if( error ) return { error };
 
     for( let type of objectTypes ) {
-        const { wobjects = [], error: wobjError } = await Wobj.fromAggregation( relatedWobjectsPipeline( type.top_wobjects ) );
-        if( wobjError ) return { error: wobjError };
+        const { wobjects = [] } = await Wobj.fromAggregation( relatedWobjectsPipeline( type.top_wobjects ) );
 
         type.related_wobjects = wobjects;
         if( type.related_wobjects.length > wobjects_count ) {
