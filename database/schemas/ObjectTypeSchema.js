@@ -11,7 +11,8 @@ const ObjectTypeSchema = new Schema( {
         type: [ {
             name: { type: String },
             weight: { type: Number, default: 0 }
-        } ]
+        } ],
+        default: []
     }
 },
 {
