@@ -100,3 +100,15 @@ exports.blogSchema = Joi.object().keys( {
     start_author: Joi.string().allow( '' ).default( '' ),
     start_permlink: Joi.string().allow( '' ).default( '' )
 } );
+
+exports.followingUpdates = Joi.object().keys( {
+    name: Joi.string().required(),
+    users_count: Joi.number().integer().min( 0 ).max( 100 ).default( 3 ),
+    wobjects_count: Joi.number().integer().min( 0 ).max( 100 ).default( 3 )
+} );
+
+exports.followingUsersUpdates = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 3 ),
+    skip: Joi.number().integer().min( 0 ).max( 100 ).default( 0 )
+} );

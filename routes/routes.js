@@ -66,6 +66,10 @@ userRoutes.route( '/users/search' )
 userRoutes.route( '/user/:userName/userMetadata' )
     .put( UserController.updateUserMetadata )
     .get( UserController.getUserMetadata );
+userRoutes.route( '/user/:userName/following_updates' )
+    .get( UserController.followingUpdates );
+userRoutes.route( '/user/:userName/following_users_updates' )
+    .get( UserController.followingUsersUpdates );
 
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
