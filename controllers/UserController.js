@@ -188,7 +188,23 @@ const followingUsersUpdates = async ( req, res, next ) => {
     next();
 };
 
+const followingWobjectsUpdates = async ( req, res, next ) => {
+    const value = validators.validate( {
+        name: req.params.userName,
+        limit: req.query.limit,
+        skip: req.query.skip,
+        object_type: req.query.object_type
+    }, validators.user.followingWobjectsUpdates, next );
+    if( !value ) return ;
+
+    const { wobjects_updates, error } = await getFollowingUpdates.getWobjectsUpdates( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: wobjects_updates };
+    next();
+};
+
 module.exports = {
-    index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers,
-    updateUserMetadata, getUserMetadata, blog, followingUpdates, followingUsersUpdates
+    index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
+    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates
 };

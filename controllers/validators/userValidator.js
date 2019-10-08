@@ -112,3 +112,10 @@ exports.followingUsersUpdates = Joi.object().keys( {
     limit: Joi.number().integer().min( 0 ).max( 100 ).default( 3 ),
     skip: Joi.number().integer().min( 0 ).max( 100 ).default( 0 )
 } );
+
+exports.followingWobjectsUpdates = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 3 ),
+    skip: Joi.number().integer().min( 0 ).max( 100 ).default( 0 ),
+    object_type: Joi.string().invalid( '' ).required()
+} );
