@@ -64,7 +64,7 @@ const getUpdatesByWobjectsList = async ( { objects_follow = [], skip = 0, limit 
         return { wobjects_updates: { related_wobjects: wobjects.slice( 0, limit ), hasMore: wobjects.length > limit } };
     }
 
-    let { wobjects: result } = await WobjectService.fromAggregation( pipeline );
+    let { wobjects: result = [] } = await WobjectService.fromAggregation( pipeline );
     result.forEach( ( group ) => {
         group.hasMore = group.related_wobjects.length > limit;
         group.related_wobjects = group.related_wobjects.slice( 0, limit );
