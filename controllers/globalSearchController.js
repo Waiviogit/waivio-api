@@ -1,7 +1,7 @@
 const { global: { getGlobalSearch } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
-const globalSearchController = async function( req, res, next ) {
+const globalSearch = async function( req, res, next ) {
     const value = validators.validate( {
         searchString: req.body.string,
         userLimit: req.body.userLimit,
@@ -19,4 +19,4 @@ const globalSearchController = async function( req, res, next ) {
     next();
 };
 
-module.exports = { globalSearch: globalSearchController };
+module.exports = { globalSearch };
