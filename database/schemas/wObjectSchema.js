@@ -44,7 +44,9 @@ const WObjectSchema = new Schema(
             } // [longitude, latitude]
         },
         latest_posts: { type: [ mongoose.Schema.ObjectId ], default: [] }, // always keep last N posts to quick build wobject feed
-        status: { type: Object }
+        status: { type: Object },
+        last_posts_count: { type: Number, default: 0 },
+        last_posts_counts_by_hours: { type: [ Number ], default: [] }
     },
     {
         toObject: { virtuals: true }, timestamps: true, strict: false

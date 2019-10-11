@@ -98,11 +98,14 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_languages } ) => {
+const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_languages, filtersData } ) => {
     try {
         let cond = {
             $or: [ { author: { $in: users } }, { 'wobjects.author_permlink': { $in: author_permlinks } } ]
         };
+        if( _.get( filtersData, 'require_wobjects' ) ) {
+            cond[ 'wobjects.author_permlink' ] = { $in: [ ...filtersData.require_wobjects ] };
+        }
         if( !_.isEmpty( user_languages ) ) cond.language = { $in: user_languages };
         const posts = await PostModel.find( cond )
             .sort( { _id: -1 } )

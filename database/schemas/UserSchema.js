@@ -47,7 +47,9 @@ const UserSchema = new Schema( {
     users_follow: { type: [ String ], default: [] }, // arr of users which user follow
     json_metadata: { type: String, default: '' },
     wobjects_weight: { type: Number, default: 0 }, // sum of weight of all wobjects
-    count_posts: { type: Number, default: 0, index: true },
+    count_posts: { type: Number, default: 0, index: true }, // count of the all posts
+    last_posts_count: { type: Number, default: 0 }, // count of the posts written in last day
+    last_posts_counts_by_hours: { type: [ Number ], default: [] },
     user_metadata: { type: UserMetadataSchema, default: () => ( {} ), select: false }
 }, { timestamps: true } );
 
