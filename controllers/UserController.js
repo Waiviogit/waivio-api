@@ -49,9 +49,6 @@ const updateUserMetadata = async function ( req, res, next ) {
 };
 
 const getUserMetadata = async function ( req, res, next ) {
-    const { error: authError } = await authoriseUser.authorise( req.params.userName );
-
-    if( authError ) return next( authError );
     const { user_metadata, error } = await getMetadata( req.params.userName );
 
     if ( error ) return next( error );
