@@ -4,7 +4,7 @@ const show = async( req, res, next ) => {
     const data = {
         name: req.params.appName || 'waiviodev'
     };
-    const { app, error } = await App.findOne( data );
+    const { app, error } = await App.getOne( data );
 
     if( error ) {
         return next( error );
