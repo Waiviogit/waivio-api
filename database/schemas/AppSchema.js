@@ -21,7 +21,17 @@ const AppSchema = new Schema( {
         } ],
         users: []
     },
-    supported_objects: { type: [ String ], index: true, default: [] }
+    supported_objects: { type: [ String ], index: true, default: [] },
+    daily_chosen_post: {
+        author: { type: String },
+        permlink: { type: String },
+        title: { type: String }
+    },
+    weekly_chosen_post: {
+        author: { type: String },
+        permlink: { type: String },
+        title: { type: String }
+    }
 }, { timestamps: true } );
 
 const AppModel = mongoose.model( 'App', AppSchema );
