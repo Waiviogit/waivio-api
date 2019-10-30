@@ -6,6 +6,7 @@ module.exports = {
     post: require( './postValidator' ),
     generalSearch: require( './generalSearch' ),
     objectType: require( './objectTypeValidator' ),
+    app: require('./appValidator'),
     validate: ( data, schema, next ) => {
         const result = Joi.validate( data, schema );
 
