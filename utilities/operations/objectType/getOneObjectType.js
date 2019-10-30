@@ -110,6 +110,8 @@ module.exports = async ( { name, filter, wobjLimit, wobjSkip, sort } ) => {
     if( objectType.related_wobjects.length === wobjLimit + 1 ) {
         objectType.hasMoreWobjects = true;
         objectType.related_wobjects = objectType.related_wobjects.slice( 0, wobjLimit );
+    } else {
+        objectType.hasMoreWobjects = false;
     }
     return { objectType };
 };
