@@ -1,4 +1,6 @@
 const { App } = require( '../models' );
+const { app: AppOperations } = require( '../utilities/operations' );
+const validators = require( './validators' );
 
 const show = async( req, res, next ) => {
     const data = {
@@ -12,4 +14,17 @@ const show = async( req, res, next ) => {
     res.status( 200 ).json( app );
 };
 
-module.exports = { show };
+const experts = async ( req, res, next ) => {
+    const value = validators.validate( {
+        name: req.params.appName,
+        skip: req.query.skip,
+        limit: req.query.limit
+    }, validators.app.experts, next );
+    if( !value ) return;
+
+    const { users, error } = await AppOperations.experts( value );
+    if( error ) return next( error );
+    res.status( 200 ).json( users );
+};
+
+module.exports = { show, experts };

@@ -3,5 +3,6 @@ module.exports = {
     user: require( './user' ),
     search: require( './search' ),
     objectType: require( './objectType' ),
-    post: require( './post' )
+    post: require( './post' ),
+    app: require( './app' )
 };
