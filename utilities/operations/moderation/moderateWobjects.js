@@ -109,7 +109,9 @@ const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 
 
 /**
  * Moderate wobject by specified moderators
- * Check every field in wobject to exist UpVote or DownVote from moderators, if UpVote exists => field marks some special key("upvotedByModerator") which indicate high priority of this field, else if DownVote exists => field remove from wobject fields
+ * Check every field in wobject to exist UpVote or DownVote from moderators,
+ * if UpVote exists => field marks some special key("upvotedByModerator") which indicate high priority of this field,
+ * else if DownVote exists => field remove from wobject fields
  * @param {Object}  wobject
  * @param {Array}   moderators
  * @param {string} ap_path, custom location of author_permlink, default is "author_permlink"
