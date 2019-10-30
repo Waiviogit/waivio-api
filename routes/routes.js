@@ -80,8 +80,11 @@ postRoutes.route( '/posts' )
 
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );
+appRoutes.route( '/app/:appName/experts' )
+    .get( AppController.experts );
 appRoutes.route( '/image' )
     .post( ImageController.saveImage );
+
 objectTypeRoutes.route( '/objectTypes' )
     .post( ObjectTypeController.index );
 objectTypeRoutes.route( '/objectTypesSearch' )
