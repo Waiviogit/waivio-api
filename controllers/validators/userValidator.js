@@ -38,7 +38,7 @@ exports.feedSchema = Joi.object().keys( {
     filter: Joi.object().keys( {
         byApp: Joi.string().allow( '' )
     } ),
-    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [] )
+    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [ 'ru-RU' ] )
 } );
 
 exports.searchSchema = Joi.object().keys( {
