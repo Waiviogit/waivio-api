@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const { LANGUAGES } = require( '../../utilities/constants' );
 
 const UserMetadataSchema = new Schema( {
-    notifications_last_timestamp: { type: Number, default: null },
+    notifications_last_timestamp: { type: Number, default: 0 },
     settings: {
         exitPageSetting: { type: Boolean, default: false }, // Enable this option to use the exit page when clicking on an external link.
         locale: { type: String, enum: [ ...LANGUAGES ], default: 'auto' }, // which language use on waivio
