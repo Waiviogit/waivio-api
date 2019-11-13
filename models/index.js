@@ -4,5 +4,6 @@ module.exports = {
     App: require( './AppModel' ),
     Post: require( './PostModel' ),
     ObjectType: require( './ObjectTypeModel' ),
-    UserWobjects: require( './UserWobjects' )
+    UserWobjects: require( './UserWobjects' ),
+    CommentRef: require( './CommentRef' )
 };
