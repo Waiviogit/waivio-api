@@ -1,20 +1,21 @@
 const Wobj = require( '../../models/wObjectModel' );
 const User = require( '../../models/UserModel' );
+const CommentRef = require( '../../models/CommentRef' );
 const { Post } = require( '../../database' ).models;
 const { postsUtil } = require( '../steemApi' );
-const { redisGetter } = require( '../redis' );
+
 const _ = require( 'lodash' );
 
 const getPostObjects = async function( author = '', permlink = '' ) {
-    const redisResult = await redisGetter.getWobjRefs( `${author}_${permlink}` );
+    const { commentRef } = await CommentRef.getRef( `${author}_${permlink}` );
 
-    if( !redisResult ) {
+    if( !commentRef ) {
         return;
-    } else if( redisResult.wobjects ) {
+    } else if( commentRef.wobjects ) {
         let wobjs; // list of wobjects on post with percents
 
         try {
-            wobjs = JSON.parse( redisResult.wobjects );
+            wobjs = JSON.parse( commentRef.wobjects );
         } catch ( e ) {
             console.log( e );
         }

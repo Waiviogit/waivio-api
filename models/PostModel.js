@@ -122,4 +122,26 @@ const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_la
     }
 };
 
-module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists };
+const getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
+    try{
+        return {
+            posts: await PostModel.aggregate( [
+                { $skip: skip },
+                { $limit: limit },
+                {
+                    $project: {
+                        _id: 0,
+                        author: 1,
+                        permlink: 1,
+                        'wobjects.author_permlink': 1,
+                        'wobjects.percent': 1
+                    }
+                }
+            ] )
+        };
+    } catch ( error ) {
+        return{ error };
+    }
+};
+
+module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs };
