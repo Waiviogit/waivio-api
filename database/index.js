@@ -18,6 +18,7 @@ module.exports = { Mongoose: mongoose,
         App: require( './schemas/AppSchema' ),
         Post: require( './schemas/PostSchema' ),
         ObjectType: require( './schemas/ObjectTypeSchema' ),
-        UserWobjects: require( './schemas/UserWobjectsSchema' )
+        UserWobjects: require( './schemas/UserWobjectsSchema' ),
+        CommentRef: require( './schemas/CommentRefSchema' )
     }
 };
