@@ -240,4 +240,35 @@ const getChildWobjects = async ( { skip, limit, author_permlink } ) => {
     }
 };
 
-module.exports = { getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist, getByField, getChildWobjects };
+// method for redis restore wobjects author and author_permlink
+const getWobjectsRefs = async () => {
+    try {
+        return {
+            wobjects: await WObjectModel.aggregate( [
+                { $project: { _id: 0, author_permlink: 1, author: 1 } }
+            ] )
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+// method for redis restore fields author and author_permlink
+const getFieldsRefs = async ( author_permlink ) => {
+    try {
+        return {
+            fields: await WObjectModel.aggregate( [
+                { $match: { author_permlink: author_permlink } },
+                { $unwind: '$fields' },
+                { $addFields: { field_author: '$fields.author', field_permlink: '$fields.permlink' } },
+                { $project: { _id: 0, field_author: 1, field_permlink: 1 } }
+            ] )
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = {
+    getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist, getByField, getChildWobjects, getWobjectsRefs, getFieldsRefs
+};
