@@ -40,9 +40,10 @@ const restorePostsRefs = async function () {
         posts = _.get( res, 'posts', [] );
         if ( !_.isEmpty( posts ) ) {
             postsCount += posts.length;
-            for ( const post of posts ) {
+
+            await Promise.all( posts.map( async ( post ) => {
                 await CommentRef.create( { comment_path: `${post.author}_${post.permlink}`, type: 'post_with_wobj', wobjects: JSON.stringify( post.wobjects ) } );
-            }
+            } ) );
         }
     } while ( posts.length === 1000 );
 
@@ -61,10 +62,5 @@ const restoreObjectTypesRefs = async () => {
     }
     return { objectTypesCount };
 };
-
-
-( async () => {
-    await restore();
-} )();
 
 module.exports = { restore };
