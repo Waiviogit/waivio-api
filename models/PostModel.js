@@ -133,7 +133,8 @@ const getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
                         _id: 0,
                         author: 1,
                         permlink: 1,
-                        wobjects: 1
+                        'wobjects.author_permlink': 1,
+                        'wobjects.percent': 1
                     }
                 }
             ] )
