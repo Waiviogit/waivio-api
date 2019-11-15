@@ -17,9 +17,8 @@ const restoreWobjectsRefs = async function () {
     if ( wobjects && wobjects.length ) {
         wobjectsCount += wobjects.length;
         for ( const wobject of wobjects ) {
-            await CommentRef.create( { comment_path: `${wobject.author}_${wobject.permlink}`, type: 'create_wobj', root_wobj: wobject.author_permlink } );
+            await CommentRef.create( { comment_path: `${wobject.author}_${wobject.author_permlink}`, type: 'create_wobj', root_wobj: wobject.author_permlink } );
             const { fields } = await Wobj.getFieldsRefs( wobject.author_permlink ); // get refs of all fields in wobj
-
             if ( fields && fields.length ) {
                 fieldsCount += fields.length;
                 for ( const field of fields ) {
