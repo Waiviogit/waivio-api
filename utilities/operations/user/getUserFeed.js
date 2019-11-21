@@ -2,6 +2,7 @@ const { User, Post, App } = require( '../../../models' );
 const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
+// TO DO: add resteems to selections by author
 const getFeed = async function ( { name, limit = 20, skip = 0, user_languages, filter } ) {
     const { user, error: userError } = await User.getOne( name );
 

@@ -33,6 +33,7 @@ const makeConditions = ( { category, user_languages } ) => {
                 _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) }
             };
             sort = { net_rshares: -1 };
+            break;
     }
     if( !_.isEmpty( user_languages ) ) cond.language = { $in: user_languages };
     return { cond, sort };
