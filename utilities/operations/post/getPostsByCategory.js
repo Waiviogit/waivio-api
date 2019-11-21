@@ -1,7 +1,5 @@
 const ObjectId = require( 'mongoose' ).Types.ObjectId;
 const { Post } = require( '../../../database' ).models;
-const { Post: PostService } = require( '../../../models' );
-const { postHelper } = require( '../../helpers' );
 const { DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE } = require( '../../constants' );
 const _ = require( 'lodash' );
 

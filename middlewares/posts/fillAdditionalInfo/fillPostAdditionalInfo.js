@@ -18,10 +18,14 @@ exports.fill = async ( req, res, next ) => {
         next();
         return;
     }
+    // replace reblog post blank to source post
+    await postHelper.fillReblogs( res.result.json );
+
     // fill wobjects on post by full info about wobjects(with fields and others);
     res.result.json = await PostService.fillObjects( res.result.json );
 
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight( res.result.json );
+
     next();
 };

@@ -1,5 +1,4 @@
 const { User, Post, App } = require( '../../../models' );
-const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
 // TO DO: add resteems to selections by author

@@ -144,4 +144,25 @@ const addAuthorWobjectsWeight = async ( posts = [] ) => {
     } );
 };
 
-module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight };
+const fillReblogs = async ( posts = [] ) => {
+    for( const post_idx in posts ) {
+        if( _.get( posts, `[${post_idx}].reblog_to.author` ) && _.get( posts, `[${post_idx}].reblog_to.permlink` ) ) {
+            // const { post: sourcePost } = await getPost( posts[ post_idx ].reblog_to.author, posts[ post_idx ].reblog_to.permlink );
+            let sourcePost;
+            try {
+                sourcePost = await Post
+                    .findOne( {
+                        author: _.get( posts, `[${post_idx}].reblog_to.author` ),
+                        permlink: _.get( posts, `[${post_idx}].reblog_to.permlink` )
+                    } )
+                    .populate( { path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' } )
+                    .lean();
+            } catch ( error ) {
+                console.error( error );
+            }
+            if( sourcePost ) posts[ post_idx ] = { ...sourcePost, reblogged_by: posts[ post_idx ].author };
+        }
+    }
+};
+
+module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight, fillReblogs };
