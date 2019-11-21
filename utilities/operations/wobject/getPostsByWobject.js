@@ -77,8 +77,5 @@ module.exports = async ( data ) => {
     // data: { author_permlink, limit, skip, user_name }
     let { posts, error: getPostsError } = await getPosts( data );
     if( getPostsError ) return { error: getPostsError };
-
-    await postHelper.addAuthorWobjectsWeight( posts );
-    posts = await Post.fillObjects( posts );
     return { posts };
 };

@@ -18,11 +18,8 @@ const getFeed = async function ( { name, limit = 20, skip = 0, user_languages, f
         author_permlinks: user.objects_follow,
         user_languages, skip, limit, filtersData
     } );
-
     if( postsError ) return { error: postsError };
 
-    posts = await Post.fillObjects( posts ); // format wobjects on each post
-    await postHelper.addAuthorWobjectsWeight( posts ); // add to each post author his weight in wobjects
     return { posts };
 };
 

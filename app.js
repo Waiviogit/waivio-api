@@ -4,6 +4,7 @@ const cors = require( 'cors' );
 const bodyParser = require( 'body-parser' );
 const { routes } = require( './routes' );
 const { moderateWobjects } = require( './middlewares/wobject/moderation' );
+const { fillPostAdditionalInfo } = require( './middlewares/posts/fillAdditionalInfo' );
 const { createNamespace } = require( 'cls-hooked' );
 const session = createNamespace( 'request-session' );
 const app = express();
@@ -22,6 +23,8 @@ app.use( ( req, res, next ) => {
 } );
 app.use( '/', routes );
 
+// fill posts by some additional information(author wobj.weight, or wobjects info)
+app.use( '/', fillPostAdditionalInfo.fill );
 // Moderate wobjects depend on app moderators before send
 app.use( '/', moderateWobjects.moderate );
 

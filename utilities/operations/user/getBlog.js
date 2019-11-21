@@ -26,7 +26,5 @@ module.exports = async ( { name, limit = 10, skip = 0, author_permlinks } ) => {
     } catch ( error ) {
         return { error };
     }
-    posts = await PostService.fillObjects( posts ); // format wobjects on each post
-    await postHelper.addAuthorWobjectsWeight( posts ); // add to each post author his weight in wobjects
     return { posts };
 };
