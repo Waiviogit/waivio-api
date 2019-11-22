@@ -16,6 +16,12 @@ exports.objectsSharesSchema = Joi.object().keys( {
     exclude_object_types: Joi.array().items( Joi.string().required() ).default( null )
 } );
 
+exports.getPostFiltersSchema = Joi.object().keys( {
+    limit: Joi.number().integer().min( 1 ).max( 300 ).default( 30 ),
+    skip: Joi.number().integer().min( 0 ).max( 300 ).default( 0 ),
+    name: Joi.string().required()
+} );
+
 exports.showSchema = Joi.string().required();
 
 exports.objectsFollowSchema = Joi.object().keys( {
