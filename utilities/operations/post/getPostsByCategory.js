@@ -19,16 +19,21 @@ const makeConditions = ( { category, user_languages } ) => {
     let sort = {};
     switch ( category ) {
         case 'created':
+            cond = { reblog_to: null };
             sort = { _id: -1 };
             break;
         case 'hot':
-            cond = { _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_HOT_FEED ) } };
+            cond = {
+                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_HOT_FEED ) },
+                reblog_to: null
+            };
             sort = { children: -1 };
             break;
         case 'trending':
             cond = {
                 author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
-                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) }
+                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) },
+                reblog_to: null
             };
             sort = { net_rshares: -1 };
             break;

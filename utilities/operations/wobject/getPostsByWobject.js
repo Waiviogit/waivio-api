@@ -1,7 +1,6 @@
-const { Wobj, Post } = require( '../../../models' );
+const { Wobj } = require( '../../../models' );
 const { Post: PostModel } = require( '../../../database' ).models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require( '../../constants' );
-const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
 const getPosts = async ( data ) => {
@@ -14,7 +13,7 @@ const getPosts = async ( data ) => {
             .sort( { _id: -1 } )
             .skip( data.skip )
             .limit( data.limit )
-            .populate( 'fullObjects' )
+            .populate( { path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' } )
             .lean();
     } catch ( error ) {
         return { error };
@@ -36,6 +35,7 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_langua
         }
         condition = { 'wobjects.author_permlink': author_permlink };
         if( !_.isEmpty( user_languages ) ) condition.language = { $in: user_languages };
+        condition.reblog_to = null;
         return { condition };
     }
 
@@ -70,6 +70,7 @@ const getWobjFeedCondition = async ( { author_permlink, skip, limit, user_langua
     };
     condition = { $and: [ firstCond, secondCond ] };
     if( !_.isEmpty( user_languages ) ) condition.$and.push( { language: { $in: user_languages } } );
+    condition.reblog_to = null;
     return { condition };
 };
 
