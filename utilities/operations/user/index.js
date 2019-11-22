@@ -1,6 +1,7 @@
 module.exports = {
     getManyUsers: require( './getManyUsers' ),
     objectsShares: require( './objectsShares' ),
+    getPostFilters: require( './getPostFilters' ),
     getOneUser: require( './getOneUser' ),
     getUserFeed: require( './getUserFeed' ),
     updateMetadata: require( './updateMetadata' ),
