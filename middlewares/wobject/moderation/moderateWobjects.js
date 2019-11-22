@@ -119,7 +119,7 @@ const validateWobjectsEmbeddedArray = ( root_array, moderators, wobjects_path = 
  * @returns {Array} New array of moderated fields
  */
 const validateFields = ( wobject, moderators, ap_path = 'author_permlink', fields_path = 'fields' ) => {
-    return _.get( wobject, `[ ${fields_path} ]` ).map( ( field ) => {
+    return _.get( wobject, `[ ${fields_path} ]`, [] ).map( ( field ) => {
         for( const vote of field.active_votes ) {
             const moderator = moderators.find( ( m ) => m.name === vote.voter && m.author_permlinks.includes( wobject[ ap_path ] ) );
 
