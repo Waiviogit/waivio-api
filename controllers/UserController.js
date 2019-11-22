@@ -106,10 +106,7 @@ const feed = async function ( req, res, next ) {
 
 const blog = async function ( req, res, next ) {
     const value = validators.validate( {
-        name: req.params.userName,
-        limit: req.body.limit,
-        start_author: req.body.start_author,
-        start_permlink: req.body.start_permlink
+        name: req.params.userName, ...req.body
     }, validators.user.blogSchema, next );
     if( !value ) return ;
 

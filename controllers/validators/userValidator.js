@@ -97,8 +97,8 @@ exports.updateMetadataSchema = Joi.object().keys( {
 exports.blogSchema = Joi.object().keys( {
     name: Joi.string().required(),
     limit: Joi.number().integer().min( 0 ).max( 100 ).default( 20 ),
-    start_author: Joi.string().allow( '' ).default( '' ),
-    start_permlink: Joi.string().allow( '' ).default( '' )
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
+    author_permlinks: Joi.array().items( Joi.string().required() ).default( null )
 } );
 
 exports.followingUpdates = Joi.object().keys( {

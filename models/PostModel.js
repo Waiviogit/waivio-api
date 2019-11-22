@@ -26,8 +26,6 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
                 }
             }
         ] );
-
-        posts = await fillObjects( posts );
         return { posts };
     } catch ( error ) {
         return { error };
@@ -64,8 +62,6 @@ const getAllPosts = async function ( data ) {
             }
         }
         let posts = await PostModel.aggregate( aggregatePipeline );
-
-        posts = await fillObjects( posts );
         return { posts };
     } catch ( error ) {
         return { error };

@@ -27,7 +27,8 @@ const PostSchema = new Schema( {
         tagged: { type: String }
     } ],
     language: { type: String, default: 'en-US' },
-    author_weight: { type: Number }
+    author_weight: { type: Number },
+    reblog_to: { type: { author: String, permlink: String } }
 }, {
     toObject: { virtuals: true },
     toJSON: { virtuals: true },
