@@ -8,6 +8,15 @@ module.exports = async ( { name, skip = 0, limit = 30 } ) => {
         { $sort: { posts_count: -1 } },
         { $skip: skip },
         { $limit: limit },
-        { $project: { _id: 0, author_permlink: '$_id', posts_count: 1 } }
+        { $project: { _id: 0, author_permlink: '$_id', posts_count: 1 } },
+        {
+            $lookup: {
+                from: 'wobjects',
+                localField: 'author_permlink',
+                foreignField: 'author_permlink',
+                as: 'wobject'
+            }
+        },
+        { $unwind: '$wobject' }
     ] );
 };
