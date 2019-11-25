@@ -1,12 +1,10 @@
-const { Post: PostService } = require( '../../../models' );
 const { Post } = require( '../../../database' ).models;
-const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
 const makeCondition = ( { name, author_permlinks } ) => {
     const cond = { author: name };
-    if( _.isArray( author_permlinks ) && !_.isEmpty( author_permlinks ) && author_permlinks.each( _.isString ) ) {
-        cond[ 'wobjects.author_permlink' ] = { $in: { ...author_permlinks } };
+    if( _.isArray( author_permlinks ) && !_.isEmpty( author_permlinks ) && author_permlinks.every( _.isString ) ) {
+        cond[ 'wobjects.author_permlink' ] = { $in: [ ...author_permlinks ] };
     }
     return cond;
 };
