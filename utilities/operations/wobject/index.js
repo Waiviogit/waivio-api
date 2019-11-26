@@ -3,5 +3,6 @@ module.exports = {
     wobjectInfo: require( './wobjectInfo' ),
     getManyObjects: require( './getManyObjects' ),
     getPostsByWobject: require( './getPostsByWobject' ),
-    getChildWobjects: require( './getChildWobjects' )
+    getChildWobjects: require( './getChildWobjects' ),
+    getFields: require( './getFields' )
 };
