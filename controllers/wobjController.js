@@ -1,7 +1,7 @@
 const { Wobj } = require( '../models' );
 const { Post } = require( '../models' );
 const followersHelper = require( '../utilities/helpers' ).followersHelper;
-const { objectExperts, wobjectInfo, getManyObjects, getPostsByWobject, getChildWobjects: getChild } = require( '../utilities/operations' ).wobject;
+const { objectExperts, wobjectInfo, getManyObjects, getPostsByWobject, getChildWobjects: getChild, getFields } = require( '../utilities/operations' ).wobject;
 const { wobjects: { searchWobjects } } = require( '../utilities/operations' ).search;
 const validators = require( './validators' );
 
@@ -139,13 +139,15 @@ const search = async function ( req, res, next ) {
 const fields = async function ( req, res, next ) {
     const value = validators.validate(
         {
-            author_permlink: req.params.authorPermlink
+            author_permlink: req.params.authorPermlink,
+            fields_names: req.body.fields_names,
+            custom_fields: req.body.custom_fields
         }, validators.wobject.fieldsScheme, next );
 
     if( !value ) {
         return ;
     }
-    const { fieldsData, error } = await Wobj.getFields( value );
+    const { fields: fieldsData, error } = await getFields( value );
 
     if ( error ) {
         return next( error );

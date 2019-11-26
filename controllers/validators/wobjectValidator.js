@@ -51,7 +51,9 @@ exports.searchScheme = Joi.object().keys( {
 } );
 
 exports.fieldsScheme = exports.galleryScheme = exports.listScheme = Joi.object().keys( {
-    author_permlink: Joi.string().required()
+    author_permlink: Joi.string().required(),
+    fields_names: Joi.array().items( Joi.string() ).default( null ),
+    custom_fields: Joi.object().default( null )
 } );
 
 exports.objectExpertiseScheme = Joi.object().keys( {
