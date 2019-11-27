@@ -45,8 +45,8 @@ const getPost = async function( author, permlink ) {
         return { error };
     }
     const wobjsResult = await getPostObjects( author, permlink );
-    post.wobjects = wobjsResult.wobjectPercents || [];
-    post.fullObjects = wobjsResult.wObjectsData || [];
+    post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
+    post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
     return { post };
 };
 
