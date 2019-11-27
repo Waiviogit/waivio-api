@@ -85,7 +85,6 @@ const getPostsByCategory = async function( data ) {
             }
         }
     }
-    await addAuthorWobjectsWeight( posts );
     return { posts };
 };
 

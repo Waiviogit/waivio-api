@@ -73,7 +73,7 @@ const fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObject
 
     for ( const post of posts ) {
         for ( let wObject of post.wobjects ) {
-            wObject = Object.assign( wObject, post[ wobjects_path ].find( ( i ) => i.author_permlink === wObject.author_permlink ) );
+            wObject = Object.assign( wObject, _.get( post, `[${wobjects_path}]`, [] ).find( ( i ) => i.author_permlink === wObject.author_permlink ) );
             wObjectHelper.formatRequireFields( wObject, locale, fields );
         }
         delete post[ wobjects_path ];
