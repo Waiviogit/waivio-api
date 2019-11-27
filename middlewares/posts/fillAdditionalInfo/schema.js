@@ -25,5 +25,9 @@ exports.schema = [
     {
         path: '/posts',
         method: 'POST'
+    },
+    {
+        path: '/post/:author/:permlink',
+        method: 'GET'
     }
 ];
