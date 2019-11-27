@@ -40,11 +40,8 @@ exports.objectsFeedSchema = Joi.object().keys( {
 exports.feedSchema = Joi.object().keys( {
     name: Joi.string().required(),
     limit: Joi.number().integer().min( 0 ).max( 50 ).default( 20 ),
-    skip: Joi.number().integer().min( 0 ).default( 0 ),
-    filter: Joi.object().keys( {
-        byApp: Joi.string().allow( '' )
-    } ),
-    user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [ 'ru-RU' ] )
+    start_author: Joi.string().allow( '' ).default( '' ),
+    start_permlink: Joi.string().allow( '' ).default( '' )
 } );
 
 exports.searchSchema = Joi.object().keys( {
