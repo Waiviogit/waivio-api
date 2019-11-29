@@ -43,12 +43,11 @@ class Image {
     }
     async resizeImage ( { buffer, size } ) {
         if ( size === '_small' ) {
-            return await sharp( buffer ).resize( 34, 34 ).toBuffer();
+            return await sharp( buffer ).rotate().resize( 34, 34 ).toBuffer();
         } else if ( size === '_medium' ) {
-            return await sharp( buffer ).resize( 180, 180 ).toBuffer();
+            return await sharp( buffer ).rotate().resize( 180, 180 ).toBuffer();
         }
-        return buffer;
-
+        return await sharp( buffer ).rotate().toBuffer();
     }
 }
 
