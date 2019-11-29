@@ -43,14 +43,15 @@ class Image {
     }
     async resizeImage ( { buffer, size } ) {
         if ( size === '_small' ) {
-            return await sharp( buffer ).rotate( 0 ).resize( 34, 34 ).toBuffer();
+            return await sharp( buffer ).rotate( 360 ).resize( 34, 34 ).toBuffer();
         } else if ( size === '_medium' ) {
-            return await sharp( buffer ).rotate( 0 ).resize( 180, 180 ).toBuffer();
+            return await sharp( buffer ).rotate( 360 ).resize( 180, 180 ).toBuffer();
         }
-        return await sharp( buffer ).rotate( 0 ).toBuffer();
+        return await sharp( buffer ).rotate( 360 ).toBuffer();
     }
 }
 
 const image = new Image();
 
 module.exports = image;
+
