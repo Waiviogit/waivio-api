@@ -104,7 +104,7 @@ const getAll = async function ( data ) {
     return { wObjectsData: wObjects, hasMore };
 };
 
-const getFields = async function ( data ) {
+const getFields = async function ( { author_permlink, fields_names, custom_fields } ) {
     try {
         const wObject = await WObjectModel
             .findOne( { 'author_permlink': data.author_permlink } )

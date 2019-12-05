@@ -1,6 +1,8 @@
 const { User } = require( '../models' );
 const { userFeedHelper, authoriseUser } = require( '../utilities/helpers' );
-const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getMetadata, getBlog, getFollowingUpdates } = require( '../utilities/operations/user' );
+const {
+    getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
+    getMetadata, getBlog, getFollowingUpdates, getPostFilters } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -106,10 +108,7 @@ const feed = async function ( req, res, next ) {
 
 const blog = async function ( req, res, next ) {
     const value = validators.validate( {
-        name: req.params.userName,
-        limit: req.body.limit,
-        start_author: req.body.start_author,
-        start_permlink: req.body.start_permlink
+        name: req.params.userName, ...req.body
     }, validators.user.blogSchema, next );
     if( !value ) return ;
 
@@ -137,6 +136,23 @@ const userObjectsShares = async function( req, res, next ) {
     if( error ) return next( error );
 
     res.result = { status: 200, json: objects_shares };
+    next();
+};
+
+const postFilters = async function( req, res, next ) {
+
+    const value = validators.validate(
+        {
+            name: req.params.userName,
+            limit: req.query.limit,
+            skip: req.query.skip
+        }, validators.user.getPostFiltersSchema, next );
+    if( !value ) return ;
+
+    const { posts, error } = await getPostFilters( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: posts };
     next();
 };
 
@@ -203,5 +219,5 @@ const followingWobjectsUpdates = async ( req, res, next ) => {
 
 module.exports = {
     index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
-    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates
+    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters
 };

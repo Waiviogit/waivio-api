@@ -3,15 +3,20 @@ const User = require( '../../models/UserModel' );
 const CommentRef = require( '../../models/CommentRef' );
 const { Post } = require( '../../database' ).models;
 const { postsUtil } = require( '../steemApi' );
-
 const _ = require( 'lodash' );
 
+/**
+ * Get wobjects data for particular post
+ * @param author {String}
+ * @param permlink {String}
+ * @returns {Promise<{wObjectsData: *, wobjectPercents: *}>}
+ * wObjectsData - full wobjects info(fields, def.name, posts counts etc.),
+ * wobjectPercent - author_permlinks with percent which author noticed on particular post
+ */
 const getPostObjects = async function( author = '', permlink = '' ) {
     const { commentRef } = await CommentRef.getRef( `${author}_${permlink}` );
 
-    if( !commentRef ) {
-        return;
-    } else if( commentRef.wobjects ) {
+    if( _.isString( _.get( commentRef, 'wobjects' ) ) ) {
         let wobjs; // list of wobjects on post with percents
 
         try {
@@ -20,7 +25,7 @@ const getPostObjects = async function( author = '', permlink = '' ) {
             console.log( e );
         }
         if( Array.isArray( wobjs ) && !_.isEmpty( wobjs ) ) {
-            const { wObjectsData, error } = await Wobj.getAll( {
+            const { wObjectsData } = await Wobj.getAll( {
                 author_permlinks: wobjs.map( ( w ) => w.author_permlink ),
                 skip: 0,
                 limit: 100,
@@ -28,12 +33,7 @@ const getPostObjects = async function( author = '', permlink = '' ) {
                 locale: 'en-US'
             } );
 
-            if( wObjectsData && Array.isArray( wObjectsData ) ) {
-                wObjectsData.forEach( ( w ) => {
-                    w = Object.assign( w, wobjs.find( ( wobj ) => wobj.author_permlink === w.author_permlink ) );
-                } );
-            }
-            return wObjectsData;
+            return { wObjectsData, wobjectPercents: wobjs };
         }
     }
 };
@@ -44,16 +44,9 @@ const getPost = async function( author, permlink ) {
     if( !post || error ) {
         return { error };
     }
-    const postWobjects = await getPostObjects( author, permlink );
-
-    if( Array.isArray( postWobjects ) && !_.isEmpty( postWobjects ) ) {
-        post.wobjects = postWobjects;
-    }
-    const postFromDb = await Post.findOne( { author, permlink } ).lean();
-
-    if( postFromDb ) {
-        post = Object.assign( postFromDb, post );
-    }
+    const wobjsResult = await getPostObjects( author, permlink );
+    post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
+    post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
     return { post };
 };
 
@@ -67,25 +60,18 @@ const getPostsByCategory = async function( data ) {
         return { error: { status: 404, message: posts.error.message } };
     }
     for ( let post of posts ) {
-        let postWobjects;
-
         if( post && post.author && post.permlink ) {
-            postWobjects = await getPostObjects( post.author, post.permlink );
-        }
-        if( Array.isArray( postWobjects ) && !_.isEmpty( postWobjects ) ) {
-            post.wobjects = postWobjects;
-        }
-        const postFromDb = await Post.findOne( { author: post.author, permlink: post.permlink } ).lean();
+            // let postWobjects;
 
-        if( postFromDb ) {
-            const tempPost = Object.assign( postFromDb, post );
-
-            for ( const key in tempPost ) {
-                post[ key ] = tempPost[ key ];
-            }
+            // postWobjects = await getPostObjects( post.author, post.permlink );
+            // if( Array.isArray( postWobjects ) && !_.isEmpty( postWobjects ) ) {
+            //     post.wobjects = postWobjects;
+            // }
+            const wobjsResult = await getPostObjects( post.author, post.permlink );
+            post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
+            post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
         }
     }
-    await addAuthorWobjectsWeight( posts );
     return { posts };
 };
 
@@ -144,4 +130,25 @@ const addAuthorWobjectsWeight = async ( posts = [] ) => {
     } );
 };
 
-module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight };
+const fillReblogs = async ( posts = [] ) => {
+    for( const post_idx in posts ) {
+        if( _.get( posts, `[${post_idx}].reblog_to.author` ) && _.get( posts, `[${post_idx}].reblog_to.permlink` ) ) {
+            // const { post: sourcePost } = await getPost( posts[ post_idx ].reblog_to.author, posts[ post_idx ].reblog_to.permlink );
+            let sourcePost;
+            try {
+                sourcePost = await Post
+                    .findOne( {
+                        author: _.get( posts, `[${post_idx}].reblog_to.author` ),
+                        permlink: _.get( posts, `[${post_idx}].reblog_to.permlink` )
+                    } )
+                    .populate( { path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' } )
+                    .lean();
+            } catch ( error ) {
+                console.error( error );
+            }
+            if( sourcePost ) posts[ post_idx ] = { ...sourcePost, reblogged_by: posts[ post_idx ].author };
+        }
+    }
+};
+
+module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight, fillReblogs };

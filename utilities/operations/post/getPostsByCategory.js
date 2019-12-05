@@ -1,7 +1,5 @@
 const ObjectId = require( 'mongoose' ).Types.ObjectId;
 const { Post } = require( '../../../database' ).models;
-const { Post: PostService } = require( '../../../models' );
-const { postHelper } = require( '../../helpers' );
 const { DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE } = require( '../../constants' );
 const _ = require( 'lodash' );
 
@@ -21,18 +19,24 @@ const makeConditions = ( { category, user_languages } ) => {
     let sort = {};
     switch ( category ) {
         case 'created':
+            cond = { reblog_to: null };
             sort = { _id: -1 };
             break;
         case 'hot':
-            cond = { _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_HOT_FEED ) } };
+            cond = {
+                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_HOT_FEED ) },
+                reblog_to: null
+            };
             sort = { children: -1 };
             break;
         case 'trending':
             cond = {
                 author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
-                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) }
+                _id: { $gte: objectIdFromDaysBefore( DAYS_FOR_TRENDING_FEED ) },
+                reblog_to: null
             };
             sort = { net_rshares: -1 };
+            break;
     }
     if( !_.isEmpty( user_languages ) ) cond.language = { $in: user_languages };
     return { cond, sort };
@@ -52,7 +56,5 @@ module.exports = async ( { category, skip, limit, user_languages } ) => {
     } catch ( error ) {
         return { error };
     }
-    posts = await PostService.fillObjects( posts ); // format wobjects on each post
-    await postHelper.addAuthorWobjectsWeight( posts ); // add to each post author his weight in wobjects
     return { posts };
 };

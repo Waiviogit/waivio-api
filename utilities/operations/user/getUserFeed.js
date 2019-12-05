@@ -1,7 +1,7 @@
 const { User, Post, App } = require( '../../../models' );
-const { postHelper } = require( '../../helpers' );
 const _ = require( 'lodash' );
 
+// TO DO: add resteems to selections by author
 const getFeed = async function ( { name, limit = 20, skip = 0, user_languages, filter } ) {
     const { user, error: userError } = await User.getOne( name );
 
@@ -17,11 +17,8 @@ const getFeed = async function ( { name, limit = 20, skip = 0, user_languages, f
         author_permlinks: user.objects_follow,
         user_languages, skip, limit, filtersData
     } );
-
     if( postsError ) return { error: postsError };
 
-    posts = await Post.fillObjects( posts ); // format wobjects on each post
-    await postHelper.addAuthorWobjectsWeight( posts ); // add to each post author his weight in wobjects
     return { posts };
 };
 

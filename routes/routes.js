@@ -61,6 +61,8 @@ userRoutes.route( '/user/:userName/blog' )
     .post( UserController.blog );
 userRoutes.route( '/user/:userName/objects_shares' )
     .post( UserController.userObjectsShares );
+userRoutes.route( '/user/:userName/get_post_filters' )
+    .get( UserController.postFilters );
 userRoutes.route( '/users/search' )
     .get( UserController.searchUsers );
 userRoutes.route( '/user/:userName/userMetadata' )
