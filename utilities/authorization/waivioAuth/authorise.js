@@ -15,7 +15,7 @@ const validateTokenRequest = async ( token ) => {
 };
 
 /**
- * Authorise user using token of steemconnect
+ * Authorise user using token of waivioAuthService
  * @param {string} token Valid waivio-auth token
  * @param {string} username User name for particular token
  * @returns {Boolean}  true if "token" valid for current "username", else false
