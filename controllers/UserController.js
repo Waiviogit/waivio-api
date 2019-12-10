@@ -1,7 +1,7 @@
 const { User } = require( '../models' );
-const { userFeedHelper, authoriseUser } = require( '../utilities/helpers' );
-const {
-    getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
+const { userFeedHelper } = require( '../utilities/helpers' );
+const { authorise } = require( '../utilities/authorization/authoriseUser' );
+const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
     getMetadata, getBlog, getFollowingUpdates, getPostFilters } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
@@ -25,7 +25,7 @@ const index = async function ( req, res, next ) {
 const show = async function ( req, res, next ) {
     const value = validators.validate( req.params.userName, validators.user.showSchema, next );
 
-    await authoriseUser.authorise( value );
+    await authorise( value );
     const { userData, error } = await getOneUser( value );
     if( error ) return next( error );
 
@@ -40,9 +40,9 @@ const updateUserMetadata = async function ( req, res, next ) {
     }, validators.user.updateMetadataSchema, next );
     if( !value ) return ;
 
-    const { error: authError } = await authoriseUser.authorise( value.user_name );
-
+    const { error: authError } = await authorise( value.user_name );
     if( authError ) return next( authError );
+
     const { user_metadata, error } = await updateMetadata( value );
 
     if ( error ) return next( error );

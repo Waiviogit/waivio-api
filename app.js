@@ -20,6 +20,7 @@ app.use( morgan( 'dev' ) );
 // write to store user steemconnect access_token if it exist
 app.use( ( req, res, next ) => {
     session.set( 'access-token', req.headers[ 'access-token' ] );
+    session.set( 'isWaivioAuth', Boolean( req.headers[ 'waivio-auth' ] ) );
     next();
 } );
 app.use( '/', routes );

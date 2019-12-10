@@ -5,7 +5,12 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/"
+    "nodeUrl": "https://api.steemit.com/",
+    "waivio_auth": {
+      "host": "www.waivio.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_token"
+    }
   },
 
   "staging": {
@@ -14,7 +19,12 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/"
+    "nodeUrl": "https://api.steemit.com/",
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_token"
+    }
   },
 
   "development": {
@@ -23,6 +33,11 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/"
+    "nodeUrl": "https://api.steemit.com/",
+    "waivio_auth": {
+      "host": "waiviodev.com",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_token"
+    }
   }
 }
