@@ -66,7 +66,7 @@ UserSchema.pre( 'aggregate', function () {
     const session = getNamespace( 'request-session' );
 
     if( !session.get( 'authorised_user' ) ) {
-        this.pipeline().push( { $project: { user_metadata: 0 } } );
+        this.pipeline().push( { $project: { user_metadata: 0, auth: 0 } } );
     }
 } );
 

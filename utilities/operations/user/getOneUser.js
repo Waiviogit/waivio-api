@@ -33,20 +33,15 @@ const makePipeline = ( { name } ) => {
 };
 
 const getOne = async function ( name ) {
-    const { userData, error: steemError } = await userSteemUtil.getAccount( name ); // get user data from STEEM blockchain
+    const { userData = {} } = await userSteemUtil.getAccount( name ); // get user data from STEEM blockchain
 
-    if ( steemError ) {
-        return { steemError };
-    }
     const { result: [ user ], error: dbError } = await User.aggregate( makePipeline( { name } ) ); // get user data from db
 
-    if ( dbError ) {
-        return { dbError };
+    if ( dbError || ( !user && _.isEmpty( userData ) ) ) {
+        return { error: dbError || { status: 404, message: `User ${name} not found!` } };
     }
 
-    if ( !user ) {
-        return { userData };
-    }
+    if ( !user ) return { userData };
     user.objects_shares_count = _.get( user, 'objects_shares[ 0 ].count' );
     delete user.objects_shares;
 
