@@ -9,7 +9,7 @@
     "waivio_auth": {
       "host": "www.waivio.com",
       "baseUrl": "auth",
-      "validateTokenPath": "validate_token"
+      "validateTokenPath": "validate_auth_token"
     }
   },
 
@@ -23,7 +23,7 @@
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
-      "validateTokenPath": "validate_token"
+      "validateTokenPath": "validate_auth_token"
     }
   },
 
@@ -37,7 +37,7 @@
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
-      "validateTokenPath": "validate_token"
+      "validateTokenPath": "validate_auth_token"
     }
   }
 }

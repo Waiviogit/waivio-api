@@ -36,7 +36,7 @@ const show = async function ( req, res, next ) {
 const updateUserMetadata = async function ( req, res, next ) {
     const value = validators.validate( {
         user_name: req.params.userName,
-        user_metadata: req.body.user_metadata
+        user_metadata: req.body.user_metadata || req.body.data.user_metadata
     }, validators.user.updateMetadataSchema, next );
     if( !value ) return ;
 

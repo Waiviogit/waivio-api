@@ -1,4 +1,3 @@
-const UserWobjects = require( '../../../models/UserWobjects' );
 const User = require( '../../../models/UserModel' );
 const { userUtil: userSteemUtil } = require( '../../steemApi' );
 const _ = require( 'lodash' );
