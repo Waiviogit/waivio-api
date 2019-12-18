@@ -3,22 +3,20 @@ const sc2 = require( 'sc2-sdk' );
 /**
  * Authorise user using token of steemconnect
  * @param {string} token Valid token of steemconnect
- * @returns {string} user_name Return name of owner token if it valid, else undefined
+ * @param {string} username User name for particular token
+ * @returns {Boolean}  true if "token" valid for current "username", else false
  */
-exports.authoriseUser = async ( token ) => {
-    if( !token ) {
-        return { error: { message: '"token" must exist!' } };
-    }
+exports.authoriseUser = async ( token = '', username = '' ) => {
+    if( token === '' ) return false;
     const api = sc2.Initialize( {
         accessToken: token
     } );
     let user;
-
     try {
         user = await api.me();
     } catch ( error ) {
-        return { error };
+        return false;
     }
 
-    return { user_name: user._id };
+    return user._id === username ;
 };

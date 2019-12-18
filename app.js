@@ -1,3 +1,4 @@
+require( 'dotenv' ).config();
 const express = require( 'express' );
 const morgan = require( 'morgan' );
 const cors = require( 'cors' );
@@ -16,9 +17,10 @@ app.use( ( req, res, next ) => {
 app.use( cors() );
 app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( morgan( 'dev' ) );
-// write to store user steemconnect access_token if it exist
+// write to store user steemconnect/waivioAuth access_token if it exist
 app.use( ( req, res, next ) => {
     session.set( 'access-token', req.headers[ 'access-token' ] );
+    session.set( 'waivio-auth', Boolean( req.headers[ 'waivio-auth' ] ) );
     next();
 } );
 app.use( '/', routes );
