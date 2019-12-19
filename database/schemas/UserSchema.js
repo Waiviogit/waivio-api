@@ -50,7 +50,14 @@ const UserSchema = new Schema( {
     count_posts: { type: Number, default: 0, index: true }, // count of the all posts
     last_posts_count: { type: Number, default: 0 }, // count of the posts written in last day
     last_posts_counts_by_hours: { type: [ Number ], default: [] },
-    user_metadata: { type: UserMetadataSchema, default: () => ( {} ), select: false }
+    user_metadata: { type: UserMetadataSchema, default: () => ( {} ), select: false },
+    auth: {
+        type: {
+            sessions: { type: [ Object ], select: false },
+            sid: { type: String },
+            provider: { type: String }
+        }
+    }
 }, { timestamps: true } );
 
 UserSchema.index( { wobjects_weight: -1 } );
@@ -66,7 +73,7 @@ UserSchema.pre( 'aggregate', function () {
     const session = getNamespace( 'request-session' );
 
     if( !session.get( 'authorised_user' ) ) {
-        this.pipeline().push( { $project: { user_metadata: 0, auth: 0 } } );
+        this.pipeline().push( { $project: { user_metadata: 0, 'auth.sessions': 0 } } );
     }
 } );
 
