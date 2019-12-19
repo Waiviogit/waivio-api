@@ -70,6 +70,17 @@ const getPostsByCategory = async function( data ) {
             const wobjsResult = await getPostObjects( post.author, post.permlink );
             post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
             post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
+            try {
+                const dbPost = await Post.findOne( { author: post.author, permlink: post.permlink } ).lean();
+                if( dbPost ) {
+                    const diffKeys = _.difference( Object.keys( dbPost ), Object.keys( post ) );
+                    diffKeys.forEach( ( key ) => {
+                        post[ key ] = dbPost[ key ];
+                    } );
+                }
+            } catch ( e ) {
+                console.error( e );
+            }
         }
     }
     return { posts };
