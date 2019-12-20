@@ -140,4 +140,14 @@ const getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
     }
 };
 
-module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs };
+const getBlog = async ( { name, skip = 0, limit = 30 } ) => {
+    try {
+        return { posts: await PostModel
+            .find( { author: name } ).sort( { _id: -1 } ).skip( skip ).limit( limit )
+            .populate( { path: 'fullObjects', select: '-latest_posts' } ).lean() };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs, getBlog };
