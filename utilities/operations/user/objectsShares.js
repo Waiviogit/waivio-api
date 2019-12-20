@@ -4,7 +4,7 @@ const { wObjectHelper } = require( '../../helpers' );
 
 const makePipeline = ( { name, skip, limit, object_types, exclude_object_types } ) => {
     let pipeline = [
-        { $match: { user_name: name } },
+        { $match: { user_name: name, weight: { $gt: 0 } } },
         { $sort: { weight: -1 } },
         {
             $lookup: {
