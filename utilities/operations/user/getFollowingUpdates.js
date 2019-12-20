@@ -21,7 +21,7 @@ const getWobjectsUpdates = async ( { name, skip = 0, limit = 3, object_type } ) 
         return { error: getUserError || { status: 404, message: 'User not found!' } };
     }
     return await getUpdatesByWobjectsList( {
-        name: user.name, objects_follow: user.objects_follow, skip, limit, object_type
+        name, skip, limit, object_type, objects_follow: user.objects_follow
     } );
 };
 
@@ -48,7 +48,7 @@ const getUpdatesByWobjectsList = async ( { objects_follow = [], skip = 0, limit 
         { $unwind: { path: '$user_wobject', preserveNullAndEmptyArrays: true } },
         { $addFields: { user_weight: '$user_wobject.weight' } },
         { $addFields: { priority: { $cond: { if: { $gt: [ '$last_posts_count', 0 ] }, then: 1, else: 0 } } } },
-        { $sort: { priority: -1, user_weight: -1 } },
+        { $sort: { priority: -1, user_weight: -1, _id: -1 } },
         // put here skip/limit params if getting only particular object_type wobjects//
         { $project: { _id: 0, last_posts_count: 1, author_permlink: 1, user_weight: 1, object_type: 1, fields: 1 } },
         // cut off this part for getting only specified object type wobjects //
