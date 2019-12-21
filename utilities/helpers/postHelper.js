@@ -82,10 +82,10 @@ const getPostsByCategory = async function( data ) {
 const mergePostData = async ( postSteem, postDb ) => {
     if( !postDb ) {
         const { post: dbPost, error } = await PostModel.getOne( { ..._.pick( postSteem, [ 'author', 'permlink' ] ) } );
-        if( error ) return postSteem;
+        if( error || !dbPost ) return postSteem;
         postDb = dbPost;
     }
-    const diffKeys = _.difference( Object.keys( postDb ), Object.keys( postSteem ) );
+    const diffKeys = _.difference( Object.keys( postDb || {} ), Object.keys( postSteem ) );
     diffKeys.forEach( ( key ) => {
         postSteem[ key ] = postDb[ key ];
     } );
