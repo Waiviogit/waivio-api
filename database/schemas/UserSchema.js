@@ -61,12 +61,27 @@ const UserSchema = new Schema( {
 }, { timestamps: true } );
 
 UserSchema.index( { wobjects_weight: -1 } );
+UserSchema.index( { users_follow: -1 } );
 
 UserSchema.virtual( 'full_objects_follow', { // get full structure of objects instead only author_permlink
     ref: 'wobject',
     localField: 'objects_follow',
     foreignField: 'author_permlink',
     justOne: false
+} );
+
+UserSchema.virtual( 'followers_count', {
+    ref: 'User',
+    localField: 'name',
+    foreignField: 'users_follow',
+    count: true
+} );
+
+UserSchema.virtual( 'objects_shares_count', {
+    ref: 'user_wobjects',
+    localField: 'name',
+    foreignField: 'user_name',
+    count: true
 } );
 
 UserSchema.pre( 'aggregate', function () {
