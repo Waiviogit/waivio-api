@@ -1,5 +1,6 @@
 const Wobj = require( '../../models/wObjectModel' );
 const User = require( '../../models/UserModel' );
+const PostModel = require( '../../models/PostModel' );
 const CommentRef = require( '../../models/CommentRef' );
 const { Post } = require( '../../database' ).models;
 const { postsUtil } = require( '../steemApi' );
@@ -80,7 +81,7 @@ const getPostsByCategory = async function( data ) {
  */
 const mergePostData = async ( postSteem, postDb ) => {
     if( !postDb ) {
-        const { post: dbPost, error } = await Post.getOne( { ..._.pick( postSteem, [ 'author', 'permlink' ] ) } );
+        const { post: dbPost, error } = await PostModel.getOne( { ..._.pick( postSteem, [ 'author', 'permlink' ] ) } );
         if( error ) return postSteem;
         postDb = dbPost;
     }
