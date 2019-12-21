@@ -88,6 +88,13 @@ const mergePostData = async ( postSteem, postDb ) => {
     diffKeys.forEach( ( key ) => {
         postSteem[ key ] = postDb[ key ];
     } );
+    // fill active_votes in case votes from guest users
+    postDb.active_votes.forEach( ( dbVote ) => {
+        if( !postSteem.active_votes.find( ( v ) => v.voter === dbVote.voter ) ) {
+            postSteem.post.active_votes.push( dbVote );
+        }
+    } );
+
     return postSteem;
 };
 
