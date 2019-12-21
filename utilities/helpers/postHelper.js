@@ -38,6 +38,7 @@ const getPostObjects = async function( author = '', permlink = '' ) {
     }
 };
 
+
 const getPost = async function( author, permlink ) {
     let { post, error } = await postsUtil.getPost( author, permlink );
 
@@ -47,6 +48,7 @@ const getPost = async function( author, permlink ) {
     const wobjsResult = await getPostObjects( author, permlink );
     post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
     post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
+    post = await mergePostData( post );
     return { post };
 };
 
@@ -61,29 +63,32 @@ const getPostsByCategory = async function( data ) {
     }
     for ( let post of posts ) {
         if( post && post.author && post.permlink ) {
-            // let postWobjects;
-
-            // postWobjects = await getPostObjects( post.author, post.permlink );
-            // if( Array.isArray( postWobjects ) && !_.isEmpty( postWobjects ) ) {
-            //     post.wobjects = postWobjects;
-            // }
             const wobjsResult = await getPostObjects( post.author, post.permlink );
             post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
             post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
-            try {
-                const dbPost = await Post.findOne( { author: post.author, permlink: post.permlink } ).lean();
-                if( dbPost ) {
-                    const diffKeys = _.difference( Object.keys( dbPost ), Object.keys( post ) );
-                    diffKeys.forEach( ( key ) => {
-                        post[ key ] = dbPost[ key ];
-                    } );
-                }
-            } catch ( e ) {
-                console.error( e );
-            }
+            post = await mergePostData( post );
         }
     }
     return { posts };
+};
+
+/**
+ * Get post from DB and merge fields which doesn't exists in source post(from steem)
+ * @param postSteem
+ * @param postDb *optional*
+ * @returns {Promise<{error: *}|*>}
+ */
+const mergePostData = async ( postSteem, postDb ) => {
+    if( !postDb ) {
+        const { post: dbPost, error } = await Post.getOne( { ..._.pick( postSteem, [ 'author', 'permlink' ] ) } );
+        if( error ) return postSteem;
+        postDb = dbPost;
+    }
+    const diffKeys = _.difference( Object.keys( postDb ), Object.keys( postSteem ) );
+    diffKeys.forEach( ( key ) => {
+        postSteem[ key ] = postDb[ key ];
+    } );
+    return postSteem;
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
