@@ -150,4 +150,12 @@ const getBlog = async ( { name, skip = 0, limit = 30 } ) => {
     }
 };
 
-module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs, getBlog };
+const getOne = async ( { author, permlink } ) => {
+    try {
+        return { post: await PostModel.findOne( { author, permlink } ).lean() };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs, getBlog, getOne };
