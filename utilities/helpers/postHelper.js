@@ -92,7 +92,7 @@ const mergePostData = async ( postSteem, postDb ) => {
     // fill active_votes in case votes from guest users
     postDb.active_votes.forEach( ( dbVote ) => {
         if( !postSteem.active_votes.find( ( v ) => v.voter === dbVote.voter ) ) {
-            postSteem.post.active_votes.push( dbVote );
+            postSteem.active_votes.push( dbVote );
         }
     } );
 
