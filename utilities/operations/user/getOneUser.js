@@ -1,49 +1,31 @@
-const User = require( '../../../models/UserModel' );
+const { User } = require( '../../../database' ).models;
 const { userUtil: userSteemUtil } = require( '../../steemApi' );
 const _ = require( 'lodash' );
 
-const makePipeline = ( { name } ) => {
-    let pipeline = [
-        {
-            $match: { name: name }
-        },
-        {
-            $addFields: {
-                objects_following_count: { $size: '$objects_follow' }
-            }
-        },
-        {
-            $lookup: {
-                from: 'user_wobjects',
-                as: 'objects_shares',
-                let: { name: '$name' },
-                pipeline: [
-                    {
-                        $match: {
-                            $expr: { $eq: [ '$user_name', '$$name' ] }
-                        }
-                    },
-                    { $count: 'count' }
-                ]
-            }
-        }
-    ];
-
-    return pipeline;
+const getDbUser = async ( name ) => {
+    try {
+        return {
+            user: await User
+                .findOne( { name } )
+                .populate( 'followers_count' )
+                .populate( 'objects_shares_count' )
+                .lean()
+        };
+    } catch ( error ) {
+        return { error };
+    }
 };
 
 const getOne = async function ( name ) {
     const { userData = {} } = await userSteemUtil.getAccount( name ); // get user data from STEEM blockchain
 
-    const { result: [ user ], error: dbError } = await User.aggregate( makePipeline( { name } ) ); // get user data from db
+    const { user, error: dbError } = await getDbUser( name ); // get user data from db
 
     if ( dbError || ( !user && _.isEmpty( userData ) ) ) {
         return { error: dbError || { status: 404, message: `User ${name} not found!` } };
     }
 
     if ( !user ) return { userData };
-    user.objects_shares_count = _.get( user, 'objects_shares[ 0 ].count' );
-    delete user.objects_shares;
 
     Object.assign( userData, user ); // combine data from db and blockchain
     return { userData };
