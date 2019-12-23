@@ -126,3 +126,9 @@ exports.followingWobjectsUpdates = Joi.object().keys( {
     skip: Joi.number().integer().min( 0 ).max( 100 ).default( 0 ),
     object_type: Joi.string().invalid( '' ).required()
 } );
+
+exports.getFollowers = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).default( 30 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
+} );

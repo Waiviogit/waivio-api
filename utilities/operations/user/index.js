@@ -7,5 +7,6 @@ module.exports = {
     updateMetadata: require( './updateMetadata' ),
     getMetadata: require( './getUserMetadata' ),
     getBlog: require( './getBlog' ),
-    getFollowingUpdates: require( './getFollowingUpdates' )
+    getFollowingUpdates: require( './getFollowingUpdates' ),
+    getFollowers: require( './getFollowers' )
 };

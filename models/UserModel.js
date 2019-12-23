@@ -2,7 +2,7 @@ const UserModel = require( '../database' ).models.User;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
 
-const getOne = async function ( name ) {
+exports.getOne = async function ( name ) {
     try {
         return { user: await UserModel.findOne( { name: name } ).lean() };
     } catch ( error ) {
@@ -18,7 +18,7 @@ const getAll = async function ( { limit, skip } ) {
     }
 };
 
-const getObjectsFollow = async function ( data ) { // list of wobjects which specified user is follow
+exports.getObjectsFollow = async function ( data ) { // list of wobjects which specified user is follow
     try {
         const user = await UserModel.findOne( { name: data.name } )
             .populate( {
@@ -48,7 +48,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
     }
 };
 
-const aggregate = async ( pipeline ) => {
+exports.aggregate = async ( pipeline ) => {
     try {
         const result = await UserModel.aggregate( pipeline ).exec();
 
@@ -61,7 +61,7 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const updateOne = async ( condition, updateData = {} ) => {
+exports.updateOne = async ( condition, updateData = {} ) => {
     try {
         const user = await UserModel
             .findOneAndUpdate( condition, updateData, { upsert: true, new: true, setDefaultsOnInsert: true } )
@@ -73,4 +73,16 @@ const updateOne = async ( condition, updateData = {} ) => {
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow, aggregate, updateOne };
+exports.getFollowers = async ( { name, skip = 0, limit = 30 } ) => {
+    try {
+        return {
+            users: await UserModel
+                .find( { users_follow: name }, { _id: 0, name: 1 } )
+                .skip( skip )
+                .limit( limit )
+                .lean()
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
