@@ -58,7 +58,7 @@ const UserSchema = new Schema( {
             provider: { type: String }
         }
     }
-}, { timestamps: true } );
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
 
 UserSchema.index( { wobjects_weight: -1 } );
 UserSchema.index( { users_follow: -1 } );
@@ -75,6 +75,10 @@ UserSchema.virtual( 'followers_count', {
     localField: 'name',
     foreignField: 'users_follow',
     count: true
+} );
+
+UserSchema.virtual( 'objects_following_count' ).get( function () {
+    return this.objects_follow.length;
 } );
 
 UserSchema.virtual( 'objects_shares_count', {
