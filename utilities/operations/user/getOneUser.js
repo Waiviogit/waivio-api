@@ -5,11 +5,11 @@ const _ = require( 'lodash' );
 const getDbUser = async ( name ) => {
     try {
         return {
-            user: await User
-                .findOne( { name } )
+            user: ( await User
+                .findOne( { name }, { _id: 0 } )
                 .populate( 'followers_count' )
                 .populate( 'objects_shares_count' )
-                .lean()
+            ).toJSON()
         };
     } catch ( error ) {
         return { error };
