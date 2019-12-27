@@ -81,6 +81,10 @@ UserSchema.virtual( 'objects_following_count' ).get( function () {
     return this.objects_follow.length;
 } );
 
+UserSchema.virtual( 'users_following_count' ).get( function () {
+    return this.users_follow.length;
+} );
+
 UserSchema.virtual( 'objects_shares_count', {
     ref: 'user_wobjects',
     localField: 'name',
