@@ -53,6 +53,8 @@ userRoutes.route( '/user/:userName' )
     .get( UserController.show );
 userRoutes.route( '/user/:userName/following_objects' )
     .post( UserController.objects_follow );
+userRoutes.route( '/user/:userName/following_users' )
+    .get( UserController.users_follow );
 userRoutes.route( '/user/:userName/followers' )
     .get( UserController.followers );
 userRoutes.route( '/user/:userName/objects_feed' )

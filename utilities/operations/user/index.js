@@ -8,5 +8,6 @@ module.exports = {
     getMetadata: require( './getUserMetadata' ),
     getBlog: require( './getBlog' ),
     getFollowingUpdates: require( './getFollowingUpdates' ),
-    getFollowers: require( './getFollowers' )
+    getFollowers: require( './getFollowers' ),
+    getFollowingsUser: require( './getFollowingsUser' )
 };
