@@ -22,7 +22,10 @@ exports.getPostFiltersSchema = Joi.object().keys( {
     name: Joi.string().required()
 } );
 
-exports.showSchema = Joi.string().required();
+exports.showSchema = Joi.object().keys( {
+    name: Joi.string().required(),
+    with_followings: Joi.bool().default( false )
+} );
 
 exports.objectsFollowSchema = Joi.object().keys( {
     name: Joi.string().required(),
