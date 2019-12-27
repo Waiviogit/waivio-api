@@ -34,6 +34,12 @@ exports.objectsFollowSchema = Joi.object().keys( {
     skip: Joi.number().integer().min( 0 ).default( 0 )
 } );
 
+exports.usersFollowSchema = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 50 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
+} );
+
 exports.objectsFeedSchema = Joi.object().keys( {
     user: Joi.string().required(),
     limit: Joi.number().integer().min( 0 ).max( 50 ).default( 30 ),

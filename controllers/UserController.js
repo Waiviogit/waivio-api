@@ -2,7 +2,7 @@ const { User } = require( '../models' );
 const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
-    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers } = require( '../utilities/operations/user' );
+    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -74,6 +74,21 @@ const objects_follow = async function ( req, res, next ) {
     if( error ) return next( error );
 
     res.result = { status: 200, json: wobjects };
+    next();
+};
+
+const users_follow = async function ( req, res, next ) {
+    const value = validators.validate( {
+        name: req.params.userName,
+        limit: req.query.limit,
+        skip: req.query.skip
+    }, validators.user.usersFollowSchema, next );
+    if( !value ) return ;
+
+    const { result, error } = await getFollowingsUser( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: result };
     next();
 };
 
@@ -237,6 +252,6 @@ const followers = async ( req, res, next ) => {
 };
 
 module.exports = {
-    index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
+    index, show, objects_follow, users_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
     getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers
 };
