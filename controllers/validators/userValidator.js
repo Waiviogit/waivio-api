@@ -49,7 +49,8 @@ exports.feedSchema = Joi.object().keys( {
 
 exports.searchSchema = Joi.object().keys( {
     searchString: Joi.string().required(),
-    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 20 )
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
+    limit: Joi.number().integer().min( 0 ).max( 500 ).default( 30 )
 } );
 
 exports.updateMetadataSchema = Joi.object().keys( {
