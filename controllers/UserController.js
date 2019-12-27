@@ -160,7 +160,8 @@ const searchUsers = async ( req, res, next ) => {
     const value = validators.validate(
         {
             searchString: req.query.searchString,
-            limit: req.query.limit
+            limit: req.query.limit,
+            skip: req.query.skip
         }, validators.user.searchSchema, next );
     if( !value ) return ;
 
