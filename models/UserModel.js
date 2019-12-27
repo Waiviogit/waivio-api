@@ -10,7 +10,7 @@ exports.getOne = async function ( name ) {
     }
 };
 
-const getAll = async function ( { limit, skip } ) {
+exports.getAll = async function ( { limit, skip } ) {
     try {
         return { UserData: await UserModel.find().skip( skip ).limit( limit ).lean() };
     } catch ( error ) {
@@ -78,6 +78,21 @@ exports.getFollowers = async ( { name, skip = 0, limit = 30 } ) => {
         return {
             users: await UserModel
                 .find( { users_follow: name }, { _id: 0, name: 1 } )
+                .skip( skip )
+                .limit( limit )
+                .lean()
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+exports.search = async ( { string, skip, limit } ) => {
+    try {
+        return {
+            users: await UserModel
+                .find( { name: { $regex: `^${string}`, $options: 'i' } }, { _id: 0, name: 1, wobjects_weight: 1 } )
+                .sort( { wobjects_weight: -1 } )
                 .skip( skip )
                 .limit( limit )
                 .lean()
