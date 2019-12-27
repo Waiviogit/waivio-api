@@ -23,7 +23,10 @@ const index = async function ( req, res, next ) {
 };
 
 const show = async function ( req, res, next ) {
-    const value = validators.validate( req.params.userName, validators.user.showSchema, next );
+    const value = validators.validate( {
+        name: req.params.userName,
+        with_followings: req.query.with_followings
+    }, validators.user.showSchema, next );
 
     await authorise( value );
     const { userData, error } = await getOneUser( value );
