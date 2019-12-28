@@ -57,7 +57,8 @@ const UserSchema = new Schema( {
             sid: { type: String },
             provider: { type: String }
         }
-    }
+    },
+    followers_count: { type: Number, default: 0 }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
 
 UserSchema.index( { wobjects_weight: -1 } );
@@ -70,7 +71,7 @@ UserSchema.virtual( 'full_objects_follow', { // get full structure of objects in
     justOne: false
 } );
 
-UserSchema.virtual( 'followers_count', {
+UserSchema.virtual( 'followers_count_virtual', {
     ref: 'User',
     localField: 'name',
     foreignField: 'users_follow',

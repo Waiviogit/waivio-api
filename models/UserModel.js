@@ -112,3 +112,14 @@ exports.search = async ( { string, skip, limit } ) => {
         return { error };
     }
 };
+
+exports.updateFollowersCount = async ( name ) => {
+    try {
+        const user = await UserModel.findOne( { name } ).populate( 'followers_count_virtual' ).lean();
+        if( user && user.followers_count_virtual ) {
+            return { result: await User.updateOne( { name }, { $set: { followers_count: user.followers_count_virtual } } ) };
+        }
+    } catch ( error ) {
+        return { error };
+    }
+};
