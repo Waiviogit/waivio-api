@@ -60,6 +60,7 @@ const getAll = async function ( data ) {
         { $limit: data.sample ? 100 : data.limit + 1 }
     ] );
     if( data.sample ) {
+        pipeline[ 0 ].$match[ 'status.title' ] = { $nin: [ 'unavailable', 'relisted' ] };
         pipeline.push( { $sample: { size: 5 } } );
     }
     pipeline.push( ...[
