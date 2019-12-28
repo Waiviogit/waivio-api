@@ -2,7 +2,7 @@ const { User } = require( '../../../models' );
 
 const makeCountPipeline = ( { string } ) => {
     return [
-        { $match: { name: { $regex: `${string}`, $options: 'i' } } },
+        { $match: { name: { $regex: `^${string}`, $options: 'i' } } },
         { $count: 'count' }
     ];
 };
