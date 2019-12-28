@@ -1,8 +1,9 @@
 const UserModel = require( '../database' ).models.User;
 const wObjectHelper = require( '../utilities/helpers/wObjectHelper' );
 const { REQUIREDFIELDS } = require( '../utilities/constants' );
+const _ = require( 'lodash' );
 
-const getOne = async function ( name ) {
+exports.getOne = async function ( name ) {
     try {
         return { user: await UserModel.findOne( { name: name } ).lean() };
     } catch ( error ) {
@@ -10,7 +11,7 @@ const getOne = async function ( name ) {
     }
 };
 
-const getAll = async function ( { limit, skip } ) {
+exports.getAll = async function ( { limit, skip } ) {
     try {
         return { UserData: await UserModel.find().skip( skip ).limit( limit ).lean() };
     } catch ( error ) {
@@ -18,7 +19,7 @@ const getAll = async function ( { limit, skip } ) {
     }
 };
 
-const getObjectsFollow = async function ( data ) { // list of wobjects which specified user is follow
+exports.getObjectsFollow = async function ( data ) { // list of wobjects which specified user is follow
     try {
         const user = await UserModel.findOne( { name: data.name } )
             .populate( {
@@ -48,7 +49,7 @@ const getObjectsFollow = async function ( data ) { // list of wobjects which spe
     }
 };
 
-const aggregate = async ( pipeline ) => {
+exports.aggregate = async ( pipeline ) => {
     try {
         const result = await UserModel.aggregate( pipeline ).exec();
 
@@ -61,7 +62,7 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const updateOne = async ( condition, updateData = {} ) => {
+exports.updateOne = async ( condition, updateData = {} ) => {
     try {
         const user = await UserModel
             .findOneAndUpdate( condition, updateData, { upsert: true, new: true, setDefaultsOnInsert: true } )
@@ -73,4 +74,52 @@ const updateOne = async ( condition, updateData = {} ) => {
     }
 };
 
-module.exports = { getAll, getOne, getObjectsFollow, aggregate, updateOne };
+exports.getFollowers = async ( { name, skip = 0, limit = 30 } ) => {
+    try {
+        return {
+            users: await UserModel
+                .find( { users_follow: name }, { _id: 0, name: 1 } )
+                .skip( skip )
+                .limit( limit )
+                .lean()
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+exports.getFollowings = async ( { name, skip = 0, limit = 30 } ) => {
+    try {
+        const result = await UserModel.findOne( { name }, { _id: 1, users_follow: { $slice: [ skip, limit ] } } ).lean();
+        return { users: _.get( result, 'users_follow', [] ) };
+
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+exports.search = async ( { string, skip, limit } ) => {
+    try {
+        return {
+            users: await UserModel
+                .find( { name: { $regex: `^${string}`, $options: 'i' } }, { _id: 0, name: 1, wobjects_weight: 1 } )
+                .sort( { wobjects_weight: -1 } )
+                .skip( skip )
+                .limit( limit )
+                .lean()
+        };
+    } catch ( error ) {
+        return { error };
+    }
+};
+
+exports.updateFollowersCount = async ( name ) => {
+    try {
+        const user = await UserModel.findOne( { name } ).populate( 'followers_count_virtual' ).lean();
+        if( user && user.followers_count_virtual ) {
+            return { result: await User.updateOne( { name }, { $set: { followers_count: user.followers_count_virtual } } ) };
+        }
+    } catch ( error ) {
+        return { error };
+    }
+};

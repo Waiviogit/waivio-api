@@ -2,7 +2,7 @@ const { User } = require( '../models' );
 const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
-    getMetadata, getBlog, getFollowingUpdates, getPostFilters } = require( '../utilities/operations/user' );
+    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -23,7 +23,10 @@ const index = async function ( req, res, next ) {
 };
 
 const show = async function ( req, res, next ) {
-    const value = validators.validate( req.params.userName, validators.user.showSchema, next );
+    const value = validators.validate( {
+        name: req.params.userName,
+        with_followings: req.query.with_followings
+    }, validators.user.showSchema, next );
 
     await authorise( value );
     const { userData, error } = await getOneUser( value );
@@ -71,6 +74,21 @@ const objects_follow = async function ( req, res, next ) {
     if( error ) return next( error );
 
     res.result = { status: 200, json: wobjects };
+    next();
+};
+
+const users_follow = async function ( req, res, next ) {
+    const value = validators.validate( {
+        name: req.params.userName,
+        limit: req.query.limit,
+        skip: req.query.skip
+    }, validators.user.usersFollowSchema, next );
+    if( !value ) return ;
+
+    const { result, error } = await getFollowingsUser( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: result };
     next();
 };
 
@@ -160,7 +178,8 @@ const searchUsers = async ( req, res, next ) => {
     const value = validators.validate(
         {
             searchString: req.query.searchString,
-            limit: req.query.limit
+            limit: req.query.limit,
+            skip: req.query.skip
         }, validators.user.searchSchema, next );
     if( !value ) return ;
 
@@ -217,7 +236,22 @@ const followingWobjectsUpdates = async ( req, res, next ) => {
     next();
 };
 
+const followers = async ( req, res, next ) => {
+    const value = validators.validate( {
+        name: req.params.userName,
+        limit: req.query.limit,
+        skip: req.query.skip
+    }, validators.user.getFollowers, next );
+    if( !value ) return ;
+
+    const { result, error } = await getFollowers( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: result };
+    next();
+};
+
 module.exports = {
-    index, show, objects_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
-    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters
+    index, show, objects_follow, users_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
+    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers
 };

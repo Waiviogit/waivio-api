@@ -57,8 +57,9 @@ const UserSchema = new Schema( {
             sid: { type: String },
             provider: { type: String }
         }
-    }
-}, { timestamps: true } );
+    },
+    followers_count: { type: Number, default: 0 }
+}, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
 
 UserSchema.index( { wobjects_weight: -1 } );
 UserSchema.index( { users_follow: -1 } );
@@ -70,11 +71,19 @@ UserSchema.virtual( 'full_objects_follow', { // get full structure of objects in
     justOne: false
 } );
 
-UserSchema.virtual( 'followers_count', {
+UserSchema.virtual( 'followers_count_virtual', {
     ref: 'User',
     localField: 'name',
     foreignField: 'users_follow',
     count: true
+} );
+
+UserSchema.virtual( 'objects_following_count' ).get( function () {
+    return this.objects_follow.length;
+} );
+
+UserSchema.virtual( 'users_following_count' ).get( function () {
+    return this.users_follow.length;
 } );
 
 UserSchema.virtual( 'objects_shares_count', {
