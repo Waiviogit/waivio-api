@@ -60,6 +60,7 @@ const getAll = async function ( data ) {
         { $limit: data.sample ? 100 : data.limit + 1 }
     ] );
     if( data.sample ) {
+        pipeline[ 0 ].$match[ 'status.title' ] = { $nin: [ 'unavailable', 'relisted' ] };
         pipeline.push( { $sample: { size: 5 } } );
     }
     pipeline.push( ...[
@@ -102,19 +103,6 @@ const getAll = async function ( data ) {
         wObjects = wObjects.slice( 0, data.limit );
     }
     return { wObjectsData: wObjects, hasMore };
-};
-
-const getFields = async function ( { author_permlink, fields_names, custom_fields } ) {
-    try {
-        const wObject = await WObjectModel
-            .findOne( { 'author_permlink': data.author_permlink } )
-            .select( 'fields' )
-            .lean();
-
-        return { fieldsData: wObject ? _.orderBy( wObject.fields, [ 'weight' ], [ 'desc' ] ) : [] };
-    } catch ( error ) {
-        return { error };
-    }
 };
 
 const getGalleryItems = async function ( data ) {
@@ -270,5 +258,5 @@ const getFieldsRefs = async ( author_permlink ) => {
 };
 
 module.exports = {
-    getAll, getOne, getFields, getGalleryItems, getList, fromAggregation, isFieldExist, getByField, getChildWobjects, getWobjectsRefs, getFieldsRefs
+    getAll, getOne, getGalleryItems, getList, fromAggregation, isFieldExist, getByField, getChildWobjects, getWobjectsRefs, getFieldsRefs
 };

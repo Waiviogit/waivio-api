@@ -10,12 +10,12 @@ const { createNamespace } = require( 'cls-hooked' );
 const session = createNamespace( 'request-session' );
 const app = express();
 
+app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( bodyParser.json() );
 app.use( ( req, res, next ) => {
     session.run( () => next() );
 } );
 app.use( cors() );
-app.use( bodyParser.urlencoded( { extended: true } ) );
 app.use( morgan( 'dev' ) );
 // write to store user steemconnect/waivioAuth access_token if it exist
 app.use( ( req, res, next ) => {

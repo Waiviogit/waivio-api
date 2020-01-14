@@ -28,6 +28,6 @@ exports.showSchema = Joi.object().keys( {
 
 exports.expertsSchema = Joi.object().keys( {
     name: Joi.string().required(),
-    limit: Joi.number().integer().min( 0 ).max( OBJECT_TYPE_TOP_EXPERTS_COUNT ).default(5),
+    limit: Joi.number().integer().min( 0 ).max( OBJECT_TYPE_TOP_EXPERTS_COUNT ).default( 5 ),
     skip: Joi.number().integer().min( 0 ).max( OBJECT_TYPE_TOP_EXPERTS_COUNT - 1 ).default( 0 )
 } );

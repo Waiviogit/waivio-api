@@ -5,13 +5,13 @@ const axios = require( 'axios' );
 
 const prepareImage = async ( req ) => {
     const form = new formidable.IncomingForm();
-    const { blobImage, imageUrl } = await new Promise( ( resolve, reject ) => {
+    const { blobImage, imageUrl, type, userName } = await new Promise( ( resolve, reject ) => {
         form.parse( req, ( err, fields, files ) => {
             if ( err ) {
                 reject( err );
                 return;
             }
-            resolve( { blobImage: files.file, imageUrl: fields.imageUrl } );
+            resolve( { blobImage: files.file, imageUrl: fields.imageUrl, type: fields.type, userName: fields.userName } );
         } );
     } );
     let base64 = null;
@@ -23,9 +23,18 @@ const prepareImage = async ( req ) => {
     } else if( imageUrl ) {
         base64 = await base64ByUrl( imageUrl );
     }
-    const fileName = `${Math.round( new Date() / 1000 )}_${uuid()}`;
+    const fileName = await generateFileName( { type, userName } );
 
     return { base64: base64, fileName: fileName };
+};
+
+const generateFileName = async( { type, userName } ) => {
+    switch ( type ) {
+        case 'avatar':
+            return`avatar/${userName}`;
+        default:
+            return `${Math.round( new Date() / 1000 )}_${uuid()}`;
+    }
 };
 
 
