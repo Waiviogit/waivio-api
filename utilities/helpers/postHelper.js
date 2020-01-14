@@ -81,7 +81,10 @@ const getPostsByCategory = async function( data ) {
  */
 const mergePostData = async ( postSteem, postDb ) => {
     if( !postDb ) {
-        const { post: dbPost, error } = await PostModel.getOne( { ..._.pick( postSteem, [ 'author', 'permlink' ] ) } );
+        const { post: dbPost, error } = await PostModel.getOne( {
+            root_author: postSteem.root_author || postSteem.author,
+            permlink: postSteem.permlink
+        } );
         if( error || !dbPost ) return postSteem;
         postDb = dbPost;
     }
