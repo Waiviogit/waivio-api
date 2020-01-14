@@ -58,7 +58,8 @@ const UserSchema = new Schema( {
             provider: { type: String }
         }
     },
-    followers_count: { type: Number, default: 0 }
+    followers_count: { type: Number, default: 0 },
+    last_root_post: { type: String, default: null }
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } } );
 
 UserSchema.index( { wobjects_weight: -1 } );
