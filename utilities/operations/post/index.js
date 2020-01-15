@@ -1,3 +1,4 @@
 module.exports = {
-    getPostsByCategory: require( './getPostsByCategory' )
+    getPostsByCategory: require( './getPostsByCategory' ),
+    getSinglePost: require( './getSinglePost' )
 };
