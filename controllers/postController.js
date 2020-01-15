@@ -1,5 +1,4 @@
-const { postHelper } = require( '../utilities/helpers' );
-const { getPostsByCategory } = require( '../utilities/operations' ).post;
+const { getPostsByCategory, getSinglePost } = require( '../utilities/operations' ).post;
 const validators = require( './validators' );
 
 const show = async function ( req, res, next ) {
@@ -11,7 +10,7 @@ const show = async function ( req, res, next ) {
     if( !value ) {
         return ;
     }
-    const { post, error } = await postHelper.getPost( value.author, value.permlink );
+    const { post, error } = await getSinglePost( value.author, value.permlink );
 
     if ( error ) {
         return next( error );

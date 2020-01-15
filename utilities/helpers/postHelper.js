@@ -39,20 +39,6 @@ const getPostObjects = async function( author = '', permlink = '' ) {
     }
 };
 
-
-const getPost = async function( author, permlink ) {
-    let { post, error } = await postsUtil.getPost( author, permlink );
-
-    if( !post || error ) {
-        return { error };
-    }
-    const wobjsResult = await getPostObjects( author, permlink );
-    post.wobjects = _.get( wobjsResult, 'wobjectPercents', [] );
-    post.fullObjects = _.get( wobjsResult, 'wObjectsData', [] );
-    post = await mergePostData( post );
-    return { post };
-};
-
 const getPostsByCategory = async function( data ) {
     let { posts, error } = await postsUtil.getPostsByCategory( data );
 
@@ -160,7 +146,6 @@ const addAuthorWobjectsWeight = async ( posts = [] ) => {
 const fillReblogs = async ( posts = [] ) => {
     for( const post_idx in posts ) {
         if( _.get( posts, `[${post_idx}].reblog_to.author` ) && _.get( posts, `[${post_idx}].reblog_to.permlink` ) ) {
-            // const { post: sourcePost } = await getPost( posts[ post_idx ].reblog_to.author, posts[ post_idx ].reblog_to.permlink );
             let sourcePost;
             try {
                 sourcePost = await Post
@@ -178,4 +163,4 @@ const fillReblogs = async ( posts = [] ) => {
     }
 };
 
-module.exports = { getPostObjects, getPost, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight, fillReblogs };
+module.exports = { getPostObjects, getPostsByCategory, getWobjFeedCondition, addAuthorWobjectsWeight, fillReblogs, mergePostData };
