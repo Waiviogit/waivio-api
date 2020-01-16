@@ -53,6 +53,10 @@ userRoutes.route( '/user/:userName' )
     .get( UserController.show );
 userRoutes.route( '/user/:userName/following_objects' )
     .post( UserController.objects_follow );
+userRoutes.route( '/user/:userName/following_users' )
+    .get( UserController.users_follow );
+userRoutes.route( '/user/:userName/followers' )
+    .get( UserController.followers );
 userRoutes.route( '/user/:userName/objects_feed' )
     .post( UserController.objects_feed );
 userRoutes.route( '/user/:userName/feed' )
@@ -74,6 +78,7 @@ userRoutes.route( '/user/:userName/following_users_updates' )
     .get( UserController.followingUsersUpdates );
 userRoutes.route( '/user/:userName/following_wobjects_updates' )
     .get( UserController.followingWobjectsUpdates );
+
 
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );

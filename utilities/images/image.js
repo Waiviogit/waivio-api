@@ -34,7 +34,7 @@ class Image {
                     } );
                 } );
             } catch ( error ) {
-                return { error: error };
+                return { error };
             }
 
         }

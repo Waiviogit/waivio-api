@@ -1,16 +1,20 @@
 const { User } = require( '../../../models' );
-const { searchUserByName } = require( '../../steemApi/userUtil' );
 
 const makeCountPipeline = ( { string } ) => {
     return [
-        { $match: { name: { $regex: `${string}`, $options: 'i' } } },
+        { $match: { name: { $regex: `^${string}`, $options: 'i' } } },
         { $count: 'count' }
     ];
 };
 
-exports.searchUsers = async ( { string, limit } ) => {
-    const { accounts, error } = await searchUserByName( string, limit );
+
+exports.searchUsers = async ( { string, limit, skip } ) => {
+    const { users, error } = await User.search( { string, skip, limit } );
     const { result: [ { count: usersCount = 0 } = {} ] = [], error: countError } = await User.aggregate( makeCountPipeline( { string } ) );
 
-    return { users: accounts, usersCount, error: error || countError };
+    return {
+        users: users.map( ( u ) => ( { account: u.name, wobjects_weight: u.wobjects_weight } ) ),
+        usersCount,
+        error: error || countError
+    };
 };

@@ -3,6 +3,7 @@ const { postHelper } = require( '../../helpers' );
 
 module.exports = async ( { name, limit, skip, start_author, start_permlink } ) => {
     const { user, error: userError } = await User.getOne( name );
+    if( !user ) return { error: { status: 404, message: 'Not found' } };
     if( userError ) return { error: userError };
     if( user.auth ) {
         return await getGuestBlog( { name, limit, skip } );
@@ -20,3 +21,4 @@ const getSteemBlog = async ( { name, limit, start_author, start_permlink } ) => 
 const getGuestBlog = async ( { name, skip, limit } ) => {
     return await Post.getBlog( { name, skip, limit } );
 };
+

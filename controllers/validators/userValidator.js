@@ -22,11 +22,20 @@ exports.getPostFiltersSchema = Joi.object().keys( {
     name: Joi.string().required()
 } );
 
-exports.showSchema = Joi.string().required();
+exports.showSchema = Joi.object().keys( {
+    name: Joi.string().required(),
+    with_followings: Joi.bool().default( false )
+} );
 
 exports.objectsFollowSchema = Joi.object().keys( {
     name: Joi.string().required(),
     locale: Joi.string().default( 'en-US' ),
+    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 50 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
+} );
+
+exports.usersFollowSchema = Joi.object().keys( {
+    name: Joi.string().required(),
     limit: Joi.number().integer().min( 0 ).max( 100 ).default( 50 ),
     skip: Joi.number().integer().min( 0 ).default( 0 )
 } );
@@ -49,7 +58,8 @@ exports.feedSchema = Joi.object().keys( {
 
 exports.searchSchema = Joi.object().keys( {
     searchString: Joi.string().required(),
-    limit: Joi.number().integer().min( 0 ).max( 100 ).default( 20 )
+    skip: Joi.number().integer().min( 0 ).default( 0 ),
+    limit: Joi.number().integer().min( 0 ).max( 500 ).default( 30 )
 } );
 
 exports.updateMetadataSchema = Joi.object().keys( {
@@ -125,4 +135,10 @@ exports.followingWobjectsUpdates = Joi.object().keys( {
     limit: Joi.number().integer().min( 0 ).max( 100 ).default( 3 ),
     skip: Joi.number().integer().min( 0 ).max( 100 ).default( 0 ),
     object_type: Joi.string().invalid( '' ).required()
+} );
+
+exports.getFollowers = Joi.object().keys( {
+    name: Joi.string().required(),
+    limit: Joi.number().integer().min( 0 ).default( 30 ),
+    skip: Joi.number().integer().min( 0 ).default( 0 )
 } );
