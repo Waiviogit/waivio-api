@@ -150,9 +150,10 @@ const getBlog = async ( { name, skip = 0, limit = 30 } ) => {
     }
 };
 
-const getOne = async ( { author, permlink } ) => {
+const getOne = async ( { author, permlink, root_author } ) => {
     try {
-        return { post: await PostModel.findOne( { author, permlink } ).lean() };
+        const cond = author ? { author, permlink } : { root_author, permlink };
+        return { post: await PostModel.findOne( cond ).lean() };
     } catch ( error ) {
         return { error };
     }
