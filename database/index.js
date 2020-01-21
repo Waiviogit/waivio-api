@@ -13,12 +13,13 @@ mongoose.set( 'debug', process.env.NODE_ENV === 'development' );
 
 module.exports = { Mongoose: mongoose,
     models: {
-        WObject: require( './schemas/wObjectSchema' ),
-        User: require( './schemas/UserSchema' ),
-        App: require( './schemas/AppSchema' ),
-        Post: require( './schemas/PostSchema' ),
-        ObjectType: require( './schemas/ObjectTypeSchema' ),
         UserWobjects: require( './schemas/UserWobjectsSchema' ),
-        CommentRef: require( './schemas/CommentRefSchema' )
+        CommentRef: require( './schemas/CommentRefSchema' ),
+        ObjectType: require( './schemas/ObjectTypeSchema' ),
+        WObject: require( './schemas/wObjectSchema' ),
+        Comment: require( './schemas/CommentSchema' ),
+        User: require( './schemas/UserSchema' ),
+        Post: require( './schemas/PostSchema' ),
+        App: require( './schemas/AppSchema' )
     }
 };
