@@ -4,7 +4,7 @@ const { REQUIREDFIELDS } = require( '../utilities/constants' );
 const AppModel = require( './AppModel' );
 const _ = require( 'lodash' );
 
-const getFeedByObjects = async function ( data ) { // data include objects(array of strings), limit, skip, locale, user
+exports.getFeedByObjects = async function ( data ) { // data include objects(array of strings), limit, skip, locale, user
     try {
         let posts = await PostModel.aggregate( [
             {
@@ -32,7 +32,7 @@ const getFeedByObjects = async function ( data ) { // data include objects(array
     }
 }; // return posts of list wobjects and one specified author(use on user feed)
 
-const getAllPosts = async function ( data ) {
+exports.getAllPosts = async function ( data ) {
     try {
         const aggregatePipeline = [
             { $sort: { _id: -1 } },
@@ -68,11 +68,11 @@ const getAllPosts = async function ( data ) {
     }
 };
 
-const fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObjects' ) => {
+exports.fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObjects' ) => {
     const fields = REQUIREDFIELDS.map( ( item ) => ( { name: item } ) );
 
     for ( const post of posts ) {
-        for ( let wObject of post.wobjects ) {
+        for ( let wObject of _.get( post, 'wobjects', [] ) ) {
             wObject = Object.assign( wObject, _.get( post, `[${wobjects_path}]`, [] ).find( ( i ) => i.author_permlink === wObject.author_permlink ) );
             wObjectHelper.formatRequireFields( wObject, locale, fields );
         }
@@ -81,7 +81,7 @@ const fillObjects = async ( posts, locale = 'en-US', wobjects_path = 'fullObject
     return posts;
 };
 
-const aggregate = async ( pipeline ) => {
+exports.aggregate = async ( pipeline ) => {
     try {
         const posts = await PostModel.aggregate( pipeline );
 
@@ -94,7 +94,7 @@ const aggregate = async ( pipeline ) => {
     }
 };
 
-const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_languages, filtersData } ) => {
+exports.getByFollowLists = async ( { users, author_permlinks, skip, limit, user_languages, filtersData } ) => {
     try {
         let cond = {
             $or: [ { author: { $in: users } }, { 'wobjects.author_permlink': { $in: author_permlinks } } ]
@@ -118,7 +118,7 @@ const getByFollowLists = async ( { users, author_permlinks, skip, limit, user_la
     }
 };
 
-const getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
+exports.getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
     try{
         return {
             posts: await PostModel.aggregate( [
@@ -140,7 +140,7 @@ const getPostsRefs = async function( { skip = 0, limit = 1000 } = {} ) {
     }
 };
 
-const getBlog = async ( { name, skip = 0, limit = 30 } ) => {
+exports.getBlog = async ( { name, skip = 0, limit = 30 } ) => {
     try {
         return { posts: await PostModel
             .find( { author: name } ).sort( { _id: -1 } ).skip( skip ).limit( limit )
@@ -150,7 +150,7 @@ const getBlog = async ( { name, skip = 0, limit = 30 } ) => {
     }
 };
 
-const getOne = async ( { author, permlink, root_author } ) => {
+exports.getOne = async ( { author, permlink, root_author } ) => {
     try {
         const cond = author ? { author, permlink } : { root_author, permlink };
         return { post: await PostModel.findOne( cond ).lean() };
@@ -159,4 +159,12 @@ const getOne = async ( { author, permlink, root_author } ) => {
     }
 };
 
-module.exports = { getFeedByObjects, getAllPosts, aggregate, fillObjects, getByFollowLists, getPostsRefs, getBlog, getOne };
+exports.findByBothAuthors = async ( { author, permlink } ) => {
+    try {
+        return{ result: await PostModel.find( {
+            $or: [ { author, permlink }, { root_author: author, permlink } ]
+        } ).lean() };
+    } catch ( error ) {
+        return { error };
+    }
+};

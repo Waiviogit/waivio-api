@@ -18,6 +18,12 @@ const getPostsByCategory = async ( data ) => { // data include tag(user if blog)
     }
 };
 
+/**
+ * Return post or comment from steem blockchain if it exist and not deleted
+ * @param author
+ * @param permlink
+ * @returns {Promise<{error: {message: string, status: number}}|{post: ({author}|any)}>}
+ */
 const getPost = async ( author, permlink ) => {
     const post = await client.database.call( 'get_content', [ author, permlink ] );
 
