@@ -1,7 +1,7 @@
 const { User } = require( '../models' );
 const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
-const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
+const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments,
     getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
@@ -251,7 +251,24 @@ const followers = async ( req, res, next ) => {
     next();
 };
 
+const getUserComments = async ( req, res, next ) => {
+    const value = validators.validate( {
+        name: req.params.userName,
+        limit: req.query.limit,
+        skip: req.query.skip,
+        start_permlink: req.query.start_permlink
+    }, validators.user.comments, next );
+    if( !value ) return ;
+
+    const { comments, error } = await getComments( value );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: comments };
+    next();
+};
+
 module.exports = {
     index, show, objects_follow, users_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
-    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers
+    getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers,
+    getUserComments
 };

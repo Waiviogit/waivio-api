@@ -1,13 +1,14 @@
 module.exports = {
-    getManyUsers: require( './getManyUsers' ),
-    objectsShares: require( './objectsShares' ),
-    getPostFilters: require( './getPostFilters' ),
-    getOneUser: require( './getOneUser' ),
-    getUserFeed: require( './getUserFeed' ),
-    updateMetadata: require( './updateMetadata' ),
-    getMetadata: require( './getUserMetadata' ),
-    getBlog: require( './getBlog' ),
     getFollowingUpdates: require( './getFollowingUpdates' ),
+    getFollowingsUser: require( './getFollowingsUser' ),
+    getPostFilters: require( './getPostFilters' ),
+    updateMetadata: require( './updateMetadata' ),
+    objectsShares: require( './objectsShares' ),
+    getMetadata: require( './getUserMetadata' ),
+    getManyUsers: require( './getManyUsers' ),
     getFollowers: require( './getFollowers' ),
-    getFollowingsUser: require( './getFollowingsUser' )
+    getUserFeed: require( './getUserFeed' ),
+    getComments: require( './getComments' ),
+    getOneUser: require( './getOneUser' ),
+    getBlog: require( './getBlog' )
 };
