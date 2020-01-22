@@ -1,6 +1,6 @@
 const { Comment } = require( '../database' ).models;
 
-const getOne = async ( { author, permlink, userId } ) => {
+exports.getOne = async ( { author, permlink, userId } ) => {
     try {
         const cond = author ? { author, permlink } : { userId, permlink };
         return { comment: await Comment.findOne( { ...cond } ).lean() };
@@ -9,7 +9,7 @@ const getOne = async ( { author, permlink, userId } ) => {
     }
 };
 
-const findByCond = async ( cond ) => {
+exports.findByCond = async ( cond ) => {
     try {
         return{ result: await Comment.find( { ...cond } ).lean() };
     } catch ( error ) {
@@ -17,4 +17,10 @@ const findByCond = async ( cond ) => {
     }
 };
 
-module.exports = { getOne, findByCond };
+exports.getMany = async ( { cond, skip, limit } ) => {
+    try {
+        return{ comments: await Comment.find( { ...cond } ).skip( skip ).limit( limit ).lean() };
+    } catch ( error ) {
+        return { error };
+    }
+};
