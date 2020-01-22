@@ -20,7 +20,7 @@ const getGuestComments = async ( { name, skip, limit } ) => {
 const getSteemUserComments = async ( { start_author, start_permlink, limit } ) => {
     const cond = start_permlink ? { start_author, start_permlink, limit: limit + 1 } : { start_author, limit };
     const { comments: steemComments, error } = await postsUtil.getUserComments( cond );
-    if( error ) return{ error };
+    if( error || steemComments.error ) return{ error: error || steemComments.error };
 
     const mergedComments = await mergeSteemCommentsWithDB( {
         steemComments: steemComments.slice( start_permlink ? 1 : 0 )
