@@ -21,7 +21,7 @@ apiRoutes.use( '/api', userRoutes );
 apiRoutes.use( '/api', postRoutes );
 apiRoutes.use( '/api', appRoutes );
 apiRoutes.use( '/api', objectTypeRoutes );
-
+// region Wobject
 wobjRoutes.route( '/wobject' )
     .post( WobjController.index );
 wobjRoutes.route( '/wobject/:authorPermlink' )
@@ -46,8 +46,8 @@ wobjRoutes.route( '/wobjectsByField' )
     .get( WobjController.getByField );
 wobjRoutes.route( '/wobject/:authorPermlink/child_wobjects' )
     .get( WobjController.getChildWobjects );
-
-
+// endregion
+// region User
 userRoutes.route( '/users' )
     .get( UserController.index );
 userRoutes.route( '/user/:userName' )
@@ -81,22 +81,24 @@ userRoutes.route( '/user/:userName/following_users_updates' )
     .get( UserController.followingUsersUpdates );
 userRoutes.route( '/user/:userName/following_wobjects_updates' )
     .get( UserController.followingWobjectsUpdates );
-
-
+// endregion
+// region Post
 postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
 postRoutes.route( '/posts' )
     .post( PostController.getByCategory );
 postRoutes.route( '/post_comments' )
     .get( PostController.getPostComments );
-
+// endregion
+// region App
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );
 appRoutes.route( '/app/:appName/experts' )
     .get( AppController.experts );
 appRoutes.route( '/image' )
     .post( ImageController.saveImage );
-
+// endregion
+// region ObjectType
 objectTypeRoutes.route( '/objectTypes' )
     .post( ObjectTypeController.index );
 objectTypeRoutes.route( '/objectTypesSearch' )
@@ -105,8 +107,9 @@ objectTypeRoutes.route( '/objectType/:objectTypeName' )
     .post( ObjectTypeController.show );
 objectTypeRoutes.route( '/objectType/:objectTypeName/expertise' )
     .get( ObjectTypeController.expertise );
-
+// endregion
+// region Search
 userRoutes.route( '/generalSearch' )
     .post( globalSearchController.globalSearch );
-
+// endregion
 module.exports = apiRoutes;

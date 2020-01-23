@@ -121,7 +121,8 @@ const search = async function ( req, res, next ) {
             locale: req.body.locale,
             object_type: req.body.object_type,
             sortByApp: req.body.sortByApp,
-            forParent: req.body.forParent
+            forParent: req.body.forParent,
+            required_fields: req.body.required_fields
         }, validators.wobject.searchScheme, next );
 
     if( !value ) {
