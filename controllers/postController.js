@@ -1,7 +1,7 @@
-const { getPostsByCategory, getSinglePost } = require( '../utilities/operations' ).post;
+const { getPostsByCategory, getSinglePost, getPostComments } = require( '../utilities/operations' ).post;
 const validators = require( './validators' );
 
-const show = async function ( req, res, next ) {
+exports.show = async function ( req, res, next ) {
     const value = validators.validate( {
         author: req.params.author,
         permlink: req.params.permlink
@@ -19,7 +19,7 @@ const show = async function ( req, res, next ) {
     next();
 };
 
-const getByCategory = async function ( req, res, next ) {
+exports.getByCategory = async function ( req, res, next ) {
     const value = validators.validate( {
         category: req.body.category,
         limit: req.body.limit,
@@ -39,4 +39,13 @@ const getByCategory = async function ( req, res, next ) {
     next();
 };
 
-module.exports = { show, getByCategory };
+exports.getPostComments = async function ( req, res, next ) {
+    const value = validators.validate( { ...req.query }, validators.post.getPostComments, next );
+    if( !value )return;
+
+    const { result, error } = await getPostComments( value );
+    if ( error ) return next( error );
+
+    res.result = { status: 200, json: result };
+    next();
+};

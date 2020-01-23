@@ -1,5 +1,6 @@
 const { Comment, User } = require( '../../../models' );
 const { postsUtil } = require( '../../steemApi' );
+const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require( '../../helpers/commentHelper' );
 const _ = require( 'lodash' );
 
 module.exports = async ( { name, start_permlink, limit, skip } ) => {
@@ -27,48 +28,6 @@ const getSteemUserComments = async ( { start_author, start_permlink, limit } ) =
     } );
     return{ comments: mergedComments };
 
-};
-
-// return steemComments
-const mergeSteemCommentsWithDB = async ( { steemComments, dbComments } ) => {
-    if( !dbComments || _.isEmpty( dbComments ) ) {
-        const cond = {
-            $or: [
-                ...steemComments.map( ( c ) => ( { ..._.pick( c, [ 'author', 'permlink' ] ) } ) )
-            ]
-        };
-        const { result: dbComm } = await Comment.findByCond( cond );
-        dbComments = dbComm;
-    }
-    const resComments = steemComments.map( ( stComment ) => {
-        const dbComm = _.find( dbComments, { ..._.pick( stComment, [ 'author', 'permlink' ] ) } );
-        if( dbComm ) {
-            stComment.active_votes.push( ...dbComm.active_votes );
-            stComment.guestInfo = dbComm.guestInfo;
-        }
-        return stComment;
-    } );
-    return resComments;
-};
-
-// return dbComments
-const mergeDbCommentsWithSteem = async ( { dbComments, steemComments } ) => {
-    if( !steemComments || _.isEmpty( steemComments ) ) {
-        const { posts: stComments } = await postsUtil.getManyPosts(
-            dbComments.map( ( c ) => ( { ..._.pick( c, [ 'author', 'permlink' ] ) } ) )
-        );
-        steemComments = stComments;
-    }
-    const resComments = dbComments.map( ( dbComment ) => {
-        const steemComment = _.find( steemComments, { ..._.pick( dbComment, [ 'author', 'permlink' ] ) } );
-        if( steemComment ) {
-            steemComment.active_votes.push( ...dbComment.active_votes );
-            steemComment.guestInfo = dbComment.guestInfo;
-            return steemComment;
-        }
-        return dbComment;
-    } );
-    return resComments;
 };
 
 /**
