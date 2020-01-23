@@ -47,6 +47,7 @@ wobjRoutes.route( '/wobjectsByField' )
 wobjRoutes.route( '/wobject/:authorPermlink/child_wobjects' )
     .get( WobjController.getChildWobjects );
 
+
 userRoutes.route( '/users' )
     .get( UserController.index );
 userRoutes.route( '/user/:userName' )
@@ -86,6 +87,8 @@ postRoutes.route( '/post/:author/:permlink' )
     .get( PostController.show );
 postRoutes.route( '/posts' )
     .post( PostController.getByCategory );
+postRoutes.route( '/post_comments' )
+    .post( PostController.getPostComments );
 
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );
