@@ -19,7 +19,11 @@ exports.findByCond = async ( cond ) => {
 
 exports.getMany = async ( { cond, skip, limit } ) => {
     try {
-        return{ comments: await Comment.find( { ...cond } ).skip( skip ).limit( limit ).lean() };
+        return{ comments: await Comment.find( { ...cond } )
+            .sort( { _id: -1 } )
+            .skip( skip )
+            .limit( limit )
+            .lean() };
     } catch ( error ) {
         return { error };
     }
