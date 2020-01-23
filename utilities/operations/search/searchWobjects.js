@@ -1,8 +1,8 @@
 const { Wobj, App } = require( '../../../models' );
 const _ = require( 'lodash' );
-const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require( '../../constants' );
+const { REQUIREFIELDS_PARENT, REQUIREFIELDS_SEARCH } = require( '../../constants' );
 
-const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects, forParent } ) => {
+const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects, forParent, required_fields } ) => {
     return [
         {
             $match: {
@@ -35,7 +35,7 @@ const makePipeline = ( { string, object_type, limit, skip, crucial_wobjects, for
                         input: '$fields',
                         as: 'field',
                         cond: {
-                            $in: [ '$$field.name', REQUIREDFIELDS ]
+                            $in: [ '$$field.name', _.union( REQUIREFIELDS_SEARCH, required_fields || [] ) ]
                         }
                     }
                 }
@@ -66,13 +66,8 @@ const makeCountPipeline = ( { string } ) => {
         { $project: { _id: 0, object_type: '$_id', count: 1 } }
     ];
 };
-const formatWobjects = async ( wObjects ) => {
-    wObjects.forEach( ( wobject ) => {
-        wobject.fields = wobject.fields.filter( ( item ) => REQUIREFIELDS_PARENT.includes( item.name ) );
-    } );
-};
 
-exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp, forParent } ) => {
+exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp, forParent, required_fields } ) => {
     // get count of wobjects grouped by object_types
     const { wobjects: wobjectsCounts, error: getWobjCountError } = await Wobj.fromAggregation( makeCountPipeline( { string } ) );
     let crucial_wobjects = [];
@@ -84,8 +79,7 @@ exports.searchWobjects = async ( { string, object_type, limit, skip, sortByApp, 
         crucial_wobjects = _.get( app, 'supported_objects' );
     }
     // get wobjects
-    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip, crucial_wobjects, forParent } ) );
+    const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation( makePipeline( { string, object_type, limit, skip, crucial_wobjects, forParent, required_fields } ) );
 
-    await formatWobjects( wobjects );
     return { wobjects, wobjectsCounts, error: getWobjCountError || getWobjError };
 };
