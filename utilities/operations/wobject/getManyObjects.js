@@ -31,7 +31,7 @@ const getMany = async ( data ) => {
     wObjects.forEach( ( wObject ) => {
         wObject.users = wObject.users || [];
         wObject.user_count = wObject.users.length; // add field user count
-        wObjectHelper.formatRequireFields( wObject, data.locale, data.required_fields.map( ( item ) => ( { name: item } ) ) );
+        // wObjectHelper.formatRequireFields( wObject, data.locale, data.required_fields.map( ( item ) => ( { name: item } ) ) );
         // format parent field
         if( Array.isArray( wObject.parent ) ) {
             if( _.isEmpty( wObject.parent ) ) {
