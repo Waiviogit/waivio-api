@@ -88,7 +88,7 @@ postRoutes.route( '/post/:author/:permlink' )
 postRoutes.route( '/posts' )
     .post( PostController.getByCategory );
 postRoutes.route( '/post_comments' )
-    .post( PostController.getPostComments );
+    .get( PostController.getPostComments );
 
 appRoutes.route( '/app/:appName' )
     .get( AppController.show );

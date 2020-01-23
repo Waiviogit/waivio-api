@@ -40,7 +40,7 @@ exports.getByCategory = async function ( req, res, next ) {
 };
 
 exports.getPostComments = async function ( req, res, next ) {
-    const value = validators.validate( { ...req.query }, validators.post.getPostsByCategorySchema, next );
+    const value = validators.validate( { ...req.query }, validators.post.getPostComments, next );
     if( !value )return;
 
     const { result, error } = await getPostComments( value );

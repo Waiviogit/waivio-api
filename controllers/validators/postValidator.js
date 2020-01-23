@@ -12,3 +12,9 @@ exports.getPostsByCategorySchema = Joi.object().keys( {
     limit: Joi.number().integer().min( 0 ).max( 50 ).default( 20 ),
     user_languages: Joi.array().items( Joi.string().valid( [ ...LANGUAGES ] ) ).default( [ 'ru-RU' ] )
 } );
+
+exports.getPostComments = Joi.object().keys( {
+    author: Joi.string().invalid( '' ).required(),
+    permlink: Joi.string().invalid( '' ).required(),
+    category: Joi.string().invalid( '' ).required()
+} );
