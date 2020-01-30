@@ -1,3 +1,5 @@
-module.exports = {
-    fillPostAdditionalInfo: require( './fillPostAdditionalInfo' )
-};
+const moduleExports = {};
+
+moduleExports.fillPostAdditionalInfo = require('./fillPostAdditionalInfo');
+
+module.exports = moduleExports;

@@ -1,3 +1,3 @@
-const config = require( './config.json' );
+const config = require('./config.json');
 
-module.exports = config[ process.env.NODE_ENV || 'development' ];
+module.exports = config[process.env.NODE_ENV || 'development'];
