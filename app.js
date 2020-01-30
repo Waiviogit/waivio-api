@@ -35,7 +35,7 @@ app.use( ( req, res, next ) => {
     res.status( res.result.status || 200 ).json( res.result.json );
 } );
 
-// error handler
+// middleware for handle error for each request
 app.use( ( err, req, res, next ) => {
     // set locals, only providing error in development
     res.locals.message = err.message;
