@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { REQUIREFIELDS_SEARCH } = require('utilities/constants');
+const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
 const { Wobj, App } = require('models');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, crucial_wobjects, forParent, required_fields,
+  string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
 }) => [
   {
     $match: {
@@ -25,7 +25,7 @@ const makePipeline = ({
   {
     $addFields: {
       // eslint-disable-next-line camelcase
-      crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucial_wobjects] }, then: 1, else: 0 } },
+      crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
       priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
     },
   },
@@ -40,7 +40,7 @@ const makePipeline = ({
           as: 'field',
           cond: {
             // eslint-disable-next-line camelcase
-            $in: ['$$field.name', _.union(REQUIREFIELDS_SEARCH, required_fields || [])],
+            $in: ['$$field.name', _.union(REQUIREDFIELDS_SEARCH, required_fields || [])],
           },
         },
       },

@@ -6,7 +6,7 @@ const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require('utilities/constants');
 const getOne = async (authorPermlink) => { // get one wobject by author_permlink
   try {
     const [wObject] = await WObjectModel.aggregate([
-      { $match: { authorPermlink } },
+      { $match: { author_permlink: authorPermlink } },
       {
         $lookup: {
           from: 'users',

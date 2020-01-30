@@ -1,5 +1,5 @@
 const {
-  CommentRef, Wobj, User, PostModel,
+  CommentRef, Wobj, User, Post: PostModel,
 } = require('models');
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
