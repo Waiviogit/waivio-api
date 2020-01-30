@@ -1,8 +1,8 @@
 const { User } = require( '../models' );
-const { userFeedHelper, getWobjectPostWriters } = require( '../utilities/helpers' );
+const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments,
-    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
+    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser, getWobjectPostWriters } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 

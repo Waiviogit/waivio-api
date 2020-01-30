@@ -4,6 +4,5 @@ module.exports = {
     userFeedHelper: require( './userFeedHelper' ),
     postHelper: require( './postHelper' ),
     imagesHelper: require( './imagesHelper' ),
-    userFollowingsUpdates: require( './userFollowingsUpdatesHelper' ),
-    getWobjectPostWriters: require( './getWobjectPostWriters' )
+    userFollowingsUpdates: require( './userFollowingsUpdatesHelper' )
 };

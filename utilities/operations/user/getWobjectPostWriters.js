@@ -1,6 +1,6 @@
 const _ = require( 'lodash' );
-const { User, Wobj } = require( '../../models' );
-const { Post: PostModel } = require( '../../database' ).models;
+const { User, Wobj } = require( '../../../models' );
+const { Post: PostModel } = require( '../../../database' ).models;
 
 
 const getUsersList = async ( userName ) => {
