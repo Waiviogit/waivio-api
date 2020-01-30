@@ -2,7 +2,7 @@ const { User } = require( '../models' );
 const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
 const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments,
-    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
+    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser, getWobjectPostWriters } = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -267,8 +267,19 @@ const getUserComments = async ( req, res, next ) => {
     next();
 };
 
+const wobjectPostWriters = async function ( req, res, next ) {
+    if ( !req.params.userName ) return next( { error: { status: 422, message: 'Invalid data in request' } } );
+
+    const { users, error } = await getWobjectPostWriters.getUsersList( req.params.userName );
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: users };
+    next();
+};
+
+
 module.exports = {
     index, show, objects_follow, users_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
     getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers,
-    getUserComments
+    getUserComments, wobjectPostWriters
 };

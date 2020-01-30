@@ -1,4 +1,5 @@
 module.exports = {
+    getWobjectPostWriters: require( './getWobjectPostWriters' ),
     getFollowingUpdates: require( './getFollowingUpdates' ),
     getFollowingsUser: require( './getFollowingsUser' ),
     getPostFilters: require( './getPostFilters' ),
