@@ -80,3 +80,4 @@ exports.COMMENT_REF_TYPES = {
     appendWobj: 'append_wobj',
     wobjType: 'wobj_type'
 };
+exports.MAX_IMPORTING_USERS = 20;

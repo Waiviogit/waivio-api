@@ -10,6 +10,10 @@
       "host": "www.waivio.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
+    },
+    "redis": {
+      "wobjRefs": 1,
+      "importUser": 2
     }
   },
 
@@ -24,6 +28,10 @@
       "host": "waiviodev.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
+    },
+    "redis": {
+      "wobjRefs": 1,
+      "importUser": 2
     }
   },
 
@@ -38,6 +46,10 @@
       "host": "waiviodev.com",
       "baseUrl": "auth",
       "validateTokenPath": "validate_auth_token"
+    },
+    "redis": {
+      "wobjRefs": 1,
+      "importUser": 2
     }
   }
 }

@@ -1,8 +1,10 @@
 const { User } = require( '../models' );
 const { userFeedHelper } = require( '../utilities/helpers' );
 const { authorise } = require( '../utilities/authorization/authoriseUser' );
-const { getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments,
-    getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser } = require( '../utilities/operations/user' );
+const {
+    getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments, getMetadata,
+    getBlog, getFollowingUpdates, getPostFilters, getFollowers, getFollowingsUser, importSteemUserBalancer
+} = require( '../utilities/operations/user' );
 const { users: { searchUsers: searchByUsers } } = require( '../utilities/operations/search' );
 const validators = require( './validators' );
 
@@ -267,8 +269,19 @@ const getUserComments = async ( req, res, next ) => {
     next();
 };
 
+const importUserFromSteem = async ( req, res, next ) => {
+    if( !req.query.userName ) return next( { status: 422, message: 'userName field must exist' } ) ;
+
+    const { result, error } = await importSteemUserBalancer.startImportUser( req.query.userName );
+
+    if( error ) return next( error );
+
+    res.result = { status: 200, json: result };
+    next();
+};
+
 module.exports = {
     index, show, objects_follow, users_follow, objects_feed, feed, userObjectsShares, searchUsers, updateUserMetadata,
     getUserMetadata, blog, followingUpdates, followingUsersUpdates, followingWobjectsUpdates, postFilters, followers,
-    getUserComments
+    getUserComments, importUserFromSteem
 };

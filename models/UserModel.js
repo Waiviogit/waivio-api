@@ -5,7 +5,9 @@ const _ = require( 'lodash' );
 
 exports.getOne = async function ( name ) {
     try {
-        return { user: await UserModel.findOne( { name: name } ).lean() };
+        return {
+            user: await UserModel.findOne( { name: name } ).lean()
+        };
     } catch ( error ) {
         return { error };
     }

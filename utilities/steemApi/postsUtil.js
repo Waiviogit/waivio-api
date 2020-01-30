@@ -42,7 +42,6 @@ exports.getManyPosts = async ( links = [] ) => {
     return{ posts: _.compact( posts ) };
 };
 
-
 /**
  * Get comments authored by specified STEEM user
  * @param start_author {String} Specified STEEM user
@@ -55,7 +54,6 @@ exports.getUserComments = async ( { start_author, start_permlink, limit } ) => {
         'get_discussions_by_comments',
         [ { start_author, start_permlink, limit } ]
     );
-
     if ( !_.isEmpty( comments ) ) return { comments };
     return { error: { message: 'Comments not found!', status: 404 } };
 };

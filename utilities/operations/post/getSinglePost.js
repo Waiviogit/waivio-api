@@ -13,12 +13,12 @@ const _ = require( 'lodash' );
  */
 module.exports = async ( author, permlink ) => {
     const postResult = await getPost( { author, permlink } );
-    if( _.get( postResult, 'error' ) ) return{ error: postResult.error };
-    if( _.get( postResult, 'post' ) ) return{ post: postResult.post };
+    if( _.get( postResult, 'error' ) ) return { error: postResult.error };
+    if( _.get( postResult, 'post' ) ) return { post: postResult.post };
 
     const commentResult = await getComment( { author, permlink } );
-    if( _.get( commentResult, 'error' ) ) return{ error: commentResult.error };
-    if( _.get( commentResult, 'comment' ) ) return{ post: commentResult.comment };
+    if( _.get( commentResult, 'error' ) ) return { error: commentResult.error };
+    if( _.get( commentResult, 'comment' ) ) return { post: commentResult.comment };
 };
 
 const getPost = async ( { author, permlink } ) => {

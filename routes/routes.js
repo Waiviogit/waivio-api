@@ -81,6 +81,8 @@ userRoutes.route( '/user/:userName/following_users_updates' )
     .get( UserController.followingUsersUpdates );
 userRoutes.route( '/user/:userName/following_wobjects_updates' )
     .get( UserController.followingWobjectsUpdates );
+userRoutes.route( '/import_steem_user' )
+    .get( UserController.importUserFromSteem );
 // endregion
 // region Post
 postRoutes.route( '/post/:author/:permlink' )
