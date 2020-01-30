@@ -1,4 +1,6 @@
-module.exports = {
-    steemApi: require( './steemApi' ),
-    helpers: require( './helpers' )
-};
+const moduleExports = {};
+
+moduleExports.steemApi = require('./steemApi');
+moduleExports.helpers = require('./helpers');
+
+module.exports = moduleExports;

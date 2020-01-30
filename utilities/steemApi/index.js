@@ -1,4 +1,6 @@
-module.exports = {
-    userUtil: require( './userUtil' ),
-    postsUtil: require( './postsUtil' )
-};
+const moduleExports = {};
+
+moduleExports.userUtil = require('./userUtil');
+moduleExports.postsUtil = require('./postsUtil');
+
+module.exports = moduleExports;

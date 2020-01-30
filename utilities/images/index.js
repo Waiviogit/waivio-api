@@ -1,3 +1,5 @@
-module.exports = {
-    image: require( './image' )
-};
+const moduleExports = {};
+
+moduleExports.image = require('./image');
+
+module.exports = moduleExports;

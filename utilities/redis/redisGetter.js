@@ -1,9 +1,9 @@
-const { wobjRefsClient } = require( './redis' );
+const { wobjRefsClient } = require('utilities/redis/redis');
 
-const getWobjRefs = async function ( author_permlink ) {
-    const res = await wobjRefsClient.hgetallAsync( author_permlink );
+const getWobjRefs = async (authorPermlink) => {
+  const res = await wobjRefsClient.hgetallAsync(authorPermlink);
 
-    return res;
-}; // get wobjects references, if post_with_wobj - list of wobjects, else if append_obj - root object of append object
+  return res;
+};
 
 module.exports = { getWobjRefs };

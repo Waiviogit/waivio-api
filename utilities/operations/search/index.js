@@ -1,6 +1,8 @@
-module.exports = {
-    wobjects: require( './searchWobjects' ),
-    objectTypes: require( './searchTypes' ),
-    users: require( './searchUsers' ),
-    global: require( './globalSearch' )
-};
+const moduleExports = {};
+
+moduleExports.wobjects = require('./searchWobjects');
+moduleExports.objectTypes = require('./searchTypes');
+moduleExports.users = require('./searchUsers');
+moduleExports.global = require('./globalSearch');
+
+module.exports = moduleExports;
