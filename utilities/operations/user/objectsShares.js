@@ -41,7 +41,7 @@ const makePipeline = ({
 // eslint-disable-next-line camelcase
 const makeCountPipeline = ({ name, object_types, exclude_object_types }) => {
   const pipeline = [
-    { $match: { user_name: name } },
+    { $match: { user_name: name, weight: { $gt: 0 } } },
     {
       $lookup: {
         from: 'wobjects',
