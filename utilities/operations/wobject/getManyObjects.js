@@ -1,7 +1,7 @@
 const { Wobj } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
 
 const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
@@ -37,7 +37,7 @@ const getMany = async (data) => {
       } else {
         // eslint-disable-next-line prefer-destructuring
         wObject.parent = wObject.parent[0];
-        getRequiredFields(wObject.parent, REQUIREFIELDS_PARENT);
+        getRequiredFields(wObject.parent, REQUIREDFIELDS_PARENT);
       }
     }
   });

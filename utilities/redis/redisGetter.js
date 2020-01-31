@@ -5,22 +5,12 @@ const { wobjRefsClient, importUserClient } = require('utilities/redis/redis');
  * @param path {String}
  * @returns {Promise<*>} Return array of wobjects(author_permlink with percent)
  */
-exports.getWobjRefs = async function (author_permlink) {
-  const res = await wobjRefsClient.hgetallAsync(author_permlink);
-
-  return res;
-};
+exports.getWobjRefs = async (authorPermlink) => wobjRefsClient.hgetallAsync(authorPermlink);
 
 /**
  * Get list of users which currently importing
  * @returns {Promise<*>} array of strings
  */
-exports.getAllImportedUsers = async () => {
-  const res = await importUserClient.keysAsync('import_user:*');
-  return res;
-};
+exports.getAllImportedUsers = async () => importUserClient.keysAsync('import_user:*');
 
-exports.getImportedUser = async (userName) => {
-  const res = await importUserClient.getAsync(`import_user:${userName}`);
-  return res;
-};
+exports.getImportedUser = async (userName) => importUserClient.getAsync(`import_user:${userName}`);

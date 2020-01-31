@@ -22,9 +22,9 @@ exports.REQUIREDFIELDS = [
   'pageContent',
   'status',
 ];
-exports.REQUIREFIELDS_PARENT = ['name', 'avatar'];
+exports.REQUIREDFIELDS_PARENT = ['name', 'avatar'];
 exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating'];
-exports.REQUIREFIELDS_CHILD = ['name', 'avatar'];
+exports.REQUIREDFIELDS_CHILD = ['name', 'avatar'];
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',
@@ -73,7 +73,9 @@ exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
 exports.LOW_PRIORITY_STATUS_FLAGS = ['relisted', 'unavailable'];
 exports.DAYS_FOR_HOT_FEED = 3;
 exports.DAYS_FOR_TRENDING_FEED = 7;
-exports.MEDIAN_USER_WAIVIO_RATE = Number(process.env.MEDIAN_USER_WAIVIO_RATE) || 25000; // some fixed average Waivio rate of user
+
+// some fixed average Waivio rate of user
+exports.MEDIAN_USER_WAIVIO_RATE = Number(process.env.MEDIAN_USER_WAIVIO_RATE) || 25000;
 exports.COMMENT_REF_TYPES = {
   postWithWobjects: 'post_with_wobj',
   createWobj: 'create_wobj',
