@@ -1,3 +1,5 @@
-module.exports = {
-    routes: require( './routes' )
-};
+const moduleExports = {};
+
+moduleExports.routes = require('./routes');
+
+module.exports = moduleExports;
