@@ -63,6 +63,8 @@ const UserSchema = new Schema({
       sid: { type: String },
       provider: { type: String },
     },
+    default: null,
+    select: false,
   },
   followers_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },
