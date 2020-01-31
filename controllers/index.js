@@ -1,9 +1,11 @@
-module.exports = {
-    WobjController: require( './wobjController' ),
-    PostController: require( './postController' ),
-    ObjectTypeController: require( './objectTypeController' ),
-    UserController: require( './UserController' ),
-    AppController: require( './appController' ),
-    ImageController: require( './imageController' ),
-    globalSearchController: require( './globalSearchController' )
-};
+const moduleExports = {};
+
+moduleExports.WobjController = require('./wobjController');
+moduleExports.PostController = require('./postController');
+moduleExports.ObjectTypeController = require('./objectTypeController');
+moduleExports.UserController = require('./UserController');
+moduleExports.AppController = require('./appController');
+moduleExports.ImageController = require('./imageController');
+moduleExports.globalSearchController = require('./globalSearchController');
+
+module.exports = moduleExports;

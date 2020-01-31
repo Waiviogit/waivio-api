@@ -1,8 +1,10 @@
-module.exports = {
-    wObjectHelper: require( './wObjectHelper' ),
-    followersHelper: require( './followersHelper' ),
-    userFeedHelper: require( './userFeedHelper' ),
-    postHelper: require( './postHelper' ),
-    imagesHelper: require( './imagesHelper' ),
-    userFollowingsUpdates: require( './userFollowingsUpdatesHelper' )
-};
+const moduleExports = {};
+
+moduleExports.wObjectHelper = require('./wObjectHelper');
+moduleExports.followersHelper = require('./followersHelper');
+moduleExports.userFeedHelper = require('./userFeedHelper');
+moduleExports.postHelper = require('./postHelper');
+moduleExports.imagesHelper = require('./imagesHelper');
+moduleExports.userFollowingsUpdates = require('./userFollowingsUpdatesHelper');
+
+module.exports = moduleExports;

@@ -1,10 +1,12 @@
-module.exports = {
-    ObjectType: require( './ObjectTypeModel' ),
-    UserWobjects: require( './UserWobjects' ),
-    CommentRef: require( './CommentRef' ),
-    Comment: require( './CommentModel' ),
-    Wobj: require( './wObjectModel' ),
-    User: require( './UserModel' ),
-    Post: require( './PostModel' ),
-    App: require( './AppModel' )
-};
+const moduleExports = {};
+
+moduleExports.ObjectType = require('./ObjectTypeModel');
+moduleExports.UserWobjects = require('./UserWobjects');
+moduleExports.CommentRef = require('./CommentRef');
+moduleExports.Comment = require('./CommentModel');
+moduleExports.Wobj = require('./wObjectModel');
+moduleExports.User = require('./UserModel');
+moduleExports.Post = require('./PostModel');
+moduleExports.App = require('./AppModel');
+
+module.exports = moduleExports;
