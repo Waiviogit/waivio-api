@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
 
 const getOne = async (authorPermlink) => { // get one wobject by author_permlink
   try {
@@ -182,7 +182,7 @@ const getList = async (authorPermlink) => {
       }
       getRequiredFields(wObject, [...REQUIREDFIELDS]);
       if (wObject && wObject.parent) {
-        getRequiredFields(wObject.parent, [...REQUIREFIELDS_PARENT]);
+        getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
       }
     });
     return { wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]')) };

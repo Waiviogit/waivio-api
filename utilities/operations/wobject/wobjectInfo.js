@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { Wobj } = require('models');
-const { REQUIREDFIELDS, REQUIREFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
 
 const getOne = async (data) => { // get one wobject by author_permlink
   const { wObject, error: getWobjError } = await Wobj.getOne(data.author_permlink);
@@ -14,7 +14,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
     } else {
       // eslint-disable-next-line prefer-destructuring
       wObject.parent = wObject.parent[0];
-      getRequiredFields(wObject.parent, REQUIREFIELDS_PARENT);
+      getRequiredFields(wObject.parent, REQUIREDFIELDS_PARENT);
     }
   }
   const requiredFields = [...REQUIREDFIELDS];
