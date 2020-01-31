@@ -55,13 +55,13 @@ userRoutes.route('/user/:userName')
 userRoutes.route('/user/:userName/getFollowingsState')
   .get(UserController.followingsState);
 userRoutes.route('/user/:userName/following_objects')
-  .post(UserController.objects_follow);
+  .post(UserController.objectsFollow);
 userRoutes.route('/user/:userName/following_users')
-  .get(UserController.users_follow);
+  .get(UserController.usersFollow);
 userRoutes.route('/user/:userName/followers')
   .get(UserController.followers);
 userRoutes.route('/user/:userName/objects_feed')
-  .post(UserController.objects_feed);
+  .post(UserController.objectsFeed);
 userRoutes.route('/user/:userName/feed')
   .post(UserController.feed);
 userRoutes.route('/user/:userName/blog')
