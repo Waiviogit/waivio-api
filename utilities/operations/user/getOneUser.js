@@ -8,8 +8,7 @@ const getDbUser = async (name) => {
       .findOne({ name })
       .populate('objects_shares_count');
 
-    if (user) return { user: user.toJSON() };
-    return {};
+    return user ? { user: user.toJSON() } : {};
   } catch (error) {
     return { error };
   }

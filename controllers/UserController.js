@@ -2,9 +2,9 @@ const { User } = require('../models');
 const { userFeedHelper } = require('../utilities/helpers');
 const { authorise } = require('../utilities/authorization/authoriseUser');
 const {
-  getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata, getComments,
-  getMetadata, getBlog, getFollowingUpdates, getPostFilters, getFollowers,
-  getFollowingsUser, getWobjectPostWriters,
+  getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
+  getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
+  getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('../utilities/operations/search');
 const validators = require('./validators');
@@ -55,10 +55,10 @@ const updateUserMetadata = async (req, res, next) => {
 
   if (authError) return next(authError);
 
-  const { userMetadata, error } = await updateMetadata(value);
+  const { user_metadata: userMetadata, error } = await updateMetadata(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: { userMetadata } };
+  res.result = { status: 200, json: { user_metadata: userMetadata } };
   next();
 };
 
@@ -66,12 +66,11 @@ const getUserMetadata = async (req, res, next) => {
   const { user_metadata: userMetadata, error } = await getMetadata(req.params.userName);
 
   if (error) return next(error);
-  res.result = { status: 200, json: { userMetadata } };
+  res.result = { status: 200, json: { user_metadata: userMetadata } };
   next();
 };
 
-// eslint-disable-next-line camelcase
-const objects_follow = async (req, res, next) => {
+const objectsFollow = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
     locale: req.body.locale,
@@ -89,8 +88,7 @@ const objects_follow = async (req, res, next) => {
   next();
 };
 
-// eslint-disable-next-line camelcase
-const users_follow = async (req, res, next) => {
+const usersFollow = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
     limit: req.query.limit,
@@ -107,8 +105,7 @@ const users_follow = async (req, res, next) => {
   next();
 };
 
-// eslint-disable-next-line camelcase
-const objects_feed = async (req, res, next) => {
+const objectsFeed = async (req, res, next) => {
   const value = validators.validate({
     user: req.params.userName,
     skip: req.body.skip,
@@ -308,6 +305,17 @@ const getUserComments = async (req, res, next) => {
   next();
 };
 
+const importUserFromSteem = async (req, res, next) => {
+  if (!req.query.userName) return next({ status: 422, message: 'userName field must exist' });
+
+  const { result, error } = await importSteemUserBalancer.startImportUser(req.query.userName);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const wobjectPostWriters = async (req, res, next) => {
   if (!req.params.userName) return next({ error: { status: 422, message: 'Invalid data in request' } });
 
@@ -319,13 +327,12 @@ const wobjectPostWriters = async (req, res, next) => {
   next();
 };
 
-
 module.exports = {
   index,
   show,
-  objects_follow,
-  users_follow,
-  objects_feed,
+  objectsFollow,
+  usersFollow,
+  objectsFeed,
   feed,
   userObjectsShares,
   searchUsers,
@@ -338,5 +345,6 @@ module.exports = {
   postFilters,
   followers,
   getUserComments,
+  importUserFromSteem,
   wobjectPostWriters,
 };

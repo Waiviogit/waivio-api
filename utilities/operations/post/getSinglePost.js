@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
 const { Post, Comment } = require('models');
 const { postsUtil } = require('utilities/steemApi');
+
 /**
  * Return single post/comment of steem blockchain (if it exist).
  * Return merged data of "steem" post/comment with post/comment from Mongo DB,
@@ -13,7 +14,6 @@ const { postsUtil } = require('utilities/steemApi');
  * @param permlink
  * @returns {Promise<{post: Object}|{error: Object}>}
  */
-
 module.exports = async (author, permlink) => {
   const postResult = await getPost({ author, permlink });
 

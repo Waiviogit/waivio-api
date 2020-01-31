@@ -1,6 +1,6 @@
 const { client, clientAnyx } = require('utilities/steemApi/steem');
 
-const getAccount = async (name) => {
+exports.getAccount = async (name) => {
   try {
     const [account] = await client.database.getAccounts([name]);
 
@@ -13,7 +13,7 @@ const getAccount = async (name) => {
   }
 };
 
-const getFollowingsList = async (name) => {
+exports.getFollowingsList = async (name) => {
   try {
     const followings = await client.call('follow_api', 'get_following', [name, '', 'blog', 1000]);
 
@@ -23,7 +23,22 @@ const getFollowingsList = async (name) => {
   }
 };
 
-const searchUserByName = async (name, limit = 20) => {
+// return {account: 'accname', follower_count: 000, following_count: 000}
+exports.getFollowCount = async (name) => {
+  try {
+    const result = await client.call(
+      'condenser_api',
+      'get_follow_count',
+      [ name ]
+    );
+    if(result && result.error) return{ error: result.error };
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.searchUserByName = async (name, limit = 20) => {
   try {
     const accounts = await clientAnyx.call('condenser_api', 'get_account_reputations', [name, limit]);
 
@@ -32,5 +47,3 @@ const searchUserByName = async (name, limit = 20) => {
     return { error: e };
   }
 };
-
-module.exports = { getAccount, getFollowingsList, searchUserByName };

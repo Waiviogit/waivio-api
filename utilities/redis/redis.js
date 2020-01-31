@@ -1,11 +1,14 @@
 const redis = require('redis');
 const bluebird = require('bluebird');
+const config = require('config');
 
 bluebird.promisifyAll(redis.RedisClient.prototype);
 bluebird.promisifyAll(redis.Multi.prototype);
 const wobjRefsClient = redis.createClient(process.env.REDISCLOUD_URL);
+const importUserClient = redis.createClient(process.env.REDISCLOUD_URL);
 
-wobjRefsClient.select(1);
+wobjRefsClient.select(config.redis.wobjRefs);
+importUserClient.select(config.redis.importUser);
 
 
-module.exports = { wobjRefsClient };
+module.exports = { wobjRefsClient, importUserClient };
