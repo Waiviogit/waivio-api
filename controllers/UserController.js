@@ -97,7 +97,7 @@ const usersFollow = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result, error } = await getFollowingsUser(value);
+  const { result, error } = await getFollowingsUser.getAll(value);
 
   if (error) return next(error);
 
@@ -327,6 +327,22 @@ const wobjectPostWriters = async (req, res, next) => {
   next();
 };
 
+const followingsState = async (req, res, next) => {
+  const value = validators.validate({
+    name: req.params.userName,
+    users: req.query.users,
+  }, validators.user.followingsState, next);
+
+  if (!value) return;
+
+  const { users, error } = await getFollowingsUser.getFollowingsArray(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: users };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -347,4 +363,5 @@ module.exports = {
   getUserComments,
   importUserFromSteem,
   wobjectPostWriters,
+  followingsState,
 };

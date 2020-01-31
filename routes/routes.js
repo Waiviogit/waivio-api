@@ -52,6 +52,8 @@ userRoutes.route('/users')
   .get(UserController.index);
 userRoutes.route('/user/:userName')
   .get(UserController.show);
+userRoutes.route('/user/:userName/getFollowingsState')
+  .get(UserController.followingsState);
 userRoutes.route('/user/:userName/following_objects')
   .post(UserController.objects_follow);
 userRoutes.route('/user/:userName/following_users')
