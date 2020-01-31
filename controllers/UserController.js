@@ -4,7 +4,7 @@ const { authorise } = require('../utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
-  getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters
+  getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('../utilities/operations/search');
 const validators = require('./validators');
