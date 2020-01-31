@@ -13,9 +13,13 @@ exports.getAccount = async (name) => {
   }
 };
 
-exports.getFollowingsList = async (name) => {
+exports.getFollowingsList = async ({ name, startAccount, limit }) => {
   try {
-    const followings = await client.call('follow_api', 'get_following', [name, '', 'blog', 1000]);
+    const followings = await client.call(
+      'follow_api',
+      'get_following',
+      [name, startAccount, 'blog', limit],
+    );
 
     return { followings };
   } catch (error) {
@@ -29,9 +33,9 @@ exports.getFollowCount = async (name) => {
     const result = await client.call(
       'condenser_api',
       'get_follow_count',
-      [ name ]
+      [name],
     );
-    if(result && result.error) return{ error: result.error };
+    if (result && result.error) return { error: result.error };
     return { result };
   } catch (error) {
     return { error };

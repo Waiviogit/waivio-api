@@ -65,8 +65,8 @@ const getUserFollowings = async (name) => {
       name, startAccount, limit: batchSize,
     });
 
-    if (error) {
-      console.error(error);
+    if (error || followings.error) {
+      console.error(error || followings.error);
       return Array.from(followingSet);
     }
     currBatchSize = followings.length;
