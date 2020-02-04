@@ -14,7 +14,7 @@ const aggregate = async (pipeline) => {
 };
 
 const getByWobject = async ({
-  authorPermlink, skip = 0, limit = 30, username,
+  authorPermlink, skip = 0, limit = 30, username, weight,
 }) => {
   try {
     const pipeline = [
@@ -25,9 +25,8 @@ const getByWobject = async ({
       { $project: { _id: 0, name: '$user_name', weight: 1 } },
     ];
 
-    if (username) {
-      pipeline[0].$match.user_name = username;
-    }
+    if (username) pipeline[0].$match.user_name = username;
+    if (weight) pipeline[0].$match.weight = { $gt: 0 };
 
     const experts = await UserWobjects.aggregate(pipeline);
 

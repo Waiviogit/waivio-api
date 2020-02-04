@@ -69,7 +69,7 @@ const getWobjExperts = async ({
       userExpert = _.get(experts, '[0]');
     }
     const { experts, error } = await UserWobjects.getByWobject({
-      authorPermlink: author_permlink, skip, limit,
+      authorPermlink: author_permlink, skip, limit, weight: true,
     });
 
     if (error) return { error };
