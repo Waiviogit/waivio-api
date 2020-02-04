@@ -41,7 +41,7 @@ const getPost = async ({ author, permlink }) => {
   // if( steemError ) return { error: steemError };
 
   let resultPost = steemPost;
-  const wobjsResult = await getPostObjects(author, permlink);
+  const wobjsResult = await getPostObjects(steemPost.root_author, permlink);
 
   resultPost.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
   resultPost.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
