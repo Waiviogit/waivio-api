@@ -14,11 +14,11 @@ const aggregate = async (pipeline) => {
 };
 
 const getByWobject = async ({
-  author_permlink: authorPermlink, skip = 0, limit = 30, username,
+  authorPermlink, skip = 0, limit = 30, username,
 }) => {
   try {
     const pipeline = [
-      { $match: { authorPermlink } },
+      { $match: { author_permlink: authorPermlink } },
       { $sort: { weight: -1 } },
       { $skip: skip },
       { $limit: limit },

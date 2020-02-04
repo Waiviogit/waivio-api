@@ -201,7 +201,7 @@ const objectExpertise = async (req, res, next) => {
   );
 
   if (!value) return;
-  const { experts, user_expert: userExpert, error } = await objectExperts.getWobjExperts(value);
+  const { experts, userExpert, error } = await objectExperts.getWobjExperts(value);
 
   if (error) {
     return next(error);
