@@ -5,6 +5,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
+  setMarkers,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('../utilities/operations/search');
 const validators = require('./validators');
@@ -20,7 +21,7 @@ const index = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await getManyUsers(value);
+  const { users, error } = await getManyUsers.getUsers(value);
 
   if (error) return next(error);
 
@@ -343,6 +344,23 @@ const followingsState = async (req, res, next) => {
   next();
 };
 
+const usersData = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.user.usersArray, next);
+  if (!value) return;
+
+  const { users, error } = await getManyUsers.getUsersByList(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: users };
+  next();
+};
+
+const modalWindowMarker = async (req, res, next) => {
+  const result = await setMarkers.newUser(req.params.userName);
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -364,4 +382,6 @@ module.exports = {
   importUserFromSteem,
   wobjectPostWriters,
   followingsState,
+  usersData,
+  modalWindowMarker,
 };

@@ -116,6 +116,14 @@ exports.search = async ({ string, skip, limit }) => {
   }
 };
 
+exports.find = async (condition, skip, limit) => {
+  try {
+    return { usersData: await UserModel.find(condition).skip(skip).limit(limit).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.updateFollowersCount = async (name) => {
   try {
     const count = await UserModel.find({ users_follow: name }).count();
