@@ -12,7 +12,7 @@ exports.create = async (data) => {
 
 exports.getRef = async (commentPath) => {
   try {
-    const commentRef = await CommentRef.findOne({ commentPath }).lean();
+    const commentRef = await CommentRef.findOne({ comment_path: commentPath }).lean();
 
     return { commentRef };
   } catch (error) {
