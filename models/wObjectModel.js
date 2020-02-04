@@ -150,7 +150,7 @@ const getGalleryItems = async (data) => {
 const getList = async (authorPermlink) => {
   try {
     const fields = await WObjectModel.aggregate([
-      { $match: { authorPermlink } },
+      { $match: { author_permlink: authorPermlink } },
       { $unwind: '$fields' },
       { $replaceRoot: { newRoot: '$fields' } },
       { $match: { $or: [{ name: 'listItem' }, { name: 'sortCustom' }] } },
