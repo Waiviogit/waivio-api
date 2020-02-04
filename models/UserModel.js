@@ -116,9 +116,9 @@ exports.search = async ({ string, skip, limit }) => {
   }
 };
 
-exports.find = async (conditions, skip, limit) => {
+exports.find = async (condition, skip, limit) => {
   try {
-    return { UsersData: await UserModel.find(conditions).skip(skip).limit(limit).lean() };
+    return { usersData: await UserModel.find(condition).skip(skip).limit(limit).lean() };
   } catch (error) {
     return { error };
   }
