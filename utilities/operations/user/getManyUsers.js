@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { User } = require('models');
 
 const makePipeline = ({ limit, skip, sample }) => {
@@ -23,4 +24,10 @@ const getUsers = async ({ limit, skip, sample }) => {
   return { users };
 };
 
-module.exports = getUsers;
+const getUsersByList = async (users) => {
+  const { usersData, error } = await User.find({ name: { $in: users } }, 0, users.length);
+  if (error) return { error };
+  return { users: _.map(usersData, (user) => _.omit(user, ['auth'])) };
+};
+
+module.exports = { getUsers, getUsersByList };
