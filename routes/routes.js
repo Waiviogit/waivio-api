@@ -54,7 +54,7 @@ userRoutes.route('/user/:userName')
   .get(UserController.show);
 userRoutes.route('/user/getUsersData')
   .post(UserController.usersData);
-userRoutes.route('/user/:userName/disableStartHelper')
+userRoutes.route('/user/:userName/setState')
   .get(UserController.modalWindowMarker);
 userRoutes.route('/user/:userName/getFollowingsState')
   .get(UserController.followingsState);
