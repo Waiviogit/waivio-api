@@ -1,6 +1,9 @@
 const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('utilities/constants');
-const { Wobj, ObjectType } = require('models');
+const {
+  Wobj, ObjectType, Campaign, User, paymentHistory,
+} = require('models');
 const _ = require('lodash');
+const moment = require('moment');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -112,6 +115,34 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
+// check the ability to reserve this campaign
+const campaignValidation = async (campaigns) => {
+  const validCapaigns = [];
+  await Promise.all(campaigns.map(async (campaign) => {
+    if (campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
+        && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users, (user) => user.status === 'assigned'
+        && user.createdAt > moment().startOf('month')).length) {
+      const { result, error } = await Wobj.findOne(campaign.requiredObject);
+      if (error) return;
+      campaign.required_object = result;
+      const { user, error: userError } = await User.getOne(campaign.guideName);
+      if (userError || !user) return;
+
+      const { result: totalPayed } = await paymentHistory.find(
+        { sponsor: campaign.guideName, type: 'transfer' },
+      );
+      campaign.guide = {
+        name: campaign.guideName,
+        wobjects_weight: user.wobjects_weight,
+        alias: user.alias,
+        totalPayed: _.sumBy(totalPayed, (count) => count.amount),
+      };
+      validCapaigns.push(campaign);
+    }
+  }));
+  return validCapaigns;
+};
+
 module.exports = async ({
   name, filter, wobjLimit, wobjSkip, sort,
 }) => {
@@ -121,8 +152,29 @@ module.exports = async ({
   const { wobjects, error: wobjError } = await getWobjWithFilters({
     objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort,
   });
-
   if (wobjError) return { error: wobjError };
+
+  switch (name) {
+    case 'restaurant':
+      await Promise.all(wobjects.map(async (wobj) => {
+        const { result, error } = await Campaign.findByPrimeObj({ requiredObject: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) return;
+        wobj.campaigns = {
+          min_reward: (_.minBy(result, 'reward')).reward,
+          max_reward: (_.maxBy(result, 'reward')).reward,
+        };
+      }));
+      break;
+    case 'dish':
+      await Promise.all(wobjects.map(async (wobj) => {
+        const { result, error } = await Campaign.findByPrimeObj({ objects: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) return;
+        const validCompanies = await campaignValidation(result);
+        wobj.campaigns = validCompanies;
+      }));
+      break;
+  }
+
   objectType.related_wobjects = wobjects;
   if (objectType.related_wobjects.length === wobjLimit + 1) {
     objectType.hasMoreWobjects = true;

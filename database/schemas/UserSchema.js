@@ -42,6 +42,7 @@ const UserMetadataSchema = new Schema({
     }],
     default: [],
   },
+  new_user: { type: Boolean, default: true },
 });
 
 const authSchema = new Schema({
@@ -64,7 +65,6 @@ const UserSchema = new Schema({
   last_posts_count: { type: Number, default: 0 }, // count of the posts written in last day
   last_posts_counts_by_hours: { type: [Number], default: [] },
   user_metadata: { type: UserMetadataSchema, default: () => ({}), select: false },
-  new_user: { type: Boolean, default: true },
   auth: {
     type: authSchema,
     default: null,
