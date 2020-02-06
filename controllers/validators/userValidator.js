@@ -75,6 +75,7 @@ exports.updateMetadataSchema = Joi.object().keys({
   user_metadata: Joi.object().keys({
     notifications_last_timestamp: Joi.number().min(0).default(0),
     bookmarks: Joi.array().items(Joi.string()).default([]),
+    new_user: Joi.boolean().default(false),
     settings: Joi.object().keys({
       exitPageSetting: Joi.boolean().default(false),
       locale: Joi.string().valid([...LANGUAGES]).default('auto'),

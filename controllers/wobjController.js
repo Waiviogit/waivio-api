@@ -19,6 +19,7 @@ const index = async (req, res, next) => {
       limit: req.body.limit,
       skip: req.body.skip,
       sample: req.body.sample,
+      coordinates: req.body.coordinates,
     }, validators.wobject.indexSchema, next,
   );
 
