@@ -332,7 +332,7 @@ const wobjectPostWriters = async (req, res, next) => {
 const followingsState = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
-    users: _.isArray(req.query.users) ? req.query.users : [req.query.users],
+    users: req.query.users,
   }, validators.user.followingsState, next);
 
   if (!value) return;
