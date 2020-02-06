@@ -22,4 +22,5 @@ const getSteemBlog = async ({
 }) => postHelper.getPostsByCategory(({
   category: 'blog', tag: name, limit, start_author, start_permlink,
 }));
+
 const getGuestBlog = async ({ name, skip, limit }) => Post.getBlog({ name, skip, limit });
