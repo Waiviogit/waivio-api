@@ -1,14 +1,15 @@
-const { User } = require('../models');
-const { userFeedHelper } = require('../utilities/helpers');
-const { authorise } = require('../utilities/authorization/authoriseUser');
+const _ = require('lodash');
+const { User } = require('models');
+const { userFeedHelper } = require('utilities/helpers');
+const { authorise } = require('utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
   setMarkers,
-} = require('../utilities/operations/user');
-const { users: { searchUsers: searchByUsers } } = require('../utilities/operations/search');
-const validators = require('./validators');
+} = require('utilities/operations/user');
+const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
+const validators = require('controllers/validators');
 
 const index = async (req, res, next) => {
   const value = validators.validate(
@@ -331,7 +332,7 @@ const wobjectPostWriters = async (req, res, next) => {
 const followingsState = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
-    users: req.query.users,
+    users: _.isArray(req.query.users) ? req.query.users : [req.query.users],
   }, validators.user.followingsState, next);
 
   if (!value) return;
