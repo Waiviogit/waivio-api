@@ -1,36 +1,53 @@
-const { client, clientAnyx } = require( './steem' );
+const { client, clientAnyx } = require('utilities/steemApi/steem');
 
-const getAccount = async ( name ) => {
-    try {
-        const [ account ] = await client.database.getAccounts( [ name ] );
+exports.getAccount = async (name) => {
+  try {
+    const [account] = await client.database.getAccounts([name]);
 
-        if ( !account ) {
-            return { error: { status: 404, message: 'User not found!' } };
-        }
-        return { userData: account };
-    } catch ( error ) {
-        return { error };
+    if (!account) {
+      return { error: { status: 404, message: 'User not found!' } };
     }
+    return { userData: account };
+  } catch (error) {
+    return { error };
+  }
 };
 
-const getFollowingsList = async ( name ) => {
-    try {
-        const followings = await client.call( 'follow_api', 'get_following', [ name, '', 'blog', 1000 ] );
+exports.getFollowingsList = async ({ name, startAccount, limit }) => {
+  try {
+    const followings = await client.call(
+      'follow_api',
+      'get_following',
+      [name, startAccount, 'blog', limit],
+    );
 
-        return { followings };
-    } catch ( error ) {
-        return { error };
-    }
+    return { followings };
+  } catch (error) {
+    return { error };
+  }
 };
 
-const searchUserByName = async ( name, limit = 20 ) => {
-    try{
-        const accounts = await clientAnyx.call( 'condenser_api', 'get_account_reputations', [ name, limit ] );
-
-        return { accounts };
-    } catch ( e ) {
-        return { error: e };
-    }
+// return {account: 'accname', follower_count: 000, following_count: 000}
+exports.getFollowCount = async (name) => {
+  try {
+    const result = await client.call(
+      'condenser_api',
+      'get_follow_count',
+      [name],
+    );
+    if (result && result.error) return { error: result.error };
+    return { result };
+  } catch (error) {
+    return { error };
+  }
 };
 
-module.exports = { getAccount, getFollowingsList, searchUserByName };
+exports.searchUserByName = async (name, limit = 20) => {
+  try {
+    const accounts = await clientAnyx.call('condenser_api', 'get_account_reputations', [name, limit]);
+
+    return { accounts };
+  } catch (e) {
+    return { error: e };
+  }
+};

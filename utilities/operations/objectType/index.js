@@ -1,7 +1,9 @@
-module.exports = {
-    updateTopWobjects: require( './updateTopWobjects' ),
-    getAll: require( './getAllObjectTypes' ),
-    getOne: require( './getOneObjectType' ),
-    updateTopExperts: require( './updateTopExperts' ),
-    getExperts: require( './getExperts' )
-};
+const moduleExports = {};
+
+moduleExports.updateTopWobjects = require('./updateTopWobjects');
+moduleExports.getAll = require('./getAllObjectTypes');
+moduleExports.getOne = require('./getOneObjectType');
+moduleExports.updateTopExperts = require('./updateTopExperts');
+moduleExports.getExperts = require('./getExperts');
+
+module.exports = moduleExports;

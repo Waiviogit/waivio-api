@@ -1,13 +1,20 @@
-module.exports = {
-    getManyUsers: require( './getManyUsers' ),
-    objectsShares: require( './objectsShares' ),
-    getPostFilters: require( './getPostFilters' ),
-    getOneUser: require( './getOneUser' ),
-    getUserFeed: require( './getUserFeed' ),
-    updateMetadata: require( './updateMetadata' ),
-    getMetadata: require( './getUserMetadata' ),
-    getBlog: require( './getBlog' ),
-    getFollowingUpdates: require( './getFollowingUpdates' ),
-    getFollowers: require( './getFollowers' ),
-    getFollowingsUser: require( './getFollowingsUser' )
-};
+const moduleExports = {};
+
+moduleExports.importSteemUserBalancer = require('./importSteemUserBalancer');
+moduleExports.getWobjectPostWriters = require('./getWobjectPostWriters');
+moduleExports.getFollowingUpdates = require('./getFollowingUpdates');
+moduleExports.importSteemUserOps = require('./importSteemUserOps');
+moduleExports.getFollowingsUser = require('./getFollowingsUser');
+moduleExports.getPostFilters = require('./getPostFilters');
+moduleExports.updateMetadata = require('./updateMetadata');
+moduleExports.objectsShares = require('./objectsShares');
+moduleExports.getMetadata = require('./getUserMetadata');
+moduleExports.getManyUsers = require('./getManyUsers');
+moduleExports.getFollowers = require('./getFollowers');
+moduleExports.getUserFeed = require('./getUserFeed');
+moduleExports.getComments = require('./getComments');
+moduleExports.setMarkers = require('./setMarkers');
+moduleExports.getOneUser = require('./getOneUser');
+moduleExports.getBlog = require('./getBlog');
+
+module.exports = moduleExports;

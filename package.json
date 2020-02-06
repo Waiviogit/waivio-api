@@ -15,7 +15,6 @@
     "cors": "^2.8.4",
     "cron": "^1.7.1",
     "debug": "~2.6.9",
-    "dotenv": "^8.2.0",
     "dsteem": "^0.10.1",
     "express": "~4.16.0",
     "formidable": "^1.2.1",
@@ -25,7 +24,9 @@
     "joi": "^14.3.1",
     "lodash": "^4.17.15",
     "migrate-mongoose": "^3.2.2",
+    "moment": "^2.24.0",
     "mongoose": "^5.3.5",
+    "mongoose-float": "^1.0.4",
     "mongoose-lean-virtuals": "^0.3.4",
     "morgan": "~1.9.0",
     "redis": "^2.8.0",
@@ -34,6 +35,10 @@
     "uuid": "^3.3.2"
   },
   "devDependencies": {
-    "eslint": "^5.16.0"
+    "eslint": "^5.16.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.20.0",
+    "eslint-plugin-mocha": "^5.3.0",
+    "eslint-plugin-node": "^11.0.0"
   }
 }
