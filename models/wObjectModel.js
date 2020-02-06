@@ -274,6 +274,14 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
+const findOne = async (authorPermlink) => {
+  try {
+    return { result: await WObjectModel.findOne({ author_permlink: authorPermlink }).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   getAll,
   getOne,
@@ -285,4 +293,5 @@ module.exports = {
   getChildWobjects,
   getWobjectsRefs,
   getFieldsRefs,
+  findOne,
 };

@@ -1,6 +1,7 @@
 const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('utilities/constants');
-const { Wobj, ObjectType } = require('models');
+const { Wobj, ObjectType, Campaign } = require('models');
 const _ = require('lodash');
+const { objectTypeHelper } = require('utilities/helpers');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -121,8 +122,28 @@ module.exports = async ({
   const { wobjects, error: wobjError } = await getWobjWithFilters({
     objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort,
   });
-
   if (wobjError) return { error: wobjError };
+
+  switch (name) {
+    case 'restaurant':
+      await Promise.all(wobjects.map(async (wobj) => {
+        const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) return;
+        wobj.campaigns = {
+          min_reward: (_.minBy(result, 'reward')).reward,
+          max_reward: (_.maxBy(result, 'reward')).reward,
+        };
+      }));
+      break;
+    case 'dish':
+      await Promise.all(wobjects.map(async (wobj) => {
+        const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) return;
+        wobj.campaigns = await objectTypeHelper.campaignFilter(result);
+      }));
+      break;
+  }
+
   objectType.related_wobjects = wobjects;
   if (objectType.related_wobjects.length === wobjLimit + 1) {
     objectType.hasMoreWobjects = true;
