@@ -19,6 +19,13 @@ exports.indexSchema = Joi.object().keys({
   exclude_object_types: Joi.array().items(Joi.string()),
   required_fields: Joi.array().items(Joi.string()).default([]),
   sample: Joi.boolean(),
+  map: Joi.object().keys({
+    coordinates: Joi.array().ordered([
+      Joi.number().min(-90).max(90),
+      Joi.number().min(-180).max(180),
+    ]),
+    radius: Joi.number().min(0),
+  }),
 });
 
 exports.postsScheme = Joi.object().keys({
