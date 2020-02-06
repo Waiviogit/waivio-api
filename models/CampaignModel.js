@@ -1,6 +1,6 @@
 const { Campaign } = require('database').models;
 
-const findByPrimeObj = async (condition) => {
+const findByCondition = async (condition) => {
   try {
     return { result: await Campaign.find(condition).lean() };
   } catch (error) {
@@ -8,4 +8,4 @@ const findByPrimeObj = async (condition) => {
   }
 };
 
-module.exports = { findByPrimeObj };
+module.exports = { findByCondition };

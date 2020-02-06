@@ -1,6 +1,6 @@
 const { paymentHistory } = require('database').models;
 
-const find = async (condition) => {
+const findByCondition = async (condition) => {
   try {
     return { result: await paymentHistory.find(condition).lean() };
   } catch (error) {
@@ -8,4 +8,4 @@ const find = async (condition) => {
   }
 };
 
-module.exports = { find };
+module.exports = { findByCondition };
