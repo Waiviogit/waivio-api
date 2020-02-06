@@ -2,12 +2,13 @@ const { UserWobjects } = require('models');
 const { WObject } = require('database').models;
 const _ = require('lodash');
 
-const getMultipliers = (newsFilter, authorPermlink) => {
+// eslint-disable-next-line camelcase
+const getMultipliers = (newsFilter, author_permlink) => {
   const array = _.flatten(newsFilter.allowList);
   const count = array.length;
   const values = _.uniq(array);
 
-  if (_.isEmpty(values)) return [{ authorPermlink, multiplier: 1 }];
+  if (_.isEmpty(values)) return [{ author_permlink, multiplier: 1 }];
   return values.map((value) => ({
     author_permlink: value,
     multiplier: (_.filter(newsFilter.allowList,
