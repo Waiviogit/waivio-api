@@ -6,5 +6,6 @@ moduleExports.userFeedHelper = require('./userFeedHelper');
 moduleExports.postHelper = require('./postHelper');
 moduleExports.imagesHelper = require('./imagesHelper');
 moduleExports.userFollowingsUpdates = require('./userFollowingsUpdatesHelper');
+moduleExports.objectTypeHelper = require('./objectTypeHelper');
 
 module.exports = moduleExports;

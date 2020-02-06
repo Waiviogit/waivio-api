@@ -22,6 +22,8 @@ models.Comment = require('./schemas/CommentSchema');
 models.User = require('./schemas/UserSchema');
 models.Post = require('./schemas/PostSchema');
 models.App = require('./schemas/AppSchema');
+models.Campaign = require('./schemas/CampaignSchema');
+models.paymentHistory = require('./schemas/paymentHistorySchema');
 
 
 module.exports = {
