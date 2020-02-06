@@ -19,6 +19,7 @@ const index = async (req, res, next) => {
       limit: req.body.limit,
       skip: req.body.skip,
       sample: req.body.sample,
+      map: req.body.map,
     }, validators.wobject.indexSchema, next,
   );
 
@@ -201,7 +202,7 @@ const objectExpertise = async (req, res, next) => {
   );
 
   if (!value) return;
-  const { experts, user_expert: userExpert, error } = await objectExperts.getWobjExperts(value);
+  const { experts, userExpert, error } = await objectExperts.getWobjExperts(value);
 
   if (error) {
     return next(error);

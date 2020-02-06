@@ -62,13 +62,15 @@ const getWobjExperts = async ({
   if (!wobj.newsFilter) {
     if (user) {
       const { experts, error } = await UserWobjects.getByWobject({
-        author_permlink, skip, limit, username: user,
+        authorPermlink: author_permlink, username: user,
       });
 
       if (error) return { error };
       userExpert = _.get(experts, '[0]');
     }
-    const { experts, error } = await UserWobjects.getByWobject({ author_permlink, skip, limit });
+    const { experts, error } = await UserWobjects.getByWobject({
+      authorPermlink: author_permlink, skip, limit, weight: true,
+    });
 
     if (error) return { error };
     return { experts, userExpert };
@@ -88,7 +90,7 @@ const getWobjExperts = async ({
     if (error) return { error };
     userExpert = _.get(expertsByUserName, '[0]');
   }
-  return { experts, user_expert: userExpert };
+  return { experts, userExpert };
 };
 
 module.exports = { getWobjExperts };

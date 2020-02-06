@@ -5,6 +5,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
+  setMarkers,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('../utilities/operations/search');
 const validators = require('./validators');
@@ -20,7 +21,7 @@ const index = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await getManyUsers(value);
+  const { users, error } = await getManyUsers.getUsers(value);
 
   if (error) return next(error);
 
@@ -97,7 +98,7 @@ const usersFollow = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result, error } = await getFollowingsUser(value);
+  const { result, error } = await getFollowingsUser.getAll(value);
 
   if (error) return next(error);
 
@@ -327,6 +328,39 @@ const wobjectPostWriters = async (req, res, next) => {
   next();
 };
 
+const followingsState = async (req, res, next) => {
+  const value = validators.validate({
+    name: req.params.userName,
+    users: req.query.users,
+  }, validators.user.followingsState, next);
+
+  if (!value) return;
+
+  const { users, error } = await getFollowingsUser.getFollowingsArray(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: users };
+  next();
+};
+
+const usersData = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.user.usersArray, next);
+  if (!value) return;
+
+  const { users, error } = await getManyUsers.getUsersByList(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: users };
+  next();
+};
+
+const modalWindowMarker = async (req, res, next) => {
+  const result = await setMarkers.newUser(req.params.userName);
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -347,4 +381,7 @@ module.exports = {
   getUserComments,
   importUserFromSteem,
   wobjectPostWriters,
+  followingsState,
+  usersData,
+  modalWindowMarker,
 };

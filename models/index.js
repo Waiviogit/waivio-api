@@ -8,5 +8,7 @@ moduleExports.Wobj = require('./wObjectModel');
 moduleExports.User = require('./UserModel');
 moduleExports.Post = require('./PostModel');
 moduleExports.App = require('./AppModel');
+moduleExports.Campaign = require('./CampaignModel');
+moduleExports.paymentHistory = require('./paymentHistoryModel');
 
 module.exports = moduleExports;

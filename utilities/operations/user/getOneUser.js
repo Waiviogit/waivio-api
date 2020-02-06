@@ -1,5 +1,6 @@
 const { User } = require('database').models;
 const { userUtil: userSteemUtil } = require('utilities/steemApi');
+const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
 const _ = require('lodash');
 
 const getDbUser = async (name) => {
@@ -14,24 +15,26 @@ const getDbUser = async (name) => {
   }
 };
 
-// eslint-disable-next-line camelcase
-const getOne = async ({ name, with_followings }) => {
+const getOne = async ({ name, with_followings: withFollowings }) => {
   const { userData = {} } = await userSteemUtil.getAccount(name);
 
-  // eslint-disable-next-line prefer-const
-  let { user, error: dbError } = await getDbUser(name); // get user data from db
+  const { user, error: dbError } = await getDbUser(name); // get user data from db
+  if (dbError) return { error: dbError };
 
-  // eslint-disable-next-line camelcase
-  if (!with_followings) {
-    user = _.omit(user, ['users_follow', 'objects_follow']);
+  if (!user) {
+    // If user not exist in DB and STEEM -> return error,
+    // else if user exist in steem but not in DB -> invoke import user operation
+    if (_.isEmpty(userData)) {
+      return { error: dbError || { status: 404, message: `User ${name} not found!` } };
+    }
+    const importResult = await startImportUser(name);
+    if (_.get(importResult, 'result.ok')) console.log(`Started import user ${name}!`);
+    return { userData };
   }
-  if (dbError || (!user && _.isEmpty(userData))) {
-    return { error: dbError || { status: 404, message: `User ${name} not found!` } };
-  }
 
-  if (!user) return { userData };
-
-  Object.assign(userData, user); // combine data from db and blockchain
+  // const resUser = withFollowings ? user : _.omit(user, ['users_follow', 'objects_follow']);
+  const resUser = _.omit(user, withFollowings ? [] : ['users_follow', 'objects_follow']);
+  Object.assign(userData, resUser); // combine data from db and blockchain
   return { userData };
 };
 

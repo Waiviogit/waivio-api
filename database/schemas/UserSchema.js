@@ -42,6 +42,14 @@ const UserMetadataSchema = new Schema({
     }],
     default: [],
   },
+  new_user: { type: Boolean, default: true },
+});
+
+const authSchema = new Schema({
+  sessions: { type: [Object], select: false },
+  _id: { type: String, select: false },
+  id: { type: String },
+  provider: { type: String },
 });
 
 const UserSchema = new Schema({
@@ -58,11 +66,8 @@ const UserSchema = new Schema({
   last_posts_counts_by_hours: { type: [Number], default: [] },
   user_metadata: { type: UserMetadataSchema, default: () => ({}), select: false },
   auth: {
-    type: {
-      sessions: { type: [Object], select: false },
-      sid: { type: String },
-      provider: { type: String },
-    },
+    type: authSchema,
+    default: null,
   },
   followers_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },

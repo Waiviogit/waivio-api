@@ -75,6 +75,7 @@ exports.updateMetadataSchema = Joi.object().keys({
   user_metadata: Joi.object().keys({
     notifications_last_timestamp: Joi.number().min(0).default(0),
     bookmarks: Joi.array().items(Joi.string()).default([]),
+    new_user: Joi.boolean().default(false),
     settings: Joi.object().keys({
       exitPageSetting: Joi.boolean().default(false),
       locale: Joi.string().valid([...LANGUAGES]).default('auto'),
@@ -162,3 +163,10 @@ exports.comments = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   start_permlink: Joi.string().invalid('').default(null),
 });
+
+exports.followingsState = Joi.object().keys({
+  name: Joi.string().required(),
+  users: Joi.array().items(Joi.string()).required(),
+});
+
+exports.usersArray = Joi.array().items(Joi.string()).required();

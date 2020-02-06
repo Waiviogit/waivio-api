@@ -8,7 +8,7 @@ module.exports = async ({
   const { user, error: userError } = await User.getOne(name);
 
   if (userError) return { error: userError };
-  if (user.auth) {
+  if (user && user.auth) {
     return getGuestBlog({ name, limit, skip });
   }
   return getSteemBlog({
@@ -20,10 +20,6 @@ const getSteemBlog = async ({
   // eslint-disable-next-line camelcase
   name, limit, start_author, start_permlink,
 }) => postHelper.getPostsByCategory(({
-  category: 'blog',
-  tag: name,
-  limit,
-  start_author,
-  start_permlink,
+  category: 'blog', tag: name, limit, start_author, start_permlink,
 }));
 const getGuestBlog = async ({ name, skip, limit }) => Post.getBlog({ name, skip, limit });
