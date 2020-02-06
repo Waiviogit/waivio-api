@@ -19,10 +19,12 @@ exports.indexSchema = Joi.object().keys({
   exclude_object_types: Joi.array().items(Joi.string()),
   required_fields: Joi.array().items(Joi.string()).default([]),
   sample: Joi.boolean(),
-  coordinates: Joi.object().keys({
-    latitude: Joi.number().min(-90).max(90),
-    longitude: Joi.number().min(-180).max(180),
-    radius: Joi.number().integer().min(0),
+  map: Joi.object().keys({
+    coordinates: Joi.array().ordered([
+      Joi.number().min(-90).max(90),
+      Joi.number().min(-180).max(180),
+    ]),
+    radius: Joi.number().min(0),
   }),
 });
 

@@ -53,11 +53,11 @@ const getAll = async (data) => {
   } else if (data.exclude_object_types && Array.isArray(data.exclude_object_types)
       && data.exclude_object_types.length) {
     findParams.object_type = { $nin: data.exclude_object_types };
-  } else if (_.has(data, ['coordinates.latitude', 'coordinates.longitude'])) {
+  } else if (_.has(data, ['map.coordinates', 'map.radius'])) {
     findParams.$geoNear = {
-      near: { type: 'Point', coordinates: [parseFloat(data.coordinates.longitude), parseFloat(data.coordinates.latitude)] },
+      near: { type: 'Point', coordinates: data.map.coordinates },
       distanceField: 'distance',
-      maxDistance: data.coordinates.radius ? parseInt(data.coordinates.radius, 10) : 10000,
+      maxDistance: data.map.radius ? parseInt(data.coordinates.radius, 10) : 10000,
       spherical: true,
     };
   }
