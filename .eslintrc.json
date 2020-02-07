@@ -29,6 +29,7 @@
     "no-plusplus": 0,
     "no-param-reassign": 0,
     "no-warning-comments": 1,
+    "one-var-declaration-per-line": 0,
     "vars-on-top": 2,
     "no-catch-shadow": 2,
     "handle-callback-err": 1,
