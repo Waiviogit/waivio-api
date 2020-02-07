@@ -13,7 +13,7 @@ const requirementFilters = async (campaign, user) => {
     frequency = _
       .chain(campaign.users)
       .filter((doer) => doer.name === user.name && doer.status === 'completed')
-      .sortBy('updatedAt')
+      .orderBy(['updatedAt'], ['desc'])
       .compact()
       .value();
   }
@@ -24,7 +24,7 @@ const requirementFilters = async (campaign, user) => {
     followers: user ? user.count_posts >= campaign.userRequirements.minPosts : false,
     expertise: user ? user.wobjects_weight >= campaign.userRequirements.minExpertise : false,
     freeReservation: true,
-    frequency: frequency.length ? moment().startOf('month') > frequency[frequency.length - 1].updatedAt : true,
+    frequency: frequency.length ? moment().startOf('month') > frequency[0].updatedAt : true,
     not_blacklisted: notBlacklisted,
   };
 };
