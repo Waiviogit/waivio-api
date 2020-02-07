@@ -1,5 +1,5 @@
 const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('utilities/constants');
-const { Wobj, ObjectType, Campaign } = require('models');
+const { Wobj, ObjectType, Campaign, User } = require('models');
 const _ = require('lodash');
 const { objectTypeHelper } = require('utilities/helpers');
 
@@ -114,7 +114,7 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort,
+  name, filter, wobjLimit, wobjSkip, sort, userName,
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
 
@@ -136,10 +136,11 @@ module.exports = async ({
       }));
       break;
     case 'dish':
+      const { user } = await User.getOne(userName);
       await Promise.all(wobjects.map(async (wobj) => {
         const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
         if (error || !result.length) return;
-        wobj.propositions = await objectTypeHelper.campaignFilter(result);
+        wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
       }));
       break;
   }

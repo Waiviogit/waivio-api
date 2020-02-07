@@ -19,6 +19,7 @@ const index = async (req, res, next) => {
 
 const show = async (req, res, next) => {
   const value = validators.validate({
+    userName: req.body.userName,
     name: req.params.objectTypeName,
     wobjLimit: req.body.wobjects_count,
     wobjSkip: req.body.wobjects_skip,
