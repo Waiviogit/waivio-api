@@ -1,7 +1,8 @@
 const _ = require('lodash');
-const { importUser } = require('./importSteemUserOps');
-const { redisGetter, redisSetter } = require('../../redis');
-const { MAX_IMPORTING_USERS } = require('../../constants');
+const { importUser } = require('utilities/operations/user/importSteemUserOps');
+const { redisGetter, redisSetter } = require('utilities/redis');
+const { MAX_IMPORTING_USERS } = require('utilities/constants');
+const { User } = require('models');
 
 /**
  * Validate current importing users state, check for already importing specified user
@@ -28,8 +29,20 @@ exports.startImportUser = async (userName) => {
       },
     };
   }
+
+  if (!(await validateAlreadyImportedUser(userName))) {
+    return {
+      error: {
+        message: `User ${userName} is already imported!`,
+        status: 400,
+      },
+    };
+  }
+
   await redisSetter.addImportedUser(userName);
-  runImport(userName);
+  runImport(userName).then((res) => {
+    console.log('Import complete!');
+  });
   return { result: { ok: true } };
 };
 
@@ -57,11 +70,21 @@ const validateCountImporting = async () => {
 };
 
 /**
- * Return true if specified user is importing at the moment
+ * Return true if specified user isn't importing at the moment
  * @returns {Promise<boolean>} true if OK
  */
 const validateForExistingImportedUser = async (userName) => {
   const user = await redisGetter.getImportedUser(userName);
 
   return !user;
+};
+
+/**
+ * Return true if user already imported with STEEM info
+ * @param userName {String}
+ * @returns {Promise<boolean>} true if OK
+ */
+const validateAlreadyImportedUser = async (userName) => {
+  const { user, error } = await User.getOne(userName);
+  return _.get(user, 'stage_version') !== 1;
 };
