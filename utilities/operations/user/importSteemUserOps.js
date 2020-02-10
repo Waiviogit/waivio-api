@@ -12,12 +12,13 @@ exports.importUser = async (userName) => {
   const { user: existUser, error: dbError } = await User.getOne(userName);
 
   if (dbError) console.error(dbError);
-  if (existUser) return { user: existUser };
+  if (existUser && existUser.stage_version !== 0) return { user: existUser };
+
   const { data: userData, error: steemError } = await this.getUserSteemInfo(userName);
 
   if (steemError) return { error: steemError };
 
-  return User.updateOne({ name: userName }, userData);
+  return User.updateOne({ name: userName }, { ...userData, stage_version: 1 });
 };
 
 /**
@@ -47,6 +48,8 @@ exports.getUserSteemInfo = async (name) => {
 
   return { data };
 };
+
+// PRIVATE METHODS //
 
 /**
  * Return all user following list from STEEM
