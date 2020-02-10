@@ -6,7 +6,7 @@ const campaignValidation = (campaign) => !!(campaign.reservation_timetable[momen
     && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users, (user) => user.status === 'assigned'
         && user.createdAt > moment().startOf('month')).length);
 
-const requirementFilters = (campaign, user, restaurant) => {
+exports.requirementFilters = (campaign, user, restaurant) => {
   let frequency = [], notBlacklisted = true;
   if (user && user.name) {
     notBlacklisted = !_.includes(campaign.blacklist_users, user.name);
@@ -27,13 +27,10 @@ const requirementFilters = (campaign, user, restaurant) => {
     frequency: frequency.length ? moment().startOf('month') > frequency[0].updatedAt : true,
     not_blacklisted: notBlacklisted,
   };
-  if (restaurant) {
-    return [campaignValidation(campaign), ...Object.values(result)];
-  }
-  return result;
+  return restaurant ? [campaignValidation(campaign), ...Object.values(result)] : result;
 };
 
-const campaignFilter = async (campaigns, user) => {
+exports.campaignFilter = async (campaigns, user) => {
   const validCampaigns = [];
   await Promise.all(campaigns.map(async (campaign) => {
     if (campaignValidation(campaign)) {
@@ -47,7 +44,7 @@ const campaignFilter = async (campaigns, user) => {
         { sponsor: campaign.guideName, type: 'transfer' },
       );
       campaign.assigned = user ? !!_.find(campaign.users, (doer) => doer.name === user.name && doer.status === 'assigned') : false;
-      campaign.requirement_filters = requirementFilters(campaign, user);
+      campaign.requirement_filters = this.requirementFilters(campaign, user);
       campaign.guide = {
         name: campaign.guideName,
         wobjects_weight: guide.wobjects_weight,
@@ -59,5 +56,3 @@ const campaignFilter = async (campaigns, user) => {
   }));
   return validCampaigns;
 };
-
-module.exports = { requirementFilters, campaignFilter };
