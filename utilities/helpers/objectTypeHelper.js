@@ -28,7 +28,7 @@ const requirementFilters = (campaign, user, restaurant) => {
     not_blacklisted: notBlacklisted,
   };
   if (restaurant) {
-    return campaignValidation(campaign) && _.forEach(Object.values(result), (value) => value);
+    return [campaignValidation(campaign), ...Object.values(result)];
   }
   return result;
 };
