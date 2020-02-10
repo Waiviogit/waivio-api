@@ -6,7 +6,7 @@ const campaignValidation = (campaign) => !!(campaign.reservation_timetable[momen
     && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users, (user) => user.status === 'assigned'
         && user.createdAt > moment().startOf('month')).length);
 
-const requirementFilters = async (campaign, user) => {
+const requirementFilters = (campaign, user, restaurant) => {
   let frequency = [], notBlacklisted = true;
   if (user && user.name) {
     notBlacklisted = !_.includes(campaign.blacklist_users, user.name);
@@ -17,7 +17,7 @@ const requirementFilters = async (campaign, user) => {
       .compact()
       .value();
   }
-  return {
+  const result = {
     can_assign_by_current_day: true,
     can_assign_by_budget: campaign.budget > campaign.reward * _.filter(campaign.users, (doer) => doer.status === 'assigned').length,
     posts: user ? user.count_posts >= campaign.userRequirements.minPosts : false,
@@ -27,9 +27,13 @@ const requirementFilters = async (campaign, user) => {
     frequency: frequency.length ? moment().startOf('month') > frequency[0].updatedAt : true,
     not_blacklisted: notBlacklisted,
   };
+  if (restaurant) {
+    return campaignValidation(campaign) && _.forEach(Object.values(result), (value) => value);
+  }
+  return result;
 };
 
-exports.campaignFilter = async (campaigns, user) => {
+const campaignFilter = async (campaigns, user) => {
   const validCampaigns = [];
   await Promise.all(campaigns.map(async (campaign) => {
     if (campaignValidation(campaign)) {
@@ -43,7 +47,7 @@ exports.campaignFilter = async (campaigns, user) => {
         { sponsor: campaign.guideName, type: 'transfer' },
       );
       campaign.assigned = user ? !!_.find(campaign.users, (doer) => doer.name === user.name && doer.status === 'assigned') : false;
-      campaign.requirement_filters = await requirementFilters(campaign, user);
+      campaign.requirement_filters = requirementFilters(campaign, user);
       campaign.guide = {
         name: campaign.guideName,
         wobjects_weight: guide.wobjects_weight,
@@ -55,3 +59,5 @@ exports.campaignFilter = async (campaigns, user) => {
   }));
   return validCampaigns;
 };
+
+module.exports = { requirementFilters, campaignFilter };
