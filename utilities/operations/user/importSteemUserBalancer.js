@@ -24,7 +24,7 @@ exports.startImportUser = async (userName) => {
   if (!(await validateForExistingImportedUser(userName))) {
     return {
       error: {
-        message: `User ${userName} is importing at the moment!`,
+        message: `User ${userName} is being imported!`,
         status: 423,
       },
     };
