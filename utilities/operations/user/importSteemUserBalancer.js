@@ -40,9 +40,7 @@ exports.startImportUser = async (userName) => {
   }
 
   await redisSetter.addImportedUser(userName);
-  runImport(userName).then((res) => {
-    console.log('Import complete!');
-  });
+  runImport(userName);
   return { result: { ok: true } };
 };
 

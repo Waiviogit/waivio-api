@@ -12,7 +12,7 @@ exports.importUser = async (userName) => {
   const { user: existUser, error: dbError } = await User.getOne(userName);
 
   if (dbError) console.error(dbError);
-  if (existUser && existUser !== 0) return { user: existUser };
+  if (existUser && existUser.stage_version !== 0) return { user: existUser };
 
   const { data: userData, error: steemError } = await this.getUserSteemInfo(userName);
 
