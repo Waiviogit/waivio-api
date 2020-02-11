@@ -118,7 +118,14 @@ exports.search = async ({ string, skip, limit }) => {
 
 exports.find = async (condition, skip, limit) => {
   try {
-    return { usersData: await UserModel.find(condition).skip(skip).limit(limit).lean() };
+    return {
+      usersData: await UserModel
+        .find(condition)
+        .sort({ wobjects_weight: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
   } catch (error) {
     return { error };
   }

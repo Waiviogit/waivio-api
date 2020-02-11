@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { User } = require('models');
 const { userFeedHelper } = require('utilities/helpers');
 const { authorise } = require('utilities/authorization/authoriseUser');

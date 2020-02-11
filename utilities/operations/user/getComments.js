@@ -28,6 +28,7 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
     ? { start_author, start_permlink, limit: limit + 1 }
     : { start_author, limit };
   const { comments: steemComments, error } = await postsUtil.getUserComments(cond);
+  if (error && error.message === 'Comments not found!') return { comments: [] };
 
   if (error || steemComments.error) return { error: error || steemComments.error };
 
@@ -47,5 +48,5 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
 const isGuestUser = async (name) => {
   const { user } = await User.getOne(name);
 
-  return user && user.auth;
+  return user && user.auth && user.auth.id;
 };
