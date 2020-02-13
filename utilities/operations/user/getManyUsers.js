@@ -27,7 +27,7 @@ const getUsers = async ({ limit, skip, sample }) => {
 const getUsersByList = async (data) => {
   let hasMore = false;
   const { usersData, error } = await User.find(
-    { name: { $in: data.users } }, data.skip, data.limit + 1,
+    { condition: { name: { $in: data.users } }, skip: data.skip, limit: data.limit + 1 },
   );
   if (error) return { error };
   if (data.limit < usersData.length) hasMore = true;
