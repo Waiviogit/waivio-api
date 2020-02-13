@@ -59,8 +59,7 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
     [{ start_author, start_permlink, limit }],
   );
 
-  if (!_.isEmpty(comments)) return { comments };
-  return { error: { message: 'Comments not found!', status: 404 } };
+  return { comments };
 };
 
 /**
