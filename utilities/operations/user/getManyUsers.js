@@ -31,7 +31,10 @@ const getUsersByList = async (data) => {
   if (error) return { error };
   return {
     data: {
-      users: _.take(_.map(usersData, (user) => _.omit(user, ['auth'])), data.limit),
+      users: _.take(_.map(usersData, (user) => {
+        if (data.name) user.followsMe = _.includes(user.users_follow, data.name);
+        return _.omit(user, ['auth']);
+      }), data.limit),
       hasMore: data.limit < usersData.length,
     },
   };
