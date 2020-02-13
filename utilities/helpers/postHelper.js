@@ -155,10 +155,11 @@ const fillReblogs = async (posts = []) => {
       let sourcePost;
 
       try {
+        const author = _.get(posts, `[${postIdx}].reblog_to.author`);
+        const permlink = _.get(posts, `[${postIdx}].reblog_to.permlink`);
         sourcePost = await Post
           .findOne({
-            author: _.get(posts, `[${postIdx}].reblog_to.author`),
-            permlink: _.get(posts, `[${postIdx}].reblog_to.permlink`),
+            $or: [{ author, permlink }, { root_author: author, permlink }],
           })
           .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
           .lean();
