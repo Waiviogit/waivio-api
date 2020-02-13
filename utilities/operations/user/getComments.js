@@ -27,10 +27,9 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
   const cond = start_permlink
     ? { start_author, start_permlink, limit: limit + 1 }
     : { start_author, limit };
-  const { comments: steemComments, error } = await postsUtil.getUserComments(cond);
-  if (error && error.message === 'Comments not found!') return { comments: [] };
+  const { comments: steemComments } = await postsUtil.getUserComments(cond);
 
-  if (error || steemComments.error) return { error: error || steemComments.error };
+  if (steemComments.error) return { error: steemComments.error };
 
   const mergedComments = await mergeSteemCommentsWithDB({
     // eslint-disable-next-line camelcase
