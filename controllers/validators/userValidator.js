@@ -169,4 +169,8 @@ exports.followingsState = Joi.object().keys({
   users: Joi.array().items(Joi.string()).single().required(),
 });
 
-exports.usersArray = Joi.array().items(Joi.string()).required();
+exports.usersArray = Joi.object().keys({
+  users: Joi.array().items(Joi.string()).required(),
+  limit: Joi.number().integer().min(0).default(20),
+  skip: Joi.number().integer().min(0).default(0)
+});

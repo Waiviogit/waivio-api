@@ -24,10 +24,19 @@ const getUsers = async ({ limit, skip, sample }) => {
   return { users };
 };
 
-const getUsersByList = async (users) => {
-  const { usersData, error } = await User.find({ name: { $in: users } }, 0, users.length);
+const getUsersByList = async (data) => {
+  let hasMore = false;
+  const { usersData, error } = await User.find(
+    { name: { $in: data.users } }, data.skip, data.limit + 1,
+  );
   if (error) return { error };
-  return { users: _.map(usersData, (user) => _.omit(user, ['auth'])) };
+  if (data.limit < usersData.length) hasMore = true;
+  return {
+    data: {
+      users: _.take(_.map(usersData, (user) => _.omit(user, ['auth'])), data.limit),
+      hasMore,
+    },
+  };
 };
 
 module.exports = { getUsers, getUsersByList };
