@@ -41,13 +41,16 @@ exports.getUserSteemInfo = async (name) => {
   const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
   if (followCountErr) return { error: followCountErr };
 
+  const { count: guestFollCount, error: guestFollErr } = await User.getGuestFollowersCount(name);
+  if (guestFollErr) return { error: guestFollErr };
+
   const data = {
     name,
     alias: _.get(parseString(userData.json_metadata), 'profile.name', ''),
     profile_image: _.get(parseString(userData.json_metadata), 'profile.profile_image', ''),
     json_metadata: userData.json_metadata,
     last_root_post: userData.last_root_post,
-    followers_count: _.get(followCountRes, 'follower_count', 0),
+    followers_count: _.get(followCountRes, 'follower_count', 0) + guestFollCount,
   };
 
   return { data };
@@ -84,16 +87,6 @@ const updateUserFollowings = async (name) => {
   } while (currBatchSize === batchSize);
   return { ok: true };
 };
-
-// /**
-//  * Retrieves list of user followings and update(or create) user in DB
-//  * @param name {String} user name
-//  * @returns {Promise<{user: *}|{error: *}>} Return updated user or error
-//  */
-// exports.importFollowingUsersList = async ( name ) => {
-//     const followings = await getUserFollowings( name );
-//     return User.updateOne( { name }, { $set: { users_follow: followings } } );
-// };
 
 const parseString = (str) => {
   try {
