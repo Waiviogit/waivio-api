@@ -20,6 +20,8 @@ exports.importUser = async (userName) => {
 
   if (steemError) return { error: steemError };
 
+  await updateUserFollowings(userName);
+
   return User.updateOne(
     { name: userName },
     { ...userData, stage_version: 1, $addToSet: { users_follow: userFollowings } },
@@ -39,32 +41,34 @@ exports.getUserSteemInfo = async (name) => {
   const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
   if (followCountErr) return { error: followCountErr };
 
-  const userFollowings = await getUserFollowings(name);
+  const { count: guestFollCount, error: guestFollErr } = await User.getGuestFollowersCount(name);
+  if (guestFollErr) return { error: guestFollErr };
+
   const data = {
     name,
     alias: _.get(parseString(userData.json_metadata), 'profile.name', ''),
     profile_image: _.get(parseString(userData.json_metadata), 'profile.profile_image', ''),
     json_metadata: userData.json_metadata,
     last_root_post: userData.last_root_post,
-    followers_count: _.get(followCountRes, 'follower_count', 0),
+    followers_count: _.get(followCountRes, 'follower_count', 0) + guestFollCount,
   };
 
-  return { data, userFollowings };
+  return { data };
 };
 
 // PRIVATE METHODS //
 
 /**
- * Return all user following list from STEEM
- * This operating can take a lot of time execution
- * @param name {String}
- * @returns {Promise<unknown[]>}
+ * Update user following list from STEEM
+ * This operation can take a lot of time execution
+ * (up to 7-8 minutes if user follow around 900k users)
+ * @param name
+ * @returns {Promise<{ok: boolean}|{error: *}>}
  */
-const getUserFollowings = async (name) => {
+const updateUserFollowings = async (name) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = '';
-  const followingSet = new Set();
 
   do {
     const { followings = [], error } = await userUtil.getFollowingsList({
@@ -73,24 +77,16 @@ const getUserFollowings = async (name) => {
 
     if (error || followings.error) {
       console.error(error || followings.error);
-      return Array.from(followingSet);
+      return { error: error || followings.error };
     }
     currBatchSize = followings.length;
-    followings.forEach((f) => followingSet.add(f.following));
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
+    await User.updateOne(
+      { name }, { $addToSet: { users_follow: followings.map((f) => f.following) } },
+    );
   } while (currBatchSize === batchSize);
-  return Array.from(followingSet);
+  return { ok: true };
 };
-
-// /**
-//  * Retrieves list of user followings and update(or create) user in DB
-//  * @param name {String} user name
-//  * @returns {Promise<{user: *}|{error: *}>} Return updated user or error
-//  */
-// exports.importFollowingUsersList = async ( name ) => {
-//     const followings = await getUserFollowings( name );
-//     return User.updateOne( { name }, { $set: { users_follow: followings } } );
-// };
 
 const parseString = (str) => {
   try {

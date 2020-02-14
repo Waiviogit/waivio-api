@@ -131,14 +131,17 @@ exports.find = async ({ condition, skip, limit }) => {
   }
 };
 
-exports.updateFollowersCount = async (name) => {
+/**
+ * Return count of guest followers
+ * @param userName {String}
+ * @returns {Promise<{count: {Number}}|{error: {Object}}>}
+ */
+exports.getGuestFollowersCount = async (userName) => {
   try {
-    const count = await UserModel.find({ users_follow: name }).count();
-
     return {
-      result: await UserModel.updateOne(
-        { name }, { $set: { followers_count: count || 0 } },
-      ),
+      count: await UserModel.find({
+        users_follow: userName, auth: { $exists: true },
+      }).count(),
     };
   } catch (error) {
     return { error };

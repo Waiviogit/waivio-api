@@ -3,8 +3,6 @@ const { User, WObject } = require('database').models;
 const _ = require('lodash');
 
 const refreshUsersCounts = async () => {
-  // const users = await User.find( {}, { _id: 1, last_posts_count: 1,
-  // last_posts_counts_by_hours: 1 } ).lean();
   // update users which has no any posts by last 24 hours
   await User.updateMany(
     { last_posts_count: 0 },
