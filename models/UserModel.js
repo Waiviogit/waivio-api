@@ -116,22 +116,32 @@ exports.search = async ({ string, skip, limit }) => {
   }
 };
 
-exports.find = async (condition, skip, limit) => {
+exports.find = async ({ condition, skip, limit }) => {
   try {
-    return { usersData: await UserModel.find(condition).skip(skip).limit(limit).lean() };
+    return {
+      usersData: await UserModel
+        .find(condition)
+        .sort({ wobjects_weight: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
   } catch (error) {
     return { error };
   }
 };
 
-exports.updateFollowersCount = async (name) => {
+/**
+ * Return count of guest followers
+ * @param userName {String}
+ * @returns {Promise<{count: {Number}}|{error: {Object}}>}
+ */
+exports.getGuestFollowersCount = async (userName) => {
   try {
-    const count = await UserModel.find({ users_follow: name }).count();
-
     return {
-      result: await UserModel.updateOne(
-        { name }, { $set: { followers_count: count || 0 } },
-      ),
+      count: await UserModel.find({
+        users_follow: userName, auth: { $exists: true },
+      }).count(),
     };
   } catch (error) {
     return { error };

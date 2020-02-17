@@ -1,5 +1,7 @@
 const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('utilities/constants');
-const { Wobj, ObjectType, Campaign } = require('models');
+const {
+  Wobj, ObjectType, Campaign, User,
+} = require('models');
 const _ = require('lodash');
 const { objectTypeHelper } = require('utilities/helpers');
 
@@ -114,7 +116,7 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort,
+  name, filter, wobjLimit, wobjSkip, sort, userName,
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
 
@@ -123,23 +125,28 @@ module.exports = async ({
     objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort,
   });
   if (wobjError) return { error: wobjError };
-
+  const { user } = await User.getOne(userName);
   switch (name) {
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj) => {
         const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
         if (error || !result.length) return;
-        wobj.campaigns = {
-          min_reward: (_.minBy(result, 'reward')).reward,
-          max_reward: (_.maxBy(result, 'reward')).reward,
-        };
+        const eligibleCampaigns = _.map(result,
+          (campaign) => _.every(objectTypeHelper.requirementFilters(campaign, user, true),
+            (cond) => !!cond));
+        if (_.some(eligibleCampaigns, (eligible) => !!eligible)) {
+          wobj.campaigns = {
+            min_reward: (_.minBy(result, 'reward')).reward,
+            max_reward: (_.maxBy(result, 'reward')).reward,
+          };
+        }
       }));
       break;
     case 'dish':
       await Promise.all(wobjects.map(async (wobj) => {
         const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
         if (error || !result.length) return;
-        wobj.propositions = await objectTypeHelper.campaignFilter(result);
+        wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
       }));
       break;
   }

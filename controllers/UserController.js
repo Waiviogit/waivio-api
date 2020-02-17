@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { User } = require('models');
 const { userFeedHelper } = require('utilities/helpers');
 const { authorise } = require('utilities/authorization/authoriseUser');
@@ -349,10 +348,10 @@ const usersData = async (req, res, next) => {
   const value = validators.validate(req.body, validators.user.usersArray, next);
   if (!value) return;
 
-  const { users, error } = await getManyUsers.getUsersByList(value);
+  const { data, error } = await getManyUsers.getUsersByList(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: users };
+  res.result = { status: 200, json: data };
   next();
 };
 
