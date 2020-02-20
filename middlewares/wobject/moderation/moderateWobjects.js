@@ -28,7 +28,11 @@ exports.moderate = async (req, res, next) => {
   switch (currentSchema.case) {
     case 1:
       // root result is single wobject
-      res.result.json = validateWobject(res.result.json, app.moderators);
+      res.result.json = validateWobject(
+        res.result.json,
+        app.moderators,
+        currentSchema.custom_fields_paths,
+      );
       break;
     case 2:
       // root result is array of wobjects
@@ -96,8 +100,11 @@ const validateWobjects = (wobjects = [], moderators, ap_path = 'author_permlink'
   return wobject;
 });
 
-const validateWobject = (wobject, moderators) => {
+const validateWobject = (wobject, moderators, customFieldsPaths) => {
   wobject.fields = validateFields(wobject, moderators);
+  customFieldsPaths.forEach((customFieldsPath) => {
+    wobject[customFieldsPath] = validateFields(wobject, moderators, 'author_permlink', customFieldsPath);
+  });
   return wobject;
 };
 
