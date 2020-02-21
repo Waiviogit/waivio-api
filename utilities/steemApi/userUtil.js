@@ -2,7 +2,7 @@ const { client, clientAnyx } = require('utilities/steemApi/steem');
 
 exports.getAccount = async (name) => {
   try {
-    const [account] = await client.database.getAccounts([name]);
+    const [account] = await clientAnyx.database.getAccounts([name]);
 
     if (!account) {
       return { error: { status: 404, message: 'User not found!' } };
@@ -30,7 +30,7 @@ exports.getFollowingsList = async ({ name, startAccount, limit }) => {
 // return {account: 'accname', follower_count: 000, following_count: 000}
 exports.getFollowCount = async (name) => {
   try {
-    const result = await client.call(
+    const result = await clientAnyx.call(
       'condenser_api',
       'get_follow_count',
       [name],
