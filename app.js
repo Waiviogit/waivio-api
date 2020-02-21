@@ -1,11 +1,13 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const { moderateWobjects } = require('middlewares/wobject/moderation');
 const { fillPostAdditionalInfo } = require('middlewares/posts/fillAdditionalInfo');
+const swaggerDocument = require('./swagger/swagger.json');
 
 const session = createNamespace('request-session');
 const app = express();
@@ -24,6 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/', routes);
+app.use('/waivio-api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // fill posts by some additional information(author wobj.weight, or wobjects info)
 app.use('/', fillPostAdditionalInfo.fill);

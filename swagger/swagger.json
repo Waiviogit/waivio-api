@@ -1,0 +1,2795 @@
+{
+  "swagger" : "2.0",
+  "info" : {
+    "description" : "API for all waivio apps\n[UI template for Waivio](https://waivio.com)\n",
+    "version" : "1.0.0",
+    "title" : "Waivio API",
+    "termsOfService" : "https://steemit.com/@waivio",
+    "contact" : {
+      "email" : "maxim@wizardsdev.com"
+    }
+  },
+  "host" : "waiviodev.com",
+  "tags" : [ {
+    "name" : "user",
+    "description" : "Info about waivio users"
+  }, {
+    "name" : "wobject",
+    "description" : "Info about waivio objects"
+  }, {
+    "name" : "post",
+    "description" : "Posts of STEEM blockchain"
+  }, {
+    "name" : "object_type",
+    "description" : "Type of object"
+  }, {
+    "name" : "general-search",
+    "description" : "Search on users, objects, object types"
+  }, {
+    "name" : "image",
+    "description" : "Upload image to AWS cloud storage"
+  }, {
+    "name" : "app",
+    "description" : "Get some info about registered \"Apps\" on waivio"
+  } ],
+  "schemes" : [ "https" ],
+  "paths" : {
+    "/api/users" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get all users objects info",
+        "description" : "Return list users sorting by summary weight in all wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "count of users to return",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of users to skip(for infinite scroll)",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "sample",
+          "in" : "query",
+          "description" : "flag to return random 5 users from TOP 100(limit and skip in this case ignored)",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/:userName/userMetadata" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user metadata",
+        "description" : "Get user metadata, which includes private info(ex. settings, drafts etc.)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of waivio user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "SteemConnect Access Token to identify user identity",
+          "required" : false,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/userMetadata"
+            }
+          },
+          "401" : {
+            "description" : "Unuthorized, token missing or invalid!"
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "user" ],
+        "summary" : "Update user metadata",
+        "description" : "Update user metadata, which includes private info(ex. settings, drafts etc.)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of waivio user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "SteemConnect Access Token to identify user identity",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "data",
+          "description" : "data",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/userMetadata"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/userMetadata"
+            }
+          },
+          "401" : {
+            "description" : "Unuthorized, token missing or invalid!"
+          }
+        }
+      }
+    },
+    "/api/user/getUsersData" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Return aray of users accounts data",
+        "description" : "Return aray of users accounts data with flad hasMOre\n",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "List of user names",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_1"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user info",
+        "description" : "Return info about specified user from database and blockchain",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "with_followings",
+          "in" : "query",
+          "description" : "Flag to include/exclude lists of followings users/objects",
+          "required" : false,
+          "type" : "boolean"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/User"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/setState" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Set new_usew marker to false",
+        "description" : "set user marker to false for disable new user modal window",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of user",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_2"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/getFollowingsState" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Check user followings",
+        "description" : "Return array with names of users and boolean markers for each",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "users",
+          "in" : "query",
+          "description" : "array of users which you want to check",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          },
+          "collectionFormat" : "multi"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_3"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/search" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Search users by name",
+        "description" : "Search users by name with param \"limit\"",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "searchString",
+          "in" : "query",
+          "description" : "String to search",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Number to indicate count of returning users",
+          "required" : false,
+          "type" : "number",
+          "default" : 20.0
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_4"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/following_objects" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Return wobjects which user is following",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name what objects needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**locale** - which locale need to choose field of each wobject(*'en-US' by default*), \n**limit** - limit of returned objects*(by default - 50)*, \n**skip** - skip some objects to return(params for infinite scroll, *by default - 0*)\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_1"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_5"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/following_users" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return users which user is following",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name which followings needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count users to skip(infinite scroll)",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of users to return",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_6"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/objects_feed" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Return posts with wobjects which specified user is follow",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name what feed needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - limit of returned posts*(by default - 30)*, \n**skip** - skip some posts to return(params for infinite scroll, *by default - 0*)\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_2"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/feed" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user FEED",
+        "description" : "Get list posts depends on user followings (on users and wobjects)",
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name what feed needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - limit of returned posts*(by default - 20)*, \n**skip** - count of skipping posts*(by default - 0)*,\n**user_languages** - array of languages to return feed\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_3"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/objects_shares" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Return all wobjects in which user has weight",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name what objects needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - limit of returned wobjects(for infinite scroll)*(by default - 30)*, \n**skip** - count of skipping wobjects(for infinite scroll)*(by default - 0)*,\n**locale** - locale which wobjects fields need to return,\n**object_types** -types of objects to return,\n**exclude_object_types** - which types esclude from list to return,\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_4"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_7"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/blog" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "summary" : "Return user Blog(user authored and resteemed posts)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name which blog needs to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**start_author** - for steem user blog feed(for infinite scroll),\n**start_permlink** - for steem user blog feed(for infinite scroll).\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_5"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/comments" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return array of user comments(valid request for ordinary and guest users)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "start_permlink",
+          "in" : "query",
+          "description" : "permlink of last received comment(for infinite scroll)",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of comment to skip(for infinite scroll)",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "count of comments to skip",
+          "required" : false,
+          "type" : "number"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/followers" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return array of users which now follow current user",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "path",
+          "description" : "User name",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "count of users to return*(by default - 30)*",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of users to skip(need for infinite scroll)*(by default - 0)*",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_8"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/following_updates" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user following updates summary",
+        "description" : "Return last updates(posts count) of following users and wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of specified user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "users_count",
+          "in" : "query",
+          "description" : "count of TOP users to return (sort by Waivio rate)",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "wobjects_count",
+          "in" : "query",
+          "description" : "count of TOP wobjects to return (sort by current user expertize in wobj)",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_9"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/following_users_updates" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get following users updates",
+        "description" : "Get updates(latest posts count) for following users",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "count of users to return (sort by Waivio rate)",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of users to skipping(for infinite scroll)",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_9_users_updates"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{username}/following_wobjects_updates" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get following wobjects updates",
+        "description" : "Return last updates(posts count) of following wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "username",
+          "in" : "path",
+          "description" : "Name of specified user",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "object_type",
+          "in" : "query",
+          "description" : "object type of wobjects to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "count of wobjects to return (sort by current user expertize in wobj)",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of skipping wobjects (for infinite scroll)",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_10"
+            }
+          }
+        }
+      }
+    },
+    "/api/import_steem_user" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Import to DB info about user from STEEM",
+        "description" : "Create user in DB if it not exist, and import data from STEEM",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "Name of specified user",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_11"
+            }
+          },
+          "400" : {
+            "description" : "User already imported!",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "423" : {
+            "description" : "User is being imported at the moment!",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          },
+          "503" : {
+            "description" : "Max number of users are importing at the moment!",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return list of waivio objects, all or by specified author_permlink(author_permlink)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - limit of returned wobjects(by default - 30),\n**skip** - count of skipping wobjects(for infinite scroll, default 0),\n**user_limit** - count of users to show(by default 5), \n**locale** - locale of fields(by default - *en-US*.), \n**author_permlinks** - return wobjects by specified author_permlinks,\n**object_types** - list object types with witch objects to returning,\n**exclude_object_types** - list object types without witch objects to returning, (if use **object_types** then ignore **exclude_object_types**)\n**required_fields** - which fields add to returning objects,\n**sample** - boolean flag, to return only 5 from top 100 wobjects\n**map** - object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_6"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "**hasMore** - Boolean flag of of existing more wobjects,\n**wobjects** - array of Waivio objects\n",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_12"
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return info about specified waivio object",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of object to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "locale",
+          "in" : "query",
+          "description" : "Read locale of user(default en-EN)",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "required_fields",
+          "in" : "query",
+          "description" : "Additional fields which (not includes in REQUIRED FIELDS on waivio) to return with wobject",
+          "required" : false,
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          },
+          "collectionFormat" : "multi"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/wobject"
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/posts" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return posts for specified wobject",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of object to return posts",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - Count of posts to return (*default* 30), \n**skip** - Count of posts to skip for inifinite scroll(*optional*),\n**user_languages** - array of lanugages to filter result posts\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_7"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/followers" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return followers for spicified wobject",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "limit - count of followers to return(default 30), skip - count of followers that need to skip(for infinite scroll)",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_8"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_13"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/fields" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return all fields for spicified wobject",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**fields_names** - **array** of fields names to return,\n**custom_fields** - custom keys in fields to search and return\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_9"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_14"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/gallery" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return all fields with name 'galleryItem'",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_15"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/child_wobjects" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return child wobjects by current",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/object_expertise" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return all users which has weight in current wobject",
+        "produces" : [ "application/json5" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - Count of users to return (*default* 5), \n**skip** - count of skipping users(*default* 5), use for infinite scroll,\n**user** - UserName, which weight add to response\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_10"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_16"
+            }
+          }
+        }
+      }
+    },
+    "/api/wobjectSearch" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Search objects by prefix of \"name\" field",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_11"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_17"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobjectsFeed" : {
+      "post" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return feed of all wobjects togetger",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - Count of posts to return (*default* 30), \n**skip** - Count of skipping posts infinite scroll(*optional*)\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_12"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type" : "object",
+                "properties" : { }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobjectsByField" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return array of wobjects by specified field entry",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "fieldName",
+          "in" : "query",
+          "description" : "Name of field",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fieldBody",
+          "in" : "query",
+          "description" : "Value of field",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/wobject"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/post/{author}/{permlink}" : {
+      "get" : {
+        "tags" : [ "post" ],
+        "summary" : "Return post details",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "author",
+          "in" : "path",
+          "description" : "Author of post",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "permlink",
+          "in" : "path",
+          "description" : "Permlink of post",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/post"
+            }
+          }
+        }
+      }
+    },
+    "/api/post_comments" : {
+      "get" : {
+        "tags" : [ "post" ],
+        "summary" : "Return post comments and other details. Comments placed at \"content\" key of result object.",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "author",
+          "in" : "query",
+          "description" : "Author of post",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "permlink",
+          "in" : "query",
+          "description" : "Permlink of post",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "category",
+          "in" : "query",
+          "description" : "Category of post, aka parent_permlink",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_18"
+            }
+          }
+        }
+      }
+    },
+    "/api/posts" : {
+      "post" : {
+        "tags" : [ "post" ],
+        "summary" : "Return list of posts by some category(trending, hot, created, blog)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - Count of posts to return (*default* 30),\n**skip** - count of posts to skip(use for infinite scroll),\n**category** - Category of posts(trending, created, hot, blog, promoted).\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_13"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/objectTypes" : {
+      "post" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return list of Object Types",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**limit** - Count of object_typs to return (*default* 30),\n**skip** - Count of skipping object_type(for infinite scroll),\n**wobjects_count** - Count of related wobjects to return(default 3)\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_14"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_19"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/objectType/{name}" : {
+      "post" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return Object Type details",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of Object Type",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**userName** - name of user, who make request\n**wobjects_count** - Count of wobjects to return (*default* 30),\n**wobjects_skip** - Count of skipping object(for infinite scroll),\n**filter** - advanced filter for *wobjects* current *Object Type*,\n**filter.map** - composite param, to find wobjects in radius\n**filter.map.coordinates** - coordinates of point to search([**latitude, longitude**])\n**filter.map.radius** - radius around of point to search(**meters**)\n**sort** - Sort by \"weight\" or \"proximity\" *(if use proximity, require to use **map** filter)*\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_15"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesfull operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_20"
+            }
+          },
+          "404" : {
+            "description" : "not found",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/objectType/{name}/expertise" : {
+      "get" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return Object Type experts",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of Object Type",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count of experts to skip, (default 0)",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of experts to return, (default 5)",
+          "required" : false,
+          "type" : "integer"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesfull operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_21"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ObjectTypesSearch" : {
+      "post" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Search by name on Object Types",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**search_string** - Name or part of name Object Type\n**limit** - Count of object_typs to return (*default* 30),\n**skip** - Count of skipping object_type(for infinite scroll), *required*\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_16"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/ObjectType"
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/generalSearch" : {
+      "post" : {
+        "tags" : [ "general-search" ],
+        "summary" : "Search by wobjects, users, object-types",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**string** - String to search\n**userLimit** - Count of users to return (*default* 20),\n**wobjectsLimit** - Count of wobjects to return (*default* 20),\n**objectsTypeLimit** - Count of object types to return (*default* 20),\n**sortByApp** - Change priority of returning wobjects by cruical to specified App\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_17"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_22"
+            }
+          }
+        }
+      }
+    },
+    "/api/image" : {
+      "post" : {
+        "tags" : [ "image" ],
+        "summary" : "Upload image and get link",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "**image** - Image in base64 string\n",
+          "required" : false,
+          "schema" : {
+            "$ref" : "#/definitions/params_18"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation, link to uploaded image",
+            "schema" : {
+              "$ref" : "#/definitions/params_18"
+            }
+          }
+        }
+      }
+    },
+    "/api/app/{appName}" : {
+      "get" : {
+        "tags" : [ "app" ],
+        "summary" : "Get waivio \"App\"",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "appName",
+          "in" : "path",
+          "description" : "Name of registered \"App\" on waivio",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation, link to uploaded image",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_200_23"
+            }
+          }
+        }
+      }
+    },
+    "/api/app/{appName}/experts" : {
+      "get" : {
+        "tags" : [ "app" ],
+        "summary" : "Get experts by specified app",
+        "description" : "If specified app has own supported_objects => return users which has some weight in this wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "appName",
+          "in" : "path",
+          "description" : "Name of registered \"App\" on waivio",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of users to return(default 10)",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count of users to skip, for infinite scroll(default 0)",
+          "required" : false,
+          "type" : "number"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_13"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions" : {
+    "wobjectonlist" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        },
+        "user_count" : {
+          "type" : "integer"
+        },
+        "app" : {
+          "type" : "string"
+        },
+        "parents" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "children" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/wobjectonlist_users"
+          }
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/apiuseruserNamefollowing_objects_fields"
+          }
+        }
+      }
+    },
+    "wobject" : {
+      "type" : "object",
+      "properties" : {
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        },
+        "app" : {
+          "type" : "string"
+        },
+        "community" : {
+          "type" : "string"
+        },
+        "parents" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "children" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "followers_count" : {
+          "type" : "integer"
+        },
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/wobjectonlist_users"
+          }
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/apiuseruserNamefollowing_objects_fields"
+          }
+        }
+      }
+    },
+    "User" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "profile_image" : {
+          "type" : "string"
+        },
+        "objects_following_count" : {
+          "type" : "integer"
+        },
+        "objects_shares_count" : {
+          "type" : "integer"
+        },
+        "objects_follow" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "wobjects_weight" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "ObjectType" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        }
+      }
+    },
+    "post" : {
+      "type" : "object",
+      "properties" : {
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "category" : {
+          "type" : "string"
+        },
+        "parent_author" : {
+          "type" : "string"
+        },
+        "parent_permlink" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "json_metadata" : {
+          "type" : "string"
+        },
+        "last_update" : {
+          "type" : "string"
+        },
+        "last_payout" : {
+          "type" : "string"
+        },
+        "created" : {
+          "type" : "string"
+        },
+        "active" : {
+          "type" : "string"
+        },
+        "depth" : {
+          "type" : "integer"
+        },
+        "children" : {
+          "type" : "integer"
+        },
+        "net_rshares" : {
+          "type" : "integer"
+        },
+        "abs_rshares" : {
+          "type" : "integer"
+        },
+        "vote_rshares" : {
+          "type" : "integer"
+        },
+        "children_abs_rshares" : {
+          "type" : "integer"
+        },
+        "cashout_time" : {
+          "type" : "string"
+        },
+        "max_cashout_time" : {
+          "type" : "string"
+        },
+        "total_vote_weight" : {
+          "type" : "integer"
+        },
+        "reward_weight" : {
+          "type" : "integer"
+        },
+        "total_payout_value" : {
+          "type" : "integer"
+        },
+        "curator_payout_value" : {
+          "type" : "integer"
+        },
+        "author_rewards" : {
+          "type" : "integer"
+        },
+        "net_votes" : {
+          "type" : "integer"
+        },
+        "root_author" : {
+          "type" : "string"
+        },
+        "root_permlink" : {
+          "type" : "string"
+        },
+        "max_accepted_payout" : {
+          "type" : "string"
+        },
+        "percent_steem_dollars" : {
+          "type" : "integer"
+        },
+        "allow_replies" : {
+          "type" : "boolean"
+        },
+        "allow_votes" : {
+          "type" : "boolean"
+        },
+        "allow_curation_rewards" : {
+          "type" : "boolean"
+        },
+        "beneficiaries" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "url" : {
+          "type" : "string"
+        },
+        "root_title" : {
+          "type" : "string"
+        },
+        "pending_payout_value" : {
+          "type" : "string"
+        },
+        "active_votes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/post_active_votes"
+          }
+        },
+        "replies" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "author_reputation" : {
+          "type" : "integer"
+        },
+        "promoted" : {
+          "type" : "string"
+        },
+        "body_length" : {
+          "type" : "integer"
+        },
+        "reblogged_by" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/wobject"
+          }
+        }
+      }
+    },
+    "userMetadata" : {
+      "type" : "object",
+      "properties" : {
+        "user_metadata" : {
+          "$ref" : "#/definitions/userMetadata_user_metadata"
+        }
+      },
+      "xml" : {
+        "name" : "User"
+      }
+    },
+    "inline_response_200" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "wobjects_weight" : {
+          "type" : "number"
+        },
+        "json_metadata" : {
+          "type" : "string"
+        }
+      }
+    },
+    "params" : {
+      "type" : "object",
+      "properties" : {
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "limit" : {
+          "type" : "integer"
+        },
+        "name" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_1" : {
+      "type" : "object",
+      "properties" : {
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_2" : {
+      "type" : "object",
+      "properties" : {
+        "result" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_3" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_4" : {
+      "type" : "object",
+      "properties" : {
+        "account" : {
+          "type" : "string"
+        },
+        "wobjects_weight" : {
+          "type" : "number"
+        }
+      }
+    },
+    "params_1" : {
+      "type" : "object",
+      "properties" : {
+        "locale" : {
+          "type" : "string"
+        },
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "apiuseruserNamefollowing_objects_fields" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_5" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        },
+        "app" : {
+          "type" : "string"
+        },
+        "parents" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "children" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/apiuseruserNamefollowing_objects_fields"
+          }
+        }
+      }
+    },
+    "inline_response_200_6" : {
+      "type" : "object",
+      "properties" : {
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "params_2" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "params_3" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "count_with_wobj" : {
+          "type" : "integer"
+        },
+        "last_permlink" : {
+          "type" : "string"
+        },
+        "last_author" : {
+          "type" : "string"
+        },
+        "user_languages" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "params_4" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "object_types" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "exclude_object_types" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "inline_response_200_7_wobjects" : {
+      "type" : "object",
+      "properties" : {
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "user_weight" : {
+          "type" : "integer"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "is_posting_open" : {
+          "type" : "boolean"
+        },
+        "is_extending_open" : {
+          "type" : "boolean"
+        },
+        "object_type" : {
+          "type" : "string"
+        },
+        "default_name" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "creator" : {
+          "type" : "string"
+        },
+        "app" : {
+          "type" : "string"
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "inline_response_200_7" : {
+      "type" : "object",
+      "properties" : {
+        "wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_7_wobjects"
+          }
+        },
+        "wobjects_count" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "params_5" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "start_author" : {
+          "type" : "string"
+        },
+        "start_permlink" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_8" : {
+      "type" : "object",
+      "properties" : {
+        "followers" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_9_users_updates_users" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "wobjects_weight" : {
+          "type" : "number"
+        },
+        "last_posts_count" : {
+          "type" : "number"
+        }
+      }
+    },
+    "inline_response_200_9_users_updates" : {
+      "type" : "object",
+      "properties" : {
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_9_users_updates_users"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_9_related_wobjects" : {
+      "type" : "object",
+      "properties" : {
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "user_weight" : {
+          "type" : "number"
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "last_posts_count" : {
+          "type" : "number"
+        }
+      }
+    },
+    "inline_response_200_9_wobjects_updates" : {
+      "type" : "object",
+      "properties" : {
+        "object_type" : {
+          "type" : "string"
+        },
+        "related_wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_9_related_wobjects"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_9" : {
+      "type" : "object",
+      "properties" : {
+        "users_updates" : {
+          "$ref" : "#/definitions/inline_response_200_9_users_updates"
+        },
+        "wobjects_updates" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_9_wobjects_updates"
+          }
+        }
+      }
+    },
+    "inline_response_200_10" : {
+      "type" : "object",
+      "properties" : {
+        "related_wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_9_related_wobjects"
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "inline_response_200_11" : {
+      "type" : "object",
+      "properties" : {
+        "ok" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_400" : {
+      "type" : "object",
+      "properties" : {
+        "message" : {
+          "type" : "string"
+        }
+      }
+    },
+    "apiwobject_map" : {
+      "type" : "object",
+      "properties" : {
+        "coordinates" : {
+          "type" : "array",
+          "items" : {
+            "type" : "number"
+          }
+        },
+        "radius" : {
+          "type" : "number"
+        }
+      }
+    },
+    "params_6" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "user_limit" : {
+          "type" : "integer"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "author_permlinks" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "object_types" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "exclude_object_types" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "required_fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "sample" : {
+          "type" : "boolean"
+        },
+        "map" : {
+          "$ref" : "#/definitions/apiwobject_map"
+        }
+      }
+    },
+    "inline_response_200_12" : {
+      "type" : "object",
+      "properties" : {
+        "hasMore" : {
+          "type" : "boolean"
+        },
+        "wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/wobjectonlist"
+          }
+        }
+      }
+    },
+    "params_7" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "user_languages" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "params_8" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "inline_response_200_13" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        }
+      }
+    },
+    "params_9" : {
+      "type" : "object",
+      "properties" : {
+        "fields_names" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "custom_fields" : {
+          "type" : "object",
+          "properties" : { }
+        }
+      },
+      "example" : {
+        "fields_names" : [ "categoryItem" ],
+        "custom_fields" : {
+          "categoryId" : 123456
+        }
+      }
+    },
+    "inline_response_200_14" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_15" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "params_10" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "user" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_16_users" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "inline_response_200_16" : {
+      "type" : "object",
+      "properties" : {
+        "users" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_16_users"
+          }
+        },
+        "user" : {
+          "$ref" : "#/definitions/inline_response_200_16_users"
+        }
+      }
+    },
+    "params_11" : {
+      "type" : "object",
+      "required" : [ "search_string" ],
+      "properties" : {
+        "search_string" : {
+          "type" : "string"
+        },
+        "object_type" : {
+          "type" : "string"
+        },
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "sortByApp" : {
+          "type" : "string"
+        },
+        "required_fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "inline_response_200_17" : {
+      "type" : "object",
+      "properties" : {
+        "author_permlink" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "params_12" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "number"
+        },
+        "skip" : {
+          "type" : "number"
+        }
+      }
+    },
+    "inline_response_200_18" : {
+      "type" : "object",
+      "properties" : {
+        "feed_price" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "props" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "tags" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "accounts" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "content" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "tag_idx" : {
+          "type" : "object",
+          "properties" : { }
+        },
+        "discussion_idx" : {
+          "type" : "object",
+          "properties" : { }
+        }
+      }
+    },
+    "params_13" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "category" : {
+          "type" : "string"
+        }
+      }
+    },
+    "params_14" : {
+      "type" : "object",
+      "properties" : {
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        },
+        "wobjects_count" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "inline_response_200_19" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "related_wobjects" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "apiobjectTypename_filter" : {
+      "type" : "object",
+      "properties" : {
+        "map" : {
+          "$ref" : "#/definitions/apiwobject_map"
+        }
+      }
+    },
+    "params_15" : {
+      "type" : "object",
+      "properties" : {
+        "userName" : {
+          "type" : "string"
+        },
+        "wobjects_count" : {
+          "type" : "integer"
+        },
+        "wobjects_skip" : {
+          "type" : "integer"
+        },
+        "filter" : {
+          "$ref" : "#/definitions/apiobjectTypename_filter"
+        },
+        "sort" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_20_filters" : {
+      "type" : "object",
+      "properties" : {
+        "map" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "inline_response_200_20" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "related_wobjects" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "hasMoreWobjects" : {
+          "type" : "boolean"
+        },
+        "filters" : {
+          "$ref" : "#/definitions/inline_response_200_20_filters"
+        }
+      }
+    },
+    "inline_response_200_21" : {
+      "type" : "object",
+      "properties" : {
+        "_id" : {
+          "type" : "string"
+        },
+        "name" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        }
+      }
+    },
+    "params_16" : {
+      "type" : "object",
+      "properties" : {
+        "search_string" : {
+          "type" : "string"
+        },
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "params_17" : {
+      "type" : "object",
+      "properties" : {
+        "string" : {
+          "type" : "string"
+        },
+        "userLimit" : {
+          "type" : "integer"
+        },
+        "wobjectsLimit" : {
+          "type" : "integer"
+        },
+        "objectTypesLimit" : {
+          "type" : "integer"
+        },
+        "sortByApp" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_22" : {
+      "type" : "object",
+      "properties" : {
+        "wobjects" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "objectTypes" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "accounts" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        }
+      }
+    },
+    "params_18" : {
+      "type" : "object",
+      "properties" : {
+        "image" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_23_moderators" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "author_permlinks" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "inline_response_200_23_supported_object_types" : {
+      "type" : "object",
+      "properties" : {
+        "object_type" : {
+          "type" : "string"
+        },
+        "required_fields" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        }
+      }
+    },
+    "inline_response_200_23_daily_chosen_post" : {
+      "type" : "object",
+      "properties" : {
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        }
+      }
+    },
+    "inline_response_200_23" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "admin" : {
+          "type" : "string"
+        },
+        "moderators" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_23_moderators"
+          }
+        },
+        "supported_object_types" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_23_supported_object_types"
+          }
+        },
+        "supported_objects" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "daily_chosen_post" : {
+          "$ref" : "#/definitions/inline_response_200_23_daily_chosen_post"
+        },
+        "weekly_chosen_post" : {
+          "$ref" : "#/definitions/inline_response_200_23_daily_chosen_post"
+        }
+      }
+    },
+    "wobjectonlist_users" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "profile_image" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "number"
+        }
+      }
+    },
+    "post_active_votes" : {
+      "type" : "object",
+      "properties" : {
+        "voter" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "perent" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "userMetadata_user_metadata_settings" : {
+      "type" : "object",
+      "properties" : {
+        "exitPageSetting" : {
+          "type" : "boolean"
+        },
+        "locale" : {
+          "type" : "string"
+        },
+        "postLocales" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "nightmode" : {
+          "type" : "boolean"
+        },
+        "rewardSetting" : {
+          "type" : "string"
+        },
+        "rewriteLinks" : {
+          "type" : "boolean"
+        },
+        "showNSFWPosts" : {
+          "type" : "boolean"
+        },
+        "upvoteSetting" : {
+          "type" : "boolean"
+        },
+        "votePercent" : {
+          "type" : "number"
+        },
+        "votingPower" : {
+          "type" : "boolean"
+        }
+      }
+    },
+    "userMetadata_user_metadata" : {
+      "type" : "object",
+      "properties" : {
+        "notifications_last_timestamp" : {
+          "type" : "number"
+        },
+        "bookmarks" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
+          }
+        },
+        "drafts" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "settings" : {
+          "$ref" : "#/definitions/userMetadata_user_metadata_settings"
+        }
+      }
+    }
+  }
+}
