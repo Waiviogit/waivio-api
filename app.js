@@ -26,7 +26,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use('/', routes);
-app.use('/waivio-api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // fill posts by some additional information(author wobj.weight, or wobjects info)
 app.use('/', fillPostAdditionalInfo.fill);
