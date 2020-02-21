@@ -87,9 +87,13 @@ exports.searchWobjects = async ({
     crucialWobjects = _.get(app, 'supported_objects');
   }
   // get wobjects
+  const { wObject } = await Wobj.getOne(string);
   const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(makePipeline({
     string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
   }));
-
+  if (wObject && wobjects.length) {
+    _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
+    wobjects.splice(0, 0, wObject);
+  }
   return { wobjects, wobjectsCounts, error: getWobjCountError || getWobjError };
 };
