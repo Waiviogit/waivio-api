@@ -14,7 +14,8 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2
-    }
+    },
+    "swaggerHost": "www.waivio.com"
   },
 
   "staging": {
@@ -32,7 +33,8 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2
-    }
+    },
+    "swaggerHost": "waiviodev.com"
   },
 
   "development": {
@@ -50,6 +52,7 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2
-    }
+    },
+    "swaggerHost": "localhost:3000"
   }
 }
