@@ -9,7 +9,7 @@
       "email" : "maxim@wizardsdev.com"
     }
   },
-  "host" : "waiviodev.com",
+  "host" : "localhost:3000",
   "tags" : [ {
     "name" : "user",
     "description" : "Info about waivio users"
@@ -32,7 +32,7 @@
     "name" : "app",
     "description" : "Get some info about registered \"Apps\" on waivio"
   } ],
-  "schemes" : [ "https" ],
+  "schemes" : [ "https", "http" ],
   "paths" : {
     "/api/users" : {
       "get" : {
@@ -2672,8 +2672,11 @@
         "name" : {
           "type" : "string"
         },
-        "admin" : {
-          "type" : "string"
+        "admins" : {
+          "type" : "array",
+          "items" : {
+            "type": "string"
+          }
         },
         "moderators" : {
           "type" : "array",
