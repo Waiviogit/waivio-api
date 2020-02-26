@@ -355,40 +355,6 @@
         }
       }
     },
-    "/api/user/{userName}/objects_feed" : {
-      "post" : {
-        "tags" : [ "user" ],
-        "summary" : "Return posts with wobjects which specified user is follow",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "userName",
-          "in" : "path",
-          "description" : "user name what feed needs to return",
-          "required" : true,
-          "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "params",
-          "description" : "**limit** - limit of returned posts*(by default - 30)*, \n**skip** - skip some posts to return(params for infinite scroll, *by default - 0*)\n",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/params_2"
-          }
-        } ],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : { }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/user/{userName}/feed" : {
       "post" : {
         "tags" : [ "user" ],
