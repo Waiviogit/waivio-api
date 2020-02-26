@@ -1,5 +1,4 @@
 const { User } = require('models');
-const { userFeedHelper } = require('utilities/helpers');
 const { authorise } = require('utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
@@ -103,23 +102,6 @@ const usersFollow = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
-  next();
-};
-
-const objectsFeed = async (req, res, next) => {
-  const value = validators.validate({
-    user: req.params.userName,
-    skip: req.body.skip,
-    limit: req.body.limit,
-  }, validators.user.objectsFeedSchema, next);
-
-  if (!value) return;
-
-  const { posts, error } = await userFeedHelper.feedByObjects(value);
-
-  if (error) return next(error);
-
-  res.result = { status: 200, json: posts };
   next();
 };
 
@@ -366,7 +348,6 @@ module.exports = {
   show,
   objectsFollow,
   usersFollow,
-  objectsFeed,
   feed,
   userObjectsShares,
   searchUsers,

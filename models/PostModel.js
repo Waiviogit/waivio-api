@@ -4,36 +4,6 @@ const { REQUIREDFIELDS } = require('utilities/constants');
 const AppModel = require('models/AppModel');
 const _ = require('lodash');
 
-// data include objects(array of strings), limit, skip, locale, user
-exports.getFeedByObjects = async (data) => {
-  try {
-    const posts = await PostModel.aggregate([
-      {
-        $match: {
-          $or: [
-            { 'wobjects.author_permlink': { $in: data.objects } },
-            { author: data.user }],
-        },
-      },
-      { $sort: { _id: -1 } },
-      { $skip: data.skip },
-      { $limit: data.limit },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'wobjects.author_permlink',
-          foreignField: 'author_permlink',
-          as: 'fullObjects',
-        },
-      },
-    ]);
-
-    return { posts };
-  } catch (error) {
-    return { error };
-  }
-}; // return posts of list wobjects and one specified author(use on user feed)
-
 exports.getAllPosts = async (data) => {
   try {
     const aggregatePipeline = [
