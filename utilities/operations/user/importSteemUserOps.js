@@ -15,7 +15,7 @@ exports.importUser = async (userName) => {
   if (_.get(existUser, 'stage_version') === 1) return { user: existUser };
 
   const {
-    data: userData, userFollowings, error: steemError,
+    data: userData, error: steemError,
   } = await this.getUserSteemInfo(userName);
 
   if (steemError) return { error: steemError };
@@ -24,7 +24,7 @@ exports.importUser = async (userName) => {
 
   return User.updateOne(
     { name: userName },
-    { ...userData, stage_version: 1, $addToSet: { users_follow: userFollowings } },
+    { ...userData, stage_version: 1 },
   );
 };
 
