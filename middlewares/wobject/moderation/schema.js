@@ -38,7 +38,7 @@ exports.schema = [
     method: 'GET',
     case: 2,
     fields_path: 'items',
-    author_permlink_path: 'id',
+    author_permlink_path: 'wobject_id',
   },
   {
     path: '/wobject/:authorPermlink/list',
