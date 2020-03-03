@@ -109,6 +109,13 @@ UserSchema.virtual('objects_shares_count', {
 });
 
 // eslint-disable-next-line func-names
+UserSchema.pre('findOneAndUpdate', async function (next) {
+  const doc = await this.model.findOne(this.getQuery());
+  if (!doc) this.set({ auth: null });
+  next();
+});
+
+// eslint-disable-next-line func-names
 UserSchema.pre('aggregate', function () {
   const session = getNamespace('request-session');
 

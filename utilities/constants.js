@@ -83,3 +83,4 @@ exports.COMMENT_REF_TYPES = {
   wobjType: 'wobj_type',
 };
 exports.MAX_IMPORTING_USERS = 20;
+exports.GALLERY_WOBJECT_ID = 'wobject_id';

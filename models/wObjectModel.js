@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('utilities/constants');
 
 const getOne = async (authorPermlink) => { // get one wobject by author_permlink
   try {
@@ -129,6 +129,7 @@ const getGalleryItems = async (data) => {
             { 'fields.name': 'galleryAlbum' }],
         },
       },
+      { $addFields: { [`fields.${GALLERY_WOBJECT_ID}`]: '$author_permlink' } },
       { $replaceRoot: { newRoot: '$fields' } },
       { $group: { _id: '$id', items: { $push: '$$ROOT' } } },
       {

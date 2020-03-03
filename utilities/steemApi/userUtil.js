@@ -2,7 +2,7 @@ const { client, clientAnyx } = require('utilities/steemApi/steem');
 
 exports.getAccount = async (name) => {
   try {
-    const [account] = await clientAnyx.database.getAccounts([name]);
+    const [account] = await client.database.getAccounts([name]);
 
     if (!account) {
       return { error: { status: 404, message: 'User not found!' } };
