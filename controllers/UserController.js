@@ -34,7 +34,7 @@ const show = async (req, res, next) => {
     with_followings: req.query.with_followings,
   }, validators.user.showSchema, next);
 
-  await authorise(value);
+  await authorise(value.name);
   const { userData, error } = await getOneUser(value);
 
   if (error) return next(error);

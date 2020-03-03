@@ -7,7 +7,7 @@ const sc2 = require('sc2-sdk');
  * @returns {Boolean}  true if "token" valid for current "username", else false
  */
 exports.authoriseUser = async (token = '', username = '') => {
-  if (token === '') return false;
+  if (!token || token === '') return false;
   const api = sc2.Initialize({
     accessToken: token,
   });
