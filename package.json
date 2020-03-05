@@ -16,6 +16,7 @@
     "cron": "^1.7.1",
     "debug": "~2.6.9",
     "dsteem": "^0.10.1",
+    "exif-parser": "^0.1.12",
     "express": "~4.16.0",
     "formidable": "^1.2.1",
     "franc-min": "^4.1.0",
