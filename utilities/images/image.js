@@ -77,8 +77,13 @@ class Image {
 
   // eslint-disable-next-line class-methods-use-this
   async resizeImage({ buffer, size }) {
-    const parsedBuffer = parser.create(buffer);
-    const metadata = parsedBuffer.parse();
+    let metadata;
+    try {
+      const parsedBuffer = parser.create(buffer);
+      metadata = parsedBuffer.parse();
+    } catch (error) {
+      metadata = null;
+    }
     const rotation = this.rotationSwitcher(_.get(metadata, 'tags.Orientation', 0));
     if (size === '_small') {
       return sharp(buffer).rotate(rotation).resize(34, 34).toBuffer();
