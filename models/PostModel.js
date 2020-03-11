@@ -160,7 +160,7 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
  */
 exports.getManyPosts = async (postsRefs) => {
   try {
-    return { posts: await PostModel.find({ $or: [...postsRefs] }) };
+    return { posts: await PostModel.find({ $or: [...postsRefs] }).lean() };
   } catch (error) {
     return { error };
   }
