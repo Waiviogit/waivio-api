@@ -5,10 +5,10 @@ const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('u
 
 const getOne = async (authorPermlink, objectType = '') => { // get one wobject by author_permlink
   try {
-    const matchPipe = { $match: { author_permlink: authorPermlink } };
-    if (objectType) matchPipe.$match.object_type = objectType;
+    const matchStage = { $match: { author_permlink: authorPermlink } };
+    if (objectType) matchStage.$match.object_type = objectType;
     const [wObject] = await WObjectModel.aggregate([
-      matchPipe,
+      matchStage,
       {
         $lookup: {
           from: 'users',
