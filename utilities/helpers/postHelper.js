@@ -1,5 +1,5 @@
 const {
-  CommentRef, Wobj, User, Post: PostModel,
+  CommentRef, Wobj, User, Post: PostRepository,
 } = require('models');
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
@@ -47,15 +47,25 @@ const getPostsByCategory = async (data) => {
   if (!posts || posts.error) {
     return { error: { status: 404, message: posts.error.message } };
   }
-  for (let post of posts) {
+
+  // get posts array by authors and permlinks
+  const { posts: dbPosts, error: postsDbError } = await PostRepository.getManyPosts(
+    posts.map((p) => (_.pick(p, ['author', 'permlink']))),
+  );
+  if (postsDbError) {
+    return { error: postsDbError };
+  }
+
+  await Promise.all(posts.map(async (post) => {
     if (post && post.author && post.permlink) {
       const wobjsResult = await getPostObjects(post.author, post.permlink);
 
       post.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
       post.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
-      post = await mergePostData(post);
+      const dbPost = dbPosts.find((p) => p.author === post.author && p.permlink === post.permlink);
+      post = await mergePostData(post, dbPost);
     }
-  }
+  }));
   return { posts };
 };
 
@@ -67,7 +77,7 @@ const getPostsByCategory = async (data) => {
  */
 const mergePostData = async (postSteem, postDb) => {
   if (!postDb) {
-    const { post: dbPost, error } = await PostModel.getOne({
+    const { post: dbPost, error } = await PostRepository.getOne({
       root_author: postSteem.root_author || postSteem.author,
       permlink: postSteem.permlink,
     });

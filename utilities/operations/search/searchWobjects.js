@@ -87,7 +87,7 @@ exports.searchWobjects = async ({
     crucialWobjects = _.get(app, 'supported_objects');
   }
   // get wobjects
-  const { wObject } = await Wobj.getOne(string);
+  const { wObject } = await Wobj.getOne(string, object_type);
   const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(makePipeline({
     string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
   }));
