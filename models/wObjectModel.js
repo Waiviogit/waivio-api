@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const _ = require('lodash');
 const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('utilities/constants');
 
-const getOne = async (authorPermlink, objectType = '') => { // get one wobject by author_permlink
+const getOne = async (authorPermlink, objectType) => { // get one wobject by author_permlink
   try {
     const matchStage = { $match: { author_permlink: authorPermlink } };
     if (objectType) matchStage.$match.object_type = objectType;
