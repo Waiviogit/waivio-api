@@ -152,3 +152,16 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
     return { error };
   }
 };
+
+/**
+ * Find and return posts by array [{author, permlink}] of posts refs
+ * @param postsRefs {Array<Object>}
+ * @returns {Promise<{posts: *}|{error: *}>}
+ */
+exports.getManyPosts = async (postsRefs) => {
+  try {
+    return { posts: await PostModel.find({ $or: [...postsRefs] }) };
+  } catch (error) {
+    return { error };
+  }
+};
