@@ -66,7 +66,7 @@ exports.updateOne = async (condition, updateData = {}) => {
   try {
     const user = await UserModel
       .findOneAndUpdate(condition, updateData,
-        { upsert: true, new: true, setDefaultsOnInsert: true })
+        { new: true, setDefaultsOnInsert: true })
       .select('+user_metadata');
 
     return { user };
