@@ -1110,6 +1110,33 @@
         }
       }
     },
+    "/api/posts/getMany" : {
+      "post" : {
+        "tags" : [ "post" ],
+        "summary" : "Return list of posts by authors and permlinks",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "in" : "body",
+          "name" : "params",
+          "description" : "Array of authors and permlinks",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/params_20"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/objectTypes" : {
       "post" : {
         "tags" : [ "object_type" ],
@@ -2395,6 +2422,20 @@
         },
         "category" : {
           "type" : "string"
+        }
+      }
+    },
+    "params_20" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          }
         }
       }
     },
