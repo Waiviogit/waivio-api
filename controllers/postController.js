@@ -1,4 +1,4 @@
-const { getPostsByCategory, getSinglePost, getPostComments, getPostsByQuery } = require('utilities/operations').post;
+const { getPostsByCategory, getSinglePost, getPostComments, getManyPosts } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 
 exports.show = async (req, res, next) => {
@@ -52,12 +52,12 @@ exports.getPostComments = async (req, res, next) => {
   next();
 };
 
-exports.getByAuthorPermlinks = async (req, res, next) => {
-  const value = validators.validate(req.body, validators.post.getPostsAuthorPermlinks, next);
+exports.getManyPosts = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.post.getManyPosts, next);
 
   if (!value) return;
 
-  const { posts, error } = await getPostsByQuery(value);
+  const { posts, error } = await getManyPosts(value);
 
   if (error) return next(error);
 
