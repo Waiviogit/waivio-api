@@ -93,6 +93,8 @@ userRoutes.route('/import_steem_user')
 // region Post
 postRoutes.route('/post/:author/:permlink')
   .get(PostController.show);
+postRoutes.route('/posts_by_conditions')
+  .post(PostController.getByAuthorPermlinks);
 postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')

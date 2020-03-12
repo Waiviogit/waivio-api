@@ -19,3 +19,8 @@ exports.getPostComments = Joi.object().keys({
   permlink: Joi.string().invalid('').required(),
   category: Joi.string().invalid('').required(),
 });
+
+exports.getPostsAuthorPermlinks = Joi.array().items(Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+}));
