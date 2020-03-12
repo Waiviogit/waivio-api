@@ -1110,7 +1110,7 @@
         }
       }
     },
-    "/api/posts_by_conditions" : {
+    "/api/posts/getMany" : {
       "post" : {
         "tags" : [ "post" ],
         "summary" : "Return list of posts by authors and permlinks",
