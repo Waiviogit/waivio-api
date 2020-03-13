@@ -23,6 +23,7 @@ const AppSchema = new Schema({
     users: [],
   },
   supported_objects: { type: [String], index: true, default: [] },
+  supported_hashtags: { type: [String], default: [] },
   daily_chosen_post: {
     author: { type: String },
     permlink: { type: String },

@@ -105,6 +105,8 @@ appRoutes.route('/app/:appName')
   .get(AppController.show);
 appRoutes.route('/app/:appName/experts')
   .get(AppController.experts);
+appRoutes.route('/app/:name/hashtags')
+  .get(AppController.hashtags);
 appRoutes.route('/image')
   .post(ImageController.saveImage);
 // endregion
