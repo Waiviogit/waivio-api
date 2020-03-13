@@ -107,4 +107,11 @@ exports.schema = [
     case: 3,
     wobjects_path: 'related_wobjects',
   },
+  // app controller
+  {
+    path: '/app/:name/hashtags',
+    method: 'GET',
+    case: 3,
+    wobjects_path: 'wobjects',
+  },
 ];
