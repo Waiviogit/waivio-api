@@ -29,4 +29,18 @@ const experts = async (req, res, next) => {
   res.status(200).json(users);
 };
 
-module.exports = { show, experts };
+const hashtags = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query, ...req.params },
+    validators.app.hashtags,
+    next,
+  );
+  if (!value) return;
+
+  const { wobjects, hasMore, error } = await AppOperations.hashtags(value);
+
+  if (error) return next(error);
+  res.status(200).json({ wobjects, hasMore });
+};
+
+module.exports = { show, experts, hashtags };

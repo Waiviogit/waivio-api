@@ -1377,6 +1377,44 @@
           }
         }
       }
+    },
+    "/api/app/{name}/hashtags" : {
+      "get" : {
+        "tags" : [ "app" ],
+        "summary" : "Get specified hashtags by app",
+        "description" : "If app has \"supported_hashtags\" => return array of this wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of registered \"App\" on waivio",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of hashtags to return(default 30)",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count of hashtags to skip, for infinite scroll(default 0)",
+          "required" : false,
+          "type" : "number"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_12"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "definitions" : {
