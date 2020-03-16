@@ -63,6 +63,7 @@ const getAll = async (data) => {
         distanceField: 'distance',
         maxDistance: data.map.radius ? parseInt(data.map.radius, 10) : 10000,
         spherical: true,
+        limit: data.limit,
       },
     });
   }
@@ -73,7 +74,7 @@ const getAll = async (data) => {
     { $match: findParams },
     { $sort: { weight: -1 } },
     { $skip: data.sample ? 0 : data.skip },
-    { $limit: data.sample ? 100 : data.limit + 1 },
+    { $limit: data.sample ? data.sample : data.limit + 1 },
   ]);
   if (data.sample) {
     pipeline.push({ $sample: { size: 5 } });
