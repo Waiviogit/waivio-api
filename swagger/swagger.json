@@ -53,6 +53,12 @@
           "required" : false,
           "type" : "number"
         }, {
+          "name" : "user",
+          "in" : "query",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "number"
+        },{
           "name" : "sample",
           "in" : "query",
           "description" : "flag to return random 5 users from TOP 100(limit and skip in this case ignored)",
@@ -1278,7 +1284,7 @@
         "parameters" : [ {
           "in" : "body",
           "name" : "params",
-          "description" : "**string** - String to search\n**userLimit** - Count of users to return (*default* 20),\n**wobjectsLimit** - Count of wobjects to return (*default* 20),\n**objectsTypeLimit** - Count of object types to return (*default* 20),\n**sortByApp** - Change priority of returning wobjects by cruical to specified App\n",
+          "description" : "**string** - String to search\n**userLimit** - Count of users to return (*default* 20),\n**wobjectsLimit** - Count of wobjects to return (*default* 20),\n**objectsTypeLimit** - Count of object types to return (*default* 20),\n**sortByApp** - Change priority of returning wobjects by cruical to specified App\n **user** - User name for check his followings",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_17"
@@ -2632,6 +2638,9 @@
         },
         "sortByApp" : {
           "type" : "string"
+        },
+        "user": {
+          "type": "string"
         }
       }
     },
