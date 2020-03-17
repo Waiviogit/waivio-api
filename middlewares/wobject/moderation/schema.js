@@ -57,12 +57,6 @@ exports.schema = [
     case: 4,
   },
   {
-    path: '/user/:userName/objects_feed',
-    method: 'POST',
-    case: 4,
-    wobjects_path: 'wobjects',
-  },
-  {
     path: '/user/:userName/objects_shares',
     method: 'POST',
     case: 3,
@@ -84,6 +78,12 @@ exports.schema = [
   },
   {
     path: '/posts',
+    method: 'POST',
+    case: 4,
+    wobjects_path: 'wobjects',
+  },
+  {
+    path: '/posts/getMany',
     method: 'POST',
     case: 4,
     wobjects_path: 'wobjects',
