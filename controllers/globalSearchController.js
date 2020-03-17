@@ -8,6 +8,7 @@ const globalSearch = async (req, res, next) => {
     wobjectsLimit: req.body.wobjectsLimit,
     objectsTypeLimit: req.body.objectsTypeLimit,
     sortByApp: req.body.sortByApp,
+    user: req.body.user,
   }, validators.generalSearch.generalSearchSchema, next);
 
   if (!value) {
