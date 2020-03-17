@@ -74,7 +74,7 @@ const getAll = async (data) => {
     { $match: findParams },
     { $sort: { weight: -1 } },
     { $skip: data.sample ? 0 : data.skip },
-    { $limit: data.sample ? data.sample : data.limit + 1 },
+    { $limit: data.sample ? 100 : data.limit + 1 },
   ]);
   if (data.sample) {
     pipeline.push({ $sample: { size: 5 } });
