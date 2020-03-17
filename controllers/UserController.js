@@ -15,7 +15,6 @@ const index = async (req, res, next) => {
       limit: req.query.limit,
       skip: req.query.skip,
       sample: req.query.sample,
-      user: req.query.user,
     }, validators.user.indexSchema, next,
   );
 

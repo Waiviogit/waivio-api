@@ -54,10 +54,10 @@
           "type" : "number"
         }, {
           "name" : "user",
-          "in" : "query",
+          "in" : "header",
           "description" : "name of user who make request to check founded users in his followings",
           "required" : false,
-          "type" : "number"
+          "type" : "string"
         },{
           "name" : "sample",
           "in" : "query",
@@ -1289,7 +1289,14 @@
           "schema" : {
             "$ref" : "#/definitions/params_17"
           }
-        } ],
+        },{
+          "name" : "user",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        }
+        ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -2638,9 +2645,6 @@
         },
         "sortByApp" : {
           "type" : "string"
-        },
-        "user": {
-          "type": "string"
         }
       }
     },

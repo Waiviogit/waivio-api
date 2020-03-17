@@ -1,27 +1,25 @@
 const _ = require('lodash');
-const { getFollowingsArray } = require('utilities/operations/user/getFollowingsUser');
+const { User } = require('models');
 const { schema } = require('middlewares/users/moderation/schema');
 
 exports.moderate = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
 
-  if (!currentSchema) {
+  if (!currentSchema || !req.headers.user) {
     return next();
   }
 
   switch (currentSchema.case) {
     case 1:
-      if (!_.get(req, 'query.user')) return next();
       const { followers, error: usersError } = await checkForFollowings(
-        { user: req.query.user, followers: res.result.json, path: 'name' },
+        { userName: req.headers.user, followers: res.result.json, path: 'name' },
       );
       if (usersError) return next(usersError);
       res.result.json = followers;
       break;
     case 2:
-      if (!_.get(req, 'body.user')) return next();
       const { followers: searchUsers, error } = await checkForFollowings(
-        { user: req.body.user, followers: res.result.json.users, path: 'account' },
+        { userName: req.headers.user, followers: res.result.json.users, path: 'account' },
       );
       if (error) return next(error);
       res.result.json.users = searchUsers;
@@ -29,13 +27,14 @@ exports.moderate = async (req, res, next) => {
   next();
 };
 
-const checkForFollowings = async ({ user, followers, path }) => {
+const checkForFollowings = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
-  const { users, error } = await getFollowingsArray({ name: user, users: names });
+  const { usersData, error } = await User.find(
+    { condition: { name: { $in: names }, users_follow: userName } },
+  );
   if (error) return { error };
   followers = _.forEach(followers, (follower) => {
-    const status = _.find(users, (User) => follower[path] === Object.keys(User)[0]);
-    follower.followsYou = status[follower[path]];
+    follower.followsYou = !!_.find(usersData, (user) => follower[path] === user.name);
   });
   return { followers };
 };
