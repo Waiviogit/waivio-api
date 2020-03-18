@@ -30,7 +30,7 @@ exports.moderate = async (req, res, next) => {
 const checkForFollowings = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
   const { usersData, error } = await User.find(
-    { condition: { name: { $in: names }, users_follow: userName } },
+    { condition: { name: { $in: names }, users_follow: userName }, sort: { wobjects_weight: -1 } },
   );
   if (error) return { error };
   followers = _.forEach(followers, (follower) => {

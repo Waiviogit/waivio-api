@@ -2026,7 +2026,15 @@
         "users" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "type" : "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "wobjects_weight": {
+                "type": "string"
+              }
+            }
           }
         },
         "hasMore" : {
@@ -2173,7 +2181,15 @@
         "followers" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "type" : "object",
+            "properties": {
+              "name" : {
+                "type" : "string"
+              },
+              "wobjects_weight" : {
+                "type" : "number"
+              }
+            }
           }
         },
         "hasMore" : {
