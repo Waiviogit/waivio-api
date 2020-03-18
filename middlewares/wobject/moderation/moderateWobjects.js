@@ -83,7 +83,7 @@ const getApp = async (req) => {
 };
 
 /*
-Validation (moderation) means that to every field in each
+Validation (checkFollowings) means that to every field in each
     returned wobject which include UpVote or DownVote will be added some key,
     which indicate some specified behavior of this field/wobject.
  */
