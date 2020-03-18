@@ -449,6 +449,12 @@
         "summary" : "Return user Blog(user authored and resteemed posts)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "userName",
           "in" : "path",
           "description" : "user name which blog needs to return",
