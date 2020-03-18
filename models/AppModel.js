@@ -13,6 +13,19 @@ const getOne = async ({ name }) => {
   }
 };
 
+const getAll = async () => {
+  try {
+    const apps = await App.find().lean();
+
+    if (!apps || !apps.length) {
+      return { error: { status: 404, message: 'App not found!' } };
+    }
+    return { apps };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const aggregate = async (pipeline) => {
   try {
     const result = await App.aggregate(pipeline);
@@ -26,4 +39,13 @@ const aggregate = async (pipeline) => {
   }
 };
 
-module.exports = { getOne, aggregate };
+const updateOne = async ({ name, updData }) => {
+  try {
+    const result = await App.updateOne({ name }, updData);
+    return { result: !!result.nModified };
+  } catch (error) {
+    return { error };
+  }
+};
+
+module.exports = { getOne, aggregate, updateOne, getAll };
