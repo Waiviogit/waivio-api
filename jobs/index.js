@@ -1,9 +1,9 @@
-const { iaExpertsJob } = require('./collectAppExperts');
+const { collectExpertsJob } = require('./collectAppExperts');
 const { objTypeExpertsJob } = require('./updateObjTypeExperts');
 const { userFollowingsJob } = require('./updateUserFollowingsJob');
 const { topWobjJob } = require('./updateTopWobjJob');
 
 objTypeExpertsJob.start();
-iaExpertsJob.start();
+collectExpertsJob.start();
 userFollowingsJob.start();
 topWobjJob.start();
