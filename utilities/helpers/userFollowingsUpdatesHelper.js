@@ -1,8 +1,7 @@
-const { CronJob } = require('cron');
 const { User, WObject } = require('database').models;
 const _ = require('lodash');
 
-const refreshUsersCounts = async () => {
+exports.refreshUsersCounts = async () => {
   // update users which has no any posts by last 24 hours
   await User.updateMany(
     { last_posts_count: 0 },
@@ -46,7 +45,7 @@ const refreshUsersCounts = async () => {
   console.log(`Users posts count updates: ${successCount}`);
 };
 
-const refreshWobjectsCounts = async () => {
+exports.refreshWobjectsCounts = async () => {
   // update wobjects which has no any posts by last 24 hours
   await WObject.updateMany(
     { last_posts_count: 0 },
@@ -122,11 +121,3 @@ const decreasedSummaryCount = (arrCounts, summaryCount) => (
  * @returns {Number} Count of post by last hour
  */
 const findLastHourCount = (arrCounts, summaryCount) => summaryCount - _.sum(arrCounts);
-
-const job = new CronJob('0 * * * *', async () => {
-  console.log('Start updating last posts counts!');
-  await refreshUsersCounts();
-  await refreshWobjectsCounts();
-}, null, true, null, null, false);
-
-job.start();

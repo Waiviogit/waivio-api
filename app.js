@@ -7,6 +7,7 @@ const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const { moderateWobjects, moderateUsers, fillPostAdditionalInfo } = require('middlewares');
 const swaggerDocument = require('./swagger');
+require('jobs');
 
 const session = createNamespace('request-session');
 const app = express();

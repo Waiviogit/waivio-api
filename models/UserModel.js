@@ -105,7 +105,9 @@ exports.search = async ({ string, skip, limit }) => {
   try {
     return {
       users: await UserModel
-        .find({ name: { $regex: `^${string}`, $options: 'i' } }, { _id: 0, name: 1, wobjects_weight: 1 })
+        .find({ name: { $regex: `^${string}`, $options: 'i' } }, {
+          _id: 0, name: 1, wobjects_weight: 1, followers_count: 1,
+        })
         .sort({ wobjects_weight: -1 })
         .skip(skip)
         .limit(limit)
