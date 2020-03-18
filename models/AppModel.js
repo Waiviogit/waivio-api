@@ -26,4 +26,13 @@ const aggregate = async (pipeline) => {
   }
 };
 
-module.exports = { getOne, aggregate };
+const updateOne = async ({ name, updData }) => {
+  try {
+    const result = await App.updateOne({ name }, updData);
+    return { result: !!result.nModified };
+  } catch (error) {
+    return { error };
+  }
+};
+
+module.exports = { getOne, aggregate, updateOne };

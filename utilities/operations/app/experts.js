@@ -8,7 +8,7 @@ const getAppWobjects = async ({ name }) => {
   return { supported_objects: _.get(app, 'supported_objects') || [] };
 };
 
-module.exports = async ({ name, skip, limit }) => {
+exports.collect = async ({ name, skip, limit }) => {
   // eslint-disable-next-line camelcase
   const { supported_objects, error } = await getAppWobjects({ name });
 
@@ -23,5 +23,17 @@ module.exports = async ({ name, skip, limit }) => {
   ]);
 
   if (aggregateError) return { error: aggregateError };
-  return { users: result };
+  const { result: updResult, error: updError } = await App.updateOne(
+    { name, updData: { $set: { top_users: result } } },
+  );
+  if (updError) return { error: updError };
+  return { result: updResult };
+};
+
+
+exports.get = async ({ name, skip, limit }) => {
+  const { app, error } = await App.getOne({ name });
+
+  if (error) return { error };
+  return { users: _.slice(app.top_users, skip, limit + skip) };
 };
