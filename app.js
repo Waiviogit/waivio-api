@@ -34,7 +34,7 @@ app.use('/', fillPostAdditionalInfo.fill);
 app.use('/', moderateWobjects.moderate);
 // Last middleware which send data from "res.result.json" to client
 // Moderate users for check followings for some routes
-app.use('/', checkUserFollowings.moderate);
+app.use('/', checkUserFollowings.check);
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
   res.status(res.result.status || 200).json(res.result.json);
