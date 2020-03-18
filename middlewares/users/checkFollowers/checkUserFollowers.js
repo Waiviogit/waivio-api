@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { User } = require('models');
-const { schema } = require('middlewares/users/checkFollowings/schema');
+const { schema } = require('middlewares/users/checkFollowers/schema');
 
 exports.check = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
@@ -11,14 +11,14 @@ exports.check = async (req, res, next) => {
 
   switch (currentSchema.case) {
     case 1:
-      const { followers, error: usersError } = await checkForFollowings(
+      const { followers, error: usersError } = await checkForFollowers(
         { userName: req.headers.user, followers: res.result.json, path: 'name' },
       );
       if (usersError) return next(usersError);
       res.result.json = followers;
       break;
     case 2:
-      const { followers: searchUsers, error } = await checkForFollowings(
+      const { followers: searchUsers, error } = await checkForFollowers(
         { userName: req.headers.user, followers: res.result.json.users, path: 'account' },
       );
       if (error) return next(error);
@@ -27,7 +27,7 @@ exports.check = async (req, res, next) => {
   next();
 };
 
-const checkForFollowings = async ({ userName, followers, path }) => {
+const checkForFollowers = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
   const { usersData, error } = await User.find(
     { condition: { name: { $in: names }, users_follow: userName }, sort: { wobjects_weight: -1 } },
