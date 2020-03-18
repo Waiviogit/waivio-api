@@ -23,7 +23,7 @@ const experts = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await AppOperations.experts(value);
+  const { users, error } = await AppOperations.experts.get(value);
 
   if (error) return next(error);
   res.status(200).json(users);

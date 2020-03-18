@@ -1,8 +1,7 @@
-const { CronJob } = require('cron');
 const { WObject, ObjectType } = require('../../../database').models;
 const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('../../constants');
 
-const updateObjectTypes = async (isLog = false) => {
+exports.updateObjectTypes = async (isLog = false) => {
   const cursor = ObjectType.find().cursor({ batchSize: 1000 });
 
   await cursor.eachAsync(async (doc) => {
@@ -32,12 +31,3 @@ const updateObjectTypes = async (isLog = false) => {
     }
   });
 };
-
-const job = new CronJob('0 */30  * * * *', async () => {
-  // update TOP wobjects for each ObjectType every 30 minutes
-  await updateObjectTypes();
-  console.log('Updating top wobjects by ObjectType finished!');
-}, null, true, null, null, false);
-
-job.start();
-module.exports = updateObjectTypes;
