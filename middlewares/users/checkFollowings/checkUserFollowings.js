@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { User } = require('models');
-const { schema } = require('middlewares/users/moderation/schema');
+const { schema } = require('middlewares/users/checkFollowings/schema');
 
 exports.moderate = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
