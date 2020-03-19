@@ -5,7 +5,7 @@ const { schema } = require('middlewares/users/checkFollowers/schema');
 exports.check = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
 
-  if (!currentSchema || !req.headers.user) {
+  if (!currentSchema || !req.headers.following) {
     return next();
   }
 
@@ -23,6 +23,7 @@ exports.check = async (req, res, next) => {
       );
       if (error) return next(error);
       res.result.json.users = searchUsers;
+      break;
   }
   next();
 };
