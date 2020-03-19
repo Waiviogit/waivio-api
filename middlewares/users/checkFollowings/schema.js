@@ -1,6 +1,6 @@
 exports.schema = [
   {
-    path: '/users',
+    path: '/user/:userName/followers',
     method: 'GET',
     case: 1,
   },
