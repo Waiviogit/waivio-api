@@ -11,6 +11,7 @@ exports.indexSchema = Joi.object().keys({
 exports.showSchema = Joi.object().keys({
   userName: Joi.string(),
   name: Joi.string().required(),
+  simplified: Joi.boolean().default(false),
   wobjLimit: Joi.number().integer().min(0).default(30),
   wobjSkip: Joi.number().integer().min(0).default(0),
   sort: Joi.string().valid('weight', 'proximity').default('weight'),
