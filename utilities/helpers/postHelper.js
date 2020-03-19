@@ -58,10 +58,6 @@ const getPostsByCategory = async (data) => {
 
   await Promise.all(posts.map(async (post) => {
     if (post && post.author && post.permlink) {
-      const wobjsResult = await getPostObjects(post.author, post.permlink);
-
-      post.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
-      post.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
       const dbPost = dbPosts.find((p) => p.author === post.author && p.permlink === post.permlink);
       post = await mergePostData(post, dbPost);
     }

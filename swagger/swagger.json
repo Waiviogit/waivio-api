@@ -53,6 +53,12 @@
           "required" : false,
           "type" : "number"
         }, {
+          "name" : "user",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "sample",
           "in" : "query",
           "description" : "flag to return random 5 users from TOP 100(limit and skip in this case ignored)",
@@ -294,6 +300,12 @@
         "summary" : "Return wobjects which user is following",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "userName",
           "in" : "path",
           "description" : "user name what objects needs to return",
@@ -361,6 +373,12 @@
         "summary" : "Get user FEED",
         "description" : "Get list posts depends on user followings (on users and wobjects)",
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "userName",
           "in" : "path",
           "description" : "user name what feed needs to return",
@@ -395,6 +413,12 @@
         "summary" : "Return all wobjects in which user has weight",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "userName",
           "in" : "path",
           "description" : "user name what objects needs to return",
@@ -425,6 +449,12 @@
         "summary" : "Return user Blog(user authored and resteemed posts)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "userName",
           "in" : "path",
           "description" : "user name which blog needs to return",
@@ -688,6 +718,12 @@
         "summary" : "Return list of waivio objects, all or by specified author_permlink(author_permlink)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**limit** - limit of returned wobjects(by default - 30),\n**skip** - count of skipping wobjects(for infinite scroll, default 0),\n**user_limit** - count of users to show(by default 5), \n**locale** - locale of fields(by default - *en-US*.), \n**author_permlinks** - return wobjects by specified author_permlinks,\n**object_types** - list object types with witch objects to returning,\n**exclude_object_types** - list object types without witch objects to returning, (if use **object_types** then ignore **exclude_object_types**)\n**required_fields** - which fields add to returning objects,\n**sample** - boolean flag, to return only 5 from top 100 wobjects\n**map** - object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n",
@@ -712,6 +748,12 @@
         "summary" : "Return info about specified waivio object",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of object to return",
@@ -750,6 +792,12 @@
         "summary" : "Return posts for specified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of object to return posts",
@@ -817,6 +865,12 @@
         "summary" : "Return all fields for spicified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
@@ -850,6 +904,12 @@
         "summary" : "Return all fields with name 'galleryItem'",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
@@ -863,6 +923,37 @@
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/inline_response_200_15"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/list" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return 'list' of specified waivio-wobject",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_12"
               }
             }
           }
@@ -941,6 +1032,12 @@
         "summary" : "Search objects by prefix of \"name\" field",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n",
@@ -968,6 +1065,12 @@
         "summary" : "Return feed of all wobjects togetger",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**limit** - Count of posts to return (*default* 30), \n**skip** - Count of skipping posts infinite scroll(*optional*)\n",
@@ -1027,6 +1130,12 @@
         "summary" : "Return post details",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "author",
           "in" : "path",
           "description" : "Author of post",
@@ -1089,6 +1198,12 @@
         "summary" : "Return list of posts by some category(trending, hot, created, blog)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**limit** - Count of posts to return (*default* 30),\n**skip** - count of posts to skip(use for infinite scroll),\n**category** - Category of posts(trending, created, hot, blog, promoted).\n",
@@ -1110,12 +1225,51 @@
         }
       }
     },
+    "/api/posts/getMany" : {
+      "post" : {
+        "tags" : [ "post" ],
+        "summary" : "Return list of posts by authors and permlinks",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "in" : "body",
+          "name" : "params",
+          "description" : "Array of authors and permlinks",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/definitions/params_20"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/objectTypes" : {
       "post" : {
         "tags" : [ "object_type" ],
         "summary" : "Return list of Object Types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**limit** - Count of object_typs to return (*default* 30),\n**skip** - Count of skipping object_type(for infinite scroll),\n**wobjects_count** - Count of related wobjects to return(default 3)\n",
@@ -1143,6 +1297,12 @@
         "summary" : "Return Object Type details",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "name" : "name",
           "in" : "path",
           "description" : "Name of Object Type",
@@ -1216,6 +1376,12 @@
         "summary" : "Search by name on Object Types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**search_string** - Name or part of name Object Type\n**limit** - Count of object_typs to return (*default* 30),\n**skip** - Count of skipping object_type(for infinite scroll), *required*\n",
@@ -1249,14 +1415,27 @@
         "summary" : "Search by wobjects, users, object-types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**string** - String to search\n**userLimit** - Count of users to return (*default* 20),\n**wobjectsLimit** - Count of wobjects to return (*default* 20),\n**objectsTypeLimit** - Count of object types to return (*default* 20),\n**sortByApp** - Change priority of returning wobjects by cruical to specified App\n",
+          "description" : "**string** - String to search\n**userLimit** - Count of users to return (*default* 20),\n**wobjectsLimit** - Count of wobjects to return (*default* 20),\n**objectsTypeLimit** - Count of object types to return (*default* 20),\n**sortByApp** - Change priority of returning wobjects by cruical to specified App\n **user** - User name for check his followings",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_17"
           }
-        } ],
+        },{
+          "name" : "user",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        }
+        ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1273,6 +1452,12 @@
         "summary" : "Upload image and get link",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "**image** - Image in base64 string\n",
@@ -1345,6 +1530,50 @@
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/inline_response_200_13"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/app/{name}/hashtags" : {
+      "get" : {
+        "tags" : [ "app" ],
+        "summary" : "Get specified hashtags by app",
+        "description" : "If app has \"supported_hashtags\" => return array of this wobjects",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "name",
+          "in" : "path",
+          "description" : "Name of registered \"App\" on waivio",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of hashtags to return(default 30)",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count of hashtags to skip, for infinite scroll(default 0)",
+          "required" : false,
+          "type" : "number"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/inline_response_200_12"
               }
             }
           }
@@ -2395,6 +2624,20 @@
         },
         "category" : {
           "type" : "string"
+        }
+      }
+    },
+    "params_20" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          }
         }
       }
     },

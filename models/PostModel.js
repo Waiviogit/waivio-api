@@ -160,7 +160,12 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
  */
 exports.getManyPosts = async (postsRefs) => {
   try {
-    return { posts: await PostModel.find({ $or: [...postsRefs] }).lean() };
+    return {
+      posts: await PostModel
+        .find({ $or: [...postsRefs] })
+        .populate({ path: 'fullObjects', select: '-latest_posts' })
+        .lean(),
+    };
   } catch (error) {
     return { error };
   }

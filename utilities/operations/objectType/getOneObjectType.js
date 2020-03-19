@@ -40,6 +40,7 @@ const getWobjWithFilters = async ({
         distanceField: 'proximity',
         maxDistance: filter.map.radius,
         spherical: true,
+        limit,
       },
     });
     delete filter.map;

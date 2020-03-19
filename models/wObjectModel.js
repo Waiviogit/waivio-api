@@ -63,6 +63,7 @@ const getAll = async (data) => {
         distanceField: 'distance',
         maxDistance: data.map.radius ? parseInt(data.map.radius, 10) : 10000,
         spherical: true,
+        limit: data.limit,
       },
     });
   }
