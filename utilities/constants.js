@@ -84,3 +84,8 @@ exports.COMMENT_REF_TYPES = {
 };
 exports.MAX_IMPORTING_USERS = 20;
 exports.GALLERY_WOBJECT_ID = 'wobject_id';
+
+exports.HOT_NEWS_CACHE_PREFIX = 'hot_locale_cache';
+exports.HOT_NEWS_CACHE_SIZE = 1000;
+exports.TREND_NEWS_CACHE_PREFIX = 'trend_locale_cache';
+exports.TREND_NEWS_CACHE_SIZE = 1000;

@@ -48,7 +48,7 @@ const makeConditions = ({ category, user_languages }) => {
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages,
+  category, skip, limit, user_languages, onlyIds = false,
 }) => {
   const { cond, sort } = makeConditions({ category, user_languages });
   let posts = [];
@@ -60,6 +60,7 @@ module.exports = async ({
       .skip(skip)
       .limit(limit)
       .populate({ path: 'fullObjects', select: '-latest_posts' })
+      .select(onlyIds ? { _id: 1 } : {})
       .lean();
   } catch (error) {
     return { error };

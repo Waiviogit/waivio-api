@@ -126,10 +126,11 @@ module.exports = async ({
   });
   if (wobjError) return { error: wobjError };
   const { user } = await User.getOne(userName);
+
   switch (name) {
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj, index) => {
-        if (simplified && filter) {
+        if (simplified) {
           wobj.fields = _.filter(wobj.fields, (field) => field.name === 'name' || field.name === 'avatar');
           wobj = _.pick(wobj, ['fields', 'author_permlink', 'map']);
         }
