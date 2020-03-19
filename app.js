@@ -5,7 +5,9 @@ const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
-const { moderateWobjects, checkUserFollowings, fillPostAdditionalInfo } = require('middlewares');
+const {
+  moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, checkUserFollowings,
+} = require('middlewares');
 const swaggerDocument = require('./swagger');
 require('jobs');
 
@@ -33,7 +35,9 @@ app.use('/', fillPostAdditionalInfo.fill);
 // Moderate wobjects depend on app moderators before send
 app.use('/', moderateWobjects.moderate);
 // Last middleware which send data from "res.result.json" to client
-// Moderate users for check followings for some routes
+// Check users for followers for some routes
+app.use('/', checkUserFollowers.check);
+// Check users for followings for some routes
 app.use('/', checkUserFollowings.check);
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
