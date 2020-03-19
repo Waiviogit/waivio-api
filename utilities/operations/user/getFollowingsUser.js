@@ -17,6 +17,7 @@ exports.getAll = async ({ name, skip, limit }) => {
     .map((user) => ({
       name: user.name,
       wobjects_weight: user.wobjects_weight,
+      youFollows: true,
     }))
     .slice(0, limit)
     .value();

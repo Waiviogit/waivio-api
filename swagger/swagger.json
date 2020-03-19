@@ -2039,6 +2039,9 @@
               },
               "wobjects_weight": {
                 "type": "string"
+              },
+              "youFollows": {
+                "type": "boolean"
               }
             }
           }
