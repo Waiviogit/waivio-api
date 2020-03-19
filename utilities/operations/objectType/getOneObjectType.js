@@ -117,10 +117,9 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort, userName,
+  name, filter, wobjLimit, wobjSkip, sort, userName, simplified,
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
-
   if (objTypeError) return { error: objTypeError };
   const { wobjects, error: wobjError } = await getWobjWithFilters({
     objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort,
@@ -129,9 +128,16 @@ module.exports = async ({
   const { user } = await User.getOne(userName);
   switch (name) {
     case 'restaurant':
-      await Promise.all(wobjects.map(async (wobj) => {
+      await Promise.all(wobjects.map(async (wobj, index) => {
+        if (simplified && filter) {
+          wobj.fields = _.filter(wobj.fields, (field) => field.name === 'name' || field.name === 'avatar');
+          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map']);
+        }
         const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
-        if (error || !result.length) return;
+        if (error || !result.length) {
+          wobjects[index] = wobj;
+          return;
+        }
         const eligibleCampaigns = _.map(result,
           (campaign) => _.every(objectTypeHelper.requirementFilters(campaign, user, true),
             (cond) => !!cond));
@@ -141,6 +147,7 @@ module.exports = async ({
             max_reward: (_.maxBy(result, 'reward')).reward,
           };
         }
+        wobjects[index] = wobj;
       }));
       break;
     case 'dish':
