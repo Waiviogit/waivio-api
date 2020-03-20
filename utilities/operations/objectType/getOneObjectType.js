@@ -40,10 +40,10 @@ const getWobjWithFilters = async ({
         distanceField: 'proximity',
         maxDistance: filter.map.radius,
         spherical: true,
-        limit,
       },
     });
     delete filter.map;
+    limit > 100 ? aggregationPipeline[0].$geoNear.limit = limit : null;
   }
   aggregationPipeline.push({
     $match: {
