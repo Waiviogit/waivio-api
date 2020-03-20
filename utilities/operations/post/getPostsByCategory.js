@@ -35,8 +35,8 @@ const makeConditions = ({ category, user_languages }) => {
       break;
     case 'trending':
       cond = {
-        author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_TRENDING_FEED) },
+        author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
       };
       sort = { net_rshares: -1 };
@@ -48,7 +48,7 @@ const makeConditions = ({ category, user_languages }) => {
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, onlyIds = false,
+  category, skip, limit, user_languages, keys,
 }) => {
   const { cond, sort } = makeConditions({ category, user_languages });
   let posts = [];
@@ -60,7 +60,7 @@ module.exports = async ({
       .skip(skip)
       .limit(limit)
       .populate({ path: 'fullObjects', select: '-latest_posts' })
-      .select(onlyIds ? { _id: 1 } : {})
+      .select(keys || {})
       .lean();
   } catch (error) {
     return { error };

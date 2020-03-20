@@ -28,7 +28,7 @@ exports.deleteImportedUser = (userName) => importUserClient.del(`import_user:${u
  * @param locale {String} locale of feed
  * @returns {Promise<void>}
  */
-exports.updateTrendLocaleFeedCache = async (ids, locale) => {
+exports.updateTrendLocaleFeedCache = async ({ ids, locale }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache(TREND_NEWS_CACHE_PREFIX);
   return mainFeedsCacheClient.rpushAsync([`${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
@@ -40,7 +40,7 @@ exports.updateTrendLocaleFeedCache = async (ids, locale) => {
  * @param locale {String} locale of feed
  * @returns {Promise<void>}
  */
-exports.updateHotLocaleFeedCache = async (ids, locale) => {
+exports.updateHotLocaleFeedCache = async ({ ids, locale }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache(HOT_NEWS_CACHE_PREFIX);
   return mainFeedsCacheClient.rpushAsync([`${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
@@ -55,15 +55,6 @@ async function clearFeedLocaleCache(prefix) {
   const keys = LANGUAGES.map((lang) => `${prefix}:${lang}`);
   return mainFeedsCacheClient.del(...keys);
 }
-
-(async () => {
-  const arr = [];
-  for (let i = 0; i < 500; i++) {
-    arr.push(i.toString(16));
-  }
-  await this.updateHotLocaleFeedCache(arr, 'en-US');
-  // await this.clearFeedLocaleCache(HOT_NEWS_CACHE_PREFIX);
-})();
 
 function validateUpdateNewsCache(ids, locale) {
   if (!ids || !locale) {
