@@ -6,4 +6,4 @@ exports.updateHotTrendCache = new CronJob('0 */30 * * * *', async () => {
   // update HOT/TREND feed cache every 30 minutes
   await updateCacheOps.updateFeedsCache();
   console.log('Updating HOT/TREND feed cache finished!');
-}, null, true, null, null, true);
+}, null, true, null, null, false);

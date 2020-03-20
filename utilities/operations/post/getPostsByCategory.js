@@ -1,7 +1,11 @@
-const { DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE } = require('utilities/constants');
+const _ = require('lodash');
+const {
+  DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
+  HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE,
+} = require('utilities/constants');
 const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
-const _ = require('lodash');
+const hotTrandGetter = require('./feedCache/hotTrandGetter');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();
@@ -50,6 +54,12 @@ module.exports = async ({
   // eslint-disable-next-line camelcase
   category, skip, limit, user_languages, keys,
 }) => {
+  // try to get posts from cache
+  const cachedPosts = await getFromCache({
+    skip, limit, user_languages, category,
+  });
+  if (cachedPosts) return { posts: cachedPosts };
+
   const { cond, sort } = makeConditions({ category, user_languages });
   let posts = [];
 
@@ -66,4 +76,25 @@ module.exports = async ({
     return { error };
   }
   return { posts };
+};
+
+const getFromCache = async ({
+  skip, limit, user_languages: locales, category,
+}) => {
+  let res;
+  switch (category) {
+    case 'hot':
+      if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
+        res = await hotTrandGetter.getHot({ skip, limit, locales });
+      }
+      break;
+    case 'trending':
+      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
+        res = await hotTrandGetter.getTrend({ skip, limit, locales });
+      }
+      break;
+  }
+  if (_.get(res, 'posts.length')) {
+    return res.posts;
+  }
 };

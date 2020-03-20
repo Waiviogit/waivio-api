@@ -1,4 +1,4 @@
-const { getPostsByCategory } = require('utilities/operations/post');
+const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
 const { redisSetter } = require('utilities/redis');
 const { LANGUAGES, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE } = require('utilities/constants');
 
