@@ -131,7 +131,7 @@ module.exports = async ({
       await Promise.all(wobjects.map(async (wobj, index) => {
         if (simplified && filter) {
           wobj.fields = _.filter(wobj.fields, (field) => field.name === 'name' || field.name === 'avatar');
-          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map']);
+          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
         }
         const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
         if (error || !result.length) {
