@@ -5,7 +5,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/",
+    "nodeUrl": "https://anyx.io",
     "waivio_auth": {
       "host": "www.waivio.com",
       "baseUrl": "auth",
@@ -24,7 +24,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/",
+    "nodeUrl": "https://anyx.io",
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
@@ -43,7 +43,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://api.steemit.com/",
+    "nodeUrl": "https://anyx.io",
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
