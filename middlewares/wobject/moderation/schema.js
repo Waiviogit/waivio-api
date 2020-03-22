@@ -57,12 +57,6 @@ exports.schema = [
     case: 4,
   },
   {
-    path: '/user/:userName/objects_feed',
-    method: 'POST',
-    case: 4,
-    wobjects_path: 'wobjects',
-  },
-  {
     path: '/user/:userName/objects_shares',
     method: 'POST',
     case: 3,
@@ -88,6 +82,12 @@ exports.schema = [
     case: 4,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/posts/getMany',
+    method: 'POST',
+    case: 4,
+    wobjects_path: 'wobjects',
+  },
   // object_type controller
   {
     path: '/objectTypes',
@@ -106,5 +106,12 @@ exports.schema = [
     method: 'POST',
     case: 3,
     wobjects_path: 'related_wobjects',
+  },
+  // app controller
+  {
+    path: '/app/:name/hashtags',
+    method: 'GET',
+    case: 3,
+    wobjects_path: 'wobjects',
   },
 ];

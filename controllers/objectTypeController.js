@@ -25,6 +25,7 @@ const show = async (req, res, next) => {
     wobjSkip: req.body.wobjects_skip,
     filter: req.body.filter,
     sort: req.body.sort,
+    simplified: req.body.simplified,
   }, validators.objectType.showSchema, next);
 
   if (!value) return;

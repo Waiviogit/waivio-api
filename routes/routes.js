@@ -93,6 +93,8 @@ userRoutes.route('/import_steem_user')
 // region Post
 postRoutes.route('/post/:author/:permlink')
   .get(PostController.show);
+postRoutes.route('/posts/getMany')
+  .post(PostController.getManyPosts);
 postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')
@@ -103,6 +105,8 @@ appRoutes.route('/app/:appName')
   .get(AppController.show);
 appRoutes.route('/app/:appName/experts')
   .get(AppController.experts);
+appRoutes.route('/app/:name/hashtags')
+  .get(AppController.hashtags);
 appRoutes.route('/image')
   .post(ImageController.saveImage);
 // endregion

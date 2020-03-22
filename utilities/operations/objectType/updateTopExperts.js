@@ -1,6 +1,5 @@
 const { WObject, ObjectType, UserWobjects } = require('database').models;
 const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('utilities/constants');
-const { CronJob } = require('cron');
 const _ = require('lodash');
 
 const getObjectTypeWobjects = async (name) => {
@@ -44,7 +43,7 @@ const getExpertsByType = async (objectTypeName) => {
   return { experts };
 };
 
-const updateObjectTypeExperts = async () => {
+exports.updateObjectTypeExperts = async () => {
   const cursor = ObjectType.find().cursor({ batchSize: 1000 });
   let successCount = 0;
 
@@ -63,12 +62,3 @@ const updateObjectTypeExperts = async () => {
   });
   console.log(`${successCount} Object Types successfully updated with experts`);
 };
-
-const job = new CronJob('0 0  */12 * * *', async () => {
-  // update TOP experts for each ObjectType every 12 hours
-  await updateObjectTypeExperts();
-}, null, true, null, null, false);
-
-job.start();
-
-module.exports = updateObjectTypeExperts;
