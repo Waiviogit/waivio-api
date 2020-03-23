@@ -57,5 +57,24 @@
       "mainFeedsCache": 10
     },
     "swaggerHost": "localhost:3000"
+  },
+  "test": {
+    "db": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waiviotest"
+    },
+    "nodeUrl": "https://anyx-test.io",
+    "waivio_auth": {
+      "host": "localhost:4500",
+      "baseUrl": "auth",
+      "validateTokenPath": "validate_auth_token"
+    },
+    "redis": {
+      "wobjRefs": 7,
+      "importUser": 7,
+      "mainFeedsCache": 7
+    },
+    "swaggerHost": "localhost:3000"
   }
 }
