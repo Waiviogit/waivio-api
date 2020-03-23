@@ -66,6 +66,8 @@ exports.getTrend = async ({ skip, limit, locales }) => {
  * @returns {number} For e.x. "X". X = 0 if equal, X<0 if a larger, X>0 if b larger
  */
 function idComparator(a, b) {
+  // in one of input items miss => return another item
+  if (!a || !b) return a || b;
   const aNum = parseInt(a.split('_')[0], 10);
   const bNum = parseInt(b.split('_')[0], 10);
   return bNum - aNum;
@@ -96,13 +98,24 @@ function getTopFromArrays(arrays, topCount) {
   const indexes = _.times(arrays.length, () => 0);
   const result = [];
   while (result.length < topCount) {
-    const topValues = indexes.map((value, idx) => arrays[idx][value]);
+    const topValues = indexes.map((value, idx) => _.get(arrays, `[${idx}][${value}]`));
+
+    /* if every item in "topValues" is undefined/null
+    it means that all arrays now is empty.
+    Break the loop and return results */
+    if (_.every(topValues, _.isNil)) break;
 
     // get index of array with current largest value
     const largestIndex = findLargestIndex(topValues, idComparator);
-    result.push(
-      obtainPostId(arrays[largestIndex][indexes[largestIndex]]),
-    );
+    /*
+    arrays[largestIndex] => return index of feed by locale with largest item currently handling
+    indexes[largestIndex] => return current handling index of item in specified feed locale
+     */
+    const topValue = _.get(arrays, `[${largestIndex}][${indexes[largestIndex]}]`);
+    if (topValue) {
+      result.push(obtainPostId(topValue));
+    }
+
     indexes[largestIndex] += 1;
   }
   return result;
