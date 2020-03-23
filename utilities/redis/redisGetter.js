@@ -42,6 +42,6 @@ exports.getTrendFeedCache = async ({ limit = 10, locale }) => {
   if (!locale) locale = 'en-US';
   if (limit > TREND_NEWS_CACHE_SIZE) return { error: `skip param should be less than ${TREND_NEWS_CACHE_SIZE}` };
   return {
-    ids: await mainFeedsCacheClient.lrangeAsync(`${TREND_NEWS_CACHE_PREFIX}:${locale}`, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
   };
 };
