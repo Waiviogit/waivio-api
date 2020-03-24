@@ -12,6 +12,13 @@ exports.schema = [
     field_name: 'account',
   },
   {
+    path: '/users/search',
+    method: 'GET',
+    case: 1,
+    fields_path: 'users',
+    field_name: 'account',
+  },
+  {
     path: '/user/:userName/following_users',
     method: 'GET',
     case: 2,

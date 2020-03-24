@@ -12,7 +12,11 @@ exports.check = async (req, res, next) => {
   switch (currentSchema.case) {
     case 1:
       const { followers, error: usersError } = await checkForFollowers(
-        { userName: req.headers.following, followers: res.result.json, path: 'name' },
+        {
+          userName: req.headers.following,
+          followers: res.result.json,
+          path: currentSchema.field_name,
+        },
       );
       if (usersError) return next(usersError);
       res.result.json = followers;
