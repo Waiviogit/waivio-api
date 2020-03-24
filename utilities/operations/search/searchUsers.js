@@ -19,12 +19,12 @@ exports.searchUsers = async ({ string, limit, skip }) => {
     users.splice(0, 0, user);
   }
   return {
-    users: users.map((u) => (
+    users: _.take(users.map((u) => (
       {
         account: u.name,
         wobjects_weight: u.wobjects_weight,
         followers_count: u.followers_count,
-      })),
+      })), limit),
     usersCount,
     error: error || countError,
   };
