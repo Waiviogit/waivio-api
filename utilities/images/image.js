@@ -48,6 +48,7 @@ class Image {
     switch (number) {
       case 3:
         return 180;
+      case 1:
       case 6:
         return 90;
       case 8:
