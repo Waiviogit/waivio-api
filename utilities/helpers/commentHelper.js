@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Comment } = require('models');
+const { Comment, User } = require('models');
 const { postsUtil } = require('utilities/steemApi');
 
 /**
@@ -20,7 +20,7 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
 
     dbComments = dbComm;
   }
-  const resComments = steemComments.map((stComment) => {
+  let resComments = steemComments.map((stComment) => {
     const dbComm = _.find(dbComments, { ..._.pick(stComment, ['author', 'permlink']) });
 
     if (dbComm) {
@@ -28,6 +28,14 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
       stComment.guestInfo = dbComm.guestInfo;
     }
     return stComment;
+  });
+  const authors = _.map(resComments,
+    (comment) => (comment.guestInfo ? comment.guestInfo.userId : comment.author));
+  const { usersData } = await User.find({ condition: { name: { $in: authors } } });
+  resComments = _.forEach(resComments, (comment) => {
+    const authorName = comment.guestInfo ? comment.guestInfo.userId : comment.author;
+    const userInfo = _.find(usersData, (user) => user.name === authorName);
+    comment.author_reputation = _.get(userInfo, 'wobjects_weight', 0);
   });
 
   return resComments;

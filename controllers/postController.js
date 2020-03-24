@@ -1,4 +1,6 @@
-const { getPostsByCategory, getSinglePost, getPostComments, getManyPosts } = require('utilities/operations').post;
+const {
+  getPostsByCategory, getSinglePost, getPostComments, getManyPosts,
+} = require('utilities/operations').post;
 const validators = require('controllers/validators');
 
 exports.show = async (req, res, next) => {

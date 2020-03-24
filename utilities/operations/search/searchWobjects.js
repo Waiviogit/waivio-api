@@ -95,5 +95,9 @@ exports.searchWobjects = async ({
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wObject);
   }
-  return { wobjects, wobjectsCounts, error: getWobjCountError || getWobjError };
+  return {
+    wobjects: _.take(wobjects, limit),
+    wobjectsCounts,
+    error: getWobjCountError || getWobjError,
+  };
 };
