@@ -72,7 +72,7 @@ exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
 exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
 exports.LOW_PRIORITY_STATUS_FLAGS = ['relisted', 'unavailable'];
 exports.DAYS_FOR_HOT_FEED = 3;
-exports.DAYS_FOR_TRENDING_FEED = 7;
+exports.DAYS_FOR_TRENDING_FEED = 3;
 
 // some fixed average Waivio rate of user
 exports.MEDIAN_USER_WAIVIO_RATE = Number(process.env.MEDIAN_USER_WAIVIO_RATE) || 25000;
@@ -84,3 +84,8 @@ exports.COMMENT_REF_TYPES = {
 };
 exports.MAX_IMPORTING_USERS = 20;
 exports.GALLERY_WOBJECT_ID = 'wobject_id';
+
+exports.HOT_NEWS_CACHE_PREFIX = 'hot_locale_cache';
+exports.HOT_NEWS_CACHE_SIZE = 1000;
+exports.TREND_NEWS_CACHE_PREFIX = 'trend_locale_cache';
+exports.TREND_NEWS_CACHE_SIZE = 1000;
