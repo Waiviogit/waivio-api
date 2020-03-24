@@ -33,6 +33,7 @@ const makeConditions = ({ category, user_languages }) => {
     case 'hot':
       cond = {
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_HOT_FEED) },
+        author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
       };
       sort = { children: -1 };
