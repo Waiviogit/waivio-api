@@ -12,6 +12,7 @@ exports.getPostsByCategorySchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).max(50)
     .default(20),
   user_languages: Joi.array().items(Joi.string().valid([...LANGUAGES])).default(['ru-RU']),
+  forApp: Joi.string(),
 });
 
 exports.getPostComments = Joi.object().keys({

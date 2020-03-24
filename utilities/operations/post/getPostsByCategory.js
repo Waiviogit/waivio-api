@@ -21,7 +21,7 @@ const objectIdFromDaysBefore = (daysCount) => {
 };
 
 // eslint-disable-next-line camelcase
-const makeConditions = ({ category, user_languages }) => {
+const makeConditions = ({ category, user_languages, forApp }) => {
   let cond = {};
   let sort = {};
 
@@ -48,12 +48,13 @@ const makeConditions = ({ category, user_languages }) => {
       break;
   }
   if (!_.isEmpty(user_languages)) cond.language = { $in: user_languages };
+  if (forApp) cond.blocked_for_apps = { $ne: forApp };
   return { cond, sort };
 };
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, keys,
+  category, skip, limit, user_languages, keys, forApp,
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
@@ -61,7 +62,7 @@ module.exports = async ({
   });
   if (cachedPosts) return { posts: cachedPosts };
 
-  const { cond, sort } = makeConditions({ category, user_languages });
+  const { cond, sort } = makeConditions({ category, user_languages, forApp });
   let posts = [];
 
   try {
