@@ -3,6 +3,7 @@ exports.schema = [
     path: '/users',
     method: 'GET',
     case: 1,
+    field_name: 'name',
   },
   {
     path: '/generalSearch',
