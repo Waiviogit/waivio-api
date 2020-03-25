@@ -9,7 +9,7 @@ exports.up = async function up(done) {
 
   await cursor.eachAsync(async (doc) => {
     if (!doc.objects_follow.length) return;
-    const result = await WObject.find({ author_permlink: { $in: [doc.objects_follow] } }).lean();
+    const result = await WObject.find({ author_permlink: { $in: doc.objects_follow } }).lean();
     const existWobjects = _.map(result, (object) => object.author_permlink);
     await User.updateOne({ name: doc.name }, { $set: { objects_follow: existWobjects } });
   });
