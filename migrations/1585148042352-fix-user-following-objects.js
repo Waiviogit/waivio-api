@@ -21,7 +21,5 @@ exports.up = async function up(done) {
  * Make any changes that UNDO the up function side effects here (if possible)
  */
 exports.down = async (done) => {
-  await User.update({}, { stage_version: 0 });
-  console.log('Set "stage_version" to 0 for all users!');
   done();
 };
