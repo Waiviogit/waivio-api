@@ -26,7 +26,12 @@ const getUsers = async ({ limit, skip, sample }) => {
 
 const getUsersByList = async (data) => {
   const { usersData, error } = await User.find(
-    { condition: { name: { $in: data.users } }, skip: data.skip, limit: data.limit + 1 },
+    {
+      condition: { name: { $in: data.users } },
+      skip: data.skip,
+      limit: data.limit + 1,
+      sort: { wobjects_weight: -1 },
+    },
   );
   if (error) return { error };
   return {

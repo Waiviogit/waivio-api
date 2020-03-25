@@ -79,7 +79,7 @@ exports.getFollowers = async ({ name, skip = 0, limit = 30 }) => {
   try {
     return {
       users: await UserModel
-        .find({ users_follow: name }, { _id: 0, name: 1 })
+        .find({ users_follow: name }, { _id: 0, name: 1, wobjects_weight: 1 })
         .skip(skip)
         .limit(limit)
         .lean(),
@@ -118,12 +118,12 @@ exports.search = async ({ string, skip, limit }) => {
   }
 };
 
-exports.find = async ({ condition, skip, limit }) => {
+exports.find = async ({ condition, skip, limit, sort }) => {
   try {
     return {
       usersData: await UserModel
         .find(condition)
-        .sort({ wobjects_weight: -1 })
+        .sort(sort)
         .skip(skip)
         .limit(limit)
         .lean(),
