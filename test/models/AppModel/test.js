@@ -1,5 +1,5 @@
-const { expect, AppModel, faker } = require('test/testHelper');
-const { AppFactory } = require('test/models/factory/AppFactory/AppFactory');
+const { expect, AppModel } = require('test/testHelper');
+const { AppFactory } = require('test/factories');
 
 describe('App Model', async () => {
   describe('On getOne', async () => {
