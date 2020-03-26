@@ -1,6 +1,6 @@
 const { faker, App } = require('test/testHelper');
 
-const CreatedaData = async ({
+const Create = async ({
   blacklists, name, admins, moderators, topUsers,
 } = {}) => {
   const data = {
@@ -26,4 +26,4 @@ const CreatedaData = async ({
   return App.create(data);
 };
 
-module.exports = { CreatedaData };
+module.exports = { Create };
