@@ -7,6 +7,7 @@ moduleExports.post = require('./postValidator');
 moduleExports.generalSearch = require('./generalSearch');
 moduleExports.objectType = require('./objectTypeValidator');
 moduleExports.app = require('./appValidator');
+moduleExports.apiKeyValidator = require('./apiKeyValidator');
 
 moduleExports.validate = (data, schema, next) => {
   const result = Joi.validate(data, schema);
