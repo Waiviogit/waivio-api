@@ -6,6 +6,7 @@ const show = async (req, res, next) => {
   const data = {
     name: req.params.appName || 'waiviodev',
   };
+  data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key'])
   const { app, error } = await App.getOne(data);
 
   if (error) {

@@ -53,12 +53,18 @@
           "required" : false,
           "type" : "number"
         }, {
-          "name" : "user",
+          "name" : "following",
           "in" : "header",
           "description" : "name of user who make request to check founded users in his followings",
           "required" : false,
           "type" : "string"
-        },{
+        }, {
+            "name" : "follower",
+            "in" : "header",
+            "description" : "name of user who make request to check founded users in his followers",
+            "required" : false,
+            "type" : "string"
+          },{
           "name" : "sample",
           "in" : "query",
           "description" : "flag to return random 5 users from TOP 100(limit and skip in this case ignored)",
@@ -191,7 +197,19 @@
           "description" : "Flag to include/exclude lists of followings users/objects",
           "required" : false,
           "type" : "boolean"
-        } ],
+        } ,{
+          "name" : "following",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followers",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -356,7 +374,19 @@
           "description" : "Count of users to return",
           "required" : false,
           "type" : "integer"
-        } ],
+        },{
+          "name" : "following",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followers",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -549,7 +579,19 @@
           "description" : "count of users to skip(need for infinite scroll)*(by default - 0)*",
           "required" : false,
           "type" : "integer"
-        } ],
+        } ,{
+          "name" : "following",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followers",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -845,14 +887,26 @@
           "schema" : {
             "$ref" : "#/definitions/params_8"
           }
-        } ],
+        } ,{
+          "name" : "following",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followers",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/inline_response_200_13"
+                "$ref" : "#/definitions/inline_response_200_16_users2"
               }
             }
           }
@@ -1015,7 +1069,19 @@
           "schema" : {
             "$ref" : "#/definitions/params_10"
           }
-        } ],
+        } ,{
+          "name" : "following",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followings",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "name of user who make request to check founded users in his followers",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1429,12 +1495,18 @@
             "$ref" : "#/definitions/params_17"
           }
         },{
-          "name" : "user",
+          "name" : "following",
           "in" : "header",
           "description" : "name of user who make request to check founded users in his followings",
           "required" : false,
           "type" : "string"
-        }
+        },{
+            "name" : "follower",
+            "in" : "header",
+            "description" : "name of user who make request to check founded users in his followers",
+            "required" : false,
+            "type" : "string"
+          }
         ],
         "responses" : {
           "200" : {
@@ -1693,6 +1765,12 @@
         },
         "wobjects_weight" : {
           "type" : "integer"
+        },
+        "youFollows": {
+          "type": "boolean"
+        },
+        "followsYou": {
+          "type": "boolean"
         }
       }
     },
@@ -1890,6 +1968,12 @@
         },
         "json_metadata" : {
           "type" : "string"
+        },
+        "youFollows": {
+          "type": "boolean"
+        },
+        "followsYou": {
+          "type": "boolean"
         }
       }
     },
@@ -1951,6 +2035,12 @@
         },
         "wobjects_weight" : {
           "type" : "number"
+        },
+        "followsYou": {
+          "type": "boolean"
+        },
+        "youFollows": {
+          "type": "boolean"
         }
       }
     },
@@ -2032,7 +2122,21 @@
         "users" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "type" : "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "wobjects_weight": {
+                "type": "string"
+              },
+              "youFollows": {
+                "type": "boolean"
+              },
+              "followsYou": {
+                "type": "boolean"
+              }
+            }
           }
         },
         "hasMore" : {
@@ -2179,7 +2283,21 @@
         "followers" : {
           "type" : "array",
           "items" : {
-            "type" : "string"
+            "type" : "object",
+            "properties": {
+              "name" : {
+                "type" : "string"
+              },
+              "wobjects_weight" : {
+                "type" : "number"
+              },
+              "youFollows" : {
+                "type" : "boolean"
+              },
+              "followsYou" : {
+                "type" : "boolean"
+              }
+            }
           }
         },
         "hasMore" : {
@@ -2507,13 +2625,30 @@
         }
       }
     },
+    "inline_response_200_16_users2" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "weight" : {
+          "type" : "integer"
+        },
+        "youFollows": {
+          "type": "boolean"
+        },
+        "followsYou": {
+          "type": "boolean"
+        }
+      }
+    },
     "inline_response_200_16" : {
       "type" : "object",
       "properties" : {
         "users" : {
           "type" : "array",
           "items" : {
-            "$ref" : "#/definitions/inline_response_200_16_users"
+            "$ref" : "#/definitions/inline_response_200_16_users2"
           }
         },
         "user" : {

@@ -1,6 +1,7 @@
 const moduleExports = {};
 
-moduleExports.moderateUsers = require('./users/moderation').moderateUsers;
+moduleExports.checkUserFollowers = require('./users/checkFollowers').checkUserFollowers;
+moduleExports.checkUserFollowings = require('./users/checkFollowings').checkUserFollowings;
 moduleExports.fillPostAdditionalInfo = require('./posts/fillAdditionalInfo').fillPostAdditionalInfo;
 moduleExports.moderateWobjects = require('./wobject/moderation').moderateWobjects;
 
