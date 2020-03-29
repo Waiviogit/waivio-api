@@ -6,7 +6,5 @@ module.exports = async ({ name, skip, limit }) => {
 
   if (error) return { error };
 
-  const followers = _.chain(users || []).slice(0, limit).map((u) => u.name).value();
-
-  return { result: { followers, hasMore: users.length === limit + 1 } };
+  return { result: { followers: _.slice(users, 0, limit), hasMore: users.length === limit + 1 } };
 };
