@@ -4,6 +4,7 @@ const { LANGUAGES } = require('utilities/constants');
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
+  user: Joi.string(),
   required_fields: Joi.array().items(Joi.string()).single(),
 });
 
