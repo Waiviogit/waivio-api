@@ -39,6 +39,7 @@ const show = async (req, res, next) => {
       author_permlink: req.params.authorPermlink,
       locale: req.query.locale,
       required_fields: req.query.required_fields,
+      user: req.query.user,
     }, validators.wobject.showSchema, next,
   );
 
