@@ -19,8 +19,8 @@ describe('App Model', async () => {
       expect(error).to.be.exist;
     });
     it('Should return error message', async () => {
-      const { error: { message } } = await AppModel.getOne({ name: faker.random.string() });
-      expect(message).to.be.eq('App not found!');
+      const { error } = await AppModel.getOne({ name: faker.random.string() });
+      expect(error.message).to.be.eq('App not found!');
     });
   });
   describe('On getAll', async () => {
@@ -36,8 +36,8 @@ describe('App Model', async () => {
         }
       });
       it('Should check that getAll returns correct number of records', async () => {
-        const { apps: { length } } = await AppModel.getAll();
-        expect(length).to.be.eq(appsCount);
+        const { apps } = await AppModel.getAll();
+        expect(apps.length).to.be.eq(appsCount);
       });
     });
     describe('On error case', async () => {
@@ -69,18 +69,25 @@ describe('App Model', async () => {
         } else await AppFactory.Create();
       }
     });
-    it('Should return right count records with id, name and admins keys', async () => {
-      const { result: { length }, result: [result] } = await AppModel.aggregate([
-        {
-          $group: {
-            _id: '$_id',
-            name: { $first: '$name' },
-            admins: { $first: '$admins' },
+    describe('On group stage case', async () => {
+      let aggregatedApps;
+      beforeEach(async () => {
+        aggregatedApps = await AppModel.aggregate([
+          {
+            $group: {
+              _id: '$_id',
+              name: { $first: '$name' },
+              admins: { $first: '$admins' },
+            },
           },
-        },
-      ]);
-      expect(length).to.be.eq(appsCount);
-      expect(result).to.be.all.keys('_id', 'name', 'admins');
+        ]);
+      });
+      it('Should return right count records', async () => {
+        expect(aggregatedApps.result.length).to.be.eq(appsCount);
+      });
+      it('Should return records with id, name and admins keys', async () => {
+        expect(aggregatedApps.result[0]).to.be.all.keys('_id', 'name', 'admins');
+      });
     });
     it('Should return from request: name and admins. Using match and project stage', async () => {
       const { result: [result] } = await AppModel.aggregate([
