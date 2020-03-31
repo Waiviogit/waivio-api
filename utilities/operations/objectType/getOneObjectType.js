@@ -128,6 +128,7 @@ module.exports = async ({
   const { user } = await User.getOne(userName);
 
   switch (name) {
+    case 'list':
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj, index) => {
         if (simplified) {
