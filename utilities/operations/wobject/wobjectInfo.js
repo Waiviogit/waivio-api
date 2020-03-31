@@ -1,6 +1,7 @@
 const _ = require('lodash');
-const { Wobj } = require('models');
+const { Wobj, Campaign, User } = require('models');
 const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
+const { objectTypeHelper } = require('utilities/helpers');
 
 const getOne = async (data) => { // get one wobject by author_permlink
   const { wObject, error: getWobjError } = await Wobj.getOne(data.author_permlink);
@@ -26,7 +27,16 @@ const getOne = async (data) => { // get one wobject by author_permlink
     if (listError) console.error(listError);
 
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
-
+    if (keyName === 'listItems' && data.user) {
+      const { user } = await User.getOne(data.user);
+      if (user) {
+        await Promise.all(wobjects.map(async (wobj) => {
+          const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
+          if (error || !result.length) return;
+          wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
+        }));
+      }
+    }
     wObject[keyName] = wobjects;
     wObject.sortCustom = sortCustom;
     requiredFields.push('sortCustom', 'listItem');
