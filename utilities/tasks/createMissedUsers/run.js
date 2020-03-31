@@ -1,7 +1,7 @@
-const { updateUserFollowings } = require('./findUsers');
+const { addUsersToImport } = require('./findUsers');
 
 (async () => {
-  await updateUserFollowings(
+  await addUsersToImport(
     {
       startAcc: process.argv[4],
       name: process.argv[3],

@@ -2,7 +2,16 @@ const { userUtil } = require('utilities/steemApi');
 const _ = require('lodash');
 const axios = require('axios');
 
-const updateUserFollowings = async ({ url, name, startAcc = '' }) => {
+/**
+ * This method receives a list of user subscriptions and sends them for import to our database,
+ * some Steem users have a very large number of subscriptions and some of their subscriptions
+ * cannot be obtained from the chain, this method is implemented in order to add all users to the database
+ * @param url {string}
+ * @param name {string} name of user from which followings need to be imported
+ * @param startAcc {string} from which following need to start
+ * @returns {Promise<{error: *}>}
+ */
+const addUsersToImport = async ({ url, name, startAcc = '' }) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = startAcc;
@@ -45,4 +54,4 @@ const request = async (url, name) => {
 };
 
 
-module.exports = { updateUserFollowings };
+module.exports = { addUsersToImport };
