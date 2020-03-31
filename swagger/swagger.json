@@ -802,6 +802,12 @@
           "required" : true,
           "type" : "string"
         }, {
+            "name" : "user",
+            "in" : "path",
+            "description" : "name of user< to show campaigns on list objects",
+            "required" : false,
+            "type" : "string"
+          },{
           "name" : "locale",
           "in" : "query",
           "description" : "Read locale of user(default en-EN)",
@@ -1717,6 +1723,12 @@
           "type" : "array",
           "items" : {
             "type" : "string"
+          }
+        },
+        "propositions" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object"
           }
         },
         "children" : {
