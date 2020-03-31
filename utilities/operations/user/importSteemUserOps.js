@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { User } = require('../../../models');
-const { userUtil } = require('../../steemApi');
+const { User } = require('models');
+const { userUtil } = require('utilities/steemApi');
 
 /**
  * Import full user info from STEEM to mongodb:
