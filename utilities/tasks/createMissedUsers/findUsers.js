@@ -1,45 +1,58 @@
-const { userUtil } = require('utilities/steemApi');
 const _ = require('lodash');
 const axios = require('axios');
 
 /**
- * This method receives a list of user subscriptions and sends them for import to our database,
- * some Steem users have a very large number of subscriptions and some of their subscriptions
- * cannot be obtained from the chain, this method is implemented in order to add all users to the database
+ * Task for import user to our data base from anyx
  * @param url {string}
- * @param name {string} name of user from which followings need to be imported
  * @param startAcc {string} from which following need to start
  * @returns {Promise<{error: *}>}
  */
-const addUsersToImport = async ({ url, name, startAcc = '' }) => {
+const addUsersToImport = async ({ url, startAcc = '' }) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = startAcc;
   do {
-    const { followings = [], error } = await userUtil.getFollowingsList({
-      name, startAccount, limit: batchSize,
+    const { users, error } = await anyxRequest({
+      start: startAccount, limit: batchSize,
     });
 
-    if (error || followings.error) {
-      console.error(error || followings.error);
-      return { error: error || followings.error };
+    if (error) {
+      console.error(error);
+      return { error };
     }
-    currBatchSize = followings.length;
-    startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
+    currBatchSize = users.length;
+    startAccount = _.get(users, `[${batchSize - 1}].name`, '');
     console.log(startAccount);
-    for (const user of followings) {
+    for (const user of users) {
       let res, counter = 0;
       do {
         counter += 1;
         await new Promise((resolve) => setTimeout(resolve, 150));
-        res = await request(url, user.following);
+        res = await request(url, user.name);
         if (res.error) await new Promise((resolve) => setTimeout(resolve, 3000));
-        if (_.get(res, 'result.ok', false)) console.log(`User ${user.following} add to import`);
+        if (_.get(res, 'result.ok', false)) console.log(`User ${user.name} add to import`);
       } while (!_.get(res, 'result.ok', false) || counter === 10);
     }
   } while (currBatchSize === batchSize);
 };
 
+const anyxRequest = async ({ start, limit }) => {
+  try {
+    const result = await axios.post('https://anyx.io', {
+      jsonrpc: '2.0',
+      method: 'database_api.list_accounts',
+      params: {
+        start,
+        limit,
+        order: 'by_name',
+      },
+      id: 1,
+    });
+    return { users: result.data.result.accounts };
+  } catch (error) {
+    return { error };
+  }
+};
 
 const request = async (url, name) => {
   try {
