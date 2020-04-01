@@ -86,7 +86,7 @@ describe('App Model', async () => {
         expect(aggregatedApps.result.length).to.be.eq(appsCount);
       });
       it('Should return records with id, name and admins keys', async () => {
-        expect(aggregatedApps.result[0]).to.be.all.keys('_id', 'name', 'admins');
+        expect(aggregatedApps.result[0]).to.have.all.keys('_id', 'name', 'admins');
       });
     });
     it('Should return from request: name and admins. Using match and project stage', async () => {
@@ -125,16 +125,22 @@ describe('App Model', async () => {
       app = await AppFactory.Create({ name });
     });
     it('Should update name at request and get true', async () => {
-      const { result } = await AppModel.updateOne({ name, updData: { $set: { name: faker.name.firstName() } } });
+      const { result } = await AppModel.updateOne(
+        { name, updData: { $set: { name: faker.name.firstName() } } },
+      );
       expect(result).to.be.true;
     });
     it('Should return false, when the data has not updated', async () => {
-      const { result } = await AppModel.updateOne({ name: faker.name.firstName(), updData: { $set: { name: faker.name.firstName() } } });
+      const { result } = await AppModel.updateOne(
+        { name: faker.name.firstName(), updData: { $set: { name: faker.name.firstName() } } },
+      );
       expect(result).to.be.false;
     });
     it('Should return duplicate key error, when the data has duplicate name', async () => {
       const appDuplicate = await AppFactory.Create({ name: faker.name.firstName() });
-      const { error } = await AppModel.updateOne({ name: app.name, updData: { $set: { name: appDuplicate.name } } });
+      const { error } = await AppModel.updateOne(
+        { name: app.name, updData: { $set: { name: appDuplicate.name } } },
+      );
       expect(error).to.be.exist;
     });
   });
