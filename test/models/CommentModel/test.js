@@ -12,7 +12,7 @@ describe('Comment Model', async () => {
       nameAuthor = faker.name.firstName();
       for (let iteration = 0; iteration < commentCount; iteration++) {
         if (iteration === 0) comment = await CommentFactory.Create({ author: nameAuthor });
-        else await CommentFactory.Create({});
+        else await CommentFactory.Create();
       }
     });
     afterEach(async () => {
@@ -38,8 +38,8 @@ describe('Comment Model', async () => {
     });
     it('Should check that the error exists', async () => {
       sinon.stub(Comment, 'findOne').throws('DataBase is not responding');
-      const result = await CommentModel.getOne({ author: faker.name.firstName() });
-      expect(result.error).to.be.exist;
+      const { error } = await CommentModel.getOne({ author: faker.name.firstName() });
+      expect(error).to.be.exist;
     });
   });
   describe('On findByCond and getMany', async () => {
@@ -72,8 +72,8 @@ describe('Comment Model', async () => {
       });
       it('Should check that the error exists', async () => {
         sinon.stub(Mongoose.Model, 'find').throws('DataBase is not responding');
-        const result = await CommentModel.findByCond({ author: faker.name.firstName() });
-        expect(result.error).to.be.exist;
+        const { error } = await CommentModel.findByCond({ author: faker.name.firstName() });
+        expect(error).to.be.exist;
       });
     });
     describe('On getMany', async () => {
@@ -90,8 +90,8 @@ describe('Comment Model', async () => {
         expect(comments.length).to.be.eq(answer);
       });
       it('Should check that the error exists', async () => {
-        const result = await CommentModel.getMany({ cond: { author: nameAuthor }, skip: -1 });
-        expect(result.error).to.be.exist;
+        const { error } = await CommentModel.getMany({ cond: { author: nameAuthor }, skip: -1 });
+        expect(error).to.be.exist;
       });
     });
   });
