@@ -1,4 +1,4 @@
-const { faker, Comment } = require('../../testHelper');
+const { faker, Comment } = require('test/testHelper');
 
 const Create = async ({
   author, permlink, parentAuthor, parentPermlink, rootAuthor, rootPermlink, guestInfo, activeVotes,

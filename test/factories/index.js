@@ -1,4 +1,4 @@
 module.exports = {
   AppFactory: require('./AppFactory/AppFactory'),
-  CommentFactory: require('./CommentModelFactory/CommentModelFactory'),
+  CommentFactory: require('./CommentFactory/CommentFactory'),
 };
