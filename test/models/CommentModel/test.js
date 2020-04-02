@@ -1,5 +1,5 @@
 const {
-  expect, CommentModel, faker, sinon, Mongoose,
+  expect, CommentModel, faker, sinon, Mongoose, Comment,
 } = require('test/testHelper');
 const { CommentFactory } = require('test/factories');
 const _ = require('lodash');
@@ -16,7 +16,7 @@ describe('Comment Model', async () => {
       }
     });
     it('Should check comment for identity using author key', async () => {
-      const result = await CommentModel.getOne({ ..._.pick(comment, 'author', 'permlink') });
+      const result = await CommentModel.getOne(_.pick(comment, 'author', 'permlink'));
       expect(result.comment).to.deep.eq(comment);
     });
     it('Should check comment for identity using userId key ', async () => {
@@ -28,21 +28,21 @@ describe('Comment Model', async () => {
       expect(result.comment).to.be.null;
     });
     it('Should check that the error exists', async () => {
-      sinon.stub(Mongoose.Model, 'findOne').throws('DataBase is not responding');
+      sinon.stub(Comment, 'find').throws('DataBase is not responding');
       const result = await CommentModel.getOne({ author: faker.name.firstName() });
       expect(result.error).to.be.exist;
     });
   });
   describe('On findByCond and getMany functions case', async () => {
-    let commentCount, ansverCount, nameAuthor;
+    let commentCount, answerCount, nameAuthor;
     beforeEach(async () => {
       nameAuthor = faker.name.firstName();
       commentCount = faker.random.number(100);
-      ansverCount = 0;
+      answerCount = 0;
       for (let iteration = 0; iteration < commentCount; iteration++) {
         if (iteration % 2) await CommentFactory.Create({ });
         else {
-          ansverCount++;
+          answerCount++;
           await CommentFactory.Create({
             author: nameAuthor,
           });
@@ -55,7 +55,7 @@ describe('Comment Model', async () => {
     describe('On findByCond', async () => {
       it('Should return right count records', async () => {
         const { result } = await CommentModel.findByCond({ author: nameAuthor });
-        expect(result.length).to.be.eq(ansverCount);
+        expect(result.length).to.be.eq(answerCount);
       });
       it('Should return empty massive comments', async () => {
         const { result } = await CommentModel.findByCond({ author: faker.name.firstName() });
@@ -69,10 +69,12 @@ describe('Comment Model', async () => {
     });
     describe('On getMany', async () => {
       it('Should return right count records considering limits and skips', async () => {
-        const limit = faker.random.number(ansverCount);
+        const limit = faker.random.number(answerCount);
         const skip = faker.random.number(limit);
-        const ansver = ansverCount - skip >= limit ? limit : ansverCount - skip;
-        const { comments } = await CommentModel.getMany({ cond: { author: nameAuthor }, limit, skip });
+        const ansver = answerCount - skip >= limit ? limit : answerCount - skip;
+        const { comments } = await CommentModel.getMany(
+          { cond: { author: nameAuthor }, limit, skip },
+        );
         expect(comments.length).to.be.eq(ansver);
       });
       it('Should check that the error exists', async () => {
