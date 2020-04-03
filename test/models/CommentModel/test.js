@@ -1,5 +1,5 @@
 const {
-  expect, CommentModel, faker, sinon, Mongoose, Comment,
+  expect, CommentModel, faker, sinon, Comment,
 } = require('test/testHelper');
 const { CommentFactory } = require('test/factories');
 const _ = require('lodash');
@@ -71,7 +71,7 @@ describe('Comment Model', async () => {
         expect(result).to.be.empty;
       });
       it('Should check that the error exists', async () => {
-        sinon.stub(Mongoose.Model, 'find').throws('DataBase is not responding');
+        sinon.stub(Comment, 'find').throws('DataBase is not responding');
         const { error } = await CommentModel.findByCond({ author: faker.name.firstName() });
         expect(error).to.be.exist;
       });
