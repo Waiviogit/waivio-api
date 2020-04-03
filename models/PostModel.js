@@ -19,7 +19,6 @@ exports.getAllPosts = async (data) => {
         },
       },
     ];
-
     if (data.filter) {
       if (data.filter.byApp) {
         const { app } = await AppModel.getOne({ name: data.filter.byApp });

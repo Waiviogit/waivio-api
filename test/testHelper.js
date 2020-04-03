@@ -11,7 +11,7 @@ const { Mongoose } = require('database');
 faker.random.string = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 
 const {
-  Wobj: WobjModel, App: AppModel, ObjectType: ObjectTypeModel, Post: PostModel, User: UserModel,
+  Wobj: WobjModel, App: AppModel, ObjectType: ObjectTypeModel, Post: PostModel, User: UserModel, Comment: CommentModel,
 } = require('models');
 
 const dropDatabase = async () => {
@@ -21,9 +21,10 @@ const dropDatabase = async () => {
   }
 };
 
-
 module.exports = {
   ...require('database').models,
+  sinon: require('sinon'),
+  CommentModel,
   WobjModel,
   PostModel,
   UserModel,
