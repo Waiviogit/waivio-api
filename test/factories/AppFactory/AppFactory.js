@@ -1,7 +1,7 @@
 const { faker, App } = require('test/testHelper');
 
 const Create = async ({
-  blacklists, name, admins, moderators, supportedHashtags, supportedObjects,
+  blacklists, name, admins, moderators, supportedHashtags, supportedObjects, bots,
 } = {}) => {
   const data = {
     name: name || faker.random.string(10),
@@ -20,9 +20,11 @@ const Create = async ({
       permlink: faker.random.string(),
       title: faker.random.string(20),
     },
+    service_bots: bots || [],
   };
 
-  return App.create(data);
+  const app = await App.create(data);
+  return app.toObject();
 };
 
 module.exports = { Create };
