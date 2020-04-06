@@ -1,8 +1,8 @@
 const { App } = require('database').models;
 
-const getOne = async ({ name }) => {
+const getOne = async ({ name, bots }) => {
   try {
-    const app = await App.findOne({ name }).lean();
+    const app = await App.findOne({ name }).select(bots ? {} : { service_bots: 0 }).lean();
 
     if (!app) {
       return { error: { status: 404, message: 'App not found!' } };
@@ -48,4 +48,6 @@ const updateOne = async ({ name, updData }) => {
   }
 };
 
-module.exports = { getOne, aggregate, updateOne, getAll };
+module.exports = {
+  getOne, aggregate, updateOne, getAll,
+};

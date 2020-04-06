@@ -9,6 +9,7 @@ const sc2 = require('sc2-sdk');
 exports.authoriseUser = async (token = '', username = '') => {
   if (!token || token === '') return false;
   const api = sc2.Initialize({
+    baseURL: 'https://hivesigner.com',
     accessToken: token,
   });
   let user;

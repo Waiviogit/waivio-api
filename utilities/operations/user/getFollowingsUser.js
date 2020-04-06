@@ -5,8 +5,24 @@ exports.getAll = async ({ name, skip, limit }) => {
   const { users, error } = await User.getFollowings({ name, skip, limit: limit + 1 });
 
   if (error) return { error };
+  if (!users.length) return { result: { users: [], hasMore: false } };
 
-  return { result: { users: users.slice(0, limit), hasMore: users.length === limit + 1 } };
+  const { usersData, error: usersError } = await User.find(
+    { condition: { name: { $in: users } } },
+  );
+  if (usersError) return { error: usersError };
+
+  const result = _
+    .chain(usersData)
+    .map((user) => ({
+      name: user.name,
+      wobjects_weight: user.wobjects_weight,
+    }))
+    .slice(0, limit)
+    .value();
+
+
+  return { result: { users: result, hasMore: users.length === limit + 1 } };
 };
 
 // returns collection of users with boolean markers
