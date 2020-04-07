@@ -58,7 +58,7 @@ module.exports = async ({
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category,
+    skip, limit, user_languages, category, forApp,
   });
   if (cachedPosts) return { posts: cachedPosts };
 
@@ -81,18 +81,22 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category,
+  skip, limit, user_languages: locales, category, forApp,
 }) => {
   let res;
   switch (category) {
     case 'hot':
       if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getHot({ skip, limit, locales });
+        res = await hotTrandGetter.getHot({
+          skip, limit, locales, forApp,
+        });
       }
       break;
     case 'trending':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({ skip, limit, locales });
+        res = await hotTrandGetter.getTrend({
+          skip, limit, locales, forApp,
+        });
       }
       break;
   }
