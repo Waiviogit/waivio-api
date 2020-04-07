@@ -12,6 +12,13 @@ const topUsersSchema = new Schema({
   weight: { type: Number, default: 0 },
 }, { _id: false });
 
+const TagsData = new Schema({
+  Ingredients: { type: Object, default: {} },
+  Cuisine: { type: Object, default: {} },
+  'Good For': { type: Object, default: {} },
+  Features: { type: Object, default: {} },
+}, { _id: false });
+
 const botSchema = new Schema({
   name: { type: String, required: true },
   postingKey: { type: String, required: true },
@@ -44,6 +51,7 @@ const AppSchema = new Schema({
     title: { type: String },
   },
   service_bots: { type: [botSchema], default: [] },
+  tagsData: { type: TagsData },
 }, { timestamps: true });
 
 const AppModel = mongoose.model('App', AppSchema);

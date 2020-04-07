@@ -2,7 +2,7 @@ const moment = require('moment');
 const _ = require('lodash');
 const { User, Wobj, paymentHistory } = require('models');
 
-const campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
+exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
     && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users, (user) => user.status === 'assigned'
         && user.createdAt > moment().startOf('month')).length);
 
@@ -27,13 +27,13 @@ exports.requirementFilters = (campaign, user, restaurant) => {
     frequency: frequency.length ? moment().startOf('month') > frequency[0].updatedAt : true,
     not_blacklisted: notBlacklisted,
   };
-  return restaurant ? [campaignValidation(campaign), ...Object.values(result)] : result;
+  return restaurant ? [this.campaignValidation(campaign), ...Object.values(result)] : result;
 };
 
 exports.campaignFilter = async (campaigns, user) => {
   const validCampaigns = [];
   await Promise.all(campaigns.map(async (campaign) => {
-    if (campaignValidation(campaign)) {
+    if (this.campaignValidation(campaign)) {
       const { result, error } = await Wobj.findOne(campaign.requiredObject);
       if (error) return;
       campaign.required_object = result;
