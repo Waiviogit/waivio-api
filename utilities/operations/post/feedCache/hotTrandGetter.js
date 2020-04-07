@@ -15,7 +15,11 @@ exports.getHot = async ({
 }) => {
   // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
-    const { ids, error } = await redisGetter.getHotFeedCache({ limit: limit + skip, locale });
+    const { ids, error } = await redisGetter.getHotFeedCache({
+      limit: limit + skip,
+      locale,
+      app: forApp,
+    });
     if (error) {
       console.error(error);
     } else {
@@ -46,7 +50,11 @@ exports.getTrend = async ({
 }) => {
 // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
-    const { ids, error } = await redisGetter.getTrendFeedCache({ limit: limit + skip, locale });
+    const { ids, error } = await redisGetter.getTrendFeedCache({
+      limit: limit + skip,
+      locale,
+      app: forApp,
+    });
     if (error) {
       console.error(error);
     } else {
