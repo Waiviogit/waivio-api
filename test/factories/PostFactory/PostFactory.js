@@ -31,6 +31,7 @@ const Create = async ({
     createdAt: faker.date.recent(10).toString(),
     created: faker.date.recent(10).toString(),
     reblogged_users: reblogged || [],
+    root_author: rootAuthor || {},
   };
   post.root_author = rootAuthor || post.author;
   post.root_permlink = post.permlink;
