@@ -10,7 +10,8 @@ const getPosts = async (data) => {
   let posts = [];
 
   try {
-    posts = await PostModel.find(condition)
+    posts = await PostModel
+      .find(condition)
       .sort({ _id: -1 })
       .skip(data.skip)
       .limit(data.limit)
@@ -25,13 +26,11 @@ const getPosts = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages,
+  author_permlink, skip, limit, user_languages, forApp,
 }) => {
   let condition = {};
-  const {
-    wobjects:
-      [wObject = {}] = [], error,
-  } = await Wobj.fromAggregation([{ $match: { author_permlink } }]);
+  const { wobjects: [wObject = {}] = [], error } = await Wobj
+    .fromAggregation([{ $match: { author_permlink } }]);
 
   if (error) return { error };
 
@@ -83,6 +82,10 @@ const getWobjFeedCondition = async ({
   condition = { $and: [firstCond, secondCond] };
   if (!_.isEmpty(user_languages)) condition.$and.push({ language: { $in: user_languages } });
   condition.reblog_to = null;
+
+  // for moderation posts
+  if (forApp) condition.blocked_for_apps = { $ne: forApp };
+
   return { condition };
 };
 
