@@ -7,12 +7,19 @@ const { Post } = require('database').models;
  * @param skip {Number}
  * @param limit {Number}
  * @param locales {[String]}
+ * @param forApp {String}
  * @returns {Promise<{posts}|{error: *}|undefined>}
  */
-exports.getHot = async ({ skip, limit, locales }) => {
+exports.getHot = async ({
+  skip, limit, locales, forApp,
+}) => {
   // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
-    const { ids, error } = await redisGetter.getHotFeedCache({ limit: limit + skip, locale });
+    const { ids, error } = await redisGetter.getHotFeedCache({
+      limit: limit + skip,
+      locale,
+      app: forApp,
+    });
     if (error) {
       console.error(error);
     } else {
@@ -35,12 +42,19 @@ exports.getHot = async ({ skip, limit, locales }) => {
  * @param skip {Number}
  * @param limit {Number}
  * @param locales {[String]}
+ * @param forApp {String}
  * @returns {Promise<{posts}|{error: *}|undefined>}
  */
-exports.getTrend = async ({ skip, limit, locales }) => {
+exports.getTrend = async ({
+  skip, limit, locales, forApp,
+}) => {
 // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
-    const { ids, error } = await redisGetter.getTrendFeedCache({ limit: limit + skip, locale });
+    const { ids, error } = await redisGetter.getTrendFeedCache({
+      limit: limit + skip,
+      locale,
+      app: forApp,
+    });
     if (error) {
       console.error(error);
     } else {

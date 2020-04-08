@@ -26,33 +26,49 @@ exports.deleteImportedUser = (userName) => importUserClient.del(`import_user:${u
  * Update list of TRENDING feed cache for specified locale
  * @param ids {[String]} list of posts "_id"
  * @param locale {String} locale of feed
+ * @param app {String} list of ids for specified app
  * @returns {Promise<void>}
  */
-exports.updateTrendLocaleFeedCache = async ({ ids, locale }) => {
+exports.updateTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
-  await clearFeedLocaleCache(TREND_NEWS_CACHE_PREFIX);
-  return mainFeedsCacheClient.rpushAsync([`${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  await clearFeedLocaleCache({ prefix: TREND_NEWS_CACHE_PREFIX, app, locale });
+  const appPrefix = app ? `${app}:` : '';
+  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
  * Update list of HOT news cache for specified locale
  * @param ids {[String]} list of posts "_id"
  * @param locale {String} locale of feed
+ * @param app {String} list of ids for specified app
  * @returns {Promise<void>}
  */
-exports.updateHotLocaleFeedCache = async ({ ids, locale }) => {
+exports.updateHotLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
-  await clearFeedLocaleCache(HOT_NEWS_CACHE_PREFIX);
-  return mainFeedsCacheClient.rpushAsync([`${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  await clearFeedLocaleCache({ prefix: HOT_NEWS_CACHE_PREFIX, app, locale });
+  const appPrefix = app ? `${app}:` : '';
+  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
- * Delete caches for feed by prefix for all locales
- * @param prefix {String} Namespace of feed cache
+ * Delete caches for feed by prefix for specified locale and app.
+ * "prefix" is required, others optional. If locales not specified - delete cache for all locales.
+ * @param app {String} Name of app, also namespace in redis(optional);
+ * @param prefix {String} Namespace of feed cache(hot ,trending, etc.), required!
+ * @param locale {String} Specified locale to clear cache only, if empty - clear all locales
  * @returns {Promise<*>}
  */
-async function clearFeedLocaleCache(prefix) {
-  const keys = LANGUAGES.map((lang) => `${prefix}:${lang}`);
+async function clearFeedLocaleCache({ app, prefix, locale }) {
+  let keyTemplate = '';
+  let keys = [];
+
+  if (app) keyTemplate = `${app}`;
+  keyTemplate += `:${prefix}`;
+
+  if (locale) keys.push(`${keyTemplate}:${locale}`);
+  else {
+    keys = LANGUAGES.map((lang) => `${keyTemplate}:${lang}`);
+  }
   return mainFeedsCacheClient.del(...keys);
 }
 
