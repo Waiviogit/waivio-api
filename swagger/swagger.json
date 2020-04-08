@@ -405,7 +405,7 @@
         "parameters" : [ {
           "name" : "app",
           "in" : "header",
-          "description" : "Specify app to enable waivio-wobject moderation",
+          "description" : "Specify app to enable waivio wobject and posts moderation",
           "required" : false,
           "type" : "string"
         }, {
@@ -842,7 +842,7 @@
         "parameters" : [ {
           "name" : "app",
           "in" : "header",
-          "description" : "Specify app to enable waivio-wobject moderation",
+          "description" : "Specify app to enable waivio-wobject and posts moderation",
           "required" : false,
           "type" : "string"
         }, {
@@ -1272,7 +1272,7 @@
         "parameters" : [ {
           "name" : "app",
           "in" : "header",
-          "description" : "Specify app to enable waivio-wobject moderation",
+          "description" : "Specify app to enable waivio-wobject and posts moderation",
           "required" : false,
           "type" : "string"
         }, {
