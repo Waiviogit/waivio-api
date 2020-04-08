@@ -60,6 +60,7 @@ exports.feedSchema = Joi.object().keys({
   filter: Joi.object().keys({
     byApp: Joi.string().allow(''),
   }),
+  forApp: Joi.string(),
   user_languages: Joi.array().items(Joi.string().valid([...LANGUAGES])).default(['ru-RU']),
 });
 

@@ -30,6 +30,8 @@ const PostSchema = new Schema({
   language: { type: String, default: 'en-US' },
   author_weight: { type: Number },
   reblog_to: { type: { author: String, permlink: String } },
+  reblogged_users: { type: [String], default: [] },
+  blocked_for_apps: { type: [String], default: [] },
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true },

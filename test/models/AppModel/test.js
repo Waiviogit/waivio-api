@@ -12,7 +12,7 @@ describe('App Model', async () => {
     });
     it('Should check app for identity', async () => {
       const { app: myApp } = await AppModel.getOne({ name: app.name, bots: 0 });
-      expect(myApp).to.be.deep.eq(_.omit(app._doc, 'service_bots'));
+      expect(myApp).to.be.deep.eq(_.omit(app, 'service_bots'));
     });
     it('Should check that the error exists', async () => {
       const { error } = await AppModel.getOne({ name: faker.random.string() });
@@ -104,7 +104,7 @@ describe('App Model', async () => {
       const { result: [result] } = await AppModel.aggregate([
         { $match: { name: app.name } },
       ]);
-      expect(result).to.be.deep.eq(app._doc);
+      expect(result).to.be.deep.eq(app);
     });
     it('Should return undefined, when aggregate has not result', async () => {
       const { result: [result] } = await AppModel.aggregate([

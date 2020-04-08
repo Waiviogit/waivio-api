@@ -44,7 +44,7 @@ exports.fillObjects = async (posts, locale = 'en-US', wobjectsPath = 'fullObject
   const fields = REQUIREDFIELDS.map((item) => ({ name: item }));
 
   for (const post of posts) {
-    for (let wObject of _.get(post, 'wobjects', [])) {
+    for (let wObject of _.get(post, 'wobjects') || []) {
       wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
       wObjectHelper.formatRequireFields(wObject, locale, fields);
     }
@@ -73,9 +73,13 @@ exports.getByFollowLists = async ({
     const cond = {
       $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
     };
-
+    // for filter by App wobjects
     if (_.get(filtersData, 'require_wobjects')) {
       cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
+    }
+    // for moderate posts by App
+    if (_.get(filtersData, 'forApp')) {
+      cond.blocked_for_apps = { $ne: filtersData.forApp };
     }
     if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
     const posts = await PostModel.find(cond)

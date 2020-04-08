@@ -35,6 +35,7 @@ exports.postsScheme = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   user_languages: Joi.array().items(Joi.string().valid([...LANGUAGES])).default(['ru-RU']),
+  forApp: Joi.string(),
 });
 
 exports.feedScheme = Joi.object().keys({

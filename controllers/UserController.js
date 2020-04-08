@@ -111,6 +111,7 @@ const feed = async (req, res, next) => {
     skip: req.body.skip,
     limit: req.body.limit,
     filter: req.body.filter,
+    forApp: req.headers.app,
     user_languages: req.body.user_languages,
   }, validators.user.feedSchema, next);
 
