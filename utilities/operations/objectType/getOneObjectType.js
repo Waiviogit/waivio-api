@@ -140,13 +140,12 @@ module.exports = async ({
           wobjects[index] = wobj;
           return;
         }
-        const eligibleCampaigns = _.map(result,
-          (campaign) => _.every(objectTypeHelper.requirementFilters(campaign, user, true),
-            (cond) => !!cond));
-        if (_.some(eligibleCampaigns, (eligible) => !!eligible)) {
+        const eligibleCampaigns = _.filter(result,
+          (campaign) => objectTypeHelper.campaignValidation(campaign) === true);
+        if (eligibleCampaigns.length) {
           wobj.campaigns = {
-            min_reward: (_.minBy(result, 'reward')).reward,
-            max_reward: (_.maxBy(result, 'reward')).reward,
+            min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
+            max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
           };
         }
         wobjects[index] = wobj;
