@@ -3,14 +3,16 @@ const _ = require('lodash');
 
 const getFeed = async ({
   // eslint-disable-next-line camelcase
-  name, limit = 20, skip = 0, user_languages, filter = {}, forApp,
+  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId,
 }) => {
   const { user, error: userError } = await User.getOne(name);
 
   if (userError || !user) {
     return { error: userError || { status: 404, message: 'User not found!' } };
   }
-  const { data: filtersData, error: filterError } = await getFiltersData({ ...filter, forApp });
+  const { data: filtersData, error: filterError } = await getFiltersData({
+    ...filter, forApp, lastId,
+  });
 
   if (filterError) return { error: filterError };
 
@@ -42,6 +44,7 @@ const getFiltersData = async (filter) => {
   }
   // for moderate posts by admin of this apps
   data.forApp = filter.forApp;
+  data.lastId = filter.lastId;
 
   return { data };
 };

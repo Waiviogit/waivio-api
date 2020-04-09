@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
+const { customValidationHelper } = require('utilities/helpers');
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
@@ -57,6 +58,7 @@ exports.feedSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).max(50)
     .default(20),
   skip: Joi.number().integer().min(0).default(0),
+  lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   filter: Joi.object().keys({
     byApp: Joi.string().allow(''),
   }),
