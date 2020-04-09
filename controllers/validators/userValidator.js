@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
 
 exports.indexSchema = Joi.object().keys({
@@ -61,7 +61,7 @@ exports.feedSchema = Joi.object().keys({
     byApp: Joi.string().allow(''),
   }),
   forApp: Joi.string(),
-  user_languages: Joi.array().items(Joi.string().valid([...LANGUAGES])).default(['ru-RU']),
+  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
 });
 
 exports.searchSchema = Joi.object().keys({
@@ -79,10 +79,10 @@ exports.updateMetadataSchema = Joi.object().keys({
     new_user: Joi.boolean().default(false),
     settings: Joi.object().keys({
       exitPageSetting: Joi.boolean().default(false),
-      locale: Joi.string().valid([...LANGUAGES]).default('auto'),
-      postLocales: Joi.array().items(Joi.string().valid([...LANGUAGES])).default([]),
+      locale: Joi.string().valid(...LANGUAGES).default('auto'),
+      postLocales: Joi.array().items(Joi.string().valid(...LANGUAGES)).default([]),
       nightmode: Joi.boolean().default(false),
-      rewardSetting: Joi.string().valid(['SP', '50', 'STEEM']).default('50'),
+      rewardSetting: Joi.string().valid('SP', '50', 'STEEM').default('50'),
       rewriteLinks: Joi.boolean().default(false),
       showNSFWPosts: Joi.boolean().default(false),
       upvoteSetting: Joi.boolean().default(false),

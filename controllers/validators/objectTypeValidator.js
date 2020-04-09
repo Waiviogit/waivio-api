@@ -1,4 +1,4 @@
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('utilities/constants');
 
 exports.indexSchema = Joi.object().keys({
@@ -19,10 +19,10 @@ exports.showSchema = Joi.object().keys({
     map: Joi.object().keys({
       coordinates: Joi
         .array()
-        .ordered([
+        .ordered(
           Joi.number().min(-90).max(90),
           Joi.number().min(-180).max(180),
-        ]),
+        ),
       radius: Joi.number().min(0),
     }),
     searchString: Joi.string().invalid(''),
