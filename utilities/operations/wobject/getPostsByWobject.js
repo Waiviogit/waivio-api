@@ -1,22 +1,26 @@
 const { Wobj } = require('models');
 const { Post: PostModel } = require('database').models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require('utilities/constants');
+const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 const getPosts = async (data) => {
   const { condition, error: conditionError } = await getWobjFeedCondition({ ...data });
 
   if (conditionError) return { error: conditionError };
+  const postsQuery = PostModel
+    .find(condition)
+    .sort({ _id: -1 })
+    // .skip(data.skip)
+    .limit(data.limit)
+    .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
+    .lean();
+
+  if (!data.lastId) postsQuery.skip(data.skip);
   let posts = [];
 
   try {
-    posts = await PostModel
-      .find(condition)
-      .sort({ _id: -1 })
-      .skip(data.skip)
-      .limit(data.limit)
-      .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
-      .lean();
+    posts = await postsQuery.exec();
   } catch (error) {
     return { error };
   }
@@ -26,11 +30,12 @@ const getPosts = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, forApp,
+  author_permlink, skip, limit, user_languages, forApp, lastId,
 }) => {
   const condition = {};
   // for moderation posts
   if (forApp) condition.blocked_for_apps = { $ne: forApp };
+  if (lastId) condition._id = { $lt: new ObjectId(lastId) };
 
   const { wobjects: [wObject = {}] = [], error } = await Wobj
     .fromAggregation([{ $match: { author_permlink } }]);

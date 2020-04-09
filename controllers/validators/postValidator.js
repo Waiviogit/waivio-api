@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
-const { ObjectId } = require('mongoose').Types;
+const { customValidationHelper } = require('utilities/helpers');
 
 exports.showSchema = Joi.object().keys({
   author: Joi.string().required(),
@@ -14,7 +14,7 @@ exports.getPostsByCategorySchema = Joi.object().keys({
     .default(20),
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
   forApp: Joi.string(),
-  lastId: Joi.string().custom(validateObjectId, 'Validate Mongoose ObjectId'),
+  lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
 });
 
 exports.getPostComments = Joi.object().keys({
@@ -27,7 +27,3 @@ exports.getManyPosts = Joi.array().items(Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
 }));
-
-function validateObjectId(value, helpers) {
-  return ObjectId.isValid(value) ? value : helpers.error('any.custom');
-}

@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
+const { customValidationHelper } = require('utilities/helpers');
 
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
@@ -36,6 +37,7 @@ exports.postsScheme = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
   forApp: Joi.string(),
+  lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
 });
 
 exports.feedScheme = Joi.object().keys({
