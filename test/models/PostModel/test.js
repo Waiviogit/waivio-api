@@ -1,5 +1,5 @@
 const {
-  PostModel, faker, expect, sinon, Post, Mongoose,
+  PostModel, faker, expect, sinon, Post, Mongoose, dropDatabase,
 } = require('test/testHelper');
 const _ = require('lodash');
 const { PostFactory, wObjectFactory } = require('test/factories');
@@ -157,7 +157,6 @@ describe('Post Model', async () => {
       const { result: [result] } = await PostModel.findByBothAuthors(
         { author: nameAuthor, permlink: userPermlink },
       );
-      console.log(result);
       expect(result).to.be.deep.eq(_.omit(post, 'post_id'));
     });
     it('Should return empty array when request params cannot be found', async () => {
@@ -199,7 +198,7 @@ describe('Post Model', async () => {
         }
       }
       for (let j = 0; j < countPosts; j++) {
-        if (j % 2) await PostFactory.Create({ author, wobjects: wObjects });
+        if (j === 0) await PostFactory.Create({ author, wobjects: wObjects });
         else if (j === countPosts - 1) {
           latestPost = await PostFactory.Create({ author, wobjects: wObjects });
         } else await PostFactory.Create({ author: faker.name.firstName() });
