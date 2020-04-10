@@ -2,6 +2,7 @@ const PostModel = require('database').models.Post;
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFIELDS } = require('utilities/constants');
 const AppModel = require('models/AppModel');
+const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 exports.getAllPosts = async (data) => {
@@ -69,26 +70,34 @@ exports.aggregate = async (pipeline) => {
 exports.getByFollowLists = async ({
   users, author_permlinks: authorPermlinks, skip, limit, user_languages: userLanguages, filtersData,
 }) => {
-  try {
-    const cond = {
-      $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-    };
-    // for filter by App wobjects
-    if (_.get(filtersData, 'require_wobjects')) {
-      cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
-    }
-    // for moderate posts by App
-    if (_.get(filtersData, 'forApp')) {
-      cond.blocked_for_apps = { $ne: filtersData.forApp };
-    }
-    if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
-    const posts = await PostModel.find(cond)
-      .sort({ _id: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate({ path: 'fullObjects', select: '-latest_posts' })
-      .lean();
+  const cond = {
+    $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+  };
+  // for filter by App wobjects
+  if (_.get(filtersData, 'require_wobjects')) {
+    cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
+  }
+  // for moderate posts by App
+  if (_.get(filtersData, 'forApp')) {
+    cond.blocked_for_apps = { $ne: filtersData.forApp };
+  }
+  if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
 
+  const postsQuery = PostModel.find(cond)
+    .sort({ _id: -1 })
+    // .skip(skip)
+    .limit(limit)
+    .populate({ path: 'fullObjects', select: '-latest_posts' })
+    .lean();
+
+  if (_.get(filtersData, 'lastId')) {
+    postsQuery.where('_id').lt(ObjectId(filtersData.lastId));
+  } else {
+    postsQuery.skip(skip);
+  }
+
+  try {
+    const posts = await postsQuery.exec();
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }

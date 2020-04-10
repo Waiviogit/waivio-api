@@ -32,13 +32,17 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // fill posts by some additional information(author wobj.weight, or wobjects info)
 app.use('/', fillPostAdditionalInfo.fill);
+
 // Moderate wobjects depend on app moderators before send
 app.use('/', moderateWobjects.moderate);
-// Last middleware which send data from "res.result.json" to client
+
 // Check users for followers for some routes
 app.use('/', checkUserFollowers.check);
+
 // Check users for followings for some routes
 app.use('/', checkUserFollowings.check);
+
+// Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
   res.status(res.result.status || 200).json(res.result.json);

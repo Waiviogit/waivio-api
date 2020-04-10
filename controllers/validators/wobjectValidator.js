@@ -1,5 +1,6 @@
-const Joi = require('joi');
+const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
+const { customValidationHelper } = require('utilities/helpers');
 
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
@@ -21,10 +22,10 @@ exports.indexSchema = Joi.object().keys({
   required_fields: Joi.array().items(Joi.string()).default([]),
   sample: Joi.boolean(),
   map: Joi.object().keys({
-    coordinates: Joi.array().ordered([
+    coordinates: Joi.array().ordered(
       Joi.number().min(-90).max(90),
       Joi.number().min(-180).max(180),
-    ]),
+    ),
     radius: Joi.number().min(0),
   }),
 });
@@ -34,8 +35,9 @@ exports.postsScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  user_languages: Joi.array().items(Joi.string().valid([...LANGUAGES])).default(['ru-RU']),
+  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
   forApp: Joi.string(),
+  lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
 });
 
 exports.feedScheme = Joi.object().keys({
