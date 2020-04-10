@@ -417,7 +417,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - limit of returned posts*(by default - 20)*, \n**skip** - count of skipping posts*(by default - 0)*,\n**user_languages** - array of languages to return feed\n",
+          "description" : "**limit** - limit of returned posts*(by default - 20)*, \n**user_languages** - array of languages to return feed\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_3"
@@ -854,7 +854,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of posts to return (*default* 30), \n**skip** - Count of posts to skip for inifinite scroll(*optional*),\n**user_languages** - array of lanugages to filter result posts\n",
+          "description" : "**limit** - Count of posts to return (*default* 30),\n**user_languages** - array of lanugages to filter result posts\n\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_7"
@@ -1278,10 +1278,14 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of posts to return (*default* 30),\n**skip** - count of posts to skip(use for infinite scroll),\n**category** - Category of posts(trending, created, hot, blog, promoted).\n",
+          "description" : "**limit** - Count of posts to return (*default* 30),\n**category** - Category of posts(trending, created, hot, blog, promoted).\n\n----------------Infinite scroll---------------\nFor infinite scroll, use **skip** or **lastId** param, for 'trending' and 'hot' - use **skip**, for 'created' - preferably **lastId**\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/params_13"
+            "example": {
+              "limit": 10,
+              "category": "created",
+              "lastId": "54745f3456a001010100"
+            }
           }
         } ],
         "responses" : {
