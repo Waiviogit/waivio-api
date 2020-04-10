@@ -1,25 +1,17 @@
-const moduleExports = {};
-const Joi = require('joi');
+exports.wobject = require('./wobjectValidator');
+exports.user = require('./userValidator');
+exports.post = require('./postValidator');
+exports.generalSearch = require('./generalSearch');
+exports.objectType = require('./objectTypeValidator');
+exports.app = require('./appValidator');
+exports.apiKeyValidator = require('./apiKeyValidator');
 
-moduleExports.wobject = require('./wobjectValidator');
-moduleExports.user = require('./userValidator');
-moduleExports.post = require('./postValidator');
-moduleExports.generalSearch = require('./generalSearch');
-moduleExports.objectType = require('./objectTypeValidator');
-moduleExports.app = require('./appValidator');
-moduleExports.apiKeyValidator = require('./apiKeyValidator');
-
-moduleExports.validate = (data, schema, next) => {
-  const result = Joi.validate(data, schema);
+exports.validate = (data, schema, next) => {
+  const result = schema.validate(data, { abortEarly: false });
 
   if (result.error) {
     const error = { status: 422, message: result.error.message };
-
-    // return { error };
     return next(error);
   }
   return result.value;
 };
-
-
-module.exports = moduleExports;

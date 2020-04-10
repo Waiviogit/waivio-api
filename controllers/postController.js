@@ -28,6 +28,7 @@ exports.getByCategory = async (req, res, next) => {
     skip: req.body.skip,
     user_languages: req.body.user_languages,
     forApp: req.headers.app,
+    lastId: req.body.lastId,
   }, validators.post.getPostsByCategorySchema, next);
 
   if (!value) {
