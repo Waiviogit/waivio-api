@@ -51,7 +51,7 @@ exports.importUsersTask = async (getUsersKeysFromRedis, getUserDataFromRedis) =>
     for (const user of users) {
       const userName = user.split(':')[1];
       const addingDate = await getUserDataFromRedis(userName);
-      if (moment.utc().subtract(15, 'minute') > moment.utc(addingDate)) {
+      if (user.split(':')[0] === 'import_user_error' || moment.utc().subtract(15, 'minute') > moment.utc(addingDate)) {
         await runImport(userName);
       }
     }
