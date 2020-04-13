@@ -30,6 +30,7 @@ exports.getFollowingsArray = async (data) => {
   const { user, error } = await User.getOne(data.name);
 
   if (error) return { error: { status: 503, message: error.message } };
+  if (!user) return { users: _.map(data.users, (name) => ({ [name]: false })) };
 
   return { users: _.map(data.users, (name) => ({ [name]: _.includes(user.users_follow, name) })) };
 };
