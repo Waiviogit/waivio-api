@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const moment = require('moment');
 const { importUser } = require('utilities/operations/user/importSteemUserOps');
 const { redisGetter, redisSetter } = require('utilities/redis');
 const { MAX_IMPORTING_USERS } = require('utilities/constants');
@@ -42,6 +43,19 @@ exports.startImportUser = async (userName) => {
   await redisSetter.addImportedUser(userName);
   runImport(userName);
   return { result: { ok: true } };
+};
+
+exports.importUsersTask = async (getUsersKeysFromRedis, getUserDataFromRedis) => {
+  const users = await getUsersKeysFromRedis();
+  if (users && users.length) {
+    for (const user of users) {
+      const userName = user.split(':')[1];
+      const addingDate = await getUserDataFromRedis(userName);
+      if (user.split(':')[0] === 'import_user_error' || moment.utc().subtract(15, 'minute') > moment.utc(addingDate)) {
+        await runImport(userName);
+      }
+    }
+  }
 };
 
 const runImport = async (userName) => {

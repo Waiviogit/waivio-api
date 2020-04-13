@@ -66,7 +66,7 @@ exports.updateOne = async (condition, updateData = {}) => {
   try {
     const user = await UserModel
       .findOneAndUpdate(condition, updateData,
-        { new: true, setDefaultsOnInsert: true })
+        { upsert: true, new: true, setDefaultsOnInsert: true })
       .select('+user_metadata');
 
     return { user };
@@ -118,7 +118,9 @@ exports.search = async ({ string, skip, limit }) => {
   }
 };
 
-exports.find = async ({ condition, skip, limit, sort }) => {
+exports.find = async ({
+  condition, skip, limit, sort,
+}) => {
   try {
     return {
       usersData: await UserModel

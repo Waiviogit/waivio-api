@@ -46,9 +46,10 @@ exports.getUserSteemInfo = async (name) => {
 
   const data = {
     name,
-    alias: _.get(parseString(userData.json_metadata), 'profile.name', ''),
-    profile_image: _.get(parseString(userData.json_metadata), 'profile.profile_image', ''),
+    alias: _.get(parseString(userData), 'posting_json_metadata.profile.name', ''),
+    profile_image: _.get(parseString(userData), 'posting_json_metadata.profile.profile_image', ''),
     json_metadata: userData.json_metadata,
+    posting_json_metadata: userData.posting_json_metadata,
     last_root_post: userData.last_root_post,
     followers_count: _.get(followCountRes, 'follower_count', 0) + guestFollCount,
   };
