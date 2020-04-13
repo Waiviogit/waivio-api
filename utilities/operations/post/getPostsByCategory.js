@@ -21,13 +21,19 @@ const objectIdFromDaysBefore = (daysCount) => {
 };
 
 // eslint-disable-next-line camelcase
-const makeConditions = ({ category, user_languages }) => {
+const makeConditions = ({
+  category, user_languages: languages, forApp, lastId,
+}) => {
   let cond = {};
   let sort = {};
 
   switch (category) {
     case 'created':
       cond = { reblog_to: null };
+      // alternative infinity scroll key(don't use skip if lastId exist)
+      if (lastId) {
+        cond._id = { $lt: new ObjectId(lastId) };
+      }
       sort = { _id: -1 };
       break;
     case 'hot':
@@ -47,32 +53,39 @@ const makeConditions = ({ category, user_languages }) => {
       sort = { net_rshares: -1 };
       break;
   }
-  if (!_.isEmpty(user_languages)) cond.language = { $in: user_languages };
+  if (!_.isEmpty(languages)) cond.language = { $in: languages };
+  if (forApp) cond.blocked_for_apps = { $ne: forApp };
   return { cond, sort };
 };
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, keys,
+  category, skip, limit, user_languages, keys, forApp, lastId,
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category,
+    skip, limit, user_languages, category, forApp,
   });
   if (cachedPosts) return { posts: cachedPosts };
 
-  const { cond, sort } = makeConditions({ category, user_languages });
+  const { cond, sort } = makeConditions({
+    category, user_languages, forApp, lastId,
+  });
+
+  const postsQuery = Post
+    .find(cond)
+    .sort(sort)
+  // .skip(skip)
+    .limit(limit)
+    .populate({ path: 'fullObjects', select: '-latest_posts' })
+    .select(keys || {})
+    .lean();
+  if (!lastId) postsQuery.skip(skip);
+
   let posts = [];
 
   try {
-    posts = await Post
-      .find(cond)
-      .sort(sort)
-      .skip(skip)
-      .limit(limit)
-      .populate({ path: 'fullObjects', select: '-latest_posts' })
-      .select(keys || {})
-      .lean();
+    posts = await postsQuery.exec();
   } catch (error) {
     return { error };
   }
@@ -80,18 +93,22 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category,
+  skip, limit, user_languages: locales, category, forApp,
 }) => {
   let res;
   switch (category) {
     case 'hot':
       if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getHot({ skip, limit, locales });
+        res = await hotTrandGetter.getHot({
+          skip, limit, locales, forApp,
+        });
       }
       break;
     case 'trending':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({ skip, limit, locales });
+        res = await hotTrandGetter.getTrend({
+          skip, limit, locales, forApp,
+        });
       }
       break;
   }

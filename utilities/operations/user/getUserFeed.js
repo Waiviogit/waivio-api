@@ -1,17 +1,18 @@
 const { User, Post, App } = require('models');
 const _ = require('lodash');
 
-// TO DO: add resteems to selections by author
 const getFeed = async ({
   // eslint-disable-next-line camelcase
-  name, limit = 20, skip = 0, user_languages, filter,
+  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId,
 }) => {
   const { user, error: userError } = await User.getOne(name);
 
   if (userError || !user) {
     return { error: userError || { status: 404, message: 'User not found!' } };
   }
-  const { data: filtersData, error: filterError } = await getFiltersData(filter);
+  const { data: filtersData, error: filterError } = await getFiltersData({
+    ...filter, forApp, lastId,
+  });
 
   if (filterError) return { error: filterError };
 
@@ -38,8 +39,13 @@ const getFiltersData = async (filter) => {
     const { app, error } = await App.getOne({ name: byApp });
 
     if (error) return { error };
+    // for filtering posts by specified list of wobjects
     data.require_wobjects = _.get(app, 'supported_objects', []);
   }
+  // for moderate posts by admin of this apps
+  data.forApp = filter.forApp;
+  data.lastId = filter.lastId;
+
   return { data };
 };
 

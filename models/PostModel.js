@@ -2,6 +2,7 @@ const PostModel = require('database').models.Post;
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFIELDS } = require('utilities/constants');
 const AppModel = require('models/AppModel');
+const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 exports.getAllPosts = async (data) => {
@@ -19,7 +20,6 @@ exports.getAllPosts = async (data) => {
         },
       },
     ];
-
     if (data.filter) {
       if (data.filter.byApp) {
         const { app } = await AppModel.getOne({ name: data.filter.byApp });
@@ -45,7 +45,7 @@ exports.fillObjects = async (posts, locale = 'en-US', wobjectsPath = 'fullObject
   const fields = REQUIREDFIELDS.map((item) => ({ name: item }));
 
   for (const post of posts) {
-    for (let wObject of _.get(post, 'wobjects', [])) {
+    for (let wObject of _.get(post, 'wobjects') || []) {
       wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
       wObjectHelper.formatRequireFields(wObject, locale, fields);
     }
@@ -70,22 +70,34 @@ exports.aggregate = async (pipeline) => {
 exports.getByFollowLists = async ({
   users, author_permlinks: authorPermlinks, skip, limit, user_languages: userLanguages, filtersData,
 }) => {
+  const cond = {
+    $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+  };
+  // for filter by App wobjects
+  if (_.get(filtersData, 'require_wobjects')) {
+    cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
+  }
+  // for moderate posts by App
+  if (_.get(filtersData, 'forApp')) {
+    cond.blocked_for_apps = { $ne: filtersData.forApp };
+  }
+  if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
+
+  const postsQuery = PostModel.find(cond)
+    .sort({ _id: -1 })
+    // .skip(skip)
+    .limit(limit)
+    .populate({ path: 'fullObjects', select: '-latest_posts' })
+    .lean();
+
+  if (_.get(filtersData, 'lastId')) {
+    postsQuery.where('_id').lt(ObjectId(filtersData.lastId));
+  } else {
+    postsQuery.skip(skip);
+  }
+
   try {
-    const cond = {
-      $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-    };
-
-    if (_.get(filtersData, 'require_wobjects')) {
-      cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
-    }
-    if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
-    const posts = await PostModel.find(cond)
-      .sort({ _id: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate({ path: 'fullObjects', select: '-latest_posts' })
-      .lean();
-
+    const posts = await postsQuery.exec();
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
