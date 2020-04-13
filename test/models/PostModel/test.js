@@ -75,7 +75,7 @@ describe('Post Model', async () => {
     let skip, limit, postsCount;
     beforeEach(async () => {
       await dropDatabase();
-      postsCount = faker.random.number(50);
+      postsCount = faker.random.number({ min: 10, max: 15 });
       for (let i = 0; i < postsCount; i++) {
         await PostFactory.Create();
       }
@@ -187,11 +187,11 @@ describe('Post Model', async () => {
       for (let i = 0; i < 10; i++) {
         if (i === 0 && i === 1) {
           const permlink = faker.random.string(10);
-          await wObjectFactory.Create(
+          await ObjectFactory.Create(
             { authorPermlink: permlink, latestPosts: [new Mongoose.Types.ObjectId()] },
           );
           wobjects.push({ author_permlink: permlink });
-        } else await wObjectFactory.Create();
+        } else await ObjectFactory.Create();
       }
       for (let j = 0; j < 10; j++) {
         if (j === 0) await PostFactory.Create({ author, wobjects });
