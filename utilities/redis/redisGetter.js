@@ -16,6 +16,14 @@ exports.getWobjRefs = async (authorPermlink) => wobjRefsClient.hgetallAsync(auth
  */
 exports.getAllImportedUsers = async () => importUserClient.keysAsync('import_user:*');
 
+/**
+ * Get list of errored users
+ * @returns {Promise<*>}
+ */
+exports.getAllErroredUsers = async () => importUserClient.keysAsync('import_user_error:*');
+
+exports.getErroredUser = async (userName) => importUserClient.getAsync(`import_user_error:${userName}`);
+
 exports.getImportedUser = async (userName) => importUserClient.getAsync(`import_user:${userName}`);
 
 /**
