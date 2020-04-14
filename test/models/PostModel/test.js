@@ -6,22 +6,15 @@ const { PostFactory, ObjectFactory } = require('test/factories');
 
 describe('Post Model', async () => {
   describe('On aggregate', async () => {
-    let post, author, permlink, title, body, postsCount;
+    let post, postsCount;
     beforeEach(async () => {
       await dropDatabase();
-      author = faker.name.firstName();
-      permlink = faker.random.string(20);
-      title = faker.address.city();
-      body = faker.lorem.sentence();
       postsCount = faker.random.number(30);
       for (let i = 0; i < postsCount; i++) {
         if (i === 0) {
-          post = await PostFactory.Create({
-            author, permlink, title, body,
-          });
+          post = await PostFactory.Create();
         } else {
-          await PostFactory.Create({
-          });
+          await PostFactory.Create();
         }
       }
     });
@@ -47,28 +40,35 @@ describe('Post Model', async () => {
         expect(firstPost).to.have.all.keys('_id', 'author', 'permlink', 'title', 'body');
       });
     });
-    it('Should return from request: author, title and body', async () => {
-      const result = await PostModel.aggregate([{
-        $match: {
-          author: post.author,
+    describe('On project stage case', async () => {
+      let result;
+      beforeEach(async () => {
+        result = await PostModel.aggregate([{
+          $match: {
+            author: post.author,
+          },
         },
-      },
-      {
-        $project: {
-          _id: 0, author: 1, title: 1, body: 1,
+        {
+          $project: {
+            _id: 0, author: 1, title: 1, body: 1,
+          },
         },
-      },
-      ]);
-      const { posts: [posts] } = result;
-      expect(posts).to.be.deep.eq(_.pick(post, ['author', 'title', 'body']));
+        ]);
+      });
+      it('Should return from request: author, title and body', async () => {
+        const { posts: [posts] } = result;
+        expect(posts).to.be.deep.eq(_.pick(post, ['author', 'title', 'body']));
+      });
     });
-    it('Should check that the error message', async () => {
-      const { error } = await PostModel.aggregate([{
-        $match: {
-          author: faker.name.firstName(),
-        },
-      }]);
-      expect(error).to.be.exist;
+    describe('On error', async () => {
+      it('Should check that the error message', async () => {
+        const { error } = await PostModel.aggregate([{
+          $match: {
+            author: faker.name.firstName(),
+          },
+        }]);
+        expect(error).to.be.exist;
+      });
     });
   });
   describe('On getPostsRefs', async () => {
@@ -87,7 +87,7 @@ describe('Post Model', async () => {
     });
     it('Should return right count records considering limits and skips', async () => {
       const { posts } = await PostModel.getPostsRefs({ skip, limit });
-      const answer = postsCount - skip >= limit ? limit : postsCount - skip;
+      const answer = (postsCount - skip) >= limit ? limit : (postsCount - skip);
       expect(posts.length).to.be.eq(answer);
     });
     it('Should return record with author, perlink, wobjects', async () => {
@@ -139,17 +139,15 @@ describe('Post Model', async () => {
     });
   });
   describe('On findByBothAuthors', async () => {
-    let post, nameAuthor, userPermlink, rootAuthor, countPosts;
+    let post, rootAuthor, countPosts;
     beforeEach(async () => {
       await dropDatabase();
       countPosts = faker.random.number(30);
-      nameAuthor = faker.name.firstName();
-      userPermlink = faker.random.string(10);
-      rootAuthor = { author: nameAuthor, permlink: userPermlink };
+      rootAuthor = faker.name.firstName();
       for (let i = 0; i < countPosts; i++) {
         if (i === 0) {
           post = await PostFactory.Create(
-            { author: nameAuthor, permlink: userPermlink, rootAuthor },
+            { rootAuthor },
           );
         } else if (i === 1) await PostFactory.Create({ rootAuthor });
         else await PostFactory.Create();
@@ -160,7 +158,7 @@ describe('Post Model', async () => {
     });
     it('Should return the requested post if the parameters match', async () => {
       const { result: [result] } = await PostModel.findByBothAuthors(
-        { author: nameAuthor, permlink: userPermlink },
+        { author: rootAuthor, permlink: post.permlink },
       );
       expect(result).to.be.deep.eq(_.omit(post, 'post_id'));
     });
@@ -193,12 +191,8 @@ describe('Post Model', async () => {
           wobjects.push({ author_permlink: permlink });
         } else await ObjectFactory.Create();
       }
-      for (let j = 0; j < 10; j++) {
-        if (j === 0) await PostFactory.Create({ author, wobjects });
-        else if (j === 10 - 1) {
-          latestPost = await PostFactory.Create({ author, wobjects });
-        } else await PostFactory.Create();
-      }
+      await PostFactory.Create();
+      latestPost = await PostFactory.Create({ author, wobjects });
     });
     afterEach(async () => {
       sinon.restore();

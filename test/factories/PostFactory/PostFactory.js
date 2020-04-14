@@ -32,7 +32,7 @@ const Create = async ({
     createdAt: faker.date.recent(10).toString(),
     created: faker.date.recent(10).toString(),
     reblogged_users: reblogged || [],
-    root_author: rootAuthor || {},
+    root_author: rootAuthor || faker.name.firstName().toLowerCase(),
   };
 
   for (const key in additionsForPost) {
