@@ -46,15 +46,13 @@ describe('Comment Model', async () => {
     let commentCount, answerCount, nameAuthor;
     beforeEach(async () => {
       nameAuthor = faker.name.firstName();
-      commentCount = faker.random.number(100);
+      commentCount = faker.random.number({ min: 5, max: 15 });
       answerCount = 0;
       for (let iteration = 0; iteration < commentCount; iteration++) {
         if (iteration % 2) await CommentFactory.Create();
         else {
           answerCount++;
-          await CommentFactory.Create({
-            author: nameAuthor,
-          });
+          await CommentFactory.Create({ author: nameAuthor });
         }
       }
     });
@@ -79,9 +77,9 @@ describe('Comment Model', async () => {
     describe('On getMany', async () => {
       let limit, skip, answer;
       beforeEach(async () => {
-        limit = faker.random.number(answerCount);
+        limit = answerCount;
         skip = faker.random.number(limit);
-        answer = answerCount - skip >= limit ? limit : answerCount - skip;
+        answer = (answerCount - skip) > limit ? limit : (answerCount - skip);
       });
       it('Should return right count records considering limits and skips', async () => {
         const { comments } = await CommentModel.getMany(
