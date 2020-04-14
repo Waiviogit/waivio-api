@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { faker, Post, commentRefSetter } = require('test/testHelper');
+const { faker, Post } = require('test/testHelper');
 
 const Create = async ({
-  children, reblogged, author, parentAuthor, additionsForMetadata = {}, onlyData, parentPermlink,
-  additionsForPost = {}, active_votes = [], app, rootAuthor, permlink,
+  reblogged, depth, author, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData, parentPermlink,
+  additionsForPost = {}, active_votes = [], app, rootAuthor, permlink, wobjects = [], children,
 } = {}) => { // additionsForMetadata(Post) must be an Object
   const jsonMetadata = {
     community: 'waiviotest',
@@ -15,22 +15,25 @@ const Create = async ({
     jsonMetadata[key] = additionsForMetadata[key];
   }
   const post = {
-    parent_author: parentAuthor || '', // if it's post -> parent_author not exists
-    parent_permlink: _.isNil(parentPermlink) ? faker.random.string(20) : parentPermlink,
+    id: faker.random.number(10000),
     author: author || faker.name.firstName().toLowerCase(),
     permlink: permlink || faker.random.string(20),
+    parent_author: parentAuthor || '', // if it's post -> parent_author not exists
+    parent_permlink: _.isNil(parentPermlink) ? faker.random.string(20) : parentPermlink,
     title: faker.address.city(),
     body: faker.lorem.sentence(),
     children: children || faker.random.number(),
     json_metadata: JSON.stringify(jsonMetadata),
-    id: faker.random.number(10000),
+    app: app || faker.random.string(10),
+    depth: depth || 0,
+    total_vote_weight: totalVoteWeight || 0,
     active_votes,
+    wobjects,
     createdAt: faker.date.recent(10).toString(),
     created: faker.date.recent(10).toString(),
     reblogged_users: reblogged || [],
+    root_author: rootAuthor || faker.name.firstName().toLowerCase(),
   };
-  post.root_author = rootAuthor || post.author;
-  post.root_permlink = post.permlink;
 
   for (const key in additionsForPost) {
     post[key] = additionsForPost[key];
@@ -39,12 +42,6 @@ const Create = async ({
     return post;
   }
   const newPost = await Post.create(post);
-  await commentRefSetter.addPostRef(
-    `${post.root_author}_${post.permlink}`,
-    _.get(additionsForMetadata, 'wobj.wobjects', []),
-    post.author === post.root_author ? null : post.author,
-  );
-
   return newPost.toObject();
 };
 module.exports = { Create };

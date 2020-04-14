@@ -9,6 +9,7 @@ const PostSchema = new Schema({
   permlink: { type: String },
   parent_author: { type: String, default: '' },
   parent_permlink: { type: String, required: true },
+  root_author: { type: String },
   title: { type: String, required: true, default: '' },
   body: { type: String, required: true, default: '' },
   json_metadata: { type: String, required: true, default: '' },
