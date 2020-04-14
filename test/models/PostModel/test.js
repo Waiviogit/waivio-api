@@ -9,7 +9,7 @@ describe('Post Model', async () => {
     let post, postsCount;
     beforeEach(async () => {
       await dropDatabase();
-      postsCount = faker.random.number(30);
+      postsCount = faker.random.number({ min: 5, max: 10 });
       for (let i = 0; i < postsCount; i++) {
         if (i === 0) {
           post = await PostFactory.Create();
@@ -87,10 +87,10 @@ describe('Post Model', async () => {
     });
     it('Should return right count records considering limits and skips', async () => {
       const { posts } = await PostModel.getPostsRefs({ skip, limit });
-      const answer = (postsCount - skip) >= limit ? limit : (postsCount - skip);
+      const answer = (postsCount - skip) > limit ? limit : (postsCount - skip);
       expect(posts.length).to.be.eq(answer);
     });
-    it('Should return record with author, perlink, wobjects', async () => {
+    it('Should return record with author, permlink, wobjects', async () => {
       const { posts: [firstPost] } = await PostModel.getPostsRefs({ skip, limit });
       expect(firstPost).to.have.all.keys('author', 'permlink', 'wobjects');
     });
@@ -142,7 +142,7 @@ describe('Post Model', async () => {
     let post, rootAuthor, countPosts;
     beforeEach(async () => {
       await dropDatabase();
-      countPosts = faker.random.number(30);
+      countPosts = faker.random.number({ min: 5, max: 10 });
       rootAuthor = faker.name.firstName();
       for (let i = 0; i < countPosts; i++) {
         if (i === 0) {

@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { faker, WObject } = require('test/testHelper');
 
 const Create = async ({
