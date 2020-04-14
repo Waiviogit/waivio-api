@@ -2,6 +2,7 @@ const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const parser = require('exif-parser');
 const _ = require('lodash');
+const ExifReader = require('exifreader');
 
 class Image {
   constructor() {
@@ -44,11 +45,13 @@ class Image {
     return { error: 'Error parse image' };
   }
 
-  rotationSwitcher(number) {
+  rotationSwitcher(number, height, width) {
     switch (number) {
       case 3:
         return 180;
       case 1:
+        if (height && width && (width > height)) return 0;
+        return 270;
       case 6:
         return 90;
       case 8:
@@ -78,14 +81,16 @@ class Image {
 
   // eslint-disable-next-line class-methods-use-this
   async resizeImage({ buffer, size }) {
-    let metadata;
+    let metadata, tags;
     try {
       const parsedBuffer = parser.create(buffer);
+      tags = ExifReader.load(buffer, { expanded: true });
+      console.log(tags.exif.Orientation);
       metadata = parsedBuffer.parse();
     } catch (error) {
       metadata = null;
     }
-    const rotation = this.rotationSwitcher(_.get(metadata, 'tags.Orientation', 0));
+    const rotation = this.rotationSwitcher(_.get(metadata, 'tags.Orientation', 0), _.get(metadata, 'imageSize.height', 0), _.get(metadata, 'imageSize.width', 0));
     if (size === '_small') {
       return sharp(buffer).rotate(rotation).resize(34, 34).toBuffer();
     } if (size === '_medium') {
