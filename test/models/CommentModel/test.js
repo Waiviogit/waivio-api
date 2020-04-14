@@ -77,7 +77,7 @@ describe('Comment Model', async () => {
     describe('On getMany', async () => {
       let limit, skip, answer;
       beforeEach(async () => {
-        limit = faker.random.number(answerCount);
+        limit = answerCount;
         skip = faker.random.number(limit);
         answer = (answerCount - skip) > limit ? limit : (answerCount - skip);
       });

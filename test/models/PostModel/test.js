@@ -79,7 +79,7 @@ describe('Post Model', async () => {
       for (let i = 0; i < postsCount; i++) {
         await PostFactory.Create();
       }
-      limit = faker.random.number(postsCount);
+      limit = postsCount;
       skip = faker.random.number(limit);
     });
     afterEach(async () => {
