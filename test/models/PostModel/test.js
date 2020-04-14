@@ -10,8 +10,8 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       postsCount = faker.random.number({ min: 5, max: 10 });
-      for (let i = 0; i < postsCount; i++) {
-        if (i === 0) {
+      for (let count = 0; count < postsCount; count++) {
+        if (count === 0) {
           post = await PostFactory.Create();
         } else {
           await PostFactory.Create();
@@ -76,7 +76,7 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       postsCount = faker.random.number({ min: 10, max: 15 });
-      for (let i = 0; i < postsCount; i++) {
+      for (let count = 0; count < postsCount; count++) {
         await PostFactory.Create();
       }
       limit = postsCount;
@@ -106,8 +106,8 @@ describe('Post Model', async () => {
       await dropDatabase();
       postCount = 6;
       nameAuthor = faker.name.firstName();
-      for (let iteration = 0; iteration < postCount; iteration++) {
-        if (iteration === 0) post = await PostFactory.Create({ author: nameAuthor });
+      for (let count = 0; count < postCount; count++) {
+        if (count === 0) post = await PostFactory.Create({ author: nameAuthor });
         else await PostFactory.Create();
       }
     });
@@ -144,12 +144,12 @@ describe('Post Model', async () => {
       await dropDatabase();
       countPosts = faker.random.number({ min: 5, max: 10 });
       rootAuthor = faker.name.firstName();
-      for (let i = 0; i < countPosts; i++) {
-        if (i === 0) {
+      for (let count = 0; count < countPosts; count++) {
+        if (count === 0) {
           post = await PostFactory.Create(
             { rootAuthor },
           );
-        } else if (i === 1) await PostFactory.Create({ rootAuthor });
+        } else if (count === 1) await PostFactory.Create({ rootAuthor });
         else await PostFactory.Create();
       }
     });
@@ -182,8 +182,8 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       author = faker.name.firstName();
-      for (let i = 0; i < 10; i++) {
-        if (i === 0 && i === 1) {
+      for (let count = 0; count < 10; count++) {
+        if (count === 0 && count === 1) {
           const permlink = faker.random.string(10);
           await ObjectFactory.Create(
             { authorPermlink: permlink, latestPosts: [new Mongoose.Types.ObjectId()] },
@@ -215,8 +215,8 @@ describe('Post Model', async () => {
     const postsRefs = [];
     beforeEach(async () => {
       await dropDatabase();
-      for (let i = 0; i < 10; i++) {
-        if (i === 3 || i === 7) {
+      for (let count = 0; count < 10; count++) {
+        if (count === 3 || count === 7) {
           const post = await PostFactory.Create();
           postsRefs.push({ author: post.author, permlink: post.permlink });
         } else await PostFactory.Create();
@@ -245,20 +245,17 @@ describe('Post Model', async () => {
   });
   describe('On getByFollowLists', async () => {
     const permLink = [], wobjects = [];
-    let post, countObjects, countPosts;
+    let post, countObjects;
     beforeEach(async () => {
       await dropDatabase();
       countObjects = faker.random.number({ min: 4, max: 10 });
-      countPosts = faker.random.number({ min: 4, max: 10 });
-      for (let i = 0; i < countObjects; i++) {
+      for (let count = 0; count < countObjects; count++) {
         permLink.push(faker.random.string(10));
-        await ObjectFactory.Create({ authorPermlink: permLink[i] });
-        if (i === 1 || i === 3) wobjects.push({ author_permlink: permLink[i] });
-      }
-      for (let j = 0; j < countPosts; j++) {
-        if (j === 0) {
+        await ObjectFactory.Create({ authorPermlink: permLink[count] });
+        if (count === 1 || count === 3) {
+          wobjects.push({ author_permlink: permLink[count] });
           post = await PostFactory.Create({ wobjects });
-        } else await PostFactory.Create();
+        }
       }
     });
     it('Should return posts where objects match', async () => {
@@ -285,22 +282,18 @@ describe('Post Model', async () => {
     });
   });
   describe('On getAllPosts', async () => {
-    const permLink = [], wobjects = [];
-    let post, data, byApp, supportedObjects, countPosts;
+    const wobjects = [], supportedObjects = [];
+    let post, data, byApp, countPosts;
     beforeEach(async () => {
       await dropDatabase();
       countPosts = faker.random.number({ min: 3, max: 15 });
-      for (let i = 0; i < 2; i++) {
-        permLink.push(faker.random.string(10));
-        wobjects.push({ author_permlink: permLink[i] });
-        await ObjectFactory.Create({ authorPermlink: permLink[i] });
+      for (let count = 0; count < countPosts; count++) {
+        const permlink = faker.random.string(10);
+        wobjects.push({ author_permlink: permlink });
+        await ObjectFactory.Create({ authorPermlink: permlink });
+        post = await PostFactory.Create({ wobjects });
+        supportedObjects.push(permlink);
       }
-      for (let i = 0; i < countPosts; i++) {
-        if (i === 0) {
-          post = await PostFactory.Create({ wobjects });
-        } else { await PostFactory.Create(); }
-      }
-      supportedObjects = [permLink[0], permLink[1]];
       byApp = (await AppFactory.Create({ supportedObjects })).name;
       data = { skip: 0, limit: 30, filter: { byApp } };
     });
@@ -327,18 +320,12 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       objectsCount = faker.random.number({ min: 2, max: 10 });
-      for (let i = 0; i < objectsCount; i++) {
+      for (let count = 0; count < objectsCount; count++) {
         wobjects.push({ author_permlink: faker.random.string(10) });
         wobjectsCreated.push(await ObjectFactory.Create(
-          { authorPermlink: wobjects[i].author_permlink },
+          { authorPermlink: wobjects[count].author_permlink },
         ));
-      }
-      for (let j = 0; j < 2; j++) {
-        await PostFactory.Create(
-          {
-            wobjects,
-          },
-        );
+        await PostFactory.Create({ wobjects });
       }
       posts = (await PostModel.getAllPosts({ skip: 0, limit: 30 })).posts;
       result = await PostModel.fillObjects(posts);
