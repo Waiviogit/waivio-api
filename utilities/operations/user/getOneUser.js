@@ -33,7 +33,9 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
   }
 
   // const resUser = withFollowings ? user : _.omit(user, ['users_follow', 'objects_follow']);
-  const resUser = _.omit(user, withFollowings ? [] : ['users_follow', 'objects_follow']);
+  if (_.get(user, 'auth.provider')) user.provider = user.auth.provider;
+  const resUser = _.omit(user, withFollowings ? ['auth'] : ['users_follow', 'objects_follow', 'auth']);
+
   Object.assign(userData, resUser); // combine data from db and blockchain
   return { userData };
 };
