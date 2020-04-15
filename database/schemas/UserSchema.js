@@ -48,7 +48,7 @@ const UserMetadataSchema = new Schema({
 const authSchema = new Schema({
   sessions: { type: [Object], select: false },
   _id: { type: String, select: false },
-  id: { type: String },
+  id: { type: String, select: false },
   provider: { type: String },
 });
 
