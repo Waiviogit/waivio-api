@@ -1,8 +1,5 @@
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
-const parser = require('exif-parser');
-const _ = require('lodash');
-const ExifReader = require('exifreader');
 
 class Image {
   constructor() {
@@ -45,60 +42,15 @@ class Image {
     return { error: 'Error parse image' };
   }
 
-  rotationSwitcher(number, height, width) {
-    switch (number) {
-      case 3:
-        return 180;
-      case 1:
-        if (height && width && (width > height)) return 0;
-        return 270;
-      case 6:
-        return 90;
-      case 8:
-        return 270;
-      default:
-        return 360;
-    }
-  }
-
-  proportionalResize(imageSize) {
-    const size = {};
-    if (imageSize && imageSize.height && imageSize.width) {
-      imageSize.height >= imageSize.width ? size.height = 1008 : size.width = 1008;
-      switch (imageSize.height >= imageSize.width) {
-        case true:
-          imageSize.height >= 1008 ? size.height = 1008 : size.height = imageSize.height;
-          break;
-        case false:
-          imageSize.width >= 1008 ? size.width = 1008 : size.width = imageSize.width;
-          break;
-      }
-    } else {
-      size.height = 1008;
-    }
-    return size;
-  }
-
   // eslint-disable-next-line class-methods-use-this
   async resizeImage({ buffer, size }) {
-    let metadata, tags;
-    try {
-      const parsedBuffer = parser.create(buffer);
-      tags = ExifReader.load(buffer, { expanded: true });
-      console.log(tags.exif.Orientation);
-      metadata = parsedBuffer.parse();
-    } catch (error) {
-      metadata = null;
-    }
-    const rotation = this.rotationSwitcher(_.get(metadata, 'tags.Orientation', 0), _.get(metadata, 'imageSize.height', 0), _.get(metadata, 'imageSize.width', 0));
     if (size === '_small') {
-      return sharp(buffer).rotate(rotation).resize(34, 34).toBuffer();
+      return sharp(buffer).rotate(0).resize(34, 34).toBuffer();
     } if (size === '_medium') {
-      return sharp(buffer).rotate(rotation).resize(180, 180).toBuffer();
+      return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
 
-    return sharp(buffer).rotate(rotation)
-      .resize(this.proportionalResize(metadata ? metadata.imageSize : null))
+    return sharp(buffer).rotate(0)
       .toBuffer();
   }
 }
