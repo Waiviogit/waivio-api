@@ -47,5 +47,5 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
 const isGuestUser = async (name) => {
   const { user } = await User.getOne(name);
 
-  return user && user.auth && user.auth.id;
+  return user && user.auth && user.auth.provider;
 };
