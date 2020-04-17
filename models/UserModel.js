@@ -3,9 +3,9 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFIELDS } = require('utilities/constants');
 const _ = require('lodash');
 
-exports.getOne = async (name) => {
+exports.getOne = async (name, keys) => {
   try {
-    return { user: await UserModel.findOne({ name }).lean() };
+    return { user: await UserModel.findOne({ name }).select(keys).lean() };
   } catch (error) {
     return { error };
   }
