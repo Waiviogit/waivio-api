@@ -1,9 +1,10 @@
-const WObjectModel = require('database/schemas/wObjectSchema');
-const UserWobjects = require('database/schemas/UserWobjectsSchema');
+const _ = require('lodash');
+const { WObject } = require('database').models;
+const { User } = require('models');
 
 const getFollowers = async (data) => {
   try {
-    const wObject = await WObjectModel.findOne({ author_permlink: data.author_permlink })
+    const wObject = await WObject.findOne({ author_permlink: data.author_permlink })
       .populate({
         path: 'followers',
         options: {
@@ -15,23 +16,23 @@ const getFollowers = async (data) => {
       })
       .lean();
 
-    await formatWobjectFollowers(wObject);
-    return { followers: wObject.followers };
+
+    return { followers: await formatWobjectFollowers(wObject) };
   } catch (error) {
     return { error };
   }
 };
 
 const formatWobjectFollowers = async (wObject) => {
-  for (const follower of wObject.followers) {
-    const userWobj = await UserWobjects.findOne(
-      { user_name: follower.name, author_permlink: wObject.author_permlink },
-    ).lean();
-
-    follower.weight = userWobj ? userWobj.weight : 0;
-    delete follower.objects_follow;
-    delete follower._id;
-  }
+  if (!wObject.followers.length) return [];
+  const followers = _.map(wObject.followers, 'name');
+  const { result } = await User.aggregate([
+    { $match: { name: { $in: followers } } },
+    { $addFields: { weight: '$wobjects_weight' } },
+    { $project: { _id: 0, name: 1, weight: 1 } },
+  ]);
+  if (result) return result;
+  return [];
 };
 
 module.exports = { getFollowers };
