@@ -25,12 +25,22 @@ exports.getAll = async ({ name, skip, limit }) => {
   return { result: { users: result, hasMore: users.length === limit + 1 } };
 };
 
-// returns collection of users with boolean markers
+// returns collection of users or permlinks with boolean markers
 exports.getFollowingsArray = async (data) => {
   const { user, error } = await User.getOne(data.name);
 
   if (error) return { error: { status: 503, message: error.message } };
-  if (!user) return { users: _.map(data.users, (name) => ({ [name]: false })) };
-
-  return { users: _.map(data.users, (name) => ({ [name]: _.includes(user.users_follow, name) })) };
+  if (data.users) {
+    if (!user) return { users: _.map(data.users, (name) => ({ [name]: false })) };
+    return {
+      users: _.map(data.users,
+        (name) => ({ [name]: _.includes(user.users_follow, name) })),
+    };
+  } if (data.permlinks) {
+    if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
+    return {
+      users: _.map(data.permlinks,
+        (permlink) => ({ [permlink]: _.includes(user.objects_follow, permlink) })),
+    };
+  }
 };

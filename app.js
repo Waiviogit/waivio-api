@@ -6,7 +6,8 @@ const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
-  moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, checkUserFollowings,
+  moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
+  checkUserFollowings, checkObjectsFollowings,
 } = require('middlewares');
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -41,6 +42,9 @@ app.use('/', checkUserFollowers.check);
 
 // Check users for followings for some routes
 app.use('/', checkUserFollowings.check);
+
+// Check objects for followings for some routes
+app.use('/', checkObjectsFollowings.check);
 
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
