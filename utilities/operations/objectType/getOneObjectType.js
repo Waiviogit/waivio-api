@@ -25,7 +25,7 @@ const validateInput = ({ filter, sort }) => {
 };
 
 const getWobjWithFilters = async ({
-  objectType, filter, limit = 30, skip = 0, sort = 'weight',
+  objectType, filter, limit = 30, skip = 0, sort = 'weight', nsfw,
 }) => {
   const aggregationPipeline = [];
 
@@ -45,11 +45,10 @@ const getWobjWithFilters = async ({
     delete filter.map;
     limit > 100 ? aggregationPipeline[0].$geoNear.limit = limit : null;
   }
-  aggregationPipeline.push({
-    $match: {
-      object_type: objectType,
-    },
-  });
+
+  if (nsfw) aggregationPipeline.push({ $match: { object_type: objectType, 'status.title': { $ne: 'nsfw' } } });
+  else aggregationPipeline.push({ $match: { object_type: objectType } });
+
   // special filter searchString
   if (_.get(filter, 'searchString')) {
     aggregationPipeline.push({
@@ -121,11 +120,18 @@ module.exports = async ({
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
+  const { user } = await User.getOne(userName, '+user_metadata');
+
   const { wobjects, error: wobjError } = await getWobjWithFilters({
-    objectType: name, filter, limit: wobjLimit + 1, skip: wobjSkip, sort,
+    objectType: name,
+    filter,
+    limit: wobjLimit + 1,
+    skip: wobjSkip,
+    sort,
+    nsfw: _.get(user, 'user_metadata.settings.showNSFWPosts', false),
   });
   if (wobjError) return { error: wobjError };
-  const { user } = await User.getOne(userName);
+
 
   switch (name) {
     case 'list':
