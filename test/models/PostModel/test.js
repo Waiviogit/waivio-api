@@ -183,7 +183,7 @@ describe('Post Model', async () => {
       await dropDatabase();
       author = faker.name.firstName();
       for (let count = 0; count < 10; count++) {
-        if (count === 0 && count === 1) {
+        if (count === 0 || count === 1) {
           const permlink = faker.random.string(10);
           await ObjectFactory.Create(
             { authorPermlink: permlink, latestPosts: [new Mongoose.Types.ObjectId()] },
