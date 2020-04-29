@@ -73,8 +73,9 @@ const getPostsByCategory = async (data) => {
  */
 const mergePostData = async (postSteem, postDb) => {
   if (!postDb) {
+    if (!postSteem) return;
     const { post: dbPost, error } = await PostRepository.getOne({
-      root_author: postSteem.root_author || postSteem.author,
+      root_author: _.get(postSteem, 'root_author', postSteem.author),
       permlink: postSteem.permlink,
     });
 
