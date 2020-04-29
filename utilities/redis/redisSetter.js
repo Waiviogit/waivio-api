@@ -63,7 +63,7 @@ async function clearFeedLocaleCache({ app, prefix, locale }) {
   let keys = [];
 
   if (app) keyTemplate = `${app}`;
-  keyTemplate += `:${prefix}`;
+  keyTemplate += app ? `:${prefix}` : `${prefix}`;
 
   if (locale) keys.push(`${keyTemplate}:${locale}`);
   else {
