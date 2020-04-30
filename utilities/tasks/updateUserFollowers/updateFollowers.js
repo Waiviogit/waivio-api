@@ -16,7 +16,7 @@ exports.findFollowersCountAndUpdate = async () => {
         }
         if (error) break;
         counter += result.result.length - 1;
-        start = result.result[result.result.length - 1].follower;
+        start = result.result.length ? result.result[result.result.length - 1].follower : '';
       } while (!result.error && result.result.length === 1000);
       const dbResult = await User.find({ users_follow: doc.name, name: { $in: [new RegExp('waivio_'), new RegExp('bxy_')] } });
       guestLength = dbResult.length + 1;
