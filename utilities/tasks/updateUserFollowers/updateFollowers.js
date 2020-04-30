@@ -6,21 +6,26 @@ exports.findFollowersCountAndUpdate = async () => {
   const users = await User.find({ stage_version: 0 });
 
   for (const doc of users) {
-    let result, error, counter = 0, start = '';
-    do {
-      ({ result, error } = await getFollowers(doc.name, start));
-      if (_.get(result, 'error.message', '') === 'Request Timeout') {
-        await new Promise((resolve) => setTimeout(resolve, 2000));
-        continue;
-      }
-      if (error) break;
-      counter += result.result.length - 1;
-      start = result.result[result.result.length - 1].follower;
-    } while (!result.error && result.result.length === 1000);
-    const dbResult = await User.find({ users_follow: doc.name, name: { $in: [new RegExp('waivio_'), new RegExp('bxy_')] } });
-    const guestLength = dbResult.length;
+    let result, error, counter = 0, start = '', guestLength = 0;
+    if (!_.get(doc, 'auth.provider', null)) {
+      do {
+        ({ result, error } = await getFollowers(doc.name, start));
+        if (_.get(result, 'error.message', '') === 'Request Timeout') {
+          await new Promise((resolve) => setTimeout(resolve, 2000));
+          continue;
+        }
+        if (error) break;
+        counter += result.result.length - 1;
+        start = result.result[result.result.length - 1].follower;
+      } while (!result.error && result.result.length === 1000);
+      const dbResult = await User.find({ users_follow: doc.name, name: { $in: [new RegExp('waivio_'), new RegExp('bxy_')] } });
+      guestLength = dbResult.length + 1;
+    } else {
+      const dbResult = await User.find({ users_follow: doc.name });
+      guestLength = dbResult.length;
+    }
     const res = await User.updateOne(
-      { name: doc.name }, { $set: { followers_count: counter + guestLength + 1 } },
+      { name: doc.name }, { $set: { followers_count: counter + guestLength } },
     );
     if (res.nModified) {
       console.log(`User ${doc.name} "followers_count" updated!`);
@@ -46,5 +51,3 @@ const getFollowers = async (name, start) => {
     return { error };
   }
 };
-
-
