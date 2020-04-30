@@ -1773,6 +1773,18 @@
           "items" : {
             "$ref" : "#/definitions/apiuseruserNamefollowing_objects_fields"
           }
+        },
+        "moderators": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "admins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
