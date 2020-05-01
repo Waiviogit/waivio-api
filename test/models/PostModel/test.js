@@ -305,7 +305,7 @@ describe('Post Model', async () => {
       expect(_.omit(posts, 'fullObjects')).to.be.deep.eq(_.omit(post, 'post_id'));
     });
     it('Should return the number of all posts', async () => {
-      const { posts: [...posts] } = await PostModel.getAllPosts(_.omit(data, 'filter'));
+      const { posts } = await PostModel.getAllPosts(_.omit(data, 'filter'));
       expect(posts.length).to.be.eq(countPosts);
     });
     it('Should check that the error exist', async () => {
