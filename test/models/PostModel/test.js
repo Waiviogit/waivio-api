@@ -2,7 +2,7 @@ const {
   PostModel, faker, expect, sinon, Post, Mongoose, dropDatabase,
 } = require('test/testHelper');
 const _ = require('lodash');
-const { PostFactory, ObjectFactory } = require('test/factories');
+const { PostFactory, ObjectFactory, AppFactory } = require('test/factories');
 
 describe('Post Model', async () => {
   describe('On aggregate', async () => {
@@ -10,8 +10,8 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       postsCount = faker.random.number({ min: 5, max: 10 });
-      for (let i = 0; i < postsCount; i++) {
-        if (i === 0) {
+      for (let count = 0; count < postsCount; count++) {
+        if (count === 0) {
           post = await PostFactory.Create();
         } else {
           await PostFactory.Create();
@@ -76,7 +76,7 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       postsCount = faker.random.number({ min: 10, max: 15 });
-      for (let i = 0; i < postsCount; i++) {
+      for (let count = 0; count < postsCount; count++) {
         await PostFactory.Create();
       }
       limit = postsCount;
@@ -106,8 +106,8 @@ describe('Post Model', async () => {
       await dropDatabase();
       postCount = 6;
       nameAuthor = faker.name.firstName();
-      for (let iteration = 0; iteration < postCount; iteration++) {
-        if (iteration === 0) post = await PostFactory.Create({ author: nameAuthor });
+      for (let count = 0; count < postCount; count++) {
+        if (count === 0) post = await PostFactory.Create({ author: nameAuthor });
         else await PostFactory.Create();
       }
     });
@@ -144,12 +144,12 @@ describe('Post Model', async () => {
       await dropDatabase();
       countPosts = faker.random.number({ min: 5, max: 10 });
       rootAuthor = faker.name.firstName();
-      for (let i = 0; i < countPosts; i++) {
-        if (i === 0) {
+      for (let count = 0; count < countPosts; count++) {
+        if (count === 0) {
           post = await PostFactory.Create(
             { rootAuthor },
           );
-        } else if (i === 1) await PostFactory.Create({ rootAuthor });
+        } else if (count === 1) await PostFactory.Create({ rootAuthor });
         else await PostFactory.Create();
       }
     });
@@ -182,8 +182,8 @@ describe('Post Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       author = faker.name.firstName();
-      for (let i = 0; i < 10; i++) {
-        if (i === 0 && i === 1) {
+      for (let count = 0; count < 10; count++) {
+        if (count === 0 || count === 1) {
           const permlink = faker.random.string(10);
           await ObjectFactory.Create(
             { authorPermlink: permlink, latestPosts: [new Mongoose.Types.ObjectId()] },
@@ -215,8 +215,8 @@ describe('Post Model', async () => {
     const postsRefs = [];
     beforeEach(async () => {
       await dropDatabase();
-      for (let i = 0; i < 10; i++) {
-        if (i === 3 || i === 7) {
+      for (let count = 0; count < 10; count++) {
+        if (count === 3 || count === 7) {
           const post = await PostFactory.Create();
           postsRefs.push({ author: post.author, permlink: post.permlink });
         } else await PostFactory.Create();
@@ -241,6 +241,103 @@ describe('Post Model', async () => {
       sinon.stub(Post, 'find').throws('DataBase is not responding');
       const { error } = await PostModel.getManyPosts(postsRefs);
       expect(error).to.be.exist;
+    });
+  });
+  describe('On getByFollowLists', async () => {
+    const permLink = [], wobjects = [];
+    let post, countObjects;
+    beforeEach(async () => {
+      await dropDatabase();
+      countObjects = faker.random.number({ min: 4, max: 10 });
+      for (let count = 0; count < countObjects; count++) {
+        permLink.push(faker.random.string(10));
+        await ObjectFactory.Create({ authorPermlink: permLink[count] });
+        if (count === 1 || count === 3) {
+          wobjects.push({ author_permlink: permLink[count] });
+          post = await PostFactory.Create({ wobjects });
+        }
+      }
+    });
+    it('Should return posts where objects match', async () => {
+      const { posts: [posts] } = await PostModel.getByFollowLists(
+        {
+          user: faker.name.firstName(),
+          skip: 0,
+          limit: 30,
+          author_permlinks: [permLink[1], permLink[3]],
+          user_languages: post.language,
+        },
+      );
+      expect(_.omit(posts, 'fullObjects')).to.be.deep.eq(_.omit(post, 'post_id'));
+    });
+    describe('On error case', async () => {
+      it('Should check that the error exists', async () => {
+        const { error } = await PostModel.getByFollowLists({ author_permlinks: [permLink[1], permLink[3]] });
+        expect(error).to.be.exist;
+      });
+      it('Should return error message', async () => {
+        const { error } = await PostModel.getByFollowLists({ author_permlinks: [permLink[1], permLink[3]] });
+        expect(error.message).to.be.eq('Posts not found!');
+      });
+    });
+  });
+  describe('On getAllPosts', async () => {
+    const wobjects = [], supportedObjects = [];
+    let post, data, byApp, countPosts;
+    beforeEach(async () => {
+      await dropDatabase();
+      countPosts = faker.random.number({ min: 3, max: 15 });
+      for (let count = 0; count < countPosts; count++) {
+        const permlink = faker.random.string(10);
+        wobjects.push({ author_permlink: permlink });
+        await ObjectFactory.Create({ authorPermlink: permlink });
+        post = await PostFactory.Create({ wobjects });
+        supportedObjects.push(permlink);
+      }
+      byApp = (await AppFactory.Create({ supportedObjects })).name;
+      data = { skip: 0, limit: 30, filter: { byApp } };
+    });
+    afterEach(async () => {
+      sinon.restore();
+    });
+    it('Should return posts based on the filter', async () => {
+      const { posts: [posts] } = await PostModel.getAllPosts(data);
+      expect(_.omit(posts, 'fullObjects')).to.be.deep.eq(_.omit(post, 'post_id'));
+    });
+    it('Should return the number of all posts', async () => {
+      const { posts } = await PostModel.getAllPosts(_.omit(data, 'filter'));
+      expect(posts.length).to.be.eq(countPosts);
+    });
+    it('Should check that the error exist', async () => {
+      sinon.stub(Post, 'aggregate').throws('Database is not responding');
+      const { error } = await PostModel.getAllPosts(_.omit(data, 'filter'));
+      expect(error).to.be.exist;
+    });
+  });
+  describe('On fillObjects', async () => {
+    const wobjectsCreated = [];
+    let posts, objectsCount, result, wobjects = [];
+    beforeEach(async () => {
+      await dropDatabase();
+      objectsCount = faker.random.number({ min: 2, max: 10 });
+      for (let count = 0; count < objectsCount; count++) {
+        wobjects.push({ author_permlink: faker.random.string(10) });
+        wobjectsCreated.push(await ObjectFactory.Create(
+          { authorPermlink: wobjects[count].author_permlink },
+        ));
+        await PostFactory.Create({ wobjects });
+      }
+      posts = (await PostModel.getAllPosts({ skip: 0, limit: 30 })).posts;
+      result = await PostModel.fillObjects(posts);
+    });
+    afterEach(async () => {
+      wobjects = [];
+    });
+    it('Should return full objects in posts objects', async () => {
+      expect(result[0].wobjects[0]).to.be.deep.eq(_.omit(wobjectsCreated[0], 'id'));
+    });
+    it('Should return the specified number of objects  ', async () => {
+      expect(result[0].wobjects.length).to.be.eq(objectsCount);
     });
   });
 });
