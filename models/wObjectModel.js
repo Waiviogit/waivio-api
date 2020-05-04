@@ -6,7 +6,7 @@ const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('u
 const getOne = async (authorPermlink, objectType, unavailable) => { // get one wobject by author_permlink
   try {
     const matchStage = { $match: { author_permlink: authorPermlink } };
-    if (unavailable) matchStage.$match['status.title'] = { $ne: 'unavailable' };
+    if (unavailable) matchStage.$match['status.title'] = { $nin: ['unavailable', 'nsfw'] };
     if (objectType) matchStage.$match.object_type = objectType;
     const [wObject] = await WObjectModel.aggregate([
       matchStage,
