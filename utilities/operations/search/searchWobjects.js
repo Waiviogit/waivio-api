@@ -20,7 +20,7 @@ const makePipeline = ({
         // eslint-disable-next-line camelcase
         { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
       ],
-      'status.title': { $nin: ['unavailable'] },
+      'status.title': { $nin: ['unavailable', 'nsfw'] },
     },
   },
   {
@@ -64,7 +64,7 @@ const makeCountPipeline = ({ string }) => [
         { fields: { $elemMatch: { name: 'name', body: { $regex: `\\b${string}.*\\b`, $options: 'i' } } } },
         { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
       ],
-      'status.title': { $nin: ['unavailable'] },
+      'status.title': { $nin: ['unavailable', 'nsfw'] },
     },
   },
   { $group: { _id: '$object_type', count: { $sum: 1 } } },
