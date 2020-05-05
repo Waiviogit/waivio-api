@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const axios = require('axios');
 const { client } = require('utilities/steemApi/steem');
 
 exports.getPostsByCategory = async (data) => {
@@ -74,7 +75,25 @@ exports.getPostState = async ({ author, permlink, category }) => {
     'get_state',
     [`${category}/@${author}/${permlink}`],
   );
-
   if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+
+  const { result: content, error } = await getComments(author, permlink);
+  if (error || !content) return { error: { message: _.get(error, 'message') } };
+
+  result.content = content;
   return { result };
+};
+
+const getComments = async (author, permlink) => {
+  try {
+    const result = await axios.post('https://api.hive.blog', {
+      id: 1,
+      jsonrpc: '2.0',
+      method: 'bridge.get_discussion',
+      params: { author, permlink },
+    });
+    return { result: result.data.result };
+  } catch (error) {
+    return { error };
+  }
 };
