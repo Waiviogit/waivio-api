@@ -79,7 +79,9 @@ exports.getPostState = async ({ author, permlink, category }) => {
 
   const { result: content, error } = await getComments(author, permlink);
   if (error || !content) return { error: { message: _.get(error, 'message') } };
-
+  _.forEach(Object.keys(content), (post) => {
+    content[post].json_metadata = JSON.stringify(content[post].json_metadata);
+  });
   result.content = content;
   return { result };
 };
