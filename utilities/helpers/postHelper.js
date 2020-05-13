@@ -182,7 +182,8 @@ const fillReblogs = async (posts = [], userName) => {
       if (sourcePost) {
         posts[postIdx] = {
           ...sourcePost,
-          reblogged_by: {
+          reblogged_by: posts[postIdx].author,
+          checkForFollow: {
             name: posts[postIdx].author,
             youFollows: user ? _.includes(user.users_follow, posts[postIdx].author) : false,
           },
