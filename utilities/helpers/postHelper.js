@@ -158,7 +158,7 @@ const addAuthorWobjectsWeight = async (posts = []) => {
   });
 };
 
-const fillReblogs = async (posts = []) => {
+const fillReblogs = async (posts = [], userName) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;
@@ -175,7 +175,19 @@ const fillReblogs = async (posts = []) => {
       } catch (error) {
         console.error(error);
       }
-      if (sourcePost) posts[postIdx] = { ...sourcePost, reblogged_by: posts[postIdx].author };
+      let user;
+      if (userName) {
+        ({ user } = await User.getOne(userName));
+      }
+      if (sourcePost) {
+        posts[postIdx] = {
+          ...sourcePost,
+          reblogged_by: {
+            name: posts[postIdx].author,
+            youFollows: user ? _.includes(user.users_follow, posts[postIdx].author) : false,
+          },
+        };
+      }
     }
   }
 };

@@ -123,6 +123,7 @@ const feed = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: posts };
+  res.params = req.params;
   next();
 };
 
@@ -138,6 +139,7 @@ const blog = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: posts };
+  res.params = req.params;
   next();
 };
 
