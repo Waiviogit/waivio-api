@@ -19,17 +19,18 @@ exports.fill = async (req, res, next) => {
     next();
     return;
   }
+  const userName = _.get(res, 'params.userName', null);
   // separate requests which return array of posts and which return single post
   if (_.isArray(res.result.json)) {
     // replace reblog post blank to source post
-    await postHelper.fillReblogs(res.result.json);
+    await postHelper.fillReblogs(res.result.json, userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
     res.result.json = await PostService.fillObjects(res.result.json);
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(res.result.json);
   } else {
     // replace reblog post blank to source post
-    await postHelper.fillReblogs([res.result.json]);
+    await postHelper.fillReblogs([res.result.json], userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
     [res.result.json] = await PostService.fillObjects([res.result.json]);
     // add current "author_wobjects_weight" to each post;

@@ -12,5 +12,4 @@ wobjRefsClient.select(config.redis.wobjRefs);
 importUserClient.select(config.redis.importUser);
 mainFeedsCacheClient.select(config.redis.mainFeedsCache);
 
-
 module.exports = { wobjRefsClient, importUserClient, mainFeedsCacheClient };

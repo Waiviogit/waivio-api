@@ -10,10 +10,6 @@ exports.schema = [
   },
   // user controller
   {
-    path: '/user/:userName/objects_feed',
-    method: 'POST',
-  },
-  {
     path: '/user/:userName/feed',
     method: 'POST',
   },

@@ -8,20 +8,18 @@ const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 
 const index = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      user_limit: req.body.user_limit,
-      locale: req.body.locale,
-      author_permlinks: req.body.author_permlinks,
-      object_types: req.body.object_types,
-      exclude_object_types: req.body.exclude_object_types,
-      required_fields: req.body.required_fields,
-      limit: req.body.limit,
-      skip: req.body.skip,
-      sample: req.body.sample,
-      map: req.body.map,
-    }, validators.wobject.indexSchema, next,
-  );
+  const value = validators.validate({
+    user_limit: req.body.user_limit,
+    locale: req.body.locale,
+    author_permlinks: req.body.author_permlinks,
+    object_types: req.body.object_types,
+    exclude_object_types: req.body.exclude_object_types,
+    required_fields: req.body.required_fields,
+    limit: req.body.limit,
+    skip: req.body.skip,
+    sample: req.body.sample,
+    map: req.body.map,
+  }, validators.wobject.indexSchema, next);
 
   if (!value) return;
 
@@ -34,14 +32,12 @@ const index = async (req, res, next) => {
 };
 
 const show = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-      locale: req.query.locale,
-      required_fields: req.query.required_fields,
-      user: req.query.user,
-    }, validators.wobject.showSchema, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    locale: req.query.locale,
+    required_fields: req.query.required_fields,
+    user: req.query.user,
+  }, validators.wobject.showSchema, next);
 
   if (!value) return;
 
@@ -54,16 +50,14 @@ const show = async (req, res, next) => {
 };
 
 const posts = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-      limit: req.body.limit,
-      skip: req.body.skip,
-      user_languages: req.body.user_languages,
-      forApp: req.headers.app,
-      lastId: req.body.lastId,
-    }, validators.wobject.postsScheme, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    limit: req.body.limit,
+    skip: req.body.skip,
+    user_languages: req.body.user_languages,
+    forApp: req.headers.app,
+    lastId: req.body.lastId,
+  }, validators.wobject.postsScheme, next);
 
   if (!value) return;
 
@@ -76,13 +70,11 @@ const posts = async (req, res, next) => {
 };
 
 const feed = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      filter: req.body.filter,
-      limit: req.body.limit,
-      skip: req.body.skip,
-    }, validators.wobject.feedScheme, next,
-  );
+  const value = validators.validate({
+    filter: req.body.filter,
+    limit: req.body.limit,
+    skip: req.body.skip,
+  }, validators.wobject.feedScheme, next);
 
   if (!value) return;
 
@@ -96,13 +88,11 @@ const feed = async (req, res, next) => {
 };
 
 const followers = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-      skip: req.body.skip,
-      limit: req.body.limit,
-    }, validators.wobject.followersScheme, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    skip: req.body.skip,
+    limit: req.body.limit,
+  }, validators.wobject.followersScheme, next);
 
   if (!value) return;
 
@@ -116,18 +106,16 @@ const followers = async (req, res, next) => {
 };
 
 const search = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      string: req.body.search_string,
-      limit: req.body.limit,
-      skip: req.body.skip,
-      locale: req.body.locale,
-      object_type: req.body.object_type,
-      sortByApp: req.body.sortByApp,
-      forParent: req.body.forParent,
-      required_fields: req.body.required_fields,
-    }, validators.wobject.searchScheme, next,
-  );
+  const value = validators.validate({
+    string: req.body.search_string,
+    limit: req.body.limit,
+    skip: req.body.skip,
+    locale: req.body.locale,
+    object_type: req.body.object_type,
+    sortByApp: req.body.sortByApp,
+    forParent: req.body.forParent,
+    required_fields: req.body.required_fields,
+  }, validators.wobject.searchScheme, next);
 
   if (!value) return;
 
@@ -140,13 +128,11 @@ const search = async (req, res, next) => {
 };
 
 const fields = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-      fields_names: req.body.fields_names,
-      custom_fields: req.body.custom_fields,
-    }, validators.wobject.fieldsScheme, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    fields_names: req.body.fields_names,
+    custom_fields: req.body.custom_fields,
+  }, validators.wobject.fieldsScheme, next);
 
   if (!value) return;
 
@@ -160,11 +146,9 @@ const fields = async (req, res, next) => {
 };
 
 const gallery = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-    }, validators.wobject.galleryScheme, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+  }, validators.wobject.galleryScheme, next);
 
   if (!value) return;
 
@@ -195,14 +179,12 @@ const list = async (req, res, next) => {
 };
 
 const objectExpertise = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-      skip: req.body.skip,
-      limit: req.body.limit,
-      user: req.body.user,
-    }, validators.wobject.objectExpertiseScheme, next,
-  );
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    skip: req.body.skip,
+    limit: req.body.limit,
+    user: req.body.user,
+  }, validators.wobject.objectExpertiseScheme, next);
 
   if (!value) return;
   const { experts, userExpert, error } = await objectExperts.getWobjExperts(value);

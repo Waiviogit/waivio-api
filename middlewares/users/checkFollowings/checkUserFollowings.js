@@ -11,35 +11,29 @@ exports.check = async (req, res, next) => {
 
   switch (currentSchema.case) {
     case 1:
-      const { followings, error: usersError } = await checkForFollowings(
-        {
-          userName: req.headers.follower,
-          followings: res.result.json,
-          path: currentSchema.field_name,
-        },
-      );
+      const { followings, error: usersError } = await checkForFollowings({
+        userName: req.headers.follower,
+        followings: res.result.json,
+        path: currentSchema.field_name,
+      });
       if (usersError) return next(usersError);
       res.result.json = followings;
       break;
     case 2:
-      const { followings: searchUsers, error } = await checkForFollowings(
-        {
-          userName: req.headers.follower,
-          followings: res.result.json[currentSchema.fields_path],
-          path: currentSchema.field_name,
-        },
-      );
+      const { followings: searchUsers, error } = await checkForFollowings({
+        userName: req.headers.follower,
+        followings: res.result.json[currentSchema.fields_path],
+        path: currentSchema.field_name,
+      });
       if (error) return next(error);
       res.result.json[currentSchema.fields_path] = searchUsers;
       break;
     case 3:
-      const { following, error: e } = await checkForFollowingsSingle(
-        {
-          userName: req.headers.follower,
-          following: res.result.json,
-          path: currentSchema.field_name,
-        },
-      );
+      const { following, error: e } = await checkForFollowingsSingle({
+        userName: req.headers.follower,
+        following: res.result.json,
+        path: currentSchema.field_name,
+      });
       if (e) return next(e);
       res.result.json = following;
       break;
