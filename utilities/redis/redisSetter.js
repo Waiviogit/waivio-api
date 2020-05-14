@@ -39,7 +39,7 @@ exports.updateTrendLocaleFeedCache = async ({ ids, locale, app }) => {
 };
 
 exports.updateFilteredTrendLocaleFeedCache = async ({ ids, locale, app }) => {
-  if (!validateUpdateNewsCache(ids, locale)) return;
+  if (!validateUpdateNewsCache(ids, locale) || !ids.length) return;
   await clearFeedLocaleCache({ prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
   return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
