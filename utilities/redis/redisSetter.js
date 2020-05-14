@@ -1,5 +1,7 @@
 const { importUserClient, mainFeedsCacheClient } = require('./redis');
-const { LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX } = require('../constants');
+const {
+  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+} = require('../constants');
 
 /**
  * Add user name to namespace of currently importing users
@@ -34,6 +36,13 @@ exports.updateTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   await clearFeedLocaleCache({ prefix: TREND_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
   return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+};
+
+exports.updateFilteredTrendLocaleFeedCache = async ({ ids, locale, app }) => {
+  if (!validateUpdateNewsCache(ids, locale)) return;
+  await clearFeedLocaleCache({ prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, app, locale });
+  const appPrefix = app ? `${app}:` : '';
+  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
