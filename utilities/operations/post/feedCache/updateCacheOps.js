@@ -64,7 +64,7 @@ const getFilteredDBPosts = async (trendingIds) => {
     for (const post of posts) {
       if (post && post.wobjects.length) {
         const wobjPermlinks = _.map(post.wobjects, 'author_permlink');
-        if (_.intersection(filterPermlinks, wobjPermlinks)) localeIds.push(`${post.net_rshares}_${post._id}`);
+        if (_.intersection(filterPermlinks, wobjPermlinks).length) localeIds.push(`${post.net_rshares}_${post._id}`);
       }
     }
     filteredIds.push({ locale: trendingLocales.locale, ids: localeIds });
