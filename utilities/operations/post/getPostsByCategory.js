@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const {
   DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
-  HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE,
+  HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
+  TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('utilities/constants');
 const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
@@ -60,11 +61,11 @@ const makeConditions = ({
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, keys, forApp, lastId,
+  category, skip, limit, user_languages, keys, forApp, lastId, onlyCrypto,
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp,
+    skip, limit, user_languages, category, forApp, onlyCrypto,
   });
   if (cachedPosts) return { posts: cachedPosts };
 
@@ -93,7 +94,7 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp,
+  skip, limit, user_languages: locales, category, forApp, onlyCrypto,
 }) => {
   let res;
   switch (category) {
@@ -105,9 +106,13 @@ const getFromCache = async ({
       }
       break;
     case 'trending':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
+      if ((skip + limit) < TREND_NEWS_CACHE_SIZE && !onlyCrypto) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp,
+          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX,
+        });
+      } else if (onlyCrypto) {
+        res = await hotTrandGetter.getTrend({
+          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
         });
       }
       break;
