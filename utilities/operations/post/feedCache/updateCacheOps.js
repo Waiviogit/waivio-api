@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const mongoose = require('mongoose');
 const { getAll: getAllApps } = require('models/AppModel');
 const { Wobj, Post } = require('models');
 const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
@@ -57,7 +58,8 @@ const getFilteredDBPosts = async (trendingIds) => {
   }
   for (const trendingLocales of trendingIds) {
     const localeIds = [];
-    const { posts } = await Post.findByCondition({ _id: { $in: trendingLocales.ids } });
+    const ids = prepareIds(trendingLocales.ids);
+    const { posts } = await Post.findByCondition({ _id: { $in: ids } });
     for (const post of posts) {
       if (post && post.wobjects.length) {
         const wobjPermlinks = _.map(post.wobjects, 'author_permlink');
@@ -67,6 +69,14 @@ const getFilteredDBPosts = async (trendingIds) => {
     filteredIds.push({ locale: trendingLocales.locale, ids: localeIds });
   }
   return filteredIds;
+};
+
+const prepareIds = (ids) => {
+  const preparedIds = [];
+  _.forEach(ids, (id) => {
+    preparedIds.push(mongoose.Types.ObjectId(id.split('_')[1]));
+  });
+  return preparedIds;
 };
 
 exports.updateFeedsCache = async () => {
