@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const { getAll: getAllApps } = require('models/AppModel');
+const { Wobj, Post } = require('models');
 const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
 const { redisSetter } = require('utilities/redis');
 const { LANGUAGES, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE } = require('utilities/constants');
@@ -42,11 +44,37 @@ async function getDbPostsIds(type, appName) {
   return idsByWithLocales.filter((arr) => arr.ids.length > 0);
 }
 
+const getFilteredDBPosts = async (trendingIds) => {
+  const { result: wobject } = await Wobj.findOne('xka-crypto-ia-wtrade');
+  const filteredIds = [];
+  let filterPermlinks = [];
+  try {
+    const newsFilter = _.find(wobject.fields, (field) => field.name === 'newsFilter');
+    const { allowList } = JSON.parse(newsFilter.body);
+    filterPermlinks = _.flattenDeep(allowList);
+  } catch (error) {
+    return trendingIds;
+  }
+  for (const trendingLocales of trendingIds) {
+    const localeIds = [];
+    const { posts } = await Post.findByCondition({ _id: { $in: trendingLocales.ids } });
+    for (const post of posts) {
+      if (post && post.wobjects.length) {
+        const wobjPermlinks = _.map(post.wobjects, 'author_permlink');
+        if (_.intersection(filterPermlinks, wobjPermlinks)) localeIds.push(post._id);
+      }
+    }
+    filteredIds.push({ locale: trendingLocales.locale, ids: localeIds });
+  }
+  return filteredIds;
+};
+
 exports.updateFeedsCache = async () => {
   // get array with ids by each language(locale)
   // for each App [{waivio:{locale: 'en-US', ids:['as87dfa8s'...]}}];
   const hotFeedAppCache = [];
   const trendFeedAppCache = [];
+  let trendFilteredCryptoCache;
   const { apps = [], error } = await getAllApps();
   if (error) {
     console.error(error);
@@ -57,6 +85,10 @@ exports.updateFeedsCache = async () => {
     const trendIds = await getDbPostsIds('trending', app.name);
     hotFeedAppCache.push({ appName: app.name, idsByLocales: hotIds });
     trendFeedAppCache.push({ appName: app.name, idsByLocales: trendIds });
+    if (app.name === 'beaxy') {
+      const trendFilteredIds = await getFilteredDBPosts(trendIds);
+      trendFilteredCryptoCache = { appName: app.name, idsByLocales: trendFilteredIds };
+    }
   }
 
   // and get feed ids without any app moderation settings
@@ -92,5 +124,15 @@ exports.updateFeedsCache = async () => {
         app: trendLocalesFeed.appName,
       });
     }));
+  }
+  // update TREND filtered feeds for beaxy
+  if (trendFilteredCryptoCache) {
+    for (const trendFilteredLocalesFeed of trendFilteredCryptoCache.idsByLocales) {
+      await redisSetter.updateFilteredTrendLocaleFeedCache({
+        ids: trendFilteredLocalesFeed.ids,
+        locale: trendFilteredLocalesFeed.locale,
+        app: trendFilteredCryptoCache.appName,
+      });
+    }
   }
 };
