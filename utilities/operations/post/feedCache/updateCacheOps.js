@@ -60,10 +60,11 @@ const getFilteredDBPosts = async (trendingIds) => {
     const localeIds = [];
     const ids = prepareIds(trendingLocales.ids);
     const { posts } = await Post.findByCondition({ _id: { $in: ids } });
+    if (!posts) continue;
     for (const post of posts) {
       if (post && post.wobjects.length) {
         const wobjPermlinks = _.map(post.wobjects, 'author_permlink');
-        if (_.intersection(filterPermlinks, wobjPermlinks)) localeIds.push(post._id);
+        if (_.intersection(filterPermlinks, wobjPermlinks)) localeIds.push(`${post.net_rshares}_${post._id}`);
       }
     }
     filteredIds.push({ locale: trendingLocales.locale, ids: localeIds });
