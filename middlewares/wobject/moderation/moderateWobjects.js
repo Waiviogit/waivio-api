@@ -1,9 +1,12 @@
 const _ = require('lodash');
+const mongoose = require('mongoose');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 
 const MODERATION_KEY_FLAG = 'upvotedByModerator';
+const MODERATION_DOWNVOTE_KEY_FLAG = 'downvotedByModerator';
 const ADMIN_KEY_FLAG = 'upvotedByAdmin';
+const ADMIN_DOWNVOTE_KEY_FLAG = 'downvotedByAdmin';
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -113,9 +116,16 @@ const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_pe
         wobject[`${ADMIN_KEY_FLAG}`] = true;
       } if (_.get(checkVoteRes, 'upvotedByModerator')) {
         wobject[`${MODERATION_KEY_FLAG}`] = true;
-      } else if (_.get(checkVoteRes, 'downvotedByModerator') || _.get(checkVoteRes, 'downvotedByAdmin')) {
-        return;
+      } else if (_.get(checkVoteRes, 'downvotedByModerator')) {
+        wobject[`${MODERATION_DOWNVOTE_KEY_FLAG}`] = true;
+      } else if (_.get(checkVoteRes, 'downvotedByAdmin')) {
+        wobject[`${ADMIN_DOWNVOTE_KEY_FLAG}`] = true;
       }
+      _.forEach(wobject.active_votes,
+        (vote) => (vote._id
+          ? vote.createdAt = vote._id.getTimestamp().valueOf()
+          : vote.createdAt = new Date().valueOf()
+        ));
     }
     wobject[fields_path] = validateFields(wobject, moderators, admins, apPath, fields_path);
     wobject.moderators = _.compact(
@@ -169,9 +179,16 @@ const validateFields = (wobject, moderators, admins, apPath = 'author_permlink',
     field[`${ADMIN_KEY_FLAG}`] = true;
   } if (_.get(validateRes, 'upvotedByModerator')) {
     field[`${MODERATION_KEY_FLAG}`] = true;
-  } else if (_.get(validateRes, 'downvotedByModerator') || _.get(validateRes, 'downvotedByAdmin')) {
-    return;
+  } else if (_.get(validateRes, 'downvotedByModerator')) {
+    field[`${MODERATION_DOWNVOTE_KEY_FLAG}`] = true;
+  } else if (_.get(validateRes, 'downvotedByAdmin')) {
+    field[`${ADMIN_DOWNVOTE_KEY_FLAG}`] = true;
   }
+  _.forEach(field.active_votes,
+    (vote) => (vote._id
+      ? vote.createdAt = vote._id.getTimestamp().valueOf()
+      : vote.createdAt = new Date().valueOf()
+    ));
   return field;
 }).filter(Boolean);
 
