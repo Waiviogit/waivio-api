@@ -61,11 +61,11 @@ const makeConditions = ({
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, keys, forApp, lastId, onlyCrypto,
+  category, skip, limit, user_languages, keys, forApp, lastId, // onlyCrypto,
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp, onlyCrypto,
+    skip, limit, user_languages, category, forApp, // onlyCrypto,
   });
   if (cachedPosts) return { posts: cachedPosts };
 
@@ -94,7 +94,7 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto,
+  skip, limit, user_languages: locales, category, forApp, // onlyCrypto,
 }) => {
   let res;
   switch (category) {
@@ -106,15 +106,16 @@ const getFromCache = async ({
       }
       break;
     case 'trending':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE && !onlyCrypto) {
+      //  if ((skip + limit) < TREND_NEWS_CACHE_SIZE && !onlyCrypto) {
+      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX,
+          skip, limit, locales, forApp, // prefix: TREND_NEWS_CACHE_PREFIX,
         });
-      } else if (onlyCrypto) {
-        res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
-        });
-      }
+      } // else if (onlyCrypto) {
+      //   res = await hotTrandGetter.getTrend({
+      //     skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
+      //   });
+      // }
       break;
   }
   if (_.get(res, 'posts.length')) {
