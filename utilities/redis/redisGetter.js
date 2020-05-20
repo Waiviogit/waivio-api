@@ -51,13 +51,13 @@ exports.getHotFeedCache = async ({ limit = 10, locale, app }) => {
  * @returns {Promise<{error: string}|{ids: *}>}
  */
 exports.getTrendFeedCache = async ({
-  limit = 10, locale, app, // prefix = TREND_NEWS_CACHE_PREFIX,
+  limit = 10, locale, app, prefix = TREND_NEWS_CACHE_PREFIX,
 }) => {
   if (!locale) locale = 'en-US';
   if (limit > TREND_NEWS_CACHE_SIZE) return { error: `skip param should be less than ${TREND_NEWS_CACHE_SIZE}` };
   const appPrefix = app ? `${app}:` : '';
   return {
-    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
-    // ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, limit - 1),
+    // ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, limit - 1),
   };
 };
