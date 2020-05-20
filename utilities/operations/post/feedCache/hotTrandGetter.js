@@ -74,39 +74,6 @@ exports.getTrend = async ({
   });
 };
 
-// /**
-//  * Comparator for feed cache indexes,
-//  * use it for array.sort() by Descending order
-//  * @param a
-//  * @param b
-//  * @returns {number} For e.x. "X". X = 0 if equal, X<0 if a larger, X>0 if b larger
-//  */
-// function idComparator(a, b) {
-//   // in one of input items miss => return another item
-//   if (!a && !b) return 0;
-//   if (!a) return -parseInt(b.split('_')[0], 10);
-//   if (!b) return -parseInt(a.split('_')[0], 10);
-//
-//   const aNum = parseInt(a.split('_')[0], 10);
-//   const bNum = parseInt(b.split('_')[0], 10);
-//   return bNum - aNum;
-// }
-//
-// function findLargestIndex(items, comparator) {
-//   let largestIndex = 0;
-//   for (const itemIdx in items) {
-//     if (comparator(items[itemIdx], items[largestIndex]) < 0) {
-//       largestIndex = itemIdx;
-//     }
-//   }
-//   return largestIndex;
-// }
-//
-// /*
-// Get post Mongo _id from redis cache item
-//  */
-// const obtainPostId = (item) => item.split('_')[1];
-
 /*
 Get top N items from several arrays of ids.
 Instead of merge all items to on array, sort inside
