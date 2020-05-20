@@ -157,8 +157,8 @@ const addAuthorWobjectsWeight = async (posts = []) => {
     post.author_reputation = reputation;
   });
 };
-
 const fillReblogs = async (posts = [], userName) => {
+//const fillReblogs = async (posts = []) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;

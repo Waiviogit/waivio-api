@@ -1,7 +1,8 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { getAll: getAllApps } = require('models/AppModel');
-const { Wobj, Post } = require('models');
+const Wobj = require('models/wObjectModel');
+const Post = require('models/PostModel');
 const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
 const { redisSetter } = require('utilities/redis');
 const { LANGUAGES, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE } = require('utilities/constants');
