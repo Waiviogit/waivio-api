@@ -65,7 +65,7 @@ module.exports = async ({
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp, onlyCrypto,
+    skip, limit, user_languages, category, forApp, //onlyCrypto,
   });
   if (cachedPosts) return { posts: cachedPosts };
 
@@ -106,16 +106,16 @@ const getFromCache = async ({
       }
       break;
     case 'trending':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE && !onlyCrypto) {
-      //if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
+      //if ((skip + limit) < TREND_NEWS_CACHE_SIZE && !onlyCrypto) {
+      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX,
+          skip, limit, locales, forApp, //prefix: TREND_NEWS_CACHE_PREFIX,
         });
-      } else if (onlyCrypto) {
-        res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
-        });
-      }
+      } //else if (onlyCrypto) {
+      //   res = await hotTrandGetter.getTrend({
+      //     skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
+      //   });
+      // }
       break;
   }
   if (_.get(res, 'posts.length')) {

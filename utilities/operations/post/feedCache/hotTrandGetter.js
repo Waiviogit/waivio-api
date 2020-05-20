@@ -47,8 +47,7 @@ exports.getHot = async ({
  * @returns {Promise<{posts}|{error: *}|undefined>}
  */
 exports.getTrend = async ({
-   skip, limit, locales, forApp, prefix,
-  //skip, limit, locales, forApp,
+   skip, limit, locales, forApp, // prefix,
 }) => {
 // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
@@ -56,7 +55,7 @@ exports.getTrend = async ({
       limit: limit + skip,
       locale,
       app: forApp,
-      prefix,
+      //prefix,
     });
     if (error) {
       console.error(error);
