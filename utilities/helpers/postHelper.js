@@ -157,8 +157,8 @@ const addAuthorWobjectsWeight = async (posts = []) => {
     post.author_reputation = reputation;
   });
 };
-// const fillReblogs = async (posts = [], userName) => {
-const fillReblogs = async (posts = []) => {
+const fillReblogs = async (posts = [], userName) => {
+//const fillReblogs = async (posts = []) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;
@@ -175,21 +175,20 @@ const fillReblogs = async (posts = []) => {
       } catch (error) {
         console.error(error);
       }
-      // let user;
-      // if (userName) {
-      //   ({ user } = await User.getOne(userName));
-      // }
-      if (sourcePost) posts[postIdx] = { ...sourcePost, reblogged_by: posts[postIdx].author };
-      // if (sourcePost) {
-      //   posts[postIdx] = {
-      //     ...sourcePost,
-      //     reblogged_by: posts[postIdx].author,
-      //     checkForFollow: {
-      //       name: posts[postIdx].author,
-      //       youFollows: user ? _.includes(user.users_follow, posts[postIdx].author) : false,
-      //     },
-      //   };
-      // }
+      let user;
+      if (userName) {
+        ({ user } = await User.getOne(userName));
+      }
+      if (sourcePost) {
+        posts[postIdx] = {
+          ...sourcePost,
+          reblogged_by: posts[postIdx].author,
+          checkForFollow: {
+            name: posts[postIdx].author,
+            youFollows: user ? _.includes(user.users_follow, posts[postIdx].author) : false,
+          },
+        };
+      }
     }
   }
 };
