@@ -28,7 +28,7 @@ exports.getHot = async ({
   }));
 
   // get ids of needed posts range
-  const postIds = getTopFromArrays(idLocaleArrays, limit + skip).slice(skip);
+  const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
 
   // get post from db by cached indexes
   return getFromDb({
@@ -65,7 +65,7 @@ exports.getTrend = async ({
   }));
 
   // get ids of needed posts range
-  const postIds = getTopFromArrays(idLocaleArrays, limit + skip).slice(skip);
+  const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
 
   // get post from db by cached indexes
   return getFromDb({
@@ -113,7 +113,7 @@ Instead of merge all items to on array, sort inside
 and get top N => use this custom method for only
 get top N items by compare each array top element.
  */
-function getTopFromArrays(arrays, topCount) {
+function getTopFromArrays(arrays, limit, skip) {
   return _
     .chain(arrays)
     .flattenDeep()
@@ -122,7 +122,7 @@ function getTopFromArrays(arrays, topCount) {
       return { id: data[1], weight: data[0] };
     })
     .orderBy(['weight'], ['desc'])
-    .slice(0, topCount)
+    .slice(skip, skip + limit)
     .map('id')
     .value();
 }
