@@ -119,7 +119,7 @@ function getTopFromArrays(arrays, limit, skip) {
     .flattenDeep()
     .map((post) => {
       const data = post.split('_');
-      return { id: data[1], weight: data[0] };
+      return { id: data[1], weight: +data[0] };
     })
     .orderBy(['weight'], ['desc'])
     .slice(skip, skip + limit)
