@@ -65,10 +65,10 @@ module.exports = async ({
 }) => {
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp,  onlyCrypto,
+    skip, limit, user_languages, category, forApp, onlyCrypto,
   });
   if (cachedPosts) return { posts: cachedPosts };
-
+  if (!cachedPosts && onlyCrypto) return { posts: [] };
   const { cond, sort } = makeConditions({
     category, user_languages, forApp, lastId,
   });
