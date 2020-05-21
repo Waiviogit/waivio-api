@@ -45,9 +45,9 @@ const getPostsByCategory = async (data) => {
     return { error };
   }
   if (!posts || posts.error) {
-    return { error: { status: 404, message: posts.error.message } };
+    return { error: { status: 404, message: _.get(posts, 'error.message', 'Posts not found') } };
   }
-
+  if (!posts.length) return { posts: [] };
   // get posts array by authors and permlinks
   const { posts: dbPosts, error: postsDbError } = await PostRepository.getManyPosts(
     posts.map((p) => (_.pick(p, ['author', 'permlink']))),
@@ -158,7 +158,7 @@ const addAuthorWobjectsWeight = async (posts = []) => {
   });
 };
 const fillReblogs = async (posts = [], userName) => {
-//const fillReblogs = async (posts = []) => {
+// const fillReblogs = async (posts = []) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;
