@@ -18,9 +18,9 @@ const UserMetadataSchema = new Schema({
     showNSFWPosts: { type: Boolean, default: false }, // show or hide NSFW posts
     upvoteSetting: { type: Boolean, default: false }, // enable auto like on your posts
     votePercent: {
-      type: Number, min: 1, max: 10000, default: 5000,
+      type: Number, min: 1, max: 10000, default: 10000,
     }, // default percent of your upvotes
-    votingPower: { type: Boolean, default: false }, // dynamic toggle of vote power on each vote
+    votingPower: { type: Boolean, default: true }, // dynamic toggle of vote power on each vote
   },
   bookmarks: { type: [String], default: [] },
   drafts: {
