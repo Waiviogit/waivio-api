@@ -35,12 +35,13 @@ exports.getByCategory = async (req, res, next) => {
   if (!value) {
     return;
   }
-  const { posts, error, hasMore } = await getPostsByCategory(value);
+  const { posts, error, hasMore = true } = await getPostsByCategory(value);
 
   if (error) {
     return next(error);
   }
-  res.result = { status: 200, json: Object.assign(posts, { hasMore }) };
+  if (!hasMore) res.setHeader('hasMore', hasMore);
+  res.result = { status: 200, json: posts };
   next();
 };
 
