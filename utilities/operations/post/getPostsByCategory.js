@@ -67,9 +67,8 @@ module.exports = async ({
   const cachedPosts = await getFromCache({
     skip, limit, user_languages, category, forApp, onlyCrypto,
   });
-  if (cachedPosts && cachedPosts.length < limit) return { posts: cachedPosts, hasMore: false };
   if (cachedPosts) return { posts: cachedPosts };
-  if (!cachedPosts && onlyCrypto) return { posts: [], hasMore: false };
+  if (!cachedPosts && onlyCrypto) return { posts: []};
   const { cond, sort } = makeConditions({
     category, user_languages, forApp, lastId,
   });
