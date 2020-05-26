@@ -8,4 +8,12 @@ const findByCondition = async (condition) => {
   }
 };
 
-module.exports = { findByCondition };
+const aggregate = async (pipeline) => {
+  try {
+    return { result: await Campaign.aggregate(pipeline) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+module.exports = { findByCondition, aggregate };
