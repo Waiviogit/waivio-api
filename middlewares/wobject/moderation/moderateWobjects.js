@@ -189,6 +189,7 @@ const validateFields = (wobject, moderators, admins, apPath = 'author_permlink',
       ? vote.createdAt = vote._id.getTimestamp().valueOf()
       : vote.createdAt = new Date().valueOf()
     ));
+  field.createdAt = field._id ? field._id.getTimestamp().valueOf() : new Date().valueOf();
   return field;
 }).filter(Boolean);
 
