@@ -1560,17 +1560,27 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**image** - Image in base64 string\n",
+          "description" : "**file** - Image file in form data, or\n **imageUrl** - link to exists image",
           "required" : false,
           "schema" : {
-            "$ref" : "#/definitions/params_18"
+            "type" : "object",
+            "properties" : {
+              "imageUrl" : {
+                "type" : "string"
+              }
+            }
           }
         } ],
         "responses" : {
           "200" : {
             "description" : "successful operation, link to uploaded image",
             "schema" : {
-              "$ref" : "#/definitions/params_18"
+              "type" : "object",
+              "properties" : {
+                "image" : {
+                  "type" : "string"
+                }
+              }
             }
           }
         }
@@ -3006,14 +3016,6 @@
             "type" : "object",
             "properties" : { }
           }
-        }
-      }
-    },
-    "params_18" : {
-      "type" : "object",
-      "properties" : {
-        "image" : {
-          "type" : "string"
         }
       }
     },
