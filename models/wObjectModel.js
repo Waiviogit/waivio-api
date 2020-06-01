@@ -3,7 +3,7 @@ const createError = require('http-errors');
 const _ = require('lodash');
 const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('utilities/constants');
 
-const getOne = async (authorPermlink, objectType, unavailable) => { // get one wobject by author_permlink
+const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
     const matchStage = { $match: { author_permlink: authorPermlink } };
     if (unavailable) matchStage.$match['status.title'] = { $nin: ['unavailable', 'nsfw'] };
@@ -190,6 +190,7 @@ const getList = async (authorPermlink) => {
       },
       { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } },
     ]);
+    if (_.isEmpty(fields)) return { wobjects: [] };
     const sortCustomField = _.maxBy(fields.filter((field) => field.name === 'sortCustom'), 'weight');
     const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
 

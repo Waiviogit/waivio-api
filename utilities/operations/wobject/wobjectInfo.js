@@ -22,20 +22,8 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
   // format listItems field
   if (await Wobj.isFieldExist({ author_permlink: data.author_permlink, fieldName: 'listItem' })) {
-    const { wobjects, sortCustom, error: listError } = await Wobj.getList(data.author_permlink);
-
-    if (listError) console.error(listError);
-
+    const { wobjects, sortCustom } = await getListItems(data.author_permlink, data.user);
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
-    let user;
-    if (data.user) {
-      user = await User.getOne(data.user);
-    }
-    await Promise.all(wobjects.map(async (wobj) => {
-      const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
-      if (error || !result.length) return;
-      wobj.propositions = await objectTypeHelper.campaignFilter(result, _.get(user, 'user', null));
-    }));
     wObject[keyName] = wobjects;
     wObject.sortCustom = sortCustom;
     requiredFields.push('sortCustom', 'listItem');
@@ -69,6 +57,53 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
 const getRequiredFields = (wObject, requiredFields) => {
   wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
+};
+
+const getListItems = async (authorPermlink, userName) => {
+  const { wobjects, sortCustom, error: listError } = await Wobj.getList(authorPermlink);
+  if (listError) console.error(listError);
+
+  for (const listWobj of wobjects) {
+    listWobj.listItemsCount = await getItemsCount(
+      listWobj.author_permlink,
+      [authorPermlink, listWobj.author_permlink],
+    );
+  }
+
+  let user;
+  if (userName) {
+    user = await User.getOne(userName);
+  }
+  await Promise.all(wobjects.map(async (wobj) => {
+    const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
+    if (error || !result.length) return;
+    wobj.propositions = await objectTypeHelper.campaignFilter(result, _.get(user, 'user', null));
+  }));
+  return { wobjects, sortCustom };
+};
+
+/**
+ * Method for get count of all included items(using recursive call)
+ * @param authorPermlink {String} Permlink of list
+ * @param handledItems {String[]} Array of author_permlinks which already handled(to avoid looping)
+ * @returns {Promise<number>}
+ */
+const getItemsCount = async (authorPermlink, handledItems) => {
+  let count = 0;
+  const { wobjects: listWobjects, error } = await Wobj.getList(authorPermlink);
+  if (error || _.isEmpty(listWobjects)) return 0;
+
+  count += listWobjects.length;
+
+  for (const item of listWobjects) {
+    // condition for exit from looping
+    if (!handledItems.includes(item.author_permlink)) {
+      handledItems.push(item.author_permlink);
+      count += await getItemsCount(item.author_permlink, handledItems);
+    }
+  }
+
+  return count;
 };
 
 module.exports = {
