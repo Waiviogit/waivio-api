@@ -84,6 +84,7 @@ const getListItems = async (authorPermlink, userName) => {
 
 /**
  * Method for get count of all included items(using recursive call)
+ * Return count only last nodes(which not list or menu)
  * @param authorPermlink {String} Permlink of list
  * @param handledItems {String[]} Array of author_permlinks which already handled(to avoid looping)
  * @returns {Promise<number>}
@@ -91,9 +92,9 @@ const getListItems = async (authorPermlink, userName) => {
 const getItemsCount = async (authorPermlink, handledItems) => {
   let count = 0;
   const { wobjects: listWobjects, error } = await Wobj.getList(authorPermlink);
-  if (error || _.isEmpty(listWobjects)) return 0;
+  if (error) return 0;
 
-  count += listWobjects.length;
+  if (_.isEmpty(listWobjects)) return 1;
 
   for (const item of listWobjects) {
     // condition for exit from looping
