@@ -40,10 +40,11 @@ const getWobjWithFilters = async ({
         distanceField: 'proximity',
         maxDistance: filter.map.radius,
         spherical: true,
+        limit: 100000,
       },
     });
     delete filter.map;
-    limit > 100 ? aggregationPipeline[0].$geoNear.limit = limit : null;
+    // limit > 100 ? aggregationPipeline[0].$geoNear.limit = limit : null;
   }
 
   if (nsfw) aggregationPipeline.push({ $match: { object_type: objectType, 'status.title': { $ne: 'nsfw' } } });
