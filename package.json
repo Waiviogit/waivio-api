@@ -6,6 +6,7 @@
     "start": "node ./bin/www",
     "createMissedUsers": "NODE_PATH=. node ./utilities/tasks/createMissedUsers/run.js",
     "fixFollowers": "NODE_PATH=. node ./utilities/tasks/updateUserFollowers/run.js",
+    "fixGuestsAvatar": "NODE_PATH=. node ./utilities/tasks/fillGuestsAvatar/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
