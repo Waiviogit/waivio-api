@@ -1,6 +1,5 @@
 const UserWobjects = require('models/UserWobjects');
-const { REQUIREDFIELDS } = require('utilities/constants');
-const { wObjectHelper } = require('utilities/helpers');
+const _ = require('lodash');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase
@@ -76,13 +75,8 @@ const getUserObjectsShares = async (data) => {
   if (userWobjectsError) {
     return { error: userWobjectsError };
   }
-
-  // eslint-disable-next-line camelcase
-  const required_fields = [...REQUIREDFIELDS];
-  const fields = required_fields.map((item) => ({ name: item }));
-
   wobjects.forEach((wObject) => {
-    wObjectHelper.formatRequireFields(wObject, data.locale, fields);
+    wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
   });
   const {
     result:
