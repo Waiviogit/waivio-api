@@ -144,16 +144,14 @@ const blog = async (req, res, next) => {
 };
 
 const userObjectsShares = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      name: req.params.userName,
-      limit: req.body.limit,
-      skip: req.body.skip,
-      locale: req.body.locale,
-      exclude_object_types: req.body.exclude_object_types,
-      object_types: req.body.object_types,
-    }, validators.user.objectsSharesSchema, next,
-  );
+  const value = validators.validate({
+    name: req.params.userName,
+    limit: req.body.limit,
+    skip: req.body.skip,
+    locale: req.body.locale,
+    exclude_object_types: req.body.exclude_object_types,
+    object_types: req.body.object_types,
+  }, validators.user.objectsSharesSchema, next);
 
   if (!value) return;
 
@@ -166,13 +164,11 @@ const userObjectsShares = async (req, res, next) => {
 };
 
 const postFilters = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      name: req.params.userName,
-      limit: req.query.limit,
-      skip: req.query.skip,
-    }, validators.user.getPostFiltersSchema, next,
-  );
+  const value = validators.validate({
+    name: req.params.userName,
+    limit: req.query.limit,
+    skip: req.query.skip,
+  }, validators.user.getPostFiltersSchema, next);
 
   if (!value) return;
 
@@ -185,13 +181,11 @@ const postFilters = async (req, res, next) => {
 };
 
 const searchUsers = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      searchString: req.query.searchString,
-      limit: req.query.limit,
-      skip: req.query.skip,
-    }, validators.user.searchSchema, next,
-  );
+  const value = validators.validate({
+    searchString: req.query.searchString,
+    limit: req.query.limit,
+    skip: req.query.skip,
+  }, validators.user.searchSchema, next);
 
   if (!value) return;
 
