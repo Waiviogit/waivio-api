@@ -17,6 +17,7 @@ const UserMetadataSchema = new Schema({
     rewriteLinks: { type: Boolean, default: false }, // change links from steemit.com to waivio.com
     showNSFWPosts: { type: Boolean, default: false }, // show or hide NSFW posts
     upvoteSetting: { type: Boolean, default: false }, // enable auto like on your posts
+    hiveBeneficiaryAccount: { type: String, default: '' },
     votePercent: {
       type: Number, min: 1, max: 10000, default: 10000,
     }, // default percent of your upvotes
