@@ -88,7 +88,9 @@ exports.updateMetadataSchema = Joi.object().keys({
       rewriteLinks: Joi.boolean().default(false),
       showNSFWPosts: Joi.boolean().default(false),
       upvoteSetting: Joi.boolean().default(false),
+      hiveBeneficiaryAccount: Joi.string().default(''),
       votePercent: Joi.number().min(1).max(10000).default(5000),
+
       votingPower: Joi.boolean().default(false),
     }).default({
       exitPageSetting: false,
@@ -100,6 +102,7 @@ exports.updateMetadataSchema = Joi.object().keys({
       upvoteSetting: false,
       votePercent: 5000,
       votingPower: false,
+      hiveBeneficiaryAccount: '',
     }),
     drafts: Joi.array().items(Joi.object().keys({
       _id: Joi.string(),
