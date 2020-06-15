@@ -414,6 +414,12 @@
           "description" : "Specify app to enable waivio wobject and posts moderation",
           "required" : false,
           "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check following",
+          "required" : false,
+          "type" : "string"
         }, {
           "name" : "userName",
           "in" : "path",
@@ -433,11 +439,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : { }
-              }
+              "$ref" : "#/definitions/inline_response_200_24"
             }
           }
         }
@@ -497,6 +499,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "user name which blog needs to return",
@@ -864,6 +872,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of object to return posts",
@@ -1226,6 +1240,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "author",
           "in" : "path",
           "description" : "Author of post",
@@ -1291,6 +1311,12 @@
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject and posts moderation",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
           "required" : false,
           "type" : "string"
         }, {
@@ -3186,6 +3212,188 @@
         },
         "settings" : {
           "$ref" : "#/definitions/userMetadata_user_metadata_settings"
+        }
+      }
+    },
+    "inline_response_200_24" : {
+      "type" : "object",
+      "properties" : {
+        "author" : {
+          "type" : "string"
+        },
+        "permlink" : {
+          "type" : "string"
+        },
+        "abs_rshares" : {
+          "type" : "string"
+        },
+        "active" : {
+          "type" : "string"
+        },
+        "active_votes" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/post_active_votes"
+          }
+        },
+        "allow_curation_rewards" : {
+          "type" : "boolean"
+        },
+        "allow_replies" : {
+          "type" : "boolean"
+        },
+        "allow_votes" : {
+          "type" : "boolean"
+        },
+        "app" : {
+          "type" : "string"
+        },
+        "author_reputation" : {
+          "type" : "number"
+        },
+        "author_rewards" : {
+          "type" : "number"
+        },
+        "beneficiaries" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "body" : {
+          "type" : "string"
+        },
+        "body_length" : {
+          "type" : "number"
+        },
+        "cashout_time" : {
+          "type" : "string"
+        },
+        "category" : {
+          "type" : "string"
+        },
+        "children" : {
+          "type" : "number"
+        },
+        "children_abs_rshares" : {
+          "type" : "number"
+        },
+        "created" : {
+          "type" : "string"
+        },
+        "createdAt" : {
+          "type" : "string"
+        },
+        "curator_payout_value" : {
+          "type" : "string"
+        },
+        "depth" : {
+          "type" : "number"
+        },
+        "id" : {
+          "type" : "number"
+        },
+        "json_metadata" : {
+          "type" : "string"
+        },
+        "last_payout" : {
+          "type" : "string"
+        },
+        "last_update" : {
+          "type" : "string"
+        },
+        "max_accepted_payout" : {
+          "type" : "string"
+        },
+        "max_cashout_time" : {
+          "type" : "string"
+        },
+        "net_rshares" : {
+          "type" : "number"
+        },
+        "net_votes" : {
+          "type" : "number"
+        },
+        "parent_author" : {
+          "type" : "string"
+        },
+        "parent_permlink" : {
+          "type" : "string"
+        },
+        "pending_payout_value" : {
+          "type" : "string"
+        },
+        "percent_steem_dollars" : {
+          "type" : "number"
+        },
+        "promoted" : {
+          "type" : "string"
+        },
+        "reblogged_by" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "replies" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties" : { }
+          }
+        },
+        "reward_weight" : {
+          "type" : "string"
+        },
+        "root_author" : {
+          "type" : "string"
+        },
+        "root_permlink" : {
+          "type" : "string"
+        },
+        "root_title" : {
+          "type" : "string"
+        },
+        "title" : {
+          "type" : "string"
+        },
+        "total_payout_value" : {
+          "type" : "string"
+        },
+        "total_pending_payout_value" : {
+          "type" : "string"
+        },
+        "total_vote_weight" : {
+          "type" : "number"
+        },
+        "updatedAt" : {
+          "type" : "string"
+        },
+        "url" : {
+          "type" : "string"
+        },
+        "vote_rshares" : {
+          "type" : "number"
+        },
+        "wobjects" : {
+          "type" : "array",
+          "items" : {
+            "$ref" : "#/definitions/inline_response_200_7_wobjects"
+          }
+        },
+        "language" : {
+          "type" : "string"
+        },
+        "author_weight" : {
+          "type" : "number"
+        },
+        "author_wobjects_weight" : {
+          "type" : "number"
+        },
+        "youFollows" : {
+          "type" : "boolean"
         }
       }
     }
