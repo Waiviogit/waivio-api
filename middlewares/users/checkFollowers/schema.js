@@ -53,4 +53,34 @@ exports.schema = [
     fields_path: 'users',
     field_name: 'name',
   },
+  {
+    path: '/user/:userName/feed',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
+  {
+    path: '/user/:userName/blog',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
+  {
+    path: '/posts',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
+  {
+    path: '/post/:author/:permlink',
+    method: 'GET',
+    case: 3,
+    field_name: 'author',
+  },
+  {
+    path: '/wobject/:authorPermlink/posts',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
 ];
