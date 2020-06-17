@@ -67,6 +67,7 @@ const UserSchema = new Schema({
   last_posts_count: { type: Number, default: 0 }, // count of the posts written in last day
   last_posts_counts_by_hours: { type: [Number], default: [] },
   user_metadata: { type: UserMetadataSchema, default: () => ({}), select: false },
+  privateEmail: { type: String, default: null, select: false },
   auth: {
     type: authSchema,
     default: null,
