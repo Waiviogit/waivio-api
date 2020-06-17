@@ -414,6 +414,12 @@
           "description" : "Specify app to enable waivio wobject and posts moderation",
           "required" : false,
           "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check following",
+          "required" : false,
+          "type" : "string"
         }, {
           "name" : "userName",
           "in" : "path",
@@ -435,8 +441,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "type" : "object",
-                "properties" : { }
+                "$ref" : "#/definitions/post"
               }
             }
           }
@@ -497,6 +502,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "user name which blog needs to return",
@@ -864,6 +875,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of object to return posts",
@@ -884,8 +901,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "type" : "object",
-                "properties" : { }
+                "$ref" : "#/definitions/post"
               }
             }
           }
@@ -1226,6 +1242,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "author",
           "in" : "path",
           "description" : "Author of post",
@@ -1291,6 +1313,12 @@
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject and posts moderation",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "follower",
+          "in" : "header",
+          "description" : "Name of user to check for following",
           "required" : false,
           "type" : "string"
         }, {
@@ -1999,6 +2027,9 @@
           "items" : {
             "$ref" : "#/definitions/wobject"
           }
+        },
+        "youFollows": {
+          "type": "boolean"
         }
       }
     },
