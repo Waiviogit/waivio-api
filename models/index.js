@@ -10,5 +10,6 @@ moduleExports.Post = require('./PostModel');
 moduleExports.App = require('./AppModel');
 moduleExports.Campaign = require('./CampaignModel');
 moduleExports.paymentHistory = require('./paymentHistoryModel');
+moduleExports.Subscriptions = require('./SubscriptionModel');
 
 module.exports = moduleExports;
