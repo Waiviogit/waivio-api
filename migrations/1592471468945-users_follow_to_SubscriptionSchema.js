@@ -30,6 +30,7 @@ exports.up = async function up(done) {
       guestArray = doc.users_follow;
     }
     const resultArray = userArray.length ? [...new Set(userArray)] : guestArray;
+    if (!resultArray) continue;
     await Promise.all(resultArray.map(async (following) => {
       const { subscription } = await Subscriptions
         .findOne({ conditions: { follower: doc.name, following } });
