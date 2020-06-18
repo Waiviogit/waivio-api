@@ -5,9 +5,9 @@ const { getFollowingsList } = require('utilities/steemApi').userUtil;
  * Make any changes you need to make to the database here
  */
 exports.up = async function up(done) {
-  const users = await User.find();
+  const { usersData } = await User.find({ _id: /^/ });
 
-  for (const doc of users) {
+  for (const doc of usersData) {
     let error, followings, guestArray = [], startAccount = '';
     const userArray = [];
     if (!_.get(doc, 'auth.provider', null)) {
@@ -22,12 +22,10 @@ exports.up = async function up(done) {
           continue;
         }
         if (error) break;
-        startAccount = followings.length ? followings[followings.length - 1] : '';
-        userArray.concat(followings);
+        startAccount = followings.length ? followings[followings.length - 1].following : '';
+        // eslint-disable-next-line no-loop-func
+        userArray.push(...followings.map((element) => element.following));
       } while (!error && followings.length === 1000);
-      if (doc.name.match(/^waivio_/) || doc.name.match(/^bxy_/)) {
-        guestArray = doc.users_follow;
-      }
     } else {
       guestArray = doc.users_follow;
     }
@@ -36,15 +34,16 @@ exports.up = async function up(done) {
       const { subscription } = await Subscriptions
         .findOne({ conditions: { follower: doc.name, following } });
       if (!subscription) {
-        await Subscriptions.followUser({ follower: doc.name, following });
+        const { result, error: dbError } = await Subscriptions
+          .followUser({ follower: doc.name, following });
+        result && console.log(`success, ${doc.name} follows ${following}`);
+        dbError && console.error(dbError);
       }
     }));
   }
   done();
 };
-(async () => {
-  await this.up();
-})();
+
 /**
  * Make any changes that UNDO the up function side effects here (if possible)
  */
