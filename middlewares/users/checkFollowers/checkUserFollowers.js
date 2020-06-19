@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 const { schema } = require('middlewares/users/checkFollowers/schema');
 
 exports.check = async (req, res, next) => {
@@ -32,6 +32,17 @@ exports.check = async (req, res, next) => {
       if (error) return next(error);
       res.result.json[currentSchema.fields_path] = searchUsers;
       break;
+    case 2.1:
+      const { followers: newSearchUsers, error: newError } = await newCheckForFollowers(
+        {
+          userName: req.headers.following,
+          followers: res.result.json[currentSchema.fields_path],
+          path: currentSchema.field_name,
+        },
+      );
+      if (newError) return next(newError);
+      res.result.json[currentSchema.fields_path] = newSearchUsers;
+      break;
     case 3:
       const { follower, error: e } = await checkForFollowersSingle(
         {
@@ -59,6 +70,20 @@ const checkForFollowers = async ({ userName, followers, path }) => {
   return { followers };
 };
 
+const newCheckForFollowers = async ({ userName, followers, path }) => {
+  const names = _.map(followers, (follower) => follower[path]);
+  const subscribers = [];
+  for (const element of names) {
+    const { subscriptionData } = await Subscriptions
+      .find({ condition: { follower: element, following: userName } });
+    if (subscriptionData.length) subscribers.push(element);
+  }
+
+  followers = _.forEach(followers, (follower) => {
+    follower.followsYou = subscribers.includes(follower.name);
+  });
+  return { followers };
+};
 
 const checkForFollowersSingle = async ({ userName, follower, path }) => {
   const { usersData, error } = await User.find(

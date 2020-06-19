@@ -33,3 +33,29 @@ exports.findOne = async ({ conditions }) => {
     return { error };
   }
 };
+
+exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
+  try {
+    const result = await Subscriptions.find({ follower }).lean();
+    return { users: result.map((el) => el.following).slice(skip, limit) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.find = async ({
+  condition, skip, limit, sort,
+}) => {
+  try {
+    return {
+      subscriptionData: await Subscriptions
+        .find(condition)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

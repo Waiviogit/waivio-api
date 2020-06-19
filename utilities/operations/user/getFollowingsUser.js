@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 
 exports.getAll = async ({ name, skip, limit }) => {
-  const { users, error } = await User.getFollowings({ name, skip, limit: limit + 1 });
-
+  const { users, error } = await Subscriptions
+    .getFollowings({ follower: name, skip, limit: limit + 1 });
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
 
@@ -21,7 +21,6 @@ exports.getAll = async ({ name, skip, limit }) => {
     .slice(0, limit)
     .value();
 
-
   return { result: { users: result, hasMore: users.length === limit + 1 } };
 };
 
@@ -35,6 +34,35 @@ exports.getFollowingsArray = async (data) => {
     return {
       users: _.map(data.users,
         (name) => ({ [name]: _.includes(user.users_follow, name) })),
+    };
+  } if (data.permlinks) {
+    if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
+    return {
+      users: _.map(data.permlinks,
+        (permlink) => ({ [permlink]: _.includes(user.objects_follow, permlink) })),
+    };
+  }
+};
+
+exports.newGetFollowingsArray = async (data) => {
+  const { user, error } = await User.getOne(data.name);
+  if (error) return { error: { status: 503, message: error.message } };
+
+  const { subscriptionData, error: subscriptionError } = await Subscriptions
+    .find({ condition: { follower: data.name } });
+  if (subscriptionError) return { error: { status: 503, message: subscriptionError.message } };
+
+  const subscriptions = _.map(subscriptionData, (el) => el.following);
+
+  if (data.users) {
+    if (!subscriptionData.length) {
+      return {
+        users: _.map(data.users, (name) => ({ [name]: false })),
+      };
+    }
+    return {
+      users: _.map(data.users,
+        (name) => ({ [name]: _.includes(subscriptions, name) })),
     };
   } if (data.permlinks) {
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
