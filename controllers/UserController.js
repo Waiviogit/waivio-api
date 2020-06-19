@@ -63,10 +63,10 @@ const updateUserMetadata = async (req, res, next) => {
 };
 
 const getUserMetadata = async (req, res, next) => {
-  const { user_metadata: userMetadata, error } = await getMetadata(req.params.userName);
+  const { user_metadata: userMetadata, error, privateEmail } = await getMetadata(req.params.userName);
 
   if (error) return next(error);
-  res.result = { status: 200, json: { user_metadata: userMetadata } };
+  res.result = { status: 200, json: { user_metadata: userMetadata, privateEmail } };
   next();
 };
 
