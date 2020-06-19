@@ -48,21 +48,19 @@ exports.newGetFollowingsArray = async (data) => {
   const { user, error } = await User.getOne(data.name);
   if (error) return { error: { status: 503, message: error.message } };
 
-  const { subscriptionData, error: subscriptionError } = await Subscriptions
-    .find({ condition: { follower: data.name } });
+  const { users, subscriptionError } = await Subscriptions
+    .getFollowings({ follower: data.name, limit: -1 });
   if (subscriptionError) return { error: { status: 503, message: subscriptionError.message } };
 
-  const subscriptions = _.map(subscriptionData, (el) => el.following);
-
   if (data.users) {
-    if (!subscriptionData.length) {
+    if (!users.length) {
       return {
         users: _.map(data.users, (name) => ({ [name]: false })),
       };
     }
     return {
       users: _.map(data.users,
-        (name) => ({ [name]: _.includes(subscriptions, name) })),
+        (name) => ({ [name]: _.includes(users, name) })),
     };
   } if (data.permlinks) {
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
