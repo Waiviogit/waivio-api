@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { Subscriptions } = require('models');
 const { schema } = require('middlewares/users/checkFollowers/schema');
 
 exports.check = async (req, res, next) => {
@@ -32,17 +32,6 @@ exports.check = async (req, res, next) => {
       if (error) return next(error);
       res.result.json[currentSchema.fields_path] = searchUsers;
       break;
-    case 2.1:
-      const { followers: newSearchUsers, error: newError } = await newCheckForFollowers(
-        {
-          userName: req.headers.following,
-          followers: res.result.json[currentSchema.fields_path],
-          path: currentSchema.field_name,
-        },
-      );
-      if (newError) return next(newError);
-      res.result.json[currentSchema.fields_path] = newSearchUsers;
-      break;
     case 3:
       const { follower, error: e } = await checkForFollowersSingle(
         {
@@ -60,18 +49,6 @@ exports.check = async (req, res, next) => {
 
 const checkForFollowers = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
-  const { usersData, error } = await User.find(
-    { condition: { name: { $in: names }, users_follow: userName }, sort: { wobjects_weight: -1 } },
-  );
-  if (error) return { error };
-  followers = _.forEach(followers, (follower) => {
-    follower.followsYou = !!_.find(usersData, (user) => follower[path] === user.name);
-  });
-  return { followers };
-};
-
-const newCheckForFollowers = async ({ userName, followers, path }) => {
-  const names = _.map(followers, (follower) => follower[path]);
   const subscribers = [];
   for (const element of names) {
     const { subscriptionData } = await Subscriptions
@@ -86,11 +63,10 @@ const newCheckForFollowers = async ({ userName, followers, path }) => {
 };
 
 const checkForFollowersSingle = async ({ userName, follower, path }) => {
-  const { usersData, error } = await User.find(
-    { condition: { name: follower.name, users_follow: userName } },
-  );
+  const { subscriptionData, error } = await Subscriptions
+    .find({ condition: { follower: follower[path], following: userName } });
   if (error) return { error };
 
-  follower.followsYou = !!_.find(usersData, (user) => follower[path] === user.name);
+  follower.followsYou = !!subscriptionData.length;
   return { follower };
 };

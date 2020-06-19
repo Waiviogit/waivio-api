@@ -22,7 +22,7 @@ exports.schema = [
   {
     path: '/user/:userName/following_users',
     method: 'GET',
-    case: 2.1,
+    case: 2,
     fields_path: 'users',
     field_name: 'name',
   },

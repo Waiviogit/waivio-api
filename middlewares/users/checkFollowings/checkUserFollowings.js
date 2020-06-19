@@ -28,15 +28,6 @@ exports.check = async (req, res, next) => {
       if (error) return next(error);
       res.result.json[currentSchema.fields_path] = searchUsers;
       break;
-    case 2.1:
-      const { followings: newSearchUsers, newError } = await newCheckForFollowings({
-        userName: req.headers.follower,
-        followings: res.result.json[currentSchema.fields_path],
-        path: currentSchema.field_name,
-      });
-      if (newError) return next(newError);
-      res.result.json[currentSchema.fields_path] = newSearchUsers;
-      break;
     case 3:
       const { following, error: e } = await checkForFollowingsSingle({
         userName: req.headers.follower,
@@ -53,20 +44,6 @@ exports.check = async (req, res, next) => {
 const checkForFollowings = async ({ userName, path, followings }) => {
   const names = _.map(followings, (following) => following[path]);
   const { users, error } = await getFollowingsUser.getFollowingsArray(
-    { name: userName, users: names },
-  );
-  if (error) return { error };
-
-  followings = _.forEach(followings, (following) => {
-    const result = _.find(users, (user) => Object.keys(user)[0] === following[path]);
-    following.youFollows = result[following[path]];
-  });
-  return { followings };
-};
-
-const newCheckForFollowings = async ({ userName, path, followings }) => {
-  const names = _.map(followings, (following) => following[path]);
-  const { users, error } = await getFollowingsUser.newGetFollowingsArray(
     { name: userName, users: names },
   );
   if (error) return { error };
