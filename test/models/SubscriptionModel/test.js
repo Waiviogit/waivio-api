@@ -1,7 +1,7 @@
 const {
   expect, SubscriptionModel, Subscriptions, dropDatabase, faker,
-} = require('../../testHelper');
-const { SubscriptionsFactory } = require('../../factories');
+} = require('test/testHelper');
+const { SubscriptionsFactory } = require('test/factories');
 
 describe('Subscription Model', async () => {
   describe('On followUser', async () => {
