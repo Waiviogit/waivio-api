@@ -76,16 +76,25 @@ const updateUserFollowings = async (name) => {
     const { followings = [], error } = await userUtil.getFollowingsList({
       name, startAccount, limit: batchSize,
     });
+    const { subscriptionData, error: subsError } = await Subscriptions
+      .find({ condition: { follower: name } });
 
-    if (error || followings.error) {
-      console.error(error || followings.error);
-      return { error: error || followings.error };
+    if (error || followings.error || subsError) {
+      console.error(error || followings.error || subsError);
+      return { error: error || followings.error || subsError };
     }
+    const dbArray = _.map(subscriptionData, (el) => el.following);
     currBatchSize = followings.length;
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
-    await User.updateOne(
-      { name }, { $addToSet: { users_follow: followings.map((f) => f.following) } },
-    );
+
+    await Promise.all(followings.map(async (el) => {
+      if (!_.includes(dbArray, el.following)) {
+        const { result, error: dbError } = await Subscriptions
+          .followUser({ follower: name, following: el.following });
+        result && console.log(`success, ${name} follows ${el.following}`);
+        dbError && console.error(dbError);
+      }
+    }));
   } while (currBatchSize === batchSize);
   return { ok: true };
 };
