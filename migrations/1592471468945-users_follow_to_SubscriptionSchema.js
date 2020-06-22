@@ -34,7 +34,7 @@ exports.up = async function up(done) {
     if (resultArray.length) {
       await Promise.all(resultArray.map(async (following) => {
         const { subscription } = await Subscriptions
-          .findOne({ conditions: { follower: doc.name, following } });
+          .findOne({ condition: { follower: doc.name, following } });
         if (!subscription) {
           const { result, error: dbError } = await Subscriptions
             .followUser({ follower: doc.name, following });
