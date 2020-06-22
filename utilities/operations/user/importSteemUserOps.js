@@ -84,14 +84,23 @@ const updateUserFollowings = async (name) => {
       return { error: error || followings.error || subsError };
     }
     const dbArray = _.map(subscriptionData, (el) => el.following);
+    const hiveArray = _.map(followings, (el) => el.following);
     currBatchSize = followings.length;
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
 
-    await Promise.all(followings.map(async (el) => {
+    await Promise.all(_.map(followings, async (el) => {
       if (!_.includes(dbArray, el.following)) {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: name, following: el.following });
         result && console.log(`success, ${name} follows ${el.following}`);
+        dbError && console.error(dbError);
+      }
+    }));
+    await Promise.all(_.map(dbArray, async (el) => {
+      if (!_.includes(hiveArray, el)) {
+        const { result, error: dbError } = await Subscriptions
+          .unfollowUser({ follower: name, following: el });
+        result && console.log(`success, ${name} unfollows ${el}`);
         dbError && console.error(dbError);
       }
     }));
