@@ -49,24 +49,21 @@ exports.check = async (req, res, next) => {
 
 const checkForFollowers = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
-  const subscribers = [];
-  for (const element of names) {
-    const { subscriptionData } = await Subscriptions
-      .find({ condition: { follower: element, following: userName } });
-    if (subscriptionData.length) subscribers.push(element);
-  }
+
+  const { subscriptionData } = await Subscriptions
+    .find({ condition: { follower: { $in: names }, following: userName } });
 
   followers = _.forEach(followers, (follower) => {
-    follower.followsYou = subscribers.includes(follower.name);
+    follower.followsYou = !!_.find(subscriptionData, (el) => el.follower === follower.name);
   });
   return { followers };
 };
 
 const checkForFollowersSingle = async ({ userName, follower, path }) => {
-  const { subscriptionData, error } = await Subscriptions
-    .find({ condition: { follower: follower[path], following: userName } });
+  const { subscription, error } = await Subscriptions
+    .findOne({ condition: { follower: follower[path], following: userName } });
   if (error) return { error };
 
-  follower.followsYou = !!subscriptionData.length;
+  follower.followsYou = !!subscription;
   return { follower };
 };

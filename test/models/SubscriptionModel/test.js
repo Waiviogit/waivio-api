@@ -56,9 +56,9 @@ describe('Subscription Model', async () => {
     beforeEach(async () => {
       await dropDatabase();
       ({ follower, following } = await SubscriptionsFactory.Create());
-      ({ subscription } = await SubscriptionModel.findOne({ conditions: { follower, following } }));
+      ({ subscription } = await SubscriptionModel.findOne({ condition: { follower, following } }));
       wrongData = await SubscriptionModel.findOne({
-        conditions: { follower: faker.name.firstName(), following: faker.name.firstName() },
+        condition: { follower: faker.name.firstName(), following: faker.name.firstName() },
       });
     });
     it('database entry should exist', async () => {

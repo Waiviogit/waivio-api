@@ -26,9 +26,9 @@ exports.unfollowUser = async ({ follower, following }) => {
   }
 };
 
-exports.findOne = async ({ conditions }) => {
+exports.findOne = async ({ condition }) => {
   try {
-    return { subscription: await Subscriptions.findOne(conditions).lean() };
+    return { subscription: await Subscriptions.findOne(condition).lean() };
   } catch (error) {
     return { error };
   }
