@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 
 const makePipeline = ({ limit, skip, sample }) => {
   const pipeline = [
@@ -34,10 +34,16 @@ const getUsersByList = async (data) => {
     },
   );
   if (error) return { error };
+
   return {
     data: {
-      users: _.take(_.map(usersData, (user) => {
-        if (data.name) user.followsMe = _.includes(user.users_follow, data.name);
+      users: _.take(_.map(usersData, async (user) => {
+        if (data.name) {
+          const { users, error: subsError } = await Subscriptions
+            .getFollowings({ follower: user.name, limit: -1 });
+          subsError && console.error(subsError);
+          user.followsMe = _.includes(users, data.name);
+        }
         return user;
       }), data.limit),
       hasMore: data.limit < usersData.length,
