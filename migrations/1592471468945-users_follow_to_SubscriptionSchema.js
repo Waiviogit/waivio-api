@@ -1,13 +1,14 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { User } = require('database').models;
+const { Subscriptions } = require('models');
 const { getFollowingsList } = require('utilities/steemApi').userUtil;
 /**
  * Make any changes you need to make to the database here
  */
 exports.up = async function up(done) {
-  const { usersData } = await User.find({ _id: /^/ });
+  const cursor = await User.find().cursor({ batchSize: 1000 });
 
-  for (const doc of usersData) {
+  await cursor.eachAsync(async (doc) => {
     let error, followings, guestArray = [], startAccount = '';
     const userArray = [];
     if (!_.get(doc, 'auth.provider', null)) {
@@ -30,18 +31,19 @@ exports.up = async function up(done) {
       guestArray = doc.users_follow;
     }
     const resultArray = userArray.length ? [...new Set(userArray)] : guestArray;
-    if (!resultArray) continue;
-    await Promise.all(resultArray.map(async (following) => {
-      const { subscription } = await Subscriptions
-        .findOne({ conditions: { follower: doc.name, following } });
-      if (!subscription) {
-        const { result, error: dbError } = await Subscriptions
-          .followUser({ follower: doc.name, following });
-        result && console.log(`success, ${doc.name} follows ${following}`);
-        dbError && console.error(dbError);
-      }
-    }));
-  }
+    if (resultArray.length) {
+      await Promise.all(resultArray.map(async (following) => {
+        const { subscription } = await Subscriptions
+          .findOne({ conditions: { follower: doc.name, following } });
+        if (!subscription) {
+          const { result, error: dbError } = await Subscriptions
+            .followUser({ follower: doc.name, following });
+          result && console.log(`success, ${doc.name} follows ${following}`);
+          dbError && console.error(dbError);
+        }
+      }));
+    }
+  });
   done();
 };
 

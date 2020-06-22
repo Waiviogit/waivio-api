@@ -1,4 +1,4 @@
-const { Subscriptions, faker } = require('../../testHelper');
+const { Subscriptions, faker } = require('test/testHelper');
 
 const Create = async ({
   follower, following, onlyData,
