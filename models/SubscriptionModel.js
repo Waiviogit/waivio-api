@@ -33,3 +33,15 @@ exports.findOne = async ({ condition }) => {
     return { error };
   }
 };
+
+exports.getGuestFollowersCount = async (userName) => {
+  try {
+    return {
+      count: await Subscriptions.find({
+        following: userName,
+      }).count(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

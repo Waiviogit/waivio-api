@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 const { userUtil } = require('utilities/steemApi');
 
 /**
@@ -41,7 +41,8 @@ exports.getUserSteemInfo = async (name) => {
   const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
   if (followCountErr) return { error: followCountErr };
 
-  const { count: guestFollCount, error: guestFollErr } = await User.getGuestFollowersCount(name);
+  const { count: guestFollCount, error: guestFollErr } = await Subscriptions
+    .getGuestFollowersCount(name);
   if (guestFollErr) return { error: guestFollErr };
 
   const data = {
