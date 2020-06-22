@@ -42,7 +42,7 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
     resUser = user;
     resUser.users_follow = users;
   } else {
-    resUser = _.omit(user, ['objects_follow']);
+    resUser = _.omit(user, ['users_follow', 'objects_follow']);
   }
   Object.assign(userData, resUser);// combine data from db and blockchain
   return { userData };
