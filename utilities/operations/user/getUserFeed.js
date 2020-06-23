@@ -1,4 +1,6 @@
-const { User, Post, App } = require('models');
+const {
+  User, Post, App, Subscriptions,
+} = require('models');
 const _ = require('lodash');
 
 const getFeed = async ({
@@ -6,9 +8,11 @@ const getFeed = async ({
   name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId,
 }) => {
   const { user, error: userError } = await User.getOne(name);
+  const { users, error: subsError } = await Subscriptions
+    .getFollowings({ follower: name, limit: -1 });
 
-  if (userError || !user) {
-    return { error: userError || { status: 404, message: 'User not found!' } };
+  if (userError || subsError || !user) {
+    return { error: userError || subsError || { status: 404, message: 'User not found!' } };
   }
   const { data: filtersData, error: filterError } = await getFiltersData({
     ...filter, forApp, lastId,
@@ -16,9 +20,8 @@ const getFeed = async ({
 
   if (filterError) return { error: filterError };
 
-
   const { posts, error: postsError } = await Post.getByFollowLists({
-    users: user.users_follow,
+    users,
     author_permlinks: user.objects_follow,
     user_languages,
     skip,
