@@ -5,12 +5,26 @@ const { getFollowingsList } = require('utilities/steemApi').userUtil;
 /**
  * Make any changes you need to make to the database here
  */
+const writeToCollection = async ({ array, doc }) => {
+  if (array.length) {
+    await Promise.all(_.map(array, async (el) => {
+      const { subscription } = await Subscriptions
+        .findOne({ condition: { follower: doc.name, following: el } });
+      if (!subscription) {
+        const { result, error: dbError } = await Subscriptions
+          .followUser({ follower: doc.name, following: el });
+        result && console.log(`success, ${doc.name} follows ${el}`);
+        dbError && console.error(dbError);
+      }
+    }));
+  }
+};
+
 exports.up = async function up(done) {
   const cursor = await User.find().cursor({ batchSize: 1000 });
 
   await cursor.eachAsync(async (doc) => {
-    let error, followings, guestArray = [], startAccount = '';
-    const userArray = [];
+    let error, followings, startAccount = '';
     if (!_.get(doc, 'auth.provider', null)) {
       do {
         ({ followings, error } = await getFollowingsList({
@@ -24,24 +38,16 @@ exports.up = async function up(done) {
         }
         if (error) break;
         startAccount = followings.length ? followings[followings.length - 1].following : '';
-        // eslint-disable-next-line no-loop-func
-        userArray.push(...followings.map((element) => element.following));
+        await writeToCollection({
+          array: _.map(followings, (el) => el.following),
+          doc,
+        });
       } while (!error && followings.length === 1000);
     } else {
-      guestArray = doc.users_follow;
-    }
-    const resultArray = userArray.length ? [...new Set(userArray)] : guestArray;
-    if (resultArray.length) {
-      await Promise.all(resultArray.map(async (following) => {
-        const { subscription } = await Subscriptions
-          .findOne({ condition: { follower: doc.name, following } });
-        if (!subscription) {
-          const { result, error: dbError } = await Subscriptions
-            .followUser({ follower: doc.name, following });
-          result && console.log(`success, ${doc.name} follows ${following}`);
-          dbError && console.error(dbError);
-        }
-      }));
+      await writeToCollection({
+        array: doc.users_follow,
+        doc,
+      });
     }
   });
   done();
