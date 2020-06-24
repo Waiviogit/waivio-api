@@ -19,6 +19,7 @@ const {
   Post: PostModel,
   User: UserModel,
   Comment: CommentModel,
+  Subscriptions: SubscriptionModel,
 } = require('models');
 
 const dropDatabase = async () => {
@@ -32,6 +33,7 @@ module.exports = {
   app: require('app'),
   ...require('database').models,
   sinon: require('sinon'),
+  SubscriptionModel,
   CommentModel,
   WobjModel,
   PostModel,
