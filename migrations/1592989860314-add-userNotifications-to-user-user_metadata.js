@@ -4,7 +4,7 @@ const _ = require('lodash');
  * Make any changes you need to make to the database here
  */
 exports.up = async function up(done) {
-  const cursor = User.find().cursor({ batchSize: 1000 });
+  const cursor = User.find().select('+user_metadata').cursor({ batchSize: 1000 });
   const defaultNotifications = {
     account_witness_vote: true,
     activateCampaign: true,
@@ -23,11 +23,10 @@ exports.up = async function up(done) {
     withdraw_vesting: true,
   };
   await cursor.eachAsync(async (doc) => {
-    if (_.isEmpty(doc.user_metadata.settings.userNotifications)) {
+    if (_.get(doc, 'user_metadata.settings') && _.isEmpty(doc.user_metadata.settings.userNotifications)) {
       const res = await User.updateOne(
         { name: doc.name }, { $set: { 'user_metadata.settings.userNotifications': defaultNotifications } },
       );
-
       if (res.nModified) {
         console.log(`User ${doc.name} alias updated!`);
       }
