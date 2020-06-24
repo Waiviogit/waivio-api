@@ -21,7 +21,7 @@ const writeToCollection = async ({ array, doc }) => {
 };
 
 exports.up = async function up(done) {
-  const cursor = await User.find().cursor({ batchSize: 1000 });
+  const cursor = await User.find({ stage_version: 1 }).cursor({ batchSize: 1000 });
 
   await cursor.eachAsync(async (doc) => {
     let error, followings, startAccount = '';
@@ -49,6 +49,7 @@ exports.up = async function up(done) {
         doc,
       });
     }
+    await User.updateOne({ _id: doc._id }, { $set: { stage_version: 0 } });
   });
   done();
 };
