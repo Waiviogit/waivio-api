@@ -26,7 +26,7 @@ models.Post = require('./schemas/PostSchema');
 models.App = require('./schemas/AppSchema');
 models.Campaign = require('./schemas/CampaignSchema');
 models.paymentHistory = require('./schemas/paymentHistorySchema');
-
+models.Subscriptions = require('./schemas/SubscriptionSchema');
 
 module.exports = {
   Mongoose: mongoose,
