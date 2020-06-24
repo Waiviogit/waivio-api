@@ -20,7 +20,7 @@ const makePipeline = ({
         // eslint-disable-next-line camelcase
         { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
       ],
-      'status.title': { $nin: ['unavailable', 'nsfw'] },
+      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
     },
   },
   {
