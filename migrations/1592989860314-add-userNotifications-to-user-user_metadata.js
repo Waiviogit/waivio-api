@@ -1,4 +1,5 @@
 const { User } = require('database').models;
+const _ = require('lodash');
 /**
  * Make any changes you need to make to the database here
  */
@@ -22,7 +23,7 @@ exports.up = async function up(done) {
     withdraw_vesting: true,
   };
   await cursor.eachAsync(async (doc) => {
-    if (!doc.user_metadata && !doc.user_metadata.settings && !doc.user_metadata.settings.userNotifications) {
+    if (_.isEmpty(doc.user_metadata.settings.userNotifications)) {
       const res = await User.updateOne(
         { name: doc.name }, { $set: { 'user_metadata.settings.userNotifications': defaultNotifications } },
       );
