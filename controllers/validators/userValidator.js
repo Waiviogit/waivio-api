@@ -124,7 +124,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         activateCampaign: true,
         changePassword: true,
         change_recovery_account: true,
-        comment: Joi.true,
+        comment: true,
         custom_json: true,
         fillOrder: true,
         rejectUpdate: true,
