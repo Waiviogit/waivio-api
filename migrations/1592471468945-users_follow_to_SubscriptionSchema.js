@@ -21,7 +21,7 @@ const writeToCollection = async ({ array, doc }) => {
 };
 
 exports.up = async function up(done) {
-  const cursor = await User.find({ stage_version: 1 }).cursor({ batchSize: 100 });
+  const cursor = await User.find({ stage_version: 1 }, {}, { timeout: true }).cursor({ batchSize: 100 });
 
   await cursor.eachAsync(async (doc) => {
     let error, followings, startAccount = '';
