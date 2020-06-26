@@ -11,6 +11,7 @@ const UserNotificationsSchema = new Schema({
   follow: { type: Boolean, default: true },
   fillOrder: { type: Boolean, default: true },
   mention: { type: Boolean, default: true },
+  minimalTransfer: { type: Number, default: 0.001 },
   power_down: { type: Boolean, default: true },
   reblog: { type: Boolean, default: true },
   reply: { type: Boolean, default: true },
