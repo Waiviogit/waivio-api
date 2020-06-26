@@ -12,6 +12,7 @@ exports.up = async function up(done) {
     follow: true,
     fillOrder: true,
     mention: true,
+    minimalTransfer: 0.001,
     power_down: true,
     reblog: true,
     reply: true,
