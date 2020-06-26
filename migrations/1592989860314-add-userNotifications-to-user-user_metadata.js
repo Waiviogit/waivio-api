@@ -6,21 +6,24 @@ const _ = require('lodash');
 exports.up = async function up(done) {
   const cursor = User.find().select('+user_metadata').cursor({ batchSize: 1000 });
   const defaultNotifications = {
-    account_witness_vote: true,
-    activateCampaign: true,
+    activationCampaign: true,
     changePassword: true,
     change_recovery_account: true,
-    comment: true,
-    custom_json: true,
+    follow: true,
     fillOrder: true,
+    mention: true,
+    minimalTransfer: 0.001,
+    power_down: true,
+    reblog: true,
+    reply: true,
     rejectUpdate: true,
-    restaurantStatus: true,
+    'status-change': true,
     suspendedStatus: true,
     transfer: true,
     transfer_from_savings: true,
     transfer_to_vesting: true,
     withdraw_route: true,
-    withdraw_vesting: true,
+    witness_vote: true,
   };
   await cursor.eachAsync(async (doc) => {
     if (_.get(doc, 'user_metadata.settings') && _.isEmpty(doc.user_metadata.settings.userNotifications)) {
