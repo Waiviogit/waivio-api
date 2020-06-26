@@ -43,7 +43,7 @@ exports.up = async function up(done) {
  * Make any changes that UNDO the up function side effects here (if possible)
  */
 exports.down = async function down(done) {
-  await User.update({}, { $unset: { 'user_metadata.settings.userNotifications': 1 } });
+  await User.update({}, { $unset: { 'user_metadata.settings.userNotifications': '' } });
   console.log('Deleted field "userNotifications" from all of users!');
   done();
 };
