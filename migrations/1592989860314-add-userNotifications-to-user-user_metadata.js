@@ -6,21 +6,24 @@ const _ = require('lodash');
 exports.up = async function up(done) {
   const cursor = User.find().select('+user_metadata').cursor({ batchSize: 1000 });
   const defaultNotifications = {
-    account_witness_vote: true,
-    activateCampaign: true,
+    activationCampaign: true,
     changePassword: true,
     change_recovery_account: true,
-    comment: true,
-    custom_json: true,
+    follow: true,
     fillOrder: true,
+    mention: true,
+    power_down: true,
+    reblog: true,
+    reply: true,
     rejectUpdate: true,
-    restaurantStatus: true,
+    'status-change': true,
     suspendedStatus: true,
     transfer: true,
+    transferFrom: true,
     transfer_from_savings: true,
     transfer_to_vesting: true,
     withdraw_route: true,
-    withdraw_vesting: true,
+    witness_vote: true,
   };
   await cursor.eachAsync(async (doc) => {
     if (_.get(doc, 'user_metadata.settings') && _.isEmpty(doc.user_metadata.settings.userNotifications)) {
@@ -39,7 +42,7 @@ exports.up = async function up(done) {
  * Make any changes that UNDO the up function side effects here (if possible)
  */
 exports.down = async function down(done) {
-  await User.update({}, { $unset: { 'user_metadata.settings.userNotifications': '' } });
+  await User.update({}, { $unset: { 'user_metadata.settings.userNotifications': 1 } });
   console.log('Deleted field "userNotifications" from all of users!');
   done();
 };

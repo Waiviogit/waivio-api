@@ -5,21 +5,24 @@ const { Schema } = mongoose;
 const { LANGUAGES } = require('../../utilities/constants');
 
 const UserNotificationsSchema = new Schema({
-  account_witness_vote: { type: Boolean, default: true },
-  activateCampaign: { type: Boolean, default: true },
+  activationCampaign: { type: Boolean, default: true },
   changePassword: { type: Boolean, default: true },
   change_recovery_account: { type: Boolean, default: true },
-  comment: { type: Boolean, default: true },
-  custom_json: { type: Boolean, default: true },
+  follow: { type: Boolean, default: true },
   fillOrder: { type: Boolean, default: true },
+  mention: { type: Boolean, default: true },
+  power_down: { type: Boolean, default: true },
+  reblog: { type: Boolean, default: true },
+  reply: { type: Boolean, default: true },
   rejectUpdate: { type: Boolean, default: true },
-  restaurantStatus: { type: Boolean, default: true },
+  'status-change': { type: Boolean, default: true },
   suspendedStatus: { type: Boolean, default: true },
   transfer: { type: Boolean, default: true },
+  transferFrom: { type: Boolean, default: true },
   transfer_from_savings: { type: Boolean, default: true },
   transfer_to_vesting: { type: Boolean, default: true },
   withdraw_route: { type: Boolean, default: true },
-  withdraw_vesting: { type: Boolean, default: true },
+  witness_vote: { type: Boolean, default: true },
 }, { _id: false });
 
 const UserMetadataSchema = new Schema({
