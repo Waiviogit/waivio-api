@@ -19,7 +19,6 @@ const UserNotificationsSchema = new Schema({
   'status-change': { type: Boolean, default: true },
   suspendedStatus: { type: Boolean, default: true },
   transfer: { type: Boolean, default: true },
-  transferFrom: { type: Boolean, default: true },
   transfer_from_savings: { type: Boolean, default: true },
   transfer_to_vesting: { type: Boolean, default: true },
   withdraw_route: { type: Boolean, default: true },

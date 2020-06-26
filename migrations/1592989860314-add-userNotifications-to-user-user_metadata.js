@@ -20,7 +20,6 @@ exports.up = async function up(done) {
     'status-change': true,
     suspendedStatus: true,
     transfer: true,
-    transferFrom: true,
     transfer_from_savings: true,
     transfer_to_vesting: true,
     withdraw_route: true,
