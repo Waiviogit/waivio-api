@@ -18,7 +18,7 @@ module.exports = async ({
   if (error) return { error };
 
   // add field reblogged_by if post not authored by "user" blog requested
-  posts.each((post) => {
+  posts.forEach((post) => {
     if (post.author !== name) post.reblogged_by = [name];
   });
   return { posts };
