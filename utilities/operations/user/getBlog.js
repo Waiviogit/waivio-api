@@ -11,12 +11,20 @@ module.exports = async ({
   if (user && user.auth) {
     return getGuestBlog({ name, limit, skip });
   }
-  return getSteemBlog({
+
+  const { posts, error } = await getHiveBlog({
     name, limit, start_author, start_permlink,
   });
+  if (error) return { error };
+
+  // add field reblogged_by if post not authored by "user" blog requested
+  posts.each((post) => {
+    if (post.author !== name) post.reblogged_by = [name];
+  });
+  return { posts };
 };
 
-const getSteemBlog = async ({
+const getHiveBlog = async ({
   // eslint-disable-next-line camelcase
   name, limit, start_author, start_permlink,
 }) => postHelper.getPostsByCategory(({
