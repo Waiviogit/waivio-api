@@ -2,12 +2,10 @@ const _ = require('lodash');
 const { User } = require('database').models;
 const { Subscriptions } = require('models');
 const { getFollowingsList } = require('utilities/steemApi').userUtil;
-/**
- * Make any changes you need to make to the database here
- */
+
 const writeToCollection = async ({ array, doc }) => {
   if (array.length) {
-    await Promise.all(_.map(array, async (el) => {
+    _.map(array, async (el) => {
       const { subscription } = await Subscriptions
         .findOne({ condition: { follower: doc.name, following: el } });
       if (!subscription) {
@@ -16,14 +14,14 @@ const writeToCollection = async ({ array, doc }) => {
         result && console.log(`success, ${doc.name} follows ${el}`);
         dbError && console.error(dbError);
       }
-    }));
+    });
   }
 };
 
-exports.up = async function up(done) {
-  const cursor = await User.find().cursor({ batchSize: 1000 });
+exports.add = async () => {
+  const cursor = await User.find({ stage_version: 1 }, { name: 1 });
 
-  await cursor.eachAsync(async (doc) => {
+  for (const doc of cursor) {
     let error, followings, startAccount = '';
     if (!_.get(doc, 'auth.provider', null)) {
       do {
@@ -49,13 +47,6 @@ exports.up = async function up(done) {
         doc,
       });
     }
-  });
-  done();
-};
-
-/**
- * Make any changes that UNDO the up function side effects here (if possible)
- */
-exports.down = async function down(done) {
-  done();
+    await User.updateOne({ _id: doc._id }, { $set: { stage_version: 0 } });
+  }
 };
