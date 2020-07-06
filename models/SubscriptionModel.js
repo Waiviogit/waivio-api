@@ -34,13 +34,21 @@ exports.findOne = async ({ condition }) => {
   }
 };
 
-exports.getGuestFollowersCount = async (userName) => {
+exports.getFollowers = async ({ following, skip = 0, limit = 30 }) => {
   try {
-    return {
-      count: await Subscriptions.find({
-        following: userName,
-      }).count(),
-    };
+    const result = await Subscriptions.find({ following }).skip(skip).limit(limit).select('follower')
+      .lean();
+    return { users: result.map((el) => el.follower) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
+  try {
+    const result = await Subscriptions.find({ follower }).skip(skip).limit(limit).select('following')
+      .lean();
+    return { users: result.map((el) => el.following) };
   } catch (error) {
     return { error };
   }
