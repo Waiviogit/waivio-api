@@ -110,10 +110,9 @@ UserSchema.virtual('full_objects_follow', { // get full structure of objects ins
 });
 
 UserSchema.virtual('followers_count_virtual', {
-  ref: 'Subscriptions',
+  ref: 'User',
   localField: 'name',
-  foreignField: 'follower',
-  justOne: false,
+  foreignField: 'users_follow',
   count: true,
 });
 
