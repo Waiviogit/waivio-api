@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 const { userUtil } = require('utilities/steemApi');
 
 /**
@@ -41,7 +41,8 @@ exports.getUserSteemInfo = async (name) => {
   const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
   if (followCountErr) return { error: followCountErr };
 
-  const { count: guestFollCount, error: guestFollErr } = await User.getGuestFollowersCount(name);
+  const { count: guestFollCount, error: guestFollErr } = await Subscriptions
+    .getGuestFollowersCount(name);
   if (guestFollErr) return { error: guestFollErr };
 
   const data = {
@@ -70,21 +71,41 @@ const updateUserFollowings = async (name) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = '';
+  const { subscriptionData, error: subsError } = await Subscriptions
+    .find({ condition: { follower: name } });
+  const dbArray = _.map(subscriptionData, (el) => el.following);
 
   do {
     const { followings = [], error } = await userUtil.getFollowingsList({
       name, startAccount, limit: batchSize,
     });
 
-    if (error || followings.error) {
-      console.error(error || followings.error);
-      return { error: error || followings.error };
+    if (error || followings.error || subsError) {
+      console.error(error || followings.error || subsError);
+      return { error: error || followings.error || subsError };
     }
+    const hiveArray = _.map(followings, (el) => el.following);
     currBatchSize = followings.length;
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
-    await User.updateOne(
-      { name }, { $addToSet: { users_follow: followings.map((f) => f.following) } },
-    );
+
+    await Promise.all(_.map(followings, async (el) => {
+      if (!_.includes(dbArray, el.following)) {
+        const { result, error: dbError } = await Subscriptions
+          .followUser({ follower: name, following: el.following });
+        // await User.updateOne({ name: el.following }, { $inc: { followers_count: 1 } });
+        result && console.log(`success, ${name} follows ${el.following}`);
+        dbError && console.error(dbError);
+      }
+    }));
+    await Promise.all(_.map(dbArray, async (el) => {
+      if (!_.includes(hiveArray, el)) {
+        const { result, error: dbError } = await Subscriptions
+          .unfollowUser({ follower: name, following: el });
+        // await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
+        result && console.log(`success, ${name} unfollows ${el}`);
+        dbError && console.error(dbError);
+      }
+    }));
   } while (currBatchSize === batchSize);
   return { ok: true };
 };
