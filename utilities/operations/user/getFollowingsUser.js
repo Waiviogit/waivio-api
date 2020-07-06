@@ -30,7 +30,7 @@ exports.getFollowingsArray = async (data) => {
   if (error) return { error: { status: 503, message: error.message } };
 
   const { users, subscriptionError } = await Subscriptions
-    .getFollowings({ follower: data.name, limit: -1 });
+    .getFollowings({ follower: data.name, limit: 0 });
   if (subscriptionError) return { error: { status: 503, message: subscriptionError.message } };
 
   if (data.users) {
