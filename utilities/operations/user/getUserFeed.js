@@ -9,7 +9,7 @@ const getFeed = async ({
 }) => {
   const { user, error: userError } = await User.getOne(name);
   const { users, error: subsError } = await Subscriptions
-    .getFollowings({ follower: name, limit: -1 });
+    .getFollowings({ follower: name, limit: 0 });
 
   if (userError || subsError || !user) {
     return { error: userError || subsError || { status: 404, message: 'User not found!' } };
