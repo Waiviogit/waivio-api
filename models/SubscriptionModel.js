@@ -34,10 +34,11 @@ exports.findOne = async ({ condition }) => {
   }
 };
 
-exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
+exports.getFollowers = async ({ following, skip = 0, limit = 30 }) => {
   try {
-    const result = await Subscriptions.find({ follower }).lean();
-    return { users: result.map((el) => el.following).slice(skip, limit) };
+    const result = await Subscriptions.find({ following }).skip(skip).limit(limit).select('follower')
+      .lean();
+    return { users: result.map((el) => el.follower) };
   } catch (error) {
     return { error };
   }

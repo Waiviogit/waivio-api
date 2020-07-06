@@ -71,11 +71,15 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
  * @returns {Promise<{error: Object}|{result: Object}>}
  */
 exports.getPostState = async ({ author, permlink, category }) => {
-  const result = await client.database.call(
-    'get_state',
-    [`${category}/@${author}/${permlink}`],
-  );
-  if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+  try {
+    const result = await client.database.call(
+      'get_state',
+      [`${category}/@${author}/${permlink}`],
+    );
+    if (!result || result.error) return { error: { message: _.get(result, 'error') } };
 
-  return { result };
+    return { result };
+  } catch (error) {
+    return { error: { message: error.message } };
+  }
 };
