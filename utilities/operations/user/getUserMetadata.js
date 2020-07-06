@@ -6,5 +6,5 @@ module.exports = async (userName) => {
   const { user, error } = await User.updateOne({ name: userName });
 
   if (error) return { error };
-  return { user_metadata: user.user_metadata };
+  return { user_metadata: user.user_metadata, privateEmail: user.privateEmail };
 };
