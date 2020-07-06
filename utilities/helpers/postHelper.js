@@ -1,5 +1,5 @@
 const {
-  CommentRef, Wobj, User, Post: PostRepository,
+  CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
 } = require('models');
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
@@ -175,9 +175,11 @@ const fillReblogs = async (posts = [], userName) => {
       } catch (error) {
         console.error(error);
       }
-      let user;
+      let user, users;
       if (userName) {
         ({ user } = await User.getOne(userName));
+        ({ users } = await Subscriptions
+          .getFollowings({ follower: userName, limit: 0 }));
       }
       if (sourcePost) {
         posts[postIdx] = {
@@ -185,7 +187,7 @@ const fillReblogs = async (posts = [], userName) => {
           reblogged_by: posts[postIdx].author,
           checkForFollow: {
             name: posts[postIdx].author,
-            youFollows: user ? _.includes(user.users_follow, posts[postIdx].author) : false,
+            youFollows: user ? _.includes(users, posts[postIdx].author) : false,
           },
         };
       }

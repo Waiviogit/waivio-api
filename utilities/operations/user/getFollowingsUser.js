@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User, Subscriptions } = require('models');
 
 exports.getAll = async ({ name, skip, limit }) => {
-  const { users, error } = await User.getFollowings({ name, skip, limit: limit + 1 });
-
+  const { users, error } = await Subscriptions
+    .getFollowings({ follower: name, skip, limit: limit + 1 });
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
 
@@ -21,20 +21,27 @@ exports.getAll = async ({ name, skip, limit }) => {
     .slice(0, limit)
     .value();
 
-
   return { result: { users: result, hasMore: users.length === limit + 1 } };
 };
 
 // returns collection of users or permlinks with boolean markers
 exports.getFollowingsArray = async (data) => {
   const { user, error } = await User.getOne(data.name);
-
   if (error) return { error: { status: 503, message: error.message } };
+
+  const { users, subscriptionError } = await Subscriptions
+    .getFollowings({ follower: data.name, limit: 0 });
+  if (subscriptionError) return { error: { status: 503, message: subscriptionError.message } };
+
   if (data.users) {
-    if (!user) return { users: _.map(data.users, (name) => ({ [name]: false })) };
+    if (!users.length) {
+      return {
+        users: _.map(data.users, (name) => ({ [name]: false })),
+      };
+    }
     return {
       users: _.map(data.users,
-        (name) => ({ [name]: _.includes(user.users_follow, name) })),
+        (name) => ({ [name]: _.includes(users, name) })),
     };
   } if (data.permlinks) {
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
