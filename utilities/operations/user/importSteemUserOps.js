@@ -92,7 +92,7 @@ const updateUserFollowings = async (name) => {
       if (!_.includes(dbArray, el.following)) {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: name, following: el.following });
-        await User.updateOne({ name: el.following }, { $inc: { followers_count: 1 } });
+        // await User.updateOne({ name: el.following }, { $inc: { followers_count: 1 } });
         result && console.log(`success, ${name} follows ${el.following}`);
         dbError && console.error(dbError);
       }
@@ -101,7 +101,7 @@ const updateUserFollowings = async (name) => {
       if (!_.includes(hiveArray, el)) {
         const { result, error: dbError } = await Subscriptions
           .unfollowUser({ follower: name, following: el });
-        await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
+        // await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
         result && console.log(`success, ${name} unfollows ${el}`);
         dbError && console.error(dbError);
       }
