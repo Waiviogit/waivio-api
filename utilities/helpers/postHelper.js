@@ -179,7 +179,7 @@ const fillReblogs = async (posts = [], userName) => {
       if (userName) {
         ({ user } = await User.getOne(userName));
         ({ users } = await Subscriptions
-          .getFollowings({ follower: userName, limit: -1 }));
+          .getFollowings({ follower: userName, limit: 0 }));
       }
       if (sourcePost) {
         posts[postIdx] = {
