@@ -53,3 +53,20 @@ exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
     return { error };
   }
 };
+
+exports.find = async ({
+  condition, skip, limit, sort,
+}) => {
+  try {
+    return {
+      subscriptionData: await Subscriptions
+        .find(condition)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
