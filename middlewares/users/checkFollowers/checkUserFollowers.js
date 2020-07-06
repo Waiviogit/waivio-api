@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { Subscriptions } = require('models');
 const { schema } = require('middlewares/users/checkFollowers/schema');
 
 exports.check = async (req, res, next) => {
@@ -49,23 +49,21 @@ exports.check = async (req, res, next) => {
 
 const checkForFollowers = async ({ userName, followers, path }) => {
   const names = _.map(followers, (follower) => follower[path]);
-  const { usersData, error } = await User.find(
-    { condition: { name: { $in: names }, users_follow: userName }, sort: { wobjects_weight: -1 } },
-  );
-  if (error) return { error };
+
+  const { subscriptionData } = await Subscriptions
+    .find({ condition: { follower: { $in: names }, following: userName } });
+
   followers = _.forEach(followers, (follower) => {
-    follower.followsYou = !!_.find(usersData, (user) => follower[path] === user.name);
+    follower.followsYou = !!_.find(subscriptionData, (el) => el.follower === follower.name);
   });
   return { followers };
 };
 
-
 const checkForFollowersSingle = async ({ userName, follower, path }) => {
-  const { usersData, error } = await User.find(
-    { condition: { name: follower.name, users_follow: userName } },
-  );
+  const { subscription, error } = await Subscriptions
+    .findOne({ condition: { follower: follower[path], following: userName } });
   if (error) return { error };
 
-  follower.followsYou = !!_.find(usersData, (user) => follower[path] === user.name);
+  follower.followsYou = !!subscription;
   return { follower };
 };
