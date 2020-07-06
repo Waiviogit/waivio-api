@@ -1,3 +1,4 @@
+// task unavailable. For use should replace users_follow request from User to Subscription model
 const _ = require('lodash');
 const { User } = require('database').models;
 const axios = require('axios');
