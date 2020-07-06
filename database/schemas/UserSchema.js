@@ -110,9 +110,10 @@ UserSchema.virtual('full_objects_follow', { // get full structure of objects ins
 });
 
 UserSchema.virtual('followers_count_virtual', {
-  ref: 'User',
+  ref: 'Subscriptions',
   localField: 'name',
-  foreignField: 'users_follow',
+  foreignField: 'follower',
+  justOne: false,
   count: true,
 });
 
@@ -122,8 +123,9 @@ UserSchema.virtual('objects_following_count').get(function () {
 });
 
 // eslint-disable-next-line func-names
-UserSchema.virtual('users_following_count').get(function () {
-  return this.users_follow.length;
+UserSchema.post('findOne', async function (doc) {
+  const followers = await mongoose.models.Subscriptions.find({ follower: doc.name });
+  doc.users_following_count = followers.length;
 });
 
 UserSchema.virtual('objects_shares_count', {
