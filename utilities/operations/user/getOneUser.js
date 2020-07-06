@@ -1,6 +1,7 @@
 const { User } = require('database').models;
 const { userUtil: userSteemUtil } = require('utilities/steemApi');
 const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
+const { Subscriptions } = require('models');
 const _ = require('lodash');
 
 const getDbUser = async (name) => {
@@ -17,8 +18,8 @@ const getDbUser = async (name) => {
 
 const getOne = async ({ name, with_followings: withFollowings }) => {
   const { userData = {} } = await userSteemUtil.getAccount(name);
-
-  const { user, error: dbError } = await getDbUser(name); // get user data from db
+  // eslint-disable-next-line prefer-const
+  let { user, error: dbError } = await getDbUser(name);// get user data from db
   if (dbError) return { error: dbError };
 
   if (!user) {
@@ -32,11 +33,13 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
     return { userData };
   }
 
-  // const resUser = withFollowings ? user : _.omit(user, ['users_follow', 'objects_follow']);
   if (_.get(user, 'auth.provider')) user.provider = user.auth.provider;
-  const resUser = _.omit(user, withFollowings ? [] : ['users_follow', 'objects_follow']);
+  if (withFollowings) {
+    const { users } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
+    user.users_follow = users || [];
+  } else user = _.omit(user, ['users_follow', 'objects_follow']);
 
-  Object.assign(userData, resUser); // combine data from db and blockchain
+  Object.assign(userData, user);// combine data from db and blockchain
   return { userData };
 };
 
