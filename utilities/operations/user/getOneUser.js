@@ -17,13 +17,10 @@ const getDbUser = async (name) => {
 };
 
 const getOne = async ({ name, with_followings: withFollowings }) => {
-  let resUser;
   const { userData = {} } = await userSteemUtil.getAccount(name);
-
-  const { user, error: dbError } = await getDbUser(name);// get user data from db
-  const { users, error: subsError } = await Subscriptions
-    .getFollowings({ follower: name, limit: -1 });
-  if (dbError || subsError) return { error: dbError || subsError };
+  // eslint-disable-next-line prefer-const
+  let { user, error: dbError } = await getDbUser(name);// get user data from db
+  if (dbError) return { error: dbError };
 
   if (!user) {
     // If user not exist in DB and STEEM -> return error,
@@ -36,15 +33,13 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
     return { userData };
   }
 
-  // const resUser = withFollowings ? user : _.omit(user, ['users_follow', 'objects_follow']);
   if (_.get(user, 'auth.provider')) user.provider = user.auth.provider;
   if (withFollowings) {
-    resUser = user;
-    resUser.users_follow = users;
-  } else {
-    resUser = _.omit(user, ['users_follow', 'objects_follow']);
-  }
-  Object.assign(userData, resUser);// combine data from db and blockchain
+    const { users } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
+    user.users_follow = users || [];
+  } else user = _.omit(user, ['users_follow', 'objects_follow']);
+
+  Object.assign(userData, user);// combine data from db and blockchain
   return { userData };
 };
 
