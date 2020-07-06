@@ -70,3 +70,16 @@ exports.find = async ({
     return { error };
   }
 };
+
+exports.getGuestFollowersCount = async (userName) => {
+  try {
+    return {
+      count: await Subscriptions.find({
+        follower: { $in: [/waivio_/, /bxy_/] },
+        following: userName,
+      }).count(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
