@@ -71,19 +71,19 @@ const updateUserFollowings = async (name) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = '';
+  const { subscriptionData, error: subsError } = await Subscriptions
+    .find({ condition: { follower: name } });
+  const dbArray = _.map(subscriptionData, (el) => el.following);
 
   do {
     const { followings = [], error } = await userUtil.getFollowingsList({
       name, startAccount, limit: batchSize,
     });
-    const { subscriptionData, error: subsError } = await Subscriptions
-      .find({ condition: { follower: name } });
 
     if (error || followings.error || subsError) {
       console.error(error || followings.error || subsError);
       return { error: error || followings.error || subsError };
     }
-    const dbArray = _.map(subscriptionData, (el) => el.following);
     const hiveArray = _.map(followings, (el) => el.following);
     currBatchSize = followings.length;
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
@@ -92,6 +92,7 @@ const updateUserFollowings = async (name) => {
       if (!_.includes(dbArray, el.following)) {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: name, following: el.following });
+        await User.updateOne({ name: el.following }, { $inc: { followers_count: 1 } });
         result && console.log(`success, ${name} follows ${el.following}`);
         dbError && console.error(dbError);
       }
@@ -100,6 +101,7 @@ const updateUserFollowings = async (name) => {
       if (!_.includes(hiveArray, el)) {
         const { result, error: dbError } = await Subscriptions
           .unfollowUser({ follower: name, following: el });
+        await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
         result && console.log(`success, ${name} unfollows ${el}`);
         dbError && console.error(dbError);
       }
