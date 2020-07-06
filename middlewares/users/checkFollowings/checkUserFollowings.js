@@ -41,7 +41,6 @@ exports.check = async (req, res, next) => {
   next();
 };
 
-
 const checkForFollowings = async ({ userName, path, followings }) => {
   const names = _.map(followings, (following) => following[path]);
   const { users, error } = await getFollowingsUser.getFollowingsArray(
