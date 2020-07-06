@@ -1,16 +1,18 @@
-const { User: UserService, Wobj: WobjectService } = require('models');
+const { User: UserService, Wobj: WobjectService, Subscriptions } = require('models');
 
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
+  const { users, error: subscribeError } = await Subscriptions
+    .getFollowings({ follower: name, limit: 0 });
 
-  if (getUserError || !user) {
-    return { error: getUserError || { status: 404, message: 'User not found!' } };
+  if (getUserError || !user || subscribeError) {
+    return { error: getUserError || subscribeError || { status: 404, message: 'User not found!' } };
   }
 
   // eslint-disable-next-line camelcase
-  const { users_updates } = await getUpdatesByUsersList(
-    { users_follow: user.users_follow, limit: users_count },
-  );
+  const { users_updates } = await getUpdatesByUsersList({
+    users_follow: users, limit: users_count,
+  });
 
   // eslint-disable-next-line camelcase
   const { wobjects_updates } = await getUpdatesByWobjectsList({
@@ -97,13 +99,10 @@ const getUpdatesByWobjectsList = async ({
 };
 
 const getUsersUpdates = async ({ name, skip, limit }) => {
-  const { user, error: getUserError } = await UserService.getOne(name);
+  const { users, error } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
+  if (error) return { error };
 
-  if (getUserError || !user) {
-    return { error: getUserError || { status: 404, message: 'User not found!' } };
-  }
-
-  return getUpdatesByUsersList({ users_follow: user.users_follow, skip, limit });
+  return getUpdatesByUsersList({ users_follow: users, skip, limit });
 };
 
 const getUpdatesByUsersList = async ({ users_follow = [], limit = 3, skip = 0 }) => {
