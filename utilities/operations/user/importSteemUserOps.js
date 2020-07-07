@@ -21,10 +21,10 @@ exports.importUser = async (userName) => {
   if (steemError) return { error: steemError };
 
   await updateUserFollowings(userName);
-
+  const followings = await Subscriptions.getFollowingsCount(userName);
   return User.updateOne(
     { name: userName },
-    { ...userData, stage_version: 1 },
+    { ...userData, stage_version: 1, users_following_count: followings },
   );
 };
 
@@ -107,8 +107,6 @@ const updateUserFollowings = async (name) => {
       }
     }));
   } while (currBatchSize === batchSize);
-  const followings = await Subscriptions.getFollowingsCount(name);
-  await User.updateOne({ name }, { $set: { users_following_count: followings } });
   return { ok: true };
 };
 
