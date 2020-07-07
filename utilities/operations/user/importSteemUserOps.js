@@ -21,7 +21,7 @@ exports.importUser = async (userName) => {
   if (steemError) return { error: steemError };
 
   await updateUserFollowings(userName);
-  const followings = await Subscriptions.getFollowingsCount(userName);
+  const { count: followings } = await Subscriptions.getFollowingsCount(userName);
   return User.updateOne(
     { name: userName },
     { ...userData, stage_version: 1, users_following_count: followings },
