@@ -114,9 +114,11 @@ UserSchema.virtual('objects_following_count').get(function () {
   return this.objects_follow.length;
 });
 
-// eslint-disable-next-line func-names
-UserSchema.virtual('users_following_count').get(function () {
-  return this.users_follow.length;
+UserSchema.virtual('users_following_count', {
+  ref: 'Subscriptions',
+  localField: 'name',
+  foreignField: 'follower',
+  count: true,
 });
 
 UserSchema.virtual('objects_shares_count', {
