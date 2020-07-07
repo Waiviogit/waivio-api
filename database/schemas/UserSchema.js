@@ -88,6 +88,7 @@ const UserSchema = new Schema({
     default: null,
   },
   followers_count: { type: Number, default: 0 },
+  users_following_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },
   stage_version: { type: Number, default: 0, required: true },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
@@ -102,23 +103,9 @@ UserSchema.virtual('full_objects_follow', { // get full structure of objects ins
   justOne: false,
 });
 
-UserSchema.virtual('followers_count_virtual', {
-  ref: 'User',
-  localField: 'name',
-  foreignField: 'users_follow',
-  count: true,
-});
-
 // eslint-disable-next-line func-names
 UserSchema.virtual('objects_following_count').get(function () {
   return this.objects_follow.length;
-});
-
-UserSchema.virtual('users_following_count', {
-  ref: 'Subscriptions',
-  localField: 'name',
-  foreignField: 'follower',
-  count: true,
 });
 
 UserSchema.virtual('objects_shares_count', {

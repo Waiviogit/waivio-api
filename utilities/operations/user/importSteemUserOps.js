@@ -107,6 +107,8 @@ const updateUserFollowings = async (name) => {
       }
     }));
   } while (currBatchSize === batchSize);
+  const followings = await Subscriptions.find({ follower: name }).count();
+  await User.updateOne({ name }, { $set: { users_following_count: followings } });
   return { ok: true };
 };
 
