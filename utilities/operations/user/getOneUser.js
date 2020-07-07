@@ -9,8 +9,8 @@ const getDbUser = async (name) => {
     const user = await User
       .findOne({ name })
       .populate('objects_shares_count')
-      .populate('users_following_count').lean();
-    return user ? { user } : {};
+      .populate('users_following_count');
+    return user ? { user: user.toJSON() } : {};
   } catch (error) {
     return { error };
   }
