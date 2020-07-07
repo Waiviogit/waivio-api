@@ -83,3 +83,13 @@ exports.getGuestFollowersCount = async (userName) => {
     return { error };
   }
 };
+
+exports.getFollowingsCount = async (userName) => {
+  try {
+    return {
+      count: await Subscriptions.find({ follower: userName }).count(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
