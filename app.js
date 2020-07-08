@@ -14,7 +14,6 @@ require('jobs');
 
 const session = createNamespace('request-session');
 const app = express();
-const {App}= require('models')
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
@@ -62,9 +61,5 @@ app.use((err, req, res, next) => {
   // render the error page
   res.status(err.status || 500).json({ message: err.message });
 });
-(async () => {
-  const { app: data } = await App.getOne({ name: 'waiviodev', bots: 'service_bots' });
-  // const { user } = userModel.findOne({ name: 'wiv01' });
-  console.log(data);
-})();
+
 module.exports = app;
