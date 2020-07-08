@@ -28,10 +28,11 @@ exports.getAll = async ({ name, skip, limit }) => {
 exports.getFollowingsArray = async (data) => {
   const { user, error } = await User.getOne(data.name);
   if (error) return { error: { status: 503, message: error.message } };
+  const { subscriptionData, error: subscriptionError } = await Subscriptions
+    .find({ condition: { follower: data.name, following: { $in: data.users } } });
 
-  const { users, subscriptionError } = await Subscriptions
-    .getFollowings({ follower: data.name, limit: 0 });
   if (subscriptionError) return { error: { status: 503, message: subscriptionError.message } };
+  const users = _.map(subscriptionData, 'following');
 
   if (data.users) {
     if (!users.length) {
