@@ -1,8 +1,9 @@
 const { User } = require('models');
 const _ = require('lodash');
+
 // eslint-disable-next-line camelcase
 module.exports = async ({ user_name, user_metadata }) => {
-  if (!_.get(user_metadata, 'settings.userNotifications.minimalTransfer')) {
+  if (_.get(user_metadata, 'settings.userNotifications.minimalTransfer') === -1) {
     const { user: client, error: clientError } = await User.getOne(user_name, '+user_metadata');
     if (clientError) return { error: clientError };
     user_metadata.settings.userNotifications.minimalTransfer = _
