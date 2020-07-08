@@ -175,11 +175,10 @@ const fillReblogs = async (posts = [], userName) => {
       } catch (error) {
         console.error(error);
       }
-      let user, users;
+      let subscription;
       if (userName) {
-        ({ user } = await User.getOne(userName));
-        ({ users } = await Subscriptions
-          .getFollowings({ follower: userName, limit: 0 }));
+        ({ subscription } = await Subscriptions
+          .findOne({ follower: userName, following: posts[postIdx].author }));
       }
       if (sourcePost) {
         posts[postIdx] = {
@@ -187,7 +186,7 @@ const fillReblogs = async (posts = [], userName) => {
           reblogged_by: posts[postIdx].author,
           checkForFollow: {
             name: posts[postIdx].author,
-            youFollows: user ? _.includes(users, posts[postIdx].author) : false,
+            youFollows: !!subscription,
           },
         };
       }

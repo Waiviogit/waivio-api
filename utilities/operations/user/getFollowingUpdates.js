@@ -3,7 +3,7 @@ const { User: UserService, Wobj: WobjectService, Subscriptions } = require('mode
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
   const { users, error: subscribeError } = await Subscriptions
-    .getFollowings({ follower: name, limit: 0 });
+    .getFollowings({ follower: name, limit: users_count + 10 });
 
   if (getUserError || !user || subscribeError) {
     return { error: getUserError || subscribeError || { status: 404, message: 'User not found!' } };
@@ -99,7 +99,7 @@ const getUpdatesByWobjectsList = async ({
 };
 
 const getUsersUpdates = async ({ name, skip, limit }) => {
-  const { users, error } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
+  const { users, error } = await Subscriptions.getFollowings({ follower: name, limit: limit + 10 });
   if (error) return { error };
 
   return getUpdatesByUsersList({ users_follow: users, skip, limit });
