@@ -121,7 +121,6 @@ exports.updateMetadataSchema = Joi.object().keys({
         follow: true,
         fillOrder: true,
         mention: true,
-        minimalTransfer: 0,
         reblog: true,
         reply: true,
         'status-change': true,
