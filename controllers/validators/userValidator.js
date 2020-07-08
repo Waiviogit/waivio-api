@@ -96,7 +96,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         follow: Joi.boolean(),
         fillOrder: Joi.boolean(),
         mention: Joi.boolean(),
-        minimalTransfer: Joi.number(),
+        minimalTransfer: Joi.number().min(0.001),
         reblog: Joi.boolean(),
         reply: Joi.boolean(),
         'status-change': Joi.boolean(),
