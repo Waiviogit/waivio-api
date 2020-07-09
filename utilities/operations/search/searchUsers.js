@@ -8,7 +8,7 @@ const makeCountPipeline = ({ string }) => [
 
 exports.searchUsers = async ({ string, limit, skip }) => {
   const { user } = await User.findOneByCondition(
-    { name: { $in: [`waivio_${string}`, `${string}`] } },
+    { name: { $in: [`waivio_${string}`, string] } },
   );
   const { users, error } = await User.search({ string, skip, limit });
   const {
