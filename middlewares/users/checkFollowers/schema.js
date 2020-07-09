@@ -83,4 +83,11 @@ exports.schema = [
     case: 1,
     field_name: 'author',
   },
+  {
+    path: '/user/getUsersData',
+    method: 'POST',
+    case: 2,
+    fields_path: 'users',
+    field_name: 'name',
+  },
 ];
