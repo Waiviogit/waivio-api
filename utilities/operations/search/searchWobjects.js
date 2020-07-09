@@ -64,7 +64,7 @@ const makeCountPipeline = ({ string }) => [
         { fields: { $elemMatch: { name: 'name', body: { $regex: `\\b${string}.*\\b`, $options: 'i' } } } },
         { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
       ],
-      'status.title': { $nin: ['unavailable', 'nsfw'] },
+      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
     },
   },
   { $group: { _id: '$object_type', count: { $sum: 1 } } },
