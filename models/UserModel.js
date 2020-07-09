@@ -11,6 +11,14 @@ exports.getOne = async (name, keys) => {
   }
 };
 
+exports.findOneByCondition = async (condition) => {
+  try {
+    return { user: await UserModel.findOne(condition).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.getAll = async ({ limit, skip }) => {
   try {
     return { UserData: await UserModel.find().skip(skip).limit(limit).lean() };
@@ -105,7 +113,7 @@ exports.search = async ({ string, skip, limit }) => {
   try {
     return {
       users: await UserModel
-        .find({ name: { $regex: `^${string}`, $options: 'i' } }, {
+        .find({ name: { $in: [new RegExp(`^waivio_${string}`), new RegExp(`^${string}`)] } }, {
           _id: 0, name: 1, wobjects_weight: 1, followers_count: 1,
         })
         .sort({ wobjects_weight: -1 })
