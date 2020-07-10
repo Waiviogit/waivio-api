@@ -21,6 +21,7 @@ exports.importUser = async (userName) => {
   if (steemError) return { error: steemError };
 
   await updateUserFollowings(userName);
+  await updateUserFollowers(userName);
   const { count: followings } = await Subscriptions.getFollowingsCount(userName);
   return User.updateOne(
     { name: userName },
@@ -42,7 +43,9 @@ exports.getUserSteemInfo = async (name) => {
   if (followCountErr) return { error: followCountErr };
 
   const { count: guestFollCount, error: guestFollErr } = await Subscriptions
-    .getGuestFollowersCount(name);
+    .getGuestSubscriptionsCount(name, true);
+  const { count: guestFollowingsCount } = await Subscriptions
+    .getGuestSubscriptionsCount(name, false);
   if (guestFollErr) return { error: guestFollErr };
 
   const data = {
@@ -52,6 +55,7 @@ exports.getUserSteemInfo = async (name) => {
     json_metadata: userData.json_metadata,
     posting_json_metadata: userData.posting_json_metadata,
     last_root_post: userData.last_root_post,
+    user_following_count: _.get(followCountRes, 'following_count', 0) + guestFollowingsCount,
     followers_count: _.get(followCountRes, 'follower_count', 0) + guestFollCount,
   };
 
@@ -103,6 +107,47 @@ const updateUserFollowings = async (name) => {
           .unfollowUser({ follower: name, following: el });
         // await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
         result && console.log(`success, ${name} unfollows ${el}`);
+        dbError && console.error(dbError);
+      }
+    }));
+  } while (currBatchSize === batchSize);
+  return { ok: true };
+};
+
+const updateUserFollowers = async (name) => {
+  const batchSize = 1000;
+  let currBatchSize = 0;
+  let startAccount = '';
+  const { subscriptionData, error: subsError } = await Subscriptions
+    .find({ condition: { following: name } });
+  const dbArray = _.map(subscriptionData, (el) => el.follower);
+
+  do {
+    const { followers = [], error } = await userUtil.getFollowersList({
+      name, startAccount, limit: batchSize,
+    });
+
+    if (error || followers.error || subsError) {
+      console.error(error || followers.error || subsError);
+      return { error: error || followers.error || subsError };
+    }
+    const hiveArray = _.map(followers, (el) => el.follower);
+    currBatchSize = followers.length;
+    startAccount = _.get(followers, `[${batchSize - 1}].follower`, '');
+
+    await Promise.all(_.map(followers, async (el) => {
+      if (!_.includes(dbArray, el.follower)) {
+        const { result, error: dbError } = await Subscriptions
+          .followUser({ follower: el.follower, following: name });
+        result && console.log(`success, ${el.follower} follows ${name}`);
+        dbError && console.error(dbError);
+      }
+    }));
+    await Promise.all(_.map(dbArray, async (el) => {
+      if (!_.includes(hiveArray, el)) {
+        const { result, error: dbError } = await Subscriptions
+          .unfollowUser({ follower: el, following: name });
+        result && console.log(`success, ${el} unfollows ${name}`);
         dbError && console.error(dbError);
       }
     }));
