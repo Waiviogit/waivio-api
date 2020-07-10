@@ -71,13 +71,17 @@ exports.find = async ({
   }
 };
 
-exports.getGuestFollowersCount = async (userName) => {
+exports.getGuestSubscriptionsCount = async (userName, flag) => {
   try {
+    const query = flag ? {
+      follower: { $in: [/waivio_/, /bxy_/] },
+      following: userName,
+    } : {
+      following: { $in: [/waivio_/, /bxy_/] },
+      follower: userName,
+    };
     return {
-      count: await Subscriptions.find({
-        follower: { $in: [/waivio_/, /bxy_/] },
-        following: userName,
-      }).count(),
+      count: await Subscriptions.find(query).count(),
     };
   } catch (error) {
     return { error };
