@@ -104,6 +104,11 @@ exports.updateMetadataSchema = Joi.object().keys({
         transfer: Joi.boolean().default(true),
         withdraw_route: Joi.boolean().default(true),
         witness_vote: Joi.boolean().default(true),
+        myPost: Joi.boolean().default(false),
+        myComment: Joi.boolean().default(false),
+        like: Joi.boolean().default(true),
+        downvote: Joi.boolean().default(false),
+        claimReward: Joi.boolean().default(false),
       }),
     }),
     drafts: Joi.array().items(Joi.object().keys({
