@@ -16,6 +16,11 @@ const UserNotificationsSchema = new Schema({
   transfer: { type: Boolean, default: true },
   withdraw_route: { type: Boolean, default: true },
   witness_vote: { type: Boolean, default: true },
+  myPost: { type: Boolean, default: false },
+  myComment: { type: Boolean, default: false },
+  like: { type: Boolean, default: true },
+  downvote: { type: Boolean, default: false },
+  claimReward: { type: Boolean, default: false },
 }, { _id: false });
 
 const UserMetadataSchema = new Schema({
