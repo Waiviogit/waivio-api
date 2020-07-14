@@ -184,7 +184,7 @@ const postFilters = async (req, res, next) => {
 
 const searchUsers = async (req, res, next) => {
   const value = validators.validate({
-    searchString: req.query.searchString,
+    searchString: req.query.searchString.toLocaleLowerCase(),
     limit: req.query.limit,
     skip: req.query.skip,
   }, validators.user.searchSchema, next);

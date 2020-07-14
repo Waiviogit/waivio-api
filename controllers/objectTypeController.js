@@ -40,7 +40,7 @@ const show = async (req, res, next) => {
 
 const search = async (req, res, next) => {
   const { objectTypes, error } = await searchObjectTypes({
-    string: req.body.search_string,
+    string: req.body.search_string.toLocaleLowerCase(),
     skip: req.body.skip || 0,
     limit: req.body.limit || 30,
   });
