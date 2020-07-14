@@ -127,12 +127,13 @@ exports.search = async ({ string, skip, limit }) => {
 };
 
 exports.find = async ({
-  condition, skip, limit, sort,
+  condition, skip, limit, sort, select,
 }) => {
   try {
     return {
       usersData: await UserModel
         .find(condition)
+        .select(select)
         .sort(sort)
         .skip(skip)
         .limit(limit)

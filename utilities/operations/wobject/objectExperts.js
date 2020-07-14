@@ -1,4 +1,4 @@
-const { UserWobjects } = require('models');
+const { UserWobjects, User } = require('models');
 const { WObject } = require('database').models;
 const _ = require('lodash');
 
@@ -65,16 +65,16 @@ const getWobjExperts = async ({
       const { experts, error } = await UserWobjects.getByWobject({
         authorPermlink: author_permlink, username: user,
       });
-
       if (error) return { error };
       userExpert = _.get(experts, '[0]');
     }
     const { experts, error } = await UserWobjects.getByWobject({
       authorPermlink: author_permlink, skip, limit, weight: true,
     });
-
     if (error) return { error };
-    return { experts, userExpert };
+    const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
+    if (getFollowersErr) return { error: getFollowersErr };
+    return { experts: result, userExpert };
   }
 
   const multipliers = getMultipliers(wobj.newsFilter, author_permlink);
@@ -91,7 +91,30 @@ const getWobjExperts = async ({
     if (error) return { error };
     userExpert = _.get(expertsByUserName, '[0]');
   }
-  return { experts, userExpert };
+  const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
+  if (getFollowersErr) return { error: getFollowersErr };
+  return { experts: result, userExpert };
+};
+
+const getFollowersCount = async ({ experts, userExpert }) => {
+  const names = _.map(experts, (el) => el.name);
+  if (userExpert) names.push(userExpert.name);
+  // eslint-disable-next-line prefer-const
+  let { usersData, error } = await User.find({
+    condition: { name: { $in: names } },
+    select: { name: 1, followers_count: 1 },
+  });
+  if (error) return { error };
+  if (userExpert) {
+    userExpert.followers_count = _
+      .find(usersData, (el) => el.name === userExpert.name).followers_count;
+    usersData = _.filter(usersData, (el) => el.name !== userExpert.name);
+  }
+  const result = _.map(experts, (el) => ({
+    ...el,
+    followers_count: _.find(usersData, (obj) => obj.name === el.name).followers_count,
+  }));
+  return { result };
 };
 
 module.exports = { getWobjExperts };
