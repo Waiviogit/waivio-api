@@ -3,7 +3,7 @@ const validators = require('controllers/validators');
 
 const globalSearch = async (req, res, next) => {
   const value = validators.validate({
-    searchString: req.body.string,
+    searchString: req.body.string.toLocaleLowerCase(),
     userLimit: req.body.userLimit,
     wobjectsLimit: req.body.wobjectsLimit,
     objectsTypeLimit: req.body.objectsTypeLimit,
