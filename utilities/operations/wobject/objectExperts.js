@@ -108,7 +108,8 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   }
   return {
     result: _.forEach(experts, (el) => {
-      el.followers_count = _.find(usersData, (obj) => obj.name === el.name).followers_count;
+      const user = _.find(usersData, (obj) => obj.name === el.name);
+      el.followers_count = _.get(user, 'followers_count', 0);
     }),
   };
 };
