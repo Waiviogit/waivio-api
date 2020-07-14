@@ -98,7 +98,7 @@ const getWobjExperts = async ({
 
 const getFollowersCount = async ({ experts, userExpert }) => {
   const { usersData, error } = await User.find({
-    condition: { name: { $in: _.compact([..._.map(experts, 'name'), userExpert]) } },
+    condition: { name: { $in: _.compact([..._.map(experts, 'name'), _.get(userExpert, 'name')]) } },
     select: { name: 1, followers_count: 1 },
   });
   if (error) return { error };
