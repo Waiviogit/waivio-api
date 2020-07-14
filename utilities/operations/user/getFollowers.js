@@ -16,6 +16,7 @@ module.exports = async ({ name, skip, limit }) => {
     .map((user) => ({
       name: user.name,
       wobjects_weight: user.wobjects_weight,
+      followers_count: user.followers_count,
     }))
     .slice(0, limit)
     .value();
