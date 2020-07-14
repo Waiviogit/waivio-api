@@ -97,24 +97,20 @@ const getWobjExperts = async ({
 };
 
 const getFollowersCount = async ({ experts, userExpert }) => {
-  const names = _.map(experts, (el) => el.name);
-  if (userExpert) names.push(userExpert.name);
-  // eslint-disable-next-line prefer-const
-  let { usersData, error } = await User.find({
-    condition: { name: { $in: names } },
+  const { usersData, error } = await User.find({
+    condition: { name: { $in: _.compact([..._.map(experts, 'name'), userExpert]) } },
     select: { name: 1, followers_count: 1 },
   });
   if (error) return { error };
   if (userExpert) {
-    userExpert.followers_count = _
-      .find(usersData, (el) => el.name === userExpert.name).followers_count;
-    usersData = _.filter(usersData, (el) => el.name !== userExpert.name);
+    const expert = _.find(usersData, (el) => el.name === userExpert.name);
+    userExpert.followers_count = _.get(expert, 'followers_count', 0);
   }
-  const result = _.map(experts, (el) => ({
-    ...el,
-    followers_count: _.find(usersData, (obj) => obj.name === el.name).followers_count,
-  }));
-  return { result };
+  return {
+    result: _.forEach(experts, (el) => {
+      el.followers_count = _.find(usersData, (obj) => obj.name === el.name).followers_count;
+    }),
+  };
 };
 
 module.exports = { getWobjExperts };
