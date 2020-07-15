@@ -30,7 +30,6 @@ class Image {
             if (err) {
               resolve({ error: `Error upload image:${err}` });
             } if (data) {
-              // console.log(data.Location);
               resolve({ imageUrl: data.Location });
             }
           });
@@ -49,9 +48,7 @@ class Image {
     } if (size === '_medium') {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
-
-    return sharp(buffer).rotate(0)
-      .toBuffer();
+    return buffer;
   }
 }
 
