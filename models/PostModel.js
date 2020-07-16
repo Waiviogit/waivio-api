@@ -147,7 +147,7 @@ exports.getOne = async ({ author, permlink, root_author }) => {
   try {
     const cond = author ? { author, permlink } : { root_author, permlink };
 
-    return { post: await PostModel.findOne(cond).lean() };
+    return { post: await PostModel.findOne(cond).populate({ path: 'fullObjects', select: '-latest_posts' }).lean() };
   } catch (error) {
     return { error };
   }
