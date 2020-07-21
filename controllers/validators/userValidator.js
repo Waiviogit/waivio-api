@@ -106,6 +106,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         witness_vote: Joi.boolean().default(true),
         myPost: Joi.boolean().default(false),
         myComment: Joi.boolean().default(false),
+        myLike: Joi.boolean().default(false),
         like: Joi.boolean().default(true),
         downvote: Joi.boolean().default(false),
         claimReward: Joi.boolean().default(false),
