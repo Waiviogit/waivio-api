@@ -96,6 +96,7 @@ const UserSchema = new Schema({
   users_following_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },
   stage_version: { type: Number, default: 0, required: true },
+  importedWallet: { type: Boolean, default: false },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });
