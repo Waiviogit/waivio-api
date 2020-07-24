@@ -18,6 +18,7 @@ const UserNotificationsSchema = new Schema({
   witness_vote: { type: Boolean, default: true },
   myPost: { type: Boolean, default: false },
   myComment: { type: Boolean, default: false },
+  myLike: { type: Boolean, default: false },
   like: { type: Boolean, default: true },
   downvote: { type: Boolean, default: false },
   claimReward: { type: Boolean, default: false },

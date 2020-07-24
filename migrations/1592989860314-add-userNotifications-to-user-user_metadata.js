@@ -7,23 +7,22 @@ exports.up = async function up(done) {
   const cursor = User.find().select('+user_metadata').cursor({ batchSize: 1000 });
   const defaultNotifications = {
     activationCampaign: true,
-    changePassword: true,
-    change_recovery_account: true,
     follow: true,
     fillOrder: true,
     mention: true,
-    minimalTransfer: 0.001,
-    power_down: true,
+    minimalTransfer: 0,
     reblog: true,
     reply: true,
-    rejectUpdate: true,
     'status-change': true,
-    suspendedStatus: true,
     transfer: true,
-    transfer_from_savings: true,
-    transfer_to_vesting: true,
     withdraw_route: true,
     witness_vote: true,
+    myPost: false,
+    myComment: false,
+    myLike: false,
+    like: true,
+    downvote: false,
+    claimReward: false,
   };
   await cursor.eachAsync(async (doc) => {
     if (_.get(doc, 'user_metadata.settings') && _.isEmpty(doc.user_metadata.settings.userNotifications)) {
