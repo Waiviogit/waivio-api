@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const { schema } = require('middlewares/wobject/moderation/schema');
-const { App } = require('models');
+const { App, Wobj } = require('models');
 
 const MODERATION_KEY_FLAG = 'upvotedByModerator';
 const MODERATION_DOWNVOTE_KEY_FLAG = 'downvotedByModerator';
@@ -106,7 +106,7 @@ Validation (checkFollowers) means that to every field in each
  * @returns {Array} New array of wobjects.
  */
 const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_permlink', fields_path = 'fields') => {
-  const moderatedWobjects = _.chain(wobjects).map((wobject) => {
+  return _.chain(wobjects).map((wobject) => {
     if (_.get(wobject, 'active_votes.length')) {
       // in some cases "wobjects" also might be as "fields" but with some fields item inside
       // in that case, we need to moderate source wobjects(fields) too as usual fields
@@ -134,9 +134,20 @@ const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_pe
       }),
     );
     wobject.admins = admins;
+    if (wobject.parent) {
+      // if (_.isString(wobject.parent)) {
+      //   wobject.parent = await Wobj.findOne(wobject.parent);
+      // }
+      wobject.parent.admins = admins;
+      wobject.parent.moderators = _.compact(
+        _.map(moderators, (moderator) => {
+          if (_.includes(moderator.author_permlinks, wobject.parent.author_permlink)) return moderator.name;
+        }),
+      );
+    }
     return wobject;
   }).filter(Boolean).value();
-  return moderatedWobjects;
+  // return moderatedWobjects;
 };
 
 const validateWobject = (wobject, moderators, customFieldsPaths, admins) => {

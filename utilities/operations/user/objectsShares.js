@@ -25,6 +25,15 @@ const makePipeline = ({
       },
     },
     { $replaceRoot: { newRoot: '$wobject' } },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'parent',
+        foreignField: 'author_permlink',
+        as: 'parent',
+      },
+    },
+    { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
   ];
 
   // eslint-disable-next-line camelcase
@@ -64,7 +73,6 @@ const makeCountPipeline = ({ name, object_types, exclude_object_types }) => {
   }
   return pipeline;
 };
-
 
 const getUserObjectsShares = async (data) => {
   const {

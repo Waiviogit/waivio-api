@@ -300,10 +300,18 @@ const findOne = async (authorPermlink) => {
   }
 };
 
+const find = async (condition) => {
+  try {
+    return { result: await WObjectModel.find(condition).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
 
 module.exports = {
   getAll,
   getOne,
+  find,
   getGalleryItems,
   getList,
   fromAggregation,
