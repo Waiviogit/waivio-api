@@ -45,10 +45,8 @@ exports.getObjectsFollow = async (data) => { // list of wobjects which specified
     if (!user || !user.full_objects_follow) {
       return { wobjects: [] };
     }
-    const fields = REQUIREDFIELDS.map((item) => ({ name: item }));
-
     user.full_objects_follow.forEach((wObject) => {
-      wObjectHelper.formatRequireFields(wObject, data.locale, fields);
+      wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
     });
 
     return { wobjects: user.full_objects_follow };
