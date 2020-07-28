@@ -41,7 +41,8 @@ const hashtags = async (req, res, next) => {
   const { wobjects, hasMore, error } = await AppOperations.hashtags(value);
 
   if (error) return next(error);
-  res.status(200).json({ wobjects, hasMore });
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
 };
 
 module.exports = { show, experts, hashtags };

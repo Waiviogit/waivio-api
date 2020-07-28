@@ -138,8 +138,3 @@ const followCount = async (name) => {
     return { error };
   }
 };
-
-(async () => {
-  await this.add();
-  console.log('end!');
-})();

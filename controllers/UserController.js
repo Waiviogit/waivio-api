@@ -4,7 +4,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
-  setMarkers,
+  setMarkers, getObjectsFollow,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const validators = require('controllers/validators');
@@ -82,7 +82,7 @@ const objectsFollow = async (req, res, next) => {
 
   if (!value) return;
 
-  const { wobjects, error } = await User.getObjectsFollow(value);
+  const { wobjects, error } = await getObjectsFollow(value);
 
   if (error) return next(error);
 

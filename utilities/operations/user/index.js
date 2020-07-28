@@ -5,6 +5,7 @@ moduleExports.getWobjectPostWriters = require('./getWobjectPostWriters');
 moduleExports.getFollowingUpdates = require('./getFollowingUpdates');
 moduleExports.importSteemUserOps = require('./importSteemUserOps');
 moduleExports.getFollowingsUser = require('./getFollowingsUser');
+moduleExports.getObjectsFollow = require('./getObjectsFollow');
 moduleExports.getPostFilters = require('./getPostFilters');
 moduleExports.updateMetadata = require('./updateMetadata');
 moduleExports.objectsShares = require('./objectsShares');

@@ -1,6 +1,4 @@
 const UserModel = require('database').models.User;
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFIELDS } = require('utilities/constants');
 const _ = require('lodash');
 
 exports.getOne = async (name, keys) => {
