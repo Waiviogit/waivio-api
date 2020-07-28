@@ -102,6 +102,7 @@ const getAll = async (data) => {
         as: 'parent',
       },
     },
+    { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
   ]);
   try {
     const { wobjects, error } = await fromAggregation(pipeline);

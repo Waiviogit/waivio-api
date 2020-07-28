@@ -105,62 +105,56 @@ Validation (checkFollowers) means that to every field in each
  * @param {string} fields_path, custom location of fields, default is "fields"
  * @returns {Array} New array of wobjects.
  */
-const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_permlink', fields_path = 'fields') => {
-  return _.chain(wobjects).map((wobject) => {
-    if (_.get(wobject, 'active_votes.length')) {
-      // in some cases "wobjects" also might be as "fields" but with some fields item inside
-      // in that case, we need to moderate source wobjects(fields) too as usual fields
-      // indicate this cases by including non empty "active_votes" array
-      const checkVoteRes = checkVotes(wobject.active_votes, moderators, wobject[`${apPath}`], admins);
-      if (_.get(checkVoteRes, 'upvotedByAdmin')) {
-        wobject[`${ADMIN_KEY_FLAG}`] = true;
-      } if (_.get(checkVoteRes, 'upvotedByModerator')) {
-        wobject[`${MODERATION_KEY_FLAG}`] = true;
-      } else if (_.get(checkVoteRes, 'downvotedByModerator')) {
-        wobject[`${MODERATION_DOWNVOTE_KEY_FLAG}`] = true;
-      } else if (_.get(checkVoteRes, 'downvotedByAdmin')) {
-        wobject[`${ADMIN_DOWNVOTE_KEY_FLAG}`] = true;
-      }
-      _.forEach(wobject.active_votes,
-        (vote) => (vote._id
-          ? vote.createdAt = vote._id.getTimestamp().valueOf()
-          : vote.createdAt = new Date().valueOf()
-        ));
+const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_permlink', fields_path = 'fields') => _.chain(wobjects).map((wobject) => {
+  if (_.get(wobject, 'active_votes.length')) {
+    // in some cases "wobjects" also might be as "fields" but with some fields item inside
+    // in that case, we need to moderate source wobjects(fields) too as usual fields
+    // indicate this cases by including non empty "active_votes" array
+    const checkVoteRes = checkVotes(wobject.active_votes, moderators, wobject[`${apPath}`], admins);
+    if (_.get(checkVoteRes, 'upvotedByAdmin')) {
+      wobject[`${ADMIN_KEY_FLAG}`] = true;
+    } if (_.get(checkVoteRes, 'upvotedByModerator')) {
+      wobject[`${MODERATION_KEY_FLAG}`] = true;
+    } else if (_.get(checkVoteRes, 'downvotedByModerator')) {
+      wobject[`${MODERATION_DOWNVOTE_KEY_FLAG}`] = true;
+    } else if (_.get(checkVoteRes, 'downvotedByAdmin')) {
+      wobject[`${ADMIN_DOWNVOTE_KEY_FLAG}`] = true;
     }
-    wobject[fields_path] = validateFields(wobject, moderators, admins, apPath, fields_path);
-    wobject.moderators = _.compact(
-      _.map(moderators, (moderator) => {
-        if (_.includes(moderator.author_permlinks, wobject.author_permlink)) return moderator.name;
-      }),
-    );
-    wobject.admins = admins;
-    if (wobject.parent) {
-      // if (_.isString(wobject.parent)) {
-      //   wobject.parent = await Wobj.findOne(wobject.parent);
-      // }
-      wobject.parent.admins = admins;
-      wobject.parent.moderators = _.compact(
-        _.map(moderators, (moderator) => {
-          if (_.includes(moderator.author_permlinks, wobject.parent.author_permlink)) return moderator.name;
-        }),
-      );
-    }
-    return wobject;
-  }).filter(Boolean).value();
-  // return moderatedWobjects;
-};
+    _.forEach(wobject.active_votes,
+      (vote) => (vote._id
+        ? vote.createdAt = vote._id.getTimestamp().valueOf()
+        : vote.createdAt = new Date().valueOf()
+      ));
+  }
+  wobject[fields_path] = validateFields(wobject, moderators, admins, apPath, fields_path);
+  wobject = addModerators({ wobject, moderators, admins });
+  return wobject;
+}).filter(Boolean).value();
 
 const validateWobject = (wobject, moderators, customFieldsPaths, admins) => {
   wobject.fields = validateFields(wobject, moderators, admins, 'author_permlink', 'fields');
   customFieldsPaths.forEach((customFieldsPath) => {
     wobject[customFieldsPath] = validateFields(wobject, moderators, admins, 'author_permlink', customFieldsPath);
   });
+  wobject = addModerators({ wobject, moderators, admins });
+  return wobject;
+};
+
+const addModerators = ({ wobject, moderators, admins }) => {
   wobject.moderators = _.compact(
     _.map(moderators, (moderator) => {
       if (_.includes(moderator.author_permlinks, wobject.author_permlink)) return moderator.name;
     }),
   );
   wobject.admins = admins;
+  if (wobject.parent) {
+    wobject.parent.admins = admins;
+    wobject.parent.moderators = _.compact(
+      _.map(moderators, (moderator) => {
+        if (_.includes(moderator.author_permlinks, wobject.parent.author_permlink)) return moderator.name;
+      }),
+    );
+  }
   return wobject;
 };
 
