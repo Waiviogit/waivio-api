@@ -102,6 +102,7 @@ const getAll = async (data) => {
         as: 'parent',
       },
     },
+    { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
   ]);
   try {
     const { wobjects, error } = await fromAggregation(pipeline);
@@ -300,10 +301,18 @@ const findOne = async (authorPermlink) => {
   }
 };
 
+const find = async (condition) => {
+  try {
+    return { result: await WObjectModel.find(condition).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
 
 module.exports = {
   getAll,
   getOne,
+  find,
   getGalleryItems,
   getList,
   fromAggregation,

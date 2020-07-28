@@ -37,8 +37,11 @@ const getWobjFeedCondition = async ({
   if (forApp) condition.blocked_for_apps = { $ne: forApp };
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
 
+  const pipeline = [
+    { $match: { author_permlink } }
+  ];
   const { wobjects: [wObject = {}] = [], error } = await Wobj
-    .fromAggregation([{ $match: { author_permlink } }]);
+    .fromAggregation(pipeline);
 
   if (error) return { error };
 
