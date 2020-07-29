@@ -1,4 +1,3 @@
-const { User } = require('models');
 const { authorise } = require('utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
@@ -63,7 +62,10 @@ const updateUserMetadata = async (req, res, next) => {
 };
 
 const getUserMetadata = async (req, res, next) => {
-  const { user_metadata: userMetadata, error, privateEmail } = await getMetadata(req.params.userName);
+  const {
+    user_metadata: userMetadata,
+    error, privateEmail,
+  } = await getMetadata(req.params.userName);
 
   if (error) return next(error);
 
