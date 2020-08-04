@@ -77,11 +77,11 @@ const addDataToFields = (fields, admins) => {
 
 const specialFieldFilter = (idField, allFields, id) => {
   if (!idField.adminVote && idField.weight < 0) return null;
-  idField.categoryItems = [];
+  idField.categoryItems = []; //! !!!!
   const filteredItems = _.filter(allFields[categorySwitcher[id]],
     (item) => _.get(item, 'adminVote.status') !== 'rejected');
 
-  for (const itemField of filteredItems) {
+  for (const itemField of filteredItems) { //! !!!! привязка к id
     if (!idField.adminVote && idField.weight < 0) continue;
     idField.categoryItems.push(itemField);
   }
@@ -110,10 +110,10 @@ const arrayFieldFilter = (idFields, allFields, filter, id) => {
   return _.compact(validFields);
 };
 
-const filterFieldValidation = (fields, field, locale) => {
+const filterFieldValidation = (filter, field, locale) => {
   const localeIndependentFields = ['status', 'map'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
-  if (fields) result = result && _.includes(fields, field.name);
+  if (filter) result = result && _.includes(filter, field.name);
   return result;
 };
 
@@ -135,7 +135,7 @@ const getFieldsToDisplay = (fields, locale, filter) => {
     }
 
     if (approvedFields.length) {
-      const lastVotedField = _.maxBy(approvedFields, 'adminVote.timestamp');
+      const lastVotedField = _.maxBy(approvedFields, 'adminVote.timestamp'); //! !!!!!!
       if (lastVotedField.status === 'approved') winningFields[id] = lastVotedField;
       continue;
     }
