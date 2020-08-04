@@ -5,11 +5,17 @@ const { objectTypeHelper, wObjectHelper } = require('utilities/helpers');
 
 const getOne = async (data) => { // get one wobject by author_permlink
   const { wObject, error: getWobjError } = await Wobj.getOne(data.author_permlink);
-
   if (getWobjError) return { error: getWobjError };
 
-  if (wObject.parent) {
+  const { count } = await User.getCustomCount({ objects_follow: wObject.author_permlink });
+  wObject.followers_count = count || 0;
+
+  const parent = await wObjectHelper.processWobjects({
+    fields: ['parent'], wobjects: [wObject], returnArray: false,
+  }).parent;
+  if (parent) {
     // Temporary solution
+    wObject.parent = await Wobj.getOne(parent);
     if (data.flag) {
       wObject.parent = await wObjectHelper.processWobjects({
         locale: data.locale,
@@ -34,9 +40,6 @@ const getOne = async (data) => { // get one wobject by author_permlink
   wObject.preview_gallery = _.orderBy(wObject.fields.filter((field) => field.name === 'galleryItem'), ['weight'], ['asc']).slice(0, 3);
   wObject.albums_count = wObject.fields.filter((field) => field.name === 'galleryAlbum').length;
   wObject.photos_count = wObject.fields.filter((field) => field.name === 'galleryItem').length;
-
-  wObject.followers_count = wObject.followers.length;
-  delete wObject.followers;
 
   // add additional fields to returning
   if (data.required_fields) requiredFields.push(...data.required_fields);
@@ -76,6 +79,7 @@ const getListItems = async (authorPermlink, userName) => {
     if (error || !result.length) return;
     wobj.propositions = await objectTypeHelper.campaignFilter(result, _.get(user, 'user', null));
   }));
+
   return { wobjects, sortCustom };
 };
 

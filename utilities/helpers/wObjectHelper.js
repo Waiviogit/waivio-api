@@ -114,7 +114,7 @@ const arrayFieldFilter = (idFields, allFields, filter, id) => {
 };
 
 const filterFieldValidation = (filter, field, locale) => {
-  const localeIndependentFields = ['status', 'map'];
+  const localeIndependentFields = ['status', 'map', 'parent'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   return result;
@@ -154,21 +154,25 @@ const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US', appName, returnArray = true,
 }) => {
   let admins = [];
-  const { app } = await App.getOne({ name: appName });
-  if (app) admins = app.admins;
+  if (appName) {
+    const { app } = await App.getOne({ name: appName });
+    if (app) admins = app.admins;
+  }
+
   for (const obj of wobjects) {
     if (hiveData) {
-      await Promise.all(obj.fields.map(async (field) => {
-        const { result: post, error } = await postsUtil.getContent(
-          { author: field.author, permlink: field.permlink },
-        );
-        if (error || !post.author) {
-          return;
-        }
+      const { result } = await postsUtil.getPostState({ author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' });
+      if (!result) {
+        obj.fields = [];
+        continue;
+      }
+      obj.fields.map((field, index) => {
+        const post = _.get(result, `content.${field.author}/${field.permlink}`);
+        if (!post) delete obj.fields[index];
         Object.assign(field,
           _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value', 'curator_payout_value']));
         field.fullBody = post.body;
-      }));
+      });
     }
     obj.fields = addDataToFields(obj.fields, admins);
     Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
