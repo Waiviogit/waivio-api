@@ -26,6 +26,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
           as: 'parent',
         },
       },
+      { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
     ]);
 
     if (!wObject) {

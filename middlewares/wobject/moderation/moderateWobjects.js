@@ -1,7 +1,8 @@
 const _ = require('lodash');
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App, Wobj } = require('models');
+const wobjectHelper = require('utilities/helpers/wObjectHelper');
 
 const MODERATION_KEY_FLAG = 'upvotedByModerator';
 const MODERATION_DOWNVOTE_KEY_FLAG = 'downvotedByModerator';
@@ -27,6 +28,15 @@ exports.moderate = async (req, res, next) => {
   if (!currentSchema) {
     next();
     return;
+  }
+  if (req.headers.locale && currentSchema.case === 1) {
+    res.result.json = await wobjectHelper.processWobjects({
+      wobjects: [res.result.json],
+      appName: req.headers.app,
+      hiveData: true,
+      locale: req.headers.locale,
+    });
+    next();
   }
 
   switch (currentSchema.case) {

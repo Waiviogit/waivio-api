@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const { UserWobjects, Wobj } = require('models');
+const UserWobjects = require('models/UserWobjects');
+const App = require('models/AppModel');
 const { postsUtil } = require('utilities/steemApi');
 const { categorySwitcher } = require('utilities/constants');
 
@@ -77,14 +78,15 @@ const addDataToFields = (fields, admins) => {
 
 const specialFieldFilter = (idField, allFields, id) => {
   if (!idField.adminVote && idField.weight < 0) return null;
-  idField.categoryItems = []; //! !!!!
+  idField.items = [];
   const filteredItems = _.filter(allFields[categorySwitcher[id]],
-    (item) => _.get(item, 'adminVote.status') !== 'rejected');
+    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== 'rejected');
 
-  for (const itemField of filteredItems) { //! !!!! привязка к id
-    if (!idField.adminVote && idField.weight < 0) continue;
-    idField.categoryItems.push(itemField);
+  for (const itemField of filteredItems) {
+    if (!idField.adminVote && itemField.weight < 0) continue;
+    idField.items.push(itemField);
   }
+  if (id === 'tagCategory' && idField.items.length === 0) return null;
   return idField;
 };
 
@@ -97,6 +99,7 @@ const arrayFieldFilter = (idFields, allFields, filter, id) => {
       case 'galleryAlbum':
         validFields.push(specialFieldFilter(field, allFields, id));
         break;
+      case 'rating':
       case 'listItem':
       case 'galleryItem':
         if (_.includes(filter, 'galleryAlbum')) break;
@@ -118,7 +121,7 @@ const filterFieldValidation = (filter, field, locale) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter) => {
-  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem'];
+  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale));
@@ -126,7 +129,8 @@ const getFieldsToDisplay = (fields, locale, filter) => {
 
   const groupedFields = _.groupBy(filteredFields, 'name');
   for (const id of Object.keys(groupedFields)) {
-    const approvedFields = _.filter(groupedFields[id], (field) => field.adminVote);
+    const approvedFields = _.filter(groupedFields[id],
+      (field) => _.get(field, 'adminVote.status') === 'approved');
 
     if (_.includes(arrayFields, id)) {
       const result = arrayFieldFilter(groupedFields[id], groupedFields, filter, id);
@@ -135,41 +139,42 @@ const getFieldsToDisplay = (fields, locale, filter) => {
     }
 
     if (approvedFields.length) {
-      const lastVotedField = _.maxBy(approvedFields, 'adminVote.timestamp'); //! !!!!!!
-      if (lastVotedField.status === 'approved') winningFields[id] = lastVotedField;
+      winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
-    const heaviestField = _.maxBy(groupedFields[id], 'weight');
-    if (heaviestField.weight > 0) winningFields[id] = heaviestField;
+    const heaviestField = _.maxBy(groupedFields[id], (field) => {
+      if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0) return field.weight;
+    });
+    if (heaviestField) winningFields[id] = heaviestField.body;
   }
   return winningFields;
 };
 
 const processWobjects = async ({
-  wobjects, fields, hiveData = false, locale = 'en-US', admins,
+  wobjects, fields, hiveData = false, locale = 'en-US', appName, returnArray = true,
 }) => {
+  let admins = [];
+  const { app } = await App.getOne({ name: appName });
+  if (app) admins = app.admins;
   for (const obj of wobjects) {
     if (hiveData) {
       await Promise.all(obj.fields.map(async (field) => {
         const { result: post, error } = await postsUtil.getContent(
           { author: field.author, permlink: field.permlink },
         );
-        if (error || !post.author) return;
+        if (error || !post.author) {
+          return;
+        }
         Object.assign(field,
           _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value', 'curator_payout_value']));
         field.fullBody = post.body;
       }));
     }
     obj.fields = addDataToFields(obj.fields, admins);
-    obj.processFields = getFieldsToDisplay(obj.fields, locale, fields);
+    Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
   }
+  if (!returnArray) return wobjects[0];
   return wobjects;
 };
-
-// (async () => {
-//   const { result } = await Wobj.findOne('pue-test8');
-//   const wobg = await processWobjects({ wobjects: [result], admins: ['waivio_oleg-cigulyov'], hiveData: false });
-//   console.log();
-// })();
 
 module.exports = { formatRequireFields, getUserSharesInWobj, processWobjects };

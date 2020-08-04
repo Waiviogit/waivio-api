@@ -31,12 +31,15 @@ const index = async (req, res, next) => {
   next();
 };
 
+// flag - Temporary solution
 const show = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
     locale: req.query.locale,
     required_fields: req.query.required_fields,
     user: req.query.user,
+    appName: req.headers.app,
+    flag: !!req.headers.locale,
   }, validators.wobject.showSchema, next);
 
   if (!value) return;
