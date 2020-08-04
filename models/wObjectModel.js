@@ -5,29 +5,10 @@ const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('u
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
-    const matchStage = { $match: { author_permlink: authorPermlink } };
-    if (unavailable) matchStage.$match['status.title'] = { $nin: ['unavailable', 'nsfw'] };
-    if (objectType) matchStage.$match.object_type = objectType;
-    const [wObject] = await WObjectModel.aggregate([
-      matchStage,
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'author_permlink',
-          foreignField: 'objects_follow',
-          as: 'followers',
-        },
-      },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'parent',
-          foreignField: 'author_permlink',
-          as: 'parent',
-        },
-      },
-      { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
-    ]);
+    const matchStage = { author_permlink: authorPermlink };
+    if (unavailable) matchStage['status.title'] = { $nin: ['unavailable', 'nsfw'] };
+    if (objectType) matchStage.object_type = objectType;
+    const wObject = await WObjectModel.findOne(matchStage).lean();
 
     if (!wObject) {
       return { error: createError(404, 'wobject not found') };
