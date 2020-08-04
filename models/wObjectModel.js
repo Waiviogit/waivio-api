@@ -173,20 +173,21 @@ const getList = async (authorPermlink) => {
       },
       { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } },
     ]);
-    if (_.isEmpty(fields)) return { wobjects: [] };
-    const sortCustomField = _.maxBy(fields.filter((field) => field.name === 'sortCustom'), 'weight');
-    const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
-
-    wobjects.forEach((wObject) => {
-      if (wObject.object_type.toLowerCase() === 'list') {
-        wObject.listItemsCount = wObject.fields.filter((f) => f.name === 'listItem').length;
-      }
-      getRequiredFields(wObject, [...REQUIREDFIELDS]);
-      if (wObject && wObject.parent) {
-        getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
-      }
-    });
-    return { wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]')) };
+    return { fields };
+    // if (_.isEmpty(fields)) return { wobjects: [] };
+    // const sortCustomField = _.maxBy(fields.filter((field) => field.name === 'sortCustom'), 'weight');
+    // const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
+    //
+    // wobjects.forEach((wObject) => {
+    //   if (wObject.object_type.toLowerCase() === 'list') {
+    //     wObject.listItemsCount = wObject.fields.filter((f) => f.name === 'listItem').length;
+    //   }
+    //   getRequiredFields(wObject, [...REQUIREDFIELDS]);
+    //   if (wObject && wObject.parent) {
+    //     getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
+    //   }
+    // });
+    // return { wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]')) };
   } catch (error) {
     return { error };
   }
@@ -283,9 +284,9 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition) => {
+const find = async (condition, populate) => {
   try {
-    return { result: await WObjectModel.find(condition).lean() };
+    return { result: await WObjectModel.find(condition).populate(populate).lean() };
   } catch (error) {
     return { error };
   }

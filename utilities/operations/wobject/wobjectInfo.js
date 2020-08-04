@@ -25,18 +25,20 @@ const getOne = async (data) => { // get one wobject by author_permlink
         appName: data.appName,
       });
     } else getRequiredFields(wObject.parent, REQUIREDFIELDS_PARENT);
-  }
+  } else wObject.parent = '';
+
   const requiredFields = _.cloneDeep(REQUIREDFIELDS);
 
   // format listItems field
-  if (await Wobj.isFieldExist({ author_permlink: data.author_permlink, fieldName: 'listItem' })) {
-    const { wobjects, sortCustom } = await getListItems(data.author_permlink, data.user);
+  if (_.find(wObject.fields, { name: 'listItem' })) {
+    const { wobjects, sortCustom } = await getListItems(wObject, data.user, data.appName);
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
     wObject[keyName] = wobjects;
     wObject.sortCustom = sortCustom;
     requiredFields.push('sortCustom', 'listItem');
   }
   // format gallery
+  // #TODO DELETE after implement new logic
   wObject.preview_gallery = _.orderBy(wObject.fields.filter((field) => field.name === 'galleryItem'), ['weight'], ['asc']).slice(0, 3);
   wObject.albums_count = wObject.fields.filter((field) => field.name === 'galleryAlbum').length;
   wObject.photos_count = wObject.fields.filter((field) => field.name === 'galleryItem').length;
@@ -44,14 +46,8 @@ const getOne = async (data) => { // get one wobject by author_permlink
   // add additional fields to returning
   if (data.required_fields) requiredFields.push(...data.required_fields);
 
-  // get only required fields for wobject, parent wobjects and child objects
+  // get only required fields for wobject
   getRequiredFields(wObject, requiredFields);
-  if (wObject.parent_objects) {
-    wObject.parent_objects.forEach((parent) => getRequiredFields(parent, requiredFields));
-  }
-  if (wObject.child_objects) {
-    wObject.child_objects.forEach((child) => getRequiredFields(child, requiredFields));
-  }
   return { wobjectData: wObject };
 };
 
@@ -59,9 +55,27 @@ const getRequiredFields = (wObject, requiredFields) => {
   wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
 };
 
-const getListItems = async (authorPermlink, userName) => {
-  const { wobjects, sortCustom, error: listError } = await Wobj.getList(authorPermlink);
-  if (listError) console.error(listError);
+const getListItems = async (wobject, userName, appName) => {
+  // const { fields, error: listError } = await Wobj.getList(authorPermlink);
+  // if (listError) return { error: listError };
+  const fields = _.filter(wobject.fields, (field) => field.name === 'listItem');
+
+  const sortCustom = await wObjectHelper.processWobjects({
+    fields: ['sortCustom'], wobjects: [wobject], returnArray: false, appName,
+  }).body || '[]';
+
+  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } }, { path: 'parent' });
+  // const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
+  // #TODO CONTINUE
+  wobjects.forEach((wObject) => {
+    if (wObject.object_type.toLowerCase() === 'list') {
+      wObject.listItemsCount = wObject.fields.filter((f) => f.name === 'listItem').length;
+    }
+    getRequiredFields(wObject, [...REQUIREDFIELDS]);
+    if (wObject && wObject.parent) {
+      getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
+    }
+  });
 
   for (const listWobj of wobjects) {
     listWobj.listItemsCount = await getItemsCount(

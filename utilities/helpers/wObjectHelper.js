@@ -52,7 +52,8 @@ const calculateApprovePercent = (field) => {
   return percent > 0 ? percent : 0;
 };
 
-const addDataToFields = (fields, admins) => {
+const addDataToFields = (fields, admins, filter) => {
+  if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
   for (const field of fields) {
     const adminVotes = [];
     _.map(field.active_votes, (vote) => {
@@ -174,8 +175,13 @@ const processWobjects = async ({
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, admins);
+    obj.fields = addDataToFields(obj.fields, admins, fields);
     Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
+    // get right count of photos in object in request for only one object
+    if (!fields) {
+      obj.albums_count = _.get(obj, 'galleryAlbum', []).filter((field) => field.name === 'galleryAlbum').length;
+      obj.photos_count = _.get(obj, 'galleryItem', []).filter((field) => field.name === 'galleryItem').length;
+    }
   }
   if (!returnArray) return wobjects[0];
   return wobjects;
