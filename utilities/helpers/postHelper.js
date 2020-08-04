@@ -157,6 +157,7 @@ const addAuthorWobjectsWeight = async (posts = []) => {
     post.author_reputation = reputation;
   });
 };
+
 const fillReblogs = async (posts = [], userName) => {
 // const fillReblogs = async (posts = []) => {
   for (const postIdx in posts) {

@@ -45,7 +45,6 @@ exports.getManyPosts = async (links = []) => {
   return { posts: _.compact(posts) };
 };
 
-
 /**
  * Get comments authored by specified STEEM user
  * @param start_author {String} Specified STEEM user
@@ -65,9 +64,6 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
 
 /**
  * Get state of post(comment). State include a lot info, e.x. replies, users etc.
- * @param author {String}
- * @param permlink {String}
- * @param category {String} aka parent_permlink
  * @returns {Promise<{error: Object}|{result: Object}>}
  */
 exports.getPostState = async ({ author, permlink, category }) => {
@@ -75,6 +71,20 @@ exports.getPostState = async ({ author, permlink, category }) => {
     const result = await client.database.call(
       'get_state',
       [`${category}/@${author}/${permlink}`],
+    );
+    if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+
+    return { result };
+  } catch (error) {
+    return { error: { message: error.message } };
+  }
+};
+
+exports.getContent = async ({ author, permlink }) => {
+  try {
+    const result = await client.database.call(
+      'get_content',
+      [author, permlink],
     );
     if (!result || result.error) return { error: { message: _.get(result, 'error') } };
 

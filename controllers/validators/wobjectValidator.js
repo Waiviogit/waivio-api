@@ -2,11 +2,14 @@ const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 
+// flag - Temporary solution
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
   user: Joi.string(),
   required_fields: Joi.array().items(Joi.string()).single(),
+  appName: Joi.string(),
+  flag: Joi.boolean().default(false),
 });
 
 exports.indexSchema = Joi.object().keys({
