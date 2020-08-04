@@ -7,7 +7,7 @@ const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
-  checkUserFollowings, checkObjectsFollowings,
+  checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -42,6 +42,9 @@ app.use('/', checkUserFollowers.check);
 
 // Check users for followings for some routes
 app.use('/', checkUserFollowings.check);
+
+// Check users for bell notifications
+app.use('/', checkBellNotifications.check);
 
 // Check objects for followings for some routes
 app.use('/', checkObjectsFollowings.check);
