@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { UserWobjects, Wobj } = require('models');
 const { postsUtil } = require('utilities/steemApi');
+const { categorySwitcher } = require('utilities/constants');
 
 const formatRequireFields = (wObject, locale, requireFields) => {
   const temp = _.reduce(wObject.fields, (resArr, field) => {
@@ -74,6 +75,41 @@ const addDataToFields = (fields, admins) => {
   return fields;
 };
 
+const specialFieldFilter = (idField, allFields, id) => {
+  if (!idField.adminVote && idField.weight < 0) return null;
+  idField.categoryItems = [];
+  const filteredItems = _.filter(allFields[categorySwitcher[id]],
+    (item) => _.get(item, 'adminVote.status') !== 'rejected');
+
+  for (const itemField of filteredItems) {
+    if (!idField.adminVote && idField.weight < 0) continue;
+    idField.categoryItems.push(itemField);
+  }
+  return idField;
+};
+
+const arrayFieldFilter = (idFields, allFields, filter, id) => {
+  const validFields = [];
+  for (const field of idFields) {
+    if (_.get(field, 'adminVote.status') === 'rejected') continue;
+    switch (id) {
+      case 'tagCategory':
+      case 'galleryAlbum':
+        validFields.push(specialFieldFilter(field, allFields, id));
+        break;
+      case 'listItem':
+      case 'galleryItem':
+        if (_.includes(filter, 'galleryAlbum')) break;
+        if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
+        else if (field.weight > 0) validFields.push(field);
+        break;
+      default:
+        break;
+    }
+  }
+  return _.compact(validFields);
+};
+
 const filterFieldValidation = (fields, field, locale) => {
   const localeIndependentFields = ['status', 'map'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
@@ -82,14 +118,22 @@ const filterFieldValidation = (fields, field, locale) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter) => {
+  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale));
-  if (!filteredFields.length) return [];
+  if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
   for (const id of Object.keys(groupedFields)) {
     const approvedFields = _.filter(groupedFields[id], (field) => field.adminVote);
+
+    if (_.includes(arrayFields, id)) {
+      const result = arrayFieldFilter(groupedFields[id], groupedFields, filter, id);
+      if (result.length)winningFields[id] = result;
+      continue;
+    }
+
     if (approvedFields.length) {
       const lastVotedField = _.maxBy(approvedFields, 'adminVote.timestamp');
       if (lastVotedField.status === 'approved') winningFields[id] = lastVotedField;
