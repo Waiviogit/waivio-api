@@ -47,7 +47,16 @@ const countDocuments = async (condition) => {
   }
 };
 
+const findOne = async (condition, select) => {
+  try {
+    return { result: await UserWobjects.findOne(condition).select(select).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
+  findOne,
   aggregate,
   getByWobject,
   countDocuments,
