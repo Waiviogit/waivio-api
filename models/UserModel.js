@@ -140,17 +140,10 @@ exports.find = async ({
   }
 };
 
-/**
- * Return count of guest followers
- * @param userName {String}
- * @returns {Promise<{count: {Number}}|{error: {Object}}>}
- */
-exports.getGuestFollowersCount = async (userName) => {
+exports.getCustomCount = async (condition) => {
   try {
     return {
-      count: await UserModel.find({
-        users_follow: userName, auth: { $exists: true },
-      }).count(),
+      count: await UserModel.find(condition).count(),
     };
   } catch (error) {
     return { error };
