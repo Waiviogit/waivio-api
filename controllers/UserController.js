@@ -189,6 +189,7 @@ const searchUsers = async (req, res, next) => {
     searchString: req.query.searchString.toLocaleLowerCase(),
     limit: req.query.limit,
     skip: req.query.skip,
+    notGuest: req.query.notGuest,
   }, validators.user.searchSchema, next);
 
   if (!value) return;

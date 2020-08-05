@@ -105,11 +105,15 @@ exports.getFollowings = async ({ name, skip = 0, limit = 30 }) => {
   }
 };
 
-exports.search = async ({ string, skip, limit }) => {
+exports.search = async ({
+  string, skip, limit, notGuest,
+}) => {
   try {
+    const condition = { name: { $in: [new RegExp(`^waivio_${string}`), new RegExp(`^${string}`)] } };
+    if (notGuest) condition.auth = { $exists: false };
     return {
       users: await UserModel
-        .find({ name: { $in: [new RegExp(`^waivio_${string}`), new RegExp(`^${string}`)] } }, {
+        .find(condition, {
           _id: 0, name: 1, wobjects_weight: 1, followers_count: 1,
         })
         .sort({ wobjects_weight: -1 })

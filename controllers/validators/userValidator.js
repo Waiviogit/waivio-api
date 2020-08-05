@@ -71,6 +71,7 @@ exports.searchSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   limit: Joi.number().integer().min(0).max(500)
     .default(30),
+  notGuest: Joi.boolean().default(false),
 });
 
 exports.updateMetadataSchema = Joi.object().keys({
