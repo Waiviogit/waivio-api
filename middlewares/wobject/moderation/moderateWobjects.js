@@ -30,7 +30,7 @@ exports.moderate = async (req, res, next) => {
     return;
   }
   if (_.includes(['/wobjectSearch', '/generalSearch'], currentSchema.path)) {
-    res.result.json = await wobjectHelper.processWobjects({
+    res.result.json[currentSchema.wobjects_path] = await wobjectHelper.processWobjects({
       wobjects: res.result.json[currentSchema.wobjects_path],
       admins: app.admins,
       hiveData: false,
