@@ -23,7 +23,7 @@ exports.REQUIREDFIELDS = [
   'status',
 ];
 exports.REQUIREDFIELDS_PARENT = ['name', 'avatar'];
-exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating'];
+exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating', 'parent'];
 exports.REQUIREDFIELDS_CHILD = ['name', 'avatar'];
 exports.LANGUAGES = ['en-US',
   'id-ID',
