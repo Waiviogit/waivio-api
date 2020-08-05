@@ -1,10 +1,9 @@
 const _ = require('lodash');
-const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
 const { Wobj, App } = require('models');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
+  string, object_type, limit, skip, crucialWobjects, forParent,
 }) => [
   {
     $match: {
@@ -33,29 +32,6 @@ const makePipeline = ({
   { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
   { $limit: limit || 10 },
   { $skip: skip || 0 },
-  // {
-  //   $addFields: {
-  //     fields: {
-  //       $filter: {
-  //         input: '$fields',
-  //         as: 'field',
-  //         cond: {
-  //           // eslint-disable-next-line camelcase
-  //           $in: ['$$field.name', _.union(REQUIREDFIELDS_SEARCH, required_fields || [])],
-  //         },
-  //       },
-  //     },
-  //   },
-  // },
-  // {
-  //   $lookup: {
-  //     from: 'wobjects',
-  //     localField: 'parent',
-  //     foreignField: 'author_permlink',
-  //     as: 'parent',
-  //   },
-  // },
-  // { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } },
 ];
 const makeCountPipeline = ({ string }) => [
   {

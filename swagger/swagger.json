@@ -298,6 +298,13 @@
           "required" : false,
           "type" : "number",
           "default" : 20.0
+        }, {
+          "name" : "notGuest",
+          "in" : "query",
+          "description" : "Flag for search only hive users",
+          "required" : false,
+          "type" : "boolean",
+          "default" : false
         } ],
         "responses" : {
           "200" : {
