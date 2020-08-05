@@ -143,7 +143,7 @@ exports.find = async ({
 exports.getCustomCount = async (condition) => {
   try {
     return {
-      count: await UserModel.find(condition).count(),
+      count: await UserModel.find(condition).countDocuments(),
     };
   } catch (error) {
     return { error };

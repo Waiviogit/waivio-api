@@ -1,8 +1,9 @@
 const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
-const App = require('models/AppModel');
+const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
 const { categorySwitcher } = require('utilities/constants');
+const { REQUIREDFIELDS_PARENT } = require('utilities/constants');
 
 const formatRequireFields = (wObject, locale, requireFields) => {
   const temp = _.reduce(wObject.fields, (resArr, field) => {
@@ -48,11 +49,12 @@ const calculateApprovePercent = (field) => {
   const approvesWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent > 0) return +vote.weight;
   }) || 0;
-  const percent = _.round((approvesWeight / rejectsWeight) * 100, 3);
+  const percent = _.round((approvesWeight / (approvesWeight + rejectsWeight)) * 100, 3);
   return percent > 0 ? percent : 0;
 };
 
-const addDataToFields = (fields, admins) => {
+const addDataToFields = (fields, admins, filter) => {
+  if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
   for (const field of fields) {
     const adminVotes = [];
     _.map(field.active_votes, (vote) => {
@@ -72,6 +74,7 @@ const addDataToFields = (fields, admins) => {
       };
     }
     field.approvePercent = calculateApprovePercent(field);
+    field.createdAt = field._id.getTimestamp().valueOf();
   }
   return fields;
 };
@@ -100,7 +103,6 @@ const arrayFieldFilter = (idFields, allFields, filter, id) => {
         validFields.push(specialFieldFilter(field, allFields, id));
         break;
       case 'rating':
-      case 'listItem':
       case 'galleryItem':
         if (_.includes(filter, 'galleryAlbum')) break;
         if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
@@ -151,14 +153,8 @@ const getFieldsToDisplay = (fields, locale, filter) => {
 };
 
 const processWobjects = async ({
-  wobjects, fields, hiveData = false, locale = 'en-US', appName, returnArray = true,
+  wobjects, fields, hiveData = false, locale = 'en-US', admins = [], returnArray = true,
 }) => {
-  let admins = [];
-  if (appName) {
-    const { app } = await App.getOne({ name: appName });
-    if (app) admins = app.admins;
-  }
-
   for (const obj of wobjects) {
     if (hiveData) {
       const { result } = await postsUtil.getPostState({ author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' });
@@ -170,15 +166,36 @@ const processWobjects = async ({
         const post = _.get(result, `content.${field.author}/${field.permlink}`);
         if (!post) delete obj.fields[index];
         Object.assign(field,
-          _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value', 'curator_payout_value']));
+          _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, admins);
+    obj.fields = addDataToFields(obj.fields, admins, fields);
     Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
+    // get right count of photos in object in request for only one object
+    if (!fields) {
+      obj.albums_count = _.get(obj, 'galleryAlbum', []).filter((field) => field.name === 'galleryAlbum').length;
+      obj.photos_count = _.get(obj, 'galleryItem', []).filter((field) => field.name === 'galleryItem').length;
+    }
+    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, admins);
   }
   if (!returnArray) return wobjects[0];
   return wobjects;
 };
 
-module.exports = { formatRequireFields, getUserSharesInWobj, processWobjects };
+const getParentInfo = async (wObject, locale, admins) => {
+  if (wObject.parent) {
+    // Temporary solution
+    const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
+    wObject.parent = fullParent;
+
+    wObject.parent = await processWobjects({
+      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, admins,
+    });
+  } else wObject.parent = '';
+  return wObject.parent;
+};
+
+module.exports = {
+  formatRequireFields, getUserSharesInWobj, processWobjects, getParentInfo,
+};

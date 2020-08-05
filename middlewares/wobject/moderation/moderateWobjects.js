@@ -1,8 +1,8 @@
 const _ = require('lodash');
-// const mongoose = require('mongoose');
 const { schema } = require('middlewares/wobject/moderation/schema');
-const { App, Wobj } = require('models');
+const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
+const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
 
 const MODERATION_KEY_FLAG = 'upvotedByModerator';
 const MODERATION_DOWNVOTE_KEY_FLAG = 'downvotedByModerator';
@@ -29,25 +29,29 @@ exports.moderate = async (req, res, next) => {
     next();
     return;
   }
-  if (req.headers.locale && currentSchema.case === 1) {
+  if (_.includes(['/wobjectSearch', '/generalSearch'], currentSchema.path)) {
     res.result.json = await wobjectHelper.processWobjects({
-      wobjects: [res.result.json],
-      appName: req.headers.app,
-      hiveData: true,
+      wobjects: res.result.json[currentSchema.wobjects_path],
+      admins: app.admins,
+      hiveData: false,
+      returnArray: true,
       locale: req.headers.locale,
+      fields: REQUIREDFIELDS_SEARCH,
     });
     next();
+    return;
   }
 
   switch (currentSchema.case) {
     case 1:
       // root result is single wobject
-      res.result.json = validateWobject(
-        res.result.json,
-        app.moderators,
-        currentSchema.custom_fields_paths,
-        app.admins,
-      );
+      res.result.json = await wobjectHelper.processWobjects({
+        wobjects: [res.result.json],
+        admins: app.admins,
+        hiveData: true,
+        returnArray: false,
+        locale: req.headers.locale,
+      });
       break;
     case 2:
       // root result is array of wobjects
