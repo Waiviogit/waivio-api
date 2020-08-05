@@ -94,7 +94,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
     const { wobjects, sortCustom } = await getListItems(wObject, data, admins);
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
     wObject[keyName] = wobjects;
-    wObject.sortCustom = sortCustom;
+    wObject.sortCustom = JSON.parse(sortCustom);
     requiredFields.push('sortCustom', 'listItem');
   }
   // format gallery
