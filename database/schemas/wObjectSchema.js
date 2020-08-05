@@ -68,12 +68,6 @@ WObjectSchema.virtual('followers', {
   justOne: false,
 });
 
-WObjectSchema.virtual('parent', {
-  ref: 'wobject',
-  localField: 'parent',
-  foreignField: 'author_permlink',
-  justOne: true,
-});
 
 WObjectSchema.virtual('users', {
   ref: 'User',

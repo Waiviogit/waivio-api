@@ -33,29 +33,29 @@ const makePipeline = ({
   { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
   { $limit: limit || 10 },
   { $skip: skip || 0 },
-  {
-    $addFields: {
-      fields: {
-        $filter: {
-          input: '$fields',
-          as: 'field',
-          cond: {
-            // eslint-disable-next-line camelcase
-            $in: ['$$field.name', _.union(REQUIREDFIELDS_SEARCH, required_fields || [])],
-          },
-        },
-      },
-    },
-  },
-  {
-    $lookup: {
-      from: 'wobjects',
-      localField: 'parent',
-      foreignField: 'author_permlink',
-      as: 'parent',
-    },
-  },
-  { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } },
+  // {
+  //   $addFields: {
+  //     fields: {
+  //       $filter: {
+  //         input: '$fields',
+  //         as: 'field',
+  //         cond: {
+  //           // eslint-disable-next-line camelcase
+  //           $in: ['$$field.name', _.union(REQUIREDFIELDS_SEARCH, required_fields || [])],
+  //         },
+  //       },
+  //     },
+  //   },
+  // },
+  // {
+  //   $lookup: {
+  //     from: 'wobjects',
+  //     localField: 'parent',
+  //     foreignField: 'author_permlink',
+  //     as: 'parent',
+  //   },
+  // },
+  // { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } },
 ];
 const makeCountPipeline = ({ string }) => [
   {
