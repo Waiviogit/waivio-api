@@ -174,8 +174,11 @@ const processWobjects = async ({
     Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
     // get right count of photos in object in request for only one object
     if (!fields) {
-      obj.albums_count = _.get(obj, 'galleryAlbum', []).filter((field) => field.name === 'galleryAlbum').length;
-      obj.photos_count = _.get(obj, 'galleryItem', []).filter((field) => field.name === 'galleryItem').length;
+      obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
+      obj.photos_count = _.get(obj, 'galleryItem', []).length;
+      obj.preview_gallery = _.orderBy(_.get(obj, 'galleryItem', []), ['weight'], ['asc']).slice(0, 3);
+
+      obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, admins);
   }

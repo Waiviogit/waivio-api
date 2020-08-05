@@ -38,11 +38,6 @@ const getItemsCount = async (authorPermlink, handledItems) => {
 
 const getListItems = async (wobject, data, admins) => {
   const fields = _.filter(wobject.fields, (field) => field.name === 'listItem');
-
-  const sortCustom = (await wObjectHelper.processWobjects({
-    fields: ['sortCustom'], wobjects: [_.cloneDeep(wobject)], returnArray: false, admins,
-  })).sortCustom || '[]';
-
   const { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
 
   for (let obj of wobjects) {
@@ -71,7 +66,7 @@ const getListItems = async (wobject, data, admins) => {
     wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
   }));
 
-  return { wobjects, sortCustom };
+  return { wobjects };
 };
 
 const getOne = async (data) => { // get one wobject by author_permlink
@@ -91,18 +86,11 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
   // format listItems field
   if (_.find(wObject.fields, { name: 'listItem' })) {
-    const { wobjects, sortCustom } = await getListItems(wObject, data, admins);
+    const { wobjects } = await getListItems(wObject, data, admins);
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
     wObject[keyName] = wobjects;
-    wObject.sortCustom = JSON.parse(sortCustom);
     requiredFields.push('sortCustom', 'listItem');
   }
-  // format gallery
-  // #TODO DELETE after implement new logic
-  wObject.preview_gallery = _.orderBy(wObject.fields.filter((field) => field.name === 'galleryItem'), ['weight'], ['asc']).slice(0, 3);
-  wObject.albums_count = wObject.fields.filter((field) => field.name === 'galleryAlbum').length;
-  wObject.photos_count = wObject.fields.filter((field) => field.name === 'galleryItem').length;
-
   // add additional fields to returning
   if (data.required_fields) requiredFields.push(...data.required_fields);
 
