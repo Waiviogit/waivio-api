@@ -72,9 +72,10 @@ const postSort = ({
     case 'followers':
       return _.chain(result).orderBy(['followers_count'], 'desc').slice(skip, limit + skip).value();
     case 'recency':
-      _.forEach(result, (el) => {
-        el.timestamp = _.find(preSorted, (user) => user.name === preSorted.name).timestamp;
-      });
+      for (const el of result) {
+        el.timestamp = _
+          .find(preSorted, (u) => u.follower === el.name || u.following === el.name).timestamp;
+      }
       return _.orderBy(result, ['timestamp'], 'desc');
   }
 };
