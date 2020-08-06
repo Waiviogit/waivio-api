@@ -28,16 +28,6 @@ exports.schema = [
     method: 'POST',
     case: 2,
   },
-  {
-    path: '/wobject/:authorPermlink/fields',
-    method: 'POST',
-    case: 5,
-  },
-  {
-    path: '/wobject/:authorPermlink/list',
-    method: 'POST',
-    case: 2,
-  },
   // user controller
   {
     path: '/user/:userName/following_objects',
@@ -59,7 +49,7 @@ exports.schema = [
   {
     path: '/generalSearch',
     method: 'POST',
-    case: 3,
+    case: 6,
     wobjects_path: 'wobjects',
   },
   // post controller

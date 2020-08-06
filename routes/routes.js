@@ -30,12 +30,8 @@ wobjRoutes.route('/wobject/:authorPermlink/posts')
   .post(WobjController.posts);
 wobjRoutes.route('/wobject/:authorPermlink/followers')
   .post(WobjController.followers);
-wobjRoutes.route('/wobject/:authorPermlink/fields')
-  .post(WobjController.fields);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')
   .get(WobjController.gallery);
-wobjRoutes.route('/wobject/:authorPermlink/list')
-  .get(WobjController.list);
 wobjRoutes.route('/wobject/:authorPermlink/object_expertise')
   .post(WobjController.objectExpertise);
 wobjRoutes.route('/wobjectSearch')
