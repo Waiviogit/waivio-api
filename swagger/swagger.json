@@ -388,6 +388,12 @@
           "required" : false,
           "type" : "integer"
         },{
+          "name" : "sort",
+          "in" : "query",
+          "description" : "How to sort users. Valid: rank, alphabet, followers, recency. Default: rank",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "following",
           "in" : "header",
           "description" : "name of user who make request to check founded users in his followings",
@@ -609,7 +615,13 @@
           "description" : "count of users to skip(need for infinite scroll)*(by default - 0)*",
           "required" : false,
           "type" : "integer"
-        } ,{
+        }, {
+          "name" : "sort",
+          "in" : "query",
+          "description" : "How to sort users. Valid: rank, alphabet, followers, recency. Default: rank",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "following",
           "in" : "header",
           "description" : "name of user who make request to check founded users in his followings",
