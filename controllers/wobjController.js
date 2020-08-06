@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getChildWobjects: getChild, getFields,
+  getPostsByWobject, getChildWobjects: getChild, getFields, getGallery,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -150,16 +150,18 @@ const fields = async (req, res, next) => {
 
 const gallery = async (req, res, next) => {
   const value = validators.validate({
-    author_permlink: req.params.authorPermlink,
+    authorPermlink: req.params.authorPermlink,
+    locale: req.headers.locale,
+    app: req.headers.app,
   }, validators.wobject.galleryScheme, next);
 
   if (!value) return;
 
-  const { gallery: wobjectGallery, error } = await Wobj.getGalleryItems(value);
+  const { result, error } = await getGallery(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectGallery };
+  res.result = { status: 200, json: result };
   req.author_permlink = req.params.authorPermlink;
   next();
 };

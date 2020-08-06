@@ -93,7 +93,9 @@ const specialFieldFilter = (idField, allFields, id) => {
   return idField;
 };
 
-const arrayFieldFilter = (idFields, allFields, filter, id) => {
+const arrayFieldFilter = ({
+  idFields, allFields, filter, id, permlink,
+}) => {
   const validFields = [];
   for (const field of idFields) {
     if (_.get(field, 'adminVote.status') === 'rejected') continue;
@@ -112,6 +114,11 @@ const arrayFieldFilter = (idFields, allFields, filter, id) => {
         break;
     }
   }
+  if (id === 'galleryAlbum') {
+    const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
+      (item) => item.id === permlink && _.get(item, 'adminVote.status') !== 'rejected');
+    if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos' });
+  }
   return _.compact(validFields);
 };
 
@@ -122,7 +129,7 @@ const filterFieldValidation = (filter, field, locale) => {
   return result;
 };
 
-const getFieldsToDisplay = (fields, locale, filter) => {
+const getFieldsToDisplay = (fields, locale, filter, permlink) => {
   const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
@@ -135,7 +142,9 @@ const getFieldsToDisplay = (fields, locale, filter) => {
       (field) => _.get(field, 'adminVote.status') === 'approved');
 
     if (_.includes(arrayFields, id)) {
-      const result = arrayFieldFilter(groupedFields[id], groupedFields, filter, id);
+      const result = arrayFieldFilter({
+        idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
+      });
       if (result.length)winningFields[id] = result;
       continue;
     }
@@ -171,7 +180,7 @@ const processWobjects = async ({
       });
     }
     obj.fields = addDataToFields(obj.fields, admins, fields);
-    Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields));
+    Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink));
     // get right count of photos in object in request for only one object
     if (!fields) {
       obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
@@ -200,5 +209,8 @@ const getParentInfo = async (wObject, locale, admins) => {
 };
 
 module.exports = {
-  formatRequireFields, getUserSharesInWobj, processWobjects, getParentInfo,
+  formatRequireFields,
+  getUserSharesInWobj,
+  processWobjects,
+  getParentInfo,
 };
