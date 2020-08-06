@@ -10,9 +10,10 @@ module.exports = async ({
   });
   if (error) return { error };
   if (!users.length) return { result: { followers: [], hasMore: false } };
-  const { usersData, error: usersError } = await User.find(
-    { condition: { name: { $in: _.map(users, 'follower') } } },
-  );
+  const { usersData, error: usersError } = await User.find({
+    condition: { name: { $in: _.map(users, 'follower') } },
+    select: { name: 1, wobjects_weight: 1, followers_count: 1 },
+  });
   if (usersError) return { error: usersError };
 
   const result = followersHelper.sortUsers({

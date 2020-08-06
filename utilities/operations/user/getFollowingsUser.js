@@ -12,9 +12,10 @@ exports.getAll = async ({
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
 
-  const { usersData, error: usersError } = await User.find(
-    { condition: { name: { $in: _.map(users, 'following') } } },
-  );
+  const { usersData, error: usersError } = await User.find({
+    condition: { name: { $in: _.map(users, 'following') } },
+    select: { name: 1, wobjects_weight: 1, followers_count: 1 },
+  });
   if (usersError) return { error: usersError };
 
   const result = followersHelper.sortUsers({
