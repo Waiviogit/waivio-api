@@ -22,7 +22,7 @@ const getParentInfo = async (wObject, data, admins) => {
 const getItemsCount = async (authorPermlink, handledItems) => {
   let count = 0;
   const { result: wobject, error } = await Wobj.findOne(authorPermlink);
-  if (error) return 0;
+  if (error || !wobject) return 0;
 
   const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === 'listItem'), 'body');
 
