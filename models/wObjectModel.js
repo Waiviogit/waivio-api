@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS} = require('utilities/constants');
+const { REQUIREDFIELDS } = require('utilities/constants');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -118,10 +118,6 @@ const fromAggregation = async (pipeline) => {
   }
 };
 
-const getRequiredFields = (wObject, requiredFields) => {
-  wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
-};
-
 // eslint-disable-next-line camelcase
 const isFieldExist = async ({ author_permlink, fieldName }) => {
   try {
@@ -196,9 +192,9 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition) => {
+const find = async (condition, select) => {
   try {
-    return { result: await WObjectModel.find(condition).lean() };
+    return { result: await WObjectModel.find(condition, select).lean() };
   } catch (error) {
     return { error };
   }
