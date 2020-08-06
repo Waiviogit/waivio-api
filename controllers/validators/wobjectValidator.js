@@ -2,14 +2,12 @@ const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 
-// flag - Temporary solution
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
   user: Joi.string(),
-  required_fields: Joi.array().items(Joi.string()).single(),
   appName: Joi.string(),
-  flag: Joi.boolean().default(false),
+  listCounters: Joi.boolean().default(false),
 });
 
 exports.indexSchema = Joi.object().keys({
@@ -71,12 +69,13 @@ exports.searchScheme = Joi.object().keys({
   required_fields: Joi.array().items(Joi.string()).default([]),
 });
 
+// deprecated methods
 // eslint-disable-next-line no-multi-assign
-exports.fieldsScheme = exports.listScheme = Joi.object().keys({
-  author_permlink: Joi.string().required(),
-  fields_names: Joi.array().items(Joi.string()).default(null),
-  custom_fields: Joi.object().default(null),
-});
+// exports.fieldsScheme = exports.listScheme = Joi.object().keys({
+//   author_permlink: Joi.string().required(),
+//   fields_names: Joi.array().items(Joi.string()).default(null),
+//   custom_fields: Joi.object().default(null),
+// });
 
 exports.galleryScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),

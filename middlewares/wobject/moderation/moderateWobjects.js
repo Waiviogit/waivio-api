@@ -2,7 +2,6 @@ const _ = require('lodash');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
 
 const MODERATION_KEY_FLAG = 'upvotedByModerator';
 const MODERATION_DOWNVOTE_KEY_FLAG = 'downvotedByModerator';
@@ -29,16 +28,6 @@ exports.moderate = async (req, res, next) => {
     next();
     return;
   }
-  if (_.includes(['/wobjectSearch', '/generalSearch', '/user/:userName/following_objects'], currentSchema.path)) {
-    if (currentSchema.wobjects_path) {
-      res.result.json[currentSchema.wobjects_path] = await newValidation(
-        res.result.json[currentSchema.wobjects_path], app.admins || [], req.headers.locale,
-      );
-    } else res.result.json = await newValidation(res.result.json, app.admins || [], req.headers.locale);
-    next();
-    return;
-  }
-
   switch (currentSchema.case) {
     case 1:
       // root result is single wobject
@@ -51,14 +40,7 @@ exports.moderate = async (req, res, next) => {
       });
       break;
     case 2:
-      // root result is array of wobjects
-      res.result.json = validateWobjects(
-        res.result.json,
-        app.moderators,
-        app.admins,
-        currentSchema.author_permlink_path,
-        currentSchema.fields_path,
-      );
+      res.result.json = await newValidation(res.result.json, app.admins || [], req.headers.locale);
       break;
     case 3:
       // root result is Object with array obj wobjects
@@ -84,6 +66,10 @@ exports.moderate = async (req, res, next) => {
         app.moderators, app.admins,
       );
       break;
+    case 6:
+      res.result.json[currentSchema.wobjects_path] = await newValidation(
+        res.result.json[currentSchema.wobjects_path], app.admins || [], req.headers.locale,
+      );
   }
   next();
 };
@@ -145,15 +131,6 @@ const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_pe
   wobject = addModerators({ wobject, moderators, admins });
   return wobject;
 }).filter(Boolean).value();
-
-const validateWobject = (wobject, moderators, customFieldsPaths, admins) => {
-  wobject.fields = validateFields(wobject, moderators, admins, 'author_permlink', 'fields');
-  customFieldsPaths.forEach((customFieldsPath) => {
-    wobject[customFieldsPath] = validateFields(wobject, moderators, admins, 'author_permlink', customFieldsPath);
-  });
-  wobject = addModerators({ wobject, moderators, admins });
-  return wobject;
-};
 
 const addModerators = ({ wobject, moderators, admins }) => {
   wobject.moderators = _.compact(

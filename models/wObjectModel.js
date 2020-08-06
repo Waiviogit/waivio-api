@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('utilities/constants');
+const { REQUIREDFIELDS} = require('utilities/constants');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -107,44 +107,10 @@ const getAll = async (data) => {
 
 const getList = async (authorPermlink) => {
   try {
-    const fields = await WObjectModel.aggregate([
-      { $match: { author_permlink: authorPermlink } },
-      { $unwind: '$fields' },
-      { $replaceRoot: { newRoot: '$fields' } },
-      { $match: { $or: [{ name: 'listItem' }, { name: 'sortCustom' }] } },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'body',
-          foreignField: 'author_permlink',
-          as: 'wobject',
-        },
-      },
-      { $unwind: { path: '$wobject', preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'wobject.parent',
-          foreignField: 'author_permlink',
-          as: 'wobject.parent',
-        },
-      },
-      { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } },
-    ]);
-    if (_.isEmpty(fields)) return { wobjects: [] };
-    const sortCustomField = _.maxBy(fields.filter((field) => field.name === 'sortCustom'), 'weight');
-    const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
-
-    wobjects.forEach((wObject) => {
-      if (wObject.object_type.toLowerCase() === 'list') {
-        wObject.listItemsCount = wObject.fields.filter((f) => f.name === 'listItem').length;
-      }
-      getRequiredFields(wObject, [...REQUIREDFIELDS]);
-      if (wObject && wObject.parent) {
-        getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
-      }
-    });
-    return { wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]')) };
+    const wobj = await WObjectModel.findOne({ author_permlink: authorPermlink }, { fields: 1 });
+    const fields = _.filter(wobj.fields, (field) => field.name === 'listItem');
+    if (!fields.length) return { wobjects: [] };
+    return { wobjects: _.map(fields, 'body') };
   } catch (error) {
     return { error };
   }
@@ -253,7 +219,6 @@ module.exports = {
   getAll,
   getOne,
   find,
-  getList,
   fromAggregation,
   isFieldExist,
   getByField,
@@ -261,4 +226,5 @@ module.exports = {
   getWobjectsRefs,
   getFieldsRefs,
   findOne,
+  getList,
 };

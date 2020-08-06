@@ -845,8 +845,15 @@
             "type" : "string"
           },{
           "name" : "locale",
-          "in" : "query",
+          "in" : "header",
           "description" : "Read locale of user(default en-EN)",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "listCounters",
+          "in" : "query",
+          "description" : "add listItems or menuItems to response",
+          "default": false,
           "required" : false,
           "type" : "string"
         }, {
@@ -962,6 +969,7 @@
     },
     "/api/wobject/{authorPermlink}/fields" : {
       "post" : {
+        "deprecated": true,
         "tags" : [ "wobject" ],
         "summary" : "Return all fields for spicified wobject",
         "produces" : [ "application/json" ],
@@ -1038,6 +1046,7 @@
     },
     "/api/wobject/{authorPermlink}/list" : {
       "get" : {
+        "deprecated": true,
         "tags" : [ "wobject" ],
         "summary" : "Return 'list' of specified waivio-wobject",
         "produces" : [ "application/json" ],
