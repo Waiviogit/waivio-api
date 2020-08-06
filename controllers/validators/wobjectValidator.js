@@ -72,10 +72,16 @@ exports.searchScheme = Joi.object().keys({
 });
 
 // eslint-disable-next-line no-multi-assign
-exports.fieldsScheme = exports.galleryScheme = exports.listScheme = Joi.object().keys({
+exports.fieldsScheme = exports.listScheme = Joi.object().keys({
   author_permlink: Joi.string().required(),
   fields_names: Joi.array().items(Joi.string()).default(null),
   custom_fields: Joi.object().default(null),
+});
+
+exports.galleryScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  locale: Joi.string().default('en-US'),
+  app: Joi.string(),
 });
 
 exports.objectExpertiseScheme = Joi.object().keys({

@@ -34,13 +34,6 @@ exports.schema = [
     case: 5,
   },
   {
-    path: '/wobject/:authorPermlink/gallery',
-    method: 'GET',
-    case: 2,
-    fields_path: 'items',
-    author_permlink_path: 'wobject_id',
-  },
-  {
     path: '/wobject/:authorPermlink/list',
     method: 'POST',
     case: 2,

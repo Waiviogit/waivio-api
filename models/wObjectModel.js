@@ -105,48 +105,6 @@ const getAll = async (data) => {
   return { wObjectsData: wObjects, hasMore };
 };
 
-const getGalleryItems = async (data) => {
-  try {
-    const gallery = await WObjectModel.aggregate([
-      { $match: { author_permlink: data.author_permlink } },
-      { $unwind: '$fields' },
-      {
-        $match: {
-          $or: [{ 'fields.name': 'galleryItem' },
-            { 'fields.name': 'galleryAlbum' }],
-        },
-      },
-      { $addFields: { [`fields.${GALLERY_WOBJECT_ID}`]: '$author_permlink' } },
-      { $replaceRoot: { newRoot: '$fields' } },
-      { $group: { _id: '$id', items: { $push: '$$ROOT' } } },
-      {
-        $replaceRoot: {
-          newRoot: {
-            $mergeObjects: [
-              { $arrayElemAt: [{ $filter: { input: '$items', as: 'item', cond: { $eq: ['$$item.name', 'galleryAlbum'] } } }, 0] },
-              { items: { $filter: { input: '$items', as: 'item', cond: { $eq: ['$$item.name', 'galleryItem'] } } } },
-            ],
-          },
-        },
-      },
-    ]);
-    const rootAlbum = {
-      id: data.author_permlink, name: 'galleryAlbum', body: 'Photos', items: [],
-    };
-
-    for (const i in gallery) {
-      if (!gallery[i].id) {
-        gallery[i] = { ...rootAlbum, ...gallery[i] };
-        return { gallery };
-      }
-    }
-    gallery.push(rootAlbum);
-    return { gallery };
-  } catch (error) {
-    return { error };
-  }
-};
-
 const getList = async (authorPermlink) => {
   try {
     const fields = await WObjectModel.aggregate([
@@ -295,7 +253,6 @@ module.exports = {
   getAll,
   getOne,
   find,
-  getGalleryItems,
   getList,
   fromAggregation,
   isFieldExist,
