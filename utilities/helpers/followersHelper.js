@@ -35,14 +35,8 @@ const formatWobjectFollowers = async (wObject) => {
 };
 
 const sortUsers = ({
-  sort, skip, limit, usersData, users,
+  sort, skip, limit, usersData, preSorted,
 }) => {
-  const recency = _.map(users, (el) => ({
-    name: el.follower || el.following,
-    timestamp: new Date(
-      parseInt(el._id.toString().substring(0, 8), 16) * 1000,
-    ).valueOf(),
-  }));
   const result = _
     .chain(usersData)
     .map((user) => ({
@@ -51,23 +45,38 @@ const sortUsers = ({
       followers_count: user.followers_count,
     }))
     .value();
-  _.forEach(result, (el) => {
-    for (const merge of recency) {
-      if (el.name === merge.name) {
-        el.timestamp = merge.timestamp;
-      }
-    }
-  });
+
   switch (sort) {
     case 'rank':
       return _.chain(result).orderBy(['wobjects_weight'], 'desc').slice(skip, limit + skip).value();
     case 'alphabet':
-      return _.chain(result).orderBy(['name'], 'asc').slice(skip, limit + skip).value();
+      return _.orderBy(result, ['name'], 'asc');
     case 'followers':
       return _.chain(result).orderBy(['followers_count'], 'desc').slice(skip, limit + skip).value();
     case 'recency':
-      return _.chain(result).orderBy(['timestamp'], 'desc').slice(skip, limit + skip).value();
+      _.forEach(result, (el) => {
+        el.timestamp = _.find(preSorted, (user) => user.name === preSorted.name).timestamp;
+      });
+      return _.orderBy(result, ['timestamp'], 'desc');
   }
 };
 
-module.exports = { getFollowers, sortUsers };
+const preSort = ({
+  sort, limit, skip, users,
+}) => {
+  switch (sort) {
+    case 'rank':
+    case 'followers':
+      return { users };
+    case 'alphabet':
+      return { users: _.chain(users).orderBy(['follower', 'following'], 'asc').slice(skip, limit + skip).value() };
+    case 'recency':
+      const addTimestamp = _.map(users, (el) => ({
+        ...el, timestamp: el._id.getTimestamp().valueOf(),
+      }));
+
+      return { users: _.chain(addTimestamp).orderBy(['timestamp'], 'desc').slice(skip, limit + skip).value() };
+  }
+};
+
+module.exports = { getFollowers, sortUsers, preSort };

@@ -11,18 +11,23 @@ exports.getAll = async ({
     });
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
-
+  const { users: preSorted } = followersHelper.preSort({
+    sort, limit: limit + 1, skip, users,
+  });
   const { usersData, error: usersError } = await User.find({
-    condition: { name: { $in: _.map(users, 'following') } },
+    condition: { name: { $in: _.map(preSorted, 'following') } },
     select: { name: 1, wobjects_weight: 1, followers_count: 1 },
   });
   if (usersError) return { error: usersError };
 
-  const result = followersHelper.sortUsers({
-    sort, skip, limit, usersData, users,
+  const postSorted = followersHelper.sortUsers({
+    sort, skip, limit: limit + 1, usersData, preSorted,
   });
 
-  return { result: { users: result, hasMore: users.length === limit + 1 } };
+  const result = [...postSorted];
+  result.pop();
+
+  return { result: { users: result, hasMore: postSorted.length === limit + 1 } };
 };
 
 // returns collection of users or permlinks with boolean markers
