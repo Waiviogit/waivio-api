@@ -19,7 +19,7 @@ module.exports = async ({
   });
   if (usersError) return { error: usersError };
 
-  const result = followersHelper.sortUsers({
+  const result = followersHelper.postSort({
     sort, skip, limit: limit + 1, usersData, preSorted,
   });
   const hasMore = result.length === limit + 1;

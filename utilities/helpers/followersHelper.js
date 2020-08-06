@@ -34,7 +34,25 @@ const formatWobjectFollowers = async (wObject) => {
   return [];
 };
 
-const sortUsers = ({
+const preSort = ({
+  sort, limit, skip, users,
+}) => {
+  switch (sort) {
+    case 'rank':
+    case 'followers':
+      return { users };
+    case 'alphabet':
+      return { users: _.chain(users).orderBy(['follower', 'following'], 'asc').slice(skip, limit + skip).value() };
+    case 'recency':
+      const addTimestamp = _.map(users, (el) => ({
+        ...el, timestamp: el._id.getTimestamp().valueOf(),
+      }));
+
+      return { users: _.chain(addTimestamp).orderBy(['timestamp'], 'desc').slice(skip, limit + skip).value() };
+  }
+};
+
+const postSort = ({
   sort, skip, limit, usersData, preSorted,
 }) => {
   const result = _
@@ -61,22 +79,4 @@ const sortUsers = ({
   }
 };
 
-const preSort = ({
-  sort, limit, skip, users,
-}) => {
-  switch (sort) {
-    case 'rank':
-    case 'followers':
-      return { users };
-    case 'alphabet':
-      return { users: _.chain(users).orderBy(['follower', 'following'], 'asc').slice(skip, limit + skip).value() };
-    case 'recency':
-      const addTimestamp = _.map(users, (el) => ({
-        ...el, timestamp: el._id.getTimestamp().valueOf(),
-      }));
-
-      return { users: _.chain(addTimestamp).orderBy(['timestamp'], 'desc').slice(skip, limit + skip).value() };
-  }
-};
-
-module.exports = { getFollowers, sortUsers, preSort };
+module.exports = { getFollowers, postSort, preSort };
