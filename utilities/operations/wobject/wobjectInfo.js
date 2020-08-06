@@ -86,10 +86,10 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
   // format listItems field
   const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
-  if (_.find(wObject.fields, { name: 'listItem' }) && data.listCounters) {
+  if (_.find(wObject.fields, { name: 'listItem' })) {
     const { wobjects } = await getListItems(wObject, data, admins);
     wObject[keyName] = wobjects;
-  } else wObject[keyName] = [];
+  }
 
   return { wobjectData: wObject };
 };
