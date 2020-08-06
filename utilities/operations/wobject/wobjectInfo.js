@@ -82,25 +82,13 @@ const getOne = async (data) => { // get one wobject by author_permlink
     if (app) admins = app.admins;
   }
 
-  const requiredFields = _.cloneDeep(REQUIREDFIELDS);
-
   // format listItems field
   if (_.find(wObject.fields, { name: 'listItem' })) {
     const { wobjects } = await getListItems(wObject, data, admins);
     const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
     wObject[keyName] = wobjects;
-    requiredFields.push('sortCustom', 'listItem');
   }
-  // add additional fields to returning
-  if (data.required_fields) requiredFields.push(...data.required_fields);
-
-  // get only required fields for wobject
-  getRequiredFields(wObject, requiredFields);
   return { wobjectData: wObject };
-};
-
-const getRequiredFields = (wObject, requiredFields) => {
-  wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
 };
 
 module.exports = {
