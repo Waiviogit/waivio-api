@@ -105,17 +105,6 @@ const getAll = async (data) => {
   return { wObjectsData: wObjects, hasMore };
 };
 
-const getList = async (authorPermlink) => {
-  try {
-    const wobj = await WObjectModel.findOne({ author_permlink: authorPermlink }, { fields: 1 });
-    const fields = _.filter(wobj.fields, (field) => field.name === 'listItem');
-    if (!fields.length) return { wobjects: [] };
-    return { wobjects: _.map(fields, 'body') };
-  } catch (error) {
-    return { error };
-  }
-};
-
 const fromAggregation = async (pipeline) => {
   try {
     const wobjects = await WObjectModel.aggregate([...pipeline]);
@@ -226,5 +215,4 @@ module.exports = {
   getWobjectsRefs,
   getFieldsRefs,
   findOne,
-  getList,
 };

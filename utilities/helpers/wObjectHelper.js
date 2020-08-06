@@ -130,7 +130,7 @@ const filterFieldValidation = (filter, field, locale) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter, permlink) => {
-  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating'];
+  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale));
