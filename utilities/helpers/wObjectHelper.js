@@ -105,6 +105,7 @@ const arrayFieldFilter = ({
         validFields.push(specialFieldFilter(field, allFields, id));
         break;
       case 'rating':
+      case 'button':
       case 'galleryItem':
         if (_.includes(filter, 'galleryAlbum')) break;
         if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
