@@ -165,6 +165,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink) => {
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US', admins = [], returnArray = true,
 }) => {
+  if (!_.isArray(wobjects)) return [];
   for (const obj of wobjects) {
     if (hiveData) {
       const { result } = await postsUtil.getPostState({ author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' });
