@@ -1022,6 +1022,12 @@
           "description" : "Specify app to enable waivio-wobject moderation",
           "required" : false,
           "type" : "string"
+        },{
+          "name" : "locale",
+          "in" : "header",
+          "description" : "User locale",
+          "required" : false,
+          "type" : "string"
         }, {
           "name" : "authorPermlink",
           "in" : "path",

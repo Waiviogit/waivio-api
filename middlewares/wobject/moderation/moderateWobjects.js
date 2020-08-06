@@ -29,15 +29,12 @@ exports.moderate = async (req, res, next) => {
     next();
     return;
   }
-  if (_.includes(['/wobjectSearch', '/generalSearch'], currentSchema.path)) {
-    res.result.json[currentSchema.wobjects_path] = await wobjectHelper.processWobjects({
-      wobjects: res.result.json[currentSchema.wobjects_path],
-      admins: app.admins,
-      hiveData: false,
-      returnArray: true,
-      locale: req.headers.locale,
-      fields: REQUIREDFIELDS_SEARCH,
-    });
+  if (_.includes(['/wobjectSearch', '/generalSearch', '/user/:userName/following_objects'], currentSchema.path)) {
+    if (currentSchema.wobjects_path) {
+      res.result.json[currentSchema.wobjects_path] = await newValidation(
+        res.result.json[currentSchema.wobjects_path], app.admins || [], req.headers.locale,
+      );
+    } else res.result.json = await newValidation(res.result.json, app.admins || [], req.headers.locale);
     next();
     return;
   }
@@ -105,6 +102,9 @@ const getApp = async (req) => {
   return App.getOne({ name: appName });
 };
 
+const newValidation = async (wobjects, admins, locale) => wobjectHelper.processWobjects({
+  wobjects, admins, hiveData: false, returnArray: true, locale,
+});
 /*
 Validation (checkFollowers) means that to every field in each
     returned wobject which include UpVote or DownVote will be added some key,
@@ -119,6 +119,7 @@ Validation (checkFollowers) means that to every field in each
  * @param {string} fields_path, custom location of fields, default is "fields"
  * @returns {Array} New array of wobjects.
  */
+
 const validateWobjects = (wobjects = [], moderators, admins, apPath = 'author_permlink', fields_path = 'fields') => _.chain(wobjects).map((wobject) => {
   if (_.get(wobject, 'active_votes.length')) {
     // in some cases "wobjects" also might be as "fields" but with some fields item inside

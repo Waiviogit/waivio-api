@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { Wobj, App } = require('models');
+const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase
@@ -20,6 +21,19 @@ const makePipeline = ({
         { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
       ],
       'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+    },
+  },
+  {
+    $addFields: {
+      fields: {
+        $filter: {
+          input: '$fields',
+          as: 'field',
+          cond: {
+            $in: ['$$field.name', REQUIREDFIELDS_SEARCH],
+          },
+        },
+      },
     },
   },
   {
