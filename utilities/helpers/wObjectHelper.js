@@ -3,7 +3,7 @@ const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
 const { categorySwitcher } = require('utilities/constants');
-const { REQUIREDFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE } = require('utilities/constants');
 
 const formatRequireFields = (wObject, locale, requireFields) => {
   const temp = _.reduce(wObject.fields, (resArr, field) => {
@@ -154,7 +154,8 @@ const getFieldsToDisplay = (fields, locale, filter, permlink) => {
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
-      if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0) return field.weight;
+      if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
+          && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
     });
     if (heaviestField) winningFields[id] = heaviestField.body;
   }
