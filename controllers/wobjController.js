@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getChildWobjects: getChild, getFields, getGallery,
+  getPostsByWobject, getChildWobjects: getChild, getGallery,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -36,10 +36,9 @@ const show = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
     locale: req.query.locale,
-    required_fields: req.query.required_fields,
+    listCounters: req.query.listCounters,
     user: req.query.user,
     appName: req.headers.app,
-    flag: !!req.headers.locale,
   }, validators.wobject.showSchema, next);
 
   if (!value) return;
@@ -130,24 +129,6 @@ const search = async (req, res, next) => {
   next();
 };
 
-const fields = async (req, res, next) => {
-  const value = validators.validate({
-    author_permlink: req.params.authorPermlink,
-    fields_names: req.body.fields_names,
-    custom_fields: req.body.custom_fields,
-  }, validators.wobject.fieldsScheme, next);
-
-  if (!value) return;
-
-  const { fields: fieldsData, error } = await getFields(value);
-
-  if (error) return next(error);
-
-  res.result = { status: 200, json: fieldsData };
-  req.author_permlink = req.params.authorPermlink;
-  next();
-};
-
 const gallery = async (req, res, next) => {
   const value = validators.validate({
     authorPermlink: req.params.authorPermlink,
@@ -163,23 +144,6 @@ const gallery = async (req, res, next) => {
 
   res.result = { status: 200, json: result };
   req.author_permlink = req.params.authorPermlink;
-  next();
-};
-
-const list = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      author_permlink: req.params.authorPermlink,
-    }, validators.wobject.listScheme, next,
-  );
-
-  if (!value) return;
-
-  const { wobjects, error } = await Wobj.getList(value.author_permlink);
-
-  if (error) return next(error);
-
-  res.result = { status: 200, json: wobjects };
   next();
 };
 
@@ -235,11 +199,9 @@ module.exports = {
   show,
   posts,
   search,
-  fields,
   followers,
   gallery,
   feed,
-  list,
   objectExpertise,
   getByField,
   getChildWobjects,
