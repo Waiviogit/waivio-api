@@ -1,26 +1,25 @@
 const _ = require('lodash');
 const { User, Subscriptions } = require('models');
+const { followersHelper } = require('utilities/helpers');
 
-exports.getAll = async ({ name, skip, limit }) => {
+exports.getAll = async ({
+  name, skip, limit, sort,
+}) => {
   const { users, error } = await Subscriptions
-    .getFollowings({ follower: name, skip, limit: limit + 1 });
+    .getFollowings({
+      follower: name, skip, limit: limit + 1, withId: true,
+    });
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
 
   const { usersData, error: usersError } = await User.find(
-    { condition: { name: { $in: users } } },
+    { condition: { name: { $in: _.map(users, 'following') } } },
   );
   if (usersError) return { error: usersError };
 
-  const result = _
-    .chain(usersData)
-    .map((user) => ({
-      name: user.name,
-      wobjects_weight: user.wobjects_weight,
-      followers_count: user.followers_count,
-    }))
-    .slice(0, limit)
-    .value();
+  const result = followersHelper.sortUsers({
+    sort, limit, usersData, users,
+  });
 
   return { result: { users: result, hasMore: users.length === limit + 1 } };
 };

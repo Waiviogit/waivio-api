@@ -34,20 +34,30 @@ exports.findOne = async ({ condition }) => {
   }
 };
 
-exports.getFollowers = async ({ following, skip = 0, limit = 30 }) => {
+exports.getFollowers = async ({
+  following, skip = 0, limit = 30, withId = false,
+}) => {
   try {
     const result = await Subscriptions.find({ following }).skip(skip).limit(limit).select('follower')
       .lean();
+    if (withId) {
+      return { users: result };
+    }
     return { users: result.map((el) => el.follower) };
   } catch (error) {
     return { error };
   }
 };
 
-exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
+exports.getFollowings = async ({
+  follower, skip = 0, limit = 30, withId = false,
+}) => {
   try {
     const result = await Subscriptions.find({ follower }).skip(skip).limit(limit).select('following')
       .lean();
+    if (withId) {
+      return { users: result };
+    }
     return { users: result.map((el) => el.following) };
   } catch (error) {
     return { error };
