@@ -100,6 +100,7 @@ const arrayFieldFilter = ({
   for (const field of idFields) {
     if (_.get(field, 'adminVote.status') === 'rejected') continue;
     switch (id) {
+      case 'button':
       case 'tagCategory':
       case 'galleryAlbum':
         validFields.push(specialFieldFilter(field, allFields, id));
