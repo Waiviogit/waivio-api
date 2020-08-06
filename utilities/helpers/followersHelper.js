@@ -35,7 +35,7 @@ const formatWobjectFollowers = async (wObject) => {
 };
 
 const sortUsers = ({
-  sort, limit, usersData, users,
+  sort, skip, limit, usersData, users,
 }) => {
   const recency = _.map(users, (el) => ({
     name: el.follower || el.following,
@@ -50,7 +50,6 @@ const sortUsers = ({
       wobjects_weight: user.wobjects_weight,
       followers_count: user.followers_count,
     }))
-    .slice(0, limit)
     .value();
   _.forEach(result, (el) => {
     for (const merge of recency) {
@@ -61,13 +60,13 @@ const sortUsers = ({
   });
   switch (sort) {
     case 'rank':
-      return _.orderBy(result, ['wobjects_weight'], 'desc');
+      return _.chain(result).orderBy(['wobjects_weight'], 'desc').slice(skip, limit + skip).value();
     case 'alphabet':
-      return _.orderBy(result, ['name'], 'asc');
+      return _.chain(result).orderBy(['name'], 'asc').slice(skip, limit + skip).value();
     case 'followers':
-      return _.orderBy(result, ['followers_count'], 'desc');
+      return _.chain(result).orderBy(['followers_count'], 'desc').slice(skip, limit + skip).value();
     case 'recency':
-      return _.orderBy(result, ['timestamp'], 'desc');
+      return _.chain(result).orderBy(['timestamp'], 'desc').slice(skip, limit + skip).value();
   }
 };
 

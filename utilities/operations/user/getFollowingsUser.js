@@ -7,7 +7,7 @@ exports.getAll = async ({
 }) => {
   const { users, error } = await Subscriptions
     .getFollowings({
-      follower: name, skip, limit: limit + 1, withId: true,
+      follower: name, skip: 0, limit: 0, withId: true,
     });
   if (error) return { error };
   if (!users.length) return { result: { users: [], hasMore: false } };
@@ -18,7 +18,7 @@ exports.getAll = async ({
   if (usersError) return { error: usersError };
 
   const result = followersHelper.sortUsers({
-    sort, limit, usersData, users,
+    sort, skip, limit, usersData, users,
   });
 
   return { result: { users: result, hasMore: users.length === limit + 1 } };
