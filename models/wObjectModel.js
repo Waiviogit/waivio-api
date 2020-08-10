@@ -192,9 +192,9 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition, select) => {
+const find = async (condition, select, sort = {}) => {
   try {
-    return { result: await WObjectModel.find(condition, select).lean() };
+    return { result: await WObjectModel.find(condition, select).sort(sort).lean() };
   } catch (error) {
     return { error };
   }

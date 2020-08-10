@@ -1270,6 +1270,12 @@
           "required" : false,
           "type" : "string"
         },{
+          "name" : "locale",
+          "in" : "header",
+          "description" : "User locale",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "author",
           "in" : "path",
           "description" : "Author of post",

@@ -58,7 +58,6 @@ const search = async ({ string, limit = 20, skip = 0 }) => {
     }
     const objectTypes = await ObjectType.aggregate([
       { $match: { name: { $regex: `${string}`, $options: 'i' } } },
-      { sort: { weight: -1 } },
       { $skip: skip },
       { $limit: limit },
     ]);
