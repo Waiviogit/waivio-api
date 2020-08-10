@@ -16,6 +16,20 @@ exports.getAllPosts = async (data) => {
           from: 'wobjects',
           localField: 'wobjects.author_permlink',
           foreignField: 'author_permlink',
+          //let: { permlink: '$wobjects.author_permlink' },
+          // pipeline: [
+          //   { $match: { $expr: { $eq: ['$author_permlink', '$$permlink'] } } },
+          //   {
+          //     $project: {
+          //       fields: 1,
+          //       author_permlink: 1,
+          //       parent: 1,
+          //       weight: 1,
+          //       object_type: 1,
+          //       default_name: 1,
+          //     },
+          //   },
+          // ],
           as: 'fullObjects',
         },
       },
@@ -87,7 +101,7 @@ exports.getByFollowLists = async ({
     .sort({ _id: -1 })
     // .skip(skip)
     .limit(limit)
-    .populate({ path: 'fullObjects', select: '-latest_posts' })
+    .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
     .lean();
 
   if (_.get(filtersData, 'lastId')) {
@@ -175,7 +189,7 @@ exports.getManyPosts = async (postsRefs) => {
     return {
       posts: await PostModel
         .find({ $or: [...postsRefs] })
-        .populate({ path: 'fullObjects', select: '-latest_posts' })
+        .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
         .lean(),
     };
   } catch (error) {

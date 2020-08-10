@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT, GALLERY_WOBJECT_ID } = require('utilities/constants');
+const { REQUIREDFIELDS } = require('utilities/constants');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -105,51 +105,6 @@ const getAll = async (data) => {
   return { wObjectsData: wObjects, hasMore };
 };
 
-const getList = async (authorPermlink) => {
-  try {
-    const fields = await WObjectModel.aggregate([
-      { $match: { author_permlink: authorPermlink } },
-      { $unwind: '$fields' },
-      { $replaceRoot: { newRoot: '$fields' } },
-      { $match: { $or: [{ name: 'listItem' }, { name: 'sortCustom' }] } },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'body',
-          foreignField: 'author_permlink',
-          as: 'wobject',
-        },
-      },
-      { $unwind: { path: '$wobject', preserveNullAndEmptyArrays: true } },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'wobject.parent',
-          foreignField: 'author_permlink',
-          as: 'wobject.parent',
-        },
-      },
-      { $unwind: { path: '$wobject.parent', preserveNullAndEmptyArrays: true } },
-    ]);
-    if (_.isEmpty(fields)) return { wobjects: [] };
-    const sortCustomField = _.maxBy(fields.filter((field) => field.name === 'sortCustom'), 'weight');
-    const wobjects = _.compact(_.map(fields.filter((field) => field.name === 'listItem' && !_.isEmpty(field.wobject)), (field) => ({ ...field.wobject, alias: field.alias })));
-
-    wobjects.forEach((wObject) => {
-      if (wObject.object_type.toLowerCase() === 'list') {
-        wObject.listItemsCount = wObject.fields.filter((f) => f.name === 'listItem').length;
-      }
-      getRequiredFields(wObject, [...REQUIREDFIELDS]);
-      if (wObject && wObject.parent) {
-        getRequiredFields(wObject.parent, [...REQUIREDFIELDS_PARENT]);
-      }
-    });
-    return { wobjects, sortCustom: JSON.parse(_.get(sortCustomField, 'body', '[]')) };
-  } catch (error) {
-    return { error };
-  }
-};
-
 const fromAggregation = async (pipeline) => {
   try {
     const wobjects = await WObjectModel.aggregate([...pipeline]);
@@ -161,10 +116,6 @@ const fromAggregation = async (pipeline) => {
   } catch (error) {
     return { error };
   }
-};
-
-const getRequiredFields = (wObject, requiredFields) => {
-  wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
 };
 
 // eslint-disable-next-line camelcase
@@ -241,9 +192,9 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition) => {
+const find = async (condition, select, sort = {}) => {
   try {
-    return { result: await WObjectModel.find(condition).lean() };
+    return { result: await WObjectModel.find(condition, select).sort(sort).lean() };
   } catch (error) {
     return { error };
   }
@@ -253,7 +204,6 @@ module.exports = {
   getAll,
   getOne,
   find,
-  getList,
   fromAggregation,
   isFieldExist,
   getByField,

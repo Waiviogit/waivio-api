@@ -4,6 +4,7 @@ const {
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
 const _ = require('lodash');
+const { REQUIREDFIELDS_POST } = require('utilities/constants');
 
 /**
  * Get wobjects data for particular post
@@ -17,7 +18,7 @@ const getPostObjects = async (author = '', permlink = '') => {
   const { commentRef } = await CommentRef.getRef(`${author}_${permlink}`);
 
   if (_.isString(_.get(commentRef, 'wobjects'))) {
-    let wobjs; // list of wobjects on post with percents
+    let wobjs;
 
     try {
       wobjs = JSON.parse(commentRef.wobjects);
@@ -25,14 +26,14 @@ const getPostObjects = async (author = '', permlink = '') => {
       console.log(e);
     }
     if (Array.isArray(wobjs) && !_.isEmpty(wobjs)) {
-      const { wObjectsData } = await Wobj.getAll({
-        author_permlinks: wobjs.map((w) => w.author_permlink),
-        skip: 0,
-        limit: 100,
-        user_limit: 0,
-        locale: 'en-US',
+      const { result: wObjectsData } = await Wobj.find(
+        { author_permlink: { $in: _.map(wobjs, 'author_permlink') } }, {
+          fields: 1, author_permlink: 1, weight: 1, object_type: 1, default_name: 1, parent: 1,
+        },
+      );
+      wObjectsData.forEach((wobj) => {
+        wobj.fields = wobj.fields.filter((field) => _.includes(REQUIREDFIELDS_POST, field.name));
       });
-
       return { wObjectsData, wobjectPercents: wobjs };
     }
   }

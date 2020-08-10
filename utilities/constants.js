@@ -25,6 +25,7 @@ exports.REQUIREDFIELDS = [
 exports.REQUIREDFIELDS_PARENT = ['name', 'avatar'];
 exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating', 'parent'];
 exports.REQUIREDFIELDS_CHILD = ['name', 'avatar'];
+exports.REQUIREDFIELDS_POST = ['name', 'avatar', 'title', 'parent'];
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',

@@ -21,16 +21,18 @@ const getParentInfo = async (wObject, data, admins) => {
  */
 const getItemsCount = async (authorPermlink, handledItems) => {
   let count = 0;
-  const { wobjects: listWobjects, error } = await Wobj.getList(authorPermlink);
-  if (error) return 0;
+  const { result: wobject, error } = await Wobj.findOne(authorPermlink);
+  if (error || !wobject) return 0;
+
+  const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === 'listItem'), 'body');
 
   if (_.isEmpty(listWobjects)) return 1;
 
   for (const item of listWobjects) {
     // condition for exit from looping
-    if (!handledItems.includes(item.author_permlink)) {
-      handledItems.push(item.author_permlink);
-      count += await getItemsCount(item.author_permlink, handledItems);
+    if (!handledItems.includes(item)) {
+      handledItems.push(item);
+      count += await getItemsCount(item, handledItems);
     }
   }
   return count;
@@ -83,11 +85,12 @@ const getOne = async (data) => { // get one wobject by author_permlink
   }
 
   // format listItems field
+  const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
   if (_.find(wObject.fields, { name: 'listItem' })) {
     const { wobjects } = await getListItems(wObject, data, admins);
-    const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
     wObject[keyName] = wobjects;
   }
+
   return { wobjectData: wObject };
 };
 
