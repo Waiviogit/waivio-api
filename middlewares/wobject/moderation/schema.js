@@ -3,7 +3,7 @@ exports.schema = [
   {
     path: '/wobject',
     method: 'POST',
-    case: 3,
+    case: 6,
     wobjects_path: 'wobjects',
   },
   {
@@ -22,6 +22,7 @@ exports.schema = [
     path: '/wobjectsFeed',
     method: 'POST',
     case: 4,
+    wobjects_path: 'wobjects',
   },
   {
     path: '/wobjectSearch',
@@ -38,11 +39,18 @@ exports.schema = [
     path: '/user/:userName/feed',
     method: 'POST',
     case: 4,
+    wobjects_path: 'wobjects',
+  },
+  {
+    path: '/user/:userName/blog',
+    method: 'POST',
+    case: 4,
+    wobjects_path: 'wobjects',
   },
   {
     path: '/user/:userName/objects_shares',
     method: 'POST',
-    case: 3,
+    case: 6,
     wobjects_path: 'wobjects',
   },
   // general search
@@ -79,22 +87,16 @@ exports.schema = [
     wobjects_path: 'related_wobjects',
   },
   {
-    path: '/objectTypesSearch',
-    method: 'POST',
-    case: 4,
-    wobjects_path: 'related_wobjects',
-  },
-  {
     path: '/objectType/:objectTypeName',
     method: 'POST',
-    case: 3,
+    case: 6,
     wobjects_path: 'related_wobjects',
   },
   // app controller
   {
     path: '/app/:name/hashtags',
     method: 'GET',
-    case: 3,
+    case: 6,
     wobjects_path: 'wobjects',
   },
 ];
