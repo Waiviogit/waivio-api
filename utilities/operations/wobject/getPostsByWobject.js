@@ -13,7 +13,7 @@ const getPosts = async (data) => {
     .sort({ _id: -1 })
     // .skip(data.skip)
     .limit(data.limit)
-    .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
+    .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
     .lean();
 
   if (!data.lastId) postsQuery.skip(data.skip);

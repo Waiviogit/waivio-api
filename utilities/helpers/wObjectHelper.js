@@ -105,6 +105,7 @@ const arrayFieldFilter = ({
         validFields.push(specialFieldFilter(field, allFields, id));
         break;
       case 'rating':
+      case 'phone':
       case 'button':
       case 'galleryItem':
         if (_.includes(filter, 'galleryAlbum')) break;
@@ -131,7 +132,7 @@ const filterFieldValidation = (filter, field, locale) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter, permlink) => {
-  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button'];
+  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button', 'phone'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale));

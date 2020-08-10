@@ -78,7 +78,7 @@ module.exports = async ({
     .sort(sort)
   // .skip(skip)
     .limit(limit)
-    .populate({ path: 'fullObjects', select: '-latest_posts' })
+    .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
     .select(keys || {})
     .lean();
   if (!lastId) postsQuery.skip(skip);
