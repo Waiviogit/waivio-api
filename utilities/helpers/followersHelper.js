@@ -41,11 +41,11 @@ const sortUsers = async ({
   let sortBy = null;
 
   switch (sort) {
-    case 'recency':
-      sortBy = { _id: -1 };
-      break;
     case 'rank':
       sortBy = { wobjects_weight: -1 };
+      break;
+    case 'recency':
+      sortBy = { _id: -1 };
       break;
     case 'followers':
       sortBy = { followers_count: -1 };

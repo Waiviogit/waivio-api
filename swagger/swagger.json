@@ -392,7 +392,7 @@
           "in" : "query",
           "description" : "How to sort users",
           "required" : false,
-          "default": "recency",
+          "default": "rank",
           "enum": ["rank", "alphabet", "followers", "recency"],
           "type" : "string"
         },{
@@ -622,7 +622,7 @@
           "in" : "query",
           "description" : "How to sort users",
           "required" : false,
-          "default": "recency",
+          "default": "rank",
           "enum": ["rank", "alphabet", "followers", "recency"],
           "type" : "string"
         },{
