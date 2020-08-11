@@ -390,8 +390,10 @@
         },{
           "name" : "sort",
           "in" : "query",
-          "description" : "How to sort users. Valid: rank, alphabet, followers, recency. Default: rank",
+          "description" : "How to sort users",
           "required" : false,
+          "default": "recency",
+          "enum": ["rank", "alphabet", "followers", "recency"],
           "type" : "string"
         },{
           "name" : "following",
@@ -618,8 +620,10 @@
         }, {
           "name" : "sort",
           "in" : "query",
-          "description" : "How to sort users. Valid: rank, alphabet, followers, recency. Default: rank",
+          "description" : "How to sort users",
           "required" : false,
+          "default": "recency",
+          "enum": ["rank", "alphabet", "followers", "recency"],
           "type" : "string"
         },{
           "name" : "following",
