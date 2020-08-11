@@ -99,4 +99,10 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/wobject/:authorPermlink/child_wobjects',
+    method: 'GET',
+    case: 2,
+    wobjects_path: 'wobjects',
+  },
 ];
