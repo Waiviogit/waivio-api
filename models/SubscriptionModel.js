@@ -64,6 +64,16 @@ exports.getFollowings = async ({
   }
 };
 
+exports.aggregate = async ({
+  pipeline,
+}) => {
+  try {
+    return { users: await Subscriptions.aggregate(pipeline) };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.find = async ({
   condition, skip, limit, sort,
 }) => {
