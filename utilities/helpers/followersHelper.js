@@ -41,21 +41,44 @@ const sortUsers = async ({
   let sortBy = null;
 
   switch (sort) {
-    case 'rank':
-      sortBy = { wobjects_weight: -1 };
-      break;
     case 'recency':
       sortBy = { _id: -1 };
+      break;
+    case 'rank':
+      sortBy = { wobjects_weight: -1 };
       break;
     case 'followers':
       sortBy = { followers_count: -1 };
       break;
     case 'alphabet':
-      sortBy = { name: 1 };
+      sortBy = { [`${localField}`]: 1 };
       break;
   }
 
-  const pipeline = [
+  const recencyAndAlphabet = [
+    { $match: { [`${field}`]: name } },
+    { $sort: sortBy },
+    { $skip: skip },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: 'users',
+        localField,
+        foreignField: 'name',
+        as: 'user',
+      },
+    },
+    { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+    {
+      $project: {
+        name: `$${localField}`,
+        wobjects_weight: '$user.wobjects_weight',
+        followers_count: '$user.followers_count',
+      },
+    },
+  ];
+
+  const rankAndFollowers = [
     { $match: { [`${field}`]: name } },
     {
       $lookup: {
@@ -74,10 +97,10 @@ const sortUsers = async ({
       },
     },
     { $sort: sortBy },
-    { $limit: limit },
     { $skip: skip },
+    { $limit: limit },
   ];
-
+  const pipeline = sort === 'alphabet' || sort === 'recency' ? recencyAndAlphabet : rankAndFollowers;
   const { users } = await Subscriptions.aggregate({ pipeline });
   return users;
 };
