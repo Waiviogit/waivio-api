@@ -1097,6 +1097,19 @@
           "in" : "query",
           "required" : false,
           "type" : "integer"
+        }, {
+          "name" : "app",
+          "in" : "header",
+          "required" : false,
+          "description": "app for filling objects",
+          "type" : "string"
+        },{
+          "name" : "locale",
+          "in" : "header",
+          "required" : false,
+          "description": "user locale for filling objects",
+          "default": "en-US",
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
