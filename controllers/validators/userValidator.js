@@ -172,7 +172,7 @@ exports.getFollowers = Joi.object().keys({
   limit: Joi.number().integer().min(0).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  sort: Joi.string().valid('rank', 'alphabet', 'followers', 'recency').default('rank'),
+  sort: Joi.string().valid('rank', 'alphabet', 'followers', 'recency').default('recency'),
 });
 
 exports.comments = Joi.object().keys({
