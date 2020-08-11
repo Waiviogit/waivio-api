@@ -5,36 +5,15 @@ const { postsUtil } = require('utilities/steemApi');
 const { categorySwitcher } = require('utilities/constants');
 const { REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE } = require('utilities/constants');
 
-const formatRequireFields = (wObject, locale, requireFields) => {
-  const temp = _.reduce(wObject.fields, (resArr, field) => {
-    const currResField = resArr.find((item) => item.name === field.name);
-
-    if (currResField && (!currResField.weight || currResField.weight < field.weight)) {
-      resArr = resArr.map((item) => (item.name === field.name ? field : item));
-    }
-    return resArr;
-  }, requireFields).filter((item) => !_.isNil(item.weight));
-
-  wObject.fields = _.reduce(wObject.fields, (resArr, field) => {
-    const currResField = resArr.find((item) => item.name === field.name);
-
-    if (currResField) {
-      if (currResField.locale !== locale && field.locale === locale) {
-        resArr = resArr.map((item) => (item.name === field.name ? field : item));
-      } else if (currResField.locale === locale
-          && currResField.weight < field.weight && field.locale === locale) {
-        resArr = resArr.map((item) => (item.name === field.name ? field : item));
-      }
-    }
-    return resArr;
-  }, temp);
-};
-
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
   const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }, '-_id weight');
 
   return _.get(userObjectShare, 'weight') || 0;
+};
+
+const getWobjectFields = async (permlink, name) => {
+  const { result } = await Wobj.findOne(permlink);
 };
 
 const calculateApprovePercent = (field) => {
@@ -213,8 +192,8 @@ const getParentInfo = async (wObject, locale, admins) => {
 };
 
 module.exports = {
-  formatRequireFields,
   getUserSharesInWobj,
+  getWobjectFields,
   processWobjects,
   getParentInfo,
 };
