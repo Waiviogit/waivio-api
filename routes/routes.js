@@ -24,7 +24,7 @@ apiRoutes.use('/api', objectTypeRoutes);
 // region Wobject
 wobjRoutes.route('/wobject')
   .post(WobjController.index);
-wobjRoutes.route('/wobject/fields')
+wobjRoutes.route('/wobject/:authorPermlink/getField')
     .get(WobjController.getWobjectField);
 wobjRoutes.route('/wobject/:authorPermlink')
   .get(WobjController.show);

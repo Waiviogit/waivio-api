@@ -12,8 +12,12 @@ const getUserSharesInWobj = async (name, author_permlink) => {
   return _.get(userObjectShare, 'weight') || 0;
 };
 
-const getWobjectFields = async (permlink, name) => {
+const getWobjectFields = async (permlink, fieldName) => {
   const { result } = await Wobj.findOne(permlink);
+  if (!result) return { error: { status: 404, message: 'Wobject not found' } };
+  // result.fields = _.filter(result.fields, { name: fieldName });
+  // if (!result.fields.length) return { error: { status: 404, message: 'field not found' } };
+  return { wobject: result };
 };
 
 const calculateApprovePercent = (field) => {
@@ -87,6 +91,7 @@ const arrayFieldFilter = ({
       case 'phone':
       case 'button':
       case 'galleryItem':
+      case 'listItem':
         if (_.includes(filter, 'galleryAlbum')) break;
         if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
         else if (field.weight > 0) validFields.push(field);

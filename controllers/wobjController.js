@@ -195,12 +195,17 @@ const getChildWobjects = async (req, res, next) => {
 };
 
 const getWobjectField = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.wobject.getWobjectField, next);
+  const value = validators.validate(Object.assign(req.query, {
+    locale: req.headers.locale,
+    app: req.headers.app,
+    authorPermlink: req.params.authorPermlink,
+  }),
+  validators.wobject.getWobjectField, next);
   if (!value) return;
-  const { result, error } = await getWobjField(value);
+  const { toDisplay, field, error } = await getWobjField(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: result };
+  res.result = { status: 200, json: { toDisplay, field } };
   next();
 };
 
