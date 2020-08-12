@@ -97,3 +97,10 @@ exports.categorySwitcher = {
   galleryAlbum: 'galleryItem',
   tagCategory: 'categoryItem',
 };
+
+exports.SPECIFIC_FIELDS_MAPPINGS = {
+  tagCategory: ['tagCategory', 'categoryItem'],
+  galleryAlbum: ['galleryAlbum', 'galleryItem'],
+  categoryItem: ['tagCategory', 'categoryItem'],
+  avatar: ['avatar', 'parent'],
+};
