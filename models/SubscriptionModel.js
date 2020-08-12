@@ -54,11 +54,19 @@ exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
   }
 };
 
-exports.aggregate = async ({
-  pipeline,
+exports.populate = async ({
+  condition, select, sort, skip, limit, populate,
 }) => {
   try {
-    return { users: await Subscriptions.aggregate(pipeline) };
+    const result = await Subscriptions
+      .find(condition)
+      .select(select)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .populate(populate)
+      .lean();
+    return { users: result };
   } catch (error) {
     return { error };
   }

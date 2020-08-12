@@ -34,52 +34,66 @@ const formatWobjectFollowers = async (wObject) => {
   return [];
 };
 
+const lightSort = async ({
+  limit, skip, select, path, condition, populate, sortData,
+}) => {
+  const { users } = await Subscriptions.populate({
+    limit, skip, select, condition, sort: sortData, populate,
+  });
+  return _.chain(users)
+    .map(`${path}`)
+    .compact()
+    .value();
+};
+
+const hardSort = async ({
+  limit, skip, select, path, condition, populate, sortData,
+}) => {
+  const { users } = await Subscriptions.populate({
+    select, condition, populate,
+  });
+  return _
+    .chain(users)
+    .map(`${path}`)
+    .compact()
+    .orderBy([`${sortData}`], 'desc')
+    .slice(skip, limit + skip)
+    .value();
+};
+
 const sortUsers = async ({
   field, name, limit, skip, sort,
 }) => {
-  const localField = field === 'follower' ? 'following' : 'follower';
-  let sortBy = null;
+  let path, select;
+
+  if (field === 'follower') {
+    select = 'following';
+    path = 'followingPath';
+  } else {
+    select = 'follower';
+    path = 'followerPath';
+  }
+  const condition = { [`${field}`]: name };
+  const populate = { path, select: { wobjects_weight: 1, followers_count: 1 } };
 
   switch (sort) {
-    case 'rank':
-      sortBy = { wobjects_weight: -1 };
-      break;
     case 'recency':
-      sortBy = { _id: -1 };
-      break;
-    case 'followers':
-      sortBy = { followers_count: -1 };
-      break;
+      return lightSort({
+        select, limit, skip, path, condition, populate, sortData: { _id: -1 },
+      });
     case 'alphabet':
-      sortBy = { name: 1 };
-      break;
+      return lightSort({
+        select, limit, skip, path, condition, populate, sortData: { [`${select}`]: 1 },
+      });
+    case 'rank':
+      return hardSort({
+        limit, skip, select, path, condition, populate, sortData: 'wobjects_weight',
+      });
+    case 'followers':
+      return hardSort({
+        limit, skip, select, path, condition, populate, sortData: 'followers_count',
+      });
   }
-
-  const pipeline = [
-    { $match: { [`${field}`]: name } },
-    {
-      $lookup: {
-        from: 'users',
-        localField,
-        foreignField: 'name',
-        as: 'user',
-      },
-    },
-    { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
-    {
-      $project: {
-        name: `$${localField}`,
-        wobjects_weight: '$user.wobjects_weight',
-        followers_count: '$user.followers_count',
-      },
-    },
-    { $sort: sortBy },
-    { $limit: limit },
-    { $skip: skip },
-  ];
-
-  const { users } = await Subscriptions.aggregate({ pipeline });
-  return users;
 };
 
 module.exports = {
