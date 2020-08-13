@@ -6,8 +6,6 @@ module.exports = async ({
   const result = await followersHelper.sortUsers({
     field: 'following', name, limit: limit + 1, skip, sort,
   });
-  const hasMore = result.length === limit + 1;
-  result.pop();
 
-  return { result: { followers: result, hasMore } };
+  return { result: { followers: result.slice(0, limit), hasMore: result.length === limit + 1 } };
 };

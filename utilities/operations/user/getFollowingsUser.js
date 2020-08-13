@@ -8,10 +8,8 @@ exports.getAll = async ({
   const result = await followersHelper.sortUsers({
     field: 'follower', name, limit: limit + 1, skip, sort,
   });
-  const hasMore = result.length === limit + 1;
-  result.pop();
 
-  return { result: { users: result, hasMore } };
+  return { result: { users: result.slice(0, limit), hasMore: result.length === limit + 1 } };
 };
 
 // returns collection of users or permlinks with boolean markers

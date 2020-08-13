@@ -34,7 +34,7 @@ const formatWobjectFollowers = async (wObject) => {
   return [];
 };
 
-const lightSort = async ({
+const sortBeforePopulate = async ({
   limit, skip, select, path, condition, populate, sortData,
 }) => {
   const { users } = await Subscriptions.populate({
@@ -46,7 +46,7 @@ const lightSort = async ({
     .value();
 };
 
-const hardSort = async ({
+const sortAfterPopulate = async ({
   limit, skip, select, path, condition, populate, sortData,
 }) => {
   const { users } = await Subscriptions.populate({
@@ -78,20 +78,14 @@ const sortUsers = async ({
 
   switch (sort) {
     case 'recency':
-      return lightSort({
-        select, limit, skip, path, condition, populate, sortData: { _id: -1 },
-      });
     case 'alphabet':
-      return lightSort({
-        select, limit, skip, path, condition, populate, sortData: { [`${select}`]: 1 },
+      return sortBeforePopulate({
+        select, limit, skip, path, condition, populate, sortData: sort === 'recency' ? { _id: -1 } : { [`${select}`]: 1 },
       });
     case 'rank':
-      return hardSort({
-        limit, skip, select, path, condition, populate, sortData: 'wobjects_weight',
-      });
     case 'followers':
-      return hardSort({
-        limit, skip, select, path, condition, populate, sortData: 'followers_count',
+      return sortAfterPopulate({
+        limit, skip, select, path, condition, populate, sortData: sort === 'rank' ? 'wobjects_weight' : 'followers_count',
       });
   }
 };
