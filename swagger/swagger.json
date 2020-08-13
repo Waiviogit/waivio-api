@@ -830,6 +830,53 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/getField" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return wobj field with data to show",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "wobject which field need to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fieldName",
+          "in" : "query",
+          "description" : "name of field",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "fieldId",
+          "in" : "query",
+          "description" : "_id of field",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "app",
+          "in" : "header",
+          "description" : "name of app",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "locale",
+          "in" : "header",
+          "description" : "Users locale",
+          "required" : false,
+          "type" : "string",
+          "default": "en-US"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/wobjField"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject/{authorPermlink}" : {
       "get" : {
         "tags" : [ "wobject" ],
@@ -1113,6 +1160,19 @@
           "in" : "query",
           "required" : false,
           "type" : "integer"
+        }, {
+          "name" : "app",
+          "in" : "header",
+          "required" : false,
+          "description": "app for filling objects",
+          "type" : "string"
+        },{
+          "name" : "locale",
+          "in" : "header",
+          "required" : false,
+          "description": "user locale for filling objects",
+          "default": "en-US",
+          "type" : "string"
         } ],
         "responses" : {
           "200" : {
@@ -1867,6 +1927,39 @@
           "items": {
             "type": "string"
           }
+        }
+      }
+    },
+    "wobjField": {
+      "type": "object",
+      "example": {
+        "toDisplay": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
+        "field": {
+          "weight": 1,
+          "locale": "en-US",
+          "_id": "5ccf4aa2d0555b20e12b26bc",
+          "creator": "diningguide",
+          "author": "jkl65",
+          "permlink": "diningguide-1v9z8t55y33",
+          "name": "avatar",
+          "body": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
+          "active_votes": [
+            {
+              "_id": "5ccf4aa5d0555b20e12b2a81",
+              "voter": "diningguide",
+              "weight": 1,
+              "rshares_weight": 0,
+              "percent": 100
+            }
+          ],
+          "children": 0,
+          "total_payout_value": "0.000 HBD",
+          "pending_payout_value": "0.000 HBD",
+          "curator_payout_value": "0.000 HBD",
+          "cashout_time": "1969-12-31T23:59:59",
+          "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
+          "approvePercent": 100,
+          "createdAt": 1557088930000
         }
       }
     },

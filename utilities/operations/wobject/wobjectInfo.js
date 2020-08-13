@@ -49,7 +49,7 @@ const getListItems = async (wobject, data, admins) => {
     obj = await wObjectHelper.processWobjects({
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, admins,
     });
-
+    obj.type = _.find(fields, (field) => field.body === obj.author_permlink).type;
     obj.parent = await getParentInfo(obj, data, admins);
 
     obj.listItemsCount = await getItemsCount(

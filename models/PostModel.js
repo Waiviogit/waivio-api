@@ -56,12 +56,9 @@ exports.getAllPosts = async (data) => {
 };
 
 exports.fillObjects = async (posts, locale = 'en-US', wobjectsPath = 'fullObjects') => {
-  const fields = REQUIREDFIELDS.map((item) => ({ name: item }));
-
   for (const post of posts) {
     for (let wObject of _.get(post, 'wobjects') || []) {
       wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
-      wObjectHelper.formatRequireFields(wObject, locale, fields);
     }
     delete post[wobjectsPath];
   }
