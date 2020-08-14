@@ -109,6 +109,7 @@ const arrayFieldFilter = ({
 };
 
 const filterFieldValidation = (filter, field, locale) => {
+  locale === 'auto' ? locale = 'en-US' : null;
   const localeIndependentFields = ['status', 'map', 'parent'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
