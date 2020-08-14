@@ -44,6 +44,7 @@ exports.usersFollowSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).max(100)
     .default(50),
   skip: Joi.number().integer().min(0).default(0),
+  sort: Joi.string().valid('rank', 'alphabet', 'followers', 'recency').default('rank'),
 });
 
 exports.objectsFeedSchema = Joi.object().keys({
@@ -168,8 +169,10 @@ exports.followingWobjectsUpdates = Joi.object().keys({
 
 exports.getFollowers = Joi.object().keys({
   name: Joi.string().required(),
-  limit: Joi.number().integer().min(0).default(30),
+  limit: Joi.number().integer().min(0).max(100)
+    .default(30),
   skip: Joi.number().integer().min(0).default(0),
+  sort: Joi.string().valid('rank', 'alphabet', 'followers', 'recency').default('rank'),
 });
 
 exports.comments = Joi.object().keys({

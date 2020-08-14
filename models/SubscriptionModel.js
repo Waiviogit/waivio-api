@@ -54,6 +54,24 @@ exports.getFollowings = async ({ follower, skip = 0, limit = 30 }) => {
   }
 };
 
+exports.populate = async ({
+  condition, select, sort, skip, limit, populate,
+}) => {
+  try {
+    const result = await Subscriptions
+      .find(condition)
+      .select(select)
+      .sort(sort)
+      .skip(skip)
+      .limit(limit)
+      .populate(populate)
+      .lean();
+    return { users: result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.find = async ({
   condition, skip, limit, sort,
 }) => {

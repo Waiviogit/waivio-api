@@ -1,28 +1,15 @@
 const _ = require('lodash');
 const { User, Subscriptions } = require('models');
+const { followersHelper } = require('utilities/helpers');
 
-exports.getAll = async ({ name, skip, limit }) => {
-  const { users, error } = await Subscriptions
-    .getFollowings({ follower: name, skip, limit: limit + 1 });
-  if (error) return { error };
-  if (!users.length) return { result: { users: [], hasMore: false } };
+exports.getAll = async ({
+  name, skip, limit, sort,
+}) => {
+  const result = await followersHelper.sortUsers({
+    field: 'follower', name, limit: limit + 1, skip, sort,
+  });
 
-  const { usersData, error: usersError } = await User.find(
-    { condition: { name: { $in: users } } },
-  );
-  if (usersError) return { error: usersError };
-
-  const result = _
-    .chain(usersData)
-    .map((user) => ({
-      name: user.name,
-      wobjects_weight: user.wobjects_weight,
-      followers_count: user.followers_count,
-    }))
-    .slice(0, limit)
-    .value();
-
-  return { result: { users: result, hasMore: users.length === limit + 1 } };
+  return { result: { users: result.slice(0, limit), hasMore: result.length === limit + 1 } };
 };
 
 // returns collection of users or permlinks with boolean markers
