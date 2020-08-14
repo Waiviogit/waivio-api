@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const AuthoritySchema = new Schema({
+  administrative: { type: [String], default: [] },
+  ownership: { type: [String], default: [] },
+}, { _id: false });
+
 const WObjectSchema = new Schema(
   {
     app: String,
@@ -20,6 +25,7 @@ const WObjectSchema = new Schema(
     count_posts: { type: Number, default: 0 },
     parent: { type: String, default: '' },
     children: { type: [String], default: [] },
+    authority: { type: AuthoritySchema, default: () => ({}) },
     fields: [{
       name: { type: String, index: true },
       body: { type: String },
@@ -67,7 +73,6 @@ WObjectSchema.virtual('followers', {
   foreignField: 'objects_follow',
   justOne: false,
 });
-
 
 WObjectSchema.virtual('users', {
   ref: 'User',

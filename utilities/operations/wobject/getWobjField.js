@@ -6,14 +6,14 @@ module.exports = async ({
   authorPermlink, fieldId, fieldName, locale, app,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink, fieldName);
-  const { error: appError, admins } = await appHelper.getAppAdmins(app);
+  const { error: appError, app: appData } = await appHelper.getApp(app);
   if (error || appError) return { error: error || appError };
 
   const filteredObject = await wObjectHelper.processWobjects({
     wobjects: [wobject],
     fields: SPECIFIC_FIELDS_MAPPINGS[fieldName] || fieldName,
     locale,
-    admins,
+    app: appData,
     returnArray: false,
     hiveData: true,
   });

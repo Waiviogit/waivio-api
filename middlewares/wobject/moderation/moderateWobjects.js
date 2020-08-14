@@ -29,21 +29,21 @@ exports.moderate = async (req, res, next) => {
       // root result is single wobject
       res.result.json = await wobjectHelper.processWobjects({
         wobjects: [res.result.json],
-        admins: app.admins,
+        app,
         hiveData: true,
         returnArray: false,
         locale: req.headers.locale,
       });
       break;
     case 2:
-      res.result.json = await newValidation(res.result.json, app.admins || [], req.headers.locale);
+      res.result.json = await newValidation(res.result.json, app, req.headers.locale);
       break;
     case 4:
-      res.result.json = await newValidationArray(res.result.json, app.admins, req.headers.locale, currentSchema.wobjects_path);
+      res.result.json = await newValidationArray(res.result.json, app, req.headers.locale, currentSchema.wobjects_path);
       break;
     case 6:
       res.result.json[currentSchema.wobjects_path] = await newValidation(
-        res.result.json[currentSchema.wobjects_path], app.admins || [], req.headers.locale,
+        res.result.json[currentSchema.wobjects_path], app, req.headers.locale,
       );
       break;
   }
@@ -64,12 +64,12 @@ const getApp = async (req) => {
   return App.getOne({ name: appName });
 };
 
-const newValidationArray = async (posts, admins, locale, path) => {
+const newValidationArray = async (posts, app, locale, path) => {
   await Promise.all(posts.map(async (post) => {
     if (post[path]) {
       post[path] = await wobjectHelper.processWobjects({
         wobjects: post[path],
-        admins,
+        app,
         hiveData: false,
         returnArray: true,
         locale,
@@ -80,6 +80,6 @@ const newValidationArray = async (posts, admins, locale, path) => {
   return posts;
 };
 
-const newValidation = async (wobjects, admins, locale) => wobjectHelper.processWobjects({
-  wobjects, admins, hiveData: false, returnArray: true, locale,
+const newValidation = async (wobjects, app, locale) => wobjectHelper.processWobjects({
+  wobjects, app, hiveData: false, returnArray: true, locale,
 });

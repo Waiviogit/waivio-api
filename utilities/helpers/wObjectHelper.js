@@ -12,11 +12,9 @@ const getUserSharesInWobj = async (name, author_permlink) => {
   return _.get(userObjectShare, 'weight') || 0;
 };
 
-const getWobjectFields = async (permlink, fieldName) => {
+const getWobjectFields = async (permlink) => {
   const { result } = await Wobj.findOne(permlink);
   if (!result) return { error: { status: 404, message: 'Wobject not found' } };
-  // result.fields = _.filter(result.fields, { name: fieldName });
-  // if (!result.fields.length) return { error: { status: 404, message: 'field not found' } };
   return { wobject: result };
 };
 
@@ -149,7 +147,8 @@ const getFieldsToDisplay = (fields, locale, filter, permlink) => {
 };
 
 const processWobjects = async ({
-  wobjects, fields, hiveData = false, locale = 'en-US', admins = [], returnArray = true,
+  wobjects, fields, hiveData = false, locale = 'en-US',
+  app, returnArray = true,
 }) => {
   if (!_.isArray(wobjects)) return [];
   for (const obj of wobjects) {
@@ -167,7 +166,7 @@ const processWobjects = async ({
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, admins, fields);
+    obj.fields = addDataToFields(obj.fields, _.get(app, 'admins', []), fields);
     Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink));
     // get right count of photos in object in request for only one object
     if (!fields) {
@@ -177,20 +176,20 @@ const processWobjects = async ({
 
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
-    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, admins);
+    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
   }
   if (!returnArray) return wobjects[0];
   return wobjects;
 };
 
-const getParentInfo = async (wObject, locale, admins) => {
+const getParentInfo = async (wObject, locale, app) => {
   if (wObject.parent) {
     // Temporary solution
     const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
     wObject.parent = fullParent;
 
     wObject.parent = await processWobjects({
-      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, admins,
+      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, app,
     });
   } else wObject.parent = '';
   return wObject.parent;

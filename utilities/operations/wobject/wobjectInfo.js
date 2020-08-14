@@ -5,9 +5,9 @@ const {
 const { REQUIREDFIELDS } = require('utilities/constants');
 const { objectTypeHelper, wObjectHelper } = require('utilities/helpers');
 
-const getParentInfo = async (wObject, data, admins) => {
+const getParentInfo = async (wObject, data, app) => {
   const { parent } = await wObjectHelper.processWobjects({
-    fields: ['parent'], wobjects: [_.cloneDeep(wObject)], returnArray: false, locale: data.locale, admins,
+    fields: ['parent'], wobjects: [_.cloneDeep(wObject)], returnArray: false, locale: data.locale, app,
   });
   return parent || '';
 };
@@ -38,7 +38,7 @@ const getItemsCount = async (authorPermlink, handledItems) => {
   return count;
 };
 
-const getListItems = async (wobject, data, admins) => {
+const getListItems = async (wobject, data, app) => {
   const fields = _.filter(wobject.fields, (field) => field.name === 'listItem');
   const { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
 
@@ -47,10 +47,10 @@ const getListItems = async (wobject, data, admins) => {
       obj.listItemsCount = obj.fields.filter((f) => f.name === 'listItem').length;
     }
     obj = await wObjectHelper.processWobjects({
-      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, admins,
+      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, app,
     });
     obj.type = _.find(fields, (field) => field.body === obj.author_permlink).type;
-    obj.parent = await getParentInfo(obj, data, admins);
+    obj.parent = await getParentInfo(obj, data, app);
 
     obj.listItemsCount = await getItemsCount(
       obj.author_permlink,
@@ -78,16 +78,15 @@ const getOne = async (data) => { // get one wobject by author_permlink
   const { count } = await User.getCustomCount({ objects_follow: wObject.author_permlink });
   wObject.followers_count = count || 0;
 
-  let admins = [];
+  let app;
   if (data.appName) {
-    const { app } = await App.getOne({ name: data.appName });
-    if (app) admins = app.admins;
+    ({ app } = await App.getOne({ name: data.appName }));
   }
 
   // format listItems field
   const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
   if (_.find(wObject.fields, { name: 'listItem' })) {
-    const { wobjects } = await getListItems(wObject, data, admins);
+    const { wobjects } = await getListItems(wObject, data, app);
     wObject[keyName] = wobjects;
   }
 
