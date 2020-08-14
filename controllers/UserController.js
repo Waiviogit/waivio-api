@@ -97,6 +97,7 @@ const usersFollow = async (req, res, next) => {
     name: req.params.userName,
     limit: req.query.limit,
     skip: req.query.skip,
+    sort: req.query.sort,
   }, validators.user.usersFollowSchema, next);
 
   if (!value) return;
@@ -261,6 +262,7 @@ const followers = async (req, res, next) => {
     name: req.params.userName,
     limit: req.query.limit,
     skip: req.query.skip,
+    sort: req.query.sort,
   }, validators.user.getFollowers, next);
 
   if (!value) return;
