@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { wObjectHelper, appHelper } = require('utilities/helpers');
-const { SPECIFIC_FIELDS_MAPPINGS } = require('utilities/constants');
+const { SPECIFIC_FIELDS_MAPPINGS } = require('constants/wobjectsData');
 
 module.exports = async ({
   authorPermlink, fieldId, fieldName, locale, app,

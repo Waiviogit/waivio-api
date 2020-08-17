@@ -1,4 +1,4 @@
-const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('utilities/constants');
+const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
 const {
   Wobj, ObjectType, Campaign, User,
 } = require('models');

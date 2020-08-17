@@ -2,8 +2,9 @@ const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
-const { categorySwitcher } = require('utilities/constants');
-const { REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES } = require('utilities/constants');
+const {
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES, categorySwitcher,
+} = require('constants/wobjectsData');
 
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
@@ -128,6 +129,11 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   const localeIndependentFields = ['status', 'map', 'parent'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
+  if (ownership) {
+    result = result && _.includes(
+      [ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN], _.get(field, 'adminVote.role'),
+    );
+  }
   return result;
 };
 
@@ -152,7 +158,10 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     }
 
     if (approvedFields.length) {
-      winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
+      const adminVotes = _.filter(approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
+      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
+      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
@@ -183,12 +192,13 @@ const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
   app, returnArray = true,
 }) => {
-  if (!_.isArray(wobjects)) return [];
-  for (const obj of wobjects) {
+  const filteredWobj = [];
+  if (!_.isArray(wobjects)) return filteredWobj;
+  for (let obj of wobjects) {
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), app.ownership);
-    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), app.administrative);
+    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), app.authority.ownership);
+    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), app.authority.administrative);
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
@@ -209,6 +219,8 @@ const processWobjects = async ({
       });
     }
     obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
+    /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
+    obj = _.omit(obj, ['map', 'tagCategories']);
     Object.assign(obj,
       getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
     /** Get right count of photos in object in request for only one object */
@@ -221,9 +233,10 @@ const processWobjects = async ({
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    filteredWobj.push(obj);
   }
-  if (!returnArray) return wobjects[0];
-  return wobjects;
+  if (!returnArray) return filteredWobj[0];
+  return filteredWobj;
 };
 
 module.exports = {

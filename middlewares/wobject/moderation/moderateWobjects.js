@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFIELDS_POST } = require('utilities/constants');
+const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 
 exports.moderate = async (req, res, next) => {
   /*

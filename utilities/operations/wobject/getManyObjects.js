@@ -1,7 +1,7 @@
 const { Wobj } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('utilities/constants');
+const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('constants/wobjectsData');
 
 const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
