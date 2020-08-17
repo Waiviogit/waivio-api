@@ -1,6 +1,6 @@
 
 const { WObject, Post } = require('database').models;
-const { WOBJECT_LATEST_POSTS_COUNT } = require('utilities/constants');
+const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
 /**
  * Make any changes you need to make to the database here
  */

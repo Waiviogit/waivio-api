@@ -2,12 +2,16 @@ const _ = require('lodash');
 const {
   Wobj, Campaign, User, App,
 } = require('models');
-const { REQUIREDFIELDS } = require('utilities/constants');
+const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { objectTypeHelper, wObjectHelper } = require('utilities/helpers');
 
-const getParentInfo = async (wObject, data, admins) => {
+const getParentInfo = async (wObject, data, app) => {
   const { parent } = await wObjectHelper.processWobjects({
-    fields: ['parent'], wobjects: [_.cloneDeep(wObject)], returnArray: false, locale: data.locale, admins,
+    fields: [FIELDS_NAMES.PARENT],
+    wobjects: [_.cloneDeep(wObject)],
+    returnArray: false,
+    locale: data.locale,
+    app,
   });
   return parent || '';
 };
@@ -24,7 +28,7 @@ const getItemsCount = async (authorPermlink, handledItems) => {
   const { result: wobject, error } = await Wobj.findOne(authorPermlink);
   if (error || !wobject) return 0;
 
-  const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === 'listItem'), 'body');
+  const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM), 'body');
 
   if (_.isEmpty(listWobjects)) return 1;
 
@@ -38,19 +42,27 @@ const getItemsCount = async (authorPermlink, handledItems) => {
   return count;
 };
 
-const getListItems = async (wobject, data, admins) => {
-  const fields = _.filter(wobject.fields, (field) => field.name === 'listItem');
+const getListItems = async (wobject, data, app) => {
+  // const fields = _.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM);
+  const fields = (await wObjectHelper.processWobjects({
+    locale: data.locale,
+    fields: [FIELDS_NAMES.LIST_ITEM],
+    wobjects: [_.cloneDeep(wobject)],
+    returnArray: false,
+    app,
+  }))[FIELDS_NAMES.LIST_ITEM];
+  if (!fields) return { wobjects: [] };
   const { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
 
   for (let obj of wobjects) {
     if (obj.object_type.toLowerCase() === 'list') {
-      obj.listItemsCount = obj.fields.filter((f) => f.name === 'listItem').length;
+      obj.listItemsCount = obj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     obj = await wObjectHelper.processWobjects({
-      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, admins,
+      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, app,
     });
     obj.type = _.find(fields, (field) => field.body === obj.author_permlink).type;
-    obj.parent = await getParentInfo(obj, data, admins);
+    obj.parent = await getParentInfo(obj, data, app);
 
     obj.listItemsCount = await getItemsCount(
       obj.author_permlink,
@@ -78,17 +90,16 @@ const getOne = async (data) => { // get one wobject by author_permlink
   const { count } = await User.getCustomCount({ objects_follow: wObject.author_permlink });
   wObject.followers_count = count || 0;
 
-  let admins = [];
+  let app;
   if (data.appName) {
-    const { app } = await App.getOne({ name: data.appName });
-    if (app) admins = app.admins;
+    ({ app } = await App.getOne({ name: data.appName }));
   }
 
   // format listItems field
-  const keyName = wObject.object_type.toLowerCase() === 'list' ? 'listItems' : 'menuItems';
-  if (_.find(wObject.fields, { name: 'listItem' })) {
-    const { wobjects } = await getListItems(wObject, data, admins);
-    wObject[keyName] = wobjects;
+  const keyName = wObject.object_type.toLowerCase() === OBJECT_TYPES.LIST ? 'listItems' : 'menuItems';
+  if (_.find(wObject.fields, { name: FIELDS_NAMES.LIST_ITEM })) {
+    const { wobjects } = await getListItems(wObject, data, app);
+    if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
 
   return { wobjectData: wObject };

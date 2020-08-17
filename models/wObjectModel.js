@@ -1,7 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS } = require('utilities/constants');
+const { REQUIREDFIELDS } = require('constants/wobjectsData');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {

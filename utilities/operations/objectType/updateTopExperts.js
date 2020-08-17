@@ -1,5 +1,5 @@
 const { WObject, ObjectType, UserWobjects } = require('database').models;
-const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('utilities/constants');
+const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('constants/wobjectsData');
 const _ = require('lodash');
 
 const getObjectTypeWobjects = async (name) => {

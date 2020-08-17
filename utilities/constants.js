@@ -1,31 +1,3 @@
-exports.REQUIREDFIELDS = [
-  'name',
-  'title',
-  'website',
-  'avatar',
-  'background',
-  'address',
-  'description',
-  'map',
-  'link',
-  'tag',
-  'phone',
-  'email',
-  'rating',
-  'parent',
-  'tagCloud',
-  'price',
-  'button',
-  'workTime',
-  'chartid',
-  'newsFilter',
-  'pageContent',
-  'status',
-];
-exports.REQUIREDFIELDS_PARENT = ['name', 'avatar'];
-exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating', 'parent'];
-exports.REQUIREDFIELDS_CHILD = ['name', 'avatar'];
-exports.REQUIREDFIELDS_POST = ['name', 'avatar', 'title', 'parent'];
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',
@@ -68,10 +40,7 @@ exports.LANGUAGES = ['en-US',
   'zh-CN',
   'auto',
 ];
-exports.WOBJECT_LATEST_POSTS_COUNT = 30;
-exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
-exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
-exports.LOW_PRIORITY_STATUS_FLAGS = ['relisted', 'unavailable'];
+
 exports.DAYS_FOR_HOT_FEED = 3;
 exports.DAYS_FOR_TRENDING_FEED = 3;
 
@@ -84,23 +53,9 @@ exports.COMMENT_REF_TYPES = {
   wobjType: 'wobj_type',
 };
 exports.MAX_IMPORTING_USERS = 20;
-exports.GALLERY_WOBJECT_ID = 'wobject_id';
 
 exports.HOT_NEWS_CACHE_PREFIX = 'hot_locale_cache';
 exports.HOT_NEWS_CACHE_SIZE = 1000;
 exports.TREND_NEWS_CACHE_PREFIX = 'trend_locale_cache';
 exports.TREND_FILTERED_NEWS_CACHE_PREFIX = 'trend_filtered_locale_cache';
 exports.TREND_NEWS_CACHE_SIZE = 1000;
-exports.MIN_PERCENT_TO_SHOW_UPGATE = 70;
-
-exports.categorySwitcher = {
-  galleryAlbum: 'galleryItem',
-  tagCategory: 'categoryItem',
-};
-
-exports.SPECIFIC_FIELDS_MAPPINGS = {
-  tagCategory: ['tagCategory', 'categoryItem'],
-  galleryAlbum: ['galleryAlbum', 'galleryItem'],
-  categoryItem: ['tagCategory', 'categoryItem'],
-  avatar: ['avatar', 'parent'],
-};
