@@ -359,7 +359,11 @@ describe('On wobjectHelper', async () => {
 
   });
 
-    describe('on administrative vote at object with ownership', async () => {
+  describe('on administrative vote at object with ownership', async () => {
 
-    });
+  });
+
+  describe('with another user locale', async () => {
+
+  });
 });
