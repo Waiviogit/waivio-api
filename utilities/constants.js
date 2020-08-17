@@ -104,3 +104,9 @@ exports.SPECIFIC_FIELDS_MAPPINGS = {
   categoryItem: ['tagCategory', 'categoryItem'],
   avatar: ['avatar', 'parent'],
 };
+
+exports.ADMIN_ROLES = {
+  ADMIN: 'admin',
+  OWNERSHIP: 'ownership',
+  ADMINISTRATIVE: 'administrative',
+};
