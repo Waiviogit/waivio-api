@@ -220,7 +220,7 @@ const processWobjects = async ({
     }
     obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
-    obj = _.omit(obj, ['map', 'tagCategories']);
+    obj = _.omit(obj, ['map']);
     Object.assign(obj,
       getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
     /** Get right count of photos in object in request for only one object */
