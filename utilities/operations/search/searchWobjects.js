@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { Wobj, App } = require('models');
-const { REQUIREDFIELDS_SEARCH } = require('utilities/constants');
+const { REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase

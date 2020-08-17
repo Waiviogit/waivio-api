@@ -1,6 +1,4 @@
 const PostModel = require('database').models.Post;
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFIELDS } = require('utilities/constants');
 const AppModel = require('models/AppModel');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -16,20 +14,6 @@ exports.getAllPosts = async (data) => {
           from: 'wobjects',
           localField: 'wobjects.author_permlink',
           foreignField: 'author_permlink',
-          //let: { permlink: '$wobjects.author_permlink' },
-          // pipeline: [
-          //   { $match: { $expr: { $eq: ['$author_permlink', '$$permlink'] } } },
-          //   {
-          //     $project: {
-          //       fields: 1,
-          //       author_permlink: 1,
-          //       parent: 1,
-          //       weight: 1,
-          //       object_type: 1,
-          //       default_name: 1,
-          //     },
-          //   },
-          // ],
           as: 'fullObjects',
         },
       },

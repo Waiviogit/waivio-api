@@ -4,7 +4,7 @@ const {
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
 const _ = require('lodash');
-const { REQUIREDFIELDS_POST } = require('utilities/constants');
+const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 
 /**
  * Get wobjects data for particular post

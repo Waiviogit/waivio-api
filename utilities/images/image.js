@@ -48,6 +48,7 @@ class Image {
     } if (size === '_medium') {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
+    if (buffer.byteLength > 1500000) return sharp(buffer).resize(1980).toFormat('jpeg').toBuffer();
     return buffer;
   }
 }

@@ -2,8 +2,9 @@ const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
-const { categorySwitcher } = require('utilities/constants');
-const { REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE } = require('utilities/constants');
+const {
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES, categorySwitcher,
+} = require('constants/wobjectsData');
 
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
@@ -12,11 +13,9 @@ const getUserSharesInWobj = async (name, author_permlink) => {
   return _.get(userObjectShare, 'weight') || 0;
 };
 
-const getWobjectFields = async (permlink, fieldName) => {
+const getWobjectFields = async (permlink) => {
   const { result } = await Wobj.findOne(permlink);
   if (!result) return { error: { status: 404, message: 'Wobject not found' } };
-  // result.fields = _.filter(result.fields, { name: fieldName });
-  // if (!result.fields.length) return { error: { status: 404, message: 'field not found' } };
   return { wobject: result };
 };
 
@@ -36,28 +35,45 @@ const calculateApprovePercent = (field) => {
   return percent > 0 ? percent : 0;
 };
 
-const addDataToFields = (fields, admins, filter) => {
+/** We have some types of admins at wobject, in this method we find admin role type */
+const getFieldVoteRole = (vote) => {
+  let role = ADMIN_ROLES.ADMIN;
+  vote.ownership ? role = ADMIN_ROLES.OWNERSHIP : null;
+  vote.administrative ? role = ADMIN_ROLES.ADMINISTRATIVE : null;
+  return role;
+};
+
+const addDataToFields = (fields, filter, admins, ownership, administrative) => {
+  /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
+
   for (const field of fields) {
-    const adminVotes = [];
+    let adminVote, administrativeVote, ownershipVote;
     _.map(field.active_votes, (vote) => {
+      vote.timestamp = vote._id.getTimestamp().valueOf();
       if (_.includes(admins, vote.voter)) {
-        adminVotes.push(vote);
         vote.admin = true;
-        vote.timestamp = vote._id.getTimestamp().valueOf();
+        vote.timestamp > _.get(adminVote, 'timestamp', 0) ? adminVote = vote : null;
+      } else if (_.includes(administrative, vote.voter)) {
+        vote.administrative = true;
+        vote.timestamp > _.get(administrativeVote, 'timestamp', 0) ? administrativeVote = vote : null;
+      } else if (_.includes(ownership, vote.voter)) {
+        vote.ownership = true;
+        vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
     });
-    if (adminVotes.length) {
-      const lastVote = _.maxBy(adminVotes, 'timestamp');
-      field.adminVote = {
-        role: 'admin',
-        status: lastVote.percent > 0 ? 'approved' : 'rejected',
-        name: lastVote.voter,
-        timestamp: lastVote.timestamp,
-      };
-    }
     field.approvePercent = calculateApprovePercent(field);
     field.createdAt = field._id.getTimestamp().valueOf();
+    /** If field includes admin votes fill in it */
+    if (adminVote || administrativeVote || ownershipVote) {
+      const mainVote = adminVote || ownershipVote || administrativeVote;
+      field.adminVote = {
+        role: getFieldVoteRole(mainVote),
+        status: mainVote.percent > 0 ? 'approved' : 'rejected',
+        name: mainVote.voter,
+        timestamp: mainVote.timestamp,
+      };
+    }
   }
   return fields;
 };
@@ -108,19 +124,24 @@ const arrayFieldFilter = ({
   return _.compact(validFields);
 };
 
-const filterFieldValidation = (filter, field, locale) => {
+const filterFieldValidation = (filter, field, locale, ownership) => {
   field.locale === 'auto' ? field.locale = 'en-US' : null;
   const localeIndependentFields = ['status', 'map', 'parent'];
   let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
+  if (ownership) {
+    result = result && _.includes(
+      [ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN], _.get(field, 'adminVote.role'),
+    );
+  }
   return result;
 };
 
-const getFieldsToDisplay = (fields, locale, filter, permlink) => {
+const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button', 'phone'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
-    (field) => filterFieldValidation(filter, field, locale));
+    (field) => filterFieldValidation(filter, field, locale, ownership));
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
@@ -137,7 +158,10 @@ const getFieldsToDisplay = (fields, locale, filter, permlink) => {
     }
 
     if (approvedFields.length) {
-      winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
+      const adminVotes = _.filter(approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
+      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
+      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
@@ -149,13 +173,38 @@ const getFieldsToDisplay = (fields, locale, filter, permlink) => {
   return winningFields;
 };
 
+/** Get info of wobject parent with specific winning fields */
+const getParentInfo = async (wObject, locale, app) => {
+  if (wObject.parent) {
+    // Temporary solution
+    const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
+    wObject.parent = fullParent;
+
+    wObject.parent = await processWobjects({
+      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, app,
+    });
+  } else wObject.parent = '';
+  return wObject.parent;
+};
+
+/** Parse wobjects to get its winning */
 const processWobjects = async ({
-  wobjects, fields, hiveData = false, locale = 'en-US', admins = [], returnArray = true,
+  wobjects, fields, hiveData = false, locale = 'en-US',
+  app, returnArray = true,
 }) => {
-  if (!_.isArray(wobjects)) return [];
-  for (const obj of wobjects) {
+  const filteredWobj = [];
+  if (!_.isArray(wobjects)) return filteredWobj;
+  for (let obj of wobjects) {
+    /** Get app admins, wobj administrators, which was approved by app owner(creator) */
+    const admins = _.get(app, 'admins', []);
+    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), app.authority.ownership);
+    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), app.authority.administrative);
+
+    /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
-      const { result } = await postsUtil.getPostState({ author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' });
+      const { result } = await postsUtil.getPostState(
+        { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
+      );
       if (!result) {
         obj.fields = [];
         continue;
@@ -164,37 +213,30 @@ const processWobjects = async ({
         const post = _.get(result, `content.${field.author}/${field.permlink}`);
         if (!post) delete obj.fields[index];
         Object.assign(field,
-          _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+          _.pick(post, ['children', 'total_pending_payout_value',
+            'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, admins, fields);
-    Object.assign(obj, getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink));
-    // get right count of photos in object in request for only one object
+    obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
+    /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
+    obj = _.omit(obj, ['map', 'tagCategories']);
+    Object.assign(obj,
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
+    /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
       obj.photos_count = _.get(obj, 'galleryItem', []).length;
-      obj.preview_gallery = _.orderBy(_.get(obj, 'galleryItem', []), ['weight'], ['asc']).slice(0, 3);
-
+      obj.preview_gallery = _.orderBy(
+        _.get(obj, 'galleryItem', []), ['weight'], ['asc'],
+      );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
-    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, admins);
+    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    filteredWobj.push(obj);
   }
-  if (!returnArray) return wobjects[0];
-  return wobjects;
-};
-
-const getParentInfo = async (wObject, locale, admins) => {
-  if (wObject.parent) {
-    // Temporary solution
-    const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
-    wObject.parent = fullParent;
-
-    wObject.parent = await processWobjects({
-      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, admins,
-    });
-  } else wObject.parent = '';
-  return wObject.parent;
+  if (!returnArray) return filteredWobj[0];
+  return filteredWobj;
 };
 
 module.exports = {

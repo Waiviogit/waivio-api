@@ -8,7 +8,7 @@ module.exports = async (data) => {
   const { app } = await App.getOne({ name: data.app });
   const { galleryAlbum } = await wObjectHelper.processWobjects({
     fields: ['galleryAlbum', 'galleryItem'],
-    admins: _.get(app, 'admins', []),
+    app,
     locale: data.locale,
     wobjects: [_.cloneDeep(wObject)],
     returnArray: false,

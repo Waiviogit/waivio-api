@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { Wobj } = require('models');
-const { REQUIREDFIELDS_CHILD } = require('utilities/constants');
+const { REQUIREDFIELDS_CHILD } = require('constants/wobjectsData');
 
 // eslint-disable-next-line camelcase
 module.exports = async ({ skip, limit, author_permlink }) => {
