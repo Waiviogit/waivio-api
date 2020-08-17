@@ -20,9 +20,9 @@ const getWobjectFields = async (permlink) => {
 };
 
 const calculateApprovePercent = (field) => {
-  if (field.weight < 0) return 0;
   if (_.isEmpty(field.active_votes)) return 100;
   if (field.adminVote) return field.adminVote.status === 'approved' ? 100 : 0;
+  if (field.weight < 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent < 0) return -(+vote.weight);
@@ -62,7 +62,6 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
         vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
     });
-    field.approvePercent = calculateApprovePercent(field);
     field.createdAt = field._id.getTimestamp().valueOf();
     /** If field includes admin votes fill in it */
     if (adminVote || administrativeVote || ownershipVote) {
@@ -74,6 +73,7 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
         timestamp: mainVote.timestamp,
       };
     }
+    field.approvePercent = calculateApprovePercent(field);
   }
   return fields;
 };
@@ -110,7 +110,9 @@ const arrayFieldFilter = ({
       case 'listItem':
         if (_.includes(filter, 'galleryAlbum')) break;
         if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
-        else if (field.weight > 0) validFields.push(field);
+        else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+          validFields.push(field);
+        }
         break;
       default:
         break;
@@ -228,7 +230,7 @@ const processWobjects = async ({
       obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
       obj.photos_count = _.get(obj, 'galleryItem', []).length;
       obj.preview_gallery = _.orderBy(
-        _.get(obj, 'galleryItem', []), ['weight'], ['asc'],
+        _.get(obj, 'galleryItem', []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }

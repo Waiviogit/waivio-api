@@ -118,13 +118,13 @@ describe('Post Model', async () => {
       const { post: receivedPost } = await PostModel.getOne(
         _.pick(post, 'author', 'permlink'),
       );
-      expect(receivedPost).to.be.deep.eq(_.omit(post, 'post_id'));
+      expect(_.omit(receivedPost, ['fullObjects'])).to.be.deep.eq(_.omit(post, 'post_id'));
     });
     it('Should check post for identity using root_author key ', async () => {
       const { post: receivedPost } = await PostModel.getOne(
         _.pick(post, 'root_author', 'permlink'),
       );
-      expect(receivedPost).to.be.deep.eq(_.omit(post, 'post_id'));
+      expect(_.omit(receivedPost, ['fullObjects'])).to.be.deep.eq(_.omit(post, 'post_id'));
     });
     it('Should return null when post cannot be found', async () => {
       const { post: receivedPost } = await PostModel.getOne(
