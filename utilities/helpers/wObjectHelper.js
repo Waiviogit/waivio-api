@@ -21,16 +21,24 @@ const getWobjectFields = async (permlink) => {
 
 const calculateApprovePercent = (field) => {
   if (_.isEmpty(field.active_votes)) return 100;
+  let approveCounter = 0, rejectCounter = 0;
   if (field.adminVote) return field.adminVote.status === 'approved' ? 100 : 0;
   if (field.weight < 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
-    if (vote.percent < 0) return -(+vote.weight);
+    if (vote.percent < 0) {
+      rejectCounter++;
+      return -(+vote.weight);
+    }
   }) || 0;
-  if (!rejectsWeight) return 100;
   const approvesWeight = _.sumBy(field.active_votes, (vote) => {
-    if (vote.percent > 0) return +vote.weight;
+    if (vote.percent > 0) {
+      approveCounter++;
+      return +vote.weight;
+    }
   }) || 0;
+  if (!approveCounter && rejectCounter) return 0;
+  if (!rejectsWeight) return 100;
   const percent = _.round((approvesWeight / (approvesWeight + rejectsWeight)) * 100, 3);
   return percent > 0 ? percent : 0;
 };
