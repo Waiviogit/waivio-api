@@ -4,4 +4,5 @@ module.exports = {
   PostFactory: require('./PostFactory/PostFactory'),
   ObjectFactory: require('./ObjectFactory/ObjectFactory'),
   SubscriptionsFactory: require('./Subscriptions/SubscriptionsFactory'),
+  AppendObjectFactory: require('./ObjectFactory/AppendObjectFactory'),
 };
