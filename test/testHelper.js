@@ -32,6 +32,7 @@ const dropDatabase = async () => {
 module.exports = {
   app: require('app'),
   ...require('database').models,
+  ...require('utilities/helpers'),
   sinon: require('sinon'),
   SubscriptionModel,
   CommentModel,

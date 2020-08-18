@@ -20,17 +20,25 @@ const getWobjectFields = async (permlink) => {
 };
 
 const calculateApprovePercent = (field) => {
-  if (field.weight < 0) return 0;
   if (_.isEmpty(field.active_votes)) return 100;
+  let approveCounter = 0, rejectCounter = 0;
   if (field.adminVote) return field.adminVote.status === 'approved' ? 100 : 0;
+  if (field.weight < 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
-    if (vote.percent < 0) return -(+vote.weight);
+    if (vote.percent < 0) {
+      rejectCounter++;
+      return -(+vote.weight);
+    }
   }) || 0;
-  if (!rejectsWeight) return 100;
   const approvesWeight = _.sumBy(field.active_votes, (vote) => {
-    if (vote.percent > 0) return +vote.weight;
+    if (vote.percent > 0) {
+      approveCounter++;
+      return +vote.weight;
+    }
   }) || 0;
+  if (!approveCounter && rejectCounter) return 0;
+  if (!rejectsWeight) return 100;
   const percent = _.round((approvesWeight / (approvesWeight + rejectsWeight)) * 100, 3);
   return percent > 0 ? percent : 0;
 };
@@ -62,7 +70,6 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
         vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
     });
-    field.approvePercent = calculateApprovePercent(field);
     field.createdAt = field._id.getTimestamp().valueOf();
     /** If field includes admin votes fill in it */
     if (adminVote || administrativeVote || ownershipVote) {
@@ -74,6 +81,7 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
         timestamp: mainVote.timestamp,
       };
     }
+    field.approvePercent = calculateApprovePercent(field);
   }
   return fields;
 };
@@ -110,7 +118,9 @@ const arrayFieldFilter = ({
       case 'listItem':
         if (_.includes(filter, 'galleryAlbum')) break;
         if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
-        else if (field.weight > 0) validFields.push(field);
+        else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+          validFields.push(field);
+        }
         break;
       default:
         break;
@@ -220,7 +230,7 @@ const processWobjects = async ({
     }
     obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
-    obj = _.omit(obj, ['map', 'tagCategories']);
+    obj = _.omit(obj, ['map']);
     Object.assign(obj,
       getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
     /** Get right count of photos in object in request for only one object */
@@ -228,7 +238,7 @@ const processWobjects = async ({
       obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
       obj.photos_count = _.get(obj, 'galleryItem', []).length;
       obj.preview_gallery = _.orderBy(
-        _.get(obj, 'galleryItem', []), ['weight'], ['asc'],
+        _.get(obj, 'galleryItem', []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
