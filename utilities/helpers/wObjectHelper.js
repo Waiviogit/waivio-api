@@ -225,7 +225,7 @@ const processWobjects = async ({
       }
       obj.fields.map((field, index) => {
         const post = _.get(result, `content.${field.author}/${field.permlink}`);
-        if (!post) delete obj.fields[index];
+        if (!post || !post.author) delete obj.fields[index];
         Object.assign(field,
           _.pick(post, ['children', 'total_pending_payout_value',
             'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
