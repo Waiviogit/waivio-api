@@ -97,7 +97,8 @@ exports.getChildWobjects = Joi.object().keys({
 
 exports.getWobjectField = Joi.object().keys({
   authorPermlink: Joi.string().required(),
-  fieldId: Joi.string().required(),
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
   fieldName: Joi.string().required(),
   locale: Joi.string().default('en-US'),
   app: Joi.string().required(),
