@@ -3,7 +3,7 @@ const { wObjectHelper, appHelper } = require('utilities/helpers');
 const { SPECIFIC_FIELDS_MAPPINGS } = require('constants/wobjectsData');
 
 module.exports = async ({
-  authorPermlink, fieldId, fieldName, locale, app,
+  authorPermlink, author, fieldName, locale, app, permlink,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink, fieldName);
   const { error: appError, app: appData } = await appHelper.getApp(app);
@@ -24,6 +24,6 @@ module.exports = async ({
 
   return {
     toDisplay: filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName],
-    field: _.find(filteredObject.fields, (field) => field._id.toString() === fieldId),
+    field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
   };
 };

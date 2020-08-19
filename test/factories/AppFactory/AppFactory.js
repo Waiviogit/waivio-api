@@ -1,7 +1,8 @@
 const { faker, App } = require('test/testHelper');
 
 const Create = async ({
-  blacklists, name, admins, moderators, supportedHashtags, supportedObjects, bots,
+  blacklists, name, admins, moderators, supportedHashtags,
+  supportedObjects, bots, administrative, ownership,
 } = {}) => {
   const data = {
     name: name || faker.random.string(10),
@@ -9,6 +10,10 @@ const Create = async ({
     moderators: moderators || [],
     supported_hashtags: supportedHashtags || [],
     supported_objects: supportedObjects || [],
+    authority: {
+      administrative: administrative || [faker.random.string()],
+      ownership: ownership || [faker.random.string()],
+    },
     black_list_users: blacklists || [],
     daily_chosen_post: {
       author: faker.name.firstName().toLowerCase(),
