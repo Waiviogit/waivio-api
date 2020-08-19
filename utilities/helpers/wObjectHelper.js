@@ -207,8 +207,12 @@ const processWobjects = async ({
   for (let obj of wobjects) {
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), app.authority.ownership);
-    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), app.authority.administrative);
+    const ownership = _.intersection(
+      _.get(obj, 'authority.ownership', []), _.get(app, 'authority.ownership', []),
+    );
+    const administrative = _.intersection(
+      _.get(obj, 'authority.administrative', []), _.get(app, 'authority.administrative', []),
+    );
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
