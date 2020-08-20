@@ -127,7 +127,7 @@ const arrayFieldFilter = ({
         break;
     }
   }
-  const condition = id === FIELDS_NAMES.GALLERY_ITEM
+  const condition = id === FIELDS_NAMES.GALLERY_ITEM && _.includes(filter, 'galleryAlbum')
       && idFields.length && !allFields[FIELDS_NAMES.GALLERY_ALBUM];
 
   if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
