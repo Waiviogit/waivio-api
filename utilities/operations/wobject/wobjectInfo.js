@@ -52,32 +52,30 @@ const getListItems = async (wobject, data, app) => {
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
   if (!fields) return { wobjects: [] };
-  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
-
-  for (let obj of wobjects) {
-    if (obj.object_type.toLowerCase() === 'list') {
-      obj.listItemsCount = obj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
-    }
-    obj = await wObjectHelper.processWobjects({
-      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [obj], returnArray: false, app,
-    });
-    obj.type = _.find(fields, (field) => field.body === obj.author_permlink).type;
-    obj.parent = await getParentInfo(obj, data, app);
-
-    obj.listItemsCount = await getItemsCount(
-      obj.author_permlink,
-      [wobject.author_permlink, obj.author_permlink],
-    );
-  }
+  let { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
 
   let user;
   if (data.userName) {
     ({ user } = await User.getOne(data.userName));
   }
-  await Promise.all(wobjects.map(async (wobj) => {
+  wobjects = await Promise.all(wobjects.map(async (wobj) => {
+    if (wobj.object_type.toLowerCase() === 'list') {
+      wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
+    }
+    wobj = await wObjectHelper.processWobjects({
+      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
+    });
+    wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
+    wobj.parent = await getParentInfo(wobj, data, app);
+
+    wobj.listItemsCount = await getItemsCount(
+      wobj.author_permlink,
+      [wobject.author_permlink, wobj.author_permlink],
+    );
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
-    if (error || !result.length) return;
+    if (error || !result.length) return wobj;
     wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
+    return wobj;
   }));
 
   return { wobjects };

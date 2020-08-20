@@ -4,7 +4,7 @@ const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES, categorySwitcher,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES, categorySwitcher, FIELDS_NAMES,
 } = require('constants/wobjectsData');
 
 // eslint-disable-next-line camelcase
@@ -127,12 +127,16 @@ const arrayFieldFilter = ({
         break;
     }
   }
-  if (id === 'galleryAlbum') {
+  const condition = id === FIELDS_NAMES.GALLERY_ITEM && _.includes(filter, 'galleryAlbum')
+      && idFields.length && !allFields[FIELDS_NAMES.GALLERY_ALBUM];
+
+  if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
     const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
       (item) => item.id === permlink && _.get(item, 'adminVote.status') !== 'rejected');
     if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos' });
+    id = FIELDS_NAMES.GALLERY_ALBUM;
   }
-  return _.compact(validFields);
+  return { result: _.compact(validFields), id };
 };
 
 const filterFieldValidation = (filter, field, locale, ownership) => {
@@ -149,6 +153,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
+  locale = locale === 'auto' ? 'en-US' : locale;
   const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button', 'phone'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
@@ -161,10 +166,10 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       (field) => _.get(field, 'adminVote.status') === 'approved');
 
     if (_.includes(arrayFields, id)) {
-      const result = arrayFieldFilter({
+      const { result, id: newId } = arrayFieldFilter({
         idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
       });
-      if (result.length)winningFields[id] = result;
+      if (result.length)winningFields[newId] = result;
       continue;
     }
 
