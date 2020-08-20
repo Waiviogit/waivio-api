@@ -1,3 +1,4 @@
+const moment = require('moment');
 const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
@@ -197,6 +198,16 @@ const getParentInfo = async (wObject, locale, app) => {
   return wObject.parent;
 };
 
+const createMockPost = (field) => ({
+  children: 0,
+  total_pending_payout_value: '0.000 HBD',
+  total_payout_value: '0.000 HBD',
+  pending_payout_value: '0.000 HBD',
+  curator_payout_value: '0.000 HBD',
+  cashout_time: moment.utc().add(7, 'days').toDate(),
+  body: `@${field.creator} added ${field.name} (${field.locale})`,
+});
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
@@ -207,8 +218,12 @@ const processWobjects = async ({
   for (let obj of wobjects) {
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), app.authority.ownership);
-    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), app.authority.administrative);
+    const ownership = _.intersection(
+      _.get(obj, 'authority.ownership', []), _.get(app, 'authority.ownership', []),
+    );
+    const administrative = _.intersection(
+      _.get(obj, 'authority.administrative', []), _.get(app, 'authority.administrative', []),
+    );
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
@@ -219,9 +234,10 @@ const processWobjects = async ({
         obj.fields = [];
         continue;
       }
-      obj.fields.map((field, index) => {
-        const post = _.get(result, `content.${field.author}/${field.permlink}`);
-        if (!post) delete obj.fields[index];
+      obj.fields.map((field) => {
+        let post = _.get(result, `content.${field.author}/${field.permlink}`);
+        if (!post || !post.author) post = createMockPost(field);
+
         Object.assign(field,
           _.pick(post, ['children', 'total_pending_payout_value',
             'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
