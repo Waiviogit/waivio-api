@@ -43,7 +43,6 @@ const getItemsCount = async (authorPermlink, handledItems) => {
 };
 
 const getListItems = async (wobject, data, app) => {
-  // const fields = _.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM);
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
