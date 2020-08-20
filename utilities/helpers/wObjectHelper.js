@@ -149,6 +149,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
+  locale = locale === 'auto' ? 'en-US' : locale;
   const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button', 'phone'];
   const winningFields = {};
   const filteredFields = _.filter(fields,
