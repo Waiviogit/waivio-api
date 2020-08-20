@@ -4,7 +4,8 @@ const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, ADMIN_ROLES, categorySwitcher, FIELDS_NAMES,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
+  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
 // eslint-disable-next-line camelcase
@@ -23,7 +24,7 @@ const getWobjectFields = async (permlink) => {
 const calculateApprovePercent = (field) => {
   if (_.isEmpty(field.active_votes)) return 100;
   let approveCounter = 0, rejectCounter = 0;
-  if (field.adminVote) return field.adminVote.status === 'approved' ? 100 : 0;
+  if (field.adminVote) return field.adminVote.status === VOTE_STATUSES.APPROVED ? 100 : 0;
   if (field.weight < 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
@@ -77,7 +78,7 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
       const mainVote = adminVote || ownershipVote || administrativeVote;
       field.adminVote = {
         role: getFieldVoteRole(mainVote),
-        status: mainVote.percent > 0 ? 'approved' : 'rejected',
+        status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
         name: mainVote.voter,
         timestamp: mainVote.timestamp,
       };
@@ -91,13 +92,13 @@ const specialFieldFilter = (idField, allFields, id) => {
   if (!idField.adminVote && idField.weight < 0) return null;
   idField.items = [];
   const filteredItems = _.filter(allFields[categorySwitcher[id]],
-    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== 'rejected');
+    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
 
   for (const itemField of filteredItems) {
     if (!idField.adminVote && itemField.weight < 0) continue;
     idField.items.push(itemField);
   }
-  if (id === 'tagCategory' && idField.items.length === 0) return null;
+  if (id === FIELDS_NAMES.TAG_CATEGORY && idField.items.length === 0) return null;
   return idField;
 };
 
@@ -106,19 +107,19 @@ const arrayFieldFilter = ({
 }) => {
   const validFields = [];
   for (const field of idFields) {
-    if (_.get(field, 'adminVote.status') === 'rejected') continue;
+    if (_.get(field, 'adminVote.status') === VOTE_STATUSES.REJECTED) continue;
     switch (id) {
-      case 'tagCategory':
-      case 'galleryAlbum':
+      case FIELDS_NAMES.TAG_CATEGORY:
+      case FIELDS_NAMES.GALLERY_ALBUM:
         validFields.push(specialFieldFilter(field, allFields, id));
         break;
-      case 'rating':
-      case 'phone':
-      case 'button':
-      case 'galleryItem':
-      case 'listItem':
-        if (_.includes(filter, 'galleryAlbum')) break;
-        if (_.get(field, 'adminVote.status') === 'approved') validFields.push(field);
+      case FIELDS_NAMES.RATING:
+      case FIELDS_NAMES.PHONE:
+      case FIELDS_NAMES.BUTTON:
+      case FIELDS_NAMES.GALLERY_ITEM:
+      case FIELDS_NAMES.LIST_ITEM:
+        if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
+        if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
           validFields.push(field);
         }
@@ -127,12 +128,13 @@ const arrayFieldFilter = ({
         break;
     }
   }
-  const condition = id === FIELDS_NAMES.GALLERY_ITEM && _.includes(filter, 'galleryAlbum')
+  const condition = id === FIELDS_NAMES.GALLERY_ITEM
+      && _.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)
       && idFields.length && !allFields[FIELDS_NAMES.GALLERY_ALBUM];
 
   if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
     const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
-      (item) => item.id === permlink && _.get(item, 'adminVote.status') !== 'rejected');
+      (item) => item.id === permlink && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
     if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos' });
     id = FIELDS_NAMES.GALLERY_ALBUM;
   }
@@ -141,8 +143,7 @@ const arrayFieldFilter = ({
 
 const filterFieldValidation = (filter, field, locale, ownership) => {
   field.locale === 'auto' ? field.locale = 'en-US' : null;
-  const localeIndependentFields = ['status', 'map', 'parent'];
-  let result = _.includes(localeIndependentFields, field.name) || locale === field.locale;
+  let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership) {
     result = result && _.includes(
@@ -154,7 +155,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
-  const arrayFields = ['categoryItem', 'listItem', 'tagCategory', 'galleryAlbum', 'galleryItem', 'rating', 'button', 'phone'];
+  const arrayFields = ARRAY_FIELDS;
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale, ownership));
@@ -163,7 +164,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   const groupedFields = _.groupBy(filteredFields, 'name');
   for (const id of Object.keys(groupedFields)) {
     const approvedFields = _.filter(groupedFields[id],
-      (field) => _.get(field, 'adminVote.status') === 'approved');
+      (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED);
 
     if (_.includes(arrayFields, id)) {
       const { result, id: newId } = arrayFieldFilter({
@@ -256,10 +257,10 @@ const processWobjects = async ({
       getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
-      obj.albums_count = _.get(obj, 'galleryAlbum', []).length;
-      obj.photos_count = _.get(obj, 'galleryItem', []).length;
+      obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
+      obj.photos_count = _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []).length;
       obj.preview_gallery = _.orderBy(
-        _.get(obj, 'galleryItem', []), ['weight'], ['desc'],
+        _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
