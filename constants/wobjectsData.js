@@ -74,6 +74,7 @@ exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
 
 exports.categorySwitcher = {
   galleryAlbum: 'galleryItem',
+  galleryItem: 'galleryItem',
   tagCategory: 'categoryItem',
 };
 
