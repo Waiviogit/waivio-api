@@ -84,7 +84,7 @@ const getUserObjectsShares = async (data) => {
     return { error: userWobjectsError };
   }
   wobjects.forEach((wObject) => {
-    wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
+    wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar', 'parent'], field.name));
   });
   const {
     result:

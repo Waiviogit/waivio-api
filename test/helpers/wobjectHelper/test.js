@@ -1,3 +1,4 @@
+const moment = require('moment');
 const _ = require('lodash');
 const {
   faker, dropDatabase, expect, wObjectHelper,
@@ -6,14 +7,15 @@ const { AppFactory, AppendObjectFactory } = require('test/factories');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 describe('On wobjectHelper', async () => {
-  let app, admin, administrative, ownership;
+  let app, admin, admin2, administrative, ownership;
   beforeEach(async () => {
     await dropDatabase();
     admin = faker.name.firstName();
+    admin2 = faker.name.firstName();
     administrative = faker.name.firstName();
     ownership = faker.name.firstName();
     app = await AppFactory.Create({
-      admins: [admin],
+      admins: [admin, admin2],
       ownership: [ownership],
       administrative: [administrative],
     });
@@ -340,30 +342,331 @@ describe('On wobjectHelper', async () => {
   });
 
   describe('on admin vote and admin downvote', async () => {
-
+    describe('vote later downvote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.TITLE;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body,
+          activeVotes: [{
+            voter: admin2,
+            percent: -100,
+            weight: -301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          }, {
+            voter: admin,
+            percent: 100,
+            weight: 1,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should add approvePercent 100', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.approvePercent).to.be.eq(100);
+      });
+      it('should return need field in object', async () => {
+        expect(result[FIELDS_NAMES.TITLE]).to.be.eq(body);
+      });
+    });
+    describe('vote earlier downvote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.DESCRIPTION;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body,
+          activeVotes: [{
+            voter: admin2,
+            percent: -100,
+            weight: -301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }, {
+            voter: admin,
+            percent: 100,
+            weight: 1,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          }],
+        }));
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should add approvePercent 0', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.approvePercent).to.be.eq(0);
+      });
+      it('should not return need field in object', async () => {
+        expect(result[FIELDS_NAMES.TITLE]).to.be.undefined;
+      });
+    });
   });
 
   describe('same fields with admin votes', async () => {
-
+    let object, result, body1, body2;
+    beforeEach(async () => {
+      const name = FIELDS_NAMES.NAME;
+      body1 = faker.random.string();
+      body2 = faker.random.string();
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        name,
+        body: body1,
+        activeVotes: [{
+          voter: admin,
+          percent: 100,
+          weight: 301,
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+        }],
+      }));
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        name,
+        body: body2,
+        rootWobj: object.author_permlink,
+        activeVotes: [{
+          voter: admin2,
+          percent: 100,
+          weight: 301,
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+        }],
+      }));
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+      });
+    });
+    it('should return 100 approval to first field', async () => {
+      const field = _.find(result.fields, { body: body1 });
+      expect(field.approvePercent).to.be.eq(100);
+    });
+    it('should return 100 approval to second field', async () => {
+      const field = _.find(result.fields, { body: body2 });
+      expect(field.approvePercent).to.be.eq(100);
+    });
+    it('should win field with latest admin vote', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body1);
+    });
   });
 
-  describe('on admin downvote and administrative vote', async () => {
+  describe('on admin and administrative actions', async () => {
+    describe('On admin vote and administrative vote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.NAME;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body,
+          administrative: [administrative],
+          activeVotes: [{
+            voter: admin,
+            percent: 100,
+            weight: 301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          }, {
+            voter: administrative,
+            percent: 100,
+            weight: 500,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
 
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should return field which was upvoted by admin', async () => {
+        expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
+      });
+      it('should return correct admin role', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.adminVote.role).to.be.eq('admin');
+      });
+    });
+    describe('On admin downvote and administrative vote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.STATUS;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          administrative: [administrative],
+          body,
+          activeVotes: [{
+            voter: admin,
+            percent: -100,
+            weight: -1000,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(10, 'day').valueOf()),
+          }, {
+            voter: administrative,
+            percent: 100,
+            weight: 500,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
+
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should return field which was downvoted by admin', async () => {
+        expect(result[FIELDS_NAMES.NAME]).to.be.undefined;
+      });
+      it('should return correct approvePercent', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.approvePercent).to.be.eq(0);
+      });
+    });
   });
 
-  describe('on admin downvote and ownership vote', async () => {
+  describe('on admin and ownership actions', async () => {
+    describe('On admin vote and administrative vote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.DESCRIPTION;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          ownership: [ownership],
+          body,
+          activeVotes: [{
+            voter: admin,
+            percent: 100,
+            weight: 1,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          }, {
+            voter: ownership,
+            weight: 1,
+            percent: 100,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
 
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should return field which was upvoted by admin', async () => {
+        expect(result[FIELDS_NAMES.DESCRIPTION]).to.be.eq(body);
+      });
+      it('should return correct admin role', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.adminVote.role).to.be.eq('admin');
+      });
+    });
+    describe('On admin downvote and ownership vote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        const name = FIELDS_NAMES.TITLE;
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body,
+          ownership: [ownership],
+          activeVotes: [{
+            voter: admin,
+            percent: -50,
+            weight: -100,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          }, {
+            voter: ownership,
+            percent: 100,
+            weight: 500,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
+
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should return field which was downvoted by admin', async () => {
+        expect(result[FIELDS_NAMES.TITLE]).to.be.undefined;
+      });
+      it('should return correct approvePercent', async () => {
+        const field = _.find(result.fields, { body });
+        expect(field.approvePercent).to.be.eq(0);
+      });
+    });
   });
 
-  describe('on administrative vote at object with ownership', async () => {
-
-  });
-
-  describe('on administrative vote at object with ownership', async () => {
-
+  describe('on administrative actions at object with ownership', async () => {
+    let object, result, body;
+    beforeEach(async () => {
+      const name = FIELDS_NAMES.NAME;
+      body = faker.random.string();
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        name,
+        administrative: [administrative],
+        ownership: [ownership],
+        body,
+        activeVotes: [{
+          voter: ownership,
+          percent: 100,
+          weight: 500,
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+        }],
+      }));
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        name: FIELDS_NAMES.TITLE,
+        body,
+        rootWobj: object.author_permlink,
+        activeVotes: [{
+          voter: administrative,
+          percent: 100,
+          weight: 500,
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+        }],
+      }));
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+      });
+    });
+    it('should not add field which was not approved by ownership', async () => {
+      expect(result[FIELDS_NAMES.TITLE]).to.be.undefined;
+    });
+    it('should return correct approval percent for administrative field', async () => {
+      const field = _.find(result.fields, { body, name: FIELDS_NAMES.TITLE });
+      expect(field.approvePercent).to.be.eq(100);
+    });
+    it('should add field which was approved by ownership', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
+    });
+    it('should return correct approval percent for ownership field', async () => {
+      const field = _.find(result.fields, { body, name: FIELDS_NAMES.NAME });
+      expect(field.approvePercent).to.be.eq(100);
+    });
   });
 
   describe('with another user locale', async () => {
-
+    let object, result, body;
+    beforeEach(async () => {
+      const name = FIELDS_NAMES.NAME;
+      body = faker.random.string();
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        name,
+        body,
+        activeVotes: [{
+          voter: faker.random.string(),
+          percent: 100,
+          weight: 500,
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+        }],
+      }));
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, locale: 'ms-MY',
+      });
+    });
+    it('should not return field with another locale', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.undefined;
+    });
+    it('should return field in all fields with approve percent', async () => {
+      const field = _.find(result.fields, { body, name: FIELDS_NAMES.NAME });
+      expect(field.approvePercent).to.be.eq(100);
+    });
   });
 });

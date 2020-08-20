@@ -1,11 +1,15 @@
+const moment = require('moment');
+const _ = require('lodash');
+const { ObjectId } = require('mongoose').Types;
 const { faker, WObject } = require('test/testHelper');
 const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
 
 const Create = async ({
   creator, name, weight, body, rootWobj, additionalFields = {},
-  activeVotes, id, administrative, ownership,
+  activeVotes, id, administrative, ownership, timestamp,
 } = {}) => {
   const appendObject = {
+    _id: objectIdFromDateString(timestamp || moment.utc().valueOf()),
     name: name || 'city',
     body: body || faker.address.city(),
     locale: 'en-US',
@@ -31,4 +35,9 @@ const Create = async ({
   return { appendObject, rootWobj, wobject };
 };
 
-module.exports = { Create };
+const objectIdFromDateString = (timestamp) => {
+  const str = `${Math.floor(timestamp / 1000).toString(16)}${_.random(10000, 99999)}00000000000`;
+  return new ObjectId(str);
+};
+
+module.exports = { Create, objectIdFromDateString };
