@@ -194,8 +194,11 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 /** Get info of wobject parent with specific winning fields */
 const getParentInfo = async (wObject, locale, app) => {
   if (wObject.parent) {
-    // Temporary solution
     const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
+    if (!fullParent) {
+      wObject.parent = '';
+      return wObject.parent;
+    }
     wObject.parent = fullParent;
 
     wObject.parent = await processWobjects({
