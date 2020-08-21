@@ -2,6 +2,7 @@ const moment = require('moment');
 const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
+const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
@@ -222,6 +223,7 @@ const processWobjects = async ({
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
   for (let obj of wobjects) {
+    let exposedFields = [];
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
     const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
@@ -234,6 +236,8 @@ const processWobjects = async ({
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
+      const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
+      exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
       const { result } = await postsUtil.getPostState(
         { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
       );
@@ -241,7 +245,13 @@ const processWobjects = async ({
         obj.fields = [];
         continue;
       }
-      obj.fields.map((field) => {
+      obj.fields.map((field, index) => {
+        /** if field not exist in object type for this object - remove it */
+        if (!_.includes(exposedFields, field.name)) {
+          delete obj.fields[index];
+          return;
+        }
+
         let post = _.get(result, `content.${field.author}/${field.permlink}`);
         if (!post || !post.author) post = createMockPost(field);
 
@@ -252,7 +262,7 @@ const processWobjects = async ({
       });
     }
     obj.fields = addDataToFields(
-      obj.fields, fields, admins, ownership, administrative, isOwnershipObj,
+      _.compact(obj.fields), fields, admins, ownership, administrative, isOwnershipObj,
     );
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
@@ -268,6 +278,7 @@ const processWobjects = async ({
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    obj.exposedFields = exposedFields;
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];

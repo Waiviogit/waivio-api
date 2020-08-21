@@ -33,6 +33,7 @@ module.exports = {
   app: require('app'),
   ...require('database').models,
   ...require('utilities/helpers'),
+  ...require('utilities/steemApi'),
   sinon: require('sinon'),
   SubscriptionModel,
   CommentModel,

@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 const { Schema } = mongoose;
 
@@ -16,6 +17,7 @@ const ObjectTypeSchema = new Schema({
     }],
     default: [],
   },
+  exposedFields: { type: [String], enum: [...Object.values(FIELDS_NAMES)], default: [] },
 },
 {
   toObject: { virtuals: true }, timestamps: true,

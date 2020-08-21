@@ -5,4 +5,5 @@ module.exports = {
   ObjectFactory: require('./ObjectFactory/ObjectFactory'),
   SubscriptionsFactory: require('./Subscriptions/SubscriptionsFactory'),
   AppendObjectFactory: require('./ObjectFactory/AppendObjectFactory'),
+  ObjectTypeFactory: require('./ObjectTypeFactory/ObjectsTypeFactory'),
 };

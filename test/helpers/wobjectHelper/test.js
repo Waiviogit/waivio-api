@@ -1,9 +1,9 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  faker, dropDatabase, expect, wObjectHelper,
+  faker, dropDatabase, expect, wObjectHelper, sinon, postsUtil,
 } = require('test/testHelper');
-const { AppFactory, AppendObjectFactory } = require('test/factories');
+const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 describe('On wobjectHelper', async () => {
@@ -21,6 +21,49 @@ describe('On wobjectHelper', async () => {
       ownershipObjects: [ownershipObject],
     });
   });
+  describe('filter fields by object type exposedFields', async () => {
+    let object, result;
+    beforeEach(async () => {
+      sinon.stub(postsUtil, 'getPostState').returns(Promise.resolve({ result: { content: {} } }));
+      const objectType = await ObjectTypeFactory.Create(
+        { exposedFields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR] },
+      );
+      const fields = [FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME, FIELDS_NAMES.ADDRESS];
+      for (const name of fields) {
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          weight: 1, name, objectType: objectType.name, rootWobj: _.get(object, 'author_permlink', faker.random.string()),
+        }));
+      }
+      result = await wObjectHelper.processWobjects({
+        wobjects: [object], app, returnArray: false, hiveData: true,
+      });
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return field avatar if object type exposedFields include it', async () => {
+      expect(result[FIELDS_NAMES.AVATAR]).to.be.exist;
+    });
+    it('should return field name if object type exposedFields include it', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.exist;
+    });
+    it('should not return field if object type exposedFields not include it', async () => {
+      expect(result[FIELDS_NAMES.ADDRESS]).to.be.undefined;
+    });
+    it('should filter fields by exposed (avatar include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.AVATAR);
+      expect(field).to.be.exist;
+    });
+    it('should filter fields by exposed (name include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.NAME);
+      expect(field).to.be.exist;
+    });
+    it('should filter fields by exposed (address not include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.ADDRESS);
+      expect(field).to.be.undefined;
+    });
+  });
+
   describe('getUpdates without adminVotes and filters', async () => {
     let object, body, result;
     beforeEach(async () => {
