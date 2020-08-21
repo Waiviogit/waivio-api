@@ -25,15 +25,11 @@ const botSchema = new Schema({
   roles: { type: [String], required: true },
 }, { _id: false });
 
-const AuthoritySchema = new Schema({
-  administrative: { type: [String], default: [] },
-  ownership: { type: [String], default: [] },
-}, { _id: false });
-
 const AppSchema = new Schema({
   name: { type: String, index: true, unique: true },
   admins: { type: [String], required: true },
-  authority: { type: AuthoritySchema, default: () => ({}) },
+  authority: { type: [String], default: [] },
+  ownership_objects: { type: [String], default: [] },
   moderators: {
     type: [moderatorsSchema],
   },
