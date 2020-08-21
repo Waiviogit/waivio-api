@@ -31,7 +31,13 @@ const getUsers = async ({ limit, skip, sample }) => {
     limit = 100;
   }
   const { usersData: users, error } = await User.find({
-    condition: {}, sort: { wobjects_weight: -1 }, limit, skip,
+    condition: {},
+    sort: { wobjects_weight: -1 },
+    limit,
+    skip,
+    select: {
+      name: 1, followers_count: 1, posting_json_metadata: 1, wobjects_weight: 1,
+    },
   });
   if (error) {
     return { error };
