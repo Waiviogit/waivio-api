@@ -17,9 +17,9 @@ exports.indexSchema = Joi.object().keys({
   user_limit: Joi.number().integer().min(0).max(100)
     .default(5),
   locale: Joi.string().default('en-US'),
-  author_permlinks: Joi.array().items(Joi.string()),
-  object_types: Joi.array().items(Joi.string()),
-  exclude_object_types: Joi.array().items(Joi.string()),
+  author_permlinks: Joi.array().items(Joi.string()).default([]),
+  object_types: Joi.array().items(Joi.string()).default([]),
+  exclude_object_types: Joi.array().items(Joi.string()).default([]),
   required_fields: Joi.array().items(Joi.string()).default([]),
   sample: Joi.boolean(),
   map: Joi.object().keys({

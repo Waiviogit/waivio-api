@@ -279,6 +279,7 @@ const processWobjects = async ({
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
     obj.exposedFields = exposedFields;
+    if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];
