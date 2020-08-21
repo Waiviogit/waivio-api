@@ -30,58 +30,9 @@ exports.FIELDS_NAMES = {
   LIST_ITEM: 'listItem',
 };
 
-exports.AUTHORITY_FIELD_ENUM = {
-  ADMINISTRATIVE: 'administrative',
-  OWNERSHIP: 'ownership',
-};
-
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
-};
-
-exports.REQUIREDFIELDS = [
-  'name',
-  'title',
-  'website',
-  'avatar',
-  'background',
-  'address',
-  'description',
-  'map',
-  'link',
-  'tag',
-  'phone',
-  'email',
-  'rating',
-  'parent',
-  'tagCloud',
-  'price',
-  'button',
-  'workTime',
-  'chartid',
-  'newsFilter',
-  'pageContent',
-  'status',
-];
-exports.REQUIREDFIELDS_PARENT = ['name', 'avatar'];
-exports.REQUIREDFIELDS_SEARCH = ['name', 'avatar', 'rating', 'parent'];
-exports.REQUIREDFIELDS_CHILD = ['name', 'avatar'];
-exports.REQUIREDFIELDS_POST = ['name', 'avatar', 'title', 'parent'];
-exports.WOBJECT_LATEST_POSTS_COUNT = 30;
-exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
-exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
-
-exports.categorySwitcher = {
-  galleryAlbum: 'galleryItem',
-  tagCategory: 'categoryItem',
-};
-
-exports.SPECIFIC_FIELDS_MAPPINGS = {
-  tagCategory: ['tagCategory', 'categoryItem'],
-  galleryAlbum: ['galleryAlbum', 'galleryItem'],
-  categoryItem: ['tagCategory', 'categoryItem'],
-  avatar: ['avatar', 'parent'],
 };
 
 exports.ADMIN_ROLES = {
@@ -90,6 +41,83 @@ exports.ADMIN_ROLES = {
   ADMINISTRATIVE: 'administrative',
 };
 
+exports.VOTE_STATUSES = {
+  APPROVED: 'approved',
+  REJECTED: 'rejected',
+};
+
+exports.ARRAY_FIELDS = [
+  this.FIELDS_NAMES.CATEGORY_ITEM,
+  this.FIELDS_NAMES.LIST_ITEM,
+  this.FIELDS_NAMES.TAG_CATEGORY,
+  this.FIELDS_NAMES.GALLERY_ITEM,
+  this.FIELDS_NAMES.GALLERY_ALBUM,
+  this.FIELDS_NAMES.RATING,
+  this.FIELDS_NAMES.BUTTON,
+  this.FIELDS_NAMES.PHONE,
+];
+
+exports.REQUIREDFIELDS = [
+  this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.AVATAR,
+  this.FIELDS_NAMES.WEBSITE,
+  this.FIELDS_NAMES.TITLE,
+  this.FIELDS_NAMES.BACKGROUND,
+  this.FIELDS_NAMES.ADDRESS,
+  this.FIELDS_NAMES.DESCRIPTION,
+  this.FIELDS_NAMES.MAP,
+  this.FIELDS_NAMES.LINK,
+  this.FIELDS_NAMES.TAG,
+  this.FIELDS_NAMES.PHONE,
+  this.FIELDS_NAMES.EMAIL,
+  this.FIELDS_NAMES.RATING,
+  this.FIELDS_NAMES.PARENT,
+  this.FIELDS_NAMES.TAG_CLOUD,
+  this.FIELDS_NAMES.PRICE,
+  this.FIELDS_NAMES.BUTTON,
+  this.FIELDS_NAMES.WORK_TIME,
+  this.FIELDS_NAMES.CHART_ID,
+  this.FIELDS_NAMES.NEWS_FILTER,
+  this.FIELDS_NAMES.PAGE_CONTENT,
+  this.FIELDS_NAMES.STATUS,
+];
+exports.REQUIREDFIELDS_PARENT = [this.FIELDS_NAMES.NAME, this.FIELDS_NAMES.AVATAR];
+exports.REQUIREDFIELDS_SEARCH = [
+  this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.AVATAR,
+  this.FIELDS_NAMES.RATING,
+  this.FIELDS_NAMES.PARENT,
+];
+exports.REQUIREDFIELDS_CHILD = [this.FIELDS_NAMES.NAME, this.FIELDS_NAMES.AVATAR];
+exports.REQUIREDFIELDS_POST = [
+  this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.AVATAR,
+  this.FIELDS_NAMES.TITLE,
+  this.FIELDS_NAMES.PARENT,
+];
+exports.WOBJECT_LATEST_POSTS_COUNT = 30;
+exports.OBJECT_TYPE_TOP_WOBJECTS_COUNT = 30;
+exports.OBJECT_TYPE_TOP_EXPERTS_COUNT = 30;
+
+exports.categorySwitcher = {
+  galleryAlbum: this.FIELDS_NAMES.GALLERY_ITEM,
+  galleryItem: this.FIELDS_NAMES.GALLERY_ITEM,
+  tagCategory: this.FIELDS_NAMES.CATEGORY_ITEM,
+};
+
+exports.SPECIFIC_FIELDS_MAPPINGS = {
+  tagCategory: [this.FIELDS_NAMES.TAG_CATEGORY, this.FIELDS_NAMES.CATEGORY_ITEM],
+  galleryAlbum: [this.FIELDS_NAMES.GALLERY_ALBUM, this.FIELDS_NAMES.GALLERY_ITEM],
+  categoryItem: [this.FIELDS_NAMES.TAG_CATEGORY, this.FIELDS_NAMES.CATEGORY_ITEM],
+  avatar: [this.FIELDS_NAMES.AVATAR, this.FIELDS_NAMES.PARENT],
+};
+
 exports.MIN_PERCENT_TO_SHOW_UPGATE = 70;
 exports.GALLERY_WOBJECT_ID = 'wobject_id';
 exports.LOW_PRIORITY_STATUS_FLAGS = ['relisted', 'unavailable'];
+
+exports.INDEPENDENT_FIELDS = [
+  this.FIELDS_NAMES.STATUS,
+  this.FIELDS_NAMES.MAP,
+  this.FIELDS_NAMES.PARENT,
+];
