@@ -25,7 +25,12 @@ const getMany = async (data) => {
   const condition = getCondition(data);
   // eslint-disable-next-line prefer-const
   let { result: wObjects, error } = await Wobj.find(condition, '', { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1);
-  if (data.sample) wObjects = _.sampleSize(wObjects, 5);
+  if (data.sample) {
+    wObjects = _.chain(wObjects)
+      .sampleSize(5)
+      .pick(['default_name', 'name', 'avatar', 'weight', 'parent'])
+      .value();
+  }
   if (error) return { error };
 
   if (data.user_limit) {
