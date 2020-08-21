@@ -1,15 +1,33 @@
 const { Wobj } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
-const { REQUIREDFIELDS, REQUIREDFIELDS_PARENT } = require('constants/wobjectsData');
+const { REQUIREDFIELDS } = require('constants/wobjectsData');
+
+const getCondition = (data) => {
+  const findParams = {};
+  if (data.author_permlinks.length) {
+    findParams.author_permlink = { $in: data.author_permlinks };
+  }
+
+  if (data.object_types.length) {
+    findParams.object_type = { $in: data.object_types };
+  } else if (data.exclude_object_types.length) {
+    findParams.object_type = { $nin: data.exclude_object_types };
+  }
+  if (data.sample) {
+    findParams['status.title'] = { $nin: ['unavailable', 'relisted'] };
+  }
+  return findParams;
+};
 
 const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
-  const { wObjectsData: wObjects, hasMore, error } = await Wobj.getAll(data);
+  const condition = getCondition(data);
+  // eslint-disable-next-line prefer-const
+  let { result: wObjects, error } = await Wobj.find(condition, '', { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1);
+  if (data.sample) wObjects = _.sampleSize(wObjects, 5);
+  if (error) return { error };
 
-  if (error) {
-    return { error };
-  }
   if (data.user_limit) {
     await Promise.all(wObjects.map(async (wobject) => {
       wobject.users = await UserWobjectsModel.aggregate([
@@ -24,29 +42,14 @@ const getMany = async (data) => {
           },
         },
       ]);
+      wobject.user_count = wobject.users.length;
     }));
   } // assign top users to each of wobject
 
-  wObjects.forEach((wObject) => {
-    wObject.users = wObject.users || [];
-    wObject.user_count = wObject.users.length; // add field user count
-    // format parent field
-    if (Array.isArray(wObject.parent)) {
-      if (_.isEmpty(wObject.parent)) {
-        wObject.parent = '';
-      } else {
-        // eslint-disable-next-line prefer-destructuring
-        wObject.parent = wObject.parent[0];
-        getRequiredFields(wObject.parent, REQUIREDFIELDS_PARENT);
-      }
-    }
-  });
-
-  return { wObjectsData: wObjects, hasMore };
-};
-
-const getRequiredFields = (wObject, requiredFields) => {
-  wObject.fields = wObject.fields.filter((item) => requiredFields.includes(item.name));
+  return {
+    hasMore: wObjects.length > data.limit,
+    wObjectsData: wObjects.slice(0, data.limit),
+  };
 };
 
 module.exports = { getMany };

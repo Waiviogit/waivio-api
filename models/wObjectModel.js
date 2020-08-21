@@ -22,13 +22,6 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 const getAll = async (data) => {
   const findParams = {};
   const pipeline = [];
-  // let hasMore = false;
-  let wObjects;
-  const requiredFields = [...REQUIREDFIELDS];
-
-  if (data.required_fields.length) {
-    requiredFields.push(...data.required_fields);
-  }
 
   if (data.author_permlinks.length) {
     findParams.author_permlink = { $in: data.author_permlinks };
@@ -63,42 +56,14 @@ const getAll = async (data) => {
   if (data.sample) {
     pipeline.push({ $sample: { size: 5 } });
   }
-  pipeline.push(...[
-    {
-      $addFields: {
-        fields: {
-          $filter: {
-            input: '$fields',
-            as: 'field',
-            cond: {
-              $in: ['$$field.name', requiredFields],
-            },
-          },
-        },
-      },
-    },
-  ]);
-  try {
-    const { wobjects, error } = await fromAggregation(pipeline);
 
-    if (error) {
-      return { error };
-    }
-    wObjects = wobjects;
-  } catch (error) {
-    return { error };
-  }
+  const { wobjects, error } = await fromAggregation(pipeline);
+  if (error) return { error };
+
   return {
-    hasMore: wObjects.length > data.limit,
-    wObjectsData: wObjects.slice(0, data.limit),
+    hasMore: wobjects.length > data.limit,
+    wObjectsData: wobjects.slice(0, data.limit),
   };
-  // if (!wObjects || wObjects.length === 0) {
-  //   return { wObjectsData: [] };
-  // } if (wObjects.length === data.limit + 1) {
-  //   hasMore = true;
-  //   wObjects = wObjects.slice(0, data.limit);
-  // }
-  // return { wObjectsData: wObjects, hasMore };
 };
 
 const fromAggregation = async (pipeline) => {
@@ -188,9 +153,16 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition, select, sort = {}) => {
+const find = async (condition, select, sort = {}, skip = 0, limit) => {
   try {
-    return { result: await WObjectModel.find(condition, select).sort(sort).lean() };
+    return {
+      result: await WObjectModel
+        .find(condition, select)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
   } catch (error) {
     return { error };
   }
