@@ -22,23 +22,24 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 const getAll = async (data) => {
   const findParams = {};
   const pipeline = [];
-  let hasMore = false;
+  // let hasMore = false;
   let wObjects;
   const requiredFields = [...REQUIREDFIELDS];
 
-  if (data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length) {
+  if (data.required_fields.length) {
     requiredFields.push(...data.required_fields);
   }
-  if (data.author_permlinks && Array.isArray(data.author_permlinks)
-      && data.author_permlinks.length) {
+
+  if (data.author_permlinks.length) {
     findParams.author_permlink = { $in: data.author_permlinks };
   }
-  if (data.object_types && Array.isArray(data.object_types) && data.object_types.length) {
+
+  if (data.object_types.length) {
     findParams.object_type = { $in: data.object_types };
-  } else if (data.exclude_object_types && Array.isArray(data.exclude_object_types)
-      && data.exclude_object_types.length) {
+  } else if (data.exclude_object_types.length) {
     findParams.object_type = { $nin: data.exclude_object_types };
   }
+
   if (_.has(data, 'map.coordinates')) {
     pipeline.push({
       $geoNear: {
@@ -76,15 +77,6 @@ const getAll = async (data) => {
         },
       },
     },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'parent',
-        foreignField: 'author_permlink',
-        as: 'parent',
-      },
-    },
-    { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
   ]);
   try {
     const { wobjects, error } = await fromAggregation(pipeline);
@@ -96,13 +88,17 @@ const getAll = async (data) => {
   } catch (error) {
     return { error };
   }
-  if (!wObjects || wObjects.length === 0) {
-    return { wObjectsData: [] };
-  } if (wObjects.length === data.limit + 1) {
-    hasMore = true;
-    wObjects = wObjects.slice(0, data.limit);
-  }
-  return { wObjectsData: wObjects, hasMore };
+  return {
+    hasMore: wObjects.length > data.limit,
+    wObjectsData: wObjects.slice(0, data.limit),
+  };
+  // if (!wObjects || wObjects.length === 0) {
+  //   return { wObjectsData: [] };
+  // } if (wObjects.length === data.limit + 1) {
+  //   hasMore = true;
+  //   wObjects = wObjects.slice(0, data.limit);
+  // }
+  // return { wObjectsData: wObjects, hasMore };
 };
 
 const fromAggregation = async (pipeline) => {
