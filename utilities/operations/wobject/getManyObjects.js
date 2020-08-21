@@ -30,19 +30,17 @@ const getMany = async (data) => {
 
   if (data.user_limit) {
     await Promise.all(wObjects.map(async (wobject) => {
-      wobject.users = await UserWobjectsModel.aggregate([
-        { $match: { author_permlink: wobject.author_permlink } },
-        { $sort: { weight: -1 } },
-        { $limit: data.user_limit },
-        {
-          $project: {
-            _id: 0,
-            name: '$user_name',
-            weight: 1,
-          },
-        },
-      ]);
+      wobject.users = await UserWobjectsModel
+        .find({ author_permlink: { $in: _.map(wObjects, 'author_permlink') } })
+        .sort({ weight: -1 })
+        .limit(data.user_limit)
+        .select({ _id: 0, weight: 1, user_name: 1 });
+      wobject.users = _.map((user) => ({
+        weight: user.weight,
+        name: user.user_name,
+      }));
       wobject.user_count = wobject.users.length;
+      return wobject;
     }));
   } // assign top users to each of wobject
 
