@@ -31,7 +31,6 @@ const getMany = async (data) => {
   if (data.user_limit) {
     const usersWobjects = await UserWobjectsModel
       .find({ author_permlink: { $in: _.map(wObjects, 'author_permlink') } })
-      .sort({ weight: -1 })
       .select({ _id: 0, weight: 1, user_name: 1 });
     wObjects.forEach((obj) => {
       obj.users = _
