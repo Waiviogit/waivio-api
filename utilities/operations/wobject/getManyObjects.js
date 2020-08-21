@@ -24,12 +24,14 @@ const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
   const condition = getCondition(data);
   // eslint-disable-next-line prefer-const
-  let { result: wObjects, error } = await Wobj.find(condition, '', { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1);
+  let { result: wObjects, error } = await Wobj.find(
+    condition, 'default_name weight parent fields',
+    { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1,
+  );
   if (data.sample) {
     wObjects = _.sampleSize(wObjects, 5);
     wObjects = wObjects.map((obj) => {
       obj.fields = _.filter(obj.fields, (field) => _.includes(REQUIREDFIELDS_SEARCH, field.name));
-      obj = _.pick(obj, ['default_name', 'name', 'avatar', 'weight', 'parent', 'fields']);
       return obj;
     });
   }
