@@ -6,7 +6,7 @@ const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
 
 const Create = async ({
   creator, name, weight, body, rootWobj, additionalFields = {},
-  activeVotes, id, administrative, ownership, timestamp,
+  activeVotes, id, administrative, ownership, timestamp, objectType
 } = {}) => {
   const appendObject = {
     _id: objectIdFromDateString(timestamp || moment.utc().valueOf()),
@@ -26,7 +26,7 @@ const Create = async ({
 
   if (!wobject) {
     wobject = await ObjectFactory.Create({
-      authorPermlink: rootWobj, fields: [appendObject], administrative, ownership,
+      authorPermlink: rootWobj, fields: [appendObject], administrative, ownership, objectType
     });
   } else {
     await WObject.updateOne({ author_permlink: rootWobj }, { $addToSet: { fields: appendObject } });

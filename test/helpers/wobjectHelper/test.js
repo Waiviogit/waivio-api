@@ -1,25 +1,69 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  faker, dropDatabase, expect, wObjectHelper,
+  faker, dropDatabase, expect, wObjectHelper, sinon, postsUtil,
 } = require('test/testHelper');
-const { AppFactory, AppendObjectFactory } = require('test/factories');
+const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 describe('On wobjectHelper', async () => {
-  let app, admin, admin2, administrative, ownership;
+  let app, admin, admin2, administrative, ownership, ownershipObject;
   beforeEach(async () => {
     await dropDatabase();
     admin = faker.name.firstName();
     admin2 = faker.name.firstName();
     administrative = faker.name.firstName();
+    ownershipObject = faker.random.string();
     ownership = faker.name.firstName();
     app = await AppFactory.Create({
       admins: [admin, admin2],
-      ownership: [ownership],
-      administrative: [administrative],
+      authority: [ownership, administrative],
+      ownershipObjects: [ownershipObject],
     });
   });
+  describe('filter fields by object type exposedFields', async () => {
+    let object, result;
+    beforeEach(async () => {
+      sinon.stub(postsUtil, 'getPostState').returns(Promise.resolve({ result: { content: {} } }));
+      const objectType = await ObjectTypeFactory.Create(
+        { exposedFields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR] },
+      );
+      const fields = [FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME, FIELDS_NAMES.ADDRESS];
+      for (const name of fields) {
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          weight: 1, name, objectType: objectType.name, rootWobj: _.get(object, 'author_permlink', faker.random.string()),
+        }));
+      }
+      result = await wObjectHelper.processWobjects({
+        wobjects: [object], app, returnArray: false, hiveData: true,
+      });
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('should return field avatar if object type exposedFields include it', async () => {
+      expect(result[FIELDS_NAMES.AVATAR]).to.be.exist;
+    });
+    it('should return field name if object type exposedFields include it', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.exist;
+    });
+    it('should not return field if object type exposedFields not include it', async () => {
+      expect(result[FIELDS_NAMES.ADDRESS]).to.be.undefined;
+    });
+    it('should filter fields by exposed (avatar include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.AVATAR);
+      expect(field).to.be.exist;
+    });
+    it('should filter fields by exposed (name include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.NAME);
+      expect(field).to.be.exist;
+    });
+    it('should filter fields by exposed (address not include)', async () => {
+      const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.ADDRESS);
+      expect(field).to.be.undefined;
+    });
+  });
+
   describe('getUpdates without adminVotes and filters', async () => {
     let object, body, result;
     beforeEach(async () => {
@@ -298,6 +342,7 @@ describe('On wobjectHelper', async () => {
       const name = FIELDS_NAMES.ADDRESS;
       body = faker.random.string();
       ({ wobject: object } = await AppendObjectFactory.Create({
+        rootWobj: ownershipObject,
         weight: -300,
         name,
         body,
@@ -524,13 +569,46 @@ describe('On wobjectHelper', async () => {
   });
 
   describe('on admin and ownership actions', async () => {
-    describe('On admin vote and administrative vote', async () => {
+    describe('On ownership votes without select app ownership object status', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        body = faker.random.string();
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name: FIELDS_NAMES.DESCRIPTION,
+          ownership: [ownership],
+          body,
+          activeVotes: [{
+            voter: ownership,
+            weight: 1,
+            percent: 100,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name: FIELDS_NAMES.AVATAR,
+          rootWobj: object.author_permlink,
+          body,
+        }));
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        });
+      });
+      it('should return description field in response which has ownership upvote', async () => {
+        expect(result[FIELDS_NAMES.DESCRIPTION]).to.be.exist;
+      });
+      it('should return avatar field without ownership upvote', async () => {
+        expect(result[FIELDS_NAMES.AVATAR]).to.be.exist;
+      });
+    });
+
+    describe('On admin vote and ownership vote', async () => {
       let object, result, body;
       beforeEach(async () => {
         const name = FIELDS_NAMES.DESCRIPTION;
         body = faker.random.string();
         ({ wobject: object } = await AppendObjectFactory.Create({
           name,
+          rootWobj: ownershipObject,
           ownership: [ownership],
           body,
           activeVotes: [{
@@ -545,7 +623,11 @@ describe('On wobjectHelper', async () => {
             _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
           }],
         }));
-
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name: FIELDS_NAMES.AVATAR,
+          rootWobj: ownershipObject,
+          body,
+        }));
         result = await wObjectHelper.processWobjects({
           wobjects: [_.cloneDeep(object)], app, returnArray: false,
         });
@@ -557,6 +639,9 @@ describe('On wobjectHelper', async () => {
         const field = _.find(result.fields, { body });
         expect(field.adminVote.role).to.be.eq('admin');
       });
+      it('should not return avatar field if there no admin vote', async () => {
+        expect(result[FIELDS_NAMES.AVATAR]).to.be.undefined;
+      });
     });
     describe('On admin downvote and ownership vote', async () => {
       let object, result, body;
@@ -566,6 +651,7 @@ describe('On wobjectHelper', async () => {
         ({ wobject: object } = await AppendObjectFactory.Create({
           name,
           body,
+          rootWobj: ownershipObject,
           ownership: [ownership],
           activeVotes: [{
             voter: admin,
@@ -601,6 +687,7 @@ describe('On wobjectHelper', async () => {
       body = faker.random.string();
       ({ wobject: object } = await AppendObjectFactory.Create({
         name,
+        rootWobj: ownershipObject,
         administrative: [administrative],
         ownership: [ownership],
         body,
