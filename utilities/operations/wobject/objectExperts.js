@@ -1,6 +1,7 @@
 const { UserWobjects, User } = require('models');
 const { WObject } = require('database').models;
 const _ = require('lodash');
+const { redisSetter, redisGetter } = require('utilities/redis');
 
 // eslint-disable-next-line camelcase
 const getMultipliers = (newsFilter, author_permlink) => {
@@ -114,4 +115,18 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   };
 };
 
-module.exports = { getWobjExperts };
+const cacheAllObjectExperts = async (limit) => {
+  const hashtags = await WObject.find({ weight: { $gt: 0 }, object_type: 'hashtag' }).sort({ weight: -1 }).limit(limit);
+  const objects = await WObject.find({ weight: { $gt: 0 }, object_type: { $ne: 'hashtag' } }).sort({ weight: -1 }).limit(limit);
+  await Promise.all(_.concat(hashtags, objects).map(async (wobj) => {
+    await redisGetter.removeTopWobjUsers(wobj.author_permlink);
+    const { result: userWobjects } = await UserWobjects.find(
+      { author_permlink: wobj.author_permlink }, { weight: -1 }, 5,
+    );
+    for (const user of userWobjects) {
+      await redisSetter.addTopWobjUsers(wobj.author_permlink, user._id.toString());
+    }
+  }));
+};
+
+module.exports = { getWobjExperts, cacheAllObjectExperts };

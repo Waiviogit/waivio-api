@@ -14,7 +14,8 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2,
-      "mainFeedsCache": 10
+      "mainFeedsCache": 10,
+      "topWobjUsers": 11
     },
     "swaggerHost": "www.waivio.com"
   },
@@ -34,7 +35,8 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2,
-      "mainFeedsCache": 10
+      "mainFeedsCache": 10,
+      "topWobjUsers": 11
     },
     "swaggerHost": "waiviodev.com"
   },
@@ -54,7 +56,8 @@
     "redis": {
       "wobjRefs": 1,
       "importUser": 2,
-      "mainFeedsCache": 10
+      "mainFeedsCache": 10,
+      "topWobjUsers": 11
     },
     "swaggerHost": "localhost:3000"
   },
@@ -73,7 +76,8 @@
     "redis": {
       "wobjRefs": 7,
       "importUser": 7,
-      "mainFeedsCache": 7
+      "mainFeedsCache": 7,
+      "topWobjUsers": 7
     },
     "swaggerHost": "localhost:3000"
   }
