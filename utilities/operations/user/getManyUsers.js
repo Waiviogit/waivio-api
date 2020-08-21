@@ -1,35 +1,9 @@
 const _ = require('lodash');
 const { User, Subscriptions } = require('models');
 
-const makePipeline = ({ limit, skip, sample }) => {
-  const pipeline = [
-    { $sort: { wobjects_weight: -1 } },
-    { $skip: sample ? 0 : skip },
-    { $limit: sample ? 100 : limit },
-    {
-      $lookup: {
-        from: 'subscriptions',
-        localField: 'name',
-        foreignField: 'follower',
-        as: 'users_follow',
-      },
-    },
-  ];
-
-  if (sample) {
-    pipeline.push({ $sample: { size: 5 } });
-  }
-  return pipeline;
-};
-
-/** This method has commented code from old logic, after check new logic - need to be removed */
 const getUsers = async ({ limit, skip, sample }) => {
-  // const pipeline = makePipeline({ limit, skip, sample });
-  //
-  // const { result: users, error } = await User.aggregate(pipeline);
-  if (sample) {
-    limit = 100;
-  }
+  if (sample) limit = 100;
+
   const { usersData: users, error } = await User.find({
     condition: {},
     sort: { wobjects_weight: -1 },
@@ -39,11 +13,9 @@ const getUsers = async ({ limit, skip, sample }) => {
       name: 1, followers_count: 1, posting_json_metadata: 1, wobjects_weight: 1,
     },
   });
-  if (error) {
-    return { error };
-  }
+  if (error) return { error };
+
   return { users: sample ? _.sampleSize(users, 5) : users };
-  // return { users: _.forEach(users, (user) => user.users_follow = _.map(user.users_follow, 'following')) };
 };
 
 const getUsersByList = async (data) => {
