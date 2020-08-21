@@ -22,14 +22,22 @@ const makePipeline = ({ limit, skip, sample }) => {
   return pipeline;
 };
 
+/** This method has commented code from old logic, after check new logic - need to be removed */
 const getUsers = async ({ limit, skip, sample }) => {
-  const pipeline = makePipeline({ limit, skip, sample });
-  const { result: users, error } = await User.aggregate(pipeline);
-
+  // const pipeline = makePipeline({ limit, skip, sample });
+  //
+  // const { result: users, error } = await User.aggregate(pipeline);
+  if (sample) {
+    limit = 100;
+  }
+  const { usersData: users, error } = await User.find({
+    condition: {}, sort: { wobjects_weight: -1 }, limit, skip,
+  });
   if (error) {
     return { error };
   }
-  return { users: _.forEach(users, (user) => user.users_follow = _.map(user.users_follow, 'following')) };
+  return { users: sample ? _.sampleSize(users, 5) : users };
+  // return { users: _.forEach(users, (user) => user.users_follow = _.map(user.users_follow, 'following')) };
 };
 
 const getUsersByList = async (data) => {
