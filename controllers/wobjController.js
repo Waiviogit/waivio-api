@@ -9,7 +9,7 @@ const validators = require('controllers/validators');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
-    user_limit: req.body.user_limit,
+    user_limit: req.body.userLimit,
     locale: req.body.locale,
     author_permlinks: req.body.author_permlinks,
     object_types: req.body.object_types,
