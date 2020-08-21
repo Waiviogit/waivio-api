@@ -55,7 +55,16 @@ const findOne = async (condition, select) => {
   }
 };
 
+const find = async (condition, sort, limit) => {
+  try {
+    return { result: await UserWobjects.find(condition).sort(sort).limit(limit).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
+  find,
   findOne,
   aggregate,
   getByWobject,

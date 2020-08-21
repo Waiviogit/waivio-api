@@ -1,7 +1,13 @@
-const { wobjRefsClient, importUserClient, mainFeedsCacheClient } = require('utilities/redis/redis');
+const {
+  wobjRefsClient, importUserClient, mainFeedsCacheClient, topWobjUsersClient,
+} = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
 } = require('utilities/constants');
+const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
+
+exports.removeTopWobjUsers = async (key) => topWobjUsersClient.delAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
+exports.getTopWobjUsers = async (key) => topWobjUsersClient.smembersAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
 
 /**
  * Get assigned wobjects to post by post path("author" + "_" + "permlink")

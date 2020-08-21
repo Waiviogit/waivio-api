@@ -1,6 +1,7 @@
 const { Wobj } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
+const { redisGetter } = require('utilities/redis');
 const { REQUIREDFIELDS, REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
 
 const getCondition = (data) => {
@@ -25,7 +26,7 @@ const getMany = async (data) => {
   const condition = getCondition(data);
   // eslint-disable-next-line prefer-const
   let { result: wObjects, error } = await Wobj.find(
-    condition, 'default_name weight parent fields',
+    condition, 'default_name weight parent fields object_type author_permlink',
     { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1,
   );
   if (data.sample) {
@@ -38,17 +39,17 @@ const getMany = async (data) => {
   if (error) return { error };
 
   if (data.user_limit && !data.sample) {
-    const usersWobjects = await UserWobjectsModel
-      .find({ author_permlink: { $in: _.map(wObjects, 'author_permlink') } })
-      .select({ _id: 0, weight: 1, user_name: 1 });
-    wObjects.forEach((obj) => {
-      obj.users = _
-        .chain(usersWobjects)
-        .filter((user) => user.author_permlink === obj.author_permlink)
-        .slice(0, 5)
-        .value();
-      obj.user_count = obj.users.length;
-    });
+    await Promise.all(wObjects.map(async (wobj) => {
+      const ids = await redisGetter.getTopWobjUsers(wobj.author_permlink);
+      const userWobjects = await UserWobjectsModel.find(
+        { _id: { $in: ids } },
+      ).lean();
+      wobj.users = _.map(userWobjects, (user) => ({
+        name: user.user_name,
+        weight: user.weight,
+      }));
+      wobj.user_count = wobj.users.length;
+    }));
   } // assign top users to each of wobject
 
   return {

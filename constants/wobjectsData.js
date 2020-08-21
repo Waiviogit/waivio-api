@@ -122,3 +122,5 @@ exports.INDEPENDENT_FIELDS = [
   this.FIELDS_NAMES.MAP,
   this.FIELDS_NAMES.PARENT,
 ];
+
+exports.TOP_WOBJ_USERS_KEY = 'topUsers';
