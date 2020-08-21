@@ -53,7 +53,7 @@ const getFieldVoteRole = (vote) => {
   return role;
 };
 
-const addDataToFields = (fields, filter, admins, ownership, administrative) => {
+const addDataToFields = (fields, filter, admins, ownership, administrative, isOwnershipObj) => {
   /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
 
@@ -67,7 +67,7 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
       } else if (_.includes(administrative, vote.voter)) {
         vote.administrative = true;
         vote.timestamp > _.get(administrativeVote, 'timestamp', 0) ? administrativeVote = vote : null;
-      } else if (_.includes(ownership, vote.voter)) {
+      } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
         vote.ownership = true;
         vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
@@ -224,11 +224,12 @@ const processWobjects = async ({
   for (let obj of wobjects) {
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(
-      _.get(obj, 'authority.ownership', []), _.get(app, 'authority.ownership', []),
-    );
+    const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
+    const ownership = isOwnershipObj ? _.intersection(
+      _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
+    ) : [];
     const administrative = _.intersection(
-      _.get(obj, 'authority.administrative', []), _.get(app, 'authority.administrative', []),
+      _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
@@ -250,11 +251,13 @@ const processWobjects = async ({
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
+    obj.fields = addDataToFields(
+      obj.fields, fields, admins, ownership, administrative, isOwnershipObj,
+    );
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
     Object.assign(obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, isOwnershipObj));
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
