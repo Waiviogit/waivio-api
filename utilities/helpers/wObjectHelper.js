@@ -2,6 +2,7 @@ const moment = require('moment');
 const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
+const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
@@ -53,7 +54,7 @@ const getFieldVoteRole = (vote) => {
   return role;
 };
 
-const addDataToFields = (fields, filter, admins, ownership, administrative) => {
+const addDataToFields = (fields, filter, admins, ownership, administrative, isOwnershipObj) => {
   /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
 
@@ -67,7 +68,7 @@ const addDataToFields = (fields, filter, admins, ownership, administrative) => {
       } else if (_.includes(administrative, vote.voter)) {
         vote.administrative = true;
         vote.timestamp > _.get(administrativeVote, 'timestamp', 0) ? administrativeVote = vote : null;
-      } else if (_.includes(ownership, vote.voter)) {
+      } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
         vote.ownership = true;
         vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
@@ -222,17 +223,21 @@ const processWobjects = async ({
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
   for (let obj of wobjects) {
+    let exposedFields = [];
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(
-      _.get(obj, 'authority.ownership', []), _.get(app, 'authority.ownership', []),
-    );
+    const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
+    const ownership = isOwnershipObj ? _.intersection(
+      _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
+    ) : [];
     const administrative = _.intersection(
-      _.get(obj, 'authority.administrative', []), _.get(app, 'authority.administrative', []),
+      _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
+      const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
+      exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
       const { result } = await postsUtil.getPostState(
         { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
       );
@@ -240,7 +245,13 @@ const processWobjects = async ({
         obj.fields = [];
         continue;
       }
-      obj.fields.map((field) => {
+      obj.fields.map((field, index) => {
+        /** if field not exist in object type for this object - remove it */
+        if (!_.includes(exposedFields, field.name)) {
+          delete obj.fields[index];
+          return;
+        }
+
         let post = _.get(result, `content.${field.author}/${field.permlink}`);
         if (!post || !post.author) post = createMockPost(field);
 
@@ -250,11 +261,13 @@ const processWobjects = async ({
         field.fullBody = post.body;
       });
     }
-    obj.fields = addDataToFields(obj.fields, fields, admins, ownership, administrative);
+    obj.fields = addDataToFields(
+      _.compact(obj.fields), fields, admins, ownership, administrative, isOwnershipObj,
+    );
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
     Object.assign(obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, isOwnershipObj));
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
@@ -265,6 +278,7 @@ const processWobjects = async ({
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    obj.exposedFields = exposedFields;
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];
