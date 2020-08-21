@@ -1,7 +1,7 @@
 const { Wobj } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
-const { REQUIREDFIELDS } = require('constants/wobjectsData');
+const { REQUIREDFIELDS, REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
 
 const getCondition = (data) => {
   const findParams = {};
@@ -24,16 +24,20 @@ const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
   const condition = getCondition(data);
   // eslint-disable-next-line prefer-const
-  let { result: wObjects, error } = await Wobj.find(condition, '', { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1);
+  let { result: wObjects, error } = await Wobj.find(
+    condition, 'default_name weight parent fields',
+    { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1,
+  );
   if (data.sample) {
-    wObjects = _.chain(wObjects)
-      .sampleSize(5)
-      .pick(['default_name', 'name', 'avatar', 'weight', 'parent'])
-      .value();
+    wObjects = _.sampleSize(wObjects, 5);
+    wObjects = wObjects.map((obj) => {
+      obj.fields = _.filter(obj.fields, (field) => _.includes(REQUIREDFIELDS_SEARCH, field.name));
+      return obj;
+    });
   }
   if (error) return { error };
 
-  if (data.user_limit) {
+  if (data.user_limit && !data.sample) {
     const usersWobjects = await UserWobjectsModel
       .find({ author_permlink: { $in: _.map(wObjects, 'author_permlink') } })
       .select({ _id: 0, weight: 1, user_name: 1 });
