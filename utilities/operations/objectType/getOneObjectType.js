@@ -1,4 +1,4 @@
-const { LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
+const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
 const {
   Wobj, ObjectType, Campaign, User,
 } = require('models');
@@ -41,7 +41,7 @@ const getWobjWithFilters = async ({
         limit: 100000,
       },
     });
-    aggregationPipeline.push({ 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } });
+    aggregationPipeline.push({ $match: { 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } } });
     delete filter.map;
   } else {
     aggregationPipeline.push({
@@ -121,7 +121,8 @@ module.exports = async ({
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj, index) => {
         if (simplified) {
-          wobj.fields = _.filter(wobj.fields, (field) => field.name === 'name' || field.name === 'avatar');
+          wobj.fields = _.filter(wobj.fields,
+            (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
           wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
         }
         const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
