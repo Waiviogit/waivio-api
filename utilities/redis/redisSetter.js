@@ -1,10 +1,10 @@
 const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
-const { importUserClient, mainFeedsCacheClient, topWobjUsersClient } = require('./redis');
+const { importUserClient, mainFeedsCacheClient } = require('./redis');
 const {
   LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('../constants');
 
-exports.addTopWobjUsers = async (permlink, ids) => topWobjUsersClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
+exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
 
 /**
  * Add user name to namespace of currently importing users
