@@ -1,4 +1,4 @@
-const { REQUIREDFIELDS, LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
+const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
 const {
   Wobj, ObjectType, Campaign, User,
 } = require('models');
@@ -14,9 +14,7 @@ const validateInput = ({ filter, sort }) => {
         return false;
       }
     }
-    // ///////////////////////////////// //
-    // validate another specific filters //
-    // ///////////////////////////////// //
+    /** validate another specific filters */
   }
   if (sort) {
     if (sort === 'proximity' && !_.get(filter, 'map')) return false;
@@ -43,13 +41,16 @@ const getWobjWithFilters = async ({
         limit: 100000,
       },
     });
+    aggregationPipeline.push({ $match: { 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } } });
     delete filter.map;
-    // limit > 100 ? aggregationPipeline[0].$geoNear.limit = limit : null;
+  } else {
+    aggregationPipeline.push({
+      $match: {
+        object_type: objectType,
+        'status.title': { $nin: nsfw ? ['nsfw', ...LOW_PRIORITY_STATUS_FLAGS] : LOW_PRIORITY_STATUS_FLAGS },
+      },
+    });
   }
-
-  if (nsfw) aggregationPipeline.push({ $match: { object_type: objectType, 'status.title': { $ne: 'nsfw' } } });
-  else aggregationPipeline.push({ $match: { object_type: objectType } });
-
   // special filter searchString
   if (_.get(filter, 'searchString')) {
     aggregationPipeline.push({
@@ -65,9 +66,7 @@ const getWobjWithFilters = async ({
     delete filter.searchString;
   }
   if (!_.isEmpty(filter)) {
-    // ///////////////////////////// ///
-    // place here additional filters ///
-    // ///////////////////////////// ///
+    /** place here additional filters */
     for (const filterItem in filter) {
       for (const filterValue of filter[filterItem]) {
         const cond = {
@@ -84,27 +83,9 @@ const getWobjWithFilters = async ({
     }
   }
   aggregationPipeline.push(
-    {
-      $addFields: {
-        priority: {
-          $cond: {
-            if: { $in: ['$status.title', LOW_PRIORITY_STATUS_FLAGS] },
-            then: 0,
-            else: 1,
-          },
-        },
-      },
-    },
-    { $sort: { priority: -1, [sort]: sort !== 'proximity' ? -1 : 1, _id: -1 } },
+    { $sort: { [sort]: sort !== 'proximity' ? -1 : 1 } },
     { $skip: skip },
     { $limit: limit },
-    { $addFields: { fields: { $filter: { input: '$fields', as: 'field', cond: { $in: ['$$field.name', REQUIREDFIELDS] } } } } },
-    {
-      $lookup: {
-        from: 'wobjects', localField: 'parent', foreignField: 'author_permlink', as: 'parent',
-      },
-    },
-    { $unwind: { path: '$parent', preserveNullAndEmptyArrays: true } },
   );
   // get wobjects by pipeline
   const { wobjects, error: aggrError } = await Wobj.fromAggregation(aggregationPipeline);
@@ -121,8 +102,9 @@ module.exports = async ({
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
+  /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');
-
+  /** get related wobjects for current object type */
   const { wobjects, error: wobjError } = await getWobjWithFilters({
     objectType: name,
     filter,
@@ -133,13 +115,14 @@ module.exports = async ({
   });
   if (wobjError) return { error: wobjError };
 
-
+  /** Fill campaigns for some object types */
   switch (name) {
     case 'list':
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj, index) => {
         if (simplified) {
-          wobj.fields = _.filter(wobj.fields, (field) => field.name === 'name' || field.name === 'avatar');
+          wobj.fields = _.filter(wobj.fields,
+            (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
           wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
         }
         const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
@@ -167,12 +150,7 @@ module.exports = async ({
       break;
   }
 
-  objectType.related_wobjects = wobjects;
-  if (objectType.related_wobjects.length === wobjLimit + 1) {
-    objectType.hasMoreWobjects = true;
-    objectType.related_wobjects = objectType.related_wobjects.slice(0, wobjLimit);
-  } else {
-    objectType.hasMoreWobjects = false;
-  }
+  objectType.hasMoreWobjects = wobjects.length > wobjLimit;
+  objectType.related_wobjects = wobjects.slice(0, wobjLimit);
   return { objectType };
 };
