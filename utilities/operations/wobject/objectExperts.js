@@ -115,18 +115,25 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   };
 };
 
+/** cache wobject top users for fast request work */
 const cacheAllObjectExperts = async (limit) => {
-  const hashtags = await WObject.find({ weight: { $gt: 0 }, object_type: 'hashtag' }).sort({ weight: -1 }).limit(limit);
-  const objects = await WObject.find({ weight: { $gt: 0 }, object_type: { $ne: 'hashtag' } }).sort({ weight: -1 }).limit(limit);
-  await Promise.all(_.concat(hashtags, objects).map(async (wobj) => {
+  const hashtags = await WObject.find({ weight: { $gt: 0 }, object_type: 'hashtag' }).sort({ weight: -1 })
+    .limit(limit).select({ author_permlink: 1, _id: 1 })
+    .lean();
+  const objects = await WObject.find({ weight: { $gt: 0 }, object_type: { $ne: 'hashtag' } })
+    .sort({ weight: -1 }).limit(limit).select({ author_permlink: 1, _id: 1 })
+    .lean();
+
+  for (const wobj of _.concat(hashtags, objects)) {
     await redisGetter.removeTopWobjUsers(wobj.author_permlink);
     const { result: userWobjects } = await UserWobjects.find(
       { author_permlink: wobj.author_permlink }, { weight: -1 }, 5,
     );
-    for (const user of userWobjects) {
-      await redisSetter.addTopWobjUsers(wobj.author_permlink, user._id.toString());
+    const ids = _.map(userWobjects, (user) => `${user.user_name}:${user.weight}`);
+    if (ids && ids.length) {
+      await redisSetter.addTopWobjUsers(wobj.author_permlink, ids);
     }
-  }));
+  }
 };
 
 module.exports = { getWobjExperts, cacheAllObjectExperts };
