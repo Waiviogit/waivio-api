@@ -1,7 +1,6 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS } = require('constants/wobjectsData');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -17,92 +16,6 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
   } catch (error) {
     return { error };
   }
-};
-
-const getAll = async (data) => {
-  const findParams = {};
-  const pipeline = [];
-  let hasMore = false;
-  let wObjects;
-  const requiredFields = [...REQUIREDFIELDS];
-
-  if (data.required_fields && Array.isArray(data.required_fields) && data.required_fields.length) {
-    requiredFields.push(...data.required_fields);
-  }
-  if (data.author_permlinks && Array.isArray(data.author_permlinks)
-      && data.author_permlinks.length) {
-    findParams.author_permlink = { $in: data.author_permlinks };
-  }
-  if (data.object_types && Array.isArray(data.object_types) && data.object_types.length) {
-    findParams.object_type = { $in: data.object_types };
-  } else if (data.exclude_object_types && Array.isArray(data.exclude_object_types)
-      && data.exclude_object_types.length) {
-    findParams.object_type = { $nin: data.exclude_object_types };
-  }
-  if (_.has(data, 'map.coordinates')) {
-    pipeline.push({
-      $geoNear: {
-        near: { type: 'Point', coordinates: [data.map.coordinates[1], data.map.coordinates[0]] },
-        distanceField: 'distance',
-        maxDistance: data.map.radius ? parseInt(data.map.radius, 10) : 10000,
-        spherical: true,
-        limit: data.limit,
-      },
-    });
-  }
-  if (data.sample) {
-    pipeline['status.title'] = { $nin: ['unavailable', 'relisted'] };
-  }
-  pipeline.push(...[
-    { $match: findParams },
-    { $sort: { weight: -1 } },
-    { $skip: data.sample ? 0 : data.skip },
-    { $limit: data.sample ? 100 : data.limit + 1 },
-  ]);
-  if (data.sample) {
-    pipeline.push({ $sample: { size: 5 } });
-  }
-  pipeline.push(...[
-    {
-      $addFields: {
-        fields: {
-          $filter: {
-            input: '$fields',
-            as: 'field',
-            cond: {
-              $in: ['$$field.name', requiredFields],
-            },
-          },
-        },
-      },
-    },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'parent',
-        foreignField: 'author_permlink',
-        as: 'parent',
-      },
-    },
-    { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
-  ]);
-  try {
-    const { wobjects, error } = await fromAggregation(pipeline);
-
-    if (error) {
-      return { error };
-    }
-    wObjects = wobjects;
-  } catch (error) {
-    return { error };
-  }
-  if (!wObjects || wObjects.length === 0) {
-    return { wObjectsData: [] };
-  } if (wObjects.length === data.limit + 1) {
-    hasMore = true;
-    wObjects = wObjects.slice(0, data.limit);
-  }
-  return { wObjectsData: wObjects, hasMore };
 };
 
 const fromAggregation = async (pipeline) => {
@@ -192,16 +105,22 @@ const findOne = async (authorPermlink) => {
   }
 };
 
-const find = async (condition, select, sort = {}) => {
+const find = async (condition, select, sort = {}, skip = 0, limit) => {
   try {
-    return { result: await WObjectModel.find(condition, select).sort(sort).lean() };
+    return {
+      result: await WObjectModel
+        .find(condition, select)
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+    };
   } catch (error) {
     return { error };
   }
 };
 
 module.exports = {
-  getAll,
   getOne,
   find,
   fromAggregation,

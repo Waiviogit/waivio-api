@@ -136,7 +136,7 @@ const arrayFieldFilter = ({
   if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
     const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
       (item) => item.id === permlink && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
-    if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos' });
+    if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos', id: permlink });
     id = FIELDS_NAMES.GALLERY_ALBUM;
   }
   return { result: _.compact(validFields), id };
@@ -194,8 +194,11 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 /** Get info of wobject parent with specific winning fields */
 const getParentInfo = async (wObject, locale, app) => {
   if (wObject.parent) {
-    // Temporary solution
     const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
+    if (!fullParent) {
+      wObject.parent = '';
+      return wObject.parent;
+    }
     wObject.parent = fullParent;
 
     wObject.parent = await processWobjects({
@@ -279,6 +282,7 @@ const processWobjects = async ({
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
     obj.exposedFields = exposedFields;
+    if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];
