@@ -2,8 +2,7 @@ const { cacheAllObjectExperts } = require('utilities/operations/wobject/objectEx
 const cron = require('cron');
 
 exports.collectWobjExpertsJob = cron.job('0 1 */1 * *', async () => {
-  console.log('Collecting wobj experts info');
-  console.time('start');
-  await cacheAllObjectExperts(5000);
-  console.timeEnd('start');
+  console.time('Collecting wobj experts info');
+  await cacheAllObjectExperts(500);
+  console.timeEnd('Collecting wobj experts info');
 }, null, false, null, null, false);
