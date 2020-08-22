@@ -1,7 +1,6 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { REQUIREDFIELDS } = require('constants/wobjectsData');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -17,53 +16,6 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
   } catch (error) {
     return { error };
   }
-};
-
-const getAll = async (data) => {
-  const findParams = {};
-  const pipeline = [];
-
-  if (data.author_permlinks.length) {
-    findParams.author_permlink = { $in: data.author_permlinks };
-  }
-
-  if (data.object_types.length) {
-    findParams.object_type = { $in: data.object_types };
-  } else if (data.exclude_object_types.length) {
-    findParams.object_type = { $nin: data.exclude_object_types };
-  }
-
-  if (_.has(data, 'map.coordinates')) {
-    pipeline.push({
-      $geoNear: {
-        near: { type: 'Point', coordinates: [data.map.coordinates[1], data.map.coordinates[0]] },
-        distanceField: 'distance',
-        maxDistance: data.map.radius ? parseInt(data.map.radius, 10) : 10000,
-        spherical: true,
-        limit: data.limit,
-      },
-    });
-  }
-  if (data.sample) {
-    pipeline['status.title'] = { $nin: ['unavailable', 'relisted'] };
-  }
-  pipeline.push(...[
-    { $match: findParams },
-    { $sort: { weight: -1 } },
-    { $skip: data.sample ? 0 : data.skip },
-    { $limit: data.sample ? 100 : data.limit + 1 },
-  ]);
-  if (data.sample) {
-    pipeline.push({ $sample: { size: 5 } });
-  }
-
-  const { wobjects, error } = await fromAggregation(pipeline);
-  if (error) return { error };
-
-  return {
-    hasMore: wobjects.length > data.limit,
-    wObjectsData: wobjects.slice(0, data.limit),
-  };
 };
 
 const fromAggregation = async (pipeline) => {
@@ -169,7 +121,6 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
 };
 
 module.exports = {
-  getAll,
   getOne,
   find,
   fromAggregation,

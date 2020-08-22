@@ -12,11 +12,17 @@ const _ = require('lodash');
 module.exports = async ({ name, skip, limit }) => {
   const { app, error: appError } = await App.getOne({ name });
   if (appError) return { appError };
-  const { wObjectsData, hasMore, error } = await Wobj.getAll({
-    author_permlinks: _.get(app, 'supported_hashtags', []),
-    skip,
-    limit,
-  });
+  const { result: wObjectsData, error } = await Wobj.find({
+    author_permlink: { $in: _.get(app, 'supported_hashtags', []) },
+    'status.title': { $nin: ['unavailable', 'relisted'] },
+  },
+  '',
+  { weight: -1 },
+  skip,
+  limit + 1);
   if (error) return { error };
-  return { wobjects: wObjectsData, hasMore };
+  return {
+    wobjects: wObjectsData.slice(0, limit),
+    hasMore: wObjectsData.length > limit,
+  };
 };
