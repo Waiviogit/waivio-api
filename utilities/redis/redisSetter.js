@@ -4,7 +4,7 @@ const {
   LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('../constants');
 
-exports.addTopWobjUsers = async (permlink, id) => topWobjUsersClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, id);
+exports.addTopWobjUsers = async (permlink, ids) => topWobjUsersClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
 
 /**
  * Add user name to namespace of currently importing users

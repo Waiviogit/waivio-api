@@ -29,6 +29,7 @@ const getMany = async (data) => {
     condition, 'default_name weight parent fields object_type author_permlink',
     { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1,
   );
+  /** Data sample use for short info about wobject, it must be light request */
   if (data.sample) {
     wObjects = _.sampleSize(wObjects, 5);
     wObjects = wObjects.map((obj) => {
@@ -40,14 +41,19 @@ const getMany = async (data) => {
 
   if (data.user_limit && !data.sample) {
     await Promise.all(wObjects.map(async (wobj) => {
+      /** We have cached users in redis DB, if key not found< use mongo */
       const ids = await redisGetter.getTopWobjUsers(wobj.author_permlink);
-      const userWobjects = await UserWobjectsModel.find(
-        { _id: { $in: ids } },
-      ).lean();
-      wobj.users = _.map(userWobjects, (user) => ({
-        name: user.user_name,
-        weight: user.weight,
-      }));
+      if (!ids || !ids.length) {
+        const userWobjects = await UserWobjectsModel
+          .find({ author_permlink: wobj.author_permlink })
+          .sort({ weight: -1 }).limit(data.user_limit).lean();
+        wobj.users = _.map(userWobjects, (user) => ({ name: user.user_name, weight: user.weight }));
+      } else {
+        wobj.users = _.map(ids, (id) => {
+          const userData = id.split(':');
+          return { name: userData[0], weight: userData[1] };
+        });
+      }
       wobj.user_count = wobj.users.length;
     }));
   } // assign top users to each of wobject
