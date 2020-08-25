@@ -30,7 +30,7 @@ const getUsersByList = async (data) => {
   for (const user of usersData) {
     if (data.name) {
       const { users } = await Subscriptions.findOne({ follower: user.name, following: data.name });
-      if (data.name) user.followsMe = !!users;
+      user.followsMe = !!users;
     }
     mappedUsers.push(user);
   }

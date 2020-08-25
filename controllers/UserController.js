@@ -304,17 +304,6 @@ const importUserFromSteem = async (req, res, next) => {
   next();
 };
 
-const wobjectPostWriters = async (req, res, next) => {
-  if (!req.params.userName) return next({ error: { status: 422, message: 'Invalid data in request' } });
-
-  const { users, error } = await getWobjectPostWriters.getUsersList(req.params.userName);
-
-  if (error) return next(error);
-
-  res.result = { status: 200, json: users };
-  next();
-};
-
 const followingsState = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
@@ -366,7 +355,6 @@ module.exports = {
   followers,
   getUserComments,
   importUserFromSteem,
-  wobjectPostWriters,
   followingsState,
   usersData,
   modalWindowMarker,
