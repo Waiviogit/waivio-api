@@ -56,7 +56,7 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
 
     steemComments = stComments;
   }
-  const resComments = dbComments.map((dbComment) => {
+  return dbComments.map((dbComment) => {
     const steemComment = _.find(steemComments, { ..._.pick(dbComment, ['author', 'permlink']) });
 
     if (steemComment) {
@@ -66,6 +66,4 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
     }
     return dbComment;
   });
-
-  return resComments;
 };
