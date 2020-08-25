@@ -1,7 +1,6 @@
 const moduleExports = {};
 
 moduleExports.importSteemUserBalancer = require('./importSteemUserBalancer');
-moduleExports.getWobjectPostWriters = require('./getWobjectPostWriters');
 moduleExports.getFollowingUpdates = require('./getFollowingUpdates');
 moduleExports.importSteemUserOps = require('./importSteemUserOps');
 moduleExports.getFollowingsUser = require('./getFollowingsUser');

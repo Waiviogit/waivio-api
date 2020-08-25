@@ -83,8 +83,6 @@ userRoutes.route('/user/:userName/following_users_updates')
   .get(UserController.followingUsersUpdates);
 userRoutes.route('/user/:userName/following_wobjects_updates')
   .get(UserController.followingWobjectsUpdates);
-userRoutes.route('/user/:userName/get_wobject_post_writers')
-  .get(UserController.wobjectPostWriters);
 userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
 // endregion
