@@ -1,4 +1,4 @@
-const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
+const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
   Wobj, ObjectType, Campaign, User,
 } = require('models');
@@ -75,7 +75,7 @@ const getWobjWithFilters = async ({
         };
         // additional filter for field "rating"
 
-        if (filterItem === 'rating') {
+        if (filterItem === FIELDS_NAMES.RATING) {
           cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
         }
         aggregationPipeline.push(cond);
@@ -143,6 +143,15 @@ module.exports = async ({
       }));
       break;
     case 'dish':
+      // const { result, error } = await Campaign.findByCondition(
+      //   { objects: { $in: _.map(wobjects, 'author_permlink') }, status: 'active' },
+      // );
+      // if (error || !result.length) return;
+      // for (const wobj of wobjects) {
+      //   const campaigns = _.filter(result, (obj) => _.includes(obj.objects, wobj.author_permlink));
+      //   wobj.propositions = await objectTypeHelper.campaignFilter(campaigns, user);
+      // }
+
       await Promise.all(wobjects.map(async (wobj) => {
         const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
         if (error || !result.length) return;
