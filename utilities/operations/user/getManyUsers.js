@@ -28,9 +28,10 @@ const getUsersByList = async (data) => {
   if (error) return { error };
   const mappedUsers = [];
   for (const user of usersData) {
-    const { users } = await Subscriptions.getFollowings({ follower: user.name, limit: 0 });
-    user.users_follow = users || [];
-    if (data.name) user.followsMe = _.includes(users || [], data.name);
+    if (data.name) {
+      const { users } = await Subscriptions.findOne({ follower: user.name, following: data.name });
+      if (data.name) user.followsMe = !!users;
+    }
     mappedUsers.push(user);
   }
   return {

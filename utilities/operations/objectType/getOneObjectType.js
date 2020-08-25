@@ -118,6 +118,7 @@ module.exports = async ({
   /** Fill campaigns for some object types */
   switch (name) {
     case 'list':
+    case 'hashtag':
     case 'restaurant':
       await Promise.all(wobjects.map(async (wobj, index) => {
         if (simplified) {
