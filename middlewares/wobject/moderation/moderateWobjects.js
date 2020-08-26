@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+const { REQUIREDFIELDS_POST, REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -81,5 +81,5 @@ const newValidationArray = async (posts, app, locale, path) => {
 };
 
 const newValidation = async (wobjects, app, locale) => wobjectHelper.processWobjects({
-  wobjects, app, hiveData: false, returnArray: true, locale,
+  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST,
 });
