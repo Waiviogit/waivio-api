@@ -19,14 +19,14 @@ exports.fill = async (req, res, next) => {
     next();
     return;
   }
-  const userName = _.get(res, 'params.userName', null);
+  const userName = _.get(req, 'params.userName', _.get(req, 'headers.follower', req.headers.following));
   // separate requests which return array of posts and which return single post
   if (_.isArray(res.result.json)) {
     // replace reblog post blank to source post
     await postHelper.fillReblogs(res.result.json, userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
     res.result.json = await fillObjects(
-      res.result.json, _.get(req, 'headers.app'), _.get(req, 'params.userName', req.headers.userName),
+      res.result.json, _.get(req, 'headers.app'), userName,
     );
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(res.result.json);
@@ -37,7 +37,7 @@ exports.fill = async (req, res, next) => {
     [res.result.json] = await fillObjects([res.result.json]);
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(
-      [res.result.json], _.get(req, 'headers.app'), _.get(req, 'params.userName', req.headers.userName),
+      [res.result.json], _.get(req, 'headers.app'), userName,
     );
   }
   next();

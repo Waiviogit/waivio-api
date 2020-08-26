@@ -13,7 +13,7 @@ exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[mom
       (user) => (user.status === 'assigned' || user.status === 'completed')
         && user.createdAt > moment().startOf('month')).length);
 
-exports.requirementFilters = async (campaign, user, restaurant) => {
+exports.requirementFilters = async (campaign, user) => {
   let frequency = null, notBlacklisted = true, assignedUser, daysPassed;
   if (user && user.name) {
     user.wobjects_weight = user.wobjects_weight < 0 ? 0 : user.wobjects_weight;
@@ -27,7 +27,7 @@ exports.requirementFilters = async (campaign, user, restaurant) => {
     (usr) => (usr.status === 'assigned' || usr.status === 'completed')
       && usr.createdAt > moment().startOf('month')).length;
 
-  const result = {
+  return {
     can_assign_by_current_day: !!campaign.reservation_timetable[moment().format('dddd').toLowerCase()],
     can_assign_by_budget: canAssignByBudget,
     posts: user ? user.count_posts >= campaign.userRequirements.minPosts : false,
@@ -37,7 +37,6 @@ exports.requirementFilters = async (campaign, user, restaurant) => {
     frequency: _.isNumber(daysPassed) ? daysPassed >= campaign.frequency_assign : true,
     not_blacklisted: notBlacklisted,
   };
-  return restaurant ? [this.campaignValidation(campaign), ...Object.values(result)] : result;
 };
 
 exports.campaignFilter = async (campaigns, user, app) => {
