@@ -5,7 +5,7 @@ const Wobj = require('models/wObjectModel');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, SPECIAL_FIELDS,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
@@ -177,15 +177,22 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     if (approvedFields.length) {
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
-      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
-      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
+      if (adminVotes.length) {
+        const adminField = _.maxBy(adminVotes, 'adminVote.timestamp');
+        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? adminField : adminField.body;
+      } else {
+        const approvedField = _.maxBy(approvedFields, 'adminVote.timestamp');
+        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? approvedField : approvedField.body;
+      }
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
           && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
     });
-    if (heaviestField) winningFields[id] = heaviestField.body;
+    if (heaviestField) {
+      winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? heaviestField : heaviestField.body;
+    }
   }
   return winningFields;
 };
