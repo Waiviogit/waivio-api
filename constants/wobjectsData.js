@@ -28,6 +28,7 @@ exports.FIELDS_NAMES = {
   CHART_ID: 'chartid',
   PAGE_CONTENT: 'pageContent',
   LIST_ITEM: 'listItem',
+  MENU_ITEM: 'menuItem',
   SORT_CUSTOM: 'sortCustom',
 };
 
