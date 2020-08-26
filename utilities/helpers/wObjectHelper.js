@@ -156,7 +156,6 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
-  const arrayFields = ARRAY_FIELDS;
   const winningFields = {};
   const filteredFields = _.filter(fields,
     (field) => filterFieldValidation(filter, field, locale, ownership));
@@ -167,7 +166,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     const approvedFields = _.filter(groupedFields[id],
       (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED);
 
-    if (_.includes(arrayFields, id)) {
+    if (_.includes(ARRAY_FIELDS, id)) {
       const { result, id: newId } = arrayFieldFilter({
         idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
       });
