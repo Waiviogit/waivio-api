@@ -28,7 +28,9 @@ exports.FIELDS_NAMES = {
   WORK_TIME: 'workTime',
   CHART_ID: 'chartid',
   PAGE_CONTENT: 'pageContent',
+  PAGE_LINK: 'pageLink',
   LIST_ITEM: 'listItem',
+  MENU_ITEM: 'menuItem',
   SORT_CUSTOM: 'sortCustom',
 };
 
@@ -102,6 +104,10 @@ exports.REQUIREDFIELDS_POST = [
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.TITLE,
   this.FIELDS_NAMES.PARENT,
+];
+
+exports.SPECIAL_FIELDS = [
+  this.FIELDS_NAMES.PAGE_LINK,
 ];
 
 exports.REQUIREDFILDS_WOBJ_LIST = [
