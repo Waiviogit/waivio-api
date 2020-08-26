@@ -3,7 +3,7 @@ const {
   Wobj, Campaign, User, App,
 } = require('models');
 const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
-const { objectTypeHelper, wObjectHelper } = require('utilities/helpers');
+const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 
 const getParentInfo = async (wObject, data, app) => {
   const { parent } = await wObjectHelper.processWobjects({
@@ -73,7 +73,7 @@ const getListItems = async (wobject, data, app) => {
     );
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
-    wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
+    wobj.propositions = await campaignsHelper.campaignFilter(result, user);
     return wobj;
   }));
 

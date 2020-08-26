@@ -1,10 +1,10 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  User, Wobj, paymentHistory, Campaign,
+  User, Wobj, paymentHistory, Campaign, App,
 } = require('models');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
 
 const wobjectHelper = require('./wObjectHelper');
 
@@ -123,4 +123,48 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
     lastCompleted: _.get(result, '[0].lastCompleted', null),
     assignedUser: !!_.get(result, '[0].assignedUser'),
   };
+};
+
+exports.addCampaignsToWobjects = async ({
+  name, wobjects, user, appName, simplified = false,
+}) => {
+  const permlinks = _.map(wobjects, 'author_permlink');
+
+  const { result: campaigns } = await Campaign.findByCondition({ requiredObject: { $in: permlinks }, objects: { $in: permlinks }, status: 'active' });
+
+  switch (name) {
+    case 'list':
+    case 'hashtag':
+    case 'restaurant':
+      await Promise.all(wobjects.map(async (wobj, index) => {
+        if (simplified) {
+          wobj.fields = _.filter(wobj.fields,
+            (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
+          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+        }
+        const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) {
+          wobjects[index] = wobj;
+          return;
+        }
+        const eligibleCampaigns = _.filter(result,
+          (campaign) => this.campaignValidation(campaign) === true);
+        if (eligibleCampaigns.length) {
+          wobj.campaigns = {
+            min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
+            max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
+          };
+        }
+        wobjects[index] = wobj;
+      }));
+      break;
+    case 'dish':
+      const { app } = await App.getOne({ name: appName });
+      await Promise.all(wobjects.map(async (wobj) => {
+        const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
+        if (error || !result.length) return;
+        wobj.propositions = await this.campaignFilter(result, user, app);
+      }));
+      break;
+  }
 };

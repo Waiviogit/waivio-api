@@ -20,6 +20,7 @@ exports.FIELDS_NAMES = {
   ADDRESS: 'address',
   LINK: 'link',
   TAG: 'tag',
+  PAGE_LINK: 'pageLink',
   PHONE: 'phone',
   EMAIL: 'email',
   PRICE: 'price',
