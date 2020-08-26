@@ -126,45 +126,38 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
 };
 
 exports.addCampaignsToWobjects = async ({
-  name, wobjects, user, appName, simplified = false,
+  wobjects, user, appName, simplified = false,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
 
-  const { result: campaigns } = await Campaign.findByCondition({ requiredObject: { $in: permlinks }, objects: { $in: permlinks }, status: 'active' });
-
-  switch (name) {
-    case 'list':
-    case 'hashtag':
-    case 'restaurant':
-      await Promise.all(wobjects.map(async (wobj, index) => {
-        if (simplified) {
-          wobj.fields = _.filter(wobj.fields,
-            (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
-          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
-        }
-        const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
-        if (error || !result.length) {
-          wobjects[index] = wobj;
-          return;
-        }
-        const eligibleCampaigns = _.filter(result,
-          (campaign) => this.campaignValidation(campaign) === true);
-        if (eligibleCampaigns.length) {
-          wobj.campaigns = {
-            min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
-            max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
-          };
-        }
-        wobjects[index] = wobj;
-      }));
-      break;
-    case 'dish':
+  const { result: campaigns } = await Campaign.findByCondition(
+    { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
+  );
+  await Promise.all(wobjects.map(async (wobj) => {
+    if (simplified) {
+      wobj.fields = _.filter(wobj.fields,
+        (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
+      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+    }
+    const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
+    if (primaryCampaigns.length) {
+      const eligibleCampaigns = _.filter(primaryCampaigns,
+        (campaign) => this.campaignValidation(campaign) === true);
+      if (eligibleCampaigns.length) {
+        wobj.campaigns = {
+          min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
+          max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
+        };
+      }
+      return wobj;
+    }
+    const secondaryCampaigns = _.filter(campaigns,
+      (campaign) => _.includes(campaign.objects, wobj.author_permlink));
+    if (secondaryCampaigns.length) {
       const { app } = await App.getOne({ name: appName });
-      await Promise.all(wobjects.map(async (wobj) => {
-        const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
-        if (error || !result.length) return;
-        wobj.propositions = await this.campaignFilter(result, user, app);
-      }));
-      break;
-  }
+      wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
+    }
+    return wobj;
+  }));
+  return wobjects;
 };

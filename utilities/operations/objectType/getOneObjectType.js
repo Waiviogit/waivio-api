@@ -1,6 +1,6 @@
 const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
-  Wobj, ObjectType, Campaign, User, App,
+  Wobj, ObjectType, User,
 } = require('models');
 const _ = require('lodash');
 const { campaignsHelper } = require('utilities/helpers');
