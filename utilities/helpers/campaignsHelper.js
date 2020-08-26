@@ -1,10 +1,10 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  User, Wobj, paymentHistory, Campaign,
+  User, Wobj, paymentHistory, Campaign, App,
 } = require('models');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
 
 const wobjectHelper = require('./wObjectHelper');
 
@@ -123,4 +123,41 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
     lastCompleted: _.get(result, '[0].lastCompleted', null),
     assignedUser: !!_.get(result, '[0].assignedUser'),
   };
+};
+
+exports.addCampaignsToWobjects = async ({
+  wobjects, user, appName, simplified = false,
+}) => {
+  const permlinks = _.map(wobjects, 'author_permlink');
+
+  const { result: campaigns } = await Campaign.findByCondition(
+    { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
+  );
+  await Promise.all(wobjects.map(async (wobj) => {
+    if (simplified) {
+      wobj.fields = _.filter(wobj.fields,
+        (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
+      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+    }
+    const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
+    if (primaryCampaigns.length) {
+      const eligibleCampaigns = _.filter(primaryCampaigns,
+        (campaign) => this.campaignValidation(campaign) === true);
+      if (eligibleCampaigns.length) {
+        wobj.campaigns = {
+          min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
+          max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
+        };
+      }
+      return wobj;
+    }
+    const secondaryCampaigns = _.filter(campaigns,
+      (campaign) => _.includes(campaign.objects, wobj.author_permlink));
+    if (secondaryCampaigns.length) {
+      const { app } = await App.getOne({ name: appName });
+      wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
+    }
+    return wobj;
+  }));
+  return wobjects;
 };

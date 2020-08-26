@@ -39,17 +39,6 @@ exports.getAllPosts = async (data) => {
   }
 };
 
-exports.fillObjects = async (posts, locale = 'en-US', wobjectsPath = 'fullObjects') => {
-  for (const post of posts) {
-    for (let wObject of _.get(post, 'wobjects') || []) {
-      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
-    }
-    post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
-    delete post[wobjectsPath];
-  }
-  return posts;
-};
-
 exports.aggregate = async (pipeline) => {
   try {
     const posts = await PostModel.aggregate(pipeline);

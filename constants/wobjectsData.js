@@ -20,6 +20,7 @@ exports.FIELDS_NAMES = {
   ADDRESS: 'address',
   LINK: 'link',
   TAG: 'tag',
+  PAGE_LINK: 'pageLink',
   PHONE: 'phone',
   EMAIL: 'email',
   PRICE: 'price',
@@ -27,7 +28,6 @@ exports.FIELDS_NAMES = {
   WORK_TIME: 'workTime',
   CHART_ID: 'chartid',
   PAGE_CONTENT: 'pageContent',
-  PAGE_LINK: 'pageLink',
   LIST_ITEM: 'listItem',
   MENU_ITEM: 'menuItem',
   SORT_CUSTOM: 'sortCustom',
@@ -87,6 +87,7 @@ exports.REQUIREDFIELDS = [
 exports.REQUIREDFIELDS_PARENT = [this.FIELDS_NAMES.NAME, this.FIELDS_NAMES.AVATAR];
 exports.REQUIREDFIELDS_SEARCH = [
   this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.RATING,
   this.FIELDS_NAMES.PARENT,
@@ -102,6 +103,7 @@ exports.REQUIREDFIELDS_POST = [
   this.FIELDS_NAMES.NAME,
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.TITLE,
+  this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.PARENT,
 ];
 
@@ -119,6 +121,7 @@ exports.REQUIREDFILDS_WOBJ_LIST = [
   this.FIELDS_NAMES.DESCRIPTION,
   this.FIELDS_NAMES.PRICE,
   this.FIELDS_NAMES.CATEGORY_ITEM,
+  this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.TAG_CATEGORY,
 ];
 

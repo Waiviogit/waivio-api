@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { schema } = require('middlewares/posts/fillAdditionalInfo/schema');
-const { Post: PostService } = require('models');
-const { postHelper } = require('utilities/helpers');
+const userModel = require('models/UserModel');
+const { postHelper, campaignsHelper } = require('utilities/helpers');
 
 /**
  * Middleware which fill some specific info on each post before send those to client.
@@ -25,17 +25,38 @@ exports.fill = async (req, res, next) => {
     // replace reblog post blank to source post
     await postHelper.fillReblogs(res.result.json, userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
-    res.result.json = await PostService.fillObjects(res.result.json);
+    res.result.json = await fillObjects(
+      res.result.json, _.get(req, 'headers.app'), _.get(req, 'params.userName', req.headers.userName),
+    );
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(res.result.json);
   } else {
     // replace reblog post blank to source post
     await postHelper.fillReblogs([res.result.json], userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
-    [res.result.json] = await PostService.fillObjects([res.result.json]);
+    [res.result.json] = await fillObjects([res.result.json]);
     // add current "author_wobjects_weight" to each post;
-    await postHelper.addAuthorWobjectsWeight([res.result.json]);
+    await postHelper.addAuthorWobjectsWeight(
+      [res.result.json], _.get(req, 'headers.app'), _.get(req, 'params.userName', req.headers.userName),
+    );
   }
-
   next();
+};
+
+const fillObjects = async (posts, appName, userName, wobjectsPath = 'fullObjects') => {
+  let user;
+  if (userName) {
+    user = await userModel.getOne(userName);
+  }
+  for (const post of posts) {
+    for (let wObject of _.get(post, 'wobjects') || []) {
+      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
+    }
+    post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
+    post.wobjects = await campaignsHelper.addCampaignsToWobjects(
+      { wobjects: post.wobjects, appName, user },
+    );
+    delete post[wobjectsPath];
+  }
+  return posts;
 };
