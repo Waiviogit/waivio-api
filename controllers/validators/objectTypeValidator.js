@@ -10,6 +10,7 @@ exports.indexSchema = Joi.object().keys({
 
 exports.showSchema = Joi.object().keys({
   userName: Joi.string(),
+  appName: Joi.string(),
   name: Joi.string().required(),
   simplified: Joi.boolean().default(false),
   wobjLimit: Joi.number().integer().min(0).default(30),

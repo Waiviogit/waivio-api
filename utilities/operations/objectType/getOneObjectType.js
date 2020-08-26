@@ -1,6 +1,6 @@
 const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
-  Wobj, ObjectType, Campaign, User,
+  Wobj, ObjectType, Campaign, User, App,
 } = require('models');
 const _ = require('lodash');
 const { objectTypeHelper } = require('utilities/helpers');
@@ -98,7 +98,7 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort, userName, simplified,
+  name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
@@ -143,19 +143,11 @@ module.exports = async ({
       }));
       break;
     case 'dish':
-      // const { result, error } = await Campaign.findByCondition(
-      //   { objects: { $in: _.map(wobjects, 'author_permlink') }, status: 'active' },
-      // );
-      // if (error || !result.length) return;
-      // for (const wobj of wobjects) {
-      //   const campaigns = _.filter(result, (obj) => _.includes(obj.objects, wobj.author_permlink));
-      //   wobj.propositions = await objectTypeHelper.campaignFilter(campaigns, user);
-      // }
-
+      const { app } = await App.getOne({ name: appName });
       await Promise.all(wobjects.map(async (wobj) => {
         const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
         if (error || !result.length) return;
-        wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
+        wobj.propositions = await objectTypeHelper.campaignFilter(result, user, app);
       }));
       break;
   }
