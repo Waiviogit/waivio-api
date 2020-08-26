@@ -233,6 +233,7 @@ const processWobjects = async ({
   if (!_.isArray(wobjects)) return filteredWobj;
   for (let obj of wobjects) {
     let exposedFields = [];
+    obj.parent = '';
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
     const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
@@ -245,7 +246,6 @@ const processWobjects = async ({
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
-      obj.parent = '';
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
       const { result } = await postsUtil.getPostState(
