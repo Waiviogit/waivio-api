@@ -26,6 +26,7 @@ const show = async (req, res, next) => {
     filter: req.body.filter,
     sort: req.body.sort,
     simplified: req.body.simplified,
+    appName: req.headers.app,
   }, validators.objectType.showSchema, next);
 
   if (!value) return;
@@ -66,7 +67,6 @@ const expertise = async (req, res, next) => {
   res.result = { status: 200, json: users };
   next();
 };
-
 
 module.exports = {
   index, search, show, expertise,
