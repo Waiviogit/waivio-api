@@ -18,7 +18,7 @@ exports.moderate = async (req, res, next) => {
     next();
     return;
   }
-  const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
+  const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
   if (!currentSchema) {
     next();
