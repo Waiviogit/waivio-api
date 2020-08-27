@@ -1,9 +1,9 @@
-const { LOW_PRIORITY_STATUS_FLAGS, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
+const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
-  Wobj, ObjectType, Campaign, User,
+  Wobj, ObjectType, User,
 } = require('models');
 const _ = require('lodash');
-const { objectTypeHelper } = require('utilities/helpers');
+const { campaignsHelper } = require('utilities/helpers');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -75,7 +75,7 @@ const getWobjWithFilters = async ({
         };
         // additional filter for field "rating"
 
-        if (filterItem === 'rating') {
+        if (filterItem === FIELDS_NAMES.RATING) {
           cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
         }
         aggregationPipeline.push(cond);
@@ -98,7 +98,7 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort, userName, simplified,
+  name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
@@ -115,40 +115,11 @@ module.exports = async ({
   });
   if (wobjError) return { error: wobjError };
 
-  /** Fill campaigns for some object types */
-  switch (name) {
-    case 'list':
-    case 'restaurant':
-      await Promise.all(wobjects.map(async (wobj, index) => {
-        if (simplified) {
-          wobj.fields = _.filter(wobj.fields,
-            (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
-          wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
-        }
-        const { result, error } = await Campaign.findByCondition({ requiredObject: wobj.author_permlink, status: 'active' });
-        if (error || !result.length) {
-          wobjects[index] = wobj;
-          return;
-        }
-        const eligibleCampaigns = _.filter(result,
-          (campaign) => objectTypeHelper.campaignValidation(campaign) === true);
-        if (eligibleCampaigns.length) {
-          wobj.campaigns = {
-            min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
-            max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
-          };
-        }
-        wobjects[index] = wobj;
-      }));
-      break;
-    case 'dish':
-      await Promise.all(wobjects.map(async (wobj) => {
-        const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
-        if (error || !result.length) return;
-        wobj.propositions = await objectTypeHelper.campaignFilter(result, user);
-      }));
-      break;
-  }
+  /** Fill campaigns for some object types,
+   * be careful, we pass objects by reference and in this method we will directly modify them */
+  await campaignsHelper.addCampaignsToWobjects({
+    name, wobjects, user, appName, simplified,
+  });
 
   objectType.hasMoreWobjects = wobjects.length > wobjLimit;
   objectType.related_wobjects = wobjects.slice(0, wobjLimit);

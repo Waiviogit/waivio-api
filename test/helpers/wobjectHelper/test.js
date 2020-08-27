@@ -7,28 +7,31 @@ const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/fac
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 describe('On wobjectHelper', async () => {
-  let app, admin, admin2, administrative, ownership, ownershipObject;
+  let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
   beforeEach(async () => {
     await dropDatabase();
+    objectType = await ObjectTypeFactory.Create(
+      { exposedFields: _.difference(Object.values(FIELDS_NAMES), [FIELDS_NAMES.PRICE]) },
+    );
     admin = faker.name.firstName();
     admin2 = faker.name.firstName();
     administrative = faker.name.firstName();
     ownershipObject = faker.random.string();
     ownership = faker.name.firstName();
+    sinon.stub(postsUtil, 'getPostState').returns(Promise.resolve({ result: { content: {} } }));
     app = await AppFactory.Create({
       admins: [admin, admin2],
       authority: [ownership, administrative],
       ownershipObjects: [ownershipObject],
     });
   });
+  afterEach(() => {
+    sinon.restore();
+  });
   describe('filter fields by object type exposedFields', async () => {
     let object, result;
     beforeEach(async () => {
-      sinon.stub(postsUtil, 'getPostState').returns(Promise.resolve({ result: { content: {} } }));
-      const objectType = await ObjectTypeFactory.Create(
-        { exposedFields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR] },
-      );
-      const fields = [FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME, FIELDS_NAMES.ADDRESS];
+      const fields = [FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME, FIELDS_NAMES.PRICE];
       for (const name of fields) {
         ({ wobject: object } = await AppendObjectFactory.Create({
           weight: 1, name, objectType: objectType.name, rootWobj: _.get(object, 'author_permlink', faker.random.string()),
@@ -38,9 +41,6 @@ describe('On wobjectHelper', async () => {
         wobjects: [object], app, returnArray: false, hiveData: true,
       });
     });
-    afterEach(() => {
-      sinon.restore();
-    });
     it('should return field avatar if object type exposedFields include it', async () => {
       expect(result[FIELDS_NAMES.AVATAR]).to.be.exist;
     });
@@ -48,7 +48,7 @@ describe('On wobjectHelper', async () => {
       expect(result[FIELDS_NAMES.NAME]).to.be.exist;
     });
     it('should not return field if object type exposedFields not include it', async () => {
-      expect(result[FIELDS_NAMES.ADDRESS]).to.be.undefined;
+      expect(result[FIELDS_NAMES.PRICE]).to.be.undefined;
     });
     it('should filter fields by exposed (avatar include)', async () => {
       const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.AVATAR);
@@ -68,10 +68,12 @@ describe('On wobjectHelper', async () => {
     let object, body, result;
     beforeEach(async () => {
       body = faker.image.imageUrl();
-      ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.AVATAR, body },
-      ));
-      result = await wObjectHelper.processWobjects({ wobjects: [object], app, returnArray: false });
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        weight: 1, name: FIELDS_NAMES.AVATAR, body, objectType: objectType.name,
+      }));
+      result = await wObjectHelper.processWobjects({
+        wobjects: [object], app, returnArray: false, hiveData: true,
+      });
     });
     it('should return correct field if weight > 0 and no downvotes', async () => {
       expect(result[FIELDS_NAMES.AVATAR]).to.be.eq(body);
@@ -92,7 +94,11 @@ describe('On wobjectHelper', async () => {
         { weight: 1, name: FIELDS_NAMES.ADDRESS, rootWobj: object.author_permlink },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, fields: [FIELDS_NAMES.ADDRESS],
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.ADDRESS],
+        hiveData: true,
       });
     });
     it('return field which set in filter', async () => {
@@ -121,7 +127,7 @@ describe('On wobjectHelper', async () => {
         weight: 1, name: FIELDS_NAMES.CATEGORY_ITEM, rootWobj: object.author_permlink, id, body,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should return correct fields length without filters', async () => {
@@ -158,7 +164,7 @@ describe('On wobjectHelper', async () => {
         weight: _.random(-1, -100), name, rootWobj: object.author_permlink, id, body,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should not return item with negative weight', async () => {
@@ -195,6 +201,7 @@ describe('On wobjectHelper', async () => {
         fields: [name, FIELDS_NAMES.GALLERY_ITEM],
         wobjects: [_.cloneDeep(object)],
         returnArray: false,
+        hiveData: true,
         app,
       });
     });
@@ -235,7 +242,7 @@ describe('On wobjectHelper', async () => {
         weight: 1, name, rootWobj: object.author_permlink,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], returnArray: false, app,
+        wobjects: [_.cloneDeep(object)], returnArray: false, app, hiveData: true,
       });
     });
     it('should not return field with small approve percent', async () => {
@@ -259,7 +266,7 @@ describe('On wobjectHelper', async () => {
         activeVotes: [{ voter: faker.random.string(), percent: -100, weight: -1 }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should not return field to show with downvotes', async () => {
@@ -287,7 +294,7 @@ describe('On wobjectHelper', async () => {
         { weight: 1, name, rootWobj: object.author_permlink },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should return approve percent 100 on field', async () => {
@@ -320,7 +327,7 @@ describe('On wobjectHelper', async () => {
         { weight: 1, name, rootWobj: object.author_permlink },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should return approve percent 100 on field with administrative vote', async () => {
@@ -363,7 +370,7 @@ describe('On wobjectHelper', async () => {
         },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should return approve percent 100 on field with ownership vote', async () => {
@@ -408,7 +415,7 @@ describe('On wobjectHelper', async () => {
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should add approvePercent 100', async () => {
@@ -440,7 +447,7 @@ describe('On wobjectHelper', async () => {
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should add approvePercent 0', async () => {
@@ -481,7 +488,7 @@ describe('On wobjectHelper', async () => {
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should return 100 approval to first field', async () => {
@@ -521,7 +528,7 @@ describe('On wobjectHelper', async () => {
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should return field which was upvoted by admin', async () => {
@@ -555,7 +562,7 @@ describe('On wobjectHelper', async () => {
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should return field which was downvoted by admin', async () => {
@@ -590,7 +597,7 @@ describe('On wobjectHelper', async () => {
           body,
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should return description field in response which has ownership upvote', async () => {
@@ -629,7 +636,7 @@ describe('On wobjectHelper', async () => {
           body,
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should return field which was upvoted by admin', async () => {
@@ -667,7 +674,7 @@ describe('On wobjectHelper', async () => {
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false,
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
         });
       });
       it('should return field which was downvoted by admin', async () => {
@@ -710,7 +717,7 @@ describe('On wobjectHelper', async () => {
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false,
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
       });
     });
     it('should not add field which was not approved by ownership', async () => {
@@ -745,7 +752,7 @@ describe('On wobjectHelper', async () => {
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, locale: 'ms-MY',
+        wobjects: [_.cloneDeep(object)], app, returnArray: false, locale: 'ms-MY', hiveData: true,
       });
     });
     it('should not return field with another locale', async () => {

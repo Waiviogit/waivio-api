@@ -14,8 +14,6 @@ exports.getAll = async ({
 
 // returns collection of users or permlinks with boolean markers
 exports.getFollowingsArray = async (data) => {
-  const { user, error } = await User.getOne(data.name);
-  if (error) return { error: { status: 503, message: error.message } };
   const { subscriptionData, error: subscriptionError } = await Subscriptions
     .find({ condition: { follower: data.name, following: { $in: data.users } } });
 
@@ -33,6 +31,9 @@ exports.getFollowingsArray = async (data) => {
         (name) => ({ [name]: _.includes(users, name) })),
     };
   } if (data.permlinks) {
+    const { user, error } = await User.getOne(data.name);
+    if (error) return { error: { status: 503, message: error.message } };
+
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
     return {
       users: _.map(data.permlinks,

@@ -314,30 +314,4 @@ describe('Post Model', async () => {
       expect(error).to.be.exist;
     });
   });
-  describe('On fillObjects', async () => {
-    const wobjectsCreated = [];
-    let posts, objectsCount, result, wobjects = [];
-    beforeEach(async () => {
-      await dropDatabase();
-      objectsCount = faker.random.number({ min: 2, max: 10 });
-      for (let count = 0; count < objectsCount; count++) {
-        wobjects.push({ author_permlink: faker.random.string(10) });
-        wobjectsCreated.push(await ObjectFactory.Create(
-          { authorPermlink: wobjects[count].author_permlink },
-        ));
-        await PostFactory.Create({ wobjects });
-      }
-      posts = (await PostModel.getAllPosts({ skip: 0, limit: 30 })).posts;
-      result = await PostModel.fillObjects(posts);
-    });
-    afterEach(async () => {
-      wobjects = [];
-    });
-    it('Should return full objects in posts objects', async () => {
-      expect(result[0].wobjects[0]).to.be.deep.eq(_.omit(wobjectsCreated[0], 'id'));
-    });
-    it('Should return the specified number of objects  ', async () => {
-      expect(result[0].wobjects.length).to.be.eq(objectsCount);
-    });
-  });
 });
