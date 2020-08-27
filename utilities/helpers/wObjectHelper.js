@@ -31,17 +31,18 @@ const calculateApprovePercent = (field) => {
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent < 0) {
       rejectCounter++;
-      return -(+vote.weight);
+      return -(+vote.weight || 1);
     }
   }) || 0;
   const approvesWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent > 0) {
       approveCounter++;
-      return +vote.weight;
+      return +vote.weight || 1;
     }
   }) || 0;
   if (!approveCounter && rejectCounter) return 0;
   if (!rejectsWeight) return 100;
+  if (!approvesWeight + rejectsWeight) return 50;
   const percent = _.round((approvesWeight / (approvesWeight + rejectsWeight)) * 100, 3);
   return percent > 0 ? percent : 0;
 };
