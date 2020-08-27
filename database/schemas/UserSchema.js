@@ -101,7 +101,7 @@ const UserSchema = new Schema({
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });
-UserSchema.index({ users_follow: -1 });
+UserSchema.index({ objects_follow: -1 });
 
 UserSchema.virtual('full_objects_follow', { // get full structure of objects instead only author_permlink
   ref: 'wobject',
