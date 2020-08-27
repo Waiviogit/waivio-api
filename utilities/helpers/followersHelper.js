@@ -1,37 +1,18 @@
 const _ = require('lodash');
-const { WObject } = require('database').models;
 const { User, Subscriptions } = require('models');
 
 const getFollowers = async (data) => {
-  try {
-    const wObject = await WObject.findOne({ author_permlink: data.author_permlink })
-      .populate({
-        path: 'followers',
-        options: {
-          limit: data.limit,
-          sort: { name: 1 },
-          skip: data.skip,
-          select: 'name',
-        },
-      })
-      .lean();
-
-    return { followers: await formatWobjectFollowers(wObject) };
-  } catch (error) {
-    return { error };
-  }
-};
-
-const formatWobjectFollowers = async (wObject) => {
-  if (!wObject.followers.length) return [];
-  const followers = _.map(wObject.followers, 'name');
-  const { result } = await User.aggregate([
-    { $match: { name: { $in: followers } } },
-    { $addFields: { weight: '$wobjects_weight' } },
-    { $project: { _id: 0, name: 1, weight: 1 } },
-  ]);
-  if (result) return result;
-  return [];
+  const { usersData: followers } = await User.find({
+    condition: { objects_follow: data.author_permlink },
+    select: { _id: 0, name: 1, wobjects_weight: 1 },
+    sort: { wobjects_weight: -1 },
+    skip: data.skip,
+    limit: data.limit,
+  });
+  return {
+    followers: _.map(followers,
+      (follower) => ({ name: follower.name, weight: follower.wobjects_weight })),
+  };
 };
 
 const sortBeforePopulate = async ({
