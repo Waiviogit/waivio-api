@@ -97,11 +97,41 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
+const findTagsForTagCategory = async (tagCategory = [], objectType) => {
+  const pipeline = [
+    {
+      $match: {
+        object_type: objectType,
+        'tagCategories.body': { $exists: true, $in: tagCategory },
+      },
+    },
+    {
+      $project: {
+        tagCategories: { body: 1, categoryItems: 1 },
+        _id: 0,
+      },
+    },
+    { $group: { _id: 'yo', yo: { $addToSet: '$tagCategories.categoryItems.name' } } },
+
+  ];
+  const { wobjects } = await Wobj.fromAggregation(pipeline);
+  _.forEach(tagCategory, (tag) => {
+
+  });
+  console.log('yo');
+};
+
 module.exports = async ({
   name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
+  let tagCategory = false;
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
+  if (_.has(objectType, 'supposed_updates')) {
+    tagCategory = _.find(objectType.supposed_updates, (obj) => obj.name === 'tagCategory').values;
+  }
+  if (tagCategory) await findTagsForTagCategory(tagCategory, name);
+  console.log(tagCategory);
   /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');
   /** get related wobjects for current object type */
