@@ -20,7 +20,6 @@ exports.FIELDS_NAMES = {
   ADDRESS: 'address',
   LINK: 'link',
   TAG: 'tag',
-  PAGE_LINK: 'pageLink',
   PHONE: 'phone',
   EMAIL: 'email',
   PRICE: 'price',
@@ -114,10 +113,6 @@ exports.REQUIREDFIELDS_POST = [
   this.FIELDS_NAMES.TITLE,
   this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.PARENT,
-];
-
-exports.SPECIAL_FIELDS = [
-  this.FIELDS_NAMES.PAGE_LINK,
 ];
 
 exports.REQUIREDFILDS_WOBJ_LIST = [

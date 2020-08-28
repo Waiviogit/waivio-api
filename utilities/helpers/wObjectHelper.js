@@ -5,7 +5,7 @@ const Wobj = require('models/wObjectModel');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, SPECIAL_FIELDS,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
@@ -173,22 +173,15 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     if (approvedFields.length) {
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
-      if (adminVotes.length) {
-        const adminField = _.maxBy(adminVotes, 'adminVote.timestamp');
-        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? adminField : adminField.body;
-      } else {
-        const approvedField = _.maxBy(approvedFields, 'adminVote.timestamp');
-        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? approvedField : approvedField.body;
-      }
+      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
+      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
           && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
     });
-    if (heaviestField) {
-      winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? heaviestField : heaviestField.body;
-    }
+    if (heaviestField) winningFields[id] = heaviestField.body;
   }
   return winningFields;
 };
@@ -230,6 +223,7 @@ const processWobjects = async ({
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
+    if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
     const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
