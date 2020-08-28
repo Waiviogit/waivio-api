@@ -132,7 +132,7 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
   ];
 
   const { wobjects } = await Wobj.fromAggregation(pipeline);
-  console.log('yo');
+  console.log('yo')
 };
 
 module.exports = async ({
