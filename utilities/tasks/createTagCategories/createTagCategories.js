@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Wobj: wobjModel } = require('models');
+const { Wobj } = require('models');
 const { ObjectType } = require('database').models;
 const { redisSetter } = require('utilities/redis');
 
@@ -36,7 +36,7 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
     { $group: { _id: '$_id', tags: { $addToSet: '$tags' } } },
   ];
 
-  const { wobjects } = await wobjModel.fromAggregation(pipeline);
+  const { wobjects } = await Wobj.fromAggregation(pipeline);
   return { tagCategories: wobjects };
 };
 
