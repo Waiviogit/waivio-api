@@ -99,25 +99,36 @@ const getWobjWithFilters = async ({
 
 const findTagsForTagCategory = async (tagCategory = [], objectType) => {
   const pipeline = [
+
     {
       $match: {
         object_type: objectType,
-        'tagCategories.body': { $exists: true, $in: tagCategory },
+        tagCategories: { $exists: true, $ne: [] },
       },
     },
-    {
-      $project: {
-        tagCategories: { body: 1, categoryItems: 1 },
-        _id: 0,
-      },
-    },
+    { $unwind: '$tagCategories' },
     {
       $group: {
         _id: '$tagCategories.body',
-        arr: { $addToSet: '$tagCategories.categoryItems.name' },
+        tags: { $addToSet: '$tagCategories.categoryItems.name' },
       },
     },
-
+    { $match: { _id: { $in: [...tagCategory] } } },
+    {
+      $addFields:
+        {
+          tags:
+            {
+              $reduce: {
+                input: '$tags',
+                initialValue: [],
+                in: { $concatArrays: ['$$value', '$$this'] },
+              },
+            },
+        },
+    },
+    { $unwind: '$tags' },
+    { $group: { _id: '$_id', items: { $addToSet: '$tags' } } },
   ];
 
   const { wobjects } = await Wobj.fromAggregation(pipeline);
