@@ -111,13 +111,16 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
         _id: 0,
       },
     },
-    { $group: { _id: 'yo', yo: { $addToSet: '$tagCategories.categoryItems.name' } } },
+    {
+      $group: {
+        _id: '$tagCategories.body',
+        arr: { $addToSet: '$tagCategories.categoryItems.name' },
+      },
+    },
 
   ];
-  const { wobjects } = await Wobj.fromAggregation(pipeline);
-  _.forEach(tagCategory, (tag) => {
 
-  });
+  const { wobjects } = await Wobj.fromAggregation(pipeline);
   console.log('yo');
 };
 
