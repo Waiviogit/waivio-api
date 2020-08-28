@@ -1,5 +1,6 @@
 const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
+const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
 
 const { Schema } = mongoose;
 const { LANGUAGES } = require('../../utilities/constants');
@@ -97,8 +98,14 @@ const UserSchema = new Schema({
   users_following_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },
   stage_version: { type: Number, default: 0, required: true },
+  referralStatus: {
+    type: String,
+    enum: Object.values(REFERRAL_STATUSES),
+    default: REFERRAL_STATUSES.NOT_ACTIVATED,
+  },
   referral: [{
     agent: { type: String },
+    type: { type: String, enum: Object.values(REFERRAL_TYPES) },
     startedAt: { type: Date },
     endedAt: { type: Date },
   }],
