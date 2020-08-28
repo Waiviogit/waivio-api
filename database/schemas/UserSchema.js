@@ -5,6 +5,13 @@ const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
 const { Schema } = mongoose;
 const { LANGUAGES } = require('../../utilities/constants');
 
+const ReferralsSchema = new Schema({
+  agent: { type: String, index: true },
+  startedAt: { type: Date },
+  endedAt: { type: Date },
+  type: { type: String, enum: Object.values(REFERRAL_TYPES) },
+}, { _id: false });
+
 const UserNotificationsSchema = new Schema({
   activationCampaign: { type: Boolean, default: true },
   follow: { type: Boolean, default: true },
@@ -103,12 +110,7 @@ const UserSchema = new Schema({
     enum: Object.values(REFERRAL_STATUSES),
     default: REFERRAL_STATUSES.NOT_ACTIVATED,
   },
-  referral: [{
-    agent: { type: String },
-    type: { type: String, enum: Object.values(REFERRAL_TYPES) },
-    startedAt: { type: Date },
-    endedAt: { type: Date },
-  }],
+  referral: { type: [ReferralsSchema], default: [] },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });
