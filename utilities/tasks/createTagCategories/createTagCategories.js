@@ -50,6 +50,7 @@ const addDataToRedis = async (tagCategories) => {
       .uniq()
       .slice(0, 10)
       .value();
+    if (!category.tags.length) continue;
     let counter = 0;
     const tags = [];
     for (let i = 0; i < category.tags.length; i++) {
@@ -65,10 +66,11 @@ module.exports = async () => {
   for (const obj of objectTypes) {
     let tagCategory = false;
     if (_.has(obj, 'supposed_updates')) {
-      tagCategory = _.find(obj.supposed_updates, (o) => o.name === 'tagCategory').values;
+      tagCategory = _.get(_.find(obj.supposed_updates, (o) => o.name === 'tagCategory'), 'values');
     }
     if (!tagCategory) continue;
     const { tagCategories } = await findTagsForTagCategory(tagCategory, obj.name);
+    if (!tagCategories) continue;
     await addDataToRedis(tagCategories);
   }
 };
