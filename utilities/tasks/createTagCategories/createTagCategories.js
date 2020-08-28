@@ -1,6 +1,7 @@
 const _ = require('lodash');
-const { ObjectType } = require('database').models;
 const { Wobj: wobjModel } = require('models');
+const { ObjectType } = require('database').models;
+const { redisSetter } = require('utilities/redis');
 
 const findTagsForTagCategory = async (tagCategory = [], objectType) => {
   const pipeline = [
@@ -39,18 +40,24 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
   return { tagCategories: wobjects };
 };
 
-const prepareDataForRedis = (tagCategories) => {
-  const preparedData = _.map(tagCategories, (category) => ({
-    categoryName: category._id,
-    tags: _
+const addDataToRedis = async (tagCategories) => {
+  for (const category of tagCategories) {
+    category.tags = _
       .chain(category.tags)
       .filter((tag) => tag.weight > 0)
       .orderBy('weight', 'desc')
-      .uniqBy('name')
+      .map('name')
+      .uniq()
       .slice(0, 10)
-      .value(),
-  }));
-  return { preparedData };
+      .value();
+    let counter = 0;
+    const tags = [];
+    for (let i = 0; i < category.tags.length; i++) {
+      tags[counter++] = 0;
+      tags[counter++] = category.tags[i];
+    }
+    await redisSetter.addTagCategory({ categoryName: category._id, tags });
+  }
 };
 
 module.exports = async () => {
@@ -62,6 +69,6 @@ module.exports = async () => {
     }
     if (!tagCategory) continue;
     const { tagCategories } = await findTagsForTagCategory(tagCategory, obj.name);
-    const { preparedData } = prepareDataForRedis(tagCategories);
+    await addDataToRedis(tagCategories);
   }
 };

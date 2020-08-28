@@ -1,5 +1,5 @@
 const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
-const { importUserClient, mainFeedsCacheClient } = require('./redis');
+const { importUserClient, mainFeedsCacheClient, tagCategoriesClient } = require('./redis');
 const {
   LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('../constants');
@@ -99,3 +99,5 @@ function validateUpdateNewsCache(ids, locale) {
   }
   return true;
 }
+
+exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zaddAsync(`tagCategory:${categoryName}`, tags);
