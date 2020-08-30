@@ -1,5 +1,5 @@
 const {
-  wobjRefsClient, importUserClient, mainFeedsCacheClient,
+  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient,
 } = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
@@ -67,3 +67,5 @@ exports.getTrendFeedCache = async ({
     ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, limit - 1),
   };
 };
+
+exports.getTagCategories = async (key) => tagCategoriesClient.zrevrangeAsync(key, 0, -1);

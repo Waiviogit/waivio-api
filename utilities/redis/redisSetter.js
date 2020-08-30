@@ -101,3 +101,4 @@ function validateUpdateNewsCache(ids, locale) {
 }
 
 exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zaddAsync(`tagCategory:${categoryName}`, tags);
+exports.incrementTag = async ({ categoryName, tag }) => tagCategoriesClient.zincrbyAsync(`tagCategory:${categoryName}`, 1, tag);

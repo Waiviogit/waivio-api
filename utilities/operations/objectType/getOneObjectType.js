@@ -4,6 +4,7 @@ const {
 } = require('models');
 const _ = require('lodash');
 const { campaignsHelper } = require('utilities/helpers');
+const { redisGetter, redisSetter } = require('utilities/redis');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -78,6 +79,11 @@ const getWobjWithFilters = async ({
         if (filterItem === FIELDS_NAMES.RATING) {
           cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
         }
+        if (filterItem === FIELDS_NAMES.CATEGORY_ITEM) {
+          const [categoryName, tag] = filterValue.split(',');
+          await redisSetter.incrementTag({ categoryName, tag });
+          cond.$match.fields.$elemMatch.body = tag;
+        }
         aggregationPipeline.push(cond);
       }
     }
@@ -97,42 +103,13 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
-const findTagsForTagCategory = async (tagCategory = [], objectType) => {
-  const pipeline = [
-
-    {
-      $match: {
-        object_type: objectType,
-        tagCategories: { $exists: true, $ne: [] },
-      },
-    },
-    { $unwind: '$tagCategories' },
-    {
-      $group: {
-        _id: '$tagCategories.body',
-        tags: { $addToSet: '$tagCategories.categoryItems.name' },
-      },
-    },
-    { $match: { _id: { $in: [...tagCategory] } } },
-    {
-      $addFields:
-        {
-          tags:
-            {
-              $reduce: {
-                input: '$tags',
-                initialValue: [],
-                in: { $concatArrays: ['$$value', '$$this'] },
-              },
-            },
-        },
-    },
-    { $unwind: '$tags' },
-    { $group: { _id: '$_id', items: { $addToSet: '$tags' } } },
-  ];
-
-  const { wobjects } = await Wobj.fromAggregation(pipeline);
-  console.log('yo')
+const getTagCategory = async (tagCategory = []) => {
+  const resultArray = [];
+  for (const category of tagCategory) {
+    const tags = await redisGetter.getTagCategories(`tagCategory:${category}`);
+    resultArray.push({ tagCategory: category, tags });
+  }
+  return resultArray;
 };
 
 module.exports = async ({
@@ -142,10 +119,8 @@ module.exports = async ({
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
   if (_.has(objectType, 'supposed_updates')) {
-    tagCategory = _.find(objectType.supposed_updates, (obj) => obj.name === 'tagCategory').values;
+    tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values');
   }
-  if (tagCategory) await findTagsForTagCategory(tagCategory, name);
-  console.log(tagCategory);
   /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');
   /** get related wobjects for current object type */
@@ -164,7 +139,9 @@ module.exports = async ({
   await campaignsHelper.addCampaignsToWobjects({
     name, wobjects, user, appName, simplified,
   });
-
+  tagCategory
+    ? objectType.tagsForFilter = await getTagCategory(tagCategory)
+    : objectType.tagsForFilter = [];
   objectType.hasMoreWobjects = wobjects.length > wobjLimit;
   objectType.related_wobjects = wobjects.slice(0, wobjLimit);
   return { objectType };
