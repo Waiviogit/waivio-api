@@ -3,7 +3,7 @@ const { Subscriptions } = require('models');
 const { schema } = require('middlewares/users/checkFollowers/schema');
 
 exports.check = async (req, res, next) => {
-  const currentSchema = schema.find((s) => s.path === req.route.path && s.method === req.method);
+  const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
   if (!currentSchema || !req.headers.following) {
     return next();

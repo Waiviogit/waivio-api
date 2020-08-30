@@ -1,8 +1,16 @@
 const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
+const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
 
 const { Schema } = mongoose;
 const { LANGUAGES } = require('../../utilities/constants');
+
+const ReferralsSchema = new Schema({
+  agent: { type: String, index: true },
+  startedAt: { type: Date },
+  endedAt: { type: Date },
+  type: { type: String, enum: Object.values(REFERRAL_TYPES) },
+}, { _id: false });
 
 const UserNotificationsSchema = new Schema({
   activationCampaign: { type: Boolean, default: true },
@@ -97,11 +105,16 @@ const UserSchema = new Schema({
   users_following_count: { type: Number, default: 0 },
   last_root_post: { type: String, default: null },
   stage_version: { type: Number, default: 0, required: true },
-  importedWallet: { type: Boolean, default: false },
+  referralStatus: {
+    type: String,
+    enum: Object.values(REFERRAL_STATUSES),
+    default: REFERRAL_STATUSES.NOT_ACTIVATED,
+  },
+  referral: { type: [ReferralsSchema], default: [] },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });
-UserSchema.index({ users_follow: -1 });
+UserSchema.index({ objects_follow: -1 });
 
 UserSchema.virtual('full_objects_follow', { // get full structure of objects instead only author_permlink
   ref: 'wobject',

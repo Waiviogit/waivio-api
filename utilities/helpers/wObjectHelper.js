@@ -24,23 +24,19 @@ const getWobjectFields = async (permlink) => {
 
 const calculateApprovePercent = (field) => {
   if (_.isEmpty(field.active_votes)) return 100;
-  let approveCounter = 0, rejectCounter = 0;
   if (field.adminVote) return field.adminVote.status === VOTE_STATUSES.APPROVED ? 100 : 0;
   if (field.weight < 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent < 0) {
-      rejectCounter++;
-      return -(+vote.weight);
+      return -(+vote.weight || -1);
     }
   }) || 0;
   const approvesWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent > 0) {
-      approveCounter++;
-      return +vote.weight;
+      return +vote.weight || 1;
     }
   }) || 0;
-  if (!approveCounter && rejectCounter) return 0;
   if (!rejectsWeight) return 100;
   const percent = _.round((approvesWeight / (approvesWeight + rejectsWeight)) * 100, 3);
   return percent > 0 ? percent : 0;
@@ -233,6 +229,7 @@ const processWobjects = async ({
   if (!_.isArray(wobjects)) return filteredWobj;
   for (let obj of wobjects) {
     let exposedFields = [];
+    obj.parent = '';
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
     const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
