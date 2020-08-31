@@ -7,63 +7,63 @@ const AuthoritySchema = new Schema({
   ownership: { type: [String], default: [] },
 }, { _id: false });
 
-const WObjectSchema = new Schema(
-  {
-    app: String,
-    community: String,
-    object_type: String,
-    default_name: { type: String, required: true },
-    is_posting_open: { type: Boolean, default: true },
-    is_extending_open: { type: Boolean, default: true },
-    creator: { type: String, required: true },
-    author: { type: String, required: true },
-    author_permlink: {
-      type: String, index: true, unique: true, required: true,
-    }, // unique identity for wobject, link to create object POST
-    // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
-    weight: { type: Number, default: 1 },
-    count_posts: { type: Number, default: 0 },
-    parent: { type: String, default: '' },
-    children: { type: [String], default: [] },
-    authority: { type: AuthoritySchema, default: () => ({}) },
-    fields: [{
-      name: { type: String, index: true },
-      body: { type: String },
-      id: { type: String },
-      weight: { type: Number, default: 1 },
-      locale: { type: String, default: 'en-US' },
-      creator: { type: String },
-      author: String, //
-      permlink: String, // author+permlink it's link to appendObject COMMENT
-      active_votes:
-                {
-                  type:
-                        [{
-                          voter: { type: String },
-                          weight: { type: Number },
-                        }],
-                  default: [],
-                },
+const FieldsSchema = new Schema({
+  name: { type: String, index: true },
+  body: { type: String },
+  id: { type: String },
+  weight: { type: Number, default: 1 },
+  locale: { type: String, default: 'en-US' },
+  creator: { type: String },
+  author: String, //
+  permlink: String, // author+permlink it's link to appendObject COMMENT
+  active_votes: {
+    type: [{
+      voter: { type: String },
+      weight: { type: Number },
+      percent: { type: Number },
+      rshares_weight: { type: Number },
     }],
-    map: {
-      type: {
-        type: String, // Don't do `{ location: { type: String } }`
-        enum: ['Point'], // 'location.type' must be 'Point'
-      },
-      coordinates: {
-        type: [Number], // First element - longitude(-180..180), second element - latitude(-90..90)
-      }, // [longitude, latitude]
+    default: [],
+  },
+});
+
+const WObjectSchema = new Schema({
+  app: String,
+  community: String,
+  object_type: String,
+  default_name: { type: String, required: true },
+  is_posting_open: { type: Boolean, default: true },
+  is_extending_open: { type: Boolean, default: true },
+  creator: { type: String, required: true },
+  author: { type: String, required: true },
+  author_permlink: {
+    type: String, index: true, unique: true, required: true,
+  }, // unique identity for wobject, link to create object POST
+  // value in STEEM(or WVIO) as a summ of rewards, index for quick sort
+  weight: { type: Number, default: 1 },
+  count_posts: { type: Number, default: 0 },
+  parent: { type: String, default: '' },
+  children: { type: [String], default: [] },
+  authority: { type: AuthoritySchema, default: () => ({}) },
+  fields: { type: [FieldsSchema], default: [] },
+  map: {
+    type: {
+      type: String, // Don't do `{ location: { type: String } }`
+      enum: ['Point'], // 'location.type' must be 'Point'
     },
-    // always keep last N posts to quick build wobject feed
-    latest_posts: { type: [mongoose.Schema.ObjectId], default: [] },
-    status: { type: Object },
-    last_posts_count: { type: Number, default: 0 },
-    last_posts_counts_by_hours: { type: [Number], default: [] },
+    coordinates: {
+      type: [Number], // First element - longitude(-180..180), second element - latitude(-90..90)
+    }, // [longitude, latitude]
   },
-  {
-    toObject: { virtuals: true }, timestamps: true, strict: false,
-  },
-);
+  // always keep last N posts to quick build wobject feed
+  latest_posts: { type: [mongoose.Schema.ObjectId], default: [] },
+  status: { type: Object },
+  last_posts_count: { type: Number, default: 0 },
+  last_posts_counts_by_hours: { type: [Number], default: [] },
+},
+{
+  toObject: { virtuals: true }, timestamps: true, strict: false,
+});
 
 WObjectSchema.index({ map: '2dsphere' });
 WObjectSchema.index({ weight: -1 });

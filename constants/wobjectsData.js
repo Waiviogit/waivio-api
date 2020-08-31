@@ -20,7 +20,6 @@ exports.FIELDS_NAMES = {
   ADDRESS: 'address',
   LINK: 'link',
   TAG: 'tag',
-  PAGE_LINK: 'pageLink',
   PHONE: 'phone',
   EMAIL: 'email',
   PRICE: 'price',
@@ -36,6 +35,18 @@ exports.FIELDS_NAMES = {
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
+  PAGE: 'page',
+  RESTAURANT: 'restaurant',
+  DISH: 'dish',
+  DRINK: 'drink',
+  BUSINESS: 'business',
+  PRODUCT: 'product',
+  SERVICE: 'service',
+  COMPANY: 'company',
+  PERSON: 'person',
+  PLACE: 'place',
+  CRYPTO: 'crypto',
+  HOTEL: 'hotel',
 };
 
 exports.ADMIN_ROLES = {
@@ -84,7 +95,13 @@ exports.REQUIREDFIELDS = [
   this.FIELDS_NAMES.PAGE_CONTENT,
   this.FIELDS_NAMES.STATUS,
 ];
-exports.REQUIREDFIELDS_PARENT = [this.FIELDS_NAMES.NAME, this.FIELDS_NAMES.AVATAR];
+
+exports.REQUIREDFIELDS_PARENT = [
+  this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.AVATAR,
+  this.FIELDS_NAMES.MAP,
+];
+
 exports.REQUIREDFIELDS_SEARCH = [
   this.FIELDS_NAMES.NAME,
   this.FIELDS_NAMES.LIST_ITEM,
@@ -92,23 +109,22 @@ exports.REQUIREDFIELDS_SEARCH = [
   this.FIELDS_NAMES.RATING,
   this.FIELDS_NAMES.PARENT,
 ];
+
 exports.REQUIREDFIELDS_SIMPLIFIED = [
   this.FIELDS_NAMES.NAME,
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.MAP,
   this.FIELDS_NAMES.PARENT,
 ];
+
 exports.REQUIREDFIELDS_CHILD = [this.FIELDS_NAMES.NAME, this.FIELDS_NAMES.AVATAR];
+
 exports.REQUIREDFIELDS_POST = [
   this.FIELDS_NAMES.NAME,
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.TITLE,
   this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.PARENT,
-];
-
-exports.SPECIAL_FIELDS = [
-  this.FIELDS_NAMES.PAGE_LINK,
 ];
 
 exports.REQUIREDFILDS_WOBJ_LIST = [

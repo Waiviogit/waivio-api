@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getChildWobjects: getChild, getGallery, getWobjField,
+  getPostsByWobject, getGallery, getWobjField,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -187,7 +187,7 @@ const getChildWobjects = async (req, res, next) => {
   }, validators.wobject.getChildWobjects, next);
 
   if (!value) return;
-  const { wobjects, error } = await getChild(value);
+  const { wobjects, error } = await Wobj.getChildWobjects(value);
 
   if (error) return next(error);
   res.result = { status: 200, json: wobjects };
