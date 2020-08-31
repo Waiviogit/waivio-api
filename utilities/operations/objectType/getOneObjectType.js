@@ -79,10 +79,11 @@ const getWobjWithFilters = async ({
         if (filterItem === FIELDS_NAMES.RATING) {
           cond.$match.fields.$elemMatch.average_rating_weight = { $gte: 8 };
         }
-        if (filterItem === FIELDS_NAMES.CATEGORY_ITEM) {
-          const [categoryName, tag] = filterValue.split(',');
+        if (filterItem === FIELDS_NAMES.TAG_CATEGORY) {
+          const { categoryName, tag } = filterValue;
           await redisSetter.incrementTag({ categoryName, tag });
           cond.$match.fields.$elemMatch.body = tag;
+          cond.$match.fields.$elemMatch.name = FIELDS_NAMES.CATEGORY_ITEM;
         }
         aggregationPipeline.push(cond);
       }

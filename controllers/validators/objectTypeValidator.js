@@ -27,6 +27,10 @@ exports.showSchema = Joi.object().keys({
       radius: Joi.number().min(0),
     }),
     searchString: Joi.string().invalid(''),
+    tagCategory: Joi.array().items(Joi.object().keys({
+      categoryName: Joi.string(),
+      tag: Joi.string(),
+    })),
   }).pattern(/.+/, Joi.array().items(Joi.string())),
 });
 
