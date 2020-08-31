@@ -104,11 +104,17 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
-const getTagCategory = async (tagCategory = []) => {
+const getTagCategory = async (tagCategory = [], filter) => {
   const resultArray = [];
   for (const category of tagCategory) {
     const tags = await redisGetter.getTagCategories(`tagCategory:${category}`);
     resultArray.push({ tagCategory: category, tags });
+  }
+  if (_.get(filter, 'tagCategory')) {
+    for (const item of filter.tagCategory) {
+      const redisValues = _.find(resultArray, (el) => el.tagCategory === item.categoryName);
+      if (!_.includes(redisValues.tags, item.tag)) redisValues.tags.push(item.tag);
+    }
   }
   return resultArray;
 };
@@ -141,7 +147,7 @@ module.exports = async ({
     name, wobjects, user, appName, simplified,
   });
   tagCategory
-    ? objectType.tagsForFilter = await getTagCategory(tagCategory)
+    ? objectType.tagsForFilter = await getTagCategory(tagCategory, filter)
     : objectType.tagsForFilter = [];
   objectType.hasMoreWobjects = wobjects.length > wobjLimit;
   objectType.related_wobjects = wobjects.slice(0, wobjLimit);
