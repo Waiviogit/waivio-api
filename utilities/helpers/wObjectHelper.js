@@ -5,7 +5,7 @@ const Wobj = require('models/wObjectModel');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
@@ -203,6 +203,38 @@ const getParentInfo = async (wObject, locale, app) => {
   return wObject.parent;
 };
 
+const fillObjectByHiveData = async (obj, exposedFields) => {
+  const { result } = await postsUtil.getPostState(
+    { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
+  );
+  if (!result) {
+    obj.fields = [];
+  }
+  obj.fields.map((field, index) => {
+    /** if field not exist in object type for this object - remove it */
+    if (!_.includes(exposedFields, field.name)) {
+      delete obj.fields[index];
+      return;
+    }
+
+    let post = _.get(result, `content.${field.author}/${field.permlink}`);
+    if (!post || !post.author) post = createMockPost(field);
+
+    Object.assign(field,
+      _.pick(post, ['children', 'total_pending_payout_value',
+        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+    field.fullBody = post.body;
+  });
+  return obj;
+};
+
+const getLinkToPageLoad = async (obj) => {
+  switch (obj.object_type) {
+    case OBJECT_TYPES.HASHTAG:
+      break;
+  }
+};
+
 const createMockPost = (field) => ({
   children: 0,
   total_pending_payout_value: '0.000 HBD',
@@ -238,29 +270,9 @@ const processWobjects = async ({
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-      const { result } = await postsUtil.getPostState(
-        { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
-      );
-      if (!result) {
-        obj.fields = [];
-        continue;
-      }
-      obj.fields.map((field, index) => {
-        /** if field not exist in object type for this object - remove it */
-        if (!_.includes(exposedFields, field.name)) {
-          delete obj.fields[index];
-          return;
-        }
-
-        let post = _.get(result, `content.${field.author}/${field.permlink}`);
-        if (!post || !post.author) post = createMockPost(field);
-
-        Object.assign(field,
-          _.pick(post, ['children', 'total_pending_payout_value',
-            'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
-        field.fullBody = post.body;
-      });
+      obj = await fillObjectByHiveData(obj, exposedFields);
     }
+
     obj.fields = addDataToFields(
       _.compact(obj.fields), fields, admins, ownership, administrative, isOwnershipObj,
     );
@@ -276,6 +288,7 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
+      obj.defaultShowLink = getLinkToPageLoad(obj);
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
     obj.exposedFields = exposedFields;
