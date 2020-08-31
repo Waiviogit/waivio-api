@@ -42,13 +42,14 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
 
 const addDataToRedis = async (tagCategories) => {
   for (const category of tagCategories) {
+    const sliceTo = category._id === 'Ingredients' ? 100 : 10;
     category.tags = _
       .chain(category.tags)
       .filter((tag) => tag.weight > 0)
       .orderBy('weight', 'desc')
       .map('name')
       .uniq()
-      .slice(0, 10)
+      .slice(0, sliceTo)
       .value();
     if (!category.tags.length) continue;
     let counter = 0;
