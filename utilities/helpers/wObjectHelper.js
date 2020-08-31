@@ -228,12 +228,12 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
   return obj;
 };
 
-const getLinkToPageLoad = async (obj) => {
-  switch (obj.object_type) {
-    case OBJECT_TYPES.HASHTAG:
-      break;
-  }
-};
+// const getLinkToPageLoad = async (obj) => {
+//   switch (obj.object_type) {
+//     case OBJECT_TYPES.HASHTAG:
+//       break;
+//   }
+// };
 
 const createMockPost = (field) => ({
   children: 0,
@@ -288,7 +288,7 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
-      obj.defaultShowLink = getLinkToPageLoad(obj);
+      // obj.defaultShowLink = getLinkToPageLoad(obj);
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
     obj.exposedFields = exposedFields;
