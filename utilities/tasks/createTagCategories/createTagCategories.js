@@ -42,22 +42,18 @@ const findTagsForTagCategory = async (tagCategory = [], objectType) => {
 
 const addDataToRedis = async (tagCategories) => {
   for (const category of tagCategories) {
-    const sliceTo = category._id === 'Ingredients' ? 100 : 10;
     category.tags = _
       .chain(category.tags)
       .filter((tag) => tag.weight > 0)
       .orderBy('weight', 'desc')
       .map('name')
       .uniq()
-      .slice(0, sliceTo)
       .value();
     if (!category.tags.length) continue;
-    let counter = 0;
-    const tags = [];
-    for (let i = 0; i < category.tags.length; i++) {
-      tags[counter++] = 0;
-      tags[counter++] = category.tags[i];
-    }
+
+    let tags = [];
+    for (const tag of category.tags) tags = _.concat(tags, [0, tag]);
+
     await redisSetter.addTagCategory({ categoryName: category._id, tags });
   }
 };
