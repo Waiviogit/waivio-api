@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getGallery, getWobjField,
+  getPostsByWobject, getGallery, getWobjField, sortFollowers,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -98,7 +98,7 @@ const followers = async (req, res, next) => {
 
   if (!value) return;
 
-  const { followers: wobjectFollowers, error } = await followersHelper.getFollowers(value);
+  const { wobjectFollowers, error } = await sortFollowers(value);
 
   if (error) {
     return next(error);
