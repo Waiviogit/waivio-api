@@ -74,7 +74,7 @@ exports.campaignFilter = async (campaigns, user, app) => {
         (doer) => doer.name === user.name && doer.status === RESERVATION_STATUSES.ASSIGNED) : false;
       campaign.requirement_filters = await this.requirementFilters(campaign, user);
 
-      validCampaigns.push(_.omit(campaign, ['users', 'payments', 'map', 'objects']));
+      validCampaigns.push(_.omit(campaign, ['payments', 'map', 'objects']));
     }
   }));
   return validCampaigns;
