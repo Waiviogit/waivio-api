@@ -17,3 +17,13 @@ exports.populate = async ({
     return { error };
   }
 };
+
+exports.getFollowersCount = async (following) => {
+  try {
+    return {
+      count: await WobjectSubscriptions.find({ following }).count(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
