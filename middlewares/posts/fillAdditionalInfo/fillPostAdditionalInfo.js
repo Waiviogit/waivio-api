@@ -46,7 +46,7 @@ exports.fill = async (req, res, next) => {
 const fillObjects = async (posts, appName, userName, wobjectsPath = 'fullObjects') => {
   let user;
   if (userName) {
-    user = await userModel.getOne(userName);
+    ({ user } = await userModel.getOne(userName));
   }
   for (const post of posts) {
     for (let wObject of _.get(post, 'wobjects') || []) {
