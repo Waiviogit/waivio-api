@@ -52,7 +52,8 @@ const addDataToRedis = async (tagCategories) => {
     if (!category.tags.length) continue;
 
     let tags = [];
-    for (const tag of category.tags) tags = _.concat(tags, [0, tag]);
+    let counter = category.tags.length;
+    for (const tag of category.tags) tags = _.concat(tags, [counter--, tag]);
 
     await redisSetter.addTagCategory({ categoryName: category._id, tags });
   }
