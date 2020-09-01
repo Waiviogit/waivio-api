@@ -20,23 +20,24 @@ const getParentInfo = async (wObject, data, app) => {
  * Method for get count of all included items(using recursive call)
  * Return count only last nodes(which not list or menu)
  * @param authorPermlink {String} Permlink of list
+ * @param recursive {Boolean} Boolean flag for recursive call
  * @param handledItems {String[]} Array of author_permlinks which already handled(to avoid looping)
  * @returns {Promise<number>}
  */
-const getItemsCount = async (authorPermlink, handledItems) => {
+const getItemsCount = async (authorPermlink, handledItems, recursive = false) => {
   let count = 0;
   const { result: wobject, error } = await Wobj.findOne(authorPermlink);
   if (error || !wobject) return 0;
 
   const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM), 'body');
 
-  if (_.isEmpty(listWobjects)) return 1;
+  if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
 
   for (const item of listWobjects) {
     // condition for exit from looping
     if (!handledItems.includes(item)) {
       handledItems.push(item);
-      count += await getItemsCount(item, handledItems);
+      count += await getItemsCount(item, handledItems, true);
     }
   }
   return count;
@@ -57,6 +58,7 @@ const getListItems = async (wobject, data, app) => {
   if (data.userName) {
     ({ user } = await User.getOne(data.userName));
   }
+
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
     if (wobj.object_type.toLowerCase() === 'list') {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
@@ -76,7 +78,6 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user);
     return wobj;
   }));
-
   return { wobjects };
 };
 
