@@ -41,3 +41,9 @@ exports.expertsSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).max(OBJECT_TYPE_TOP_EXPERTS_COUNT - 1)
     .default(0),
 });
+
+exports.showMoreTagsSchema = Joi.object().keys({
+  tagCategory: Joi.string().required(),
+  limit: Joi.number().integer().min(0).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});

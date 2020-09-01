@@ -68,4 +68,6 @@ exports.getTrendFeedCache = async ({
   };
 };
 
-exports.getTagCategories = async (key) => tagCategoriesClient.zrevrangeAsync(key, 0, 2);
+exports.getTagCategories = async ({ key, start, end }) => (
+  tagCategoriesClient.zrevrangeAsync(key, start, end)
+);

@@ -107,7 +107,7 @@ const getWobjWithFilters = async ({
 const getTagCategory = async (tagCategory = [], filter) => {
   const resultArray = [];
   for (const category of tagCategory) {
-    const tags = await redisGetter.getTagCategories(`tagCategory:${category}`);
+    const tags = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${category}`, start: 0, end: 2 });
     resultArray.push({ tagCategory: category, tags });
   }
   if (_.get(filter, 'tagCategory')) {

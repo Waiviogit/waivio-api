@@ -115,6 +115,8 @@ objectTypeRoutes.route('/objectType/:objectTypeName')
   .post(ObjectTypeController.show);
 objectTypeRoutes.route('/objectType/:objectTypeName/expertise')
   .get(ObjectTypeController.expertise);
+objectTypeRoutes.route('/objectType/showMoreTags')
+  .get(ObjectTypeController.showMoreTags);
 // endregion
 // region Search
 userRoutes.route('/generalSearch')
