@@ -25,7 +25,7 @@ const FieldsSchema = new Schema({
     }],
     default: [],
   },
-}, { _id: false });
+});
 
 const WObjectSchema = new Schema({
   app: String,

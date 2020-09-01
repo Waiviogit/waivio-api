@@ -20,7 +20,6 @@ exports.FIELDS_NAMES = {
   ADDRESS: 'address',
   LINK: 'link',
   TAG: 'tag',
-  PAGE_LINK: 'pageLink',
   PHONE: 'phone',
   EMAIL: 'email',
   PRICE: 'price',
@@ -36,6 +35,18 @@ exports.FIELDS_NAMES = {
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
+  PAGE: 'page',
+  RESTAURANT: 'restaurant',
+  DISH: 'dish',
+  DRINK: 'drink',
+  BUSINESS: 'business',
+  PRODUCT: 'product',
+  SERVICE: 'service',
+  COMPANY: 'company',
+  PERSON: 'person',
+  PLACE: 'place',
+  CRYPTO: 'crypto',
+  HOTEL: 'hotel',
 };
 
 exports.ADMIN_ROLES = {
@@ -114,10 +125,6 @@ exports.REQUIREDFIELDS_POST = [
   this.FIELDS_NAMES.TITLE,
   this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.PARENT,
-];
-
-exports.SPECIAL_FIELDS = [
-  this.FIELDS_NAMES.PAGE_LINK,
 ];
 
 exports.REQUIREDFILDS_WOBJ_LIST = [

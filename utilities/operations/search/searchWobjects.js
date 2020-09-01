@@ -25,19 +25,6 @@ const makePipeline = ({
   },
   {
     $addFields: {
-      fields: {
-        $filter: {
-          input: '$fields',
-          as: 'field',
-          cond: {
-            $in: ['$$field.name', REQUIREDFIELDS_SEARCH],
-          },
-        },
-      },
-    },
-  },
-  {
-    $addFields: {
       // eslint-disable-next-line camelcase
       crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
       priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },

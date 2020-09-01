@@ -5,7 +5,7 @@ const Wobj = require('models/wObjectModel');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, SPECIAL_FIELDS,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
@@ -173,22 +173,15 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     if (approvedFields.length) {
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
-      if (adminVotes.length) {
-        const adminField = _.maxBy(adminVotes, 'adminVote.timestamp');
-        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? adminField : adminField.body;
-      } else {
-        const approvedField = _.maxBy(approvedFields, 'adminVote.timestamp');
-        winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? approvedField : approvedField.body;
-      }
+      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
+      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
           && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
     });
-    if (heaviestField) {
-      winningFields[id] = _.includes(SPECIAL_FIELDS, id) ? heaviestField : heaviestField.body;
-    }
+    if (heaviestField) winningFields[id] = heaviestField.body;
   }
   return winningFields;
 };
@@ -208,6 +201,65 @@ const getParentInfo = async (wObject, locale, app) => {
     });
   } else wObject.parent = '';
   return wObject.parent;
+};
+
+const fillObjectByHiveData = async (obj, exposedFields) => {
+  const { result } = await postsUtil.getPostState(
+    { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
+  );
+  if (!result) {
+    obj.fields = [];
+  }
+  obj.fields.map((field, index) => {
+    /** if field not exist in object type for this object - remove it */
+    if (!_.includes(exposedFields, field.name)) {
+      delete obj.fields[index];
+      return;
+    }
+
+    let post = _.get(result, `content.${field.author}/${field.permlink}`);
+    if (!post || !post.author) post = createMockPost(field);
+
+    Object.assign(field,
+      _.pick(post, ['children', 'total_pending_payout_value',
+        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+    field.fullBody = post.body;
+  });
+  return obj;
+};
+
+const getLinkToPageLoad = (obj) => {
+  const listItem = _.get(obj, 'listItem', []);
+  if (!_.get(obj, 'sortCustom', []).length) {
+    switch (obj.object_type) {
+      case OBJECT_TYPES.PAGE:
+        return `/object/${obj.author_permlink}/page`;
+      case OBJECT_TYPES.LIST:
+        return `/object/${obj.author_permlink}/list`;
+      case OBJECT_TYPES.BUSINESS:
+      case OBJECT_TYPES.PRODUCT:
+      case OBJECT_TYPES.SERVICE:
+      case OBJECT_TYPES.COMPANY:
+      case OBJECT_TYPES.PERSON:
+      case OBJECT_TYPES.PLACE:
+      case OBJECT_TYPES.HOTEL:
+      case OBJECT_TYPES.RESTAURANT:
+        if (listItem.length) {
+          const item = _
+            .chain(listItem)
+            .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
+            .first()
+            .value();
+          return `/object/${obj.author_permlink}/menu#${item.body}`;
+        }
+        return `/object/${obj.author_permlink}`;
+      default:
+        return `/object/${obj.author_permlink}`;
+    }
+  }
+  const field = _.find(listItem, { body: obj.sortCustom[0] });
+  if (!field) return `/object/${obj.author_permlink}`;
+  return `/object/${obj.author_permlink}/menu#${field.body}`;
 };
 
 const createMockPost = (field) => ({
@@ -230,6 +282,7 @@ const processWobjects = async ({
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
+    if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
     const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
@@ -244,29 +297,9 @@ const processWobjects = async ({
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-      const { result } = await postsUtil.getPostState(
-        { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
-      );
-      if (!result) {
-        obj.fields = [];
-        continue;
-      }
-      obj.fields.map((field, index) => {
-        /** if field not exist in object type for this object - remove it */
-        if (!_.includes(exposedFields, field.name)) {
-          delete obj.fields[index];
-          return;
-        }
-
-        let post = _.get(result, `content.${field.author}/${field.permlink}`);
-        if (!post || !post.author) post = createMockPost(field);
-
-        Object.assign(field,
-          _.pick(post, ['children', 'total_pending_payout_value',
-            'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
-        field.fullBody = post.body;
-      });
+      obj = await fillObjectByHiveData(obj, exposedFields);
     }
+
     obj.fields = addDataToFields(
       _.compact(obj.fields), fields, admins, ownership, administrative, isOwnershipObj,
     );
@@ -282,8 +315,10 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
+      if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     filteredWobj.push(obj);
