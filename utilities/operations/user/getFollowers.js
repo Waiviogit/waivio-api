@@ -4,7 +4,7 @@ module.exports = async ({
   name, skip, limit, sort,
 }) => {
   const result = await followersHelper.sortUsers({
-    field: 'following', name, limit: limit + 1, skip, sort,
+    field: 'following', name, limit: limit + 1, skip, sort, collection: 'userSubscription',
   });
 
   return { result: { followers: result.slice(0, limit), hasMore: result.length === limit + 1 } };

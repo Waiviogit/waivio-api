@@ -55,6 +55,7 @@ exports.followersScheme = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   author_permlink: Joi.string().required(),
+  sort: Joi.string().valid('rank', 'alphabet', 'followers', 'recency').default('recency'),
 });
 
 exports.searchScheme = Joi.object().keys({

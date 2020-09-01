@@ -92,18 +92,14 @@ const feed = async (req, res, next) => {
 const followers = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
-    skip: req.body.skip,
-    limit: req.body.limit,
+    ...req.body,
   }, validators.wobject.followersScheme, next);
 
   if (!value) return;
 
-  const { wobjectFollowers, error } = await sortFollowers(value);
+  const { result } = await sortFollowers(value);
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: wobjectFollowers };
+  res.result = { status: 200, json: result };
   next();
 };
 

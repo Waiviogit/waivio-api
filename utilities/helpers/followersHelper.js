@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { User, Subscriptions, wobjectSubscriptionModel } = require('models');
 
 const getFollowers = async (data) => {
   const { usersData: followers } = await User.find({
@@ -16,11 +16,22 @@ const getFollowers = async (data) => {
 };
 
 const sortBeforePopulate = async ({
-  limit, skip, select, path, condition, populate, sortData,
+  limit, skip, select, path, condition, populate, sortData, collection,
 }) => {
-  const { users } = await Subscriptions.populate({
-    limit, skip, select, condition, sort: sortData, populate,
-  });
+  let users;
+  switch (collection) {
+    case 'userSubscription':
+      ({ users } = await Subscriptions.populate({
+        limit, skip, select, condition, sort: sortData, populate,
+      }));
+      break;
+    case 'wobjectSubscription':
+      ({ users } = await wobjectSubscriptionModel.populate({
+        limit, skip, select, condition, sort: sortData, populate,
+      }));
+      break;
+  }
+
   return _.chain(users)
     .map(`${path}`)
     .compact()
@@ -28,11 +39,21 @@ const sortBeforePopulate = async ({
 };
 
 const sortAfterPopulate = async ({
-  limit, skip, select, path, condition, populate, sortData,
+  limit, skip, select, path, condition, populate, sortData, collection,
 }) => {
-  const { users } = await Subscriptions.populate({
-    select, condition, populate,
-  });
+  let users;
+  switch (collection) {
+    case 'userSubscription':
+      ({ users } = await Subscriptions.populate({
+        select, condition, populate,
+      }));
+      break;
+    case 'wobjectSubscription':
+      ({ users } = await wobjectSubscriptionModel.populate({
+        select, condition, populate,
+      }));
+      break;
+  }
   return _
     .chain(users)
     .map(`${path}`)
@@ -43,7 +64,7 @@ const sortAfterPopulate = async ({
 };
 
 const sortUsers = async ({
-  field, name, limit, skip, sort,
+  field, name, limit, skip, sort, collection,
 }) => {
   let path, select;
 
@@ -61,12 +82,12 @@ const sortUsers = async ({
     case 'recency':
     case 'alphabet':
       return sortBeforePopulate({
-        select, limit, skip, path, condition, populate, sortData: sort === 'recency' ? { _id: -1 } : { [`${select}`]: 1 },
+        select, limit, skip, path, condition, populate, sortData: sort === 'recency' ? { _id: -1 } : { [`${select}`]: 1 }, collection,
       });
     case 'rank':
     case 'followers':
       return sortAfterPopulate({
-        limit, skip, select, path, condition, populate, sortData: sort === 'rank' ? 'wobjects_weight' : 'followers_count',
+        limit, skip, select, path, condition, populate, sortData: sort === 'rank' ? 'wobjects_weight' : 'followers_count', collection,
       });
   }
 };

@@ -6,7 +6,7 @@ exports.getAll = async ({
   name, skip, limit, sort,
 }) => {
   const result = await followersHelper.sortUsers({
-    field: 'follower', name, limit: limit + 1, skip, sort,
+    field: 'follower', name, limit: limit + 1, skip, sort, collection: 'userSubscription',
   });
 
   return { result: { users: result.slice(0, limit), hasMore: result.length === limit + 1 } };
