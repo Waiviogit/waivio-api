@@ -2,8 +2,10 @@ const _ = require('lodash');
 const { User, Subscriptions, wobjectSubscriptionModel } = require('models');
 
 const getFollowers = async (data) => {
+  const { wobjFollowers = [] } = await wobjectSubscriptionModel
+    .getFollowers({ following: data.author_permlink });
   const { usersData: followers } = await User.find({
-    condition: { objects_follow: data.author_permlink },
+    condition: { name: { $in: wobjFollowers } },
     select: { _id: 0, name: 1, wobjects_weight: 1 },
     sort: { wobjects_weight: -1 },
     skip: data.skip,
