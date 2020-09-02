@@ -228,12 +228,39 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
   return obj;
 };
 
-// const getLinkToPageLoad = async (obj) => {
-//   switch (obj.object_type) {
-//     case OBJECT_TYPES.HASHTAG:
-//       break;
-//   }
-// };
+const getLinkToPageLoad = (obj) => {
+  const listItem = _.get(obj, 'listItem', []);
+  if (!_.get(obj, 'sortCustom', []).length) {
+    switch (obj.object_type) {
+      case OBJECT_TYPES.PAGE:
+        return `/object/${obj.author_permlink}/page`;
+      case OBJECT_TYPES.LIST:
+        return `/object/${obj.author_permlink}/list`;
+      case OBJECT_TYPES.BUSINESS:
+      case OBJECT_TYPES.PRODUCT:
+      case OBJECT_TYPES.SERVICE:
+      case OBJECT_TYPES.COMPANY:
+      case OBJECT_TYPES.PERSON:
+      case OBJECT_TYPES.PLACE:
+      case OBJECT_TYPES.HOTEL:
+      case OBJECT_TYPES.RESTAURANT:
+        if (listItem.length) {
+          const item = _
+            .chain(listItem)
+            .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
+            .first()
+            .value();
+          return `/object/${obj.author_permlink}/menu#${item.body}`;
+        }
+        return `/object/${obj.author_permlink}`;
+      default:
+        return `/object/${obj.author_permlink}`;
+    }
+  }
+  const field = _.find(listItem, { body: obj.sortCustom[0] });
+  if (!field) return `/object/${obj.author_permlink}`;
+  return `/object/${obj.author_permlink}/menu#${field.body}`;
+};
 
 const createMockPost = (field) => ({
   children: 0,
@@ -288,9 +315,10 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
-      // obj.defaultShowLink = getLinkToPageLoad(obj);
+      if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
     if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     filteredWobj.push(obj);

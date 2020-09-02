@@ -13,10 +13,12 @@ const makeCountPipeline = ({ string, notGuest }) => {
 exports.searchUsers = async ({
   string, limit, skip, notGuest = false,
 }) => {
-  const { user } = await User.findOneByCondition(
-    { name: { $in: [`waivio_${string}`, string] } },
-  );
-  const { users, error } = await User.search({ string, skip, limit, notGuest });
+  const condition = { name: { $in: [`waivio_${string}`, string] } };
+  if (notGuest) condition.auth = { $exists: false };
+  const { user } = await User.findOneByCondition(condition);
+  const { users, error } = await User.search({
+    string, skip, limit, notGuest,
+  });
   const {
     result: [
       { count: usersCount = 0 } = {}] = [], error: countError,
