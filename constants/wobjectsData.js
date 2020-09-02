@@ -32,11 +32,6 @@ exports.FIELDS_NAMES = {
   SORT_CUSTOM: 'sortCustom',
 };
 
-exports.FIELDS_TO_PARSE = [
-  this.FIELDS_NAMES.SORT_CUSTOM,
-  this.FIELDS_NAMES.NEWS_FILTER,
-];
-
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
@@ -175,3 +170,8 @@ exports.INDEPENDENT_FIELDS = [
 ];
 
 exports.TOP_WOBJ_USERS_KEY = 'topUsers';
+
+exports.FIELDS_TO_PARSE = [
+  this.FIELDS_NAMES.SORT_CUSTOM,
+  this.FIELDS_NAMES.NEWS_FILTER,
+];
