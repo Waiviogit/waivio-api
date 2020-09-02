@@ -1,12 +1,12 @@
 const {
-  User: UserService, Wobj: WobjectService, Subscriptions, wobjectSubscriptionModel,
+  User: UserService, Wobj: WobjectService, Subscriptions, wobjectSubscriptions,
 } = require('models');
 
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
   const { users, error: subscribeError } = await Subscriptions
     .getFollowings({ follower: name, limit: users_count + 10 });
-  const { wobjects = [] } = await wobjectSubscriptionModel.getFollowings({ follower: name });
+  const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
 
   if (getUserError || !user || subscribeError) {
     return { error: getUserError || subscribeError || { status: 404, message: 'User not found!' } };
@@ -30,7 +30,7 @@ const getWobjectsUpdates = async ({
   name, skip = 0, limit = 3, object_type,
 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
-  const { wobjects = [] } = await wobjectSubscriptionModel.getFollowings({ follower: name });
+  const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
 
   if (getUserError || !user) {
     return { error: getUserError || { status: 404, message: 'User not found!' } };

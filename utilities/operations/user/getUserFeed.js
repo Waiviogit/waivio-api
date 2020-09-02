@@ -1,5 +1,5 @@
 const {
-  User, Post, App, Subscriptions, wobjectSubscriptionModel,
+  User, Post, App, Subscriptions, wobjectSubscriptions,
 } = require('models');
 const _ = require('lodash');
 
@@ -10,7 +10,7 @@ const getFeed = async ({
   const { user, error: userError } = await User.getOne(name);
   const { users, error: subsError } = await Subscriptions
     .getFollowings({ follower: name, limit: 0 });
-  const { wobjects = [] } = await wobjectSubscriptionModel.getFollowings({ follower: name });
+  const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
 
   if (userError || subsError || !user) {
     return { error: userError || subsError || { status: 404, message: 'User not found!' } };

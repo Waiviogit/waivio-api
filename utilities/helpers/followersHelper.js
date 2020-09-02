@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { User, Subscriptions, wobjectSubscriptionModel } = require('models');
+const { User, Subscriptions, wobjectSubscriptions } = require('models');
 
 const getFollowers = async (data) => {
-  const { wobjFollowers = [] } = await wobjectSubscriptionModel
+  const { wobjFollowers = [] } = await wobjectSubscriptions
     .getFollowers({ following: data.author_permlink });
   const { usersData: followers } = await User.find({
     condition: { name: { $in: wobjFollowers } },
@@ -28,7 +28,7 @@ const sortBeforePopulate = async ({
       }));
       break;
     case 'wobjectSubscription':
-      ({ users } = await wobjectSubscriptionModel.populate({
+      ({ users } = await wobjectSubscriptions.populate({
         limit, skip, select, condition, sort: sortData, populate,
       }));
       break;
@@ -51,7 +51,7 @@ const sortAfterPopulate = async ({
       }));
       break;
     case 'wobjectSubscription':
-      ({ users } = await wobjectSubscriptionModel.populate({
+      ({ users } = await wobjectSubscriptions.populate({
         select, condition, populate,
       }));
       break;

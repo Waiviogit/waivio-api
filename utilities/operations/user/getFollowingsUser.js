@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User, Subscriptions, wobjectSubscriptionModel } = require('models');
+const { User, Subscriptions, wobjectSubscriptions } = require('models');
 const { followersHelper } = require('utilities/helpers');
 
 exports.getAll = async ({
@@ -35,7 +35,7 @@ exports.getFollowingsArray = async (data) => {
     if (error) return { error: { status: 503, message: error.message } };
 
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
-    const { wobjects = [] } = await wobjectSubscriptionModel.getFollowings({ follower: data.name });
+    const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: data.name });
     return {
       users: _.map(data.permlinks,
         (permlink) => ({ [permlink]: _.includes(wobjects, permlink) })),
