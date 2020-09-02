@@ -23,7 +23,7 @@ module.exports = async ({
   }
 
   return {
-    toDisplay: filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName],
+    toDisplay: JSON.parse(filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName]),
     field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
   };
 };
