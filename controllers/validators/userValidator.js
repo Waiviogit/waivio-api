@@ -5,7 +5,7 @@ const { customValidationHelper } = require('utilities/helpers');
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
   skip: Joi.number().integer().min(0).default(0),
-  sample: Joi.boolean().truthy('true'),
+  sample: Joi.boolean().truthy('true').required(),
 });
 
 exports.objectsSharesSchema = Joi.object().keys({
