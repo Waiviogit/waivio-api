@@ -43,14 +43,14 @@ const getWobjWithFilters = async ({
     });
     aggregationPipeline.push({ $match: { 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } } });
     delete filter.map;
-  } else {
-    aggregationPipeline.push({
-      $match: {
-        object_type: objectType,
-        'status.title': { $nin: nsfw ? ['nsfw', ...LOW_PRIORITY_STATUS_FLAGS] : LOW_PRIORITY_STATUS_FLAGS },
-      },
-    });
   }
+  aggregationPipeline.push({
+    $match: {
+      object_type: objectType,
+      'status.title': { $nin: nsfw ? ['nsfw', ...LOW_PRIORITY_STATUS_FLAGS] : LOW_PRIORITY_STATUS_FLAGS },
+    },
+  });
+
   // special filter searchString
   if (_.get(filter, 'searchString')) {
     aggregationPipeline.push({
