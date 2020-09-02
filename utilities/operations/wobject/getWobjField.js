@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { wObjectHelper, appHelper } = require('utilities/helpers');
-const { SPECIFIC_FIELDS_MAPPINGS } = require('constants/wobjectsData');
+const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES } = require('constants/wobjectsData');
 
 module.exports = async ({
   authorPermlink, author, fieldName, locale, app, permlink,
@@ -21,17 +21,14 @@ module.exports = async ({
   if (fieldName === 'avatar' && !filteredObject.avatar) {
     filteredObject.avatar = _.get(filteredObject, 'parent.avatar', '');
   }
+  const toDisplay = filteredObject[
+    fieldName === FIELDS_NAMES.CATEGORY_ITEM
+      ? FIELDS_NAMES.TAG_CATEGORY
+      : fieldName
+  ];
 
   return {
-    toDisplay: parseJson(filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName]),
+    toDisplay: fieldName === FIELDS_NAMES.SORT_CUSTOM ? JSON.parse(toDisplay) : toDisplay,
     field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
   };
-};
-const parseJson = (value) => {
-  try {
-    return JSON.parse(value);
-  } catch (e) {
-    if (Array.isArray(value)) return value;
-    return typeof value === 'string' ? [value] : Object.values(value);
-  }
 };
