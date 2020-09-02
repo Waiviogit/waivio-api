@@ -23,7 +23,15 @@ module.exports = async ({
   }
 
   return {
-    toDisplay: JSON.parse(filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName]),
+    toDisplay: parseJson(filteredObject[fieldName === 'categoryItem' ? 'tagCategory' : fieldName]),
     field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
   };
+};
+const parseJson = (value) => {
+  try {
+    return JSON.parse(value);
+  } catch (e) {
+    if (Array.isArray(value)) return value;
+    return typeof value === 'string' ? [value] : Object.values(value);
+  }
 };
