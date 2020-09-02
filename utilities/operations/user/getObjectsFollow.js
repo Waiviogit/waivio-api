@@ -1,12 +1,19 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { wobjectSubscriptions, Wobj } = require('models');
 
 module.exports = async (value) => {
-  const { wobjects, error } = await User.getObjectsFollow(value);
-  if (error) return { error };
+  const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: value.name });
   if (!wobjects.length) return { wobjects };
-  wobjects.forEach((wObject) => {
+  const { result, error } = await Wobj.find(
+    { author_permlink: { $in: wobjects } },
+    '-_id',
+    { weight: -1 },
+    value.skip,
+    value.limit,
+  );
+  if (error) return { error };
+  result.forEach((wObject) => {
     wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
   });
-  return { wobjects };
+  return { wobjects: result };
 };
