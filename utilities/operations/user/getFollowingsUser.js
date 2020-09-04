@@ -1,12 +1,18 @@
 const _ = require('lodash');
 const { User, Subscriptions, wobjectSubscriptions } = require('models');
+const { FOLLOWERS_SORT } = require('constants/sortData');
 const { followersHelper } = require('utilities/helpers');
 
 exports.getAll = async ({
   name, skip, limit, sort,
 }) => {
   const result = await followersHelper.sortUsers({
-    field: 'follower', name, limit: limit + 1, skip, sort, collection: 'userSubscription',
+    collection: FOLLOWERS_SORT.USER_SUB,
+    field: FOLLOWERS_SORT.FOLLOWER,
+    limit: limit + 1,
+    name,
+    skip,
+    sort,
   });
 
   return { result: { users: result.slice(0, limit), hasMore: result.length === limit + 1 } };
