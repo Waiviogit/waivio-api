@@ -1,8 +1,8 @@
 const { WobjectSubscriptions } = require('database').models;
 
 exports.populate = async ({
-                            condition, select, sort, skip, limit, populate,
-                          }) => {
+  condition, select, sort, skip, limit, populate,
+}) => {
   try {
     const result = await WobjectSubscriptions
       .find(condition)
