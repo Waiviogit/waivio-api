@@ -9,7 +9,7 @@ const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
-const { WobjectSubscriptions, User } = require('database').models;
+
 const swaggerDocument = require('./swagger');
 require('jobs');
 
