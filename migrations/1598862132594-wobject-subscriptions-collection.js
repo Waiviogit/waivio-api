@@ -5,10 +5,9 @@ const { WobjectSubscriptions, User } = require('database').models;
  */
 exports.up = async function up(done) {
   const cursor = User
-    .find().select({ name: 1, objects_follow: 1 }).lean().cursor({ batchSize: 100 });
+    .find({ objects_follow: { $ne: [] } })
+    .select({ name: 1, objects_follow: 1 }).lean().cursor({ batchSize: 100 });
   await cursor.eachAsync(async (doc) => {
-    if (!doc.objects_follow.length) return;
-
     for (const following of doc.objects_follow) {
       try {
         const newSubscription = new WobjectSubscriptions({ follower: doc.name, following });
