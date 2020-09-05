@@ -28,6 +28,7 @@ models.Campaign = require('./schemas/CampaignSchema');
 models.paymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.BellNotifications = require('./schemas/BellNotificationsSchema');
+models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 
 module.exports = {
   Mongoose: mongoose,
