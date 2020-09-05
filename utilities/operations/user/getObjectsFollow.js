@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { REQUIREDFIELDS_POST } = require('constants/wobjectsData.js');
 const { wobjectSubscriptions, Wobj } = require('models');
 
 module.exports = async (value) => {
@@ -13,7 +14,8 @@ module.exports = async (value) => {
   );
   if (error) return { error };
   result.forEach((wObject) => {
-    wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
+    wObject.fields = _.filter(wObject.fields,
+      (field) => _.includes(REQUIREDFIELDS_POST, field.name));
   });
   return { wobjects: result };
 };
