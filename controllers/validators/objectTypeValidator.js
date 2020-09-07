@@ -28,9 +28,9 @@ exports.showSchema = Joi.object().keys({
     }),
     searchString: Joi.string().invalid(''),
     tagCategory: Joi.array().items(Joi.object().keys({
-      categoryName: Joi.string(),
-      tag: Joi.string(),
-    }).with('categoryName', 'tag').with('tag', 'categoryName')),
+      categoryName: Joi.string().required(),
+      tag: Joi.string().required(),
+    })),
   }).pattern(/.+/, Joi.array().items(Joi.string())),
 });
 
