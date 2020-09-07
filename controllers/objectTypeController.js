@@ -75,9 +75,9 @@ const showMoreTags = async (req, res, next) => {
     validators.objectType.showMoreTagsSchema, next,
   );
   if (!value) return;
-  const { tagCategory, tags, error } = await showTags(value);
+  const { tags, hasMore, error } = await showTags(value);
   if (error) return next(error);
-  res.result = { status: 200, json: { tagCategory, tags } };
+  res.result = { status: 200, json: { tagCategory: value.tagCategory, tags, hasMore } };
   next();
 };
 

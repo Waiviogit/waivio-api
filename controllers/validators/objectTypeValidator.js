@@ -30,7 +30,7 @@ exports.showSchema = Joi.object().keys({
     tagCategory: Joi.array().items(Joi.object().keys({
       categoryName: Joi.string(),
       tag: Joi.string(),
-    })),
+    }).with('categoryName', 'tag').with('tag', 'categoryName')),
   }).pattern(/.+/, Joi.array().items(Joi.string())),
 });
 

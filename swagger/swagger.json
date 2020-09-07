@@ -1675,6 +1675,9 @@
                   "items": {
                     "type" : "string"
                   }
+                },
+                "hasMore": {
+                  "type": "boolean"
                 }
               }
             }

@@ -68,6 +68,10 @@ exports.getTrendFeedCache = async ({
   };
 };
 
-exports.getTagCategories = async ({ key, start, end }) => (
-  tagCategoriesClient.zrevrangeAsync(key, start, end)
-);
+exports.getTagCategories = async ({ key, start, end }) => {
+  try {
+    return { tags: await tagCategoriesClient.zrevrangeAsync(key, start, end) };
+  } catch (error) {
+    return { error };
+  }
+};
