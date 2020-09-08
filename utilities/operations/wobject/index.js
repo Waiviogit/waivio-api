@@ -6,5 +6,6 @@ moduleExports.getManyObjects = require('./getManyObjects');
 moduleExports.getPostsByWobject = require('./getPostsByWobject');
 moduleExports.getGallery = require('./getGallery');
 moduleExports.getWobjField = require('./getWobjField');
+moduleExports.sortFollowers = require('./sortFollowers');
 
 module.exports = moduleExports;

@@ -1,9 +1,12 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { FOLLOWERS_SORT } = require('constants/sortData');
+const { User, Subscriptions, wobjectSubscriptions } = require('models');
 
 const getFollowers = async (data) => {
+  const { wobjFollowers = [] } = await wobjectSubscriptions
+    .getFollowers({ following: data.author_permlink });
   const { usersData: followers } = await User.find({
-    condition: { objects_follow: data.author_permlink },
+    condition: { name: { $in: wobjFollowers } },
     select: { _id: 0, name: 1, wobjects_weight: 1 },
     sort: { wobjects_weight: -1 },
     skip: data.skip,
@@ -16,11 +19,22 @@ const getFollowers = async (data) => {
 };
 
 const sortBeforePopulate = async ({
-  limit, skip, select, path, condition, populate, sortData,
+  limit, skip, select, path, condition, populate, sortData, collection,
 }) => {
-  const { users } = await Subscriptions.populate({
-    limit, skip, select, condition, sort: sortData, populate,
-  });
+  let users = [];
+  switch (collection) {
+    case FOLLOWERS_SORT.USER_SUB:
+      ({ users } = await Subscriptions.populate({
+        limit, skip, select, condition, sort: sortData, populate,
+      }));
+      break;
+    case FOLLOWERS_SORT.WOBJECT_SUB:
+      ({ users } = await wobjectSubscriptions.populate({
+        limit, skip, select, condition, sort: sortData, populate,
+      }));
+      break;
+  }
+
   return _.chain(users)
     .map(`${path}`)
     .compact()
@@ -28,11 +42,21 @@ const sortBeforePopulate = async ({
 };
 
 const sortAfterPopulate = async ({
-  limit, skip, select, path, condition, populate, sortData,
+  limit, skip, select, path, condition, populate, sortData, collection,
 }) => {
-  const { users } = await Subscriptions.populate({
-    select, condition, populate,
-  });
+  let users = [];
+  switch (collection) {
+    case FOLLOWERS_SORT.USER_SUB:
+      ({ users } = await Subscriptions.populate({
+        select, condition, populate,
+      }));
+      break;
+    case FOLLOWERS_SORT.WOBJECT_SUB:
+      ({ users } = await wobjectSubscriptions.populate({
+        select, condition, populate,
+      }));
+      break;
+  }
   return _
     .chain(users)
     .map(`${path}`)
@@ -43,30 +67,30 @@ const sortAfterPopulate = async ({
 };
 
 const sortUsers = async ({
-  field, name, limit, skip, sort,
+  field, name, limit, skip, sort, collection,
 }) => {
   let path, select;
 
-  if (field === 'follower') {
-    select = 'following';
-    path = 'followingPath';
+  if (field === FOLLOWERS_SORT.FOLLOWER) {
+    select = FOLLOWERS_SORT.FOLLOWING;
+    path = FOLLOWERS_SORT.FOLLOWING_PATH;
   } else {
-    select = 'follower';
-    path = 'followerPath';
+    select = FOLLOWERS_SORT.FOLLOWER;
+    path = FOLLOWERS_SORT.FOLLOWER_PATH;
   }
   const condition = { [`${field}`]: name };
   const populate = { path, select: { wobjects_weight: 1, followers_count: 1 } };
 
   switch (sort) {
-    case 'recency':
-    case 'alphabet':
+    case FOLLOWERS_SORT.RECENCY:
+    case FOLLOWERS_SORT.ALPHABET:
       return sortBeforePopulate({
-        select, limit, skip, path, condition, populate, sortData: sort === 'recency' ? { _id: -1 } : { [`${select}`]: 1 },
+        select, limit, skip, path, condition, populate, sortData: sort === FOLLOWERS_SORT.RECENCY ? { _id: -1 } : { [`${select}`]: 1 }, collection,
       });
-    case 'rank':
-    case 'followers':
+    case FOLLOWERS_SORT.RANK:
+    case FOLLOWERS_SORT.FOLLOWERS:
       return sortAfterPopulate({
-        limit, skip, select, path, condition, populate, sortData: sort === 'rank' ? 'wobjects_weight' : 'followers_count',
+        limit, skip, select, path, condition, populate, sortData: sort === FOLLOWERS_SORT.RANK ? 'wobjects_weight' : 'followers_count', collection,
       });
   }
 };
