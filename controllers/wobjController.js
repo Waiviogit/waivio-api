@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getGallery, getWobjField,
+  getPostsByWobject, getGallery, getWobjField, sortFollowers,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -92,18 +92,14 @@ const feed = async (req, res, next) => {
 const followers = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
-    skip: req.body.skip,
-    limit: req.body.limit,
+    ...req.body,
   }, validators.wobject.followersScheme, next);
 
   if (!value) return;
 
-  const { followers: wobjectFollowers, error } = await followersHelper.getFollowers(value);
+  const { result } = await sortFollowers(value);
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: wobjectFollowers };
+  res.result = { status: 200, json: result };
   next();
 };
 

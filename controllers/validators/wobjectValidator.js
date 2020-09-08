@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
+const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
 
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
@@ -55,6 +56,7 @@ exports.followersScheme = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   author_permlink: Joi.string().required(),
+  sort: Joi.string().valid(...VALID_FOLLOWERS_SORT).default(FOLLOWERS_SORT.RECENCY),
 });
 
 exports.searchScheme = Joi.object().keys({

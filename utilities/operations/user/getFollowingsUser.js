@@ -1,12 +1,18 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { User, Subscriptions, wobjectSubscriptions } = require('models');
+const { FOLLOWERS_SORT } = require('constants/sortData');
 const { followersHelper } = require('utilities/helpers');
 
 exports.getAll = async ({
   name, skip, limit, sort,
 }) => {
   const result = await followersHelper.sortUsers({
-    field: 'follower', name, limit: limit + 1, skip, sort,
+    collection: FOLLOWERS_SORT.USER_SUB,
+    field: FOLLOWERS_SORT.FOLLOWER,
+    limit: limit + 1,
+    name,
+    skip,
+    sort,
   });
 
   return { result: { users: result.slice(0, limit), hasMore: result.length === limit + 1 } };
@@ -35,9 +41,10 @@ exports.getFollowingsArray = async (data) => {
     if (error) return { error: { status: 503, message: error.message } };
 
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
+    const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: data.name });
     return {
       users: _.map(data.permlinks,
-        (permlink) => ({ [permlink]: _.includes(user.objects_follow, permlink) })),
+        (permlink) => ({ [permlink]: _.includes(wobjects, permlink) })),
     };
   }
 };

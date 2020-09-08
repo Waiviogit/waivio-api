@@ -9,6 +9,7 @@ const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
+
 const swaggerDocument = require('./swagger');
 require('jobs');
 
