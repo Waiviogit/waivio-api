@@ -1632,6 +1632,62 @@
         }
       }
     },
+    "/api/objectType/showMoreTags": {
+      "get" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return tags by tagCategory",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Count of tags to skip",
+          "required" : false,
+          "type" : "integer",
+          "default": 0
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "Count of tags to return",
+          "required" : false,
+          "type" : "integer",
+          "default": 10
+        }, {
+          "name" : "tagCategory",
+          "in" : "query",
+          "description" : "name of tagCategory",
+          "required" : true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "succesfull operation",
+            "schema" : {
+              "type" : "object",
+              "properties": {
+                "tagCategory": {
+                  "type": "string"
+                },
+                "tags" : {
+                  "type": "array",
+                  "items": {
+                    "type" : "string"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
     "/api/generalSearch" : {
       "post" : {
         "tags" : [ "general-search" ],

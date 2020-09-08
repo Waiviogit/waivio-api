@@ -4,6 +4,7 @@ const {
 } = require('models');
 const _ = require('lodash');
 const { campaignsHelper } = require('utilities/helpers');
+const { redisGetter, redisSetter } = require('utilities/redis');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -65,6 +66,21 @@ const getWobjWithFilters = async ({
     });
     delete filter.searchString;
   }
+  // special filter TAG_CATEGORY
+  if (_.get(filter, FIELDS_NAMES.TAG_CATEGORY)) {
+    for (const category of filter.tagCategory) {
+      for (const tag of category.tags) {
+        const cond = {
+          $match:
+            { fields: { $elemMatch: { name: FIELDS_NAMES.CATEGORY_ITEM, body: tag } } },
+        };
+        await redisSetter.incrementTag({ categoryName: category.categoryName, tag });
+        aggregationPipeline.push(cond);
+      }
+    }
+    delete filter.tagCategory;
+  }
+
   if (!_.isEmpty(filter)) {
     /** place here additional filters */
     for (const filterItem in filter) {
@@ -97,11 +113,36 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
+const getTagCategory = async (tagCategory = [], filter) => {
+  const resultArray = [];
+  for (const category of tagCategory) {
+    const { tags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${category}`, start: 0, end: 2 });
+    if (error) continue;
+    resultArray.push({ tagCategory: category, tags });
+  }
+  if (_.get(filter, 'tagCategory')) {
+    for (const item of filter.tagCategory) {
+      const redisValues = _.find(resultArray, (el) => el.tagCategory === item.categoryName);
+      if (!_.includes(redisValues.tags, item.tags[0])) {
+        redisValues.tags.splice(2, 1, item.tags[0]);
+      }
+    }
+  }
+  return resultArray;
+};
+
 module.exports = async ({
   name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
+  let tagCategory = [];
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
+  if (_.has(objectType, 'supposed_updates')) {
+    tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values');
+  }
+  tagCategory.length
+    ? objectType.tagsForFilter = await getTagCategory(tagCategory, filter)
+    : objectType.tagsForFilter = [];
   /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');
   /** get related wobjects for current object type */
@@ -120,7 +161,6 @@ module.exports = async ({
   await campaignsHelper.addCampaignsToWobjects({
     name, wobjects, user, appName, simplified,
   });
-
   objectType.hasMoreWobjects = wobjects.length > wobjLimit;
   objectType.related_wobjects = wobjects.slice(0, wobjLimit);
   return { objectType };
