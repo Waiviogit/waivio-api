@@ -999,7 +999,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "limit - count of followers to return(default 30), skip - count of followers that need to skip(for infinite scroll)",
+          "description" : "**limit** - count of followers to return(default 30), \n**skip** - count of followers that need to skip(for infinite scroll\n**sort** - How to sort followers. Available values : rank, alphabet, followers, recency)",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_8"
@@ -1021,10 +1021,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/inline_response_200_16_users2"
-              }
+              "$ref" : "#/definitions/inline_response_200_16_users3"
             }
           }
         }
@@ -2408,7 +2405,10 @@
                 "type": "string"
               },
               "wobjects_weight": {
-                "type": "string"
+                "type": "number"
+              },
+              "followers_count": {
+                "type": "number"
               },
               "youFollows": {
                 "type": "boolean"
@@ -2795,6 +2795,9 @@
         },
         "skip" : {
           "type" : "integer"
+        },
+        "sort": {
+          "type": "string"
         }
       }
     },
@@ -2919,6 +2922,37 @@
         },
         "followsYou": {
           "type": "boolean"
+        }
+      }
+    },
+    "inline_response_200_16_users3" : {
+      "type" : "object",
+      "properties" : {
+        "wobjectFollowers" : {
+          "type" : "array",
+          "items" : {
+            "type" : "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "wobjects_weight": {
+                "type": "number"
+              },
+              "followers_count": {
+                "type": "number"
+              },
+              "youFollows": {
+                "type": "boolean"
+              },
+              "followsYou": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "hasMore" : {
+          "type" : "boolean"
         }
       }
     },

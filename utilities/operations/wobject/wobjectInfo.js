@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  Wobj, Campaign, User, App,
+  Wobj, Campaign, User, App, wobjectSubscriptions,
 } = require('models');
 const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
@@ -85,7 +85,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
   const { wObject, error: getWobjError } = await Wobj.getOne(data.author_permlink);
   if (getWobjError) return { error: getWobjError };
 
-  const { count } = await User.getCustomCount({ objects_follow: wObject.author_permlink });
+  const { count } = await wobjectSubscriptions.getFollowersCount(wObject.author_permlink);
   wObject.followers_count = count || 0;
 
   let app;
