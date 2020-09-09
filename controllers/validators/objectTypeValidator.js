@@ -27,6 +27,10 @@ exports.showSchema = Joi.object().keys({
       radius: Joi.number().min(0),
     }),
     searchString: Joi.string().invalid(''),
+    tagCategory: Joi.array().items(Joi.object().keys({
+      categoryName: Joi.string().required(),
+      tags: Joi.array().items(Joi.string()).required(),
+    })),
   }).pattern(/.+/, Joi.array().items(Joi.string())),
 });
 
@@ -36,4 +40,10 @@ exports.expertsSchema = Joi.object().keys({
     .default(5),
   skip: Joi.number().integer().min(0).max(OBJECT_TYPE_TOP_EXPERTS_COUNT - 1)
     .default(0),
+});
+
+exports.showMoreTagsSchema = Joi.object().keys({
+  tagCategory: Joi.string().required(),
+  limit: Joi.number().integer().min(0).default(10),
+  skip: Joi.number().integer().min(0).default(0),
 });

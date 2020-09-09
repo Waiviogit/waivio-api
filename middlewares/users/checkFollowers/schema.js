@@ -42,8 +42,8 @@ exports.schema = [
   {
     path: '/wobject/:authorPermlink/followers',
     method: 'POST',
-    case: 1,
-    fields_path: 'followers',
+    case: 2,
+    fields_path: 'wobjectFollowers',
     field_name: 'name',
   },
   {

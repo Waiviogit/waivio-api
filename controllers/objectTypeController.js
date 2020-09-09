@@ -1,5 +1,7 @@
 const { searchObjectTypes } = require('utilities/operations/search/searchTypes');
-const { getAll, getOne, getExperts } = require('utilities/operations/objectType');
+const {
+  getAll, getOne, getExperts, showTags,
+} = require('utilities/operations/objectType');
 const validators = require('controllers/validators');
 
 const index = async (req, res, next) => {
@@ -67,7 +69,18 @@ const expertise = async (req, res, next) => {
   res.result = { status: 200, json: users };
   next();
 };
+const showMoreTags = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.objectType.showMoreTagsSchema, next,
+  );
+  if (!value) return;
+  const { tags, hasMore, error } = await showTags(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: { tagCategory: value.tagCategory, tags, hasMore } };
+  next();
+};
 
 module.exports = {
-  index, search, show, expertise,
+  index, search, show, expertise, showMoreTags,
 };

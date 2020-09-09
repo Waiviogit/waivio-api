@@ -15,7 +15,8 @@
       "wobjRefs": 1,
       "importUser": 2,
       "mainFeedsCache": 10,
-      "topWobjUsers": 11
+      "topWobjUsers": 11,
+      "tagCategories": 9
     },
     "swaggerHost": "www.waivio.com"
   },
@@ -36,7 +37,8 @@
       "wobjRefs": 1,
       "importUser": 2,
       "mainFeedsCache": 10,
-      "topWobjUsers": 11
+      "topWobjUsers": 11,
+      "tagCategories": 9
     },
     "swaggerHost": "waiviodev.com"
   },
@@ -57,7 +59,8 @@
       "wobjRefs": 1,
       "importUser": 2,
       "mainFeedsCache": 10,
-      "topWobjUsers": 11
+      "topWobjUsers": 11,
+      "tagCategories": 9
     },
     "swaggerHost": "localhost:3000"
   },
@@ -77,7 +80,8 @@
       "wobjRefs": 7,
       "importUser": 7,
       "mainFeedsCache": 7,
-      "topWobjUsers": 7
+      "topWobjUsers": 7,
+      "tagCategories": 7
     },
     "swaggerHost": "localhost:3000"
   }

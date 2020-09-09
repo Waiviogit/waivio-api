@@ -25,7 +25,7 @@ apiRoutes.use('/api', objectTypeRoutes);
 wobjRoutes.route('/wobject')
   .post(WobjController.index);
 wobjRoutes.route('/wobject/:authorPermlink/getField')
-    .get(WobjController.getWobjectField);
+  .get(WobjController.getWobjectField);
 wobjRoutes.route('/wobject/:authorPermlink')
   .get(WobjController.show);
 wobjRoutes.route('/wobject/:authorPermlink/posts')
@@ -115,6 +115,8 @@ objectTypeRoutes.route('/objectType/:objectTypeName')
   .post(ObjectTypeController.show);
 objectTypeRoutes.route('/objectType/:objectTypeName/expertise')
   .get(ObjectTypeController.expertise);
+objectTypeRoutes.route('/objectType/showMoreTags')
+  .get(ObjectTypeController.showMoreTags);
 // endregion
 // region Search
 userRoutes.route('/generalSearch')
