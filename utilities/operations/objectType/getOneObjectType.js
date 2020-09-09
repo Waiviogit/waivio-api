@@ -117,8 +117,7 @@ const getTagCategory = async (tagCategory = [], filter) => {
   const resultArray = [];
   for (const category of tagCategory) {
     const { tags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${category}`, start: 0, end: 2 });
-    if (error) continue;
-    if (!tags.length) continue;
+    if (error|| !tags.length) continue;
     resultArray.push({ tagCategory: category, tags });
   }
   if (_.get(filter, 'tagCategory')) {
