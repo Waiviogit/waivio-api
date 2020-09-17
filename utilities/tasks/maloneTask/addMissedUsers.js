@@ -16,8 +16,12 @@ exports.add = async () => {
     const DBFollowersCount = await Subscriptions.find({ following: usr, follower: { $nin: [/waivio_/, /bxy_/] } });
     const DBFollowingsCount = await Subscriptions.find({ follower: usr, following: { $nin: [/waivio_/, /bxy_/] } });
     if (DBFollowersCount.length === data.follower_count && DBFollowingsCount.length === data.following_count) {
+      console.log(`All followers/followings at user ${usr} OK`);
       continue;
     }
+    console.log('data', data);
+    console.log('followers', DBFollowersCount.length);
+    console.log('followings', DBFollowingsCount.length);
     if (DBFollowersCount.length !== data.follower_count) {
       do {
         const { followers, error } = await anyxRequest({
