@@ -1,19 +1,28 @@
 const _ = require('lodash');
 const { schema } = require('middlewares/users/checkBellNotifications/schema');
-const { BellNotifications } = require('models');
+const { BellNotifications, bellWobjectModel } = require('models');
 
 exports.check = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
-  if (!currentSchema || !req.headers.follower) {
+  if (!currentSchema) {
     return next();
   }
 
   switch (currentSchema.case) {
-    case 3:
-      await checkBellNotificationSingle({
+    case 1:
+      if (!req.headers.follower) return next();
+      await checkUserBell({
         result: res.result.json,
         follower: req.headers.follower,
+        path: currentSchema.field_name,
+      });
+      break;
+    case 2:
+      if (!req.query.user) return next();
+      await checkWobjectBell({
+        result: res.result.json,
+        follower: req.query.user,
         path: currentSchema.field_name,
       });
       break;
@@ -21,8 +30,16 @@ exports.check = async (req, res, next) => {
   next();
 };
 
-const checkBellNotificationSingle = async ({ result, follower, path }) => {
+const checkUserBell = async ({ result, follower, path }) => {
   const { bell } = await BellNotifications.findOne({
+    following: result[path],
+    follower,
+  });
+  result.bell = !!bell;
+};
+
+const checkWobjectBell = async ({ result, follower, path }) => {
+  const { bell } = await bellWobjectModel.findOne({
     following: result[path],
     follower,
   });
