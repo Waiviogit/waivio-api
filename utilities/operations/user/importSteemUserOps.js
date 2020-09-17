@@ -92,24 +92,22 @@ const updateUserFollowings = async (name) => {
     currBatchSize = followings.length;
     startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
 
-    await Promise.all(_.map(followings, async (el) => {
+    for (const el of followings) {
       if (!_.includes(dbArray, el.following)) {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: name, following: el.following });
-        // await User.updateOne({ name: el.following }, { $inc: { followers_count: 1 } });
         result && console.log(`success, ${name} follows ${el.following}`);
         dbError && console.error(dbError);
       }
-    }));
-    await Promise.all(_.map(dbArray, async (el) => {
-      if (!_.includes(hiveArray, el)) {
+    }
+    for (const el of dbArray) {
+      if (!_.includes(hiveArray, el) && !el.includes('_')) {
         const { result, error: dbError } = await Subscriptions
           .unfollowUser({ follower: name, following: el });
-        // await User.updateOne({ name: el }, { $inc: { followers_count: -1 } });
         result && console.log(`success, ${name} unfollows ${el}`);
         dbError && console.error(dbError);
       }
-    }));
+    }
   } while (currBatchSize === batchSize);
   return { ok: true };
 };
@@ -135,22 +133,22 @@ const updateUserFollowers = async (name) => {
     currBatchSize = followers.length;
     startAccount = _.get(followers, `[${batchSize - 1}].follower`, '');
 
-    await Promise.all(_.map(followers, async (el) => {
+    for (const el of followers) {
       if (!_.includes(dbArray, el.follower)) {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: el.follower, following: name });
         result && console.log(`success, ${el.follower} follows ${name}`);
         dbError && console.error(dbError);
       }
-    }));
-    await Promise.all(_.map(dbArray, async (el) => {
-      if (!_.includes(hiveArray, el)) {
+    }
+    for (const el of dbArray) {
+      if (!_.includes(hiveArray, el) && !el.includes('_')) {
         const { result, error: dbError } = await Subscriptions
           .unfollowUser({ follower: el, following: name });
         result && console.log(`success, ${el} unfollows ${name}`);
         dbError && console.error(dbError);
       }
-    }));
+    }
   } while (currBatchSize === batchSize);
   return { ok: true };
 };
