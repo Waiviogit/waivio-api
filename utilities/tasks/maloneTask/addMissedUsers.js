@@ -4,12 +4,8 @@ const { importUser } = require('utilities/operations/user/importSteemUserOps');
 const axios = require('axios');
 
 exports.add = async () => {
-  // const usersDB = await User.find({ followers_count: { $gt: 5000 } }, { name: 1 }).lean();
-  // const users = _.map(usersDB, 'name');
-  const users = ['markitoelias', 'chomsy', 'anasteisha06', 'takken', 'hannanmithu', 'gijog', 'coenec-10', 'sharko33',
-    'jerome-colley', 'yury-efim-off', 'alfaruq', 'rattioo', 'flaccidfervor', 'nancy007', 'edfrant', 'biomanu', 'annenolte',
-    'sebastian1903', 'kanoe', 'jerrisity', 'sanamamq', 'art-of-can-emed', 'barrysteem', 'riosparada', 'ajdohmen',
-    'steemswede', 'green07', 'twirble'];
+  const usersDB = await User.find({ followers_count: { $gt: 5000, $lt: 10000 } }, { name: 1 }).lean();
+  const users = _.map(usersDB, 'name');
 
   for (const usr of users) {
     const batchSize = 1000;
@@ -17,11 +13,15 @@ exports.add = async () => {
     let startAccount = '';
     let userFollowers = [], userFollowings = [];
     const { data } = await followCount(usr);
-    const DBFollowersCount = await Subscriptions.find({ following: usr });
-    const DBFollowingsCount = await Subscriptions.find({ follower: usr });
+    const DBFollowersCount = await Subscriptions.find({ following: usr, follower: { $nin: [/waivio_/, /bxy_/] } });
+    const DBFollowingsCount = await Subscriptions.find({ follower: usr, following: { $nin: [/waivio_/, /bxy_/] } });
     if (DBFollowersCount.length === data.follower_count && DBFollowingsCount.length === data.following_count) {
+      console.log(`All followers/followings at user ${usr} OK`);
       continue;
     }
+    console.log('data', data);
+    console.log('followers', DBFollowersCount.length);
+    console.log('followings', DBFollowingsCount.length);
     if (DBFollowersCount.length !== data.follower_count) {
       do {
         const { followers, error } = await anyxRequest({
