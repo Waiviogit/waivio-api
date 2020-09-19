@@ -22,11 +22,7 @@ exports.importUser = async (userName) => {
 
   await updateUserFollowings(userName);
   await updateUserFollowers(userName);
-  const { count: followings } = await Subscriptions.getFollowingsCount(userName);
-  return User.updateOne(
-    { name: userName },
-    { ...userData, stage_version: 1, users_following_count: followings },
-  );
+  return User.updateOne({ name: userName }, { ...userData, stage_version: 1 });
 };
 
 /**
@@ -48,10 +44,12 @@ exports.getUserSteemInfo = async (name) => {
     .getGuestSubscriptionsCount(name, false);
   if (guestFollErr) return { error: guestFollErr };
 
+  const metadata = parseString(userData.json_metadata);
+  const postingMetadata = parseString(userData.posting_json_metadata);
   const data = {
     name,
-    alias: _.get(parseString(userData), 'posting_json_metadata.profile.name', ''),
-    profile_image: _.get(parseString(userData), 'posting_json_metadata.profile.profile_image', ''),
+    alias: _.get(postingMetadata, 'profile.name', _.get(metadata, 'profile.name', '')),
+    profile_image: _.get(postingMetadata, 'profile.profile_image', _.get(metadata, 'profile.profile_image', '')),
     json_metadata: userData.json_metadata,
     posting_json_metadata: userData.posting_json_metadata,
     last_root_post: userData.last_root_post,
@@ -75,40 +73,24 @@ const updateUserFollowings = async (name) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = '';
-  const { subscriptionData, error: subsError } = await Subscriptions
-    .find({ condition: { follower: name } });
-  const dbArray = _.map(subscriptionData, (el) => el.following);
+  let hiveArray = [];
 
   do {
     const { followings = [], error } = await userUtil.getFollowingsList({
       name, startAccount, limit: batchSize,
     });
 
-    if (error || followings.error || subsError) {
-      console.error(error || followings.error || subsError);
-      return { error: error || followings.error || subsError };
+    if (error || followings.error) {
+      console.error(error || followings.error);
+      return { error: error || followings.error };
     }
-    const hiveArray = _.map(followings, (el) => el.following);
+    hiveArray = _.concat(hiveArray, _.map(followings, (el) => el.following));
     currBatchSize = followings.length;
-    startAccount = _.get(followings, `[${batchSize - 1}].following`, '');
-
-    for (const el of followings) {
-      if (!_.includes(dbArray, el.following)) {
-        const { result, error: dbError } = await Subscriptions
-          .followUser({ follower: name, following: el.following });
-        result && console.log(`success, ${name} follows ${el.following}`);
-        dbError && console.error(dbError);
-      }
-    }
-    for (const el of dbArray) {
-      if (!_.includes(hiveArray, el) && !el.includes('_')) {
-        const { result, error: dbError } = await Subscriptions
-          .unfollowUser({ follower: name, following: el });
-        result && console.log(`success, ${name} unfollows ${el}`);
-        dbError && console.error(dbError);
-      }
-    }
+    startAccount = _.get(followings, `[${currBatchSize - 1}].following`, '');
   } while (currBatchSize === batchSize);
+
+  await Subscriptions.deleteMany({ follower: name, following: { $nin: [/waivio_/, /bxy_/] } });
+  for (const following of hiveArray) await Subscriptions.followUser({ follower: name, following });
   return { ok: true };
 };
 
@@ -116,40 +98,24 @@ const updateUserFollowers = async (name) => {
   const batchSize = 1000;
   let currBatchSize = 0;
   let startAccount = '';
-  const { subscriptionData, error: subsError } = await Subscriptions
-    .find({ condition: { following: name } });
-  const dbArray = _.map(subscriptionData, (el) => el.follower);
+  let hiveArray = [];
 
   do {
     const { followers = [], error } = await userUtil.getFollowersList({
       name, startAccount, limit: batchSize,
     });
 
-    if (error || followers.error || subsError) {
-      console.error(error || followers.error || subsError);
-      return { error: error || followers.error || subsError };
+    if (error || followers.error) {
+      console.error(error || followers.error);
+      return { error: error || followers.error };
     }
-    const hiveArray = _.map(followers, (el) => el.follower);
+    hiveArray = _.concat(hiveArray, _.map(followers, (el) => el.follower));
     currBatchSize = followers.length;
-    startAccount = _.get(followers, `[${batchSize - 1}].follower`, '');
-
-    for (const el of followers) {
-      if (!_.includes(dbArray, el.follower)) {
-        const { result, error: dbError } = await Subscriptions
-          .followUser({ follower: el.follower, following: name });
-        result && console.log(`success, ${el.follower} follows ${name}`);
-        dbError && console.error(dbError);
-      }
-    }
-    for (const el of dbArray) {
-      if (!_.includes(hiveArray, el) && !el.includes('_')) {
-        const { result, error: dbError } = await Subscriptions
-          .unfollowUser({ follower: el, following: name });
-        result && console.log(`success, ${el} unfollows ${name}`);
-        dbError && console.error(dbError);
-      }
-    }
+    startAccount = _.get(followers, `[${currBatchSize - 1}].follower`, '');
   } while (currBatchSize === batchSize);
+
+  await Subscriptions.deleteMany({ following: name, follower: { $nin: [/waivio_/, /bxy_/] } });
+  for (const follower of hiveArray) await Subscriptions.followUser({ following: name, follower });
   return { ok: true };
 };
 
