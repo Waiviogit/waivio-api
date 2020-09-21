@@ -12,7 +12,7 @@ const makePipeline = ({
         {
           $or: [
             // search matching in every "name" field
-            { fields: { $elemMatch: { name: 'name', body: { $regex: `\\b${string}.*\\b`, $options: 'i' } } } },
+            { fields: { $elemMatch: { name: 'name', body: { $regex: string, $options: 'i' } } } },
             // if 4-th symbol is "-" - search by "author_permlink" too
             { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
           ],
@@ -38,7 +38,7 @@ const makeCountPipeline = ({ string }) => [
   {
     $match: {
       $or: [
-        { fields: { $elemMatch: { name: 'name', body: { $regex: `\\b${string}.*\\b`, $options: 'i' } } } },
+        { fields: { $elemMatch: { name: 'name', body: { $regex: string, $options: 'i' } } } },
         { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
       ],
       'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
