@@ -5,6 +5,7 @@ const { Schema } = mongoose;
 const SubscriptionSchema = new Schema({
   follower: { type: String, required: true },
   following: { type: String, required: true },
+  bell: { type: Boolean },
 }, { versionKey: false });
 
 SubscriptionSchema.index({ follower: 1, following: 1 }, { unique: true });

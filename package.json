@@ -10,6 +10,7 @@
     "migrateGuestFollowers": "NODE_PATH=. node ./utilities/tasks/fixGuestFollowers/run.js",
     "fixFollowers": "NODE_PATH=. node ./utilities/tasks/updateUserFollowers/run.js",
     "maloneTask": "NODE_PATH=. node ./utilities/tasks/maloneTask/run.js",
+    "bellToSubscriptions": "NODE_PATH=. node ./utilities/tasks/bellToSubscriptions/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
