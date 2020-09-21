@@ -115,3 +115,13 @@ exports.getFollowingsCount = async (userName) => {
     return { error };
   }
 };
+
+exports.deleteMany = async (condition) => {
+  try {
+    return {
+      result: await Subscriptions.deleteMany(condition),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
