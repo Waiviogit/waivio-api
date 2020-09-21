@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { schema } = require('middlewares/users/checkBellNotifications/schema');
-const { BellNotifications, bellWobjectModel } = require('models');
+const { Subscriptions, wobjectSubscriptions } = require('models');
 
 exports.check = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
@@ -31,17 +31,23 @@ exports.check = async (req, res, next) => {
 };
 
 const checkUserBell = async ({ result, follower, path }) => {
-  const { bell } = await BellNotifications.findOne({
-    following: result[path],
-    follower,
+  const { subscription } = await Subscriptions.findOne({
+    condition: {
+      following: result[path],
+      follower,
+      bell: true,
+    },
   });
-  result.bell = !!bell;
+  result.bell = !!subscription;
 };
 
 const checkWobjectBell = async ({ result, follower, path }) => {
-  const { bell } = await bellWobjectModel.findOne({
-    following: result[path],
-    follower,
+  const { subscription } = await wobjectSubscriptions.findOne({
+    condition: {
+      following: result[path],
+      follower,
+      bell: true,
+    },
   });
-  result.bell = !!bell;
+  result.bell = !!subscription;
 };

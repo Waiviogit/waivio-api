@@ -11,8 +11,6 @@ moduleExports.App = require('./AppModel');
 moduleExports.Campaign = require('./CampaignModel');
 moduleExports.paymentHistory = require('./paymentHistoryModel');
 moduleExports.Subscriptions = require('./SubscriptionModel');
-moduleExports.BellNotifications = require('./BellNotificationsModel');
-moduleExports.bellWobjectModel = require('./bellWobjectModel');
 moduleExports.wobjectSubscriptions = require('./wobjectSubscriptionModel');
 
 module.exports = moduleExports;
