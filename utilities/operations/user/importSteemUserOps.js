@@ -89,8 +89,14 @@ const updateUserFollowings = async (name) => {
     startAccount = _.get(followings, `[${currBatchSize - 1}].following`, '');
   } while (currBatchSize === batchSize);
 
-  await Subscriptions.deleteMany({ follower: name, following: { $nin: [/waivio_/, /bxy_/] } });
-  for (const following of hiveArray) await Subscriptions.followUser({ follower: name, following });
+  let { users } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
+  users = _.filter(users, (u) => !u.includes('_'));
+  const deleteData = _.difference(users, hiveArray);
+  const updateData = _.difference(hiveArray, users);
+
+  for (const following of updateData) await Subscriptions.followUser({ follower: name, following });
+  await Subscriptions.deleteMany({ follower: name, following: { $in: deleteData } });
+
   return { ok: true };
 };
 
@@ -114,8 +120,14 @@ const updateUserFollowers = async (name) => {
     startAccount = _.get(followers, `[${currBatchSize - 1}].follower`, '');
   } while (currBatchSize === batchSize);
 
-  await Subscriptions.deleteMany({ following: name, follower: { $nin: [/waivio_/, /bxy_/] } });
-  for (const follower of hiveArray) await Subscriptions.followUser({ following: name, follower });
+  let { users } = await Subscriptions.getFollowers({ following: name, limit: 0 });
+  users = _.filter(users, (u) => !u.includes('_'));
+  const deleteData = _.difference(users, hiveArray);
+  const updateData = _.difference(hiveArray, users);
+
+  for (const follower of updateData) await Subscriptions.followUser({ follower, following: name });
+  await Subscriptions.deleteMany({ follower: { $in: deleteData }, following: name });
+
   return { ok: true };
 };
 
