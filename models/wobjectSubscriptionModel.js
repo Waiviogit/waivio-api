@@ -57,3 +57,11 @@ exports.getFollowers = async ({ following }) => {
     return { error };
   }
 };
+
+exports.findOne = async ({ condition }) => {
+  try {
+    return { subscription: await WobjectSubscriptions.findOne(condition).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
