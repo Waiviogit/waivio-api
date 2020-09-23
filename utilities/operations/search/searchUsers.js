@@ -2,6 +2,7 @@ const { User } = require('models');
 const _ = require('lodash');
 
 const makeCountPipeline = ({ string, notGuest }) => {
+  string = string.replace(/\(|\+|\)|\^|\$|\.|\||\?|\*|\[|\{/g, '');
   const pipeline = [
     { $match: { name: { $in: [new RegExp(`^waivio_${string}`), new RegExp(`^${string}`)] } } },
     { $count: 'count' },
