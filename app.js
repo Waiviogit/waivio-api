@@ -39,7 +39,7 @@ app.use((req, res, next) => {
   session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
   next();
 });
-app.use(Sentry.Handlers.requestHandler());
+app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
