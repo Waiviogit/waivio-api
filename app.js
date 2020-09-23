@@ -1,4 +1,5 @@
 const express = require('express');
+const Tracing = require('@sentry/tracing');
 const morgan = require('morgan');
 const cors = require('cors');
 const Sentry = require('@sentry/node');
@@ -26,7 +27,16 @@ app.use((req, res, next) => {
 app.use(cors());
 app.use(morgan('dev'));
 
-Sentry.init({ environment: process.env.NODE_ENV, dsn: process.env.SENTRY_DNS });
+Sentry.init({
+  environment: process.env.NODE_ENV,
+  dsn: process.env.SENTRY_DNS,
+  integrations: [
+    // enable HTTP calls tracing
+    new Sentry.Integrations.Http({ tracing: true }),
+    // enable Express.js middleware tracing
+    new Tracing.Integrations.Express({ app }),
+  ],
+});
 
 process.on('unhandledRejection', (error) => {
   sendSentryNotification();
