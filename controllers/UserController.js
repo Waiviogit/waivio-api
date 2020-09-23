@@ -16,7 +16,6 @@ const index = async (req, res, next) => {
       sample: req.query.sample,
     }, validators.user.indexSchema, next,
   );
-
   if (!value) return;
 
   const { users, error } = await getManyUsers.getUsers(value);
