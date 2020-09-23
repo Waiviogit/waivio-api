@@ -2,7 +2,6 @@ const { User } = require('models');
 const _ = require('lodash');
 
 const makeCountPipeline = ({ string, notGuest }) => {
-  string = string.replace(/\(|\+|\)|\^|\$|\.|\||\?|\*|\[|\{/g, '');
   const pipeline = [
     { $match: { name: { $in: [new RegExp(`^waivio_${string}`), new RegExp(`^${string}`)] } } },
     { $count: 'count' },
@@ -15,6 +14,7 @@ exports.searchUsers = async ({
   string, limit, skip, notGuest = false,
 }) => {
   const condition = { name: { $in: [`waivio_${string}`, string] } };
+  string = string.replace(/\(|\+|\)|\^|\$|\.|\||\?|\*|\[|\{/g, '');
   if (notGuest) condition.auth = { $exists: false };
   const { user } = await User.findOneByCondition(condition);
   const { users, error } = await User.search({
