@@ -1,6 +1,7 @@
 const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
+const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
@@ -9,6 +10,7 @@ const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
+const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -23,12 +25,21 @@ app.use((req, res, next) => {
 });
 app.use(cors());
 app.use(morgan('dev'));
+
+Sentry.init({ environment: process.env.NODE_ENV, dsn: process.env.SENTRY_DNS });
+
+process.on('unhandledRejection', (error) => {
+  sendSentryNotification();
+  Sentry.captureException(error);
+});
+
 // write to store user steemconnect/waivioAuth access_token if it exist
 app.use((req, res, next) => {
   session.set('access-token', req.headers['access-token']);
   session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
   next();
 });
+app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
@@ -49,6 +60,17 @@ app.use('/', checkBellNotifications.check);
 
 // Check objects for followings for some routes
 app.use('/', checkObjectsFollowings.check);
+
+app.use(Sentry.Handlers.errorHandler({
+  shouldHandleError(error) {
+    // Capture 500 errors
+    if (error.status >= 500) {
+      sendSentryNotification();
+      return true;
+    }
+    return false;
+  },
+}));
 
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
