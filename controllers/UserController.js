@@ -2,7 +2,7 @@ const { authorise } = require('utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
-  getFollowers, getFollowingsUser, importSteemUserBalancer, getWobjectPostWriters,
+  getFollowers, getFollowingsUser, importSteemUserBalancer,
   setMarkers, getObjectsFollow,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
@@ -16,9 +16,7 @@ const index = async (req, res, next) => {
       sample: req.query.sample,
     }, validators.user.indexSchema, next,
   );
-
   if (!value) return;
-
   const { users, error } = await getManyUsers.getUsers(value);
 
   if (error) return next(error);
