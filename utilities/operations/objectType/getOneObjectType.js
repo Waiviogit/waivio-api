@@ -138,9 +138,9 @@ module.exports = async ({
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
   if (objTypeError) return { error: objTypeError };
   if (_.has(objectType, 'supposed_updates')) {
-    tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values');
+    tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values', []);
   }
-  tagCategory.length
+  _.get(tagCategory, 'length')
     ? objectType.tagsForFilter = await getTagCategory(tagCategory, filter)
     : objectType.tagsForFilter = [];
   /** search user for check allow nsfw flag */
