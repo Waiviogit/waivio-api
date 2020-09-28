@@ -123,6 +123,7 @@ const getTagCategory = async (tagCategory = [], filter) => {
   if (_.get(filter, 'tagCategory')) {
     for (const item of filter.tagCategory) {
       const redisValues = _.find(resultArray, (el) => el.tagCategory === item.categoryName);
+      if (!redisValues) return resultArray;
       if (!_.includes(redisValues.tags, item.tags[0])) {
         redisValues.tags.splice(2, 1, item.tags[0]);
       }
