@@ -6,5 +6,6 @@ moduleExports.checkBellNotifications = require('./users/checkBellNotifications')
 moduleExports.fillPostAdditionalInfo = require('./posts/fillAdditionalInfo').fillPostAdditionalInfo;
 moduleExports.moderateWobjects = require('./wobject/moderation').moderateWobjects;
 moduleExports.checkObjectsFollowings = require('./wobject/checkFollowings').checkObjectsFollowings;
+moduleExports.siteUserStatistics = require('./statistics/siteUserStatistics');
 
 module.exports = moduleExports;
