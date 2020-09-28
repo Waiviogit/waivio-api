@@ -1,5 +1,6 @@
 exports.wobject = require('./wobjectValidator');
 exports.user = require('./userValidator');
+exports.sites = require('./sitesValidator.js');
 exports.post = require('./postValidator');
 exports.generalSearch = require('./generalSearch');
 exports.objectType = require('./objectTypeValidator');

@@ -285,10 +285,9 @@ const processWobjects = async ({
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const admins = _.get(app, 'admins', []);
-    const isOwnershipObj = _.includes(_.get(app, 'ownership_objects', []), obj.author_permlink);
-    const ownership = isOwnershipObj ? _.intersection(
+    const ownership = _.intersection(
       _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
-    ) : [];
+    );
     const administrative = _.intersection(
       _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
@@ -301,12 +300,12 @@ const processWobjects = async ({
     }
 
     obj.fields = addDataToFields(
-      _.compact(obj.fields), fields, admins, ownership, administrative, isOwnershipObj,
+      _.compact(obj.fields), fields, admins, ownership, administrative, !!ownership.length,
     );
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
     Object.assign(obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, isOwnershipObj));
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
