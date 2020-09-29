@@ -108,15 +108,16 @@ const AppSchema = new Schema({
   tagsData: { type: TagsData },
 }, { timestamps: true });
 
-AppSchema.pre('save', async function (doc) {
-  if (doc && doc.parent) {
-    const parent = await this.model.find({ _id: doc.parent }).lean();
+AppSchema.pre('save', async function (next) {
+  if (this.parent) {
+    const parent = await this.constructor.findOne({ _id: this.parent });
     if (!parent) return;
-    doc.supported_object_types = parent.supported_object_types;
-    doc.object_filters = parent.object_filters;
-    if (!doc.configuration) doc.configuration = {};
-    doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
+    this._doc.supported_object_types = parent.supported_object_types;
+    this._doc.object_filters = parent.object_filters;
+    if (!this.configuration) this._doc.configuration = {};
+    this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
   }
+  next();
 });
 
 const AppModel = mongoose.model('App', AppSchema);
