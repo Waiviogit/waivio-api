@@ -172,7 +172,6 @@
           "schema": {
             "example": {
               "name": "van",
-              "parent": "dining.gifts",
               "owner": "grampo",
               "parentId": "5e907213bc17bb418517a640"
             }

@@ -16,6 +16,5 @@ exports.getApps = Joi.object().keys({
 exports.createApp = Joi.object().keys({
   owner: Joi.string().required(),
   name: Joi.string().regex(/[a-z,0-9]+$\b/).required(),
-  parent: Joi.string().required(),
   parentId: Joi.string().required(),
 }).options(options);
