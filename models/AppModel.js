@@ -56,6 +56,23 @@ const findOne = async (condition) => {
   }
 };
 
+const find = async (condition) => {
+  try {
+    return { result: await App.find(condition) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const create = async (condition) => {
+  const app = new App(condition);
+  try {
+    return { result: await app.save() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
-  getOne, aggregate, updateOne, getAll, findOne,
+  getOne, aggregate, updateOne, getAll, findOne, find, create,
 };

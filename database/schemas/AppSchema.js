@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const { STATUSES } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 
 const { Schema } = mongoose;
@@ -76,6 +77,7 @@ const AppSchema = new Schema({
   },
   configuration: { type: Configuration },
   host: { type: String, required: true, unique: true },
+  parent: { type: mongoose.Schema.ObjectId, default: null },
   admins: { type: [String], default: [] },
   authority: { type: [String], default: [] },
   moderators: { type: [String], default: [] },
@@ -85,6 +87,9 @@ const AppSchema = new Schema({
   supported_hashtags: { type: [String], default: [] },
   canBeExtended: { type: Boolean, default: false },
   inherited: { type: Boolean, default: true },
+  status: { type: String, default: STATUSES.PENDING, enum: Object.values(STATUSES) },
+  activatedAt: { type: Date, default: null },
+  deactivatedAt: { type: Date, default: null },
   supported_objects: { type: [String], index: true, default: [] },
   top_users: { type: [topUsersSchema] },
   daily_chosen_post: {
@@ -105,7 +110,7 @@ const AppSchema = new Schema({
 
 AppSchema.pre('save', async function (doc) {
   if (doc && doc.parent) {
-    const parent = await this.model.find({ parent: doc.parent }).lean();
+    const parent = await this.model.find({ _id: doc.parent }).lean();
     if (!parent) return;
     doc.supported_object_types = parent.supported_object_types;
     doc.object_filters = parent.object_filters;
