@@ -7,5 +7,6 @@ moduleExports.UserController = require('./UserController');
 moduleExports.AppController = require('./appController');
 moduleExports.ImageController = require('./imageController');
 moduleExports.globalSearchController = require('./globalSearchController');
+moduleExports.sitesController = require('./sitesController');
 
 module.exports = moduleExports;
