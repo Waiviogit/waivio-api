@@ -7,6 +7,7 @@ const {
   AppController,
   ImageController,
   globalSearchController,
+  sitesController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -15,12 +16,26 @@ const userRoutes = new Router();
 const postRoutes = new Router();
 const appRoutes = new Router();
 const objectTypeRoutes = new Router();
+const sitesRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
 apiRoutes.use('/api', postRoutes);
 apiRoutes.use('/api', appRoutes);
 apiRoutes.use('/api', objectTypeRoutes);
+apiRoutes.use('/api', sitesRoutes);
+
+// region Sites
+userRoutes.route('/sites')
+  .get(sitesController.getUserApps);
+userRoutes.route('/sites/getParents')
+  .get(sitesController.parentList);
+userRoutes.route('/sites/create')
+  .put(sitesController.create);
+userRoutes.route('/sites/checkAvailable')
+  .get(sitesController.availableCheck);
+// endregion
+
 // region Wobject
 wobjRoutes.route('/wobject')
   .post(WobjController.index);

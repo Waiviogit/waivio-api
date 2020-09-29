@@ -34,6 +34,196 @@
   } ],
   "schemes" : [ "https", "http" ],
   "paths" : {
+    "/api/sites" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get all user created sites",
+        "description" : "Return list user sites active, pending and deactivated(deactivated< 6 month ago)",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of hive user",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type": "string"
+              },
+              "example":  [
+                  "van.dining.gifts"
+                ]
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not valid!"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/getParents" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get all available parents",
+        "description" : "Return list of parent domains which allow to create website",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "example": [
+                {
+                  "domain": "dining.gifts",
+                  "id": "5e907213bc17bb418517a640"
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/checkAvailable" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Check for subdomain availability",
+        "description" : "Return boolean response about subdomain availability",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "name",
+          "in" : "query",
+          "description" : "name of subdomain - allow only lowercase and numbers",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "parentId",
+          "in" : "query",
+          "description" : "id of subdomain parent",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type": "string"
+              },
+              "example":  {
+                "result": true
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/create" : {
+      "put" : {
+        "tags" : [ "sites" ],
+        "summary" : "Create new site",
+        "description" : "Create new pending website",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
+          "required": true,
+          "schema": {
+            "example": {
+              "name": "van",
+              "parent": "dining.gifts",
+              "owner": "grampo",
+              "parentId": "5e907213bc17bb418517a640"
+            }
+          }
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type": "string"
+              },
+              "example":  {
+                "result": true
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users" : {
       "get" : {
         "tags" : [ "user" ],
