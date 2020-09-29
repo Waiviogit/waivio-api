@@ -1,10 +1,17 @@
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
-const { importUserClient, mainFeedsCacheClient, tagCategoriesClient } = require('./redis');
+const {
+  importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
+} = require('./redis');
 const {
   LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('../constants');
 
 exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
+
+/**
+ * Set active users to redis for collect statistics and invoicing
+ */
+exports.addSiteActiveUser = async (key, ip) => appUsersStatistics.saddAsync(key, ip);
 
 /**
  * Add user name to namespace of currently importing users
