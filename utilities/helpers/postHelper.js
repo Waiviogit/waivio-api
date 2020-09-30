@@ -210,16 +210,16 @@ const additionalSponsorObligations = async (posts) => {
     const metadata = post.json_metadata ? jsonParse(post) : null;
     const _id = _.get(metadata, 'campaignId');
     // if post metadata doesn't have campaignId it's not review
-    if (!_id) return;
+    if (!_id) continue;
 
     const { result: campaign } = await Campaign.findOne({ _id });
     const { result: upvote } = await botUpvoteModel
       .findOne({ author: post.author, permlink: post.permlink });
-    if (!campaign || !upvote) return;
+    if (!campaign || !upvote) continue;
 
     const user = _.find(campaign.users, (u) => u.permlink === upvote.reservationPermlink);
     const { result: histories } = await paymentHistory.findByCondition({ 'details.reservation_permlink': _.get(user, 'permlink') });
-    if (!user || !histories.length) return;
+    if (!user || !histories.length) continue;
 
     const rewards = _.filter(histories, (history) => _.includes(['beneficiary_fee', 'review'], history.type));
     const rewardSponsor = _.sumBy(rewards, 'amount')
