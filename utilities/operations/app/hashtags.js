@@ -1,3 +1,4 @@
+const { getNamespace } = require('cls-hooked');
 const { App, Wobj } = require('models');
 const _ = require('lodash');
 
@@ -10,7 +11,9 @@ const _ = require('lodash');
  * @returns {Promise<{error: any}|{appError: *}|{wobjects: any, hasMore: any}>}
  */
 module.exports = async ({ name, skip, limit }) => {
-  const { app, error: appError } = await App.getOne({ name });
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const { result: app, error: appError } = await App.findOne({ host });
   if (appError) return { appError };
   const { result: wObjectsData, error } = await Wobj.find({
     author_permlink: { $in: _.get(app, 'supported_hashtags', []) },

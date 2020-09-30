@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const { App, UserWobjects } = require('models');
 
 exports.collect = async ({ limit }) => {
@@ -26,10 +27,11 @@ exports.collect = async ({ limit }) => {
   return res;
 };
 
+exports.get = async ({ skip, limit }) => {
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const { result: app, error } = await App.findOne({ host });
 
-exports.get = async ({ name, skip, limit }) => {
-  const { app, error } = await App.getOne({ name });
-
-  if (error) return { error };
+  if (error || !app) return { error: error || { status: 404, message: 'App not found!' } };
   return { users: _.slice(app.top_users, skip, limit + skip) };
 };
