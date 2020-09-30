@@ -15,7 +15,7 @@ exports.searchUsers = async ({
 }) => {
   const condition = { name: { $in: [`waivio_${string}`, string] } };
   string = string.replace(/\(|\+|\)|\^|\$|\||\?|\*|\[|\{/g, '');
-  string = string.replace(/\./g, '\\.');
+  string = string.replace(/\./, '\\.');
   if (notGuest) condition.auth = { $exists: false };
   const { user } = await User.findOneByCondition(condition);
   const { users, error } = await User.search({
@@ -40,3 +40,10 @@ exports.searchUsers = async ({
     error: error || countError,
   };
 };
+
+(async () => {
+  await this.searchUsers({
+    string: 'waivio.', limit: 10, skip: 0, notGuest: true,
+  });
+  console.log('yo');
+})();
