@@ -84,6 +84,7 @@ const AppSchema = new Schema({
   supported_object_types: { type: [String], default: [] },
   object_filters: { type: Object, default: {} },
   black_list_users: { type: [String], default: [] },
+  blacklist_apps: { type: [String], default: [] },
   supported_hashtags: { type: [String], default: [] },
   canBeExtended: { type: Boolean, default: false },
   inherited: { type: Boolean, default: true },

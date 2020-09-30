@@ -158,6 +158,64 @@
         }
       }
     },
+    "/api/sites/getConfigurationsList" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of site configurations which can be changed",
+        "description" : "Return list of site configurations which can be changed",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                  "desktopLogo",
+                  "mobileLogo",
+                  "aboutObject",
+                  "desktopMap",
+                  "mobileMap",
+                  "colors"
+                ]
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/create" : {
       "put" : {
         "tags" : [ "sites" ],
