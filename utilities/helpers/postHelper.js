@@ -1,5 +1,6 @@
 const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
+  Campaign, paymentHistory, botUpvoteModel,
 } = require('models');
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
@@ -195,6 +196,37 @@ const fillReblogs = async (posts = [], userName) => {
     }
   }
 };
+const jsonParse = (post) => {
+  try {
+    return JSON.parse(post.json_metadata);
+  } catch (error) {
+    return null;
+  }
+};
+
+const additionalSponsorObligations = async (posts) => {
+  if (_.isEmpty(posts)) return;
+  for (const post of posts) {
+    const metadata = post.json_metadata ? jsonParse(post) : null;
+    const _id = _.get(metadata, 'campaignId');
+    // if post metadata doesn't have campaignId it's not review
+    if (!_id) return;
+
+    const { result: campaign } = await Campaign.findOne({ _id });
+    const { result: upvote } = await botUpvoteModel
+      .findOne({ author: post.author, permlink: post.permlink });
+    if (!campaign || !upvote) return;
+
+    const user = _.find(campaign.users, (u) => u.permlink === upvote.reservationPermlink);
+    const { result: histories } = await paymentHistory.findByCondition({ 'details.reservation_permlink': _.get(user, 'permlink') });
+    if (!user || !histories.length) return;
+
+    const rewards = _.filter(histories, (history) => _.includes(['beneficiary_fee', 'review'], history.type));
+    const rewardSponsor = _.sumBy(rewards, 'amount')
+      * _.get(user, 'hiveCurrency', _.get(rewards, '[0].details.hiveCurrency'));
+    post.rewardFromSponsor = { guideName: campaign.guideName, reward: rewardSponsor.toFixed(3) };
+  }
+};
 
 module.exports = {
   getPostObjects,
@@ -203,4 +235,5 @@ module.exports = {
   addAuthorWobjectsWeight,
   fillReblogs,
   mergePostData,
+  additionalSponsorObligations,
 };
