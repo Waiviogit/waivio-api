@@ -6,7 +6,7 @@ module.exports = async ({
   authorPermlink, author, fieldName, locale, app, permlink,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink, fieldName);
-  const { error: appError, app: appData } = await appHelper.getApp(app);
+  const { error: appError, result: appData } = await appHelper.getApp();
   if (error || appError) return { error: error || appError };
 
   const filteredObject = await wObjectHelper.processWobjects({

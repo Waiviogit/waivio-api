@@ -38,3 +38,10 @@ exports.getUserApps = async (params) => {
 
   return { result: _.map(apps, 'domain') };
 };
+
+exports.getConfigurationsList = async (host) => {
+  const { result } = await App.findOne({ host, inherited: true });
+  if (!result) return { error: { status: 404, message: 'App not Found!' } };
+
+  return { result: _.get(result, 'configuration.configurationFields', []) };
+};
