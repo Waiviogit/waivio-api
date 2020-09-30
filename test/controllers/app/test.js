@@ -1,6 +1,7 @@
 const {
   faker, chai, expect, dropDatabase, app, sinon, App,
 } = require('test/testHelper');
+
 const _ = require('lodash');
 const { AppFactory } = require('test/factories');
 const mocks = require('./mocks');
@@ -20,7 +21,8 @@ describe('On appController', async () => {
         let result;
         beforeEach(async () => {
           result = await chai.request(app)
-            .get(`/api/app/${currentApp.name}`);
+            .get(`/api/app/${currentApp.name}`)
+            .set({ host: currentApp.host });
         });
         it('should return status 200', async () => {
           expect(result).to.have.status(200);
@@ -39,7 +41,7 @@ describe('On appController', async () => {
         beforeEach(async () => {
           result = await chai.request(app)
             .get(`/api/app/${currentApp.name}`)
-            .set({ 'api-key': apiKey });
+            .set({ 'api-key': apiKey, host: currentApp.host });
         });
         it('should return status 200', async () => {
           expect(result).to.have.status(200);
@@ -54,7 +56,7 @@ describe('On appController', async () => {
         let result;
         beforeEach(async () => {
           result = await chai.request(app)
-            .get(`/api/app/${faker.random.string()}`);
+            .get(`/api/app/${faker.random.string()}`)
         });
         it('should return 404 status if app not found', async () => {
           expect(result).to.have.status(404);
