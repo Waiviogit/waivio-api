@@ -224,7 +224,8 @@ const additionalSponsorObligations = async (posts) => {
     const rewards = _.filter(histories, (history) => _.includes(['beneficiary_fee', 'review'], history.type));
     const rewardSponsor = _.sumBy(rewards, 'amount')
       * _.get(user, 'hiveCurrency', _.get(rewards, '[0].details.hiveCurrency'));
-    post.rewardFromSponsor = { guideName: campaign.guideName, reward: rewardSponsor.toFixed(3) };
+    post.guideName = campaign.guideName;
+    post.sponsor_payout_value = rewardSponsor.toFixed(3);
   }
 };
 
