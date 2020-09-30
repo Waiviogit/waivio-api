@@ -8,5 +8,6 @@ moduleExports.userFollowingsUpdates = require('./userFollowingsUpdatesHelper');
 moduleExports.campaignsHelper = require('./campaignsHelper');
 moduleExports.customValidationHelper = require('./customValidationHelper');
 moduleExports.appHelper = require('./appHelper');
+moduleExports.sitesHelper = require('./sitesHelper');
 
 module.exports = moduleExports;

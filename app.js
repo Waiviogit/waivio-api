@@ -8,7 +8,7 @@ const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
-  moderateWobjects, checkUserFollowers, fillPostAdditionalInfo,
+  moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
@@ -50,6 +50,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
+app.use('/', siteUserStatistics.saveUserIp);
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 

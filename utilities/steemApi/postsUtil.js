@@ -27,12 +27,16 @@ exports.getPostsByCategory = async (data) => {
  * @returns {Promise<{error: {message: string, status: number}}|{post: ({author}|any)}>}
  */
 exports.getPost = async (author, permlink) => {
-  const post = await client.database.call('get_content', [author, permlink]);
+  try {
+    const post = await client.database.call('get_content', [author, permlink]);
 
-  if (post.author) {
-    return { post };
+    if (post.author) {
+      return { post };
+    }
+    return { error: { message: 'Post not found!', status: 404 } };
+  } catch (e) {
+    return { error: { message: 'Post not found!', status: 404 } };
   }
-  return { error: { message: 'Post not found!', status: 404 } };
 };
 
 exports.getManyPosts = async (links = []) => {
