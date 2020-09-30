@@ -40,10 +40,3 @@ exports.searchUsers = async ({
     error: error || countError,
   };
 };
-
-(async () => {
-  await this.searchUsers({
-    string: 'waivio.', limit: 10, skip: 0, notGuest: true,
-  });
-  console.log('yo');
-})();
