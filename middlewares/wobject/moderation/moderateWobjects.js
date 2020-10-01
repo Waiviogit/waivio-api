@@ -13,7 +13,7 @@ exports.moderate = async (req, res, next) => {
     data locate on "res.result" => {status, json}
     app locate on "res.headers.app"
     */
-  const { app, error: getAppErr } = await getApp();
+  const { result: app, error: getAppErr } = await getApp();
 
   if (getAppErr || !app) {
     next();
