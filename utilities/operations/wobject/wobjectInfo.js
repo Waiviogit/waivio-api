@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const {
   Wobj, Campaign, User, App, wobjectSubscriptions,
 } = require('models');
@@ -90,7 +91,9 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
   let app;
   if (data.appName) {
-    ({ app } = await App.getOne({ name: data.appName }));
+    const session = getNamespace('request-session');
+    const host = session.get('host');
+    ({ result: app } = await App.findOne({ host }));
   }
 
   // format listItems field

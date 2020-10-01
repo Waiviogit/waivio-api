@@ -3,6 +3,7 @@ const sinonChai = require('sinon-chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
+const { ObjectID } = require('bson');
 
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);
@@ -35,6 +36,8 @@ module.exports = {
   ...require('utilities/helpers'),
   ...require('utilities/steemApi'),
   sinon: require('sinon'),
+  _: require('lodash'),
+  moment: require('moment'),
   SubscriptionModel,
   CommentModel,
   WobjModel,
@@ -47,4 +50,5 @@ module.exports = {
   chai,
   expect,
   dropDatabase,
+  ObjectID,
 };

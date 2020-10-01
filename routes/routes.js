@@ -34,6 +34,8 @@ userRoutes.route('/sites/create')
   .put(sitesController.create);
 userRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
+userRoutes.route('/sites/getConfigurationsList')
+  .get(sitesController.configurationsList);
 // endregion
 
 // region Wobject

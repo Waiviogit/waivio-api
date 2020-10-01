@@ -1,8 +1,8 @@
 const { App } = require('database').models;
 
-const getOne = async ({ name, bots }) => {
+const getOne = async ({ host, bots }) => {
   try {
-    const app = await App.findOne({ name }).select({ service_bots: bots ? 1 : 0 }).lean();
+    const app = await App.findOne({ host }).select({ service_bots: bots ? 1 : 0 }).lean();
 
     if (!app) {
       return { error: { status: 404, message: 'App not found!' } };
@@ -50,7 +50,7 @@ const updateOne = async ({ name, updData }) => {
 
 const findOne = async (condition) => {
   try {
-    return { result: await App.findOne(condition) };
+    return { result: await App.findOne(condition).lean() };
   } catch (error) {
     return { error };
   }
@@ -58,7 +58,7 @@ const findOne = async (condition) => {
 
 const find = async (condition) => {
   try {
-    return { result: await App.find(condition) };
+    return { result: await App.find(condition).lean() };
   } catch (error) {
     return { error };
   }

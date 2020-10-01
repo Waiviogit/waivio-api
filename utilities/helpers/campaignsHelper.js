@@ -1,5 +1,6 @@
 const moment = require('moment');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const {
   User, Wobj, paymentHistory, Campaign, App,
 } = require('models');
@@ -153,7 +154,9 @@ exports.addCampaignsToWobjects = async ({
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
     if (secondaryCampaigns.length) {
-      const { app } = await App.getOne({ name: appName });
+      const session = getNamespace('request-session');
+      const host = session.get('host');
+      const { result: app } = await App.findOne({ host });
       wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
     }
     return wobj;
