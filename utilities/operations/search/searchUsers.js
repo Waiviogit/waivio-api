@@ -15,6 +15,7 @@ exports.searchUsers = async ({
 }) => {
   const condition = { name: { $in: [`waivio_${string}`, string] } };
   string = string.replace(/\(|\+|\)|\^|\$|\||\?|\*|\[|\{/g, '');
+  string = string.replace(/\./, '\\.');
   if (notGuest) condition.auth = { $exists: false };
   const { user } = await User.findOneByCondition(condition);
   const { users, error } = await User.search({
