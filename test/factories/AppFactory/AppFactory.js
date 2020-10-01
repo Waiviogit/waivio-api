@@ -1,10 +1,10 @@
-const { faker, App } = require('test/testHelper');
+const { faker, App, ObjectID } = require('test/testHelper');
 const { STATUSES } = require('constants/sitesConstants');
 
 const Create = async ({
   blacklists, name, admins, moderators, supportedHashtags,
-  supportedObjects, bots, authority, ownershipObjects,
-  host, owner, status,
+  supportedObjects, bots, authority, inherited, canBeExtended, deactivatedAt,
+  host, owner, status, configuration, filters, supportedTypes, parent,
 } = {}) => {
   const data = {
     host: host || faker.internet.domainWord(),
@@ -12,11 +12,17 @@ const Create = async ({
     status: status || STATUSES.PENDING,
     name: name || faker.random.string(10),
     admins: admins || [faker.name.firstName().toLowerCase()],
+    parent: parent || new ObjectID(),
     moderators: moderators || [],
+    deactivatedAt: deactivatedAt || null,
     supported_hashtags: supportedHashtags || [],
     supported_objects: supportedObjects || [],
+    configuration: configuration || { configurationFields: [faker.random.string()] },
     authority: authority || [],
-    ownership_objects: ownershipObjects || [],
+    object_filters: filters || { restaurant: { feature: [] } },
+    canBeExtended: canBeExtended || false,
+    supported_object_types: supportedTypes || ['restaurant'],
+    inherited: inherited || true,
     black_list_users: blacklists || [],
     daily_chosen_post: {
       author: faker.name.firstName().toLowerCase(),

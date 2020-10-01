@@ -36,7 +36,7 @@ exports.getUserApps = async (params) => {
   });
   if (error) return { error };
 
-  return { result: _.map(apps, 'domain') };
+  return { result: _.map(apps, 'host') };
 };
 
 exports.getConfigurationsList = async (host) => {
