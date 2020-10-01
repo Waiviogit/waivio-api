@@ -29,6 +29,7 @@ models.paymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 models.BotUpvote = require('./schemas/BotUpvoteSchema');
+models.MatchBot = require('./schemas/MatchBotsSchema');
 
 module.exports = {
   Mongoose: mongoose,

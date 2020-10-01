@@ -13,5 +13,6 @@ moduleExports.paymentHistory = require('./paymentHistoryModel');
 moduleExports.Subscriptions = require('./SubscriptionModel');
 moduleExports.wobjectSubscriptions = require('./wobjectSubscriptionModel');
 moduleExports.botUpvoteModel = require('./botUpvoteModel');
+moduleExports.matchBotModel = require('./matchBotModel');
 
 module.exports = moduleExports;
