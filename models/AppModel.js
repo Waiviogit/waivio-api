@@ -50,7 +50,7 @@ const updateOne = async ({ name, updData }) => {
 
 const findOne = async (condition) => {
   try {
-    return { result: await App.findOne(condition) };
+    return { result: await App.findOne(condition).lean() };
   } catch (error) {
     return { error };
   }
@@ -58,7 +58,7 @@ const findOne = async (condition) => {
 
 const find = async (condition) => {
   try {
-    return { result: await App.find(condition) };
+    return { result: await App.find(condition).lean() };
   } catch (error) {
     return { error };
   }

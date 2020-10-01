@@ -22,7 +22,7 @@ describe('On appController', async () => {
         beforeEach(async () => {
           result = await chai.request(app)
             .get(`/api/app/${currentApp.name}`)
-            .set({ host: currentApp.host });
+            .set({ origin: currentApp.host });
         });
         it('should return status 200', async () => {
           expect(result).to.have.status(200);

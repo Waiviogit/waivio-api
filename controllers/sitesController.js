@@ -1,12 +1,12 @@
 const validators = require('controllers/validators');
-const { authorise } = require('utilities/authorization/authoriseUser');
+const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 
 exports.create = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.createApp, next);
   if (!value) return;
 
-  const { error: authError } = await authorise(value.owner);
+  const { error: authError } = await authoriseUser.authorise(value.owner);
   if (authError) return next(authError);
 
   const { result, error } = await sitesHelper.createApp(value);
@@ -39,7 +39,7 @@ exports.getUserApps = async (req, res, next) => {
   const value = validators.validate(req.query, validators.sites.getApps, next);
   if (!value) return;
 
-  const { error: authError } = await authorise(value.userName);
+  const { error: authError } = await authoriseUser.authorise(value.userName);
   if (authError) return next(authError);
 
   const { result, error } = await sitesHelper.getUserApps(value);
