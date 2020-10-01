@@ -226,6 +226,18 @@ const additionalSponsorObligations = async (posts) => {
       * _.get(user, 'hiveCurrency', _.get(rewards, '[0].details.hiveCurrency'));
     post.guideName = campaign.guideName;
     post.sponsor_payout_value = rewardSponsor.toFixed(3);
+
+    const totalPayout = parseFloat(post.pending_payout_value)
+      + parseFloat(post.total_payout_value)
+      + parseFloat(post.curator_payout_value);
+    const voteRshares = post.active_votes.reduce(
+      (a, b) => a + parseFloat(b.rshares_weight || b.rshares),
+      0,
+    );
+    const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
+
+    const vacover = ratio * "7078987637300"
+    console.log('yo')
   }
 };
 
