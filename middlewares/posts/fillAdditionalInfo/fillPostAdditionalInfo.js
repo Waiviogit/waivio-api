@@ -31,7 +31,7 @@ exports.fill = async (req, res, next) => {
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(res.result.json);
     // if review  add additional sponsor obligations to calculations
-    await postHelper.additionalSponsorObligations(res.result.json);
+    res.result.json = await postHelper.additionalSponsorObligations(res.result.json);
   } else {
     // replace reblog post blank to source post
     await postHelper.fillReblogs([res.result.json], userName);
@@ -42,7 +42,7 @@ exports.fill = async (req, res, next) => {
       [res.result.json], _.get(req, 'headers.app'), userName,
     );
     // if review  add additional sponsor obligations to calculations
-    await postHelper.additionalSponsorObligations([res.result.json]);
+    [res.result.json] = await postHelper.additionalSponsorObligations([res.result.json]);
   }
   next();
 };

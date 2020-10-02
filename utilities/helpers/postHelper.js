@@ -235,18 +235,19 @@ const additionalSponsorObligations = async (posts) => {
       post.sponsor_payout_value = sponsorPayout.toFixed(3);
       post.active_votes.push({
         voter: campaign.guideName,
-        rhares: sponsorPayout / ratio,
+        rshares: sponsorPayout / ratio,
         sponsor: true,
       });
     } else {
       post.sponsor_payout_value = campaign.reward;
       post.active_votes.push({
         voter: campaign.guideName,
-        rhares: Math.abs(voteRshares) * 100,
+        rshares: Math.abs(voteRshares) * 100,
         sponsor: true,
       });
     }
   }
+  return posts;
 };
 
 module.exports = {
