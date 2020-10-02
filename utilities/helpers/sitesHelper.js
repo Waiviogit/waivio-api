@@ -129,6 +129,30 @@ exports.getReport = async ({
   return { ownerAppNames, payments: sortedPayments, dataForPayments };
 };
 
+exports.getSiteAuthorities = async (params, path) => {
+  const { result, error } = await App.findOne({ host: params.host, owner: params.userName });
+  if (error) return { error };
+  if (!result) return { error: { status: 404, message: 'Site dont find!' } };
+  let condition = {};
+  switch (path) {
+    case 'moderators':
+      condition = { name: { $in: result.moderators } };
+      break;
+    case 'administrators':
+      condition = { name: { $in: result.admins } };
+      break;
+    case 'authorities':
+      condition = { name: { $in: result.authority } };
+      break;
+  }
+  const { result: users, error: usersError } = await User.findWithSelect(condition, {
+    name: 1, alias: 1, posting_json_metadata: 1, json_metadata: 1,
+  });
+  if (usersError) return { error: usersError };
+
+  return { result: users };
+};
+
 /** _______________________________PRIVATE METHODS____________________________________ */
 const getWebsitePayments = async ({
   owner, host, startDate, endDate,

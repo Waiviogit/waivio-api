@@ -267,16 +267,28 @@
         }
       }
     },
-    "/api/sites/getConfigurationsList" : {
+    "/api/sites/moderators" : {
       "get" : {
         "tags" : [ "sites" ],
-        "summary" : "Get list of site configurations which can be changed",
-        "description" : "Return list of site configurations which can be changed",
+        "summary" : "Get list of site moderators",
+        "description" : "Return list of site moderators",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
           "name" : "host",
           "in" : "query",
           "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
           "required": true,
           "type" : "string"
         } ],
@@ -284,18 +296,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items": {
-                "type": "string"
-              },
-              "example": [
-                  "desktopLogo",
-                  "mobileLogo",
-                  "aboutObject",
-                  "desktopMap",
-                  "mobileMap",
-                  "colors"
-                ]
+              "$ref": "#/definitions/authorities"
             }
           },
           "422": {
@@ -306,19 +307,113 @@
               }
             }
           },
-          "409": {
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/administrators" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of site administrators",
+        "description" : "Return list of site administrators",
+        "produces" : [ "application/json" ],
+        "parameters" : [  {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/authorities"
+            }
+          },
+          "422": {
             "description": "ValidationError",
             "schema": {
               "example": {
-                "message": "Subdomain already exists"
+                "message": "Validation Error"
               }
             }
           },
           "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/authorities" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of site authorities",
+        "description" : "Return list of site authorities",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/authorities"
+            }
+          },
+          "422": {
             "description": "ValidationError",
             "schema": {
               "example": {
-                "message": "Parent not found"
+                "message": "Validation Error"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
               }
             }
           }
@@ -2233,6 +2328,18 @@
     }
   },
   "definitions" : {
+    "authorities": {
+      "type": "array",
+      "example": [
+        {
+          "_id": "5cc3215ad0555b20e1d4d2a3",
+          "name": "asd09",
+          "json_metadata": "{\"profile\":{\"about\":\"This is a Waivio bot service. It is being used to maintain Object Reference Protocol on Steem blockchain\",\"cover_image\":\"https://cdn.steemitimages.com/DQmaj3MLuivowwzq9Ks7H6oJJRWMZqMk7ScpmwjovdvdKW5/Positive%20Vibes%20(3).png\",\"location\":\"Internet\",\"name\":\"Waivio Service \",\"profile_image\":\"https://steemitimages.com/p/4HFqJv9qRjVeVQzX3gvDHytNF793bg88B7fESPieLQ8dxJ6Kt6ZDcMkQZftXp7DiLCjkepEzG4foz3EF6Us1xm5x7MMNraHbpCe8rKsNc1Gou2vSYDYYBMVCijP5JAg2jo25n6eziBrbXsNa3qeoJFBexGLxsyLTCCW\",\"website\":\"http://waiviodev.com/\",\"twitter\":\"\",\"youtube\":\"asd08\"}}",
+          "alias": "Waivio Service ",
+          "posting_json_metadata": "{\"profile\":{\"about\":\"This is a Waivio bot service. It is being used to maintain Object Reference Protocol on Steem blockchain\",\"cover_image\":\"https://cdn.steemitimages.com/DQmaj3MLuivowwzq9Ks7H6oJJRWMZqMk7ScpmwjovdvdKW5/Positive%20Vibes%20(3).png\",\"location\":\"Internet\",\"name\":\"Waivio Service \",\"profile_image\":\"https://steemitimages.com/p/4HFqJv9qRjVeVQzX3gvDHytNF793bg88B7fESPieLQ8dxJ6Kt6ZDcMkQZftXp7DiLCjkepEzG4foz3EF6Us1xm5x7MMNraHbpCe8rKsNc1Gou2vSYDYYBMVCijP5JAg2jo25n6eziBrbXsNa3qeoJFBexGLxsyLTCCW\",\"website\":\"http://waiviodev.com/\",\"twitter\":\"\",\"youtube\":\"asd08\"}}"
+        }
+      ]
+    },
     "reportPage": {
       "type": "object",
       "example": {

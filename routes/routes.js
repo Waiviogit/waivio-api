@@ -40,6 +40,12 @@ sitesRoutes.route('/sites/managePage')
   .get(sitesController.managePage);
 sitesRoutes.route('/sites/report')
   .get(sitesController.report);
+sitesRoutes.route('/sites/administrators')
+  .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/moderators')
+  .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/authorities')
+  .get(sitesController.siteAuthorities);
 // endregion
 
 // region Wobject

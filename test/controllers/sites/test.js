@@ -37,20 +37,6 @@ describe('On sitesController', async () => {
       it('should send request for create app ', async () => {
         expect(objectBotRequests.sendCustomJson.calledOnce).to.be.true;
       });
-      // it('should create app with correct inherited and canBeExtended flags', async () => {
-      //   expect(myApp.inherited && !myApp.canBeExtended).to.be.true;
-      // });
-      // it('should create app with correct parent id', async () => {
-      //   expect(myApp.parent.toString()).to.be.eq(parent._id.toString());
-      // });
-      // it('should add to app parent configuration', async () => {
-      //   expect(myApp.configuration.configurationFields)
-      //     .to.be.deep.eq(parent.configuration.configurationFields);
-      // });
-      // it('should add to app parent ', async () => {
-      //   expect(myApp.supported_object_types)
-      //     .to.be.deep.eq(parent.supported_object_types);
-      // });
     });
     describe('On ERROR', async () => {
       describe('On authorise error', async () => {
@@ -193,7 +179,7 @@ describe('On sitesController', async () => {
     });
   });
 
-  describe('Request with many apps', async () => {
+  describe('Requests with many apps(manage, report)', async () => {
     let pendingApp, activeApp, inactiveApp, amount, debt, payment, activePayment;
     beforeEach(async () => {
       await UsersFactory.Create({ name: FEE.account });
@@ -368,6 +354,34 @@ describe('On sitesController', async () => {
           });
         });
       });
+    });
+  });
+
+  describe('On authorities(moderators, admins, authorities)', async () => {
+    let userApp, authorities, result;
+    beforeEach(async () => {
+      authorities = [];
+      for (let num = 0; num <= _.random(5, 10); num++) {
+        const userName = faker.random.string();
+        authorities.push(userName);
+        await UsersFactory.Create({ name: userName });
+      }
+      userApp = await AppFactory.Create({ parent: parent._id, host: `${faker.random.string()}.${parent.host}`, authority: authorities });
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+      result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${userApp.host}`);
+    });
+    it('should return correct authorities', async () => {
+      expect(_.sortBy(_.map(result.body, 'name'))).to.be.deep.eq(_.sortBy(authorities));
+    });
+    it('should return correct authorities length', async () => {
+      expect(result.body.length).to.be.eq(authorities.length);
+    });
+    it('should result items with all keys', async () => {
+      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias']);
+    });
+    it('should return 404 status if host not found', async () => {
+      result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${faker.random.string()}`);
+      expect(result).to.have.status(404);
     });
   });
 });
