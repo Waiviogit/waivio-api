@@ -14,7 +14,12 @@ exports.createApp = async (params) => {
   params.parent = parent._id;
   const { result, error: createError } = await objectBotRequests.sendCustomJson(params,
     `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
-  if (createError) return { error: createError };
+  if (createError) {
+    return {
+      error:
+        { status: _.get(createError, 'response.status'), message: _.get(createError, 'response.statusText', 'Forbidden') },
+    };
+  }
   return { result: !!result };
 };
 
