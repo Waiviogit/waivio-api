@@ -1,5 +1,7 @@
 const _ = require('lodash');
 const moment = require('moment');
+const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { OBJECT_BOT } = require('constants/requestData');
 const { STATUSES, ACTIVE_STATUSES } = require('constants/sitesConstants');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const { App, websitePayments, User } = require('models');
@@ -10,7 +12,8 @@ exports.createApp = async (params) => {
   if (error) return { error };
   params.host = `${params.name}.${parent.host}`;
   params.parent = parent._id;
-  const { result, error: createError } = await App.create(params);
+  const { result, error: createError } = await objectBotRequests.sendCustomJson(params,
+    `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
   if (createError) return { error: createError };
   return { result: !!result };
 };
