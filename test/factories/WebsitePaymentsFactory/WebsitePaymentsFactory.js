@@ -2,7 +2,7 @@ const { PAYMENT_TYPES } = require('constants/sitesConstants');
 const { WebsitePayments, faker } = require('test/testHelper');
 
 const Create = async ({
-  name, type, countUsers, host, amount,
+  name, type, countUsers, host, amount, createdAt,
 } = {}) => {
   const paymentData = {
     userName: name || faker.name.firstName(),
@@ -11,6 +11,7 @@ const Create = async ({
     host: host || faker.random.string(),
     countUsers: countUsers || 100,
     blockNum: faker.random.number(),
+    createdAt: createdAt || new Date(),
   };
   const payment = new WebsitePayments(paymentData);
   await payment.save();

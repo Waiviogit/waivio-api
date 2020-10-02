@@ -1,5 +1,5 @@
 const {
-  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment, User,
+  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment, User, WebsitePayments,
 } = require('test/testHelper');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
@@ -189,8 +189,8 @@ describe('On sitesController', async () => {
     });
   });
 
-  describe('on ManagePage', async () => {
-    let pendingApp, activeApp, inactiveApp, amount, debt, result, payment, activePayment;
+  describe('Request with many apps', async () => {
+    let pendingApp, activeApp, inactiveApp, amount, debt, payment, activePayment;
     beforeEach(async () => {
       await UsersFactory.Create({ name: FEE.account });
       sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
@@ -225,42 +225,145 @@ describe('On sitesController', async () => {
       payment = await WebsitePaymentsFactory.Create({
         name: owner, amount: debt, type: PAYMENT_TYPES.WRITE_OFF, host: inactiveApp.host,
       });
-      result = await chai.request(app).get(`/api/sites/managePage?userName=${owner}`);
     });
-    it('should return status 200', async () => {
-      expect(result).to.have.status(200);
+
+    describe('on ManagePage', async () => {
+      let result;
+      beforeEach(async () => {
+        result = await chai.request(app).get(`/api/sites/managePage?userName=${owner}`);
+      });
+      it('should return status 200', async () => {
+        expect(result).to.have.status(200);
+      });
+      it('should return correct apps', async () => {
+        const hosts = _.map(result.body.websites, (site) => `${site.name}.${site.parent}`);
+        expect(hosts).to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
+      });
+      it('should return correct average dau of pending site', async () => {
+        const foundApp = _.find(result.body.websites,
+          { name: pendingApp.name, status: STATUSES.PENDING });
+        expect(foundApp.averageDau).to.be.eq(0);
+      });
+      it('should return correct average dau of active site', async () => {
+        const foundApp = _.find(result.body.websites,
+          { name: activeApp.name, status: STATUSES.ACTIVE });
+        expect(foundApp.averageDau).to.be.eq(activePayment.countUsers);
+      });
+      it('should return correct average dau of inactive site', async () => {
+        const foundApp = _.find(result.body.websites,
+          { name: inactiveApp.name, status: STATUSES.INACTIVE });
+        expect(foundApp.averageDau).to.be.eq(payment.countUsers);
+      });
+      it('should return correct average DAU', async () => {
+        expect(result.body.accountBalance.avgDau)
+          .to.be.eq(Math.trunc(_.mean([payment.countUsers, activePayment.countUsers, 0])));
+      });
+      it('should return correct pay data', async () => {
+        expect(result.body.accountBalance.paid).to.be.eq(amount - debt * 2);
+      });
+      it('should return correct dataForPayments', async () => {
+        const user = await User.findOne({ name: FEE.account }).lean();
+        const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
+        fields._id = fields._id.toString();
+        expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, memo: FEE.id });
+      });
     });
-    it('should return correct apps', async () => {
-      const hosts = _.map(result.body.websites, (site) => `${site.name}.${site.parent}`);
-      expect(hosts).to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
-    });
-    it('should return correct average dau of pending site', async () => {
-      const foundApp = _.find(result.body.websites,
-        { name: pendingApp.name, status: STATUSES.PENDING });
-      expect(foundApp.averageDau).to.be.eq(0);
-    });
-    it('should return correct average dau of active site', async () => {
-      const foundApp = _.find(result.body.websites,
-        { name: activeApp.name, status: STATUSES.ACTIVE });
-      expect(foundApp.averageDau).to.be.eq(activePayment.countUsers);
-    });
-    it('should return correct average dau of inactive site', async () => {
-      const foundApp = _.find(result.body.websites,
-        { name: inactiveApp.name, status: STATUSES.INACTIVE });
-      expect(foundApp.averageDau).to.be.eq(payment.countUsers);
-    });
-    it('should return correct average DAU', async () => {
-      expect(result.body.accountBalance.avgDau)
-        .to.be.eq(Math.trunc(_.mean([payment.countUsers, activePayment.countUsers, 0])));
-    });
-    it('should return correct pay data', async () => {
-      expect(result.body.accountBalance.paid).to.be.eq(amount - debt * 2);
-    });
-    it('should return correct dataForPayments', async () => {
-      const user = await User.findOne({ name: FEE.account }).lean();
-      const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
-      fields._id = fields._id.toString();
-      expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, id: FEE.id });
+
+    describe('on Report', async () => {
+      beforeEach(async () => {
+      });
+      describe('with exist payments without host and date sort', async () => {
+        let result;
+        beforeEach(async () => {
+          result = await chai.request(app).get(`/api/sites/report?userName=${owner}`);
+        });
+        it('should return status 200', async () => {
+          expect(result).to.have.status(200);
+        });
+        it('should return correct balance', async () => {
+          expect(result.body.payments[0].balance)
+            .to.be.eq(amount - activePayment.amount - payment.amount);
+        });
+        it('should return correct payments length', async () => {
+          expect(result.body.payments.length).to.be.eq(3);
+        });
+        it('should return correct ownerAppNames', async () => {
+          expect(result.body.ownerAppNames)
+            .to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
+        });
+        it('should return correct dataForPayments at report', async () => {
+          const user = await User.findOne({ name: FEE.account }).lean();
+          const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
+          fields._id = fields._id.toString();
+          expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, memo: FEE.id });
+        });
+      });
+      describe('With host, and without dates', async () => {
+        let result;
+        beforeEach(async () => {
+          result = await chai.request(app).get(`/api/sites/report?userName=${owner}&host=${activeApp.host}`);
+        });
+        it('should not return transfer payments', async () => {
+          const payments = _.filter(result.body.payments,
+            (pmnt) => pmnt.type === PAYMENT_TYPES.TRANSFER);
+          expect(payments).to.have.length(0);
+        });
+        it('should return only payments for required host', async () => {
+          const dbPayments = await WebsitePayments.find({ host: activeApp.host });
+          expect(result.body.payments).to.have.length(dbPayments.length);
+        });
+      });
+      describe('with date and without host', async () => {
+        let oldPayment;
+        beforeEach(async () => {
+          oldPayment = await WebsitePaymentsFactory.Create({
+            name: owner,
+            amount: debt,
+            type: PAYMENT_TYPES.WRITE_OFF,
+            host: inactiveApp.host,
+            createdAt: moment.utc().subtract(10, 'day').toDate(),
+          });
+        });
+        describe('without host', async () => {
+          it('should not return old payment with start date', async () => {
+            const result = await chai.request(app)
+              .get(`/api/sites/report?userName=${owner}&startDate=${moment(moment.utc().subtract(5, 'day')).unix()}`);
+            const oldData = _.find(result.body.payments, { _id: oldPayment._id });
+            expect(oldData).to.be.undefined;
+          });
+          it('should return 422 status with start date > endDate', async () => {
+            const result = await chai.request(app)
+              .get(`/api/sites/report?userName=${owner}
+              &startDate=${moment(moment.utc().subtract(5, 'day')).unix()}
+              &endDate=${moment(moment.utc().subtract(6, 'day')).unix()}`);
+            expect(result).to.have.status(422);
+          });
+          it('should return only old payment with oldDate', async () => {
+            const result = await chai.request(app)
+              .get(`/api/sites/report?userName=${owner}&endDate=${moment(moment.utc().subtract(6, 'day')).unix()}`);
+            const oldData = _.filter(result.body.payments, { host: oldPayment.host });
+            expect(result.body.payments).to.be.deep.eq(oldData);
+          });
+        });
+        describe('with host', async () => {
+          let result;
+          beforeEach(async () => {
+            result = await chai.request(app)
+              .get(`/api/sites/report?userName=${owner}&host=${inactiveApp.host}&startDate=${moment(moment.utc().subtract(5, 'day')).unix()}`);
+          });
+          it('should return only one record for inactive host', async () => {
+            expect(result.body.payments).to.have.length(1);
+          });
+          it('should not return old record for inactive app', async () => {
+            const record = _.find(result.body.payments, { _id: oldPayment._id.toString() });
+            expect(record).to.be.undefined;
+          });
+          it('should return correct record for inactive app', async () => {
+            const record = _.filter(result.body.payments, { _id: payment._id.toString() });
+            expect(result.body.payments).to.be.deep.eq(record);
+          });
+        });
+      });
     });
   });
 });
