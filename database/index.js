@@ -28,6 +28,7 @@ models.Campaign = require('./schemas/CampaignSchema');
 models.paymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
+models.WebsitePayments = require('./schemas/WebsitePaymentsSchema');
 
 module.exports = {
   Mongoose: mongoose,

@@ -64,6 +64,14 @@ const find = async (condition) => {
   }
 };
 
+const findWithPopulate = async ({ condition, populate }) => {
+  try {
+    return { result: await App.find(condition).populate(populate).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const create = async (condition) => {
   const app = new App(condition);
   try {
@@ -74,5 +82,5 @@ const create = async (condition) => {
 };
 
 module.exports = {
-  getOne, aggregate, updateOne, getAll, findOne, find, create,
+  getOne, aggregate, updateOne, getAll, findOne, find, create, findWithPopulate,
 };

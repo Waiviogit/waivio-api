@@ -6,4 +6,6 @@ module.exports = {
   SubscriptionsFactory: require('./Subscriptions/SubscriptionsFactory'),
   AppendObjectFactory: require('./ObjectFactory/AppendObjectFactory'),
   ObjectTypeFactory: require('./ObjectTypeFactory/ObjectsTypeFactory'),
+  WebsitePaymentsFactory: require('./WebsitePaymentsFactory/WebsitePaymentsFactory'),
+  UsersFactory: require('./UsersFactory/UsersFactory'),
 };

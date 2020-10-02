@@ -1,8 +1,9 @@
 const {
-  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment,
+  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment, User,
 } = require('test/testHelper');
 const authoriseUser = require('utilities/authorization/authoriseUser');
-const { AppFactory } = require('test/factories');
+const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
+const { AppFactory, WebsitePaymentsFactory, UsersFactory } = require('test/factories');
 
 describe('On sitesController', async () => {
   let parent, owner, name;
@@ -15,6 +16,7 @@ describe('On sitesController', async () => {
   afterEach(() => {
     sinon.restore();
   });
+
   describe('On create', async () => {
     describe('On OK', async () => {
       let result, myApp;
@@ -96,6 +98,7 @@ describe('On sitesController', async () => {
       });
     });
   });
+
   describe('On parentList', async () => {
     let result;
     beforeEach(async () => {
@@ -108,6 +111,7 @@ describe('On sitesController', async () => {
       expect(result.body).to.be.deep.eq([{ domain: parent.host, _id: parent._id.toString() }]);
     });
   });
+
   describe('On getUserApps', async () => {
     let userApp;
     beforeEach(async () => {
@@ -167,6 +171,7 @@ describe('On sitesController', async () => {
       });
     });
   });
+
   describe('On configurationsList', async () => {
     let myApp;
     beforeEach(async () => {
@@ -181,6 +186,81 @@ describe('On sitesController', async () => {
     it('should return 404 status if not find app', async () => {
       const result = await chai.request(app).get(`/api/sites/getConfigurationsList?host=${faker.random.string()}`);
       expect(result).to.have.status(404);
+    });
+  });
+
+  describe('on ManagePage', async () => {
+    let pendingApp, activeApp, inactiveApp, amount, debt, result, payment, activePayment;
+    beforeEach(async () => {
+      await UsersFactory.Create({ name: FEE.account });
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+      amount = _.random(20, 50);
+      debt = _.random(1, 2);
+      const appName = faker.random.string();
+      pendingApp = await AppFactory.Create({
+        parent: parent._id, owner, host: `${appName}.${parent.host}`, name: appName,
+      });
+      const activeName = faker.random.string();
+      activeApp = await AppFactory.Create({
+        parent: parent._id,
+        owner,
+        name: activeName,
+        host: `${activeName}.${parent.host}`,
+        activatedAt: moment.utc().toDate(),
+        status: STATUSES.ACTIVE,
+      });
+      const inactiveName = faker.random.string();
+      inactiveApp = await AppFactory.Create({
+        parent: parent._id,
+        owner,
+        name: inactiveName,
+        host: `${inactiveName}.${parent.host}`,
+        deactivatedAt: moment.utc().toDate(),
+        status: STATUSES.INACTIVE,
+      });
+      await WebsitePaymentsFactory.Create({ name: owner, amount });
+      activePayment = await WebsitePaymentsFactory.Create({
+        name: owner, amount: debt, type: PAYMENT_TYPES.WRITE_OFF, host: activeApp.host, countUsers: _.random(100, 150),
+      });
+      payment = await WebsitePaymentsFactory.Create({
+        name: owner, amount: debt, type: PAYMENT_TYPES.WRITE_OFF, host: inactiveApp.host,
+      });
+      result = await chai.request(app).get(`/api/sites/managePage?userName=${owner}`);
+    });
+    it('should return status 200', async () => {
+      expect(result).to.have.status(200);
+    });
+    it('should return correct apps', async () => {
+      const hosts = _.map(result.body.websites, (site) => `${site.name}.${site.parent}`);
+      expect(hosts).to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
+    });
+    it('should return correct average dau of pending site', async () => {
+      const foundApp = _.find(result.body.websites,
+        { name: pendingApp.name, status: STATUSES.PENDING });
+      expect(foundApp.averageDau).to.be.eq(0);
+    });
+    it('should return correct average dau of active site', async () => {
+      const foundApp = _.find(result.body.websites,
+        { name: activeApp.name, status: STATUSES.ACTIVE });
+      expect(foundApp.averageDau).to.be.eq(activePayment.countUsers);
+    });
+    it('should return correct average dau of inactive site', async () => {
+      const foundApp = _.find(result.body.websites,
+        { name: inactiveApp.name, status: STATUSES.INACTIVE });
+      expect(foundApp.averageDau).to.be.eq(payment.countUsers);
+    });
+    it('should return correct average DAU', async () => {
+      expect(result.body.accountBalance.avgDau)
+        .to.be.eq(Math.trunc(_.mean([payment.countUsers, activePayment.countUsers, 0])));
+    });
+    it('should return correct pay data', async () => {
+      expect(result.body.accountBalance.paid).to.be.eq(amount - debt * 2);
+    });
+    it('should return correct dataForPayments', async () => {
+      const user = await User.findOne({ name: FEE.account }).lean();
+      const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
+      fields._id = fields._id.toString();
+      expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, id: FEE.id });
     });
   });
 });
