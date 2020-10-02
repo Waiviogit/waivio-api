@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
@@ -12,7 +13,7 @@ exports.moderate = async (req, res, next) => {
     data locate on "res.result" => {status, json}
     app locate on "res.headers.app"
     */
-  const { app, error: getAppErr } = await getApp(req);
+  const { result: app, error: getAppErr } = await getApp();
 
   if (getAppErr || !app) {
     next();
@@ -55,13 +56,13 @@ exports.moderate = async (req, res, next) => {
  * @param {Object} req instance of current request
  * @returns {Object} app, error
  */
-const getApp = async (req) => {
-  const appName = _.get(req, 'headers.app');
-
-  if (!appName) {
+const getApp = async () => {
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  if (!host) {
     return {};
   }
-  return App.getOne({ name: appName });
+  return App.findOne({ host });
 };
 
 const newValidationArray = async (posts, app, locale, path) => {

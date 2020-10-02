@@ -158,6 +158,173 @@
         }
       }
     },
+    "/api/sites/managePage" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Data for manage page",
+        "description" : "Return all data for load manage page",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of authorised user",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access-token",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/managePage"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/report" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Data for report page",
+        "description" : "Generate data for reports",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of authorised user",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access-token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "to get report only for one selected host",
+          "required": false,
+          "type" : "string"
+        },{
+          "name" : "endDate",
+          "in" : "query",
+          "description" : "Field for generating a report before a specified date(timestamp)",
+          "required": false,
+          "type" : "number"
+        },{
+          "name" : "startDate",
+          "in" : "query",
+          "description" : "Field for generating a report after a specified date(timestamp)",
+          "required": false,
+          "type" : "number"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/reportPage"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/getConfigurationsList" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of site configurations which can be changed",
+        "description" : "Return list of site configurations which can be changed",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "type": "string"
+              },
+              "example": [
+                  "desktopLogo",
+                  "mobileLogo",
+                  "aboutObject",
+                  "desktopMap",
+                  "mobileMap",
+                  "colors"
+                ]
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/create" : {
       "put" : {
         "tags" : [ "sites" ],
@@ -2066,6 +2233,71 @@
     }
   },
   "definitions" : {
+    "reportPage": {
+      "type": "object",
+      "example": {
+        "payments": [
+          {
+            "userName": "olegvladim",
+            "balance": 99,
+            "host": "van.dining.pp.ua",
+            "createdAt": "2020-10-01T12:42:35.519Z",
+            "amount": 1,
+            "type": "writeOff",
+            "countUsers": 2
+          },
+          {
+            "userName": "olegvladim",
+            "balance": 100,
+            "createdAt": "2020-10-01T09:42:35.519Z",
+            "amount": 100,
+            "type": "transfer"
+          }
+        ],
+        "ownerAppNames": [
+          "van.dining.pp.ua"
+        ],
+        "dataForPayments": {
+          "user": {
+            "_id": "5caf42256fb6c810cde66d20",
+            "name": "waivio.hosting",
+            "alias": "",
+            "json_metadata": "",
+            "posting_json_metadata": ""
+          },
+          "memo": "{\"id\":\"websitesPayment\"}"
+        }
+      }
+    },
+    "managePage": {
+      "type": "object",
+      "example": {
+        "websites": [
+          {
+            "status": "pending",
+            "name": "van",
+            "parent": "dining.pp.ua",
+            "averageDau": 2
+          }
+        ],
+        "accountBalance": {
+          "paid": 99,
+          "avgDau": 2,
+          "dailyCost": 0,
+          "remainingDays": null
+        },
+        "dataForPayments": {
+          "user": {
+            "_id": "5caf42256fb6c810cde66d20",
+            "name": "waivio.hosting",
+            "alias": "",
+            "json_metadata": "",
+            "posting_json_metadata": ""
+          },
+          "memo": "{\"id\":\"websitesPayment\"}"
+        }
+      }
+    },
     "wobjectonlist" : {
       "type" : "object",
       "properties" : {

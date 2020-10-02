@@ -1,10 +1,14 @@
+const { getNamespace } = require('cls-hooked');
 const { redisStatisticsKey } = require('constants/sitesConstants');
 const { redisSetter } = require('utilities/redis');
+const { App } = require('models');
 
 exports.saveUserIp = async (req, res, next) => {
-  const { host } = req.headers;
+  const session = getNamespace('request-session');
+  const host = session.get('host');
   const ip = req.headers['x-real-ip'];
-  if (!ip) return next();
+  const { result } = await App.findOne({ host });
+  if (!ip || !result) return next();
   await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
   next();
 };

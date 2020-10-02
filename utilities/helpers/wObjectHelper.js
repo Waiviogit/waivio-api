@@ -250,7 +250,7 @@ const getLinkToPageLoad = (obj) => {
             .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
             .first()
             .value();
-          return `/object/${obj.author_permlink}/menu#${item.body}`;
+          return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
         }
         return `/object/${obj.author_permlink}`;
       default:

@@ -576,7 +576,7 @@ describe('On wobjectHelper', async () => {
   });
 
   describe('on admin and ownership actions', async () => {
-    describe('On ownership votes without select app ownership object status', async () => {
+    describe('On ownership votes select app ownership object status', async () => {
       let object, result, body;
       beforeEach(async () => {
         body = faker.random.string();
@@ -603,8 +603,8 @@ describe('On wobjectHelper', async () => {
       it('should return description field in response which has ownership upvote', async () => {
         expect(result[FIELDS_NAMES.DESCRIPTION]).to.be.exist;
       });
-      it('should return avatar field without ownership upvote', async () => {
-        expect(result[FIELDS_NAMES.AVATAR]).to.be.exist;
+      it('should not return avatar field without ownership upvote', async () => {
+        expect(result[FIELDS_NAMES.AVATAR]).to.be.not.exist;
       });
     });
 

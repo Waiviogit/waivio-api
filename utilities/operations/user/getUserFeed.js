@@ -1,6 +1,7 @@
 const {
   User, Post, App, Subscriptions, wobjectSubscriptions,
 } = require('models');
+const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
 
 const getFeed = async ({
@@ -38,9 +39,10 @@ const getFeed = async ({
 const getFiltersData = async (filter) => {
   const data = {};
   const byApp = _.get(filter, 'byApp');
-
+  const session = getNamespace('request-session');
+  const host = session.get('host');
   if (_.isString(byApp) && !_.isEmpty(byApp)) {
-    const { app, error } = await App.getOne({ name: byApp });
+    const { result: app, error } = await App.findOne({ host });
 
     if (error) return { error };
     // for filtering posts by specified list of wobjects

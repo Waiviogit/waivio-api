@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { Wobj, App } = require('models');
-const { REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
+const { getNamespace } = require('cls-hooked');
 
 const makePipeline = ({
   // eslint-disable-next-line camelcase
@@ -60,8 +60,10 @@ exports.searchWobjects = async ({
   let crucialWobjects = [];
 
   if (sortByApp) {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
     // change priority for some wobjects by specified App
-    const { app } = await App.getOne({ name: sortByApp });
+    const { result: app } = await App.findOne({ host });
 
     crucialWobjects = _.get(app, 'supported_objects');
   }

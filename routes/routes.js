@@ -26,14 +26,20 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 
 // region Sites
-userRoutes.route('/sites')
+sitesRoutes.route('/sites')
   .get(sitesController.getUserApps);
-userRoutes.route('/sites/getParents')
+sitesRoutes.route('/sites/getParents')
   .get(sitesController.parentList);
-userRoutes.route('/sites/create')
+sitesRoutes.route('/sites/create')
   .put(sitesController.create);
-userRoutes.route('/sites/checkAvailable')
+sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
+sitesRoutes.route('/sites/getConfigurationsList')
+  .get(sitesController.configurationsList);
+sitesRoutes.route('/sites/managePage')
+  .get(sitesController.managePage);
+sitesRoutes.route('/sites/report')
+  .get(sitesController.report);
 // endregion
 
 // region Wobject
