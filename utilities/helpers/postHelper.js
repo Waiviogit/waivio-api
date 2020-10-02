@@ -1,6 +1,6 @@
 const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
-  Campaign, paymentHistory, botUpvoteModel, matchBotModel,
+  Campaign, botUpvoteModel,
 } = require('models');
 const { Post } = require('database').models;
 const { postsUtil } = require('utilities/steemApi');
@@ -205,7 +205,6 @@ const jsonParse = (post) => {
 };
 
 const additionalSponsorObligations = async (posts) => {
-  if (_.isEmpty(posts)) return;
   for (const post of posts) {
     const metadata = post.json_metadata ? jsonParse(post) : null;
     const _id = _.get(metadata, 'campaignId');
@@ -214,73 +213,39 @@ const additionalSponsorObligations = async (posts) => {
 
     const { result: campaign } = await Campaign.findOne({ _id });
     if (!campaign) continue;
-    const { bots } = await matchBotModel.find({}, { bot_name: 1 });
-    // const { result: upvote } = await botUpvoteModel
-    //   .findOne({ author: post.author, permlink: post.permlink });
-    // if (!campaign || !upvote) continue;
-    //
-    // const user = _.find(campaign.users, (u) => u.permlink === upvote.reservationPermlink);
-    // const { result: histories } = await paymentHistory.findByCondition({ 'details.reservation_permlink': _.get(user, 'permlink') });
-    // if (!user || !histories.length) continue;
-    //
-    // const rewards = _.filter(histories, (history) => _.includes(['beneficiary_fee', 'review'], history.type));
-    // const rewardSponsor = _.sumBy(rewards, 'amount')
-    //   * _.get(user, 'hiveCurrency', _.get(rewards, '[0].details.hiveCurrency'));
-    // post.guideName = campaign.guideName;
-    // post.sponsor_payout_value = rewardSponsor.toFixed(3);
+    const { result: bots } = await botUpvoteModel
+      .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
 
     const totalPayout = parseFloat(post.pending_payout_value)
       + parseFloat(post.total_payout_value)
       + parseFloat(post.curator_payout_value);
-    const voteRshares = post.active_votes.reduce(
-      (a, b) => a + parseFloat(b.rshares_weight || b.rshares),
-      0,
-    );
+    const voteRshares = _.reduce(post.active_votes,
+      (a, b) => a + parseFloat(b.rshares_weight || b.rshares), 0);
+
     const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
+
     if (ratio) {
       let likedSum = 0;
-      for (const el of _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'bot_name'), campaign.guideName], v.voter))) {
-        likedSum += (ratio * (el.rshares_weight || el.rshares)) / 2;
+      const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), campaign.guideName], v.voter));
+      for (const el of registeredVotes) {
+        likedSum += (ratio * (el.rshares_weight || el.rshares));
       }
-      post.sponsor_payout_value = campaign.reward - likedSum;
-      post.sponsor = { voter: campaign.guideName, rhares: (post.sponsor_payout_value / ratio) * 2 };
+      const sponsorPayout = campaign.reward - likedSum;
+      if (sponsorPayout <= 0) continue;
+      post.sponsor_payout_value = sponsorPayout.toFixed(3);
+      post.active_votes.push({
+        voter: campaign.guideName,
+        rhares: sponsorPayout / ratio,
+        sponsor: true,
+      });
     } else {
-      post.sponsor = { voter: campaign.guideName, rhares: Math.abs(voteRshares) * 100 };
       post.sponsor_payout_value = campaign.reward;
+      post.active_votes.push({
+        voter: campaign.guideName,
+        rhares: Math.abs(voteRshares) * 100,
+        sponsor: true,
+      });
     }
-
-    // const totalPayout2 = parseFloat(post.pending_payout_value)
-    //   + parseFloat(post.total_payout_value)
-    //   + parseFloat(post.curator_payout_value)
-    //   + parseFloat(post.sponsor_payout_value);
-    // const weightSponsor = (post.sponsor_payout_value / ratio) * 2;
-    // const check = (ratio * weightSponsor) / 2;
-    // const check2 = post.sponsor_payout_value + likedSum;
-    // console.log('yo');
-    // if ratio 0 full sum how to calculate?
-    //
-    // const minusArray = [
-    //   {
-    //     _id: '5f71ed5a1e68a4847c8707f7',
-    //     voter: 'naha',
-    //     weight: -84907,
-    //     percent: -10000,
-    //     rshares: -84907368342,
-    //   },
-    //   {
-    //     voter: 'me',
-    //     rshares: 8490736834200,
-    //   },
-    // ];
-    //
-    // const rharesMinus2 = minusArray.reduce(
-    //   (a, b) => a + parseFloat(b.rshares_weight || b.rshares),
-    //   0,
-    // );
-    // const ratio3 = rharesMinus2 > 0 ? 3 / rharesMinus2 : 0;
-    // const myBucks = ratio3 * 8490736834200;
-    //
-    // console.log('yo');
   }
 };
 
