@@ -60,7 +60,7 @@ exports.configurationsList = async (req, res, next) => {
 };
 
 exports.managePage = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.sites.getApps, next);
+  const value = validators.validate(req.query, validators.sites.managePage, next);
   if (!value) return;
 
   const { error: authError } = await authoriseUser.authorise(value.userName);
@@ -73,6 +73,24 @@ exports.managePage = async (req, res, next) => {
 
   res.result = {
     status: 200, json: { websites, accountBalance, dataForPayments },
+  };
+  next();
+};
+
+exports.report = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.sites.report, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const {
+    payments, ownerAppNames, dataForPayments, error,
+  } = await sitesHelper.getReport(value);
+  if (error) return next(error);
+
+  res.result = {
+    status: 200, json: { payments, ownerAppNames, dataForPayments },
   };
   next();
 };
