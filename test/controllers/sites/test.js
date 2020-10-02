@@ -37,20 +37,6 @@ describe('On sitesController', async () => {
       it('should send request for create app ', async () => {
         expect(objectBotRequests.sendCustomJson.calledOnce).to.be.true;
       });
-      // it('should create app with correct inherited and canBeExtended flags', async () => {
-      //   expect(myApp.inherited && !myApp.canBeExtended).to.be.true;
-      // });
-      // it('should create app with correct parent id', async () => {
-      //   expect(myApp.parent.toString()).to.be.eq(parent._id.toString());
-      // });
-      // it('should add to app parent configuration', async () => {
-      //   expect(myApp.configuration.configurationFields)
-      //     .to.be.deep.eq(parent.configuration.configurationFields);
-      // });
-      // it('should add to app parent ', async () => {
-      //   expect(myApp.supported_object_types)
-      //     .to.be.deep.eq(parent.supported_object_types);
-      // });
     });
     describe('On ERROR', async () => {
       describe('On authorise error', async () => {
