@@ -33,3 +33,8 @@ exports.report = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string(),
 }).options(options);
+
+exports.authorities = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+}).options(options);

@@ -144,6 +144,19 @@ exports.find = async ({
   }
 };
 
+exports.findWithSelect = async (condition, select) => {
+  try {
+    return {
+      result: await UserModel
+        .find(condition)
+        .select(select)
+        .lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.getCustomCount = async (condition) => {
   try {
     return {
