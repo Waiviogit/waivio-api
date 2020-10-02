@@ -54,13 +54,11 @@ exports.getWebsitePayments = async ({
   let byHost;
   const { result: apps, error: appsError } = await App.find({
     owner, inherited: true,
-    // $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
   });
   if (appsError) return { error: appsError };
   const ownerAppNames = _.map(apps, 'host');
   if (host) {
     ({ result: byHost } = await App.find({
-      // $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
       inherited: true,
       host,
     }));
