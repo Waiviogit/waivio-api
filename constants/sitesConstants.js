@@ -18,7 +18,6 @@ exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
   REFUND: 'refund',
-  WEBSITE_PAYMENT: 'websitePayment',
 };
 
 exports.FEE = {

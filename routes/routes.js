@@ -37,7 +37,9 @@ sitesRoutes.route('/sites/checkAvailable')
 sitesRoutes.route('/sites/getConfigurationsList')
   .get(sitesController.configurationsList);
 sitesRoutes.route('/sites/managePage')
-    .get(sitesController.managePage);
+  .get(sitesController.managePage);
+sitesRoutes.route('/sites/report')
+  .get(sitesController.report);
 // endregion
 
 // region Wobject
