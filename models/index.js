@@ -12,5 +12,6 @@ moduleExports.Campaign = require('./CampaignModel');
 moduleExports.paymentHistory = require('./paymentHistoryModel');
 moduleExports.Subscriptions = require('./SubscriptionModel');
 moduleExports.wobjectSubscriptions = require('./wobjectSubscriptionModel');
+moduleExports.websitePayments = require('./websitePaymentsModel');
 
 module.exports = moduleExports;

@@ -4,7 +4,7 @@ const { STATUSES } = require('constants/sitesConstants');
 const Create = async ({
   blacklists, name, admins, moderators, supportedHashtags,
   supportedObjects, bots, authority, inherited, canBeExtended, deactivatedAt,
-  host, owner, status, configuration, filters, supportedTypes, parent,
+  host, owner, status, configuration, filters, supportedTypes, parent, activatedAt,
 } = {}) => {
   const data = {
     host: host || faker.internet.domainWord(),
@@ -15,6 +15,7 @@ const Create = async ({
     parent: parent || new ObjectID(),
     moderators: moderators || [],
     deactivatedAt: deactivatedAt || null,
+    activatedAt: activatedAt || null,
     supported_hashtags: supportedHashtags || [],
     supported_objects: supportedObjects || [],
     configuration: configuration || { configurationFields: [faker.random.string()] },
