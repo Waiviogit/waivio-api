@@ -11,7 +11,7 @@ describe('App Model', async () => {
       app = await AppFactory.Create();
     });
     it('Should check app for identity', async () => {
-      const { app: myApp } = await AppModel.getOne({ name: app.name, bots: 0 });
+      const { app: myApp } = await AppModel.getOne({ host: app.host, bots: 0 });
       expect(myApp).to.be.deep.eq(_.omit(app, 'service_bots'));
     });
     it('Should check that the error exists', async () => {

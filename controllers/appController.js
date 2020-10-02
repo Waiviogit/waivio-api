@@ -1,4 +1,5 @@
 const validators = require('controllers/validators');
+const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
 const { app: AppOperations } = require('utilities/operations');
 
@@ -6,7 +7,9 @@ const show = async (req, res, next) => {
   const data = {
     name: req.params.appName || 'waiviodev',
   };
-  data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key'])
+  data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+  const session = getNamespace('request-session');
+  data.host = session.get('host');
   const { app, error } = await App.getOne(data);
 
   if (error) {
