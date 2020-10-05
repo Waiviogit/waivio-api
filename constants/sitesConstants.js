@@ -20,6 +20,17 @@ exports.PAYMENT_TYPES = {
   REFUND: 'refund',
 };
 
+exports.REFUND_TYPES = {
+  WEBSITE_REFUND: 'website_refund',
+};
+
+exports.REFUND_STATUSES = {
+  PENDING: 'pending',
+  COMPLETED: 'completed',
+  REJECTED: 'rejected',
+  FROZEN: 'frozen',
+};
+
 exports.FEE = {
   minimumValue: 1,
   currency: 'HBD',
