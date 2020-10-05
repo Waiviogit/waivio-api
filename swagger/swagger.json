@@ -462,6 +462,65 @@
         }
       }
     },
+    "/api/sites/objectFilters" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of object filters",
+        "description" : "Return list of object filters with tag categories for add tags",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "host owner name",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/getObjectFilters"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/refund" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -2423,6 +2482,24 @@
     }
   },
   "definitions" : {
+    "getObjectFilters": {
+      "type": "object",
+      "example": {
+        "restaurant": {
+          "Cuisine": ["asian"],
+          "Features": [],
+          "Good For": ["family"]
+        },
+        "dish": {
+          "Category": [],
+          "Ingredients": []
+        },
+        "drink": {
+          "Category": [],
+          "Ingredients": []
+        }
+      }
+    },
     "refund": {
       "type": "array",
       "example": [

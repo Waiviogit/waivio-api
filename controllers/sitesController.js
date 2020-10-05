@@ -123,7 +123,17 @@ exports.refundList = async (req, res, next) => {
 };
 
 exports.getObjectFilters = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.sites.authorities, next);
+  if (!value) return;
 
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await sitesHelper.getObjectsFilter(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
 };
 
 exports.findTags = async (req, res, next) => {

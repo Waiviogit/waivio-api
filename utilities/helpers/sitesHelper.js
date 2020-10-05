@@ -187,6 +187,14 @@ exports.searchTags = async (params) => {
   return { result: _.filter(tags, (tag) => new RegExp(params.string).test(tag)) };
 };
 
+exports.getObjectsFilter = async ({ host, userName }) => {
+  const { result, error } = await App.findOne({ host, owner: userName, inherited: true });
+  if (error) return { error };
+  if (!result) return { status: 404, message: 'App not found' };
+
+  return { result: _.get(result, 'object_filters', {}) };
+};
+
 /** _______________________________PRIVATE METHODS____________________________________ */
 const getWebsitePayments = async ({
   owner, host, startDate, endDate,
