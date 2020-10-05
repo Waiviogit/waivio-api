@@ -48,6 +48,13 @@ sitesRoutes.route('/sites/moderators')
   .get(sitesController.siteAuthorities);
 sitesRoutes.route('/sites/authorities')
   .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/objectFilters')
+  .get(sitesController.getObjectFilters);
+sitesRoutes.route('/sites/objectFilters')
+  .post(sitesController.saveObjectFilters);
+sitesRoutes.route('/sites/tags')
+  .get(sitesController.findTags);
+
 // endregion
 
 // region Wobject

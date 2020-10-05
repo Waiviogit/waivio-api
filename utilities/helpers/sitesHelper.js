@@ -1,13 +1,15 @@
 const _ = require('lodash');
 const moment = require('moment');
 const config = require('config');
+const { redisGetter } = require('utilities/redis');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
-const { STATUSES, ACTIVE_STATUSES, REFUND_STATUSES } = require('constants/sitesConstants');
+const { ACTIVE_STATUSES, REFUND_STATUSES } = require('constants/sitesConstants');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, websiteRefunds,
 } = require('models');
+const { FIELDS_NAMES } = require('../../constants/wobjectsData.js');
 
 /** Method for validate and create user site */
 exports.createApp = async (params) => {
@@ -177,6 +179,20 @@ exports.refundsList = async (userName) => {
     refundsData.push(refund);
   }
   return { result: refundsData };
+};
+
+exports.searchTags = async (params) => {
+  const { tags, error } = await redisGetter.getTagCategories({ start: 0, key: `${FIELDS_NAMES.TAG_CATEGORY}:${params.category}`, end: -1 });
+  if (error) return { error };
+  return { result: _.filter(tags, (tag) => new RegExp(params.string).test(tag)) };
+};
+
+exports.getObjectsFilter = async ({ host, userName }) => {
+  const { result, error } = await App.findOne({ host, owner: userName, inherited: true });
+  if (error) return { error };
+  if (!result) return { error: { status: 404, message: 'App not found' } };
+
+  return { result: _.get(result, 'object_filters', {}) };
 };
 
 /** _______________________________PRIVATE METHODS____________________________________ */

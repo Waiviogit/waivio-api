@@ -38,3 +38,8 @@ exports.authorities = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),
 }).options(options);
+
+exports.searchTags = Joi.object().keys({
+  string: Joi.string().lowercase().required(),
+  category: Joi.string().required(),
+}).options(options);

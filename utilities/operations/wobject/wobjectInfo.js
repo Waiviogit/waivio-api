@@ -68,7 +68,6 @@ const getListItems = async (wobject, data, app) => {
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
     });
     wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
-    wobj.parent = await getParentInfo(wobj, data, app);
 
     wobj.listItemsCount = await getItemsCount(
       wobj.author_permlink,
