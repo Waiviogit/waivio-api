@@ -77,6 +77,56 @@
         }
       }
     },
+    "/api/sites/configurations" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of configurations  which can be changed",
+        "description" : "Get list of configurations  which can be changed",
+        "produces" : [ "application/json" ],
+        "parameters" : [  {
+          "name" : "host",
+          "in" : "query",
+          "description" : "Website host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type": "string"
+              },
+              "example": [
+                "desktopLogo",
+                "mobileLogo",
+                "aboutObject",
+                "desktopMap",
+                "mobileMap",
+                "colors"
+              ]
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "example": {
+                "message": "Not found"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/getParents" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -158,7 +208,7 @@
         }
       }
     },
-    "/api/sites/managePage" : {
+    "/api/sites/manage" : {
       "get" : {
         "tags" : [ "sites" ],
         "summary" : "Data for manage page",
@@ -462,7 +512,7 @@
         }
       }
     },
-    "/api/sites/objectFilters" : {
+    "/api/sites/filters" : {
       "get" : {
         "tags" : [ "sites" ],
         "summary" : "Get list of object filters",
@@ -585,8 +635,7 @@
         }
       }
     },
-
-    "/api/sites/refund" : {
+    "/api/sites/refunds" : {
       "get" : {
         "tags" : [ "sites" ],
         "summary" : "Get list of pending refunds",
