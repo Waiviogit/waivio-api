@@ -88,7 +88,7 @@ exports.updateFeedsCache = async () => {
   const hotFeedAppCache = [];
   const trendFeedAppCache = [];
   let trendFilteredCryptoCache;
-  const { apps = [], error } = await find({ host: { $in: APPS_FOR_FEED_CACHE } });
+  const { result: apps = [], error } = await find({ host: { $in: APPS_FOR_FEED_CACHE } });
   if (error) {
     console.error(error);
     return;
