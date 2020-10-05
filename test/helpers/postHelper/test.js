@@ -10,21 +10,22 @@ describe('on additionalSponsorObligations', async () => {
     beforeEach(async () => {
       await dropDatabase();
       const activeVotes = [];
-      for (let i = 0; i < _.random(2, 10); i++) {
+      reward = _.random(1, 10);
+      for (let i = 0; i < reward; i++) {
         activeVotes.push({
           voter: faker.name.firstName(),
-          rshares: _.random(10000, 1000000),
+          rshares: _.random(90, 99),
         });
       }
       guideName = faker.name.firstName();
-      reward = _.random(1, 100);
-      rewardOnPost = _.random(0, reward);
+      rewardOnPost = _.reduce(activeVotes,
+        (a, b) => a + parseFloat(b.rshares_weight || b.rshares), 0) / (reward * 100);
       campaign = await CampaignFactory.Create({ reward, guideName });
       post = await PostFactory.Create({
         onlyData: true,
         additionsForMetadata: { campaignId: campaign._id },
         active_votes: activeVotes,
-        pending_payout_value: rewardOnPost,
+        pending_payout_value: rewardOnPost.toString(),
       });
       const registeredVotes = _.slice(activeVotes, 0, _.random(1, activeVotes.length));
       for (const arg of registeredVotes) {
@@ -36,9 +37,9 @@ describe('on additionalSponsorObligations', async () => {
       }
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should ', async () => {
-      result = +post.pending_payout_value + post.sponsor_payout_value;
-      expect(result).to.be.eq(reward);
+    it('should display result greater or equal reward (greater, becouse there are', async () => {
+      result = Math.round(Number(post.pending_payout_value) + Number(post.sponsor_payout_value));
+      expect(result).to.be.gte(reward);
     });
   });
 });

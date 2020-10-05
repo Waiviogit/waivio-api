@@ -215,10 +215,9 @@ const additionalSponsorObligations = async (posts) => {
     if (!campaign) continue;
     const { result: bots } = await botUpvoteModel
       .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
-
-    const totalPayout = parseFloat(post.pending_payout_value)
-      + parseFloat(post.total_payout_value)
-      + parseFloat(post.curator_payout_value);
+    const totalPayout = parseFloat(_.get(post, 'pending_payout_value', 0))
+      + parseFloat(_.get(post, 'total_payout_value', 0))
+      + parseFloat(_.get(post, 'curator_payout_value', 0));
     const voteRshares = _.reduce(post.active_votes,
       (a, b) => a + parseFloat(b.rshares_weight || b.rshares), 0);
 
