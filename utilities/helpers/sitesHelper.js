@@ -190,7 +190,7 @@ exports.searchTags = async (params) => {
 exports.getObjectsFilter = async ({ host, userName }) => {
   const { result, error } = await App.findOne({ host, owner: userName, inherited: true });
   if (error) return { error };
-  if (!result) return { status: 404, message: 'App not found' };
+  if (!result) return { error: { status: 404, message: 'App not found' } };
 
   return { result: _.get(result, 'object_filters', {}) };
 };

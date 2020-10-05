@@ -210,7 +210,11 @@ describe('On sitesController', async () => {
       });
       await WebsitePaymentsFactory.Create({ name: owner, amount });
       activePayment = await WebsitePaymentsFactory.Create({
-        name: owner, amount: debt, type: PAYMENT_TYPES.WRITE_OFF, host: activeApp.host, countUsers: _.random(100, 150),
+        name: owner,
+        amount: debt,
+        type: PAYMENT_TYPES.WRITE_OFF,
+        host: activeApp.host,
+        countUsers: _.random(100, 150),
       });
       payment = await WebsitePaymentsFactory.Create({
         name: owner, amount: debt, type: PAYMENT_TYPES.WRITE_OFF, host: inactiveApp.host,
@@ -366,7 +370,11 @@ describe('On sitesController', async () => {
         authorities.push(userName);
         await UsersFactory.Create({ name: userName });
       }
-      userApp = await AppFactory.Create({ parent: parent._id, host: `${faker.random.string()}.${parent.host}`, authority: authorities });
+      userApp = await AppFactory.Create({
+        parent: parent._id,
+        host: `${faker.random.string()}.${parent.host}`,
+        authority: authorities,
+      });
       sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
       result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${userApp.host}`);
     });
@@ -381,6 +389,26 @@ describe('On sitesController', async () => {
     });
     it('should return 404 status if host not found', async () => {
       result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${faker.random.string()}`);
+      expect(result).to.have.status(404);
+    });
+  });
+
+  describe('On getObjectFilters', async () => {
+    let userApp, result;
+    beforeEach(async () => {
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+      const host = `${faker.random.string()}.${parent.host}`;
+      userApp = await AppFactory.Create({ parent: parent._id, owner, host });
+      result = await chai.request(app).get(`/api/sites/objectFilters?userName=${owner}&host=${host}`);
+    });
+    it('should return status 200', async () => {
+      expect(result).to.have.status(200);
+    });
+    it('should return correct responce', async () => {
+      expect(result.body).to.be.deep.eq(userApp.object_filters);
+    });
+    it('should return 404 if user not owner in app', async () => {
+      result = await chai.request(app).get(`/api/sites/objectFilters?userName=${faker.random.string()}&host=${userApp.host}`);
       expect(result).to.have.status(404);
     });
   });
