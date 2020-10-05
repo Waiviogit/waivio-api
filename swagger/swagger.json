@@ -424,7 +424,7 @@
       "get" : {
         "tags" : [ "sites" ],
         "summary" : "Get list of pending refunds",
-        "description" : "Return list of site pending refunds",
+        "description" : "Return list of site pending refunds, only website admins can get this info",
         "produces" : [ "application/json" ],
         "parameters" : [ {
           "name" : "access-token",
