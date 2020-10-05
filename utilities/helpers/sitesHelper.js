@@ -1,32 +1,9 @@
 const _ = require('lodash');
 const moment = require('moment');
-const config = require('config');
 const { redisGetter } = require('utilities/redis');
-const objectBotRequests = require('utilities/requests/objectBotRequests');
-const { OBJECT_BOT } = require('constants/requestData');
-const { ACTIVE_STATUSES, REFUND_STATUSES } = require('constants/sitesConstants');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
-const {
-  App, websitePayments, User, websiteRefunds,
-} = require('models');
-const { FIELDS_NAMES } = require('../../constants/wobjectsData.js');
-
-/** Method for validate and create user site */
-exports.createApp = async (params) => {
-  const { error, parent } = await this.availableCheck(params);
-  if (error) return { error };
-  params.host = `${params.name}.${parent.host}`;
-  params.parent = parent._id;
-  const { result, error: createError } = await objectBotRequests.sendCustomJson(params,
-    `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
-  if (createError) {
-    return {
-      error:
-        { status: _.get(createError, 'response.status'), message: _.get(createError, 'response.statusText', 'Forbidden') },
-    };
-  }
-  return { result: !!result };
-};
+const { App, websitePayments, User } = require('models');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -67,136 +44,13 @@ exports.getConfigurationsList = async (host) => {
   return { result: _.get(result, 'configuration.configurationFields', []) };
 };
 
-/** Get data for manage page. In this method, we generate a report for the site owner,
- * in which we include the average data on users on his sites for the last 7 days,
- * calculate the approximate amount of daily debt based on past data,
- * also gives information about the account to which payments need to be made + data for payment */
-exports.getManagePageData = async ({ userName }) => {
-  const { error, apps, payments } = await getWebsitePayments({ owner: userName });
-  if (error) return { error };
-  const accountBalance = {
-    paid: 0, avgDau: 0, dailyCost: 0, remainingDays: 0,
-  };
-  accountBalance.paid = _.sumBy(payments, (payment) => {
-    if (payment.type === PAYMENT_TYPES.TRANSFER) return payment.amount;
-  }) || 0;
-  const dataForPayments = await getPaymentsData();
-
-  if (!apps.length) return { accountBalance, dataForPayments, websites: [] };
-
-  accountBalance.paid -= _.sumBy(payments, (payment) => {
-    if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
-  }) || 0;
-
-  const websites = [];
-  for (const site of apps) {
-    if (site.deactivatedAt && site.deactivatedAt < moment.utc().subtract(6, 'month').toDate()) continue;
-    websites.push(getWebsiteData(payments, site));
-  }
-
-  accountBalance.avgDau = Math.trunc(_.meanBy(websites, (site) => site.averageDau));
-  const dailyCost = _.round(accountBalance.avgDau * FEE.perUser, 3);
-
-  accountBalance.dailyCost = (dailyCost < FEE.minimumValue ? FEE.minimumValue : dailyCost)
-      * _.filter(apps, (app) => _.includes(ACTIVE_STATUSES, app.status)).length;
-
-  accountBalance.remainingDays = accountBalance.dailyCost > 0
-    ? Math.trunc(accountBalance.paid > 0 ? accountBalance.paid : 0 / accountBalance.dailyCost)
-    : null;
-
-  return {
-    websites,
-    accountBalance,
-    dataForPayments,
-  };
-};
-
-/** Get data for report page, if host exist - return only debt records,
- * always return all owner apps hosts */
-exports.getReport = async ({
-  userName, startDate, endDate, host,
-}) => {
-  let sortedPayments;
-  const {
-    payments, ownerAppNames, error,
-  } = await getWebsitePayments({
-    host, owner: userName, startDate, endDate,
-  });
-  if (error) return { error };
-  const dataForPayments = await getPaymentsData();
-  if (!payments.length) return { ownerAppNames, payments, dataForPayments };
-
-  if (host || startDate || endDate) {
-    ({ payments: sortedPayments } = await getPaymentsTable(_.filter(payments,
-      (payment) => payment.type === PAYMENT_TYPES.WRITE_OFF)));
-  } else ({ payments: sortedPayments } = await getPaymentsTable(payments));
-
-  return { ownerAppNames, payments: sortedPayments, dataForPayments };
-};
-
-exports.getSiteAuthorities = async (params, path) => {
-  const { result, error } = await App.findOne({ host: params.host, owner: params.userName });
-  if (error) return { error };
-  if (!result) return { error: { status: 404, message: 'Site dont find!' } };
-  let condition = {};
-  switch (path) {
-    case 'moderators':
-      condition = { name: { $in: result.moderators } };
-      break;
-    case 'administrators':
-      condition = { name: { $in: result.admins } };
-      break;
-    case 'authorities':
-      condition = { name: { $in: result.authority } };
-      break;
-  }
-  const { result: users, error: usersError } = await User.findWithSelect(condition, {
-    name: 1, alias: 1, posting_json_metadata: 1, json_metadata: 1,
-  });
-  if (usersError) return { error: usersError };
-
-  return { result: users };
-};
-
-exports.refundsList = async (userName) => {
-  const { app, error } = await App.getOne({ host: config.appHost });
-  if (error) return { error };
-  if (!_.includes(app.admins, userName)) return { error: { status: 401, message: 'Unauthorized' } };
-  const { result: refunds, error: refundsError } = await websiteRefunds.find(
-    { status: REFUND_STATUSES.PENDING },
-  );
-  if (refundsError) return { error: refundsError };
-
-  const refundsData = [];
-  for (const refund of refunds) {
-    const { result } = await websitePayments.find(
-      { condition: { userName: refund.userName }, sort: { createdAt: 1 } },
-    );
-    if (!result || !result.length) continue;
-    const { payable } = getPaymentsTable(result);
-    if (payable <= 0) continue;
-    refund.amount = payable;
-    refundsData.push(refund);
-  }
-  return { result: refundsData };
-};
-
 exports.searchTags = async (params) => {
   const { tags, error } = await redisGetter.getTagCategories({ start: 0, key: `${FIELDS_NAMES.TAG_CATEGORY}:${params.category}`, end: -1 });
   if (error) return { error };
   return { result: _.filter(tags, (tag) => new RegExp(params.string).test(tag)) };
 };
 
-exports.getObjectsFilter = async ({ host, userName }) => {
-  const { result, error } = await App.findOne({ host, owner: userName, inherited: true });
-  if (error) return { error };
-  if (!result) return { error: { status: 404, message: 'App not found' } };
-
-  return { result: _.get(result, 'object_filters', {}) };
-};
-
-/** _______________________________PRIVATE METHODS____________________________________ */
-const getWebsitePayments = async ({
+exports.getWebsitePayments = async ({
   owner, host, startDate, endDate,
 }) => {
   let byHost;
@@ -234,7 +88,7 @@ const getWebsitePayments = async ({
   };
 };
 
-const getPaymentsTable = (payments) => {
+exports.getPaymentsTable = (payments) => {
   let payable = 0;
   payments = _.map(payments, (payment) => {
     switch (payment.type) {
@@ -253,14 +107,14 @@ const getPaymentsTable = (payments) => {
   return { payments, payable };
 };
 
-const getPaymentsData = async () => {
+exports.getPaymentsData = async () => {
   const { user } = await User.getOne(FEE.account, {
     alias: 1, json_metadata: 1, posting_json_metadata: 1, name: 1,
   });
   return { user, memo: FEE.id };
 };
 
-const getWebsiteData = (payments, site) => {
+exports.getWebsiteData = (payments, site) => {
   const lastWriteOff = _.filter(payments, (payment) => payment.host === site.host
       && payment.type === PAYMENT_TYPES.WRITE_OFF
       && payment.createdAt > moment.utc().subtract(7, 'day').startOf('day').toDate());

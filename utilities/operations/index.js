@@ -6,5 +6,6 @@ moduleExports.search = require('./search');
 moduleExports.objectType = require('./objectType');
 moduleExports.post = require('./post');
 moduleExports.app = require('./app');
+moduleExports.sites = require('./sites');
 
 module.exports = moduleExports;

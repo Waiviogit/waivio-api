@@ -1,6 +1,11 @@
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
+const {
+  sites: {
+    objectsFilter, refunds, authorities, reports, manage, create,
+  },
+} = require('utilities/operations');
 
 exports.create = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.createApp, next);
@@ -9,7 +14,7 @@ exports.create = async (req, res, next) => {
   const { error: authError } = await authoriseUser.authorise(value.owner);
   if (authError) return next(authError);
 
-  const { result, error } = await sitesHelper.createApp(value);
+  const { result, error } = await create.createApp(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: { result } };
@@ -68,7 +73,7 @@ exports.managePage = async (req, res, next) => {
 
   const {
     websites, accountBalance, dataForPayments, error,
-  } = await sitesHelper.getManagePageData(value);
+  } = await manage.getManagePage(value);
   if (error) return next(error);
 
   res.result = {
@@ -86,7 +91,7 @@ exports.report = async (req, res, next) => {
 
   const {
     payments, ownerAppNames, dataForPayments, error,
-  } = await sitesHelper.getReport(value);
+  } = await reports.getReport(value);
   if (error) return next(error);
 
   res.result = {
@@ -102,7 +107,7 @@ exports.siteAuthorities = async (req, res, next) => {
   const { error: authError } = await authoriseUser.authorise(value.userName);
   if (authError) return next(authError);
 
-  const { result, error } = await sitesHelper.getSiteAuthorities(value, req.route.path.split('/')[2]);
+  const { result, error } = await authorities.getSiteAuthorities(value, req.route.path.split('/')[2]);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -115,7 +120,7 @@ exports.refundList = async (req, res, next) => {
   const { error: authError } = await authoriseUser.authorise(req.query.userName);
   if (authError) return next(authError);
 
-  const { result, error } = await sitesHelper.refundsList(req.query.userName);
+  const { result, error } = await refunds.refundsList(req.query.userName);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -129,7 +134,21 @@ exports.getObjectFilters = async (req, res, next) => {
   const { error: authError } = await authoriseUser.authorise(value.userName);
   if (authError) return next(authError);
 
-  const { result, error } = await sitesHelper.getObjectsFilter(value);
+  const { result, error } = await objectsFilter.getObjectsFilter(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.saveObjectFilters = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.sites.objectsFilter, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await objectsFilter.saveObjectsFilter(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -147,6 +166,3 @@ exports.findTags = async (req, res, next) => {
   next();
 };
 
-exports.saveObjectFilters = async (req, res, next) => {
-
-};

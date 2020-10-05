@@ -7,12 +7,16 @@ const { AppFactory, WebsitePaymentsFactory, UsersFactory } = require('test/facto
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 
 describe('On sitesController', async () => {
-  let parent, owner, name;
+  let parent, owner, name, filters;
   beforeEach(async () => {
     owner = faker.random.string();
     name = faker.random.string();
     await dropDatabase();
-    parent = await AppFactory.Create({ canBeExtended: true, inherited: false });
+    filters = {
+      restaurant: { features: [faker.random.string()], cuisine: [faker.random.string()] },
+      dish: { ingredients: [], cuisine: [faker.random.string()] },
+    };
+    parent = await AppFactory.Create({ canBeExtended: true, inherited: false, filters });
   });
   afterEach(() => {
     sinon.restore();
@@ -410,6 +414,49 @@ describe('On sitesController', async () => {
     it('should return 404 if user not owner in app', async () => {
       result = await chai.request(app).get(`/api/sites/objectFilters?userName=${faker.random.string()}&host=${userApp.host}`);
       expect(result).to.have.status(404);
+    });
+  });
+
+  describe('On saveObjectFilters', async () => {
+    let host;
+    beforeEach(async () => {
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+      host = `${faker.random.string()}.${parent.host}`;
+
+      await AppFactory.Create({
+        owner, parent: parent._id, host,
+      });
+    });
+    describe('On OK', async () => {
+      let result, tag;
+      beforeEach(async () => {
+        tag = faker.random.string();
+        filters.restaurant.cuisine.push(tag);
+        result = await chai.request(app)
+          .post('/api/sites/objectFilters')
+          .send({ userName: owner, host, objectsFilter: filters });
+      });
+      it('should return status 200', async () => {
+        expect(result).to.have.status(200);
+      });
+      it('should update correct tagCategory', async () => {
+        expect(result.body.restaurant.cuisine).to.include(tag);
+      });
+    });
+    describe('On error', async () => {
+      it('should return 422 status with not full top level filters', async () => {
+        const result = await chai.request(app)
+          .post('/api/sites/objectFilters')
+          .send({ userName: owner, host, objectsFilter: _.omit(filters, ['restaurant']) });
+        expect(result).to.have.status(422);
+      });
+      it('should return 422 status with not full teg cetegories', async () => {
+        filters.restaurant = _.omit(filters.restaurant, ['cuisine']);
+        const result = await chai.request(app)
+          .post('/api/sites/objectFilters')
+          .send({ userName: owner, host, objectsFilter: filters });
+        expect(result).to.have.status(422);
+      });
     });
   });
 });
