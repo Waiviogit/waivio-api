@@ -420,6 +420,59 @@
         }
       }
     },
+    "/api/sites/refund" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of pending refunds",
+        "description" : "Return list of site pending refunds, only website admins can get this info",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of waivio admin",
+          "required": true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/refund"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/create" : {
       "put" : {
         "tags" : [ "sites" ],
@@ -2328,6 +2381,24 @@
     }
   },
   "definitions" : {
+    "refund": {
+      "type": "array",
+      "example": [
+        {
+          "_id": "5f7ad9c923de933796693d0b",
+          "status": "pending",
+          "description": "",
+          "rejectMessage": "",
+          "userName": "olegvladim",
+          "type": "website_refund",
+          "blockNum": 1234,
+          "createdAt": "2020-10-05T08:31:05.174Z",
+          "updatedAt": "2020-10-05T08:31:05.174Z",
+          "__v": 0,
+          "amount": 99
+        }
+      ]
+    },
     "authorities": {
       "type": "array",
       "example": [

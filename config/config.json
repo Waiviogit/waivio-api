@@ -18,7 +18,8 @@
       "appDayUsers": 11,
       "tagCategories": 9
     },
-    "swaggerHost": "www.waivio.com"
+    "swaggerHost": "www.waivio.com",
+    "appHost": "waivio.com"
   },
 
   "staging": {
@@ -40,7 +41,8 @@
       "appDayUsers": 11,
       "tagCategories": 9
     },
-    "swaggerHost": "waiviodev.com"
+    "swaggerHost": "waiviodev.com",
+    "appHost": "waiviodev.com"
   },
 
   "development": {
@@ -62,7 +64,8 @@
       "appDayUsers": 11,
       "tagCategories": 9
     },
-    "swaggerHost": "localhost:3000"
+    "swaggerHost": "localhost:3000",
+    "appHost": "waiviodev.com"
   },
   "test": {
     "db": {
@@ -83,6 +86,7 @@
       "appDayUsers": 7,
       "tagCategories": 7
     },
-    "swaggerHost": "localhost:3000"
+    "swaggerHost": "localhost:3000",
+    "appHost": "localhost:3000"
   }
 }
