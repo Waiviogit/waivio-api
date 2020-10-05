@@ -29,6 +29,7 @@ models.paymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 models.WebsitePayments = require('./schemas/WebsitePaymentsSchema');
+models.WebsiteRefunds = require('./schemas/WebsiteRefundsSchema');
 
 module.exports = {
   Mongoose: mongoose,

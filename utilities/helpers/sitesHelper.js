@@ -1,10 +1,13 @@
 const _ = require('lodash');
 const moment = require('moment');
+const config = require('config');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
-const { STATUSES, ACTIVE_STATUSES } = require('constants/sitesConstants');
+const { STATUSES, ACTIVE_STATUSES, REFUND_STATUSES } = require('constants/sitesConstants');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
-const { App, websitePayments, User } = require('models');
+const {
+  App, websitePayments, User, websiteRefunds,
+} = require('models');
 
 /** Method for validate and create user site */
 exports.createApp = async (params) => {
@@ -122,9 +125,9 @@ exports.getReport = async ({
   if (!payments.length) return { ownerAppNames, payments, dataForPayments };
 
   if (host || startDate || endDate) {
-    sortedPayments = await getPaymentsTable(_.filter(payments,
-      (payment) => payment.type === PAYMENT_TYPES.WRITE_OFF));
-  } else sortedPayments = await getPaymentsTable(payments);
+    ({ payments: sortedPayments } = await getPaymentsTable(_.filter(payments,
+      (payment) => payment.type === PAYMENT_TYPES.WRITE_OFF)));
+  } else ({ payments: sortedPayments } = await getPaymentsTable(payments));
 
   return { ownerAppNames, payments: sortedPayments, dataForPayments };
 };
@@ -151,6 +154,29 @@ exports.getSiteAuthorities = async (params, path) => {
   if (usersError) return { error: usersError };
 
   return { result: users };
+};
+
+exports.refundsList = async (userName) => {
+  const { app, error } = await App.getOne({ host: config.appHost });
+  if (error) return { error };
+  if (!_.includes(app.admins, userName)) return { error: { status: 401, message: 'Unauthorized' } };
+  const { result: refunds, error: refundsError } = await websiteRefunds.find(
+    { status: REFUND_STATUSES.PENDING },
+  );
+  if (refundsError) return { error: refundsError };
+
+  const refundsData = [];
+  for (const refund of refunds) {
+    const { result } = await websitePayments.find(
+      { condition: { userName: refund.userName }, sort: { createdAt: 1 } },
+    );
+    if (!result || !result.length) continue;
+    const { payable } = getPaymentsTable(result);
+    if (payable <= 0) continue;
+    refund.amount = payable;
+    refundsData.push(refund);
+  }
+  return { result: refundsData };
 };
 
 /** _______________________________PRIVATE METHODS____________________________________ */
@@ -208,7 +234,7 @@ const getPaymentsTable = (payments) => {
     }
   });
   _.reverse(payments);
-  return payments;
+  return { payments, payable };
 };
 
 const getPaymentsData = async () => {
