@@ -43,3 +43,9 @@ exports.searchTags = Joi.object().keys({
   string: Joi.string().lowercase().required(),
   category: Joi.string().required(),
 }).options(options);
+
+exports.objectsFilter = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  objectsFilter: Joi.object().required(),
+}).options({ allowUnknown: true });

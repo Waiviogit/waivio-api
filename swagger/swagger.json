@@ -519,8 +519,73 @@
             }
           }
         }
+      },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update list of object filters",
+        "description" : "Update and return list of object filters with tag categories for add tags",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **objectsFilter** - objectsFilter for app(all fields required) \n",
+          "required": true,
+          "schema": {
+            "example": {
+              "host": "van.dining.gifts",
+              "userName": "grampo",
+              "objectsFilter": {
+                "restaurant": {
+                  "Cuisine": []
+                },
+                "dish": {
+                  "Ingredients": []
+                }
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/getObjectFilters"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
       }
     },
+
     "/api/sites/refund" : {
       "get" : {
         "tags" : [ "sites" ],
