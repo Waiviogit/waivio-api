@@ -241,7 +241,7 @@ const additionalSponsorObligations = async (posts) => {
       post.sponsor_payout_value = campaign.reward;
       post.active_votes.push({
         voter: campaign.guideName,
-        rshares: Math.abs(voteRshares) * 100,
+        rshares: Math.abs(voteRshares || 1) * 1000000,
         sponsor: true,
       });
     }
