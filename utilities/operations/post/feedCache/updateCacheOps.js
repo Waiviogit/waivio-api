@@ -1,11 +1,12 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const { getAll: getAllApps } = require('models/AppModel');
+const { getAll: getAllApps, find } = require('models/AppModel');
 const Wobj = require('models/wObjectModel');
 const Post = require('models/PostModel');
 const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
 const { redisSetter } = require('utilities/redis');
 const { LANGUAGES, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE } = require('utilities/constants');
+const { APPS_FOR_FEED_CACHE } = require('constants/postsData');
 
 async function getDbPostsIds(type, appName) {
   let idsByWithLocales = [];
@@ -87,7 +88,7 @@ exports.updateFeedsCache = async () => {
   const hotFeedAppCache = [];
   const trendFeedAppCache = [];
   let trendFilteredCryptoCache;
-  const { apps = [], error } = await getAllApps();
+  const { apps = [], error } = await find({ host: { $in: APPS_FOR_FEED_CACHE } });
   if (error) {
     console.error(error);
     return;
