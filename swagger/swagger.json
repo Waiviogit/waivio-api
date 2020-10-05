@@ -420,6 +420,48 @@
         }
       }
     },
+    "/api/sites/tags" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of tags for certain tag category",
+        "description" : "Return list of tags for certain tag category",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "category",
+          "in" : "query",
+          "description" : "Tag Category for search",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "string",
+          "in" : "query",
+          "description" : "search string",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "example": [
+                "amdina",
+                "dish",
+                "dinner"
+              ]
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/refund" : {
       "get" : {
         "tags" : [ "sites" ],

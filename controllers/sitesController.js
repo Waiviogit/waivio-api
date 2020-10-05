@@ -121,3 +121,22 @@ exports.refundList = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
+
+exports.getObjectFilters = async (req, res, next) => {
+
+};
+
+exports.findTags = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.sites.searchTags, next);
+  if (!value) return;
+
+  const { result, error } = await sitesHelper.searchTags(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.saveObjectFilters = async (req, res, next) => {
+
+};
