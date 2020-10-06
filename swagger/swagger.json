@@ -76,6 +76,50 @@
             }
           }
         }
+      },
+      "delete" : {
+        "tags" : [ "sites" ],
+        "summary" : "Delete one user website ",
+        "description" : "Delete user website, only websites with status PENDING can be deleted",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of hive user",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "host to delete",
+          "required": true,
+          "type" : "string"
+        }  ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "example":  {
+                "result": true
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not valid!"
+              }
+            }
+          }
+        }
       }
     },
     "/api/sites/create" : {

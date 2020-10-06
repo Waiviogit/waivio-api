@@ -3,7 +3,7 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports, manage, create, configurations,
+    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove
   },
 } = require('utilities/operations');
 
@@ -15,6 +15,20 @@ exports.create = async (req, res, next) => {
   if (authError) return next(authError);
 
   const { result, error } = await create.createApp(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
+exports.delete = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.sites.delete, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await remove.deleteWebsite(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: { result } };
