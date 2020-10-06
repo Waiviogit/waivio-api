@@ -75,7 +75,7 @@ const getListItems = async (wobject, data, app) => {
     );
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
-    wobj.propositions = await campaignsHelper.campaignFilter(result, user);
+    wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
   return { wobjects };
