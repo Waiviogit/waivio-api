@@ -53,6 +53,13 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/user/:userName/following_updates',
+    method: 'GET',
+    case: 7,
+    wobjects_path: 'related_wobjects',
+    array_path: 'wobjects_updates',
+  },
   // general search
   {
     path: '/generalSearch',
