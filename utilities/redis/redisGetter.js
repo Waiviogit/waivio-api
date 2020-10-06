@@ -81,4 +81,4 @@ exports.getTagCategories = async ({ key, start, end }) => {
  */
 exports.getSiteActiveUser = async (key) => appUsersStatistics.smembersAsync(key);
 
-exports.deleteSiteActiveUser = async (key) => appUsersStatistics.sdelAsync(key);
+exports.deleteSiteActiveUser = async (key) => appUsersStatistics.delAsync(key);

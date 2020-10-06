@@ -34,15 +34,17 @@ exports.dailyDebt = async () => {
     if (payable < invoice) {
       await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.FROZEN });
     }
-    const { error: createError } = await objectBotRequests.sendCustomJson({
 
-    },
-    `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
+    const data = {
+      invoice, userName: app.owner, countUsers, host: app.host,
+    };
+    const { error: createError } = await objectBotRequests.sendCustomJson(data,
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`);
     if (createError) {
-      return {
-        error: { status: _.get(createError, 'response.status'), message: _.get(createError, 'response.statusText', 'Forbidden') },
-      };
+      Sentry.captureException(Object.assign(error, data));
+      await sendSentryNotification();
     }
+    await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
   }
 };
 
