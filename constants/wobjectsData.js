@@ -50,6 +50,7 @@ exports.OBJECT_TYPES = {
 };
 
 exports.ADMIN_ROLES = {
+  OWNER: 'owner',
   ADMIN: 'admin',
   OWNERSHIP: 'ownership',
   ADMINISTRATIVE: 'administrative',
