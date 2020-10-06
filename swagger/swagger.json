@@ -88,19 +88,18 @@
           "description" : "Hive user access token",
           "required" : true,
           "type" : "string"
-        }, {
-          "name" : "userName",
-          "in" : "query",
-          "description" : "name of hive user",
+        },  {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user - who create website,\n **host** - website host",
           "required": true,
-          "type" : "string"
-        },{
-          "name" : "host",
-          "in" : "query",
-          "description" : "host to delete",
-          "required": true,
-          "type" : "string"
-        }  ],
+          "schema": {
+            "example": {
+              "userName": "grampo",
+              "host": "van.dining.pp.ua"
+            }
+          }
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
