@@ -34,9 +34,10 @@ sitesRoutes.route('/sites/create')
   .put(sitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
-sitesRoutes.route('/sites/getConfigurationsList')
-  .get(sitesController.configurationsList);
-sitesRoutes.route('/sites/managePage')
+sitesRoutes.route('/sites/configuration')
+  .get(sitesController.configurationsList)
+  .post(sitesController.saveConfigurations);
+sitesRoutes.route('/sites/manage')
   .get(sitesController.managePage);
 sitesRoutes.route('/sites/report')
   .get(sitesController.report);
@@ -48,9 +49,8 @@ sitesRoutes.route('/sites/moderators')
   .get(sitesController.siteAuthorities);
 sitesRoutes.route('/sites/authorities')
   .get(sitesController.siteAuthorities);
-sitesRoutes.route('/sites/objectFilters')
-  .get(sitesController.getObjectFilters);
-sitesRoutes.route('/sites/objectFilters')
+sitesRoutes.route('/sites/filters')
+  .get(sitesController.getObjectFilters)
   .post(sitesController.saveObjectFilters);
 sitesRoutes.route('/sites/tags')
   .get(sitesController.findTags);

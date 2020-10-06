@@ -3,11 +3,14 @@ const {
 } = require('test/testHelper');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
-const { AppFactory, WebsitePaymentsFactory, UsersFactory } = require('test/factories');
+const {
+  AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory,
+} = require('test/factories');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { configurationMock } = require('./mocks');
 
 describe('On sitesController', async () => {
-  let parent, owner, name, filters;
+  let parent, owner, name, filters, configuration;
   beforeEach(async () => {
     owner = faker.random.string();
     name = faker.random.string();
@@ -16,7 +19,10 @@ describe('On sitesController', async () => {
       restaurant: { features: [faker.random.string()], cuisine: [faker.random.string()] },
       dish: { ingredients: [], cuisine: [faker.random.string()] },
     };
-    parent = await AppFactory.Create({ canBeExtended: true, inherited: false, filters });
+    configuration = configurationMock();
+    parent = await AppFactory.Create({
+      canBeExtended: true, inherited: false, filters, configuration,
+    });
   });
   afterEach(() => {
     sinon.restore();
@@ -27,13 +33,13 @@ describe('On sitesController', async () => {
       sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ result: true }));
     });
     describe('On OK', async () => {
-      let result, myApp;
+      let result;
       beforeEach(async () => {
         sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: true }));
         result = await chai.request(app)
           .put('/api/sites/create')
           .send({ owner, parentId: parent._id, name });
-        myApp = await App.findOne({ host: `${name}.${parent.host}` });
+        await App.findOne({ host: `${name}.${parent.host}` });
       });
       it('should return status 200', async () => {
         expect(result).to.have.status(200);
@@ -166,20 +172,64 @@ describe('On sitesController', async () => {
     });
   });
 
-  describe('On configurationsList', async () => {
+  describe('On configuration', async () => {
     let myApp;
     beforeEach(async () => {
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: true }));
       myApp = await AppFactory.Create({
-        canBeExtended: true, inherited: false, parent: parent._id, host: `${name}.${parent.host}`,
+        canBeExtended: true, inherited: false, parent: parent._id, host: `${name}.${parent.host}`, owner,
       });
     });
-    it('should return configuration list', async () => {
-      const result = await chai.request(app).get(`/api/sites/getConfigurationsList?host=${myApp.host}`);
-      expect(result.body).to.be.deep.eq(myApp.configuration.configurationFields);
+    describe('On get configurations', async () => {
+      it('should return configuration list', async () => {
+        const result = await chai.request(app).get(`/api/sites/configuration?host=${myApp.host}`);
+        expect(result.body).to.be.deep.eq(myApp.configuration);
+      });
+      it('should return 404 status if not find app', async () => {
+        const result = await chai.request(app).get(`/api/sites/configuration?host=${faker.random.string()}`);
+        expect(result).to.have.status(404);
+      });
     });
-    it('should return 404 status if not find app', async () => {
-      const result = await chai.request(app).get(`/api/sites/getConfigurationsList?host=${faker.random.string()}`);
-      expect(result).to.have.status(404);
+
+    describe('On save configurations', async () => {
+      describe('On OK', async () => {
+        let result, object;
+        beforeEach(async () => {
+          object = await ObjectFactory.Create();
+          const configToUpdate = _.cloneDeep(configuration);
+          configToUpdate.aboutObject = object.author_permlink;
+          result = await chai.request(app).post('/api/sites/configuration')
+            .send({ host: myApp.host, userName: owner, configuration: configToUpdate });
+        });
+        it('should return status 200', async () => {
+          expect(result).to.have.status(200);
+        });
+        it('should return updated configuration', async () => {
+          expect(result.body.aboutObject).to.be.not.deep.eq(configuration.aboutObject);
+        });
+        it('should return all keys', async () => {
+          configuration.aboutObject = object.author_permlink;
+          expect(_.omit(result.body, ['configurationFields'])).to.have.all.keys(configuration.configurationFields);
+        });
+      });
+      describe('On errors', async () => {
+        it('should return 422 with not all config fields', async () => {
+          const result = await chai.request(app).post('/api/sites/configuration')
+            .send({ host: myApp.host, userName: owner, configuration: _.omit(configuration, ['desktopLogo']) });
+          expect(result).to.have.status(422);
+        });
+        it('should return 422 with not fields in colors', async () => {
+          configuration.colors = _.omit(configuration.colors, ['hover']);
+          const result = await chai.request(app).post('/api/sites/configuration')
+            .send({ host: myApp.host, userName: owner, configuration });
+          expect(result).to.have.status(422);
+        });
+        it('should return 422 status with not exist object', async () => {
+          const result = await chai.request(app).post('/api/sites/configuration')
+            .send({ host: myApp.host, userName: owner, configuration });
+          expect(result).to.have.status(422);
+        });
+      });
     });
   });
 
@@ -228,7 +278,7 @@ describe('On sitesController', async () => {
     describe('on ManagePage', async () => {
       let result;
       beforeEach(async () => {
-        result = await chai.request(app).get(`/api/sites/managePage?userName=${owner}`);
+        result = await chai.request(app).get(`/api/sites/manage?userName=${owner}`);
       });
       it('should return status 200', async () => {
         expect(result).to.have.status(200);
@@ -403,7 +453,7 @@ describe('On sitesController', async () => {
       sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
       const host = `${faker.random.string()}.${parent.host}`;
       userApp = await AppFactory.Create({ parent: parent._id, owner, host });
-      result = await chai.request(app).get(`/api/sites/objectFilters?userName=${owner}&host=${host}`);
+      result = await chai.request(app).get(`/api/sites/filters?userName=${owner}&host=${host}`);
     });
     it('should return status 200', async () => {
       expect(result).to.have.status(200);
@@ -412,7 +462,7 @@ describe('On sitesController', async () => {
       expect(result.body).to.be.deep.eq(userApp.object_filters);
     });
     it('should return 404 if user not owner in app', async () => {
-      result = await chai.request(app).get(`/api/sites/objectFilters?userName=${faker.random.string()}&host=${userApp.host}`);
+      result = await chai.request(app).get(`/api/sites/filters?userName=${faker.random.string()}&host=${userApp.host}`);
       expect(result).to.have.status(404);
     });
   });
@@ -433,7 +483,7 @@ describe('On sitesController', async () => {
         tag = faker.random.string();
         filters.restaurant.cuisine.push(tag);
         result = await chai.request(app)
-          .post('/api/sites/objectFilters')
+          .post('/api/sites/filters')
           .send({ userName: owner, host, objectsFilter: filters });
       });
       it('should return status 200', async () => {
@@ -446,14 +496,14 @@ describe('On sitesController', async () => {
     describe('On error', async () => {
       it('should return 422 status with not full top level filters', async () => {
         const result = await chai.request(app)
-          .post('/api/sites/objectFilters')
+          .post('/api/sites/filters')
           .send({ userName: owner, host, objectsFilter: _.omit(filters, ['restaurant']) });
         expect(result).to.have.status(422);
       });
-      it('should return 422 status with not full teg cetegories', async () => {
+      it('should return 422 status with not full teg categories', async () => {
         filters.restaurant = _.omit(filters.restaurant, ['cuisine']);
         const result = await chai.request(app)
-          .post('/api/sites/objectFilters')
+          .post('/api/sites/filters')
           .send({ userName: owner, host, objectsFilter: filters });
         expect(result).to.have.status(422);
       });

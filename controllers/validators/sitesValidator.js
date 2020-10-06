@@ -49,3 +49,9 @@ exports.objectsFilter = Joi.object().keys({
   host: Joi.string().required(),
   objectsFilter: Joi.object().required(),
 }).options({ allowUnknown: true });
+
+exports.saveConfigurations = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  configuration: Joi.object().required(),
+}).options({ allowUnknown: true });

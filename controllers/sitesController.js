@@ -3,7 +3,7 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports, manage, create,
+    objectsFilter, refunds, authorities, reports, manage, create, configurations,
   },
 } = require('utilities/operations');
 
@@ -57,7 +57,21 @@ exports.getUserApps = async (req, res, next) => {
 exports.configurationsList = async (req, res, next) => {
   if (!req.query.host) return next({ status: 422, message: 'App host is required' });
 
-  const { result, error } = await sitesHelper.getConfigurationsList(req.query.host);
+  const { result, error } = await configurations.getConfigurationsList(req.query.host);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.saveConfigurations = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.sites.saveConfigurations, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await configurations.saveConfigurations(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -72,12 +86,15 @@ exports.managePage = async (req, res, next) => {
   if (authError) return next(authError);
 
   const {
-    websites, accountBalance, dataForPayments, error,
+    websites, accountBalance, dataForPayments, error, prices,
   } = await manage.getManagePage(value);
   if (error) return next(error);
 
   res.result = {
-    status: 200, json: { websites, accountBalance, dataForPayments },
+    status: 200,
+    json: {
+      websites, accountBalance, dataForPayments, prices,
+    },
   };
   next();
 };
@@ -165,4 +182,3 @@ exports.findTags = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
-
