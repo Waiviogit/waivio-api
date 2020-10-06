@@ -75,7 +75,7 @@ const AppSchema = new Schema({
     account: { type: String, default: 'waivio' },
     percent: { type: Number, default: 300 },
   },
-  configuration: { type: Configuration },
+  configuration: { type: Configuration, default: () => ({}) },
   host: { type: String, required: true, unique: true },
   parent: { type: mongoose.Schema.ObjectId, default: null },
   admins: { type: [String], default: [] },
@@ -117,7 +117,6 @@ AppSchema.pre('save', async function (next) {
     this._doc.object_filters = parent.object_filters;
     if (!this.configuration) this._doc.configuration = {};
     this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
-    // this._doc.configuration.colors = _.get(parent, 'configuration.colors', GET_DEFAULT_COLORS());
   }
   next();
 });
