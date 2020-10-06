@@ -34,7 +34,8 @@ exports.report = Joi.object().keys({
   host: Joi.string(),
 }).options(options);
 
-exports.authorities = Joi.object().keys({
+// eslint-disable-next-line no-multi-assign
+exports.delete = exports.authorities = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),
 }).options(options);

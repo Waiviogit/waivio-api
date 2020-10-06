@@ -5,5 +5,6 @@ module.exports = {
   authorities: require('./authorities'),
   refunds: require('./refunds'),
   create: require('./create'),
+  remove: require('./remove'),
   configurations: require('./configurations'),
 };

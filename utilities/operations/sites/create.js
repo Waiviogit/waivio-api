@@ -8,7 +8,7 @@ exports.createApp = async (params) => {
   const { error, parent } = await sitesHelper.availableCheck(params);
   if (error) return { error };
   params.host = `${params.name}.${parent.host}`;
-  params.parent = parent._id;
+  params.parentHost = parent.host;
   const { result, error: createError } = await objectBotRequests.sendCustomJson(params,
     `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
   if (createError) {
