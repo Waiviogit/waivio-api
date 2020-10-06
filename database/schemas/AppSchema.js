@@ -47,13 +47,13 @@ const MapPoints = new Schema({
 
 const Colors = new Schema({
   [SUPPORTED_COLORS.BACKGROUND]: { type: String },
-  [SUPPORTED_COLORS.FONT]: { type: String },
-  [SUPPORTED_COLORS.HOVER]: { type: String },
-  [SUPPORTED_COLORS.HEADER]: { type: String },
-  [SUPPORTED_COLORS.BUTTON]: { type: String },
-  [SUPPORTED_COLORS.BORDER]: { type: String },
-  [SUPPORTED_COLORS.FOCUS]: { type: String },
-  [SUPPORTED_COLORS.LINKS]: { type: String },
+  [SUPPORTED_COLORS.FONT]: { type: String, default: null },
+  [SUPPORTED_COLORS.HOVER]: { type: String, default: null },
+  [SUPPORTED_COLORS.HEADER]: { type: String, default: null },
+  [SUPPORTED_COLORS.BUTTON]: { type: String, default: null },
+  [SUPPORTED_COLORS.BORDER]: { type: String, default: null },
+  [SUPPORTED_COLORS.FOCUS]: { type: String, default: null },
+  [SUPPORTED_COLORS.LINKS]: { type: String, default: null },
 }, { _id: false });
 
 const Configuration = new Schema({
@@ -63,7 +63,7 @@ const Configuration = new Schema({
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
-  colors: { type: Colors },
+  colors: { type: Colors, default: () => ({}) },
 
 }, { _id: false });
 
@@ -117,7 +117,7 @@ AppSchema.pre('save', async function (next) {
     this._doc.object_filters = parent.object_filters;
     if (!this.configuration) this._doc.configuration = {};
     this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
-    this._doc.configuration.colors = _.get(parent, 'configuration.colors', GET_DEFAULT_COLORS());
+    // this._doc.configuration.colors = _.get(parent, 'configuration.colors', GET_DEFAULT_COLORS());
   }
   next();
 });
