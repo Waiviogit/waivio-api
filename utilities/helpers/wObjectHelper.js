@@ -177,9 +177,12 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     }
 
     if (approvedFields.length) {
+      const ownerVotes = _.filter(approvedFields,
+          (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
-      if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
+      if (ownerVotes.length) winningFields[id] = _.maxBy(ownerVotes, 'adminVote.timestamp').body;
+      else if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
       else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
       continue;
     }
