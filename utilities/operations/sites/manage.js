@@ -43,7 +43,7 @@ exports.getManagePage = async ({ userName }) => {
 
   accountBalance.remainingDays = accountBalance.dailyCost > 0
     ? Math.trunc(accountBalance.paid > 0 ? accountBalance.paid : 0 / accountBalance.dailyCost)
-    : null;
+    : 0;
 
   return {
     websites,

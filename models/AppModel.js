@@ -48,6 +48,15 @@ const updateOne = async ({ name, updData }) => {
   }
 };
 
+const updateMany = async (condition, updateData) => {
+  try {
+    const result = await App.updateMany(condition, updateData);
+    return { result: result.nModified };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const findOneAndUpdate = async (condition, updateData) => {
   try {
     return { result: await App.findOneAndUpdate(condition, updateData, { new: true }).lean() };
@@ -93,6 +102,7 @@ module.exports = {
   getOne,
   aggregate,
   updateOne,
+  updateMany,
   getAll,
   findOne,
   find,

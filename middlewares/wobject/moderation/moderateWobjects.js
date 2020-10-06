@@ -47,6 +47,11 @@ exports.moderate = async (req, res, next) => {
         res.result.json[currentSchema.wobjects_path], app, req.headers.locale,
       );
       break;
+    case 7:
+      res.result.json[currentSchema.array_path] = await newValidationArray(
+        res.result.json[currentSchema.array_path], app, req.headers.locale, currentSchema.wobjects_path,
+      );
+      break;
   }
   next();
 };

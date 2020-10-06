@@ -6,17 +6,6 @@ const {
 const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 
-const getParentInfo = async (wObject, data, app) => {
-  const { parent } = await wObjectHelper.processWobjects({
-    fields: [FIELDS_NAMES.PARENT],
-    wobjects: [_.cloneDeep(wObject)],
-    returnArray: false,
-    locale: data.locale,
-    app,
-  });
-  return parent || '';
-};
-
 /**
  * Method for get count of all included items(using recursive call)
  * Return count only last nodes(which not list or menu)
@@ -75,7 +64,7 @@ const getListItems = async (wobject, data, app) => {
     );
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
-    wobj.propositions = await campaignsHelper.campaignFilter(result, user);
+    wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
   return { wobjects };
