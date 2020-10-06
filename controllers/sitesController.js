@@ -65,7 +65,7 @@ exports.configurationsList = async (req, res, next) => {
 };
 
 exports.saveConfigurations = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.sites.saveConfigurations, next);
+  const value = validators.validate(req.body, validators.sites.saveConfigurations, next);
   if (!value) return;
 
   const { error: authError } = await authoriseUser.authorise(value.userName);
@@ -86,12 +86,15 @@ exports.managePage = async (req, res, next) => {
   if (authError) return next(authError);
 
   const {
-    websites, accountBalance, dataForPayments, error,
+    websites, accountBalance, dataForPayments, error, prices,
   } = await manage.getManagePage(value);
   if (error) return next(error);
 
   res.result = {
-    status: 200, json: { websites, accountBalance, dataForPayments },
+    status: 200,
+    json: {
+      websites, accountBalance, dataForPayments, prices,
+    },
   };
   next();
 };

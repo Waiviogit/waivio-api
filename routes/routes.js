@@ -34,9 +34,9 @@ sitesRoutes.route('/sites/create')
   .put(sitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
-sitesRoutes.route('/sites/configurations')
+sitesRoutes.route('/sites/configuration')
   .get(sitesController.configurationsList)
-  .post(sitesController.findTags);
+  .post(sitesController.saveConfigurations);
 sitesRoutes.route('/sites/manage')
   .get(sitesController.managePage);
 sitesRoutes.route('/sites/report')

@@ -38,3 +38,20 @@ exports.FEE = {
   account: 'waivio.hosting',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
 };
+
+exports.SUPPORTED_COLORS = {
+  BACKGROUND: 'background',
+  FONT: 'font',
+  HOVER: 'hover',
+  HEADER: 'header',
+  BUTTON: 'button',
+  BORDER: 'border',
+  FOCUS: 'focus',
+  LINKS: 'links',
+};
+
+exports.GET_DEFAULT_COLORS = () => {
+  const colors = {};
+  Object.values(this.SUPPORTED_COLORS).forEach((color) => colors[color] = null);
+  return colors;
+};

@@ -18,8 +18,12 @@ exports.getManagePage = async ({ userName }) => {
     if (payment.type === PAYMENT_TYPES.TRANSFER) return payment.amount;
   }) || 0;
   const dataForPayments = await sitesHelper.getPaymentsData();
-
-  if (!apps.length) return { accountBalance, dataForPayments, websites: [] };
+  const prices = { minimumValue: FEE.minimumValue, perUser: FEE.perUser };
+  if (!apps.length) {
+    return {
+      accountBalance, dataForPayments, websites: [], prices,
+    };
+  }
 
   accountBalance.paid -= _.sumBy(payments, (payment) => {
     if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
@@ -45,5 +49,6 @@ exports.getManagePage = async ({ userName }) => {
     websites,
     accountBalance,
     dataForPayments,
+    prices,
   };
 };

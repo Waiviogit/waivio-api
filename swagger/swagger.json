@@ -34,6 +34,7 @@
   } ],
   "schemes" : [ "https", "http" ],
   "paths" : {
+
     "/api/sites" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -77,19 +78,31 @@
         }
       }
     },
-    "/api/sites/configurations" : {
-      "get" : {
+    "/api/sites/create" : {
+      "put" : {
         "tags" : [ "sites" ],
-        "summary" : "Get list of configurations  which can be changed",
-        "description" : "Get list of configurations  which can be changed",
+        "summary" : "Create new site",
+        "description" : "Create new pending website",
         "produces" : [ "application/json" ],
-        "parameters" : [  {
-          "name" : "host",
-          "in" : "query",
-          "description" : "Website host",
+        "parameters" : [ {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
           "required": true,
+          "schema": {
+            "example": {
+              "name": "van",
+              "owner": "grampo",
+              "parentId": "5e907213bc17bb418517a640"
+            }
+          }
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
           "type" : "string"
-        } ],
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -98,21 +111,8 @@
               "items" : {
                 "type": "string"
               },
-              "example": [
-                "desktopLogo",
-                "mobileLogo",
-                "aboutObject",
-                "desktopMap",
-                "mobileMap",
-                "colors"
-              ]
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "schema": {
-              "example": {
-                "message": "Not found"
+              "example":  {
+                "result": true
               }
             }
           },
@@ -121,6 +121,22 @@
             "schema": {
               "example": {
                 "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
               }
             }
           }
@@ -247,6 +263,118 @@
             "schema": {
               "example": {
                 "message": "Token not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/configuration" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of configurations  which can be changed",
+        "description" : "Get list of configurations  which can be changed",
+        "produces" : [ "application/json" ],
+        "parameters" : [  {
+          "name" : "host",
+          "in" : "query",
+          "description" : "Website host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "example": {
+                "configurationFields": [
+                  "desktopLogo",
+                  "mobileLogo",
+                  "aboutObject",
+                  "desktopMap",
+                  "mobileMap",
+                  "colors"
+                ],
+                "colors": {
+                  "background": null,
+                  "font": null,
+                  "hover": null,
+                  "header": null,
+                  "button": null,
+                  "border": null,
+                  "focus": null,
+                  "links": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "example": {
+                "message": "Not found"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update list of configurations",
+        "description" : "Update and return list of configurations with colors",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **configuration** - configurations for app(all fields required) \n",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/siteConfigurations"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/siteConfigurations"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
               }
             }
           }
@@ -682,71 +810,6 @@
             "schema": {
               "example": {
                 "message": "App not found"
-              }
-            }
-          }
-        }
-      }
-    },
-    "/api/sites/create" : {
-      "put" : {
-        "tags" : [ "sites" ],
-        "summary" : "Create new site",
-        "description" : "Create new pending website",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "params",
-          "in" : "body",
-          "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
-          "required": true,
-          "schema": {
-            "example": {
-              "name": "van",
-              "owner": "grampo",
-              "parentId": "5e907213bc17bb418517a640"
-            }
-          }
-        },{
-          "name" : "access-token",
-          "in" : "header",
-          "description" : "Hive user access token",
-          "required" : true,
-          "type" : "string"
-        }],
-        "responses" : {
-          "200" : {
-            "description" : "successful operation",
-            "schema" : {
-              "type" : "array",
-              "items" : {
-                "type": "string"
-              },
-              "example":  {
-                "result": true
-              }
-            }
-          },
-          "422": {
-            "description": "ValidationError",
-            "schema": {
-              "example": {
-                "message": "Validation Error"
-              }
-            }
-          },
-          "409": {
-            "description": "ValidationError",
-            "schema": {
-              "example": {
-                "message": "Subdomain already exists"
-              }
-            }
-          },
-          "404": {
-            "description": "ValidationError",
-            "schema": {
-              "example": {
-                "message": "Parent not found"
               }
             }
           }
@@ -2596,6 +2659,36 @@
     }
   },
   "definitions" : {
+    "siteConfigurations": {
+      "type": "object",
+      "example": {
+        "userName": "olegvladim",
+        "host": "van.dining.pp.ua",
+        "configuration":{
+          "desktopLogo":"https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "aboutObject":"afd-dfeedcxcb",
+          "desktopMap":{
+            "topPoint":[34.435, 65.543],
+            "bottomPoint":[32.435, 55.543]
+          },
+          "mobileMap":{
+            "topPoint":[34.435, 65.543],
+            "bottomPoint":[32.435, 55.543]
+          },
+          "colors":{
+            "background":"4533",
+            "font":"3543",
+            "hover": "3356",
+            "header": "433",
+            "button": "634",
+            "border":"5343",
+            "focus": "3353",
+            "links": "4654"
+          }
+        }
+      }
+    },
     "getObjectFilters": {
       "type": "object",
       "example": {
@@ -2691,6 +2784,10 @@
             "averageDau": 2
           }
         ],
+        "prices": {
+          "minimumValue": 1,
+          "perUser": 0.005
+        },
         "accountBalance": {
           "paid": 99,
           "avgDau": 2,

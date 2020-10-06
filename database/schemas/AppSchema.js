@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
-const { STATUSES } = require('constants/sitesConstants');
+const { STATUSES, SUPPORTED_COLORS, GET_DEFAULT_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 
 const { Schema } = mongoose;
@@ -46,14 +46,14 @@ const MapPoints = new Schema({
 }, { _id: false });
 
 const Colors = new Schema({
-  background: { type: String },
-  font: { type: String },
-  hover: { type: String },
-  header: { type: String },
-  button: { type: String },
-  border: { type: String },
-  focus: { type: String },
-  links: { type: String },
+  [SUPPORTED_COLORS.BACKGROUND]: { type: String },
+  [SUPPORTED_COLORS.FONT]: { type: String },
+  [SUPPORTED_COLORS.HOVER]: { type: String },
+  [SUPPORTED_COLORS.HEADER]: { type: String },
+  [SUPPORTED_COLORS.BUTTON]: { type: String },
+  [SUPPORTED_COLORS.BORDER]: { type: String },
+  [SUPPORTED_COLORS.FOCUS]: { type: String },
+  [SUPPORTED_COLORS.LINKS]: { type: String },
 }, { _id: false });
 
 const Configuration = new Schema({
@@ -117,6 +117,7 @@ AppSchema.pre('save', async function (next) {
     this._doc.object_filters = parent.object_filters;
     if (!this.configuration) this._doc.configuration = {};
     this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
+    this._doc.configuration.colors = _.get(parent, 'configuration.colors', GET_DEFAULT_COLORS());
   }
   next();
 });
