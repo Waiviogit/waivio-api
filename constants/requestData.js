@@ -10,21 +10,25 @@ const OBJECT_BOT = {
     HOST: 'https://www.waivio.com',
     BASE_URL: '/objects-bot',
     CREATE_WEBSITE: '/create-site',
+    DELETE_WEBSITE: '/delete-site',
   },
   staging: {
     HOST: 'https://waiviodev.com',
     BASE_URL: '/objects-bot',
     CREATE_WEBSITE: '/create-site',
+    DELETE_WEBSITE: '/delete-site',
   },
   development: {
     HOST: 'http://localhost:8093',
     BASE_URL: '/objects-bot',
     CREATE_WEBSITE: '/create-site',
+    DELETE_WEBSITE: '/delete-site',
   },
   test: {
     HOST: 'http://localhost:8093',
     BASE_URL: '/objects-bot',
     CREATE_WEBSITE: '/create-site',
+    DELETE_WEBSITE: '/delete-site',
   },
 };
 
