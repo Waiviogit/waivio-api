@@ -178,7 +178,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 
     if (approvedFields.length) {
       const ownerVotes = _.filter(approvedFields,
-          (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
+        (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
       if (ownerVotes.length) winningFields[id] = _.maxBy(ownerVotes, 'adminVote.timestamp').body;
@@ -315,7 +315,7 @@ const processWobjects = async ({
       admins,
       ownership,
       administrative,
-      owner: app.owner,
+      owner: _.get(app, 'owner'),
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
