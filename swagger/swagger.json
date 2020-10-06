@@ -34,6 +34,7 @@
   } ],
   "schemes" : [ "https", "http" ],
   "paths" : {
+
     "/api/sites" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -71,6 +72,115 @@
             "schema": {
               "example": {
                 "message": "Token not valid!"
+              }
+            }
+          }
+        }
+      },
+      "delete" : {
+        "tags" : [ "sites" ],
+        "summary" : "Delete one user website ",
+        "description" : "Delete user website, only websites with status PENDING can be deleted",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of hive user",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "host to delete",
+          "required": true,
+          "type" : "string"
+        }  ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "example":  {
+                "result": true
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not valid!"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/create" : {
+      "put" : {
+        "tags" : [ "sites" ],
+        "summary" : "Create new site",
+        "description" : "Create new pending website",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
+          "required": true,
+          "schema": {
+            "example": {
+              "name": "van",
+              "owner": "grampo",
+              "parentId": "5e907213bc17bb418517a640"
+            }
+          }
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "type": "string"
+              },
+              "example":  {
+                "result": true
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "409": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Subdomain already exists"
+              }
+            }
+          },
+          "404": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Parent not found"
               }
             }
           }
@@ -158,7 +268,7 @@
         }
       }
     },
-    "/api/sites/managePage" : {
+    "/api/sites/manage" : {
       "get" : {
         "tags" : [ "sites" ],
         "summary" : "Data for manage page",
@@ -197,6 +307,118 @@
             "schema": {
               "example": {
                 "message": "Token not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/configuration" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of configurations  which can be changed",
+        "description" : "Get list of configurations  which can be changed",
+        "produces" : [ "application/json" ],
+        "parameters" : [  {
+          "name" : "host",
+          "in" : "query",
+          "description" : "Website host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "example": {
+                "configurationFields": [
+                  "desktopLogo",
+                  "mobileLogo",
+                  "aboutObject",
+                  "desktopMap",
+                  "mobileMap",
+                  "colors"
+                ],
+                "colors": {
+                  "background": null,
+                  "font": null,
+                  "hover": null,
+                  "header": null,
+                  "button": null,
+                  "border": null,
+                  "focus": null,
+                  "links": null
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "example": {
+                "message": "Not found"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update list of configurations",
+        "description" : "Update and return list of configurations with colors",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **configuration** - configurations for app(all fields required) \n",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/siteConfigurations"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/siteConfigurations"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
               }
             }
           }
@@ -267,16 +489,28 @@
         }
       }
     },
-    "/api/sites/getConfigurationsList" : {
+    "/api/sites/moderators" : {
       "get" : {
         "tags" : [ "sites" ],
-        "summary" : "Get list of site configurations which can be changed",
-        "description" : "Return list of site configurations which can be changed",
+        "summary" : "Get list of site moderators",
+        "description" : "Return list of site moderators",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
           "name" : "host",
           "in" : "query",
           "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
           "required": true,
           "type" : "string"
         } ],
@@ -284,18 +518,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items": {
-                "type": "string"
-              },
-              "example": [
-                  "desktopLogo",
-                  "mobileLogo",
-                  "aboutObject",
-                  "desktopMap",
-                  "mobileMap",
-                  "colors"
-                ]
+              "$ref": "#/definitions/authorities"
             }
           },
           "422": {
@@ -306,61 +529,47 @@
               }
             }
           },
-          "409": {
-            "description": "ValidationError",
-            "schema": {
-              "example": {
-                "message": "Subdomain already exists"
-              }
-            }
-          },
           "404": {
-            "description": "ValidationError",
+            "description": "NotFound",
             "schema": {
               "example": {
-                "message": "Parent not found"
+                "message": "App not found"
               }
             }
           }
         }
       }
     },
-    "/api/sites/create" : {
-      "put" : {
+    "/api/sites/administrators" : {
+      "get" : {
         "tags" : [ "sites" ],
-        "summary" : "Create new site",
-        "description" : "Create new pending website",
+        "summary" : "Get list of site administrators",
+        "description" : "Return list of site administrators",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "params",
-          "in" : "body",
-          "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
-          "required": true,
-          "schema": {
-            "example": {
-              "name": "van",
-              "owner": "grampo",
-              "parentId": "5e907213bc17bb418517a640"
-            }
-          }
-        },{
+        "parameters" : [  {
           "name" : "access-token",
           "in" : "header",
-          "description" : "Hive user access token",
-          "required" : true,
+          "description" : "user access token",
+          "required": true,
           "type" : "string"
-        }],
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
+          "required": true,
+          "type" : "string"
+        } ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "type": "string"
-              },
-              "example":  {
-                "result": true
-              }
+              "$ref": "#/definitions/authorities"
             }
           },
           "422": {
@@ -371,19 +580,280 @@
               }
             }
           },
-          "409": {
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/authorities" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of site authorities",
+        "description" : "Return list of site authorities",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "name of host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of user",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/authorities"
+            }
+          },
+          "422": {
             "description": "ValidationError",
             "schema": {
               "example": {
-                "message": "Subdomain already exists"
+                "message": "Validation Error"
               }
             }
           },
           "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/tags" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of tags for certain tag category",
+        "description" : "Return list of tags for certain tag category",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "category",
+          "in" : "query",
+          "description" : "Tag Category for search",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "string",
+          "in" : "query",
+          "description" : "search string",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "example": [
+                "amdina",
+                "dish",
+                "dinner"
+              ]
+            }
+          },
+          "422": {
             "description": "ValidationError",
             "schema": {
               "example": {
-                "message": "Parent not found"
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/filters" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of object filters",
+        "description" : "Return list of object filters with tag categories for add tags",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "host",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "userName",
+          "in" : "query",
+          "description" : "host owner name",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/getObjectFilters"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update list of object filters",
+        "description" : "Update and return list of object filters with tag categories for add tags",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **objectsFilter** - objectsFilter for app(all fields required) \n",
+          "required": true,
+          "schema": {
+            "example": {
+              "host": "van.dining.gifts",
+              "userName": "grampo",
+              "objectsFilter": {
+                "restaurant": {
+                  "Cuisine": []
+                },
+                "dish": {
+                  "Ingredients": []
+                }
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/getObjectFilters"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/refunds" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of pending refunds",
+        "description" : "Return list of site pending refunds, only website admins can get this info",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "user access token",
+          "required": true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of waivio admin",
+          "required": true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/refund"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
               }
             }
           }
@@ -2233,6 +2703,84 @@
     }
   },
   "definitions" : {
+    "siteConfigurations": {
+      "type": "object",
+      "example": {
+        "userName": "olegvladim",
+        "host": "van.dining.pp.ua",
+        "configuration":{
+          "desktopLogo":"https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "aboutObject":"afd-dfeedcxcb",
+          "desktopMap":{
+            "topPoint":[34.435, 65.543],
+            "bottomPoint":[32.435, 55.543]
+          },
+          "mobileMap":{
+            "topPoint":[34.435, 65.543],
+            "bottomPoint":[32.435, 55.543]
+          },
+          "colors":{
+            "background":"4533",
+            "font":"3543",
+            "hover": "3356",
+            "header": "433",
+            "button": "634",
+            "border":"5343",
+            "focus": "3353",
+            "links": "4654"
+          }
+        }
+      }
+    },
+    "getObjectFilters": {
+      "type": "object",
+      "example": {
+        "restaurant": {
+          "Cuisine": ["asian"],
+          "Features": [],
+          "Good For": ["family"]
+        },
+        "dish": {
+          "Category": [],
+          "Ingredients": []
+        },
+        "drink": {
+          "Category": [],
+          "Ingredients": []
+        }
+      }
+    },
+    "refund": {
+      "type": "array",
+      "example": [
+        {
+          "_id": "5f7ad9c923de933796693d0b",
+          "status": "pending",
+          "description": "",
+          "rejectMessage": "",
+          "userName": "olegvladim",
+          "type": "website_refund",
+          "blockNum": 1234,
+          "createdAt": "2020-10-05T08:31:05.174Z",
+          "updatedAt": "2020-10-05T08:31:05.174Z",
+          "__v": 0,
+          "amount": 99
+        }
+      ]
+    },
+    "authorities": {
+      "type": "array",
+      "example": [
+        {
+          "_id": "5cc3215ad0555b20e1d4d2a3",
+          "name": "asd09",
+          "json_metadata": "{\"profile\":{\"about\":\"This is a Waivio bot service. It is being used to maintain Object Reference Protocol on Steem blockchain\",\"cover_image\":\"https://cdn.steemitimages.com/DQmaj3MLuivowwzq9Ks7H6oJJRWMZqMk7ScpmwjovdvdKW5/Positive%20Vibes%20(3).png\",\"location\":\"Internet\",\"name\":\"Waivio Service \",\"profile_image\":\"https://steemitimages.com/p/4HFqJv9qRjVeVQzX3gvDHytNF793bg88B7fESPieLQ8dxJ6Kt6ZDcMkQZftXp7DiLCjkepEzG4foz3EF6Us1xm5x7MMNraHbpCe8rKsNc1Gou2vSYDYYBMVCijP5JAg2jo25n6eziBrbXsNa3qeoJFBexGLxsyLTCCW\",\"website\":\"http://waiviodev.com/\",\"twitter\":\"\",\"youtube\":\"asd08\"}}",
+          "alias": "Waivio Service ",
+          "posting_json_metadata": "{\"profile\":{\"about\":\"This is a Waivio bot service. It is being used to maintain Object Reference Protocol on Steem blockchain\",\"cover_image\":\"https://cdn.steemitimages.com/DQmaj3MLuivowwzq9Ks7H6oJJRWMZqMk7ScpmwjovdvdKW5/Positive%20Vibes%20(3).png\",\"location\":\"Internet\",\"name\":\"Waivio Service \",\"profile_image\":\"https://steemitimages.com/p/4HFqJv9qRjVeVQzX3gvDHytNF793bg88B7fESPieLQ8dxJ6Kt6ZDcMkQZftXp7DiLCjkepEzG4foz3EF6Us1xm5x7MMNraHbpCe8rKsNc1Gou2vSYDYYBMVCijP5JAg2jo25n6eziBrbXsNa3qeoJFBexGLxsyLTCCW\",\"website\":\"http://waiviodev.com/\",\"twitter\":\"\",\"youtube\":\"asd08\"}}"
+        }
+      ]
+    },
     "reportPage": {
       "type": "object",
       "example": {
@@ -2280,6 +2828,10 @@
             "averageDau": 2
           }
         ],
+        "prices": {
+          "minimumValue": 1,
+          "perUser": 0.005
+        },
         "accountBalance": {
           "paid": 99,
           "avgDau": 2,

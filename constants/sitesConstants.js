@@ -20,10 +20,38 @@ exports.PAYMENT_TYPES = {
   REFUND: 'refund',
 };
 
+exports.REFUND_TYPES = {
+  WEBSITE_REFUND: 'website_refund',
+};
+
+exports.REFUND_STATUSES = {
+  PENDING: 'pending',
+  COMPLETED: 'completed',
+  REJECTED: 'rejected',
+  FROZEN: 'frozen',
+};
+
 exports.FEE = {
   minimumValue: 1,
   currency: 'HBD',
   perUser: 0.005,
   account: 'waivio.hosting',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
+};
+
+exports.SUPPORTED_COLORS = {
+  BACKGROUND: 'background',
+  FONT: 'font',
+  HOVER: 'hover',
+  HEADER: 'header',
+  BUTTON: 'button',
+  BORDER: 'border',
+  FOCUS: 'focus',
+  LINKS: 'links',
+};
+
+exports.GET_DEFAULT_COLORS = () => {
+  const colors = {};
+  Object.values(this.SUPPORTED_COLORS).forEach((color) => colors[color] = null);
+  return colors;
 };

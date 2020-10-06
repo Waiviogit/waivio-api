@@ -27,19 +27,35 @@ apiRoutes.use('/api', sitesRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
-  .get(sitesController.getUserApps);
+  .get(sitesController.getUserApps)
+  .delete(sitesController.delete);
 sitesRoutes.route('/sites/getParents')
   .get(sitesController.parentList);
 sitesRoutes.route('/sites/create')
   .put(sitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
-sitesRoutes.route('/sites/getConfigurationsList')
-  .get(sitesController.configurationsList);
-sitesRoutes.route('/sites/managePage')
+sitesRoutes.route('/sites/configuration')
+  .get(sitesController.configurationsList)
+  .post(sitesController.saveConfigurations);
+sitesRoutes.route('/sites/manage')
   .get(sitesController.managePage);
 sitesRoutes.route('/sites/report')
   .get(sitesController.report);
+sitesRoutes.route('/sites/refunds')
+  .get(sitesController.refundList);
+sitesRoutes.route('/sites/administrators')
+  .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/moderators')
+  .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/authorities')
+  .get(sitesController.siteAuthorities);
+sitesRoutes.route('/sites/filters')
+  .get(sitesController.getObjectFilters)
+  .post(sitesController.saveObjectFilters);
+sitesRoutes.route('/sites/tags')
+  .get(sitesController.findTags);
+
 // endregion
 
 // region Wobject

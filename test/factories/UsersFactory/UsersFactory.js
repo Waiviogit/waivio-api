@@ -3,7 +3,7 @@ const { REFERRAL_STATUSES } = require('constants/referralData');
 const { User, faker } = require('test/testHelper');
 
 const Create = async ({
-  name, wobjects_weight, users_follow, objects_follow, count_posts,
+  name, wobjects_weight, users_follow, objects_follow, count_posts, alias,
   stage_version, json_metadata, posting_json_metadata, referral, referralStatus,
 } = {}) => {
   const userName = name || faker.name.firstName().toLowerCase();
@@ -12,6 +12,7 @@ const Create = async ({
   if (existUser) return { user: existUser };
   const user = await User.create({
     name: userName,
+    alias: alias || '',
     wobjects_weight: wobjects_weight || 0,
     users_follow: users_follow || [],
     objects_follow: objects_follow || [],
