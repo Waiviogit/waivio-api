@@ -763,4 +763,71 @@ describe('On wobjectHelper', async () => {
       expect(field.approvePercent).to.be.eq(100);
     });
   });
+
+  describe('On owner vote', async () => {
+    describe('On owner & admin upvote', async () => {
+      let object, result, body1, body2;
+      beforeEach(async () => {
+        body1 = faker.random.string();
+        body2 = faker.random.string();
+        const name = FIELDS_NAMES.NAME;
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body: body1,
+          activeVotes: [{
+            voter: admin,
+            percent: 100,
+            weight: 301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }],
+        }));
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body: body2,
+          rootWobj: object.author_permlink,
+          activeVotes: [{
+            voter: app.owner,
+            percent: 100,
+            weight: 301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(5, 'day').valueOf()),
+          }],
+        }));
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        });
+      });
+      it('should return name which was upvoted by owner', async () => {
+        expect(result[FIELDS_NAMES.NAME]).to.be.eq(body2);
+      });
+    });
+    describe('On owner downvote& admin upvote', async () => {
+      let object, result, body;
+      beforeEach(async () => {
+        body = faker.random.string();
+
+        const name = FIELDS_NAMES.NAME;
+        ({ wobject: object } = await AppendObjectFactory.Create({
+          name,
+          body,
+          activeVotes: [{
+            voter: admin,
+            percent: 100,
+            weight: 301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          }, {
+            voter: app.owner,
+            percent: -100,
+            weight: -301,
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(5, 'day').valueOf()),
+          }],
+        }));
+        result = await wObjectHelper.processWobjects({
+          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        });
+      });
+      it('should return name which was upvoted by owner', async () => {
+        expect(result[FIELDS_NAMES.NAME]).to.be.undefined;
+      });
+    });
+  });
 });
