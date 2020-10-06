@@ -47,13 +47,13 @@ const MapPoints = new Schema({
 
 const Colors = new Schema({
   [SUPPORTED_COLORS.BACKGROUND]: { type: String },
-  [SUPPORTED_COLORS.FONT]: { type: String, default: null },
-  [SUPPORTED_COLORS.HOVER]: { type: String, default: null },
-  [SUPPORTED_COLORS.HEADER]: { type: String, default: null },
-  [SUPPORTED_COLORS.BUTTON]: { type: String, default: null },
-  [SUPPORTED_COLORS.BORDER]: { type: String, default: null },
-  [SUPPORTED_COLORS.FOCUS]: { type: String, default: null },
-  [SUPPORTED_COLORS.LINKS]: { type: String, default: null },
+  [SUPPORTED_COLORS.FONT]: { type: String, default: '' },
+  [SUPPORTED_COLORS.HOVER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.HEADER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.BUTTON]: { type: String, default: '' },
+  [SUPPORTED_COLORS.BORDER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.FOCUS]: { type: String, default: '' },
+  [SUPPORTED_COLORS.LINKS]: { type: String, default: '' },
 }, { _id: false });
 
 const Configuration = new Schema({
