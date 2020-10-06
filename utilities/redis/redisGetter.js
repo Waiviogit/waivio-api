@@ -1,5 +1,5 @@
 const {
-  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient,
+  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
 } = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
@@ -75,3 +75,10 @@ exports.getTagCategories = async ({ key, start, end }) => {
     return { error };
   }
 };
+
+/**
+ * Get active users from redis for collect statistics and invoicing
+ */
+exports.getSiteActiveUser = async (key) => appUsersStatistics.smembersAsync(key);
+
+exports.deleteSiteActiveUser = async (key) => appUsersStatistics.sdelAsync(key);
