@@ -2823,6 +2823,7 @@
           {
             "status": "pending",
             "name": "van",
+            "host": "van.dining.pp.ua",
             "parent": "dining.pp.ua",
             "averageDau": 2
           }
