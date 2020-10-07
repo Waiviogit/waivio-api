@@ -59,4 +59,4 @@ const base64ByUrl = async (url) => axios
   .then((response) => new Buffer(response.data, 'binary').toString('base64'))
   .catch(() => null);
 
-module.exports = { prepareImage, base64ByUrl };
+module.exports = { prepareImage, base64ByUrl, generateFileName };
