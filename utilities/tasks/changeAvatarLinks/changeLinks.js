@@ -38,5 +38,6 @@ const uploadImage = async (url) => {
     return _.get(result, 'data.image', url);
   } catch (error) {
     console.error(error.message);
+    return url;
   }
 };
