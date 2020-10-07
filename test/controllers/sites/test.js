@@ -177,7 +177,7 @@ describe('On sitesController', async () => {
     beforeEach(async () => {
       sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: true }));
       myApp = await AppFactory.Create({
-        canBeExtended: true, inherited: false, parent: parent._id, host: `${name}.${parent.host}`, owner,
+        canBeExtended: false, inherited: true, parent: parent._id, host: `${name}.${parent.host}`, owner,
       });
     });
     describe('On get configurations', async () => {
