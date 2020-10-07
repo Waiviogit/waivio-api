@@ -29,6 +29,8 @@ apiRoutes.use('/api', sitesRoutes);
 sitesRoutes.route('/sites')
   .get(sitesController.getUserApps)
   .delete(sitesController.delete);
+sitesRoutes.route('/sites/info')
+  .get(sitesController.info);
 sitesRoutes.route('/sites/getParents')
   .get(sitesController.parentList);
 sitesRoutes.route('/sites/create')

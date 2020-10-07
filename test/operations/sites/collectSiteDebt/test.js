@@ -1,0 +1,135 @@
+const {
+  faker, expect, sinon, redis, dropDatabase, _, App, moment, AppModel,
+} = require('test/testHelper');
+const Sentry = require('@sentry/node');
+const { collectSiteDebts } = require('utilities/operations/sites');
+const {
+  STATUSES, FEE, PAYMENT_TYPES, redisStatisticsKey,
+} = require('constants/sitesConstants');
+const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { OBJECT_BOT } = require('constants/requestData');
+const { AppFactory, WebsitePaymentsFactory } = require('test/factories');
+
+describe('on collectSiteDebts', async () => {
+  describe('on dailyDebt', async () => {
+    let parent;
+    beforeEach(async () => {
+      await dropDatabase();
+      sinon.stub(Sentry, 'captureException').returns('Ok');
+      parent = await AppFactory.Create({ inherited: false, canBeExtended: true });
+    });
+    afterEach(async () => {
+      sinon.restore();
+    });
+    describe('on OK', async () => {
+      beforeEach(() => {
+        sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ result: true }));
+      });
+      describe('on active website', async () => {
+        let app;
+        beforeEach(async () => {
+          const name = faker.random.string();
+          app = await AppFactory.Create({ host: `${name}.${parent.host}`, status: STATUSES.ACTIVE });
+        });
+        describe('Without users', async () => {
+          let amount;
+          beforeEach(async () => {
+            amount = _.random(10, 100);
+            await WebsitePaymentsFactory.Create({ amount, name: app.owner });
+          });
+          it('should call object bot method', async () => {
+            await collectSiteDebts.dailyDebt(1);
+            expect(objectBotRequests.sendCustomJson.calledOnce).to.be.true;
+          });
+          it('should call object bot method with correct params', async () => {
+            await collectSiteDebts.dailyDebt(1);
+            expect(objectBotRequests.sendCustomJson.calledWith({
+              amount: FEE.minimumValue, userName: app.owner, countUsers: 0, host: app.host,
+            },
+            `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+          });
+          it('should change site status if invoice > payable', async () => {
+            await WebsitePaymentsFactory.Create(
+              { amount: amount + 1, name: app.owner, type: PAYMENT_TYPES.WRITE_OFF },
+            );
+            await collectSiteDebts.dailyDebt(1);
+            const result = await App.findOne({ _id: app._id });
+            expect(result.status).to.be.eq(STATUSES.SUSPENDED);
+          });
+        });
+        describe('With many users', async () => {
+          let counter, amount;
+          beforeEach(async () => {
+            counter = _.random(1000, 2000);
+            amount = _.random(10, 100);
+            const users = [];
+            for (let i = 0; i < counter; i++) users.push(faker.internet.ip());
+            await redis.appUsersStatistics.saddAsync(`${redisStatisticsKey}:${app.host}`, ...users);
+            await WebsitePaymentsFactory.Create({ amount, name: app.owner });
+          });
+          it('should call object bot method with correct params ', async () => {
+            await collectSiteDebts.dailyDebt(1);
+            expect(objectBotRequests.sendCustomJson.calledWith({
+              amount: FEE.perUser * counter, userName: app.owner, countUsers: counter, host: app.host,
+            },
+            `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+          });
+          it('should change site status with amount > payable', async () => {
+            await WebsitePaymentsFactory.Create(
+              { amount: amount + 1 - FEE.perUser * counter, name: app.owner, type: PAYMENT_TYPES.WRITE_OFF },
+            );
+            await collectSiteDebts.dailyDebt(1);
+            const result = await App.findOne({ _id: app._id });
+            expect(result.status).to.be.eq(STATUSES.SUSPENDED);
+          });
+          it('should delete keys from redis', async () => {
+            await collectSiteDebts.dailyDebt(1);
+            const result = await redis.appUsersStatistics.smembersAsync(`${redisStatisticsKey}:${app.host}`);
+            expect(result).to.have.length(0);
+          });
+        });
+      });
+
+      describe('on deactivated website', async () => {
+        let app;
+        beforeEach(async () => {
+          const name = faker.random.string();
+          app = await AppFactory.Create({
+            host: `${name}.${parent.host}`,
+            status: STATUSES.INACTIVE,
+            deactivatedAt: moment.utc().subtract(1, 'h').toDate(),
+          });
+        });
+        it('should call objects bot method with correct params if site deactivated < day ago', async () => {
+          await collectSiteDebts.dailyDebt(1);
+          expect(objectBotRequests.sendCustomJson.calledWith({
+            amount: FEE.minimumValue, userName: app.owner, countUsers: 0, host: app.host,
+          },
+          `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+        });
+        it('should not call objects bot method if site deactivated > day ago', async () => {
+          await App.updateOne({ _id: app._id }, { deactivatedAt: moment.utc().subtract(2, 'd').toDate() });
+          await collectSiteDebts.dailyDebt(1);
+          expect(objectBotRequests.sendCustomJson.notCalled).to.be.true;
+        });
+      });
+    });
+
+    describe('on error', async () => {
+      beforeEach(async () => {
+        const name = faker.random.string();
+        await AppFactory.Create({ host: `${name}.${parent.host}`, status: STATUSES.ACTIVE });
+      });
+      it('should call sentry if object bot method return error', async () => {
+        sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ error: true }));
+        await collectSiteDebts.dailyDebt(1);
+        expect(Sentry.captureException.calledOnce).to.be.true;
+      });
+      it('should call sentry method with DB error', async () => {
+        sinon.stub(AppModel, 'find').returns(Promise.resolve({ error: true }));
+        await collectSiteDebts.dailyDebt(1);
+        expect(Sentry.captureException.calledOnce).to.be.true;
+      });
+    });
+  });
+});

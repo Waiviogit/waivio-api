@@ -2,19 +2,25 @@ const _ = require('lodash');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { App, websitePayments } = require('models');
+const { App, websitePayments, websiteRefunds } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { sitesHelper } = require('utilities/helpers');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
-const { redisStatisticsKey, FEE, STATUSES } = require('constants/sitesConstants');
+const {
+  redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES,
+} = require('constants/sitesConstants');
 
-exports.dailyDebt = async () => {
-  const { result: apps, error } = await App.find({ inherited: true });
-  if (error) await sendError(error);
+exports.dailyDebt = async (timeout = 200) => {
+  const { result: apps, error } = await App.find({
+    inherited: true,
+    status: { $in: [STATUSES.INACTIVE, STATUSES.PENDING, STATUSES.ACTIVE] },
+  });
+  if (error) return sendError(error);
   for (const app of apps) {
     if (app.deactivatedAt && moment.utc(app.deactivatedAt).valueOf()
         < moment.utc().subtract(1, 'day').startOf('day').valueOf()) {
+      await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
       continue;
     }
 
@@ -32,19 +38,22 @@ exports.dailyDebt = async () => {
       : _.round(countUsers * FEE.perUser, 3);
 
     if (payable < invoice) {
-      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.FROZEN });
+      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.SUSPENDED });
+      await websiteRefunds.deleteOne(
+        { status: REFUND_STATUSES.PENDING, type: REFUND_TYPES.WEBSITE_REFUND, userName: app.owner },
+      );
     }
 
     const data = {
-      invoice, userName: app.owner, countUsers, host: app.host,
+      amount: invoice, userName: app.owner, countUsers, host: app.host,
     };
     const { error: createError } = await objectBotRequests.sendCustomJson(data,
-      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`);
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
     if (createError) {
-      Sentry.captureException(Object.assign(error, data));
-      await sendSentryNotification();
+      await sendError(Object.assign(createError, data));
     }
     await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
+    await new Promise((resolve) => setTimeout(resolve, timeout));
   }
 };
 

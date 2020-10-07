@@ -33,6 +33,7 @@ const dropDatabase = async () => {
 module.exports = {
   app: require('app'),
   ...require('database').models,
+  ...require('utilities/redis'),
   ...require('utilities/helpers'),
   ...require('utilities/steemApi'),
   sinon: require('sinon'),
