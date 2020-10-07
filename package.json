@@ -11,6 +11,7 @@
     "fixFollowers": "NODE_PATH=. node ./utilities/tasks/updateUserFollowers/run.js",
     "maloneTask": "NODE_PATH=. node ./utilities/tasks/maloneTask/run.js",
     "bellToSubscriptions": "NODE_PATH=. node ./utilities/tasks/bellToSubscriptions/run.js",
+    "changeAvatarLinks": "NODE_PATH=. node ./utilities/tasks/changeAvatarLinks/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
@@ -30,6 +31,7 @@
     "dsteem": "^0.10.1",
     "exif-parser": "^0.1.12",
     "express": "~4.16.0",
+    "form-data": "^3.0.0",
     "formidable": "^1.2.1",
     "franc-min": "^4.1.0",
     "fs": "^0.0.1-security",
