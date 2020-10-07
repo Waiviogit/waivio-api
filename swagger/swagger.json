@@ -121,6 +121,39 @@
         }
       }
     },
+    "/api/sites/info" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get site info",
+        "description" : "Return special fields from app",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "host",
+          "in" : "query",
+          "description" : "host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "example": {
+                  "status": "active"
+                }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/create" : {
       "put" : {
         "tags" : [ "sites" ],

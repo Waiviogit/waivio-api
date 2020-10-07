@@ -3,7 +3,7 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove
+    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove,
   },
 } = require('utilities/operations');
 
@@ -18,6 +18,16 @@ exports.create = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: { result } };
+  next();
+};
+
+exports.info = async (req, res, next) => {
+  if (!req.query.host) return next({ status: 422, message: 'App host is required' });
+
+  const { result, error } = await sitesHelper.siteInfo(req.query.host);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
   next();
 };
 
