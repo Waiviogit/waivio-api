@@ -2,12 +2,14 @@ const _ = require('lodash');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { App, websitePayments } = require('models');
+const { App, websitePayments, websiteRefunds } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { sitesHelper } = require('utilities/helpers');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
-const { redisStatisticsKey, FEE, STATUSES } = require('constants/sitesConstants');
+const {
+  redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES,
+} = require('constants/sitesConstants');
 
 exports.dailyDebt = async () => {
   const { result: apps, error } = await App.find({ inherited: true });
@@ -32,7 +34,10 @@ exports.dailyDebt = async () => {
       : _.round(countUsers * FEE.perUser, 3);
 
     if (payable < invoice) {
-      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.FROZEN });
+      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.SUSPENDED });
+      await websiteRefunds.deleteOne(
+        { status: REFUND_STATUSES.PENDING, type: REFUND_TYPES.WEBSITE_REFUND, userName: app.owner },
+      );
     }
 
     const data = {
