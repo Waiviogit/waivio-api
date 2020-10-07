@@ -11,12 +11,16 @@ const {
   redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES,
 } = require('constants/sitesConstants');
 
-exports.dailyDebt = async () => {
-  const { result: apps, error } = await App.find({ inherited: true });
-  if (error) await sendError(error);
+exports.dailyDebt = async (timeout = 200) => {
+  const { result: apps, error } = await App.find({
+    inherited: true,
+    status: { $in: [STATUSES.INACTIVE, STATUSES.PENDING, STATUSES.ACTIVE] },
+  });
+  if (error) return sendError(error);
   for (const app of apps) {
     if (app.deactivatedAt && moment.utc(app.deactivatedAt).valueOf()
         < moment.utc().subtract(1, 'day').startOf('day').valueOf()) {
+      await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
       continue;
     }
 
@@ -41,15 +45,15 @@ exports.dailyDebt = async () => {
     }
 
     const data = {
-      invoice, userName: app.owner, countUsers, host: app.host,
+      amount: invoice, userName: app.owner, countUsers, host: app.host,
     };
     const { error: createError } = await objectBotRequests.sendCustomJson(data,
-      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`);
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
     if (createError) {
-      Sentry.captureException(Object.assign(error, data));
-      await sendSentryNotification();
+      await sendError(Object.assign(createError, data));
     }
     await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
+    await new Promise((resolve) => setTimeout(resolve, timeout));
   }
 };
 
