@@ -16,5 +16,5 @@ exports.createApp = async (params) => {
       error: { status: _.get(createError, 'response.status'), message: _.get(createError, 'response.statusText', 'Forbidden') },
     };
   }
-  return { result: !!result };
+  return { result };
 };
