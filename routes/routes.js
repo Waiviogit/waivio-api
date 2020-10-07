@@ -28,6 +28,7 @@ apiRoutes.use('/api', sitesRoutes);
 // region Sites
 sitesRoutes.route('/sites')
   .get(sitesController.getUserApps)
+  .post(sitesController.firstLoad)
   .delete(sitesController.delete);
 sitesRoutes.route('/sites/info')
   .get(sitesController.info);

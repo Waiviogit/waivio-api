@@ -5,7 +5,7 @@ const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 exports.sendCustomJson = async (data, url, sendSentry = true) => {
   try {
     const result = await axios.post(url, data, { headers: { api_key: process.env.API_KEY } });
-    return { result: result.status === 200 };
+    return { result: result.data };
   } catch (error) {
     if (sendSentry) {
       Sentry.captureException(error);

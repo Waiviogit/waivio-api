@@ -9,6 +9,12 @@ exports.STATUSES = {
   SUSPENDED: 'suspended',
 };
 
+exports.INACTIVE_STATUSES = [
+  this.STATUSES.SUSPENDED,
+  this.STATUSES.INACTIVE,
+  this.STATUSES.PENDING,
+];
+
 exports.ACTIVE_STATUSES = [
   this.STATUSES.ACTIVE,
   this.STATUSES.PENDING,
