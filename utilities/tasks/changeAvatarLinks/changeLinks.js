@@ -35,7 +35,7 @@ const uploadImage = async (url) => {
         'content-type': `multipart/form-data; boundary=${bodyFormData._boundary}`,
       },
     });
-    return result.data.image;
+    return _.get(result, 'data.image', url);
   } catch (error) {
     console.error(error.message);
   }
