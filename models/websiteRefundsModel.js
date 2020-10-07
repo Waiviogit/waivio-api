@@ -15,3 +15,12 @@ exports.findOne = async (condition) => {
     return { error };
   }
 };
+
+exports.deleteOne = async (condition) => {
+  try {
+    return { result: await WebsiteRefunds.deleteOne(condition).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+

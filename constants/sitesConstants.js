@@ -7,7 +7,6 @@ exports.STATUSES = {
   INACTIVE: 'inactive',
   PENDING: 'pending',
   SUSPENDED: 'suspended',
-  FROZEN: 'frozen',
 };
 
 exports.ACTIVE_STATUSES = [

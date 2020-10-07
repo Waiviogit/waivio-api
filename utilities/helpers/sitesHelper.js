@@ -120,3 +120,10 @@ exports.getWebsiteData = (payments, site) => {
       : 0,
   };
 };
+
+exports.siteInfo = async (host) => {
+  const { result: app } = await App.findOne({ host, inherited: true });
+  if (!app) return { error: { status: 404, message: 'App not found!' } };
+
+  return { result: _.pick(app, ['status']) };
+};
