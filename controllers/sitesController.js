@@ -206,3 +206,11 @@ exports.findTags = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
+
+exports.firstLoad = async (req, res, next) => {
+  const { result, error } = await sitesHelper.firstLoad();
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};

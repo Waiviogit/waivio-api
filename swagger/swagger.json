@@ -77,6 +77,28 @@
           }
         }
       },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get info about app for first load",
+        "description" : "Return configurations for first load app, get host from origin headers",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/firstLoad"
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "schema": {
+              "example": {
+                "message": "App not found!"
+              }
+            }
+          }
+        }
+      },
       "delete" : {
         "tags" : [ "sites" ],
         "summary" : "Delete one user website ",
@@ -2735,6 +2757,67 @@
     }
   },
   "definitions" : {
+    "firstLoad": {
+      "type": "object",
+      "example": {
+        "configuration": {
+          "configurationFields": [
+            "aboutObject",
+            "colors",
+            "desktopLogo",
+            "desktopMap",
+            "mobileLogo",
+            "mobileMap"
+          ],
+          "desktopLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
+          "aboutObject": "hive",
+          "desktopMap": {
+            "topPoint": [
+              34.435,
+              65.543
+            ],
+            "bottomPoint": [
+              32.435,
+              55.543
+            ]
+          },
+          "mobileMap": {
+            "topPoint": [
+              34.435,
+              65.543
+            ],
+            "bottomPoint": [
+              32.435,
+              55.543
+            ]
+          },
+          "colors": {
+            "background": "4533",
+            "font": "3543",
+            "hover": "3356",
+            "header": "433",
+            "button": "634",
+            "border": "5343",
+            "focus": "3353",
+            "links": "4654"
+          }
+        },
+        "host": "van.dining.pp.ua",
+        "googleAnalyticsTag": null,
+        "beneficiary": {
+          "account": "waivio",
+          "percent": 300
+        },
+        "supported_object_types": [
+          "dish",
+          "restaurant",
+          "drink"
+        ],
+        "status": "active",
+        "mainPage": "dining"
+      }
+    },
     "siteConfigurations": {
       "type": "object",
       "example": {
