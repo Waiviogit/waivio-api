@@ -1,6 +1,7 @@
 const _ = require('lodash');
-const { Comment, User } = require('models');
+const { Comment, User, App } = require('models');
 const { postsUtil } = require('utilities/steemApi');
+const { getNamespace } = require('cls-hooked');
 
 /**
  * Merge data between array of steemComments and dbComments
@@ -37,8 +38,17 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
     const userInfo = _.find(usersData, (user) => user.name === authorName);
     comment.author_reputation = _.get(userInfo, 'wobjects_weight', 0);
   });
-
-  return resComments;
+  /** Check for moderator downvote */
+  const filteredComments = [];
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const { result: app } = await App.findOne({ host });
+  for (const comment of resComments) {
+    if (!await this.checkBlackListedComment({ app, votes: comment.active_votes })) {
+      filteredComments.push(comment);
+    }
+  }
+  return filteredComments;
 };
 
 /**
@@ -66,4 +76,12 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
     }
     return dbComment;
   });
+};
+
+/** Check for moderators downvote */
+exports.checkBlackListedComment = async ({ app, votes }) => {
+  const downVoteNames = _.map(votes, (vote) => {
+    if (+vote.percent < 0) return vote.voter;
+  }) || [];
+  return !!_.intersection(_.get(app, 'moderators', []), downVoteNames).length;
 };
