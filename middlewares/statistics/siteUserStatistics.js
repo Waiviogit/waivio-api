@@ -10,8 +10,9 @@ exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
   const ip = req.headers['x-real-ip'];
-  const { result } = await App.findOne({ host });
-  if (!result) return next({ status: 404, message: 'App not found!' });
+  const { result, error } = await App.findOne({ host });
+  if (error) return next(error);
+  if (!result) return res.redirect(303, `https://${config.appHost}`);
 
   if (_.includes(INACTIVE_STATUSES, result.status)) {
     const { origin, referer } = req.headers;

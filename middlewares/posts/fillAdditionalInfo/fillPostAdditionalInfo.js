@@ -1,8 +1,7 @@
 const _ = require('lodash');
 const { schema } = require('middlewares/posts/fillAdditionalInfo/schema');
-const userModel = require('models/UserModel');
 const { postHelper, campaignsHelper } = require('utilities/helpers');
-
+const userModel = require('models/UserModel');
 /**
  * Middleware which fill some specific info on each post before send those to client.
  * - fill wobjects on post by full info about wobjects(with fields and others);
@@ -25,9 +24,7 @@ exports.fill = async (req, res, next) => {
     // replace reblog post blank to source post
     await postHelper.fillReblogs(res.result.json, userName);
     // fill wobjects on post by full info about wobjects(with fields and others);
-    res.result.json = await fillObjects(
-      res.result.json, _.get(req, 'headers.app'), userName,
-    );
+    res.result.json = await fillObjects(res.result.json, userName);
     // add current "author_wobjects_weight" to each post;
     await postHelper.addAuthorWobjectsWeight(res.result.json);
   } else {
@@ -43,7 +40,7 @@ exports.fill = async (req, res, next) => {
   next();
 };
 
-const fillObjects = async (posts, appName, userName, wobjectsPath = 'fullObjects') => {
+const fillObjects = async (posts, userName, wobjectsPath = 'fullObjects') => {
   let user;
   if (userName) {
     ({ user } = await userModel.getOne(userName));
@@ -54,7 +51,7 @@ const fillObjects = async (posts, appName, userName, wobjectsPath = 'fullObjects
     }
     post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
     post.wobjects = await campaignsHelper.addCampaignsToWobjects(
-      { wobjects: post.wobjects, appName, user },
+      { wobjects: post.wobjects, user },
     );
     delete post[wobjectsPath];
   }

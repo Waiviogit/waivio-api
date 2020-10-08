@@ -128,7 +128,12 @@
             "schema" : {
               "type" : "object",
               "example":  {
-                "result": true
+                "result": {
+                  "id": "c779b850f073f631c1f3aaf1ec5af44931dc074f",
+                  "block_num": 47590315,
+                  "trx_num": 8,
+                  "expired": false
+                }
               }
             }
           },
@@ -209,8 +214,13 @@
               "items" : {
                 "type": "string"
               },
-              "example":  {
-                "result": true
+              "example": {
+                "result": {
+                  "id": "c779b850f073f631c1f3aaf1ec5af44931dc074f",
+                  "block_num": 47590315,
+                  "trx_num": 8,
+                  "expired": false
+                }
               }
             }
           },

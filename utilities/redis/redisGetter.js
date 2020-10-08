@@ -64,7 +64,7 @@ exports.getTrendFeedCache = async ({
   const appPrefix = app ? `${app}:` : '';
   return {
     // ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
-    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`),
   };
 };
 
