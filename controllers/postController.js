@@ -14,9 +14,8 @@ exports.show = async (req, res, next) => {
   }
   const { post, error } = await getSinglePost(value.author, value.permlink);
 
-  if (error) {
-    return next(error);
-  }
+  if (error) return next(error);
+
   res.result = { status: 200, json: post };
   next();
 };

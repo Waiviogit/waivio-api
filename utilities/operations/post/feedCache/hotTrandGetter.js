@@ -1,4 +1,6 @@
 const _ = require('lodash');
+const config = require('config');
+const { getNamespace } = require('cls-hooked');
 const { redisGetter } = require('utilities/redis');
 const { Post } = require('database').models;
 
@@ -29,11 +31,15 @@ exports.getHot = async ({
 
   // get ids of needed posts range
   const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
-
+  const session = getNamespace('request-session');
+  let host = session.get('host');
+  if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds } },
+    cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
     sort: { children: -1 },
+    limit,
+    skip,
   });
 };
 
@@ -67,10 +73,15 @@ exports.getTrend = async ({
   // get ids of needed posts range
   const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
 
+  const session = getNamespace('request-session');
+  let host = session.get('host');
+  if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds } },
+    cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
     sort: { net_rshares: -1 },
+    skip,
+    limit,
   });
 };
 
@@ -89,17 +100,21 @@ function getTopFromArrays(arrays, limit, skip) {
       return { id: data[1], weight: +data[0] };
     })
     .orderBy(['weight'], ['desc'])
-    .slice(skip, skip + limit)
+    // .slice(skip, skip + limit)
     .map('id')
     .value();
 }
 
-const getFromDb = async ({ cond, sort }) => {
+const getFromDb = async ({
+  cond, sort, skip, limit,
+}) => {
   try {
     return {
       posts: await Post
         .find(cond)
         .sort(sort)
+        .skip(skip)
+        .limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
     };

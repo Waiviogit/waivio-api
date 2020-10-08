@@ -1,6 +1,7 @@
 const _ = require('lodash');
-const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
-const { Post, Comment } = require('models');
+const { getNamespace } = require('cls-hooked');
+const { getPostObjects, mergePostData, checkBlackListedComment } = require('utilities/helpers/postHelper');
+const { Post, Comment, App } = require('models');
 const { postsUtil } = require('utilities/steemApi');
 
 /**
@@ -15,30 +16,36 @@ const { postsUtil } = require('utilities/steemApi');
  * @returns {Promise<{post: Object}|{error: Object}>}
  */
 module.exports = async (author, permlink) => {
-  const postResult = await getPost({ author, permlink });
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const { result: app } = await App.findOne({ host });
+  const { error, post: postResult } = await getPost({ author, permlink, host });
 
-  if (_.get(postResult, 'error')) return { error: postResult.error };
-  if (_.get(postResult, 'post')) return { post: postResult.post };
+  if (error) return { error };
+  if (postResult) return { post: postResult };
 
-  const commentResult = await getComment({ author, permlink });
+  const { error: commentError, comment: commentResult } = await getComment({ author, permlink, app });
 
-  if (_.get(commentResult, 'error')) return { error: commentResult.error };
-  if (_.get(commentResult, 'comment')) return { post: commentResult.comment };
+  if (commentError) return { error: commentError };
+  return { post: commentResult };
 };
 
-const getPost = async ({ author, permlink }) => {
+const getPost = async ({ author, permlink, host }) => {
   // get post with specified author(ordinary post)
   const { result: dbPosts, error: dbError } = await Post.findByBothAuthors({ author, permlink });
 
   if (dbError) return { error: dbError };
 
   const post = _.get(dbPosts, '[0]');
+  /** Not return post which was downvoted by moderator */
+  if (_.includes(_.get(post, 'blocked_for_apps', []), host)) {
+    return { error: { status: 404, message: 'Post not found!' } };
+  }
 
   const { post: steemPost } = await postsUtil
     .getPost(post ? post.root_author || post.author : author, permlink);
 
-  if (!steemPost || steemPost.parent_author) return;
-  // if( steemError ) return { error: steemError };
+  if (!steemPost || steemPost.parent_author) return { post: null };
 
   let resultPost = steemPost;
   const wobjsResult = await getPostObjects(steemPost.root_author, permlink);
@@ -54,7 +61,7 @@ const getPost = async ({ author, permlink }) => {
   return { post: resultPost };
 };
 
-const getComment = async ({ author, permlink }) => {
+const getComment = async ({ author, permlink, app }) => {
   const { result, error } = await Comment.findByCond({
     $or: [{ author, permlink }, { 'guestInfo.userId': author, permlink }],
   });
@@ -64,17 +71,26 @@ const getComment = async ({ author, permlink }) => {
   // if comment not found in DB, it still might exist in STEEM
   if (!_.get(result, '[0]')) {
     const { post: comment, error: steemError } = await postsUtil.getPost(author, permlink);
+    if (steemError) return { error: steemError };
+    if (await checkBlackListedComment({ app, votes: comment.active_votes })) {
+      return { error: { status: 404, message: 'Post not found!' } };
+    }
 
-    return { comment, error: steemError };
+    return { comment };
   }
-  return mergeCommentData(result[0]);
+  return mergeCommentData(result[0], app);
 };
 
-const mergeCommentData = async (comment) => {
+const mergeCommentData = async (comment, app) => {
   const { post: steemComment, error } = await postsUtil.getPost(comment.author, comment.permlink);
-
   if (error) return { error };
+
   // add guest votes to comment votes (if they exists)
   steemComment.active_votes.push(...comment.active_votes);
+  // Check for moderator downvote
+  if (await checkBlackListedComment({ app, votes: steemComment.active_votes })) {
+    return { error: { status: 404, message: 'Post not found!' } };
+  }
+
   return { comment: { ...steemComment, guestInfo: comment.guestInfo } };
 };
