@@ -65,16 +65,13 @@ exports.getByFollowLists = async ({
 
   const cond = {
     $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-    blocked_for_apps: { $nin: [host] },
+    blocked_for_apps: { $ne: host },
   };
   // for filter by App wobjects
   if (_.get(filtersData, 'require_wobjects')) {
     cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
   }
-  // for moderate posts by App
-  if (_.get(filtersData, 'forApp')) {
-    cond.blocked_for_apps = { $ne: filtersData.forApp };
-  }
+
   if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
 
   const postsQuery = PostModel.find(cond)
@@ -129,7 +126,7 @@ exports.getBlog = async ({ name, skip = 0, limit = 30 }) => {
     const host = session.get('host');
     return {
       posts: await PostModel
-        .find({ author: name, blocked_for_apps: { $nin: [host] } })
+        .find({ author: name, blocked_for_apps: { $ne: host } })
         .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
@@ -173,7 +170,7 @@ exports.getManyPosts = async (postsRefs) => {
     const host = session.get('host');
     return {
       posts: await PostModel
-        .find({ $or: [...postsRefs], blocked_for_apps: { $nin: [host] } })
+        .find({ $or: [...postsRefs], blocked_for_apps: { $ne: host } })
         .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
         .lean(),
     };
