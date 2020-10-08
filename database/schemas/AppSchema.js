@@ -119,7 +119,7 @@ AppSchema.pre('save', async function (next) {
     this._doc.supported_object_types = parent.supported_object_types;
     this._doc.object_filters = parent.object_filters;
     this._doc.mainPage = parent.mainPage;
-    if (!this._.doc.configuration) this._doc.configuration = {};
+    if (!this._doc.configuration) this._doc.configuration = {};
     this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
   }
   next();

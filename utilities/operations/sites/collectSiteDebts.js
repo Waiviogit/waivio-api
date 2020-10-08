@@ -37,20 +37,23 @@ exports.dailyDebt = async (timeout = 200) => {
       ? FEE.minimumValue
       : _.round(countUsers * FEE.perUser, 3);
 
-    if (payable < invoice) {
-      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.SUSPENDED });
-      await websiteRefunds.deleteOne(
-        { status: REFUND_STATUSES.PENDING, type: REFUND_TYPES.WEBSITE_REFUND, userName: app.owner },
-      );
-    }
-
     const data = {
       amount: invoice, userName: app.owner, countUsers, host: app.host,
     };
     const { error: createError } = await objectBotRequests.sendCustomJson(data,
       `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
     if (createError) {
+      console.error(`Request for create invoice for host ${data.host} 
+      with amount ${data.amount}, daily users: ${data.countUsers} failed!`);
       await sendError(Object.assign(createError, data));
+      continue;
+    }
+    /** If invoice sent - check for suspended */
+    if (payable < invoice) {
+      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.SUSPENDED });
+      await websiteRefunds.deleteOne(
+        { status: REFUND_STATUSES.PENDING, type: REFUND_TYPES.WEBSITE_REFUND, userName: app.owner },
+      );
     }
     await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
     await new Promise((resolve) => setTimeout(resolve, timeout));

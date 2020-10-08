@@ -1,6 +1,7 @@
 const {
   faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment, User, WebsitePayments,
 } = require('test/testHelper');
+const { getNamespace } = require('cls-hooked');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
@@ -21,8 +22,10 @@ describe('On sitesController', async () => {
     };
     configuration = configurationMock();
     parent = await AppFactory.Create({
-      canBeExtended: true, inherited: false, filters, configuration,
+      canBeExtended: true, inherited: false, filters, configuration, status: STATUSES.ACTIVE,
     });
+    const session = getNamespace('request-session');
+    sinon.stub(session, 'get').returns(parent.host);
   });
   afterEach(() => {
     sinon.restore();

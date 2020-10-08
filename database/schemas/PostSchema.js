@@ -17,10 +17,9 @@ const PostSchema = new Schema({
   depth: { type: Number, default: 0 },
   total_vote_weight: { type: Number, default: 0 },
   active_votes: [{
-    voter: { type: String, required: true },
-    author: { type: String, required: true },
-    permlink: { type: String, required: true },
-    weight: { type: Number, required: true },
+    voter: { type: String },
+    weight: { type: Number },
+    percent: { type: Number },
   }],
   wobjects: [{
     author_permlink: { type: String },

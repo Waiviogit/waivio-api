@@ -1,9 +1,9 @@
 const {
   faker, chai, expect, dropDatabase, app, sinon, App,
 } = require('test/testHelper');
-
 const _ = require('lodash');
 const { AppFactory } = require('test/factories');
+const { STATUSES } = require('constants/sitesConstants');
 const mocks = require('./mocks');
 
 describe('On appController', async () => {
@@ -13,9 +13,12 @@ describe('On appController', async () => {
       beforeEach(async () => {
         await dropDatabase();
         serviceBots = mocks.serviceBots(5);
-        currentApp = await AppFactory.Create({ bots: serviceBots });
+        currentApp = await AppFactory.Create({ bots: serviceBots, status: STATUSES.ACTIVE });
         apiKey = faker.random.string(10);
         process.env.API_KEY = apiKey;
+      });
+      afterEach(async () => {
+        sinon.restore();
       });
       describe('Without api key in request', async () => {
         let result;
@@ -52,27 +55,16 @@ describe('On appController', async () => {
       });
     });
     describe('On errors', async () => {
-      describe('Not found errors', async () => {
-        let result;
-        beforeEach(async () => {
-          result = await chai.request(app)
-            .get(`/api/app/${faker.random.string()}`)
-        });
-        it('should return 404 status if app not found', async () => {
-          expect(result).to.have.status(404);
-        });
-        it('should return not found message if app not found', async () => {
-          const regExp = /not found/;
-          expect(regExp.test(result.body.message.toLowerCase())).to.be.true;
-        });
-      });
       describe('On database errors', async () => {
-        let result, errorString;
+        let result, errorString, currentApp;
         beforeEach(async () => {
+          await dropDatabase()
+          currentApp = await AppFactory.Create({ status: STATUSES.ACTIVE });
           errorString = 'test Error';
           sinon.stub(App, 'findOne').throws({ message: errorString });
           result = await chai.request(app)
-            .get(`/api/app/${faker.random.string()}`);
+            .get(`/api/app/${faker.random.string()}`)
+            .set({ host: currentApp.host });
         });
         afterEach(async () => {
           sinon.restore();
