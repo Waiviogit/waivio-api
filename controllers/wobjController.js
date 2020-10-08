@@ -1,5 +1,4 @@
 const { Wobj, Post } = require('models');
-const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers,

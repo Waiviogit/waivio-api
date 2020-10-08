@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { getNamespace } = require('cls-hooked');
-const { getPostObjects, mergePostData, checkBlackListedComment } = require('utilities/helpers/postHelper');
+const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
+const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
 const { Post, Comment, App } = require('models');
 const { postsUtil } = require('utilities/steemApi');
 

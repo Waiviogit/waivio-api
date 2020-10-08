@@ -197,24 +197,10 @@ const fillReblogs = async (posts = [], userName) => {
   }
 };
 
-/** Check for moderators downvote */
-const checkBlackListedComment = async ({ app, votes }) => {
-  if (!app) {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
-    ({ result: app } = await App.findOne({ host }));
-  }
-  const downVoteNames = _.map(votes, (vote) => {
-    if (+vote.percent < 0) return vote.voter;
-  }) || [];
-  return !!_.intersection(_.get(app, 'moderators'), downVoteNames).length;
-};
-
 module.exports = {
   getPostObjects,
   getPostsByCategory,
   getWobjFeedCondition,
-  checkBlackListedComment,
   addAuthorWobjectsWeight,
   fillReblogs,
   mergePostData,
