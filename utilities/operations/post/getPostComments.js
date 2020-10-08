@@ -19,5 +19,3 @@ const mergeComments = async (postState) => {
 
   return mergeSteemCommentsWithDB({ steemComments });
 };
-
-

@@ -1,4 +1,5 @@
 const { Wobj } = require('models');
+const { getNamespace } = require('cls-hooked');
 const { Post: PostModel } = require('database').models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
 const { ObjectId } = require('mongoose').Types;
@@ -32,13 +33,14 @@ const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
   author_permlink, skip, limit, user_languages, forApp, lastId,
 }) => {
-  const condition = {};
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const condition = { blocked_for_apps: { $ne: host } };
   // for moderation posts
-  if (forApp) condition.blocked_for_apps = { $ne: forApp };
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
 
   const pipeline = [
-    { $match: { author_permlink } }
+    { $match: { author_permlink } },
   ];
   const { wobjects: [wObject = {}] = [], error } = await Wobj
     .fromAggregation(pipeline);

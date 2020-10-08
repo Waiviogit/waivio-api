@@ -1,11 +1,16 @@
 const PostModel = require('database').models.Post;
+const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 exports.getAllPosts = async (data) => {
   try {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
+
     const aggregatePipeline = [
+      { $match: { blocked_for_apps: { $ne: host } } },
       { $sort: { _id: -1 } },
       { $skip: data.skip },
       { $limit: data.limit },
@@ -55,8 +60,12 @@ exports.aggregate = async (pipeline) => {
 exports.getByFollowLists = async ({
   users, author_permlinks: authorPermlinks, skip, limit, user_languages: userLanguages, filtersData,
 }) => {
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+
   const cond = {
     $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+    blocked_for_apps: { $nin: [host] },
   };
   // for filter by App wobjects
   if (_.get(filtersData, 'require_wobjects')) {
@@ -116,9 +125,12 @@ exports.getPostsRefs = async ({ skip = 0, limit = 1000 } = {}) => {
 
 exports.getBlog = async ({ name, skip = 0, limit = 30 }) => {
   try {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
     return {
       posts: await PostModel
-        .find({ author: name }).sort({ _id: -1 }).skip(skip).limit(limit)
+        .find({ author: name, blocked_for_apps: { $nin: [host] } })
+        .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
     };
@@ -157,9 +169,11 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
  */
 exports.getManyPosts = async (postsRefs) => {
   try {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
     return {
       posts: await PostModel
-        .find({ $or: [...postsRefs] })
+        .find({ $or: [...postsRefs], blocked_for_apps: { $nin: [host] } })
         .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
         .lean(),
     };

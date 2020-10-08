@@ -59,6 +59,10 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
  * @returns {Promise<Array>} return array of db comments with all steem comment info
  */
 exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+  const { result: app } = await App.findOne({ host });
+
   if (!steemComments || _.isEmpty(steemComments)) {
     const { posts: stComments } = await postsUtil.getManyPosts(
       dbComments.map((c) => ({ ..._.pick(c, ['author', 'permlink']) })),
@@ -66,15 +70,15 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
 
     steemComments = stComments;
   }
-  return dbComments.map((dbComment) => {
+  return dbComments.map(async (dbComment) => {
     const steemComment = _.find(steemComments, { ..._.pick(dbComment, ['author', 'permlink']) });
 
     if (steemComment) {
       steemComment.active_votes.push(...dbComment.active_votes);
       steemComment.guestInfo = dbComment.guestInfo;
-      return steemComment;
+      if (!await this.checkBlackListedComment({ app, votes: steemComment.active_votes })) return steemComment;
     }
-    return dbComment;
+    if (!await this.checkBlackListedComment({ app, votes: dbComment.active_votes })) return dbComment;
   });
 };
 
