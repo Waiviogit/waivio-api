@@ -36,7 +36,7 @@ exports.getHot = async ({
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
+    cond: { _id: { $in: postIds }, blocked_for_apps: { $ne: host } },
     sort: { children: -1 },
     limit,
     skip,
@@ -78,7 +78,7 @@ exports.getTrend = async ({
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
+    cond: { _id: { $in: postIds }, blocked_for_apps: { $ne: host } },
     sort: { net_rshares: -1 },
     skip,
     limit,
