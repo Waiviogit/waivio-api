@@ -137,9 +137,9 @@ describe('App Model', async () => {
       expect(result).to.be.false;
     });
     it('Should return duplicate key error, when the data has duplicate name', async () => {
-      const appDuplicate = await AppFactory.Create({ name: faker.name.firstName() });
+      const appDuplicate = await AppFactory.Create({ host: faker.name.firstName() });
       const { error } = await AppModel.updateOne(
-        { name: app.name, updData: { $set: { name: appDuplicate.name } } },
+        { name: app.name, updData: { $set: { host: appDuplicate.host } } },
       );
       expect(error).to.be.exist;
     });
