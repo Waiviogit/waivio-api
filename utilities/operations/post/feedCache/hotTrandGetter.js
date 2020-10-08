@@ -38,6 +38,8 @@ exports.getHot = async ({
   return getFromDb({
     cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
     sort: { children: -1 },
+    limit,
+    skip,
   });
 };
 
@@ -78,6 +80,8 @@ exports.getTrend = async ({
   return getFromDb({
     cond: { _id: { $in: postIds }, blocked_for_apps: { $nin: [host] } },
     sort: { net_rshares: -1 },
+    skip,
+    limit,
   });
 };
 
@@ -96,19 +100,21 @@ function getTopFromArrays(arrays, limit, skip) {
       return { id: data[1], weight: +data[0] };
     })
     .orderBy(['weight'], ['desc'])
-    .slice(skip, skip + limit)
+    // .slice(skip, skip + limit)
     .map('id')
     .value();
 }
 
 const getFromDb = async ({
-  cond, sort,
+  cond, sort, skip, limit,
 }) => {
   try {
     return {
       posts: await Post
         .find(cond)
         .sort(sort)
+        .skip(skip)
+        .limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
     };

@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const config = require('config');
 const {
   DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
   HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
@@ -30,8 +31,8 @@ const makeConditions = ({
   let sort = {};
 
   const session = getNamespace('request-session');
-  const host = session.get('host');
-
+  let host = session.get('host');
+  if (!host) host = config.appHost;
   switch (category) {
     case 'created':
       cond = { reblog_to: null };
