@@ -40,32 +40,33 @@ const getPostObjects = async (author = '', permlink = '') => {
   }
 };
 
-const getPostsByCategory = async (data) => {
-  const { posts, error } = await postsUtil.getPostsByCategory(data);
+const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.tag, skip: data.skip, limit: data.limit });
 
-  if (error) {
-    return { error };
-  }
-  if (!posts || posts.error) {
-    return { error: { status: 404, message: _.get(posts, 'error.message', 'Posts not found') } };
-  }
-  if (!posts.length) return { posts: [] };
-  // get posts array by authors and permlinks
-  const { posts: dbPosts, error: postsDbError } = await PostRepository.getManyPosts(
-    posts.map((p) => (_.pick(p, ['author', 'permlink']))),
-  );
-  if (postsDbError) {
-    return { error: postsDbError };
-  }
-
-  await Promise.all(posts.map(async (post) => {
-    if (post && post.author && post.permlink) {
-      const dbPost = dbPosts.find((p) => p.author === post.author && p.permlink === post.permlink);
-      post = await mergePostData(post, dbPost);
-    }
-  }));
-  return { posts };
-};
+// const { posts, error } = await postsUtil.getPostsByCategory(data);
+//
+// if (error) {
+//   return { error };
+// }
+// if (!posts || posts.error) {
+//   return { error: { status: 404, message: _.get(posts, 'error.message', 'Posts not found') } };
+// }
+// if (!posts.length) return { posts: [] };
+// // get posts array by authors and permlinks
+// const { posts: dbPosts, error: postsDbError } = await PostRepository.getManyPosts(
+//   posts.map((p) => (_.pick(p, ['author', 'permlink']))),
+// );
+// if (postsDbError) {
+//   return { error: postsDbError };
+// }
+//
+// await Promise.all(posts.map(async (post) => {
+//   if (post && post.author && post.permlink) {
+//     const dbPost = dbPosts.find((p) => p.author === post.author && p.permlink === post.permlink);
+//     post = await mergePostData(post, dbPost);
+//   }
+// }));
+// return { posts };
+// ;
 
 /**
  * Get post from DB and merge fields which doesn't exists in source post(from steem)
