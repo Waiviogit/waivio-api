@@ -40,7 +40,7 @@ const getPostObjects = async (author = '', permlink = '') => {
   }
 };
 
-const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.tag, skip: data.skip, limit: data.limit });
+const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.name, skip: data.skip, limit: data.limit });
 
 // const { posts, error } = await postsUtil.getPostsByCategory(data);
 //
