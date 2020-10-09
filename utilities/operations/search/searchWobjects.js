@@ -5,30 +5,18 @@ const { getNamespace } = require('cls-hooked');
 
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
+  string, object_type, limit, skip, app, forParent, required_fields, needCounters = false,
 }) => {
-  // get count of wobjects grouped by object_types
-  let app;
-
-  if (!crucialWobjects) {
+  if (!app) {
     const session = getNamespace('request-session');
     const host = session.get('host');
-    // change priority for some wobjects by specified App
     ({ result: app } = await App.findOne({ host }));
-
-    crucialWobjects = _.get(app, 'supported_objects', []);
   }
 
+  const crucialWobjects = _.get(app, 'supported_objects', []);
   const forSites = crucialWobjects.length && (app.inherited || app.canBeExtended);
   const authorities = _.get(app, 'authority', []);
   const supportedTypes = _.get(app, 'supported_object_types', []);
-
-  const {
-    wobjects: wobjectsCounts,
-    error: getWobjCountError,
-  } = await Wobj.fromAggregation(makeCountPipeline({
-    string, crucialWobjects, authorities, object_type, forSites, supportedTypes,
-  }));
 
   const pipeline = getPipeline({
     forSites,
@@ -50,26 +38,37 @@ exports.searchWobjects = async ({
     _.remove(wobjects, (wobj) => wobject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wobject);
   }
+
+  if (needCounters && !getWobjError) {
+    const {
+      wobjects: wobjectsCounts,
+      error: getWobjCountError,
+    } = await Wobj.fromAggregation(makeCountPipeline({
+      string, crucialWobjects, authorities, object_type, forSites, supportedTypes,
+    }));
+    return {
+      wobjects: _.take(wobjects, limit),
+      wobjectsCounts,
+      error: getWobjCountError,
+    };
+  }
+
   return {
     wobjects: _.take(wobjects, limit),
-    wobjectsCounts,
-    error: getWobjCountError || getWobjError,
+    error: getWobjError,
   };
 };
 
 const getPipeline = ({
   forSites, crucialWobjects, authorities, string, limit,
   skip, forParent, object_type, supportedTypes, required_fields,
-}) => {
-  const pipeline = forSites
-    ? addFieldsToSearch({
-      crucialWobjects, authorities, string, limit, skip, forParent, object_type, supportedTypes,
-    })
-    : makePipeline({
-      string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
-    });
-  return pipeline;
-};
+}) => (forSites
+  ? addFieldsToSearch({
+    crucialWobjects, authorities, string, limit, skip, forParent, object_type, supportedTypes,
+  })
+  : makePipeline({
+    string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
+  }));
 
 const addFieldsToSearch = ({
   crucialWobjects, string, authorities, object_type, forParent, skip, limit, supportedTypes,
