@@ -51,13 +51,19 @@ const getAll = async ({ limit, skip, wobjects_count: wobjectsCount = 3 }) => {
   return { objectTypes };
 };
 
-const search = async ({ string, limit = 20, skip = 0 }) => {
+const search = async ({
+  string, limit = 20, skip = 0, supportedTypes,
+}) => {
   try {
     if (!string) {
       return { error: { status: 422, message: 'Search string is empty' } };
     }
+
+    const condition = { $and: [{ name: { $regex: `${string}`, $options: 'i' } }] };
+    if (supportedTypes.length)condition.$and.push({ name: { $in: supportedTypes } });
+
     const objectTypes = await ObjectType.aggregate([
-      { $match: { name: { $regex: `${string}`, $options: 'i' } } },
+      { $match: condition },
       { $skip: skip },
       { $limit: limit },
     ]);
