@@ -1,4 +1,5 @@
 const { ObjectType } = require('models');
+const { getSessionApp } = require('utilities/helpers/sitesHelper');
 
 const makeCountPipeline = (string, supportedTypes) => {
   const condition = { $and: [{ name: { $regex: `${string}`, $options: 'i' } }] };
@@ -7,8 +8,15 @@ const makeCountPipeline = (string, supportedTypes) => {
 };
 
 exports.searchObjectTypes = async ({
-  string, limit, skip, supportedTypes = [],
+  string, limit, skip, supportedTypes,
 }) => {
+  /** Get supported object types from app */
+  if (!supportedTypes) {
+    const { result: app, error } = await getSessionApp();
+    if (!app || error) supportedTypes = [];
+    else supportedTypes = app.supported_object_types;
+  }
+
   const { objectTypes = [] } = await ObjectType.search({
     string, limit, skip, supportedTypes,
   });

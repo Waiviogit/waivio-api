@@ -130,14 +130,18 @@ exports.siteInfo = async (host) => {
 };
 
 exports.firstLoad = async () => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
-
-  const { result, error } = await App.findOne({ host });
+  const { result, error } = await this.getSessionApp();
   if (error || !result) return { error: error || { status: 404, message: 'App not found!' } };
 
   return {
     result: _.pick(result, ['configuration', 'host', 'googleAnalyticsTag',
       'beneficiary', 'supported_object_types', 'status', 'mainPage']),
   };
+};
+
+exports.getSessionApp = async () => {
+  const session = getNamespace('request-session');
+  const host = session.get('host');
+
+  return App.findOne({ host });
 };
