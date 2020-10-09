@@ -12,9 +12,10 @@ module.exports = async ({
     return getGuestBlog({ name, limit, skip });
   }
 
-  const { posts, error } = await getHiveBlog({
-    name, limit, start_author, start_permlink,
-  });
+  // const { posts, error } = await getHiveBlog({
+  //   name, limit, start_author, start_permlink,
+  const { posts, error } = await postHelper.getPostsByCategory({ limit, name, skip: skip !== 0 ? skip - 1 : 0 });
+
   if (error) return { error };
 
   // add field reblogged_by if post not authored by "user" blog requested
