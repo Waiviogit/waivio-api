@@ -196,4 +196,30 @@ describe('on additionalSponsorObligations', async () => {
       expect(parseFloat(_.get(post, 'pending_payout_value'))).to.be.eq(reward);
     });
   });
+  describe('When no campaign id in metadata', async () => {
+    let handledPost;
+    beforeEach(async () => {
+      await dropDatabase();
+      post = await PostFactory.Create({ onlyData: true });
+      [handledPost] = await postHelper.additionalSponsorObligations([post]);
+    });
+    it('should return post from method and not attract post', async () => {
+      expect(handledPost).to.be.deep.eq(post);
+    });
+  });
+
+  describe('When cant find campaign by campaign id in metadata', async () => {
+    let handledPost;
+    beforeEach(async () => {
+      await dropDatabase();
+      post = await PostFactory.Create({
+        onlyData: true,
+        additionsForMetadata: { campaignId: faker.random.string() },
+      });
+      [handledPost] = await postHelper.additionalSponsorObligations([post]);
+    });
+    it('should return post from method and not attract post', async () => {
+      expect(handledPost).to.be.deep.eq(post);
+    });
+  });
 });
