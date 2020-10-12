@@ -112,6 +112,8 @@ const search = async (req, res, next) => {
     object_type: req.body.object_type,
     sortByApp: req.body.sortByApp,
     forParent: req.body.forParent,
+    userName: req.body.userName,
+    simplified: req.body.simplified,
     required_fields: req.body.required_fields,
   }, validators.wobject.searchScheme, next);
 
