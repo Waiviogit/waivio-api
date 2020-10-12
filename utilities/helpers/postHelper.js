@@ -204,6 +204,10 @@ const jsonParse = (post) => {
   }
 };
 
+/**
+ * Method calculate and add sponsor obligations to each post if it is review
+ * @beforeCashOut checks either the cashout_time has passed or not
+ */
 const additionalSponsorObligations = async (posts) => {
   for (const post of posts) {
     const metadata = post.json_metadata ? jsonParse(post) : null;
@@ -213,11 +217,12 @@ const additionalSponsorObligations = async (posts) => {
 
     const { result: campaign } = await Campaign.findOne({ _id });
     if (!campaign) continue;
-    const beforeCashout = new Date(post.cashout_time) > new Date();
+    const beforeCashOut = new Date(post.cashout_time) > new Date();
     const { result: bots } = await botUpvoteModel
       .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
-    const totalPayout = parseFloat(_.get(post, 'pending_payout_value', 0))
-      + parseFloat(_.get(post, 'total_payout_value', 0))
+    const totalPayout = beforeCashOut
+      ? parseFloat(_.get(post, 'pending_payout_value', 0))
+      : parseFloat(_.get(post, 'total_payout_value', 0))
       + parseFloat(_.get(post, 'curator_payout_value', 0));
     const voteRshares = _.reduce(post.active_votes,
       (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
@@ -232,9 +237,9 @@ const additionalSponsorObligations = async (posts) => {
       }
       const sponsorPayout = campaign.reward - likedSum;
       if (sponsorPayout <= 0) continue;
-      beforeCashout
-        ? post.pending_payout_value = parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout.toFixed(3)
-        : post.curator_payout_value = parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout.toFixed(3);
+      beforeCashOut
+        ? post.pending_payout_value = (parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout).toFixed(3)
+        : post.curator_payout_value = (parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout).toFixed(3);
       post.active_votes.push({
         voter: campaign.guideName,
         rshares: sponsorPayout / ratio,
@@ -242,7 +247,7 @@ const additionalSponsorObligations = async (posts) => {
         percent: 10000,
       });
     } else {
-      beforeCashout
+      beforeCashOut
         ? post.pending_payout_value = campaign.reward
         : post.curator_payout_value = campaign.reward;
       _.forEach(post.active_votes, (el) => {
