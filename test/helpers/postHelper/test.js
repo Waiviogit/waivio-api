@@ -2,10 +2,25 @@ const _ = require('lodash');
 const {
   faker, dropDatabase, postHelper, expect, moment,
 } = require('test/testHelper');
-const { CampaignFactory, BotUpvoteFactory, PostFactory } = require('test/factories');
+const {
+  CampaignFactory, BotUpvoteFactory, PostFactory, PaymentHistoryFactory,
+} = require('test/factories');
+const { RESERVATION_STATUSES } = require('constants/campaignsData');
 
 describe('on additionalSponsorObligations', async () => {
   let reward, campaign, post, rewardOnPost, result, registeredVotes;
+  const cashoutTime = moment().add(_.random(1, 10), 'days').toISOString();
+  const reservationPermlink = faker.random.string();
+  const reviewPermlink = faker.random.string();
+  const userName = faker.random.string();
+  const users = [{
+    name: userName,
+    status: _.sample(Object.values(_.omit(RESERVATION_STATUSES, ['REJECTED']))),
+    object_permlink: faker.random.string(),
+    hiveCurrency: 1,
+    permlink: reservationPermlink,
+  }];
+
   describe('when there are no downvotes on post', async () => {
     beforeEach(async () => {
       await dropDatabase();
@@ -19,20 +34,28 @@ describe('on additionalSponsorObligations', async () => {
       }
       rewardOnPost = _.reduce(activeVotes,
         (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0) / (reward * 100);
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
-        onlyData: true,
+        cashout_time: cashoutTime,
         additionsForMetadata: { campaignId: campaign._id },
-        active_votes: activeVotes,
         pending_payout_value: rewardOnPost.toString(),
-        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+        active_votes: activeVotes,
+        permlink: reviewPermlink,
+        author: userName,
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       registeredVotes = _.slice(activeVotes, 0, _.random(1, activeVotes.length));
       for (const arg of registeredVotes) {
         await BotUpvoteFactory.Create({
+          permlink: post.permlink,
           bot_name: arg.voter,
           author: post.author,
-          permlink: post.permlink,
         });
       }
       [post] = await postHelper.additionalSponsorObligations([post]);
@@ -70,13 +93,21 @@ describe('on additionalSponsorObligations', async () => {
           rshares: _.random(-90, -99),
         });
       }
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
-        onlyData: true,
+        cashout_time: cashoutTime,
         additionsForMetadata: { campaignId: campaign._id },
         active_votes: activeVotes,
         pending_payout_value: '0',
-        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+        permlink: reviewPermlink,
+        author: userName,
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
@@ -100,13 +131,21 @@ describe('on additionalSponsorObligations', async () => {
     beforeEach(async () => {
       await dropDatabase();
       reward = _.random(1, 10);
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
-        onlyData: true,
         additionsForMetadata: { campaignId: campaign._id },
-        active_votes: [],
+        cashout_time: cashoutTime,
         pending_payout_value: '0',
-        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+        permlink: reviewPermlink,
+        active_votes: [],
+        author: userName,
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
@@ -136,13 +175,21 @@ describe('on additionalSponsorObligations', async () => {
       }
       rewardOnPost = _.reduce(activeVotes,
         (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0) / (reward * 10);
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
         onlyData: true,
         additionsForMetadata: { campaignId: campaign._id },
         active_votes: activeVotes,
         pending_payout_value: rewardOnPost.toString(),
-        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+        cashout_time: cashoutTime,
+        permlink: reviewPermlink,
+        author: userName,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       for (const arg of activeVotes) {
         await BotUpvoteFactory.Create({
@@ -157,19 +204,30 @@ describe('on additionalSponsorObligations', async () => {
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       expect(guide).to.be.undefined;
     });
+    it('pending_payout_value should be greater than reward', async () => {
+      expect(parseFloat(post.pending_payout_value)).to.be.gt(reward);
+    });
   });
   describe('When the cashout_time has passed', async () => {
     beforeEach(async () => {
       await dropDatabase();
       reward = _.random(1, 10);
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
-        onlyData: true,
-        additionsForMetadata: { campaignId: campaign._id },
-        active_votes: [],
-        pending_payout_value: '0',
-        curator_payout_value: '0',
         cashout_time: moment().subtract(_.random(1, 10), 'days').toISOString(),
+        additionsForMetadata: { campaignId: campaign._id },
+        curator_payout_value: '0',
+        pending_payout_value: '0',
+        permlink: reviewPermlink,
+        author: userName,
+        active_votes: [],
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
@@ -181,14 +239,22 @@ describe('on additionalSponsorObligations', async () => {
     beforeEach(async () => {
       await dropDatabase();
       reward = _.random(1, 10);
-      campaign = await CampaignFactory.Create({ reward });
+      campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
-        onlyData: true,
+        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
         additionsForMetadata: { campaignId: campaign._id },
-        active_votes: [],
         pending_payout_value: '0',
         curator_payout_value: '0',
-        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+        permlink: reviewPermlink,
+        author: userName,
+        active_votes: [],
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });

@@ -1,10 +1,11 @@
 const _ = require('lodash');
 const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
-  Campaign, botUpvoteModel,
+  Campaign, botUpvoteModel, paymentHistory,
 } = require('models');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+const { RESERVATION_STATUSES } = require('constants/campaignsData');
 
 /**
  * Get wobjects data for particular post
@@ -177,6 +178,16 @@ const jsonParse = (post) => {
   }
 };
 
+const checkUserStatus = async ({
+  sponsor, userName, campaign, reviewPermlink,
+}) => {
+  const { result } = await paymentHistory.findByCondition({ sponsor, userName, 'details.review_permlink': reviewPermlink });
+  if (_.isEmpty(result)) return true;
+  const permlink = _.get(result, '[0].details.reservation_permlink');
+  const user = _.find(campaign.users, (u) => u.permlink === permlink);
+  return !user || _.get(user, 'status') === RESERVATION_STATUSES.REJECTED;
+};
+
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
@@ -190,6 +201,14 @@ const additionalSponsorObligations = async (posts) => {
 
     const { result: campaign } = await Campaign.findOne({ _id });
     if (!campaign) continue;
+    // chek whether review is rejected
+    const isRejected = await checkUserStatus({
+      reviewPermlink: post.permlink,
+      sponsor: campaign.guideName,
+      userName: post.author,
+      campaign,
+    });
+    if (isRejected) continue;
     const beforeCashOut = new Date(post.cashout_time) > new Date();
     const { result: bots } = await botUpvoteModel
       .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
@@ -238,11 +257,12 @@ const additionalSponsorObligations = async (posts) => {
 };
 
 module.exports = {
-  getPostObjects,
-  getPostsByCategory,
-  getWobjFeedCondition,
-  addAuthorWobjectsWeight,
-  fillReblogs,
-  mergePostData,
   additionalSponsorObligations,
+  addAuthorWobjectsWeight,
+  getWobjFeedCondition,
+  getPostsByCategory,
+  checkUserStatus,
+  getPostObjects,
+  mergePostData,
+  fillReblogs,
 };

@@ -10,4 +10,5 @@ module.exports = {
   UsersFactory: require('./UsersFactory/UsersFactory'),
   CampaignFactory: require('./Campaign/CampaignFactory'),
   BotUpvoteFactory: require('./BotUpvote/BotUpvoteFactory'),
+  PaymentHistoryFactory: require('./PaymentHistory/PaymentHistoryFactory'),
 };
