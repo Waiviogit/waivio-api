@@ -126,9 +126,15 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
 };
 
 exports.addCampaignsToWobjects = async ({
-  wobjects, user, simplified = false,
+  wobjects, user, simplified = false, app,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
+
+  if (!app) {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
+    ({ result: app } = await App.findOne({ host }));
+  }
 
   const { result: campaigns } = await Campaign.findByCondition(
     { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
@@ -155,9 +161,6 @@ exports.addCampaignsToWobjects = async ({
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
     if (secondaryCampaigns.length) {
-      const session = getNamespace('request-session');
-      const host = session.get('host');
-      const { result: app } = await App.findOne({ host });
       wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
     }
     wobjects[index] = wobj;
