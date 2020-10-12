@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  faker, dropDatabase, postHelper, expect,
+  faker, dropDatabase, postHelper, expect, moment,
 } = require('test/testHelper');
 const { CampaignFactory, BotUpvoteFactory, PostFactory } = require('test/factories');
 
@@ -36,11 +36,9 @@ describe('on additionalSponsorObligations', async () => {
       }
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should exist property sponsor_payout_value', async () => {
-      expect(post.sponsor_payout_value).to.exist;
-    });
+
     it('should display result greater or equal reward (greater, because there are others, not registred votes)', async () => {
-      result = Math.round(Number(post.pending_payout_value) + Number(post.sponsor_payout_value));
+      result = Math.round(parseFloat(post.pending_payout_value) + parseFloat(post.curator_payout_value));
       expect(result).to.be.gte(reward);
     });
     it('additional obligations should be in active_votes array with flag sponsor true', async () => {
@@ -52,7 +50,7 @@ describe('on additionalSponsorObligations', async () => {
       const voteRshares = _.reduce(post.active_votes,
         (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
       const totalPayout = parseFloat(_.get(post, 'pending_payout_value', 0))
-        + parseFloat(_.get(post, 'sponsor_payout_value', 0));
+        + parseFloat(_.get(post, 'curator_payout_value', 0));
       const ratio = totalPayout / voteRshares;
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       registeredVotes.push(guide);
@@ -82,11 +80,8 @@ describe('on additionalSponsorObligations', async () => {
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should exist property sponsor_payout_value', async () => {
-      expect(post.sponsor_payout_value).to.exist;
-    });
     it('sponsor_payout_value should be equal reward ', async () => {
-      expect(Number(post.sponsor_payout_value)).to.be.eq(reward);
+      expect(Number(post.curator_payout_value)).to.be.eq(reward);
     });
     it('additional obligations should be in active_votes array with flag sponsor true', async () => {
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
@@ -96,7 +91,7 @@ describe('on additionalSponsorObligations', async () => {
       const voteRshares = _.reduce(post.active_votes,
         (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
-      const guideHBD = (Number(post.sponsor_payout_value)
+      const guideHBD = (Number(post.curator_payout_value)
         / voteRshares) * guide.rshares;
       expect(Math.round(guideHBD)).to.be.eq(reward);
     });
@@ -114,18 +109,15 @@ describe('on additionalSponsorObligations', async () => {
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should exist property sponsor_payout_value', async () => {
-      expect(post.sponsor_payout_value).to.exist;
-    });
     it('sponsor_payout_value should be equal reward ', async () => {
-      expect(Number(post.sponsor_payout_value)).to.be.eq(reward);
+      expect(Number(post.curator_payout_value)).to.be.eq(reward);
     });
     it('additional obligations should be in active_votes array with flag sponsor true', async () => {
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       expect(guide.voter).to.be.eq(campaign.guideName);
     });
     it('sponsor rshares should be full reward', async () => {
-      const guideHBD = (Number(post.sponsor_payout_value)
+      const guideHBD = (Number(post.curator_payout_value)
         / post.active_votes[0].rshares) * post.active_votes[0].rshares;
       expect(Math.round(guideHBD)).to.be.eq(reward);
     });
@@ -159,12 +151,47 @@ describe('on additionalSponsorObligations', async () => {
       }
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should not exist property sponsor_payout_value', async () => {
-      expect(post.sponsor_payout_value).to.not.exist;
-    });
     it('sponsor should not be in active_votes array ', async () => {
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       expect(guide).to.be.undefined;
+    });
+  });
+  describe('When the cashout_time has passed', async () => {
+    beforeEach(async () => {
+      await dropDatabase();
+      reward = _.random(1, 10);
+      campaign = await CampaignFactory.Create({ reward });
+      post = await PostFactory.Create({
+        onlyData: true,
+        additionsForMetadata: { campaignId: campaign._id },
+        active_votes: [],
+        pending_payout_value: '0',
+        curator_payout_value: '0',
+        cashout_time: moment().subtract(_.random(1, 10), 'days').toISOString(),
+      });
+      [post] = await postHelper.additionalSponsorObligations([post]);
+    });
+    it('should write sponsor obligations in curator_payout_value', async () => {
+      expect(parseFloat(_.get(post, 'curator_payout_value'))).to.be.eq(reward);
+    });
+  });
+  describe('When the cashout_time has not passed', async () => {
+    beforeEach(async () => {
+      await dropDatabase();
+      reward = _.random(1, 10);
+      campaign = await CampaignFactory.Create({ reward });
+      post = await PostFactory.Create({
+        onlyData: true,
+        additionsForMetadata: { campaignId: campaign._id },
+        active_votes: [],
+        pending_payout_value: '0',
+        curator_payout_value: '0',
+        cashout_time: moment().add(_.random(1, 10), 'days').toISOString(),
+      });
+      [post] = await postHelper.additionalSponsorObligations([post]);
+    });
+    it('should write sponsor obligations in curator_payout_value', async () => {
+      expect(parseFloat(_.get(post, 'curator_payout_value'))).to.be.eq(reward);
     });
   });
 });

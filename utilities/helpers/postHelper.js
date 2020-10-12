@@ -213,6 +213,7 @@ const additionalSponsorObligations = async (posts) => {
 
     const { result: campaign } = await Campaign.findOne({ _id });
     if (!campaign) continue;
+    const beforeCashout = new Date(post.cashout_time) > new Date();
     const { result: bots } = await botUpvoteModel
       .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
     const totalPayout = parseFloat(_.get(post, 'pending_payout_value', 0))
@@ -231,7 +232,9 @@ const additionalSponsorObligations = async (posts) => {
       }
       const sponsorPayout = campaign.reward - likedSum;
       if (sponsorPayout <= 0) continue;
-      post.sponsor_payout_value = sponsorPayout.toFixed(3);
+      beforeCashout
+        ? post.pending_payout_value = parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout.toFixed(3)
+        : post.curator_payout_value = parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout.toFixed(3);
       post.active_votes.push({
         voter: campaign.guideName,
         rshares: sponsorPayout / ratio,
@@ -239,7 +242,9 @@ const additionalSponsorObligations = async (posts) => {
         percent: 10000,
       });
     } else {
-      post.sponsor_payout_value = campaign.reward;
+      beforeCashout
+        ? post.pending_payout_value = campaign.reward
+        : post.curator_payout_value = campaign.reward;
       _.forEach(post.active_votes, (el) => {
         el.rshares ? el.rshares = 0 : el.rshares_weight = 0;
       });
