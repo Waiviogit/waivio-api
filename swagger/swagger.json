@@ -2131,7 +2131,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags",
+          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_11"
@@ -4078,6 +4078,12 @@
         },
         "object_type" : {
           "type" : "string"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "simplified": {
+          "type": "boolean"
         },
         "tagCategory": {
           "type": "array",

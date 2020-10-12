@@ -1,11 +1,13 @@
 const _ = require('lodash');
 const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
-const { Wobj, ObjectType } = require('models');
+const { Wobj, ObjectType, User } = require('models');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
+const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, app, forParent, required_fields, needCounters = false, tagCategory,
+  string, object_type, limit, skip, app, forParent, required_fields,
+  needCounters = false, tagCategory, userName, simplified,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
@@ -54,7 +56,13 @@ exports.searchWobjects = async ({
       error: getWobjCountError,
     };
   }
-
+  /** Fill campaigns for some objects,
+   * be careful, we pass objects by reference and in this method we will directly modify them */
+  let user;
+  if (userName) ({ user } = await User.getOne(userName));
+  await addCampaignsToWobjects({
+    wobjects, app, simplified, user,
+  });
   return {
     wobjects: _.take(wobjects, limit),
     error: getWobjError,

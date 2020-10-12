@@ -80,7 +80,7 @@ const getWobjWithFilters = async ({
         },
       });
     }
-    aggregationPipeline.push({ $match: { $or: condition } });
+    if (condition.length)aggregationPipeline.push({ $match: { $or: condition } });
     delete filter.tagCategory;
   }
 
