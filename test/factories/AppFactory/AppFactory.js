@@ -1,4 +1,6 @@
-const { faker, App, ObjectID } = require('test/testHelper');
+const {
+  faker, App, ObjectID, _,
+} = require('test/testHelper');
 const { STATUSES } = require('constants/sitesConstants');
 
 const Create = async ({
@@ -21,9 +23,9 @@ const Create = async ({
     configuration: configuration || { configurationFields: [faker.random.string()] },
     authority: authority || [],
     object_filters: filters || { restaurant: { feature: [] } },
-    canBeExtended: canBeExtended || false,
+    canBeExtended: _.isBoolean(canBeExtended) ? canBeExtended : false,
     supported_object_types: supportedTypes || ['restaurant'],
-    inherited: inherited || true,
+    inherited: _.isBoolean(inherited) ? inherited : true,
     black_list_users: blacklists || [],
     daily_chosen_post: {
       author: faker.name.firstName().toLowerCase(),

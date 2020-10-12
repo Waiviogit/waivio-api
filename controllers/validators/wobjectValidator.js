@@ -63,6 +63,10 @@ exports.searchScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(10),
   skip: Joi.number().integer().min(0).default(0),
+  tagCategory: Joi.array().items(Joi.object().keys({
+    categoryName: Joi.string().required(),
+    tags: Joi.array().items(Joi.string()).min(1).required(),
+  })),
   string: Joi.string().allow(''),
   locale: Joi.string().default('en-US'),
   sortByApp: Joi.string().allow('').default(null),

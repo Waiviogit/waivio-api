@@ -1,5 +1,4 @@
 const { Wobj, Post } = require('models');
-const { followersHelper } = require('utilities/helpers');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers,
@@ -109,6 +108,7 @@ const search = async (req, res, next) => {
     limit: req.body.limit,
     skip: req.body.skip,
     locale: req.body.locale,
+    tagCategory: req.body.tagCategory,
     object_type: req.body.object_type,
     sortByApp: req.body.sortByApp,
     forParent: req.body.forParent,

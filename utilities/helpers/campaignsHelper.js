@@ -126,14 +126,14 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
 };
 
 exports.addCampaignsToWobjects = async ({
-  wobjects, user, appName, simplified = false,
+  wobjects, user, simplified = false,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
 
   const { result: campaigns } = await Campaign.findByCondition(
     { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
   );
-  await Promise.all(wobjects.map(async (wobj) => {
+  await Promise.all(wobjects.map(async (wobj, index) => {
     if (simplified) {
       wobj.fields = _.filter(wobj.fields,
         (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
@@ -149,7 +149,8 @@ exports.addCampaignsToWobjects = async ({
           max_reward: (_.maxBy(eligibleCampaigns, 'reward')).reward,
         };
       }
-      return wobj;
+      wobjects[index] = wobj;
+      return;
     }
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
@@ -159,7 +160,7 @@ exports.addCampaignsToWobjects = async ({
       const { result: app } = await App.findOne({ host });
       wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
     }
-    return wobj;
+    wobjects[index] = wobj;
   }));
   return wobjects;
 };

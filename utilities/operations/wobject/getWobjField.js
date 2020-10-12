@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { wObjectHelper, appHelper } = require('utilities/helpers');
-const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES , FIELDS_TO_PARSE } = require('constants/wobjectsData');
+const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('constants/wobjectsData');
 
 module.exports = async ({
   authorPermlink, author, fieldName, locale, app, permlink,
@@ -28,7 +28,15 @@ module.exports = async ({
   ];
 
   return {
-    toDisplay: _.includes(FIELDS_TO_PARSE, fieldName) ? JSON.parse(toDisplay) : toDisplay,
+    toDisplay: _.includes(FIELDS_TO_PARSE, fieldName) ? parseJson(toDisplay) : toDisplay,
     field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
   };
+};
+
+const parseJson = (data) => {
+  try {
+    return JSON.parse(data);
+  } catch (error) {
+    return {};
+  }
 };

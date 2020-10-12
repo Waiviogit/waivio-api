@@ -10,7 +10,6 @@ exports.schema = [
     path: '/wobject/:authorPermlink',
     method: 'GET',
     case: 1,
-    custom_fields_paths: ['preview_gallery', 'tagCategories'],
   },
   {
     path: '/wobject/:authorPermlink/posts',
@@ -52,6 +51,13 @@ exports.schema = [
     method: 'POST',
     case: 6,
     wobjects_path: 'wobjects',
+  },
+  {
+    path: '/user/:userName/following_updates',
+    method: 'GET',
+    case: 7,
+    wobjects_path: 'related_wobjects',
+    array_path: 'wobjects_updates',
   },
   // general search
   {

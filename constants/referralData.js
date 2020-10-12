@@ -1,5 +1,5 @@
 exports.REFERRAL_TYPES = {
-  REVIEWS: 'reviews',
+  REWARDS: 'rewards',
 };
 
 exports.REFERRAL_STATUSES = {

@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
-const { STATUSES } = require('constants/sitesConstants');
+const { STATUSES, SUPPORTED_COLORS, GET_DEFAULT_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 
 const { Schema } = mongoose;
@@ -46,14 +46,14 @@ const MapPoints = new Schema({
 }, { _id: false });
 
 const Colors = new Schema({
-  background: { type: String },
-  font: { type: String },
-  hover: { type: String },
-  header: { type: String },
-  button: { type: String },
-  border: { type: String },
-  focus: { type: String },
-  links: { type: String },
+  [SUPPORTED_COLORS.BACKGROUND]: { type: String },
+  [SUPPORTED_COLORS.FONT]: { type: String, default: '' },
+  [SUPPORTED_COLORS.HOVER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.HEADER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.BUTTON]: { type: String, default: '' },
+  [SUPPORTED_COLORS.BORDER]: { type: String, default: '' },
+  [SUPPORTED_COLORS.FOCUS]: { type: String, default: '' },
+  [SUPPORTED_COLORS.LINKS]: { type: String, default: '' },
 }, { _id: false });
 
 const Configuration = new Schema({
@@ -63,20 +63,23 @@ const Configuration = new Schema({
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
-  colors: { type: Colors },
+  colors: { type: Colors, default: () => ({}) },
 
 }, { _id: false });
 
 const AppSchema = new Schema({
-  name: { type: String, index: true, unique: true },
+  name: { type: String, index: true },
   owner: { type: String, required: true },
   googleAnalyticsTag: { type: String, default: null },
   beneficiary: {
     account: { type: String, default: 'waivio' },
     percent: { type: Number, default: 300 },
   },
-  configuration: { type: Configuration },
-  host: { type: String, required: true, unique: true },
+  configuration: { type: Configuration, default: () => ({}) },
+  host: {
+    type: String, required: true, unique: true, index: true,
+  },
+  mainPage: { type: String },
   parent: { type: mongoose.Schema.ObjectId, default: null },
   admins: { type: [String], default: [] },
   authority: { type: [String], default: [] },
@@ -115,7 +118,8 @@ AppSchema.pre('save', async function (next) {
     if (!parent) return;
     this._doc.supported_object_types = parent.supported_object_types;
     this._doc.object_filters = parent.object_filters;
-    if (!this.configuration) this._doc.configuration = {};
+    this._doc.mainPage = parent.mainPage;
+    if (!this._doc.configuration) this._doc.configuration = {};
     this._doc.configuration.configurationFields = _.get(parent, 'configuration.configurationFields', []);
   }
   next();

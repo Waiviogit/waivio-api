@@ -1,9 +1,11 @@
 const _ = require('lodash');
+const config = require('config');
 const {
   DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
   HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
   TREND_FILTERED_NEWS_CACHE_PREFIX,
 } = require('utilities/constants');
+const { getNamespace } = require('cls-hooked');
 const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
 const hotTrandGetter = require('./feedCache/hotTrandGetter');
@@ -28,6 +30,9 @@ const makeConditions = ({
   let cond = {};
   let sort = {};
 
+  const session = getNamespace('request-session');
+  let host = session.get('host');
+  if (!host) host = config.appHost;
   switch (category) {
     case 'created':
       cond = { reblog_to: null };
@@ -56,6 +61,7 @@ const makeConditions = ({
   }
   if (!_.isEmpty(languages)) cond.language = { $in: languages };
   if (forApp) cond.blocked_for_apps = { $ne: forApp };
+  cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
 
@@ -68,7 +74,7 @@ module.exports = async ({
     skip, limit, user_languages, category, forApp, onlyCrypto,
   });
   if (cachedPosts) return { posts: cachedPosts };
-  if (!cachedPosts && onlyCrypto) return { posts: []};
+  if (!cachedPosts && onlyCrypto) return { posts: [] };
   const { cond, sort } = makeConditions({
     category, user_languages, forApp, lastId,
   });

@@ -1,5 +1,5 @@
 const {
-  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient,
+  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
 } = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
@@ -44,7 +44,7 @@ exports.getHotFeedCache = async ({ limit = 10, locale, app }) => {
   if (limit > HOT_NEWS_CACHE_SIZE) return { error: `skip param should be less than ${HOT_NEWS_CACHE_SIZE}` };
   const appPrefix = app ? `${app}:` : '';
   return {
-    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, 0, -1),
   };
 };
 
@@ -64,7 +64,7 @@ exports.getTrendFeedCache = async ({
   const appPrefix = app ? `${app}:` : '';
   return {
     // ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
-    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, -1),
   };
 };
 
@@ -75,3 +75,10 @@ exports.getTagCategories = async ({ key, start, end }) => {
     return { error };
   }
 };
+
+/**
+ * Get active users from redis for collect statistics and invoicing
+ */
+exports.getSiteActiveUser = async (key) => appUsersStatistics.smembersAsync(key);
+
+exports.deleteSiteActiveUser = async (key) => appUsersStatistics.delAsync(key);

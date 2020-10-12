@@ -22,3 +22,37 @@ exports.createApp = Joi.object().keys({
 exports.managePage = Joi.object().keys({
   userName: Joi.string().required(),
 }).options(options);
+
+exports.report = Joi.object().keys({
+  endDate: Joi.date().timestamp('unix').less('now'),
+  startDate: Joi.when('endDate', {
+    is: Joi.exist(),
+    then: Joi.date().timestamp('unix').less(Joi.ref('endDate')),
+    otherwise: Joi.date().timestamp('unix').less(new Date()),
+  }),
+  userName: Joi.string().required(),
+  host: Joi.string(),
+}).options(options);
+
+// eslint-disable-next-line no-multi-assign
+exports.delete = exports.authorities = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+}).options(options);
+
+exports.searchTags = Joi.object().keys({
+  string: Joi.string().lowercase().required(),
+  category: Joi.string().required(),
+}).options(options);
+
+exports.objectsFilter = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  objectsFilter: Joi.object().required(),
+}).options({ allowUnknown: true });
+
+exports.saveConfigurations = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  configuration: Joi.object().required(),
+}).options({ allowUnknown: true });
