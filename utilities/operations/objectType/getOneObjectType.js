@@ -68,16 +68,19 @@ const getWobjWithFilters = async ({
   }
   // special filter TAG_CATEGORY
   if (_.get(filter, FIELDS_NAMES.TAG_CATEGORY)) {
+    const condition = [];
     for (const category of filter.tagCategory) {
-      for (const tag of category.tags) {
-        const cond = {
-          $match:
-            { fields: { $elemMatch: { name: FIELDS_NAMES.CATEGORY_ITEM, body: tag } } },
-        };
-        await redisSetter.incrementTag({ categoryName: category.categoryName, tag });
-        aggregationPipeline.push(cond);
-      }
+      condition.push({
+        fields: {
+          $elemMatch: {
+            name: FIELDS_NAMES.CATEGORY_ITEM,
+            body: { $in: category.tags },
+            tagCategory: category.categoryName,
+          },
+        },
+      });
     }
+    aggregationPipeline.push({ $match: { $or: condition } });
     delete filter.tagCategory;
   }
 

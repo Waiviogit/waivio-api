@@ -29,7 +29,7 @@ exports.showSchema = Joi.object().keys({
     searchString: Joi.string().invalid(''),
     tagCategory: Joi.array().items(Joi.object().keys({
       categoryName: Joi.string().required(),
-      tags: Joi.array().items(Joi.string()).required(),
+      tags: Joi.array().items(Joi.string()).min(1).required(),
     })),
   }).pattern(/.+/, Joi.array().items(Joi.string())),
 });
