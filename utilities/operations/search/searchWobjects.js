@@ -1,11 +1,11 @@
 const _ = require('lodash');
 const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
-const { Wobj } = require('models');
+const { Wobj, ObjectType } = require('models');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, app, forParent, required_fields, needCounters = false,
+  string, object_type, limit, skip, app, forParent, required_fields, needCounters = false, tagCategory,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
@@ -17,6 +17,7 @@ exports.searchWobjects = async ({
 
   const pipeline = getPipeline({
     forExtended,
+    tagCategory,
     forSites,
     crucialWobjects,
     authorities,
@@ -38,12 +39,15 @@ exports.searchWobjects = async ({
   }
 
   if (needCounters && !getWobjError) {
-    const {
+    let {
       wobjects: wobjectsCounts,
       error: getWobjCountError,
     } = await Wobj.fromAggregation(makeCountPipeline({
       string, crucialWobjects, authorities, object_type, forSites, supportedTypes, forExtended,
     }));
+    if (_.get(wobjectsCounts, 'length')) {
+      wobjectsCounts = await fillTagCategories(wobjectsCounts);
+    }
     return {
       wobjects: _.take(wobjects, limit),
       wobjectsCounts,
@@ -57,13 +61,32 @@ exports.searchWobjects = async ({
   };
 };
 
+const fillTagCategories = async (wobjectsCounts) => {
+  const { result: types } = await ObjectType.aggregate(
+    [{ $match: { name: { $in: _.map(wobjectsCounts, 'object_type') } } }],
+  );
+  wobjectsCounts = wobjectsCounts.map((wobj) => {
+    const objectType = _.find(types, { name: wobj.object_type });
+    if (!_.get(objectType, 'supposed_updates')) {
+      wobj.tagCategoties = [];
+      return wobj;
+    }
+    const tagCategory = _.find(objectType.supposed_updates,
+      { name: FIELDS_NAMES.TAG_CATEGORY });
+    if (tagCategory) wobj.tagCategoties = tagCategory.values;
+    return wobj;
+  });
+  return wobjectsCounts;
+};
+
 const getPipeline = ({
   forSites, crucialWobjects, authorities, string, limit, forExtended,
-  skip, forParent, object_type, supportedTypes, required_fields,
+  skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
 }) => (forSites || forExtended
   ? addFieldsToSearch({
     forSites,
     crucialWobjects,
+    tagCategory,
     authorities,
     string,
     limit,
@@ -78,10 +101,10 @@ const getPipeline = ({
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
-  crucialWobjects, string, authorities, object_type, forParent, skip, limit, supportedTypes, forSites,
+  crucialWobjects, string, authorities, object_type, forParent, skip, limit, supportedTypes, forSites, tagCategory,
 }) => {
   const pipeline = [...matchSitesPipe({
-    string, authorities, crucialWobjects, object_type, supportedTypes, forSites,
+    string, authorities, crucialWobjects, object_type, supportedTypes, forSites, tagCategory,
   })];
   if (forParent) {
     pipeline.push({
@@ -136,7 +159,7 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  authorities, crucialWobjects, string, object_type, supportedTypes, forSites,
+  authorities, crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory,
 }) => {
   const pipeline = [];
   if (forSites) {
@@ -170,6 +193,21 @@ const matchSitesPipe = ({
         'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
       },
     });
+  }
+  if (tagCategory) {
+    const condition = [];
+    for (const category of tagCategory) {
+      condition.push({
+        fields: {
+          $elemMatch: {
+            name: FIELDS_NAMES.CATEGORY_ITEM,
+            body: { $in: category.tags },
+            tagCategory: category.categoryName,
+          },
+        },
+      });
+    }
+    pipeline.push({ $match: { $or: condition } });
   }
   pipeline.push({
     $match: {

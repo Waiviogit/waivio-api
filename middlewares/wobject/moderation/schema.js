@@ -10,7 +10,6 @@ exports.schema = [
     path: '/wobject/:authorPermlink',
     method: 'GET',
     case: 1,
-    custom_fields_paths: ['preview_gallery', 'tagCategories'],
   },
   {
     path: '/wobject/:authorPermlink/posts',
