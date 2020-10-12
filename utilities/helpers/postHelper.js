@@ -219,7 +219,7 @@ const additionalSponsorObligations = async (posts) => {
       + parseFloat(_.get(post, 'total_payout_value', 0))
       + parseFloat(_.get(post, 'curator_payout_value', 0));
     const voteRshares = _.reduce(post.active_votes,
-      (a, b) => a + parseFloat(b.rshares_weight || b.rshares), 0);
+      (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
 
     const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
 
@@ -227,7 +227,7 @@ const additionalSponsorObligations = async (posts) => {
       let likedSum = 0;
       const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), campaign.guideName], v.voter));
       for (const el of registeredVotes) {
-        likedSum += (ratio * (el.rshares_weight || el.rshares));
+        likedSum += (ratio * parseInt(el.rshares_weight || el.rshares, 10));
       }
       const sponsorPayout = campaign.reward - likedSum;
       if (sponsorPayout <= 0) continue;
@@ -236,13 +236,18 @@ const additionalSponsorObligations = async (posts) => {
         voter: campaign.guideName,
         rshares: sponsorPayout / ratio,
         sponsor: true,
+        percent: 10000,
       });
     } else {
       post.sponsor_payout_value = campaign.reward;
+      _.forEach(post.active_votes, (el) => {
+        el.rshares ? el.rshares = 0 : el.rshares_weight = 0;
+      });
       post.active_votes.push({
         voter: campaign.guideName,
-        rshares: Math.abs(voteRshares || 1) * 1000000,
+        rshares: campaign.reward,
         sponsor: true,
+        percent: 10000,
       });
     }
   }
