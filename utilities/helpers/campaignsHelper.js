@@ -88,7 +88,7 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
       requiredObject,
       status: { $nin: ['pending'] },
       'users.name': userName,
-      'users.status': { $in: ['completed', RESERVATION_STATUSES.COMPLETED] },
+      'users.status': { $in: [RESERVATION_STATUSES.ASSIGNED, RESERVATION_STATUSES.COMPLETED] },
     },
   }, {
     $addFields: {
@@ -110,18 +110,14 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
         },
       },
     },
-  }, { $group: { _id: null, lastCompleted: { $max: '$completedUser.updatedAt' }, assignedUser: { $last: '$assignedUser.name' } } }, {
-    $project: {
-      _id: 0,
-      lastCompleted: { $arrayElemAt: ['$lastCompleted', 0] },
-      assignedUser: { $arrayElemAt: ['$assignedUser', 0] },
-    },
   },
+  { $project: { _id: null, completedUser: 1, assignedUser: 1 } },
   ];
   const { result } = await Campaign.aggregate(pipeline);
+  if (_.isEmpty(result)) return { lastCompleted: null, assignedUser: false };
   return {
-    lastCompleted: _.get(result, '[0].lastCompleted', null),
-    assignedUser: !!_.get(result, '[0].assignedUser'),
+    lastCompleted: _.max(_.map(result[0].completedUser, 'updatedAt')) || null,
+    assignedUser: !!_.last(_.get(result, '[0].assignedUser')),
   };
 };
 
