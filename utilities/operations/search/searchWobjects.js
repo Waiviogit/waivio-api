@@ -7,7 +7,7 @@ const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
   string, object_type, limit, skip, app, forParent, required_fields,
-  needCounters = false, tagCategory, userName, simplified, map,
+  needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
@@ -24,6 +24,7 @@ exports.searchWobjects = async ({
     crucialWobjects,
     authorities,
     string,
+    sort,
     map,
     limit,
     skip,
@@ -89,11 +90,12 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 const getPipeline = ({
-  forSites, crucialWobjects, authorities, string, limit, forExtended, map,
+  forSites, crucialWobjects, authorities, string, limit, forExtended, map, sort,
   skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
 }) => (forSites || forExtended
   ? addFieldsToSearch({
     forSites,
+    sort,
     map,
     crucialWobjects,
     tagCategory,
@@ -112,7 +114,7 @@ const getPipeline = ({
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
   crucialWobjects, string, authorities, object_type, forParent,
-  skip, limit, supportedTypes, forSites, tagCategory, map,
+  skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
     string, authorities, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
@@ -122,8 +124,8 @@ const addFieldsToSearch = ({
       $addFields: {
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
-    }, { $sort: { priority: -1, weight: -1 } });
-  } else pipeline.push({ $sort: { weight: -1 } });
+    }, { $sort: { priority: -1, [sort]: -1 } });
+  } else pipeline.push({ $sort: { [sort]: -1 } });
 
   pipeline.push({ $limit: limit || 10 }, { $skip: skip || 0 });
   return pipeline;

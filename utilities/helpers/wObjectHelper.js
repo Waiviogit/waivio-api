@@ -196,20 +196,16 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 };
 
 /** Get info of wobject parent with specific winning fields */
-const getParentInfo = async (wObject, locale, app) => {
+const getParentInfo = async ({
+  wObject, locale, app, parent,
+}) => {
   if (wObject.parent) {
-    const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
-    if (!fullParent) {
-      wObject.parent = '';
-      return wObject.parent;
-    }
-    wObject.parent = fullParent;
-
-    wObject.parent = await processWobjects({
-      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, app,
+    if (!parent) return '';
+    parent = await processWobjects({
+      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(parent, 'parent')], returnArray: false, app,
     });
-  } else wObject.parent = '';
-  return wObject.parent;
+  } else parent = '';
+  return parent;
 };
 
 const fillObjectByHiveData = async (obj, exposedFields) => {
@@ -288,6 +284,9 @@ const processWobjects = async ({
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
+  let parents = [];
+  const parentPermlinks = _.uniq(_.compact(_.map(wobjects, 'parent')));
+  if (parentPermlinks.length) ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
@@ -331,7 +330,12 @@ const processWobjects = async ({
       obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
       if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
-    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    if (_.isString(obj.parent)) {
+      const parent = _.find(parents, { author_permlink: obj.parent });
+      obj.parent = await getParentInfo({
+        wObject: obj, locale, app, parent,
+      });
+    }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
