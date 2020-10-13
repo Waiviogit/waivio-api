@@ -7,7 +7,7 @@ const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
   string, object_type, limit, skip, app, forParent, required_fields,
-  needCounters = false, tagCategory, userName, simplified,
+  needCounters = false, tagCategory, userName, simplified, map,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
@@ -24,6 +24,7 @@ exports.searchWobjects = async ({
     crucialWobjects,
     authorities,
     string,
+    map,
     limit,
     skip,
     forParent,
@@ -88,11 +89,12 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 const getPipeline = ({
-  forSites, crucialWobjects, authorities, string, limit, forExtended,
+  forSites, crucialWobjects, authorities, string, limit, forExtended, map,
   skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
 }) => (forSites || forExtended
   ? addFieldsToSearch({
     forSites,
+    map,
     crucialWobjects,
     tagCategory,
     authorities,
@@ -109,10 +111,11 @@ const getPipeline = ({
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
-  crucialWobjects, string, authorities, object_type, forParent, skip, limit, supportedTypes, forSites, tagCategory,
+  crucialWobjects, string, authorities, object_type, forParent,
+  skip, limit, supportedTypes, forSites, tagCategory, map,
 }) => {
   const pipeline = [...matchSitesPipe({
-    string, authorities, crucialWobjects, object_type, supportedTypes, forSites, tagCategory,
+    string, authorities, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
   })];
   if (forParent) {
     pipeline.push({
@@ -167,9 +170,20 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  authorities, crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory,
+  authorities, crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map,
 }) => {
   const pipeline = [];
+  if (map) {
+    pipeline.push({
+      $geoNear: {
+        near: { type: 'Point', coordinates: [map.coordinates[1], map.coordinates[0]] },
+        distanceField: 'proximity',
+        maxDistance: map.radius,
+        spherical: true,
+        limit: 100000,
+      },
+    });
+  }
   if (forSites) {
     pipeline.push({
       $match: {
