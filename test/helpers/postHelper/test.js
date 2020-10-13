@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  faker, dropDatabase, postHelper, expect, moment,
+  faker, dropDatabase, postHelper, expect, moment, sinon,
 } = require('test/testHelper');
 const {
   CampaignFactory, BotUpvoteFactory, PostFactory, PaymentHistoryFactory,
@@ -316,6 +316,33 @@ describe('on additionalSponsorObligations', async () => {
       post = await PostFactory.Create({
         onlyData: true,
         additionsForMetadata: { campaignId: faker.random.string() },
+      });
+      [handledPost] = await postHelper.additionalSponsorObligations([post]);
+    });
+    it('should return post from method and not attract post', async () => {
+      expect(handledPost).to.be.deep.eq(post);
+    });
+  });
+  describe('when review rejected', async () => {
+    let handledPost;
+    beforeEach(async () => {
+      await dropDatabase();
+      const rejected = [...users];
+      rejected[0].status = RESERVATION_STATUSES.REJECTED;
+      reward = _.random(1, 10);
+      campaign = await CampaignFactory.Create({ reward, users: rejected });
+      post = await PostFactory.Create({
+        cashout_time: moment().subtract(_.random(1, 10), 'days').toISOString(),
+        additionsForMetadata: { campaignId: campaign._id },
+        permlink: reviewPermlink,
+        author: userName,
+        onlyData: true,
+      });
+      await PaymentHistoryFactory.Create({
+        permlink: reservationPermlink,
+        sponsor: campaign.guideName,
+        reviewPermlink,
+        userName,
       });
       [handledPost] = await postHelper.additionalSponsorObligations([post]);
     });
