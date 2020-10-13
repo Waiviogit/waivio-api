@@ -42,10 +42,12 @@ exports.requirementFilters = async (campaign, user) => {
 
 exports.campaignFilter = async (campaigns, user, app) => {
   const validCampaigns = [];
+  const { result: wobjects, error } = await Wobj.find({ author_permlink: { $in: _.map(campaigns, 'requiredObject') } });
+  if (error) return;
   await Promise.all(campaigns.map(async (campaign) => {
     if (this.campaignValidation(campaign)) {
-      const { result, error } = await Wobj.findOne(campaign.requiredObject);
-      if (error || !result) return;
+      const result = _.find(wobjects, { author_permlink: campaign.requiredObject });
+      if (!result) return;
       campaign.required_object = await wobjectHelper.processWobjects({
         wobjects: [result], app, returnArray: false, fields: REQUIREDFIELDS_POST,
       });
@@ -139,7 +141,7 @@ exports.addCampaignsToWobjects = async ({
     if (simplified) {
       wobj.fields = _.filter(wobj.fields,
         (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
-      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status', 'default_name', 'parent']);
     }
     const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
     if (primaryCampaigns.length) {

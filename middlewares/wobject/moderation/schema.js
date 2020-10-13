@@ -12,6 +12,12 @@ exports.schema = [
     case: 1,
   },
   {
+    path: '/sites/map',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
+  {
     path: '/wobject/:authorPermlink/posts',
     method: 'POST',
     case: 4,

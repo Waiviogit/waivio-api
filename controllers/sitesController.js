@@ -3,7 +3,7 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove,
+    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove, map,
   },
 } = require('utilities/operations');
 
@@ -201,6 +201,17 @@ exports.findTags = async (req, res, next) => {
   if (!value) return;
 
   const { result, error } = await sitesHelper.searchTags(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getMapData = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.sites.mapData, next);
+  if (!value) return;
+
+  const { result, error } = await map.getData(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
