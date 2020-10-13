@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  faker, dropDatabase, postHelper, expect, moment, sinon,
+  faker, dropDatabase, postHelper, expect, moment,
 } = require('test/testHelper');
 const {
   CampaignFactory, BotUpvoteFactory, PostFactory, PaymentHistoryFactory,
@@ -344,9 +344,9 @@ describe('on additionalSponsorObligations', async () => {
         reviewPermlink,
         userName,
       });
-      [handledPost] = await postHelper.additionalSponsorObligations([post]);
     });
     it('should return post from method and not attract post', async () => {
+      [handledPost] = await postHelper.additionalSponsorObligations([post]);
       expect(handledPost).to.be.deep.eq(post);
     });
   });
