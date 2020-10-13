@@ -111,6 +111,7 @@ const search = async (req, res, next) => {
     tagCategory: req.body.tagCategory,
     object_type: req.body.object_type,
     sortByApp: req.body.sortByApp,
+    sort: req.body.sort,
     forParent: req.body.forParent,
     userName: req.body.userName,
     map: req.body.map,

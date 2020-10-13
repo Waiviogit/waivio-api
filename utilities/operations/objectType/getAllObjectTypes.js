@@ -19,7 +19,6 @@ module.exports = async ({ limit, skip, wobjects_count = 3 }) => {
   ));
 
   if (error) return { error };
-  console.time('start');
   await Promise.all(objectTypes.map(async (type) => {
     const { result: wobjects } = await Wobj.find({ author_permlink: { $in: type.top_wobjects } },
       'parent fields weight author_permlink object_type default_name', { weight: -1 });
@@ -31,6 +30,5 @@ module.exports = async ({ limit, skip, wobjects_count = 3 }) => {
       type.related_wobjects = type.related_wobjects.slice(0, wobjects_count);
     }
   }));
-  console.timeEnd('start');
   return { objectTypes };
 };
