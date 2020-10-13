@@ -66,8 +66,17 @@ exports.searchScheme = Joi.object().keys({
   tagCategory: Joi.array().items(Joi.object().keys({
     categoryName: Joi.string().required(),
     tags: Joi.array().items(Joi.string()).min(1).required(),
-  })),
+  })).min(1),
   userName: Joi.string(),
+  map: Joi.object().keys({
+    coordinates: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-90).max(90),
+        Joi.number().min(-180).max(180),
+      ),
+    radius: Joi.number().min(0),
+  }),
   simplified: Joi.boolean().default(false),
   string: Joi.string().allow(''),
   locale: Joi.string().default('en-US'),
