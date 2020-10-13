@@ -232,12 +232,18 @@ const additionalSponsorObligations = async (posts) => {
       beforeCashOut
         ? post.pending_payout_value = (parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout).toFixed(3)
         : post.curator_payout_value = (parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout).toFixed(3);
-      post.active_votes.push({
-        voter: campaign.guideName,
-        rshares: sponsorPayout / ratio,
-        sponsor: true,
-        percent: 10000,
-      });
+      const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+      if (hasSponsor) {
+        hasSponsor.rshares = parseInt(hasSponsor.rshares, 10) + Math.round(sponsorPayout / ratio);
+        hasSponsor.sponsor = true;
+      } else {
+        post.active_votes.push({
+          voter: campaign.guideName,
+          rshares: Math.round(sponsorPayout / ratio),
+          sponsor: true,
+          percent: 10000,
+        });
+      }
     } else {
       beforeCashOut
         ? post.pending_payout_value = campaign.reward
@@ -245,12 +251,18 @@ const additionalSponsorObligations = async (posts) => {
       _.forEach(post.active_votes, (el) => {
         el.rshares ? el.rshares = 0 : el.rshares_weight = 0;
       });
-      post.active_votes.push({
-        voter: campaign.guideName,
-        rshares: campaign.reward,
-        sponsor: true,
-        percent: 10000,
-      });
+      const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+      if (hasSponsor) {
+        hasSponsor.rshares = campaign.reward;
+        hasSponsor.sponsor = true;
+      } else {
+        post.active_votes.push({
+          voter: campaign.guideName,
+          rshares: campaign.reward,
+          sponsor: true,
+          percent: 10000,
+        });
+      }
     }
   }
   return posts;

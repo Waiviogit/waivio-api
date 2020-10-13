@@ -33,7 +33,7 @@ describe('on additionalSponsorObligations', async () => {
         });
       }
       rewardOnPost = _.reduce(activeVotes,
-        (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0) / (reward * 100);
+        (a, b) => a + parseInt(b.rshares, 10), 0) / (reward * 100);
       campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
         cashout_time: cashoutTime,
@@ -72,7 +72,7 @@ describe('on additionalSponsorObligations', async () => {
     it('registered votes and sponsor vote should be equal reward ', async () => {
       let likedSum = 0;
       const voteRshares = _.reduce(post.active_votes,
-        (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
+        (a, b) => a + parseInt(b.rshares, 10), 0);
       const ratio = parseFloat(post.pending_payout_value) / voteRshares;
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       registeredVotes.push(guide);
@@ -120,7 +120,7 @@ describe('on additionalSponsorObligations', async () => {
     });
     it('sponsor rshares should be full reward', async () => {
       const voteRshares = _.reduce(post.active_votes,
-        (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
+        (a, b) => a + parseInt(b.rshares, 10), 0);
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       const guideHBD = (Number(post.pending_payout_value)
         / voteRshares) * guide.rshares;
@@ -174,7 +174,7 @@ describe('on additionalSponsorObligations', async () => {
         });
       }
       rewardOnPost = _.reduce(activeVotes,
-        (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0) / (reward * 10);
+        (a, b) => a + parseInt(b.rshares, 10), 0) / (reward * 10);
       campaign = await CampaignFactory.Create({ reward, users });
       post = await PostFactory.Create({
         onlyData: true,
