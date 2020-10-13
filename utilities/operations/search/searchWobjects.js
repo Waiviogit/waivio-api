@@ -12,8 +12,8 @@ exports.searchWobjects = async ({
   if (!app) ({ result: app } = await getSessionApp());
 
   const crucialWobjects = _.get(app, 'supported_objects', []);
-  const forSites = app.inherited;
-  const forExtended = app.canBeExtended;
+  const forSites = _.get(app, 'inherited');
+  const forExtended = _.get(app, 'canBeExtended');
   const authorities = _.get(app, 'authority', []);
   const supportedTypes = _.get(app, 'supported_object_types', []);
 
@@ -178,7 +178,7 @@ const matchSitesPipe = ({
   if (map) {
     pipeline.push({
       $geoNear: {
-        near: { type: 'Point', coordinates: [map.coordinates[1], map.coordinates[0]] },
+        near: { type: 'Point', coordinates: map.coordinates },
         distanceField: 'proximity',
         maxDistance: map.radius,
         spherical: true,

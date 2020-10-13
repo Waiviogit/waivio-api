@@ -66,6 +66,7 @@ const WObjectSchema = new Schema({
 });
 
 WObjectSchema.index({ map: '2dsphere' });
+WObjectSchema.index({ 'map.coordinates': '2d' });
 WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });

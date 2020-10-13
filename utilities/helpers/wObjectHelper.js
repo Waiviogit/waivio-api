@@ -197,9 +197,9 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 
 /** Get info of wobject parent with specific winning fields */
 const getParentInfo = async ({
-  wObject, locale, app, parent,
+  locale, app, parent,
 }) => {
-  if (wObject.parent) {
+  if (parent) {
     if (!parent) return '';
     parent = await processWobjects({
       locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(parent, 'parent')], returnArray: false, app,
@@ -285,7 +285,8 @@ const processWobjects = async ({
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
   let parents = [];
-  const parentPermlinks = _.uniq(_.compact(_.map(wobjects, 'parent')));
+  const parentPermlinks = _.chain(wobjects).map('parent').compact().uniq()
+    .value();
   if (parentPermlinks.length) ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   for (let obj of wobjects) {
     let exposedFields = [];
@@ -332,9 +333,7 @@ const processWobjects = async ({
     }
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
-      obj.parent = await getParentInfo({
-        wObject: obj, locale, app, parent,
-      });
+      obj.parent = await getParentInfo({ locale, app, parent });
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;

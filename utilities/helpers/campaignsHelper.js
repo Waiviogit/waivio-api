@@ -145,7 +145,7 @@ exports.addCampaignsToWobjects = async ({
     if (simplified) {
       wobj.fields = _.filter(wobj.fields,
         (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
-      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status', 'default_name', 'parent']);
     }
     const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
     if (primaryCampaigns.length) {

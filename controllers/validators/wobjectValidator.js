@@ -73,8 +73,8 @@ exports.searchScheme = Joi.object().keys({
     coordinates: Joi
       .array()
       .ordered(
-        Joi.number().min(-90).max(90),
         Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
       ),
     radius: Joi.number().min(0),
   }),

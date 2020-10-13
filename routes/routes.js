@@ -58,6 +58,8 @@ sitesRoutes.route('/sites/filters')
   .post(sitesController.saveObjectFilters);
 sitesRoutes.route('/sites/tags')
   .get(sitesController.findTags);
+sitesRoutes.route('/sites/map')
+  .post(sitesController.getMapData);
 
 // endregion
 
