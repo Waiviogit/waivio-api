@@ -12,6 +12,7 @@ describe('on additionalSponsorObligations', async () => {
   const cashoutTime = moment().add(_.random(1, 10), 'days').toISOString();
   const reservationPermlink = faker.random.string();
   const reviewPermlink = faker.random.string();
+  const guideName = faker.random.string();
   const userName = faker.random.string();
   const users = [{
     name: userName,
@@ -34,7 +35,7 @@ describe('on additionalSponsorObligations', async () => {
       }
       rewardOnPost = _.reduce(activeVotes,
         (a, b) => a + parseInt(b.rshares, 10), 0) / (reward * 100);
-      campaign = await CampaignFactory.Create({ reward, users });
+      campaign = await CampaignFactory.Create({ reward, users, guideName });
       post = await PostFactory.Create({
         cashout_time: cashoutTime,
         additionsForMetadata: { campaignId: campaign._id },
@@ -58,18 +59,37 @@ describe('on additionalSponsorObligations', async () => {
           author: post.author,
         });
       }
-      [post] = await postHelper.additionalSponsorObligations([post]);
     });
 
     it('should display result greater or equal reward (greater, because there are others, not registred votes)', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
       result = Math.round(parseFloat(post.pending_payout_value));
       expect(result).to.be.gte(reward);
     });
     it('additional obligations should be in active_votes array with flag sponsor true', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       expect(guide.voter).to.be.eq(campaign.guideName);
     });
     it('registered votes and sponsor vote should be equal reward ', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
+      let likedSum = 0;
+      const voteRshares = _.reduce(post.active_votes,
+        (a, b) => a + parseInt(b.rshares, 10), 0);
+      const ratio = parseFloat(post.pending_payout_value) / voteRshares;
+      const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
+      registeredVotes.push(guide);
+      for (const el of registeredVotes) {
+        likedSum += (ratio * (el.rshares_weight || el.rshares));
+      }
+      expect(Math.round(likedSum)).to.be.eq(reward);
+    });
+    it('should change sponsor record if it is in active votes result must be same', async () => {
+      post.active_votes.push({
+        voter: guideName,
+        rshares: _.random(90, 99),
+      });
+      [post] = await postHelper.additionalSponsorObligations([post]);
       let likedSum = 0;
       const voteRshares = _.reduce(post.active_votes,
         (a, b) => a + parseInt(b.rshares, 10), 0);
@@ -109,16 +129,31 @@ describe('on additionalSponsorObligations', async () => {
         reviewPermlink,
         userName,
       });
-      [post] = await postHelper.additionalSponsorObligations([post]);
     });
     it('sponsor_payout_value should be equal reward ', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
       expect(Number(post.pending_payout_value)).to.be.eq(reward);
     });
     it('additional obligations should be in active_votes array with flag sponsor true', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       expect(guide.voter).to.be.eq(campaign.guideName);
     });
     it('sponsor rshares should be full reward', async () => {
+      [post] = await postHelper.additionalSponsorObligations([post]);
+      const voteRshares = _.reduce(post.active_votes,
+        (a, b) => a + parseInt(b.rshares, 10), 0);
+      const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
+      const guideHBD = (Number(post.pending_payout_value)
+        / voteRshares) * guide.rshares;
+      expect(Math.round(guideHBD)).to.be.eq(reward);
+    });
+    it('should change sponsor record if it is in active votes result must be same', async () => {
+      post.active_votes.push({
+        voter: guideName,
+        rshares: _.random(90, 99),
+      });
+      [post] = await postHelper.additionalSponsorObligations([post]);
       const voteRshares = _.reduce(post.active_votes,
         (a, b) => a + parseInt(b.rshares, 10), 0);
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
