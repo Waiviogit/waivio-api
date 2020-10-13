@@ -1,4 +1,5 @@
 const PostModel = require('database').models.Post;
+const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -6,6 +7,7 @@ const _ = require('lodash');
 exports.getAllPosts = async (data) => {
   try {
     const aggregatePipeline = [
+      { $match: { ...getBlockedAppCond() } },
       { $sort: { _id: -1 } },
       { $skip: data.skip },
       { $limit: data.limit },
@@ -57,15 +59,13 @@ exports.getByFollowLists = async ({
 }) => {
   const cond = {
     $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+    ...getBlockedAppCond(),
   };
   // for filter by App wobjects
   if (_.get(filtersData, 'require_wobjects')) {
     cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
   }
-  // for moderate posts by App
-  if (_.get(filtersData, 'forApp')) {
-    cond.blocked_for_apps = { $ne: filtersData.forApp };
-  }
+
   if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
 
   const postsQuery = PostModel.find(cond)
@@ -118,7 +118,8 @@ exports.getBlog = async ({ name, skip = 0, limit = 30 }) => {
   try {
     return {
       posts: await PostModel
-        .find({ author: name }).sort({ _id: -1 }).skip(skip).limit(limit)
+        .find({ author: name, ...getBlockedAppCond() })
+        .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
     };
@@ -159,7 +160,7 @@ exports.getManyPosts = async (postsRefs) => {
   try {
     return {
       posts: await PostModel
-        .find({ $or: [...postsRefs] })
+        .find({ $or: [...postsRefs], ...getBlockedAppCond() })
         .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
         .lean(),
     };
@@ -173,5 +174,15 @@ exports.findByCondition = async (condition) => {
     return { posts: await PostModel.find(condition).lean() };
   } catch (error) {
     return { error };
+  }
+};
+
+const getBlockedAppCond = () => {
+  try {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
+    return { blocked_for_apps: { $ne: host } };
+  } catch (error) {
+    return {};
   }
 };

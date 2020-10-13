@@ -1,10 +1,8 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
 } = require('models');
-const { Post, App } = require('database').models;
-const { postsUtil } = require('utilities/steemApi');
+const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 
 /**
@@ -40,32 +38,7 @@ const getPostObjects = async (author = '', permlink = '') => {
   }
 };
 
-const getPostsByCategory = async (data) => {
-  const { posts, error } = await postsUtil.getPostsByCategory(data);
-
-  if (error) {
-    return { error };
-  }
-  if (!posts || posts.error) {
-    return { error: { status: 404, message: _.get(posts, 'error.message', 'Posts not found') } };
-  }
-  if (!posts.length) return { posts: [] };
-  // get posts array by authors and permlinks
-  const { posts: dbPosts, error: postsDbError } = await PostRepository.getManyPosts(
-    posts.map((p) => (_.pick(p, ['author', 'permlink']))),
-  );
-  if (postsDbError) {
-    return { error: postsDbError };
-  }
-
-  await Promise.all(posts.map(async (post) => {
-    if (post && post.author && post.permlink) {
-      const dbPost = dbPosts.find((p) => p.author === post.author && p.permlink === post.permlink);
-      post = await mergePostData(post, dbPost);
-    }
-  }));
-  return { posts };
-};
+const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.name, skip: data.skip, limit: data.limit });
 
 /**
  * Get post from DB and merge fields which doesn't exists in source post(from steem)
@@ -161,7 +134,6 @@ const addAuthorWobjectsWeight = async (posts = []) => {
 };
 
 const fillReblogs = async (posts = [], userName) => {
-// const fillReblogs = async (posts = []) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;
@@ -197,24 +169,10 @@ const fillReblogs = async (posts = [], userName) => {
   }
 };
 
-/** Check for moderators downvote */
-const checkBlackListedComment = async ({ app, votes }) => {
-  if (!app) {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
-    ({ result: app } = await App.findOne({ host }));
-  }
-  const downVoteNames = _.map(votes, (vote) => {
-    if (+vote.percent < 0) return vote.voter;
-  }) || [];
-  return !!_.intersection(_.get(app, 'moderators'), downVoteNames).length;
-};
-
 module.exports = {
   getPostObjects,
   getPostsByCategory,
   getWobjFeedCondition,
-  checkBlackListedComment,
   addAuthorWobjectsWeight,
   fillReblogs,
   mergePostData,
