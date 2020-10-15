@@ -101,7 +101,6 @@ const specialFieldFilter = (idField, allFields, id) => {
     if (!idField.adminVote && itemField.weight < 0) continue;
     idField.items.push(itemField);
   }
-  if (id === FIELDS_NAMES.TAG_CATEGORY && idField.items.length === 0) return null;
   return idField;
 };
 
