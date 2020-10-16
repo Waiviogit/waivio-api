@@ -24,7 +24,8 @@ exports.saveUserIp = async (req, res, next) => {
     const parentHost = `https://${_.get(parent, 'host', config.appHost)}${referer.replace(origin, '')}`;
     return res.redirect(303, parentHost);
   }
-  if (!ip || !result) return next();
+  req.appData = result;
+  if (!ip) return next();
   await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
   next();
 };

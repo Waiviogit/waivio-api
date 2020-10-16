@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { App } = require('models');
+const sitesHelper = require('utilities/helpers/sitesHelper');
 
 exports.getObjectsFilter = async ({ host, userName }) => {
   const { result, error } = await App.findOne({ host, owner: userName, inherited: true });
@@ -30,5 +31,6 @@ exports.saveObjectsFilter = async (params) => {
     { _id: result._id }, { object_filters: params.objectsFilter },
   );
   if (updateError) return { error: updateError };
+  await sitesHelper.updateSupportedObjects({ host: result.host, app: updatedApp });
   return { result: updatedApp.object_filters };
 };
