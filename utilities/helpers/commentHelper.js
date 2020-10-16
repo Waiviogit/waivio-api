@@ -70,7 +70,7 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
 
     steemComments = stComments;
   }
-  return dbComments.map(async (dbComment) => {
+  return Promise.all(dbComments.map(async (dbComment) => {
     const steemComment = _.find(steemComments, { ..._.pick(dbComment, ['author', 'permlink']) });
 
     if (steemComment) {
@@ -79,7 +79,7 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
       if (!await this.checkBlackListedComment({ app, votes: steemComment.active_votes })) return steemComment;
     }
     if (!await this.checkBlackListedComment({ app, votes: dbComment.active_votes })) return dbComment;
-  });
+  }));
 };
 
 /** Check for moderators downvote */
