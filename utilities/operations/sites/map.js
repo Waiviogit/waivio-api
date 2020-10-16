@@ -7,11 +7,10 @@ exports.getData = async ({
 }) => {
   let user;
   const crucialWobjects = _.get(app, 'supported_objects', []);
-  const authorities = _.get(app, 'authority', []);
   const supportedTypes = _.get(app, 'supported_object_types', []);
   const forSites = _.get(app, 'inherited');
 
-  let condition = {
+  const condition = {
     map: {
       $geoWithin: {
         $box: [bottomPoint, topPoint],
@@ -19,27 +18,8 @@ exports.getData = async ({
     },
     object_type: { $in: supportedTypes },
   };
-  if (forSites) {
-    condition = Object.assign(condition, {
-      $or: [{
-        $expr: {
-          $gt: [
-            { $size: { $setIntersection: ['$authority.ownership', authorities] } },
-            0,
-          ],
-        },
-      }, {
-        $expr: {
-          $gt: [
-            { $size: { $setIntersection: ['$authority.administrative', authorities] } },
-            0,
-          ],
-        },
-      },
-      { author_permlink: { $in: crucialWobjects } },
-      ],
-    });
-  }
+  if (forSites) condition.author_permlink = { $in: crucialWobjects };
+
   const { result: wobjects, error } = await Wobj.find(condition, {}, { weight: -1 }, 0, limit + 1);
 
   if (error) return { error };

@@ -63,6 +63,27 @@ exports.mapData = Joi.object().keys({
     ).required(),
 }).options(options);
 
+exports.siteMapCoordinates = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  mapCoordinates: Joi.array().items(Joi.object().keys({
+    topPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    bottomPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+  })).min(1).max(30)
+    .required(),
+
+});
+
 exports.objectsFilter = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),

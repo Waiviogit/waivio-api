@@ -615,6 +615,123 @@
             }
           }
         }
+      },
+      "put" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update map points for supported objects of website",
+        "description" : "Update map points for supported objects of website",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access token",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user\n, **topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
+          "required": true,
+          "schema": {
+           "type": "object",
+            "example": {
+              "host": "van.dining.gifts",
+              "userName": "grampo",
+              "mapCoordinates": [{
+                  "topPoint": [
+                    -91.479002,68.117143
+                  ],
+                  "bottomPoint": [
+                    -131.139244,49.152501
+                  ]
+                }]
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/mapCoordinates"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Return points for boxes at map",
+        "description" : "Return points for boxes at map",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name": "host",
+          "description": "host to return map points",
+          "example": "https://waiviodev.com",
+          "in": "query",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/mapCoordinates"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
       }
     },
     "/api/sites/report" : {
@@ -3252,6 +3369,18 @@
     }
   },
   "definitions" : {
+    "mapCoordinates": {
+      "type": "array",
+     "example": [{
+       "topPoint": [
+         -91.479002,68.117143
+       ],
+       "bottomPoint": [
+         -131.139244,49.152501
+       ]
+     }
+     ]
+    },
     "firstLoad": {
       "type": "object",
       "example": {

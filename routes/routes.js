@@ -59,7 +59,9 @@ sitesRoutes.route('/sites/filters')
 sitesRoutes.route('/sites/tags')
   .get(sitesController.findTags);
 sitesRoutes.route('/sites/map')
-  .post(sitesController.getMapData);
+  .get(sitesController.getMapCoordinates)
+  .post(sitesController.getMapData)
+  .put(sitesController.setMapCoordinates);
 
 // endregion
 

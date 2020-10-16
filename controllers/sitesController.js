@@ -3,7 +3,8 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports, manage, create, configurations, remove, map,
+    objectsFilter, refunds, authorities, reports,
+    manage, create, configurations, remove, map, mapCoordinates,
   },
 } = require('utilities/operations');
 
@@ -211,7 +212,31 @@ exports.getMapData = async (req, res, next) => {
   const params = validators.validate(req.body, validators.sites.mapData, next);
   if (!params) return;
 
-  const { result, error } = await map.getData({ ...params, app: req.app });
+  const { result, error } = await map.getData({ ...params, app: req.appData });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.setMapCoordinates = async (req, res, next) => {
+  const params = validators.validate(req.body, validators.sites.siteMapCoordinates, next);
+  if (!params) return;
+
+  const { error: authError } = await authoriseUser.authorise(params.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await mapCoordinates.set(params);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getMapCoordinates = async (req, res, next) => {
+  if (!req.query.host) return next({ status: 422, message: 'host is required' });
+
+  const { result, error } = await mapCoordinates.get({ host: req.query.host });
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -219,7 +244,7 @@ exports.getMapData = async (req, res, next) => {
 };
 
 exports.firstLoad = async (req, res, next) => {
-  const { result, error } = await sitesHelper.firstLoad({ app: req.app });
+  const { result, error } = await sitesHelper.firstLoad({ app: req.appData });
   if (error) return next(error);
 
   res.result = { status: 200, json: result };

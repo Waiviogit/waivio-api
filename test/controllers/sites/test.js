@@ -5,13 +5,16 @@ const { getNamespace } = require('cls-hooked');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
-  AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory,
+  AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory, CampaignFactory,
 } = require('test/factories');
+const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
+const sitesHelper = require('utilities/helpers/sitesHelper');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { configurationMock } = require('./mocks');
 
 describe('On sitesController', async () => {
-  let parent, owner, name, filters, configuration;
+  let parent, owner, name, filters, configuration, session;
   beforeEach(async () => {
     owner = faker.random.string();
     name = faker.random.string();
@@ -22,9 +25,14 @@ describe('On sitesController', async () => {
     };
     configuration = configurationMock();
     parent = await AppFactory.Create({
-      canBeExtended: true, inherited: false, filters, configuration, status: STATUSES.ACTIVE,
+      canBeExtended: true,
+      inherited: false,
+      filters,
+      configuration,
+      status: STATUSES.ACTIVE,
+      supportedTypes: OBJECT_TYPES.RESTAURANT,
     });
-    const session = getNamespace('request-session');
+    session = getNamespace('request-session');
     sinon.stub(session, 'get').returns(parent.host);
   });
   afterEach(() => {
@@ -509,6 +517,133 @@ describe('On sitesController', async () => {
           .post('/api/sites/filters')
           .send({ userName: owner, host, objectsFilter: filters });
         expect(result).to.have.status(422);
+      });
+    });
+  });
+
+  describe('On save mapCoordinates', async () => {
+    let host, mapCoordinates;
+    beforeEach(async () => {
+      sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+      host = `${faker.random.string()}.${parent.host}`;
+      sinon.spy(sitesHelper, 'updateSupportedObjects');
+      await AppFactory.Create({
+        owner, parent: parent._id, host,
+      });
+      mapCoordinates = [{
+        topPoint: [+faker.address.longitude(), +faker.address.latitude()],
+        bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
+      }];
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+    describe('On OK', async () => {
+      let result;
+      beforeEach(async () => {
+        result = await chai.request(app)
+          .put('/api/sites/map')
+          .send({ userName: owner, host, mapCoordinates });
+      });
+      it('should return status 200', async () => {
+        expect(result).to.have.status(200);
+      });
+      it('should save coordinates to app', async () => {
+        const updatedApp = await App.findOne({ host }).lean();
+        expect(updatedApp.mapCoordinates).to.be.deep.eq(mapCoordinates);
+      });
+      it('should should call update supported objects method', async () => {
+        expect(sitesHelper.updateSupportedObjects.calledOnce).to.be.true;
+      });
+    });
+
+    describe('On Error', async () => {
+      it('should return 404 status with incorrect host', async () => {
+        const result = await chai.request(app)
+          .put('/api/sites/map')
+          .send({ userName: owner, host: faker.random.string(), mapCoordinates });
+        expect(result).to.have.status(404);
+      });
+      it('should not update app with incorrect host', async () => {
+        await chai.request(app)
+          .put('/api/sites/map')
+          .send({ userName: owner, host: faker.random.string(), mapCoordinates });
+        const result = await App.findOne({ host }).lean();
+        expect(result.mapCoordinates).to.have.length(0);
+      });
+    });
+  });
+
+  describe('On main sites map', async () => {
+    let wobj1, wobj2, campaign;
+    beforeEach(async () => {
+      wobj1 = await ObjectFactory.Create({ objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [-94.233, 48.224] } });
+      wobj2 = await ObjectFactory.Create({ objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [-95.233, 48.224] } });
+      campaign = await CampaignFactory.Create({
+        status: CAMPAIGN_STATUSES.ACTIVE,
+        requiredObject: wobj1.author_permlink,
+        activation_permlink: faker.random.string(),
+        objects: [wobj2.author_permlink],
+      });
+    });
+    describe('for parent', async () => {
+      it('should return two objects for parent if they in box', async () => {
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+        expect(result.body.wobjects).to.have.length(2);
+      });
+      it('should not return one of object in it not in box', async () => {
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-94.235, 48.224], bottomPoint: [-91.233, 44.224] });
+        expect(result.body.wobjects).to.have.length(1);
+      });
+      it('should return primary campaign for object if it exist', async () => {
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+        const wobj = _.find(result.body.wobjects, { author_permlink: wobj1.author_permlink });
+        expect(wobj.campaigns).to.be.deep.eq({ min_reward: campaign.reward, max_reward: campaign.reward });
+      });
+      it('should return secondary campaign if it exist', async () => {
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+        const wobj = _.find(result.body.wobjects, { author_permlink: wobj2.author_permlink });
+        expect(wobj.propositions).to.be.exist;
+      });
+    });
+    describe('for sites', async () => {
+      let host;
+      beforeEach(async () => {
+        host = `${faker.random.string()}.${parent.host}`;
+        sinon.spy(sitesHelper, 'updateSupportedObjects');
+        await AppFactory.Create({
+          owner,
+          parent: parent._id,
+          host,
+          supportedObjects: [wobj1.author_permlink, wobj2.author_permlink],
+          status: STATUSES.ACTIVE,
+        });
+      });
+      it('should return all wobjects if they in search box and in site supported objects ', async () => {
+        sinon.restore();
+        sinon.stub(session, 'get').returns(host);
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+        expect(result.body.wobjects).to.have.length(2);
+      });
+      it('should not return object if it not in supported objects', async () => {
+        await App.updateOne({ host }, { supported_objects: [wobj1.author_permlink] });
+        sinon.restore();
+        sinon.stub(session, 'get').returns(host);
+        const result = await chai.request(app)
+          .post('/api/sites/map')
+          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+        const wobj = _.find(result.body.wobjects, { author_permlink: wobj2.author_permlink });
+        expect(wobj).to.be.undefined;
       });
     });
   });
