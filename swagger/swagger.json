@@ -42,6 +42,13 @@
         "description" : "Return list user sites active, pending and deactivated(deactivated< 6 month ago)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "Hive user access token",
@@ -79,6 +86,15 @@
       },
       "post" : {
         "tags" : [ "sites" ],
+        "parameters": [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
         "summary" : "Get info about app for first load",
         "description" : "Return configurations for first load app, get host from origin headers",
         "produces" : [ "application/json" ],
@@ -105,6 +121,13 @@
         "description" : "Delete user website, only websites with status PENDING can be deleted",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "Hive user access token",
@@ -155,6 +178,13 @@
         "description" : "Return special fields from app",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "host",
           "in" : "query",
           "description" : "host",
@@ -188,6 +218,13 @@
         "description" : "Create new pending website",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "params",
           "in" : "body",
           "description" : "**owner** - name of user - who create website\n, **name** - name of subdomain - allow only lowercase and numbers\n **parent** - parent of subdomain\n **parentId** - id of parent",
@@ -256,6 +293,15 @@
         "tags" : [ "sites" ],
         "summary" : "Get all available parents",
         "description" : "Return list of parent domains which allow to create website",
+        "parameters": [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
         "produces" : [ "application/json" ],
         "responses" : {
           "200" : {
@@ -449,7 +495,7 @@
         },{
           "name" : "params",
           "in" : "body",
-          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **configuration** - configurations for app(all fields required) \n",
+          "description" : "**userName** - name of user - who owned website\n, **host** - name of host to update\n **configuration** - configurations for app(all fields required), for fields topPoint (it is array with numbers [longitude, latitude]) and bottomPoint(it is array with numbers [longitude, latitude]) - (topPoint - upper right coordinates, bottomPoint - bottom left coordinates) \n",
           "required": true,
           "schema": {
             "$ref": "#/definitions/siteConfigurations"
@@ -489,6 +535,205 @@
         }
       }
     },
+    "/api/sites/map" : {
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Return wobjects in a given range of coordinates",
+        "description" : "Return wobjects in a given range of coordinates by rectangle",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**skip** - skip wobjects \n**limit** - wobjectslimit \n**userName** - name of user\n, **topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/getMap"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "wobjects": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "example": {
+                      "author_permlink": "iwh-sushi-mura",
+                      "weight": 48761893.21,
+                      "default_name": "Sushi Mura",
+                      "parent": "",
+                      "campaigns": {
+                        "min_reward": 0.001,
+                        "max_reward": 0.01
+                      },
+                      "name": "Sushi Mura",
+                      "avatar": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
+                      "map": "{\"latitude\":49.2268638,\"longitude\":-123.1288576}",
+                      "defaultShowLink": "/object/iwh-sushi-mura",
+                      "exposedFields": []
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "sites" ],
+        "summary" : "Update map points for supported objects of website",
+        "description" : "Update map points for supported objects of website",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access token",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of user\n, **topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
+          "required": true,
+          "schema": {
+           "type": "object",
+            "example": {
+              "host": "van.dining.gifts",
+              "userName": "grampo",
+              "mapCoordinates": [{
+                  "topPoint": [
+                    -91.479002,68.117143
+                  ],
+                  "bottomPoint": [
+                    -131.139244,49.152501
+                  ]
+                }]
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/mapCoordinates"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Unauthorized"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      },
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Return points for boxes at map",
+        "description" : "Return points for boxes at map",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name": "host",
+          "description": "host to return map points",
+          "example": "https://waiviodev.com",
+          "in": "query",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/mapCoordinates"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites/report" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -496,6 +741,13 @@
         "description" : "Generate data for reports",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "query",
           "description" : "name of authorised user",
@@ -560,6 +812,13 @@
         "description" : "Return list of site moderators",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "user access token",
@@ -611,6 +870,13 @@
         "description" : "Return list of site administrators",
         "produces" : [ "application/json" ],
         "parameters" : [  {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "user access token",
@@ -662,6 +928,13 @@
         "description" : "Return list of site authorities",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "user access token",
@@ -713,6 +986,13 @@
         "description" : "Return list of tags for certain tag category",
         "produces" : [ "application/json" ],
         "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "category",
           "in" : "query",
           "description" : "Tag Category for search",
@@ -755,6 +1035,13 @@
         "description" : "Return list of object filters with tag categories for add tags",
         "produces" : [ "application/json" ],
         "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "access-token",
           "in" : "header",
           "description" : "user access token",
@@ -877,7 +1164,14 @@
         "summary" : "Get list of pending refunds",
         "description" : "Return list of site pending refunds, only website admins can get this info",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }, {
           "name" : "access-token",
           "in" : "header",
           "description" : "user access token",
@@ -931,6 +1225,13 @@
         "description" : "Return list users sorting by summary weight in all wobjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "limit",
           "in" : "query",
           "description" : "count of users to return",
@@ -981,6 +1282,13 @@
         "description" : "Get user metadata, which includes private info(ex. settings, drafts etc.)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "Name of waivio user",
@@ -1050,7 +1358,14 @@
         "summary" : "Return aray of users accounts data",
         "description" : "Return aray of users accounts data with flad hasMOre\n",
         "produces" : [ "application/json" ],
-        "parameters" : [ {
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }, {
           "in" : "body",
           "name" : "params",
           "description" : "List of user names",
@@ -1076,6 +1391,13 @@
         "description" : "Return info about specified user from database and blockchain",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of user to return",
@@ -1117,6 +1439,13 @@
         "description" : "set user marker to false for disable new user modal window",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of user",
@@ -1140,6 +1469,13 @@
         "description" : "Return array with names of users and boolean markers for each",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of user to return",
@@ -1176,6 +1512,13 @@
         "description" : "Search users by name with param \"limit\"",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "searchString",
           "in" : "query",
           "description" : "String to search",
@@ -1215,6 +1558,13 @@
         "summary" : "Return wobjects which user is following",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -1260,6 +1610,13 @@
         "summary" : "Return users which user is following",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "user name which followings needs to return",
@@ -1314,6 +1671,13 @@
         "summary" : "Get user FEED",
         "description" : "Get list posts depends on user followings (on users and wobjects)",
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio wobject and posts moderation",
@@ -1359,6 +1723,13 @@
         "summary" : "Return all wobjects in which user has weight",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -1401,6 +1772,13 @@
         "summary" : "Return user Blog(user authored and resteemed posts)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -1446,6 +1824,13 @@
         "summary" : "Return array of user comments(valid request for ordinary and guest users)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "user name",
@@ -1490,6 +1875,13 @@
         "summary" : "Return array of users which now follow current user",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "path",
           "description" : "User name",
@@ -1545,6 +1937,13 @@
         "description" : "Return last updates(posts count) of following users and wobjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of specified user",
@@ -1580,6 +1979,13 @@
         "description" : "Get updates(latest posts count) for following users",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of user to return",
@@ -1615,6 +2021,13 @@
         "description" : "Return last updates(posts count) of following wobjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "username",
           "in" : "path",
           "description" : "Name of specified user",
@@ -1656,6 +2069,13 @@
         "description" : "Create user in DB if it not exist, and import data from STEEM",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "query",
           "description" : "Name of specified user",
@@ -1696,6 +2116,13 @@
         "summary" : "Return list of waivio objects, all or by specified author_permlink(author_permlink)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -1726,6 +2153,13 @@
         "summary" : "Return wobj field with data to show",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "wobject which field need to return",
@@ -1773,6 +2207,13 @@
         "summary" : "Return info about specified waivio object",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -1836,6 +2277,13 @@
         "summary" : "Return posts for specified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject and posts moderation",
@@ -1881,6 +2329,13 @@
         "summary" : "Return followers for spicified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
@@ -1963,6 +2418,13 @@
         "summary" : "Return all fields with name 'galleryItem'",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2001,6 +2463,13 @@
         "summary" : "Return 'list' of specified waivio-wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2032,6 +2501,13 @@
         "summary" : "Return child wobjects by current",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
@@ -2081,6 +2557,13 @@
         "summary" : "Return all users which has weight in current wobject",
         "produces" : [ "application/json5" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
@@ -2123,6 +2606,13 @@
         "summary" : "Search objects by prefix of \"name\" field",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2131,7 +2621,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]",
+          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_11"
@@ -2156,6 +2646,13 @@
         "summary" : "Return feed of all wobjects togetger",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2190,6 +2687,13 @@
         "summary" : "Return array of wobjects by specified field entry",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "fieldName",
           "in" : "query",
           "description" : "Name of field",
@@ -2221,6 +2725,13 @@
         "summary" : "Return post details",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2267,6 +2778,13 @@
         "summary" : "Return post comments and other details. Comments placed at \"content\" key of result object.",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "author",
           "in" : "query",
           "description" : "Author of post",
@@ -2301,6 +2819,13 @@
         "summary" : "Return list of posts by some category(trending, hot, created, blog)",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject and posts moderation",
@@ -2344,6 +2869,13 @@
         "summary" : "Return list of posts by authors and permlinks",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2377,6 +2909,13 @@
         "summary" : "Return list of Object Types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2410,6 +2949,13 @@
         "summary" : "Return Object Type details",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2452,6 +2998,13 @@
         "summary" : "Return Object Type experts",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "name",
           "in" : "path",
           "description" : "Name of Object Type",
@@ -2489,6 +3042,13 @@
         "summary" : "Search by name on Object Types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2528,6 +3088,13 @@
         "summary" : "Return tags by tagCategory",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "skip",
           "in" : "query",
           "description" : "Count of tags to skip",
@@ -2584,6 +3151,13 @@
         "summary" : "Search by wobjects, users, object-types",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2627,6 +3201,13 @@
         "summary" : "Upload image and get link",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2667,6 +3248,13 @@
         "summary" : "Get waivio \"App\"",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "appName",
           "in" : "path",
           "description" : "Name of registered \"App\" on waivio",
@@ -2690,6 +3278,13 @@
         "description" : "If specified app has own supported_objects => return users which has some weight in this wobjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "appName",
           "in" : "path",
           "description" : "Name of registered \"App\" on waivio",
@@ -2728,6 +3323,13 @@
         "description" : "If app has \"supported_hashtags\" => return array of this wobjects",
         "produces" : [ "application/json" ],
         "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "description" : "Specify app to enable waivio-wobject moderation",
@@ -2767,6 +3369,18 @@
     }
   },
   "definitions" : {
+    "mapCoordinates": {
+      "type": "array",
+     "example": [{
+       "topPoint": [
+         -91.479002,68.117143
+       ],
+       "bottomPoint": [
+         -131.139244,49.152501
+       ]
+     }
+     ]
+    },
     "firstLoad": {
       "type": "object",
       "example": {
@@ -2826,6 +3440,16 @@
         ],
         "status": "active",
         "mainPage": "dining"
+      }
+    },
+    "getMap": {
+      "type": "object",
+      "example": {
+        "userName": "olegvladim",
+        "topPoint":[34.435, 65.543],
+        "bottomPoint":[32.435, 55.543],
+        "limit": 30,
+        "skip": 0
       }
     },
     "siteConfigurations": {
@@ -4075,6 +4699,11 @@
       "properties" : {
         "search_string" : {
           "type" : "string"
+        },
+        "sort": {
+          "type": "string",
+          "enum": ["weight", "createdAt"],
+          "default": "weight"
         },
         "object_type" : {
           "type" : "string"

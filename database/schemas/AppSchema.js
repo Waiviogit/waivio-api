@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
-const { STATUSES, SUPPORTED_COLORS, GET_DEFAULT_COLORS } = require('constants/sitesConstants');
+const { STATUSES, SUPPORTED_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 
 const { Schema } = mongoose;
@@ -95,6 +95,7 @@ const AppSchema = new Schema({
   activatedAt: { type: Date, default: null },
   deactivatedAt: { type: Date, default: null },
   supported_objects: { type: [String], index: true, default: [] },
+  mapCoordinates: { type: [MapPoints], default: [] },
   top_users: { type: [topUsersSchema] },
   daily_chosen_post: {
     author: { type: String },

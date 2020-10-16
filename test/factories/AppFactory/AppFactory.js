@@ -4,7 +4,7 @@ const {
 const { STATUSES } = require('constants/sitesConstants');
 
 const Create = async ({
-  blacklists, name, admins, moderators, supportedHashtags,
+  blacklists, name, admins, moderators, supportedHashtags, coordinates,
   supportedObjects, bots, authority, inherited, canBeExtended, deactivatedAt,
   host, owner, status, configuration, filters, supportedTypes, parent, activatedAt,
 } = {}) => {
@@ -16,6 +16,7 @@ const Create = async ({
     admins: admins || [faker.name.firstName().toLowerCase()],
     parent: parent || new ObjectID(),
     moderators: moderators || [],
+    mapCoordinates: coordinates || [],
     deactivatedAt: deactivatedAt || null,
     activatedAt: activatedAt || null,
     supported_hashtags: supportedHashtags || [],
