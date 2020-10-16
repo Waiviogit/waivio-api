@@ -5,8 +5,8 @@ const { faker, WObject } = require('test/testHelper');
 const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
 
 const Create = async ({
-  creator, name, weight, body, rootWobj, additionalFields = {},
-  activeVotes, id, administrative, ownership, timestamp, objectType,
+  creator, name, weight, body, rootWobj, additionalFields = {}, tagCategory,
+  activeVotes, id, administrative, ownership, timestamp, objectType, map,
 } = {}) => {
   const appendObject = {
     _id: objectIdFromDateString(timestamp || moment.utc().valueOf()),
@@ -19,6 +19,7 @@ const Create = async ({
     permlink: faker.random.string(20),
     active_votes: activeVotes || [],
   };
+  if (tagCategory) appendObject.tagCategory = tagCategory;
   for (const key in additionalFields) appendObject[key] = additionalFields[key];
   if (id) appendObject.id = id;
   rootWobj = rootWobj || `${faker.random.string(3)}-${faker.address.city().replace(/ /g, '')}`;
@@ -26,7 +27,7 @@ const Create = async ({
 
   if (!wobject) {
     wobject = await ObjectFactory.Create({
-      authorPermlink: rootWobj, fields: [appendObject], administrative, ownership, objectType,
+      authorPermlink: rootWobj, fields: [appendObject], administrative, ownership, objectType, map,
     });
   } else {
     await WObject.updateOne({ author_permlink: rootWobj }, { $addToSet: { fields: appendObject } });

@@ -11,6 +11,7 @@ const FieldsSchema = new Schema({
   name: { type: String },
   body: { type: String },
   id: { type: String },
+  tagCategory: { type: String },
   weight: { type: Number, default: 1 },
   locale: { type: String, default: 'en-US' },
   creator: { type: String },
@@ -66,7 +67,6 @@ const WObjectSchema = new Schema({
 });
 
 WObjectSchema.index({ map: '2dsphere' });
-WObjectSchema.index({ 'map.coordinates': '2d' });
 WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });
