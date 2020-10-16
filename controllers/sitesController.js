@@ -208,10 +208,10 @@ exports.findTags = async (req, res, next) => {
 };
 
 exports.getMapData = async (req, res, next) => {
-  const value = validators.validate(req.body, validators.sites.mapData, next);
-  if (!value) return;
+  const params = validators.validate(req.body, validators.sites.mapData, next);
+  if (!params) return;
 
-  const { result, error } = await map.getData(value);
+  const { result, error } = await map.getData({ ...params, app: req.app });
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -219,7 +219,7 @@ exports.getMapData = async (req, res, next) => {
 };
 
 exports.firstLoad = async (req, res, next) => {
-  const { result, error } = await sitesHelper.firstLoad();
+  const { result, error } = await sitesHelper.firstLoad({ app: req.app });
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
