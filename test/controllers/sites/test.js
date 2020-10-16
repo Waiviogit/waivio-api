@@ -314,7 +314,7 @@ describe('On sitesController', async () => {
       });
       it('should return correct dataForPayments', async () => {
         const user = await User.findOne({ name: FEE.account }).lean();
-        const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
+        const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id', 'objects_following_count']);
         fields._id = fields._id.toString();
         expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, memo: FEE.id });
       });
@@ -344,7 +344,7 @@ describe('On sitesController', async () => {
         });
         it('should return correct dataForPayments at report', async () => {
           const user = await User.findOne({ name: FEE.account }).lean();
-          const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id']);
+          const fields = _.pick(user, ['name', 'json_metadata', 'posting_json_metadata', 'alias', '_id', 'objects_following_count']);
           fields._id = fields._id.toString();
           expect(result.body.dataForPayments).to.be.deep.eq({ user: fields, memo: FEE.id });
         });
@@ -442,7 +442,7 @@ describe('On sitesController', async () => {
       expect(result.body.length).to.be.eq(authorities.length);
     });
     it('should result items with all keys', async () => {
-      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias']);
+      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias', 'objects_following_count']);
     });
     it('should return 404 status if host not found', async () => {
       result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${faker.random.string()}`);
