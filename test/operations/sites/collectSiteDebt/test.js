@@ -4,7 +4,7 @@ const {
 const Sentry = require('@sentry/node');
 const { collectSiteDebts } = require('utilities/operations/sites');
 const {
-  STATUSES, FEE, PAYMENT_TYPES, redisStatisticsKey,
+  STATUSES, FEE, redisStatisticsKey, TEST_DOMAINS,
 } = require('constants/sitesConstants');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
@@ -16,7 +16,7 @@ describe('on collectSiteDebts', async () => {
     beforeEach(async () => {
       await dropDatabase();
       sinon.stub(Sentry, 'captureException').returns('Ok');
-      parent = await AppFactory.Create({ inherited: false, canBeExtended: true });
+      parent = await AppFactory.Create({ inherited: false, canBeExtended: true, host: TEST_DOMAINS[0] });
     });
     afterEach(async () => {
       sinon.restore();
@@ -24,6 +24,7 @@ describe('on collectSiteDebts', async () => {
     describe('on OK', async () => {
       beforeEach(() => {
         sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ result: true }));
+        sinon.stub(collectSiteDebts, 'checkForTestSites').returns(Promise.resolve(true));
       });
       describe('on active website', async () => {
         let app;
@@ -48,14 +49,6 @@ describe('on collectSiteDebts', async () => {
             },
             `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
           });
-          it('should change site status if invoice > payable', async () => {
-            await WebsitePaymentsFactory.Create(
-              { amount: amount + 1, name: app.owner, type: PAYMENT_TYPES.WRITE_OFF },
-            );
-            await collectSiteDebts.dailyDebt(1);
-            const result = await App.findOne({ _id: app._id });
-            expect(result.status).to.be.eq(STATUSES.SUSPENDED);
-          });
         });
         describe('With many users', async () => {
           let counter, amount;
@@ -73,14 +66,6 @@ describe('on collectSiteDebts', async () => {
               amount: FEE.perUser * counter, userName: app.owner, countUsers: counter, host: app.host,
             },
             `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
-          });
-          it('should change site status with amount > payable', async () => {
-            await WebsitePaymentsFactory.Create(
-              { amount: amount + 1 - FEE.perUser * counter, name: app.owner, type: PAYMENT_TYPES.WRITE_OFF },
-            );
-            await collectSiteDebts.dailyDebt(1);
-            const result = await App.findOne({ _id: app._id });
-            expect(result.status).to.be.eq(STATUSES.SUSPENDED);
           });
           it('should delete keys from redis', async () => {
             await collectSiteDebts.dailyDebt(1);
@@ -117,6 +102,7 @@ describe('on collectSiteDebts', async () => {
 
     describe('on error', async () => {
       beforeEach(async () => {
+        sinon.stub(collectSiteDebts, 'checkForTestSites').returns(Promise.resolve(true));
         const name = faker.random.string();
         await AppFactory.Create({ host: `${name}.${parent.host}`, status: STATUSES.ACTIVE });
       });

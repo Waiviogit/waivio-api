@@ -15,6 +15,10 @@ exports.INACTIVE_STATUSES = [
   this.STATUSES.PENDING,
 ];
 
+exports.TEST_DOMAINS = [
+  'dining.pp.ua',
+];
+
 exports.ACTIVE_STATUSES = [
   this.STATUSES.ACTIVE,
   this.STATUSES.PENDING,
