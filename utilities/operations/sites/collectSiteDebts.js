@@ -8,7 +8,7 @@ const { sitesHelper } = require('utilities/helpers');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
 const {
-  redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES,
+  redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES, TEST_DOMAINS,
 } = require('constants/sitesConstants');
 
 exports.dailyDebt = async (timeout = 200) => {
@@ -18,19 +18,14 @@ exports.dailyDebt = async (timeout = 200) => {
   });
   if (error) return sendError(error);
   for (const app of apps) {
+    if (!await this.checkForTestSites(app.parent)) continue;
     if (app.deactivatedAt && moment.utc(app.deactivatedAt).valueOf()
         < moment.utc().subtract(1, 'day').startOf('day').valueOf()) {
       await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
       continue;
     }
 
-    const { result, error: paymentsError } = await websitePayments.find(
-      { condition: { userName: app.owner }, sort: { createdAt: 1 } },
-    );
-    if (paymentsError) await sendError(paymentsError);
-
     /** Collect data for debt calculation */
-    const { payable } = await sitesHelper.getPaymentsTable(result);
     const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
     const countUsers = _.get(todayUsers, 'length', 0);
     const invoice = countUsers * FEE.perUser < FEE.minimumValue
@@ -48,13 +43,7 @@ exports.dailyDebt = async (timeout = 200) => {
       await sendError(Object.assign(createError, data));
       continue;
     }
-    /** If invoice sent - check for suspended */
-    if (payable < invoice) {
-      await App.updateMany({ owner: app.owner, inherited: true }, { status: STATUSES.SUSPENDED });
-      await websiteRefunds.deleteOne(
-        { status: REFUND_STATUSES.PENDING, type: REFUND_TYPES.WEBSITE_REFUND, userName: app.owner },
-      );
-    }
+
     await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
     await new Promise((resolve) => setTimeout(resolve, timeout));
   }
@@ -63,4 +52,14 @@ exports.dailyDebt = async (timeout = 200) => {
 const sendError = async (error) => {
   Sentry.captureException(error);
   await sendSentryNotification(error);
+};
+
+exports.checkForTestSites = async (parent) => {
+  const { result, error } = await App.findOne({ _id: parent });
+  if (error) {
+    await sendError(error);
+    return false;
+  }
+  if (process.env.NODE_ENV === 'staging' && _.includes(TEST_DOMAINS, result.host)) return true;
+  return process.env.NODE_ENV === 'production' && !_.includes(TEST_DOMAINS, result.host);
 };
