@@ -3,6 +3,7 @@ const moment = require('moment');
 const { ACTIVE_STATUSES } = require('constants/sitesConstants');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
+const { STATUSES } = require('../../../constants/sitesConstants.js');
 
 /** Get data for manage page. In this method, we generate a report for the site owner,
  * in which we include the average data on users on his sites for the last 7 days,
@@ -35,14 +36,16 @@ exports.getManagePage = async ({ userName }) => {
     websites.push(sitesHelper.getWebsiteData(payments, site));
   }
 
-  accountBalance.avgDau = Math.trunc(_.meanBy(websites, (site) => site.averageDau));
-  const dailyCost = _.round(accountBalance.avgDau * FEE.perUser, 3);
+  accountBalance.avgDau = _.sumBy(websites, (site) => site.averageDau) || 0;
 
-  accountBalance.dailyCost = (dailyCost < FEE.minimumValue ? FEE.minimumValue : dailyCost)
-        * _.filter(apps, (app) => _.includes(ACTIVE_STATUSES, app.status)).length;
+  accountBalance.dailyCost = _.chain(websites)
+    .filter((site) => site.status !== STATUSES.SUSPENDED)
+    .sumBy((site) => (site.averageDau < FEE.minimumValue / FEE.perUser ? 1 : site.averageDau * FEE.perUser))
+    .round(3)
+    .value() || 0;
 
   accountBalance.remainingDays = accountBalance.dailyCost > 0
-    ? Math.trunc(accountBalance.paid > 0 ? accountBalance.paid : 0 / accountBalance.dailyCost)
+    ? Math.trunc(accountBalance.paid > 0 ? accountBalance.paid / accountBalance.dailyCost : 0)
     : 0;
 
   return {
