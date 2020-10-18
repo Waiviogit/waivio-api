@@ -183,22 +183,14 @@ const matchSitesPipe = ({
       },
     });
   }
-  if (forSites) {
-    pipeline.push({
-      $match: {
-        author_permlink: { $in: crucialWobjects },
-        object_type: { $in: supportedTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-      },
-    });
-  } else {
-    pipeline.push({
-      $match: {
-        object_type: { $in: supportedTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-      },
-    });
-  }
+  const matchCond = {
+    $match: {
+      object_type: { $in: supportedTypes },
+      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+    },
+  };
+  if (forSites)matchCond.$match.author_permlink = { $in: crucialWobjects };
+  pipeline.push(matchCond);
   if (tagCategory) {
     const condition = [];
     for (const category of tagCategory) {
