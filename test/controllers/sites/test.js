@@ -315,7 +315,7 @@ describe('On sitesController', async () => {
       });
       it('should return correct average DAU', async () => {
         expect(result.body.accountBalance.avgDau)
-          .to.be.eq(Math.trunc(_.mean([payment.countUsers, activePayment.countUsers, 0])));
+          .to.be.eq(Math.trunc(payment.countUsers + activePayment.countUsers));
       });
       it('should return correct pay data', async () => {
         expect(result.body.accountBalance.paid).to.be.eq(amount - debt * 2);
