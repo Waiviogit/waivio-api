@@ -533,6 +533,8 @@ describe('On sitesController', async () => {
       mapCoordinates = [{
         topPoint: [+faker.address.longitude(), +faker.address.latitude()],
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
+        center: [+faker.address.longitude(), +faker.address.latitude()],
+        zoom: faker.random.number(),
       }];
     });
     afterEach(() => {
@@ -575,6 +577,9 @@ describe('On sitesController', async () => {
   });
 
   describe('On main sites map', async () => {
+    const center = [faker.address.longitude(), faker.address.latitude()];
+    const zoom = faker.random.number();
+
     let wobj1, wobj2, campaign;
     beforeEach(async () => {
       wobj1 = await ObjectFactory.Create({ objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [-94.233, 48.224] } });
@@ -590,26 +595,34 @@ describe('On sitesController', async () => {
       it('should return two objects for parent if they in box', async () => {
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         expect(result.body.wobjects).to.have.length(2);
       });
       it('should not return one of object in it not in box', async () => {
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-94.235, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-94.235, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         expect(result.body.wobjects).to.have.length(1);
       });
       it('should return primary campaign for object if it exist', async () => {
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         const wobj = _.find(result.body.wobjects, { author_permlink: wobj1.author_permlink });
         expect(wobj.campaigns).to.be.deep.eq({ min_reward: campaign.reward, max_reward: campaign.reward });
       });
       it('should return secondary campaign if it exist', async () => {
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         const wobj = _.find(result.body.wobjects, { author_permlink: wobj2.author_permlink });
         expect(wobj.propositions).to.be.exist;
       });
@@ -632,7 +645,9 @@ describe('On sitesController', async () => {
         sinon.stub(session, 'get').returns(host);
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         expect(result.body.wobjects).to.have.length(2);
       });
       it('should not return object if it not in supported objects', async () => {
@@ -641,7 +656,9 @@ describe('On sitesController', async () => {
         sinon.stub(session, 'get').returns(host);
         const result = await chai.request(app)
           .post('/api/sites/map')
-          .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
+          .send({
+            topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224], center, zoom,
+          });
         const wobj = _.find(result.body.wobjects, { author_permlink: wobj2.author_permlink });
         expect(wobj).to.be.undefined;
       });

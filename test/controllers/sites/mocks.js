@@ -11,10 +11,14 @@ exports.configurationMock = ({
   desktopMap: {
     topPoint: [faker.address.longitude(), faker.address.latitude()],
     bottomPoint: [faker.address.longitude(), faker.address.latitude()],
+    center: [faker.address.longitude(), faker.address.latitude()],
+    zoom: faker.random.number(),
   },
   mobileMap: {
     topPoint: [faker.address.longitude(), faker.address.latitude()],
     bottomPoint: [faker.address.longitude(), faker.address.latitude()],
+    center: [faker.address.longitude(), faker.address.latitude()],
+    zoom: faker.random.number(),
   },
   colors: GET_DEFAULT_COLORS(),
 });

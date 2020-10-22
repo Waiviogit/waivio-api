@@ -61,6 +61,13 @@ exports.mapData = Joi.object().keys({
       Joi.number().min(-180).max(180),
       Joi.number().min(-90).max(90),
     ).required(),
+  center: Joi
+    .array()
+    .ordered(
+      Joi.number().min(-180).max(180),
+      Joi.number().min(-90).max(90),
+    ).required(),
+  zoom: Joi.number().required(),
 }).options(options);
 
 exports.siteMapCoordinates = Joi.object().keys({
@@ -79,6 +86,13 @@ exports.siteMapCoordinates = Joi.object().keys({
         Joi.number().min(-180).max(180),
         Joi.number().min(-90).max(90),
       ).required(),
+    center: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    zoom: Joi.number().required(),
   })).min(1).max(30)
     .required(),
 
