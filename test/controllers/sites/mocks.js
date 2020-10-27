@@ -7,7 +7,12 @@ exports.configurationMock = ({
   configurationFields: ['desktopLogo', 'mobileLogo', 'aboutObject', 'desktopMap', 'mobileMap', 'colors'],
   desktopLogo: desktop || faker.image.imageUrl(),
   mobileLogo: mobile || faker.image.imageUrl(),
-  aboutObject: object || faker.random.string(),
+  aboutObject: object || {
+    author_permlink: faker.random.string(),
+    name: faker.random.string(),
+    default_name: faker.random.string(),
+    avatar: faker.random.string(),
+  },
   desktopMap: {
     topPoint: [faker.address.longitude(), faker.address.latitude()],
     bottomPoint: [faker.address.longitude(), faker.address.latitude()],

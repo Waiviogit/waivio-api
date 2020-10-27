@@ -208,7 +208,7 @@ describe('On sitesController', async () => {
         beforeEach(async () => {
           object = await ObjectFactory.Create();
           const configToUpdate = _.cloneDeep(configuration);
-          configToUpdate.aboutObject = object.author_permlink;
+          configToUpdate.aboutObject.author_permlink = object.author_permlink;
           result = await chai.request(app).post('/api/sites/configuration')
             .send({ host: myApp.host, userName: owner, configuration: configToUpdate });
         });

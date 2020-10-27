@@ -3395,7 +3395,12 @@
           ],
           "desktopLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
           "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
-          "aboutObject": "hive",
+          "aboutObject": {
+            "author_permlink": "hive",
+            "name": "hive",
+            "default_name": "hive",
+            "avatar": "https://link.to.hive"
+          },
           "desktopMap": {
             "topPoint": [
               34.435,
@@ -3460,7 +3465,12 @@
         "configuration":{
           "desktopLogo":"https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
           "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
-          "aboutObject":"afd-dfeedcxcb",
+          "aboutObject": {
+            "author_permlink": "hive",
+            "name": "hive",
+            "default_name": "hive",
+            "avatar": "https://link.to.hive"
+          },
           "desktopMap":{
             "topPoint":[34.435, 65.543],
             "bottomPoint":[32.435, 55.543]

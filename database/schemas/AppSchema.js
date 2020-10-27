@@ -62,7 +62,12 @@ const Configuration = new Schema({
   configurationFields: { type: [String] },
   desktopLogo: { type: String },
   mobileLogo: { type: String },
-  aboutObject: { type: String },
+  aboutObject: {
+    name: { type: String },
+    avatar: { type: String },
+    default_name: { type: String },
+    author_permlink: { type: String },
+  },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
   colors: { type: Colors, default: () => ({}) },
