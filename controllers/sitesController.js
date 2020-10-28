@@ -93,8 +93,8 @@ exports.saveConfigurations = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.saveConfigurations, next);
   if (!value) return;
 
-  const { error: authError } = await authoriseUser.authorise(value.userName);
-  if (authError) return next(authError);
+  // const { error: authError } = await authoriseUser.authorise(value.userName);
+  // if (authError) return next(authError);
 
   const { result, error } = await configurations.saveConfigurations(value);
   if (error) return next(error);
