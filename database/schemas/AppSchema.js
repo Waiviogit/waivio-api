@@ -43,6 +43,8 @@ const AppCommissions = new Schema({
 const MapPoints = new Schema({
   topPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
   bottomPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  center: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  zoom: { type: Number, required: true },
 }, { _id: false });
 
 const Colors = new Schema({
