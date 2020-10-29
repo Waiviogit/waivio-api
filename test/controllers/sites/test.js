@@ -533,6 +533,8 @@ describe('On sitesController', async () => {
       mapCoordinates = [{
         topPoint: [+faker.address.longitude(), +faker.address.latitude()],
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
+        center: [+faker.address.longitude(), +faker.address.latitude()],
+        zoom: faker.random.number()
       }];
     });
     afterEach(() => {
