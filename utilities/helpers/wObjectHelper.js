@@ -266,6 +266,21 @@ const getLinkToPageLoad = (obj) => {
   return `/object/${obj.author_permlink}/menu#${field.body}`;
 };
 
+const getTopTags = (obj) => {
+  const tagCategories = _.get(obj, 'tagCategory', []);
+  if (_.isEmpty(tagCategories)) return [];
+  let tags = [];
+  for (const tagCategory of tagCategories) {
+    tags = _.concat(tags, tagCategory.items);
+  }
+  return _
+    .chain(tags)
+    .orderBy('weight', 'desc')
+    .slice(0, 2)
+    .map('body')
+    .value();
+};
+
 const createMockPost = (field) => ({
   children: 0,
   total_pending_payout_value: '0.000 HBD',
@@ -327,9 +342,9 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
-      obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
-      if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
+    if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
+    if (obj.newsFilter) obj.newsFilter = JSON.parse(obj.newsFilter);
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });
@@ -337,6 +352,7 @@ const processWobjects = async ({
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
+    if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj);
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];

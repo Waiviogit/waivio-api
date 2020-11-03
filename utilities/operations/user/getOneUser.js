@@ -1,8 +1,43 @@
-const { User } = require('database').models;
+const { User, UserWobjects } = require('database').models;
 const { userUtil: userSteemUtil } = require('utilities/steemApi');
 const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
 const { Subscriptions } = require('models');
 const _ = require('lodash');
+
+const makeCountPipeline = (name) => {
+  const pipeline = [
+    { $match: { user_name: name, weight: { $gt: 0 } } },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'author_permlink',
+        foreignField: 'author_permlink',
+        as: 'wobject',
+      },
+    },
+    { $unwind: '$wobject' },
+    {
+      $facet: {
+        hashtagsCount: [
+          { $match: { 'wobject.object_type': 'hashtag' } },
+          { $count: 'hashtagsCount' },
+        ],
+        wobjectsCount: [
+          { $match: { 'wobject.object_type': { $ne: 'hashtag' } } },
+          { $count: 'wobjectsCount' },
+        ],
+      },
+    },
+    {
+      $project: {
+        hashtagsExpCount: { $arrayElemAt: ['$hashtagsCount.hashtagsCount', 0] },
+        wobjectsExpCount: { $arrayElemAt: ['$wobjectsCount.wobjectsCount', 0] },
+      },
+    },
+  ];
+
+  return pipeline;
+};
 
 const getDbUser = async (name) => {
   try {
@@ -38,7 +73,9 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
     user.users_follow = users || [];
   } else user = _.omit(user, ['users_follow', 'objects_follow']);
 
-  Object.assign(userData, user);// combine data from db and blockchain
+  const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
+  Object.assign(userData, user, counters);// combine data from db and blockchain
+
   return { userData };
 };
 

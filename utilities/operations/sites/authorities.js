@@ -17,7 +17,7 @@ exports.getSiteAuthorities = async (params, path) => {
       break;
   }
   const { result: users, error: usersError } = await User.findWithSelect(condition, {
-    name: 1, alias: 1, posting_json_metadata: 1, json_metadata: 1,
+    name: 1, alias: 1, posting_json_metadata: 1, json_metadata: 1, wobjects_weight: 1,
   });
   if (usersError) return { error: usersError };
 

@@ -315,7 +315,7 @@ describe('On sitesController', async () => {
       });
       it('should return correct average DAU', async () => {
         expect(result.body.accountBalance.avgDau)
-          .to.be.eq(Math.trunc(_.mean([payment.countUsers, activePayment.countUsers, 0])));
+          .to.be.eq(Math.trunc(payment.countUsers + activePayment.countUsers));
       });
       it('should return correct pay data', async () => {
         expect(result.body.accountBalance.paid).to.be.eq(amount - debt * 2);
@@ -450,7 +450,7 @@ describe('On sitesController', async () => {
       expect(result.body.length).to.be.eq(authorities.length);
     });
     it('should result items with all keys', async () => {
-      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias', 'objects_following_count']);
+      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias', 'objects_following_count', 'wobjects_weight']);
     });
     it('should return 404 status if host not found', async () => {
       result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${faker.random.string()}`);
@@ -533,6 +533,8 @@ describe('On sitesController', async () => {
       mapCoordinates = [{
         topPoint: [+faker.address.longitude(), +faker.address.latitude()],
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
+        center: [+faker.address.longitude(), +faker.address.latitude()],
+        zoom: faker.random.number()
       }];
     });
     afterEach(() => {
