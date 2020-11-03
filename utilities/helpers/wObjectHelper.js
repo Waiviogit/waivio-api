@@ -342,9 +342,9 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
-      obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
-      if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
+    if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
+    if (obj.newsFilter) obj.newsFilter = JSON.parse(obj.newsFilter);
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });
