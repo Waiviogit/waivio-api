@@ -450,7 +450,7 @@ describe('On sitesController', async () => {
       expect(result.body.length).to.be.eq(authorities.length);
     });
     it('should result items with all keys', async () => {
-      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias', 'objects_following_count']);
+      expect(result.body[0]).to.have.all.keys(['name', '_id', 'json_metadata', 'posting_json_metadata', 'alias', 'objects_following_count', 'wobjects_weight']);
     });
     it('should return 404 status if host not found', async () => {
       result = await chai.request(app).get(`/api/sites/authorities?userName=${userApp.owner}&host=${faker.random.string()}`);
