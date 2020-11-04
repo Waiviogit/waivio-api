@@ -139,6 +139,8 @@ postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')
   .get(PostController.getPostComments);
+postRoutes.route('/post/social-info')
+  .get(PostController.getSocialInfo);
 // endregion
 // region App
 appRoutes.route('/app/:appName')

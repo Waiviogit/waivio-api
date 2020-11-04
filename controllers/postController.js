@@ -1,5 +1,5 @@
 const {
-  getPostsByCategory, getSinglePost, getPostComments, getManyPosts,
+  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo,
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 
@@ -66,5 +66,18 @@ exports.getManyPosts = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: posts };
+  next();
+};
+
+exports.getSocialInfo = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.post.postSocialInfoSchema, next);
+
+  if (!value) return;
+
+  const { result, error } = await getPostSocialInfo(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
   next();
 };
