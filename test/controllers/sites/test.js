@@ -138,7 +138,7 @@ describe('On sitesController', async () => {
         expect(result).to.have.status(200);
       });
       it('should return user apps', async () => {
-        expect(result.body).to.be.deep.eq([userApp.host]);
+        expect(result.body).to.be.deep.eq([{ host: userApp.host, id: userApp._id.toString() }]);
       });
       it('should not return error if user not has created apps', async () => {
         result = await chai.request(app).get(`/api/sites?userName=${faker.name.firstName()}`);
@@ -534,7 +534,7 @@ describe('On sitesController', async () => {
         topPoint: [+faker.address.longitude(), +faker.address.latitude()],
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
         center: [+faker.address.longitude(), +faker.address.latitude()],
-        zoom: faker.random.number()
+        zoom: faker.random.number(),
       }];
     });
     afterEach(() => {

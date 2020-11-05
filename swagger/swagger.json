@@ -67,10 +67,20 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "type": "string"
+                "type": "object",
+                "properties": {
+                  "host" : {
+                    "type": "string"
+                  },
+                  "id" : {
+                    "type": "string"
+                  }
+                }
               },
-              "example":  [
-                  "van.dining.gifts"
+              "example":  [ {
+                "host": "van.dining.gifts",
+                "id": "5f7ef6391b6f614fdae9249c"
+              }
                 ]
             }
           },

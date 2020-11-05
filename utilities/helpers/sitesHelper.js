@@ -37,7 +37,7 @@ exports.getUserApps = async (params) => {
   });
   if (error) return { error };
 
-  return { result: _.map(apps, 'host') };
+  return { result: _.map(apps, (app) => ({ host: app.host, id: app._id })) };
 };
 
 exports.searchTags = async (params) => {
