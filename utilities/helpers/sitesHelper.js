@@ -215,3 +215,10 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   }
   await App.findOneAndUpdate({ _id: app._id }, { $set: { supported_objects: _.map(result, 'author_permlink') } });
 };
+
+exports.getSettings = async (host) => {
+  const { result: app } = await App.findOne({ host, inherited: true });
+  if (!app) return { error: { status: 404, message: 'App not found!' } };
+
+  return { result: _.pick(app, ['googleAnalyticsTag', 'beneficiary']) };
+};

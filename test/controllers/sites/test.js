@@ -649,4 +649,41 @@ describe('On sitesController', async () => {
       });
     });
   });
+
+  describe('On get settings', async () => {
+    let userApp, result;
+    beforeEach(async () => {
+      userApp = await AppFactory.Create();
+    });
+    describe('On OK', async () => {
+      beforeEach(async () => {
+        result = await chai.request(app)
+          .get('/api/sites/settings')
+          .query({ host: userApp.host });
+      });
+      it('should response 200', async () => {
+        expect(result).to.have.status(200);
+      });
+      it('should response body to be deep eq app fields', async () => {
+        const mock = {
+          googleAnalyticsTag: userApp.googleAnalyticsTag,
+          beneficiary: userApp.beneficiary,
+        };
+        expect(result.body).to.be.deep.eq(mock);
+      });
+    });
+    describe('On Error', async () => {
+      it('should response 422', async () => {
+        result = await chai.request(app)
+          .get('/api/sites/settings');
+        expect(result).to.have.status(422);
+      });
+      it('should response 404', async () => {
+        result = await chai.request(app)
+          .get('/api/sites/settings')
+          .query({ host: faker.random.string() });
+        expect(result).to.have.status(404);
+      });
+    });
+  });
 });
