@@ -1228,6 +1228,55 @@
         }
       }
     },
+    "/api/sites/settings" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get site settings",
+        "description" : "Return special fields from app",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "host",
+          "in" : "query",
+          "description" : "host",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "example": {
+                "beneficiary": {
+                  "account" : "string",
+                  "percent" :"number"
+                },
+                "googleAnalyticsTag" : "string"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "App not found"
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
     "/api/users" : {
       "get" : {
         "tags" : [ "user" ],
