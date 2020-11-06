@@ -2962,7 +2962,7 @@
         }
       }
     },
-    "/api/posts/social-info" : {
+    "/api/post/social-info" : {
       "get" : {
         "tags" : [ "post" ],
         "summary" : "Return list of posts by authors and permlinks",
