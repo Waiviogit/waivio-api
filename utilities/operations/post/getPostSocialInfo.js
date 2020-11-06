@@ -7,7 +7,7 @@ module.exports = async ({
   author, permlink, userName, social,
 }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });
-  if (!post || postError) return { error: { status: 404, message: 'Post not found' } };
+  if (!post || postError) return { error: postError || { status: 404, message: 'Post not found' } };
   const { userSocial } = await getUserSocials(userName, social);
   const { tags, cities, wobjectsSocial } = await getWobjectInfo(post, social);
 
@@ -74,5 +74,5 @@ const getUserSocials = async (userName, social) => {
 const parseJson = (json) => {
   try {
     return JSON.parse(json);
-  } catch (e) { return json; }
+  } catch (e) { return {}; }
 };
