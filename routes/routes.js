@@ -62,6 +62,8 @@ sitesRoutes.route('/sites/map')
   .get(sitesController.getMapCoordinates)
   .post(sitesController.getMapData)
   .put(sitesController.setMapCoordinates);
+sitesRoutes.route('/sites/settings')
+  .get(sitesController.getSettings);
 
 // endregion
 
