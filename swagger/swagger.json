@@ -2962,6 +2962,99 @@
         }
       }
     },
+    "/api/posts/social-info" : {
+      "get" : {
+        "tags" : [ "post" ],
+        "summary" : "Return list of posts by authors and permlinks",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        },{
+          "in" : "query",
+          "name" : "author",
+          "description" : "author of post",
+          "type": "string",
+          "required" : true
+        },{
+          "in" : "query",
+          "name" : "permlink",
+          "description" : "post permlink",
+          "type": "string",
+          "required" : true
+        },{
+            "in" : "query",
+            "name" : "userName",
+            "description" : "name of authorised user",
+            "type": "string",
+            "required" : true
+        },{
+          "in" : "query",
+          "name" : "social",
+          "description" : "social network name",
+          "type": "string",
+          "enum": ["facebook", "twitter"],
+          "required" : true
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "userSocial" : {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "wobjectsSocial": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "Post not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/objectTypes" : {
       "post" : {
         "tags" : [ "object_type" ],
