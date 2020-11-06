@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
+const { SOCIAL_NETWORKS } = require('constants/common');
 const { customValidationHelper } = require('utilities/helpers');
 
 exports.showSchema = Joi.object().keys({
@@ -28,3 +29,10 @@ exports.getManyPosts = Joi.array().items(Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
 }));
+
+exports.postSocialInfoSchema = Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  userName: Joi.string().required(),
+  social: Joi.string().valid(...Object.values(SOCIAL_NETWORKS)).required(),
+});
