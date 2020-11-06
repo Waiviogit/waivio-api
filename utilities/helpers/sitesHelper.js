@@ -37,7 +37,7 @@ exports.getUserApps = async (params) => {
   });
   if (error) return { error };
 
-  return { result: _.map(apps, 'host') };
+  return { result: _.map(apps, (app) => ({ host: app.host, id: app._id })) };
 };
 
 exports.searchTags = async (params) => {
@@ -214,4 +214,11 @@ exports.updateSupportedObjects = async ({ host, app }) => {
     return Sentry.captureException(error);
   }
   await App.findOneAndUpdate({ _id: app._id }, { $set: { supported_objects: _.map(result, 'author_permlink') } });
+};
+
+exports.getSettings = async (host) => {
+  const { result: app } = await App.findOne({ host, inherited: true });
+  if (!app) return { error: { status: 404, message: 'App not found!' } };
+
+  return { result: _.pick(app, ['googleAnalyticsTag', 'beneficiary']) };
 };

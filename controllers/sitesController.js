@@ -250,3 +250,13 @@ exports.firstLoad = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
+
+exports.getSettings = async (req, res, next) => {
+  if (!req.query.host) return next({ status: 422, message: 'App host is required' });
+
+  const { result, error } = await sitesHelper.getSettings(req.query.host);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
