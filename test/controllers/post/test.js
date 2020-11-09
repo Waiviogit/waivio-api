@@ -21,7 +21,7 @@ describe('On postController', async () => {
   });
   describe('on getSocialInfo', async () => {
     describe('on ok', async () => {
-      let social, user, wobject;
+      let user, wobject;
       const twitter = faker.random.string();
       const facebook = faker.random.string();
       const city = faker.random.string();
@@ -38,70 +38,25 @@ describe('On postController', async () => {
         post = await PostFactory.Create({ wobjects: [wobject] });
         user = await UsersFactory
           .Create({ posting_json_metadata: JSON.stringify({ profile: { twitter, facebook } }) });
-      });
-      it('should have status 200', async () => {
-        social = 'facebook';
         result = await chai.request(app)
           .get('/api/post/social-info')
           .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
+            author: post.author, permlink: post.permlink, userName: user.name,
           });
+      });
+      it('should have status 200', async () => {
         expect(result).to.have.status(200);
       });
       it('should have same userSocial facebook', async () => {
-        social = 'facebook';
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.userSocial).to.be.eq(facebook);
-      });
-      it('should have same userSocial twitter', async () => {
-        social = 'twitter';
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.userSocial).to.be.eq(twitter);
-      });
-      it('should be city in response cities array', async () => {
-        social = 'twitter';
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.cities).to.be.deep.eq([city]);
-      });
-      it('should be same linkFacebook and wobjectsSocial', async () => {
-        social = 'facebook';
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.wobjectsSocial).to.be.deep.eq([facebook]);
-      });
-      it('should be same linkTwitter and wobjectsSocial', async () => {
-        social = 'twitter';
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.wobjectsSocial).to.be.deep.eq([twitter]);
-      });
-      it('should be deep equal tags', async () => {
-        social = 'twitter';
-        const mock = ['HIVE', 'waivio', wobject.default_name];
-        result = await chai.request(app)
-          .get('/api/post/social-info')
-          .query({
-            author: post.author, permlink: post.permlink, userName: user.name, social,
-          });
-        expect(result.body.tags).to.be.deep.eq(mock);
+        const mock = {
+          tags: ['HIVE', 'waivio', wobject.default_name],
+          cities: [city],
+          userFacebook: facebook,
+          userTwitter: twitter,
+          wobjectsTwitter: [twitter],
+          wobjectsFacebook: [facebook],
+        };
+        expect(result.body).to.be.deep.eq(mock);
       });
     });
     describe('on error', async () => {
@@ -117,7 +72,6 @@ describe('On postController', async () => {
             author: faker.random.string(),
             permlink: faker.random.string(),
             userName: faker.random.string(),
-            social: 'facebook',
           });
         expect(result).to.have.status(404);
       });
