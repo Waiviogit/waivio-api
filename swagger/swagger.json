@@ -2998,13 +2998,6 @@
             "description" : "name of authorised user",
             "type": "string",
             "required" : true
-        },{
-          "in" : "query",
-          "name" : "social",
-          "description" : "social network name",
-          "type": "string",
-          "enum": ["facebook", "twitter"],
-          "required" : true
         }],
         "responses" : {
           "200" : {
@@ -3012,7 +3005,10 @@
             "schema" : {
               "type" : "object",
               "properties" : {
-                "userSocial" : {
+                "userFacebook" : {
+                  "type": "string"
+                },
+                "userTwitter" : {
                   "type": "string"
                 },
                 "tags": {
@@ -3027,7 +3023,13 @@
                     "type": "string"
                   }
                 },
-                "wobjectsSocial": {
+                "wobjectsTwitter": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "wobjectsFacebook": {
                   "type": "array",
                   "items": {
                     "type": "string"
