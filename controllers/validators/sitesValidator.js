@@ -45,6 +45,52 @@ exports.searchTags = Joi.object().keys({
   category: Joi.string().required(),
 }).options(options);
 
+exports.mapData = Joi.object().keys({
+  userName: Joi.string(),
+  limit: Joi.number().default(20),
+  skip: Joi.number().default(0),
+  topPoint: Joi
+    .array()
+    .ordered(
+      Joi.number().min(-180).max(180),
+      Joi.number().min(-90).max(90),
+    ).required(),
+  bottomPoint: Joi
+    .array()
+    .ordered(
+      Joi.number().min(-180).max(180),
+      Joi.number().min(-90).max(90),
+    ).required(),
+}).options(options);
+
+exports.siteMapCoordinates = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+  mapCoordinates: Joi.array().items(Joi.object().keys({
+    topPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    bottomPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    center: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    zoom: Joi.number().required(),
+  })).min(1).max(30)
+    .required(),
+
+});
+
 exports.objectsFilter = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),

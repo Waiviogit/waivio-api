@@ -101,7 +101,6 @@ const specialFieldFilter = (idField, allFields, id) => {
     if (!idField.adminVote && itemField.weight < 0) continue;
     idField.items.push(itemField);
   }
-  if (id === FIELDS_NAMES.TAG_CATEGORY && idField.items.length === 0) return null;
   return idField;
 };
 
@@ -196,20 +195,16 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 };
 
 /** Get info of wobject parent with specific winning fields */
-const getParentInfo = async (wObject, locale, app) => {
-  if (wObject.parent) {
-    const { wObject: fullParent } = await Wobj.getOne(wObject.parent);
-    if (!fullParent) {
-      wObject.parent = '';
-      return wObject.parent;
-    }
-    wObject.parent = fullParent;
-
-    wObject.parent = await processWobjects({
-      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(wObject.parent, 'parent')], returnArray: false, app,
+const getParentInfo = async ({
+  locale, app, parent,
+}) => {
+  if (parent) {
+    if (!parent) return '';
+    parent = await processWobjects({
+      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(parent, 'parent')], returnArray: false, app,
     });
-  } else wObject.parent = '';
-  return wObject.parent;
+  } else parent = '';
+  return parent;
 };
 
 const fillObjectByHiveData = async (obj, exposedFields) => {
@@ -271,6 +266,21 @@ const getLinkToPageLoad = (obj) => {
   return `/object/${obj.author_permlink}/menu#${field.body}`;
 };
 
+const getTopTags = (obj) => {
+  const tagCategories = _.get(obj, 'tagCategory', []);
+  if (_.isEmpty(tagCategories)) return [];
+  let tags = [];
+  for (const tagCategory of tagCategories) {
+    tags = _.concat(tags, tagCategory.items);
+  }
+  return _
+    .chain(tags)
+    .orderBy('weight', 'desc')
+    .slice(0, 2)
+    .map('body')
+    .value();
+};
+
 const createMockPost = (field) => ({
   children: 0,
   total_pending_payout_value: '0.000 HBD',
@@ -288,6 +298,10 @@ const processWobjects = async ({
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
+  let parents = [];
+  const parentPermlinks = _.chain(wobjects).map('parent').compact().uniq()
+    .value();
+  if (parentPermlinks.length) ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
@@ -328,13 +342,17 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
-      obj.sortCustom = obj.sortCustom ? JSON.parse(obj.sortCustom) : [];
-      if (obj.newsFilter)obj.newsFilter = JSON.parse(obj.newsFilter);
     }
-    if (_.isString(obj.parent)) obj.parent = await getParentInfo(obj, locale, app);
+    if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
+    if (obj.newsFilter) obj.newsFilter = JSON.parse(obj.newsFilter);
+    if (_.isString(obj.parent)) {
+      const parent = _.find(parents, { author_permlink: obj.parent });
+      obj.parent = await getParentInfo({ locale, app, parent });
+    }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
+    if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj);
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];

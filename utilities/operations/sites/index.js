@@ -8,4 +8,6 @@ module.exports = {
   remove: require('./remove'),
   configurations: require('./configurations'),
   collectSiteDebts: require('./collectSiteDebts'),
+  map: require('./map'),
+  mapCoordinates: require('./mapCoordinates'),
 };

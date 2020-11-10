@@ -42,10 +42,12 @@ exports.requirementFilters = async (campaign, user) => {
 
 exports.campaignFilter = async (campaigns, user, app) => {
   const validCampaigns = [];
+  const { result: wobjects, error } = await Wobj.find({ author_permlink: { $in: _.map(campaigns, 'requiredObject') } });
+  if (error) return;
   await Promise.all(campaigns.map(async (campaign) => {
     if (this.campaignValidation(campaign)) {
-      const { result, error } = await Wobj.findOne(campaign.requiredObject);
-      if (error || !result) return;
+      const result = _.find(wobjects, { author_permlink: campaign.requiredObject });
+      if (!result) return;
       campaign.required_object = await wobjectHelper.processWobjects({
         wobjects: [result], app, returnArray: false, fields: REQUIREDFIELDS_POST,
       });
@@ -88,7 +90,7 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
       requiredObject,
       status: { $nin: ['pending'] },
       'users.name': userName,
-      'users.status': { $in: ['completed', RESERVATION_STATUSES.COMPLETED] },
+      'users.status': { $in: [RESERVATION_STATUSES.ASSIGNED, RESERVATION_STATUSES.COMPLETED] },
     },
   }, {
     $addFields: {
@@ -110,25 +112,27 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
         },
       },
     },
-  }, { $group: { _id: null, lastCompleted: { $max: '$completedUser.updatedAt' }, assignedUser: { $last: '$assignedUser.name' } } }, {
-    $project: {
-      _id: 0,
-      lastCompleted: { $arrayElemAt: ['$lastCompleted', 0] },
-      assignedUser: { $arrayElemAt: ['$assignedUser', 0] },
-    },
   },
+  { $project: { _id: null, completedUser: 1, assignedUser: 1 } },
   ];
   const { result } = await Campaign.aggregate(pipeline);
+  if (_.isEmpty(result)) return { lastCompleted: null, assignedUser: false };
   return {
-    lastCompleted: _.get(result, '[0].lastCompleted', null),
-    assignedUser: !!_.get(result, '[0].assignedUser'),
+    lastCompleted: _.max(_.map(result[0].completedUser, 'updatedAt')) || null,
+    assignedUser: !!_.last(_.get(result, '[0].assignedUser')),
   };
 };
 
 exports.addCampaignsToWobjects = async ({
-  wobjects, user, simplified = false,
+  wobjects, user, simplified = false, app,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
+
+  if (!app) {
+    const session = getNamespace('request-session');
+    const host = session.get('host');
+    ({ result: app } = await App.findOne({ host }));
+  }
 
   const { result: campaigns } = await Campaign.findByCondition(
     { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
@@ -137,7 +141,7 @@ exports.addCampaignsToWobjects = async ({
     if (simplified) {
       wobj.fields = _.filter(wobj.fields,
         (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
-      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status']);
+      wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status', 'default_name', 'parent']);
     }
     const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
     if (primaryCampaigns.length) {
@@ -155,9 +159,6 @@ exports.addCampaignsToWobjects = async ({
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
     if (secondaryCampaigns.length) {
-      const session = getNamespace('request-session');
-      const host = session.get('host');
-      const { result: app } = await App.findOne({ host });
       wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
     }
     wobjects[index] = wobj;

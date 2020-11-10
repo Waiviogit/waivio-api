@@ -4,7 +4,7 @@ const {
 } = require('models');
 const _ = require('lodash');
 const { campaignsHelper } = require('utilities/helpers');
-const { redisGetter, redisSetter } = require('utilities/redis');
+const { redisGetter } = require('utilities/redis');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -80,7 +80,7 @@ const getWobjWithFilters = async ({
         },
       });
     }
-    aggregationPipeline.push({ $match: { $or: condition } });
+    if (condition.length)aggregationPipeline.push({ $match: { $or: condition } });
     delete filter.tagCategory;
   }
 

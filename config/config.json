@@ -5,7 +5,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://anyx.io",
+    "nodeUrls": ["https://api.hive.blog", "https://rpc.esteem.app", "https://api.openhive.network"],
     "waivio_auth": {
       "host": "www.waivio.com",
       "baseUrl": "auth",
@@ -28,7 +28,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://anyx.io",
+    "nodeUrls": ["https://api.hive.blog", "https://rpc.esteem.app", "https://api.openhive.network"],
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
@@ -51,7 +51,7 @@
       "port": 27017,
       "database": "waivio"
     },
-    "nodeUrl": "https://anyx.io",
+    "nodeUrls": ["https://api.hive.blog", "https://rpc.esteem.app", "https://api.openhive.network"],
     "waivio_auth": {
       "host": "waiviodev.com",
       "baseUrl": "auth",
@@ -73,7 +73,7 @@
       "port": 27017,
       "database": "waiviotest"
     },
-    "nodeUrl": "https://anyx-test.io",
+    "nodeUrls": ["https://api.hive.blog", "https://rpc.esteem.app", "https://api.openhive.network"],
     "waivio_auth": {
       "host": "localhost:4500",
       "baseUrl": "auth",

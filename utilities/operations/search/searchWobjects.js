@@ -1,18 +1,19 @@
 const _ = require('lodash');
 const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
-const { Wobj, ObjectType } = require('models');
+const { Wobj, ObjectType, User } = require('models');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
+const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, app, forParent, required_fields, needCounters = false, tagCategory,
+  string, object_type, limit, skip, app, forParent, required_fields,
+  needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
   const crucialWobjects = _.get(app, 'supported_objects', []);
-  const forSites = app.inherited;
-  const forExtended = app.canBeExtended;
-  const authorities = _.get(app, 'authority', []);
+  const forSites = _.get(app, 'inherited');
+  const forExtended = _.get(app, 'canBeExtended');
   const supportedTypes = _.get(app, 'supported_object_types', []);
 
   const pipeline = getPipeline({
@@ -20,8 +21,9 @@ exports.searchWobjects = async ({
     tagCategory,
     forSites,
     crucialWobjects,
-    authorities,
     string,
+    sort,
+    map,
     limit,
     skip,
     forParent,
@@ -43,7 +45,7 @@ exports.searchWobjects = async ({
       wobjects: wobjectsCounts,
       error: getWobjCountError,
     } = await Wobj.fromAggregation(makeCountPipeline({
-      string, crucialWobjects, authorities, object_type, forSites, supportedTypes, forExtended,
+      string, crucialWobjects, object_type, forSites, supportedTypes, forExtended,
     }));
     if (_.get(wobjectsCounts, 'length')) {
       wobjectsCounts = await fillTagCategories(wobjectsCounts);
@@ -54,7 +56,13 @@ exports.searchWobjects = async ({
       error: getWobjCountError,
     };
   }
-
+  /** Fill campaigns for some objects,
+   * be careful, we pass objects by reference and in this method we will directly modify them */
+  let user;
+  if (userName) ({ user } = await User.getOne(userName));
+  await addCampaignsToWobjects({
+    wobjects, app, simplified, user,
+  });
   return {
     wobjects: _.take(wobjects, limit),
     error: getWobjError,
@@ -80,14 +88,15 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 const getPipeline = ({
-  forSites, crucialWobjects, authorities, string, limit, forExtended,
+  forSites, crucialWobjects, string, limit, forExtended, map, sort,
   skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
 }) => (forSites || forExtended
   ? addFieldsToSearch({
     forSites,
+    sort,
+    map,
     crucialWobjects,
     tagCategory,
-    authorities,
     string,
     limit,
     skip,
@@ -101,18 +110,19 @@ const getPipeline = ({
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
-  crucialWobjects, string, authorities, object_type, forParent, skip, limit, supportedTypes, forSites, tagCategory,
+  crucialWobjects, string, object_type, forParent,
+  skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
-    string, authorities, crucialWobjects, object_type, supportedTypes, forSites, tagCategory,
+    string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
   })];
   if (forParent) {
     pipeline.push({
       $addFields: {
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
-    }, { $sort: { priority: -1, weight: -1 } });
-  } else pipeline.push({ $sort: { weight: -1 } });
+    }, { $sort: { priority: -1, [sort]: -1 } });
+  } else pipeline.push({ $sort: { [sort]: -1 } });
 
   pipeline.push({ $limit: limit || 10 }, { $skip: skip || 0 });
   return pipeline;
@@ -140,7 +150,7 @@ const makePipeline = ({
 };
 
 const makeCountPipeline = ({
-  string, forSites, authorities, crucialWobjects, object_type, supportedTypes, forExtended,
+  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
 }) => {
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
@@ -148,7 +158,7 @@ const makeCountPipeline = ({
   ];
   if (forSites || forExtended) {
     pipeline.unshift(...matchSitesPipe({
-      string, authorities, crucialWobjects, object_type, supportedTypes, forSites,
+      string, crucialWobjects, object_type, supportedTypes, forSites,
     }));
   } else {
     pipeline.unshift(matchSimplePipe({ string, object_type }));
@@ -159,41 +169,28 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  authorities, crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory,
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map,
 }) => {
   const pipeline = [];
-  if (forSites) {
+  if (map) {
     pipeline.push({
-      $match: {
-        $or: [{
-          $expr: {
-            $gt: [
-              { $size: { $setIntersection: ['$authority.ownership', authorities] } },
-              0,
-            ],
-          },
-        }, {
-          $expr: {
-            $gt: [
-              { $size: { $setIntersection: ['$authority.administrative', authorities] } },
-              0,
-            ],
-          },
-        },
-        { author_permlink: { $in: crucialWobjects } },
-        ],
-        object_type: { $in: supportedTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-      },
-    });
-  } else {
-    pipeline.push({
-      $match: {
-        object_type: { $in: supportedTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      $geoNear: {
+        near: { type: 'Point', coordinates: map.coordinates },
+        distanceField: 'proximity',
+        maxDistance: map.radius,
+        spherical: true,
+        limit: 100000,
       },
     });
   }
+  const matchCond = {
+    $match: {
+      object_type: { $in: supportedTypes },
+      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+    },
+  };
+  if (forSites)matchCond.$match.author_permlink = { $in: crucialWobjects };
+  pipeline.push(matchCond);
   if (tagCategory) {
     const condition = [];
     for (const category of tagCategory) {

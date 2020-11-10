@@ -1,13 +1,15 @@
 const _ = require('lodash');
-const { SUPPORTED_COLORS } = require('constants/sitesConstants');
 const { App, Wobj } = require('models');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { SUPPORTED_COLORS } = require('constants/sitesConstants');
+const { processWobjects } = require('utilities/helpers/wObjectHelper');
 
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
 exports.getConfigurationsList = async (host) => {
-  const { result } = await App.findOne({ host, inherited: true });
+  let { result } = await App.findOne({ host, inherited: true });
   if (!result) return { error: { status: 404, message: 'App not Found!' } };
-
+  result = await this.aboutObjectFormat(result);
   return { result: _.get(result, 'configuration') };
 };
 
@@ -44,4 +46,14 @@ exports.saveConfigurations = async (params) => {
   );
   if (updateError) return { error: updateError };
   return { result: updatedApp.configuration };
+};
+
+exports.aboutObjectFormat = async (app) => {
+  const { result } = await Wobj.findOne(_.get(app, 'configuration.aboutObject'));
+  if (!result) return app;
+  const wobject = await processWobjects({
+    wobjects: [result], returnArray: false, fields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR], app,
+  });
+  app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink');
+  return app;
 };

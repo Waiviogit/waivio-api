@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
-const { STATUSES, SUPPORTED_COLORS, GET_DEFAULT_COLORS } = require('constants/sitesConstants');
+const { STATUSES, SUPPORTED_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 
 const { Schema } = mongoose;
@@ -43,6 +43,8 @@ const AppCommissions = new Schema({
 const MapPoints = new Schema({
   topPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
   bottomPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  center: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  zoom: { type: Number, required: true },
 }, { _id: false });
 
 const Colors = new Schema({
@@ -95,6 +97,7 @@ const AppSchema = new Schema({
   activatedAt: { type: Date, default: null },
   deactivatedAt: { type: Date, default: null },
   supported_objects: { type: [String], index: true, default: [] },
+  mapCoordinates: { type: [MapPoints], default: [] },
   top_users: { type: [topUsersSchema] },
   daily_chosen_post: {
     author: { type: String },

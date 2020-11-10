@@ -58,6 +58,12 @@ sitesRoutes.route('/sites/filters')
   .post(sitesController.saveObjectFilters);
 sitesRoutes.route('/sites/tags')
   .get(sitesController.findTags);
+sitesRoutes.route('/sites/map')
+  .get(sitesController.getMapCoordinates)
+  .post(sitesController.getMapData)
+  .put(sitesController.setMapCoordinates);
+sitesRoutes.route('/sites/settings')
+  .get(sitesController.getSettings);
 
 // endregion
 
@@ -135,6 +141,8 @@ postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')
   .get(PostController.getPostComments);
+postRoutes.route('/post/social-info')
+  .get(PostController.getSocialInfo);
 // endregion
 // region App
 appRoutes.route('/app/:appName')

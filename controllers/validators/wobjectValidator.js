@@ -1,7 +1,7 @@
 const Joi = require('@hapi/joi');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
-const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
+const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
 
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
@@ -66,7 +66,19 @@ exports.searchScheme = Joi.object().keys({
   tagCategory: Joi.array().items(Joi.object().keys({
     categoryName: Joi.string().required(),
     tags: Joi.array().items(Joi.string()).min(1).required(),
-  })),
+  })).min(1),
+  userName: Joi.string(),
+  sort: Joi.string().valid(...Object.values(SEARCH_SORT)).default(SEARCH_SORT.WEIGHT),
+  map: Joi.object().keys({
+    coordinates: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ),
+    radius: Joi.number().min(0),
+  }),
+  simplified: Joi.boolean().default(false),
   string: Joi.string().allow(''),
   locale: Joi.string().default('en-US'),
   sortByApp: Joi.string().allow('').default(null),

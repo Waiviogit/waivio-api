@@ -14,10 +14,8 @@ const userModel = require('models/UserModel');
 exports.fill = async (req, res, next) => {
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
-  if (!currentSchema) {
-    next();
-    return;
-  }
+  if (!currentSchema) return next();
+
   const userName = _.get(req, 'params.userName', _.get(req, 'headers.follower', req.headers.following));
   // separate requests which return array of posts and which return single post
   if (_.isArray(res.result.json)) {

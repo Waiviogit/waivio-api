@@ -1,9 +1,13 @@
 const _ = require('lodash');
 const { getNamespace } = require('cls-hooked');
+const Sentry = require('@sentry/node');
 const moment = require('moment');
+const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
-const { App, websitePayments, User } = require('models');
+const {
+  App, websitePayments, User, Wobj,
+} = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 /** Check for available domain for user site */
@@ -33,7 +37,7 @@ exports.getUserApps = async (params) => {
   });
   if (error) return { error };
 
-  return { result: _.map(apps, 'host') };
+  return { result: _.map(apps, (app) => ({ host: app.host, id: app._id })) };
 };
 
 exports.searchTags = async (params) => {
@@ -129,19 +133,92 @@ exports.siteInfo = async (host) => {
   return { result: _.pick(app, ['status']) };
 };
 
-exports.firstLoad = async () => {
-  const { result, error } = await this.getSessionApp();
-  if (error || !result) return { error: error || { status: 404, message: 'App not found!' } };
-
-  return {
-    result: _.pick(result, ['configuration', 'host', 'googleAnalyticsTag',
-      'beneficiary', 'supported_object_types', 'status', 'mainPage']),
-  };
-};
+exports.firstLoad = async ({ app }) => ({
+  result: _.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+    'beneficiary', 'supported_object_types', 'status', 'mainPage']),
+});
 
 exports.getSessionApp = async () => {
   const session = getNamespace('request-session');
   const host = session.get('host');
 
   return App.findOne({ host });
+};
+
+exports.updateSupportedObjects = async ({ host, app }) => {
+  if (!app)({ result: app } = await App.findOne({ host }));
+
+  if (!app) {
+    await sendSentryNotification();
+    return Sentry.captureException({ error: { message: `Some problems with updateSupportedObject for app ${host}` } });
+  }
+  if (!(app.inherited && !app.canBeExtended)) return;
+  const authorities = _.get(app, 'authority', []);
+  const orMapCond = [], orTagsCond = [];
+  if (app.mapCoordinates.length) {
+    app.mapCoordinates.forEach((points) => {
+      orMapCond.push({
+        map: {
+          $geoWithin: {
+            $box: [points.bottomPoint, points.topPoint],
+          },
+        },
+      });
+    });
+  }
+  if (app.object_filters && Object.keys(app.object_filters).length) {
+    for (const type of Object.keys(app.object_filters)) {
+      const typesCond = [];
+      for (const category of Object.keys(app.object_filters[type])) {
+        if (app.object_filters[type][category].length) {
+          typesCond.push({
+            fields: {
+              $elemMatch: {
+                name: FIELDS_NAMES.CATEGORY_ITEM,
+                body: { $in: app.object_filters[type][category] },
+                tagCategory: category,
+              },
+            },
+          });
+        }
+      }
+      if (typesCond.length)orTagsCond.push({ $and: [{ object_type: type }, { $or: typesCond }] });
+    }
+  }
+  const condition = {
+    $and: [{
+      $or: [{
+        $expr: {
+          $gt: [
+            { $size: { $setIntersection: ['$authority.ownership', authorities] } },
+            0,
+          ],
+        },
+      }, {
+        $expr: {
+          $gt: [
+            { $size: { $setIntersection: ['$authority.administrative', authorities] } },
+            0,
+          ],
+        },
+      }],
+    }],
+    object_type: { $in: app.supported_object_types },
+  };
+  if (orMapCond.length)condition.$and[0].$or.push(...orMapCond);
+  if (orTagsCond.length) condition.$and.push({ $or: orTagsCond });
+
+  const { result, error } = await Wobj.find(condition);
+  if (error) {
+    await sendSentryNotification();
+    return Sentry.captureException(error);
+  }
+  await App.findOneAndUpdate({ _id: app._id }, { $set: { supported_objects: _.map(result, 'author_permlink') } });
+};
+
+exports.getSettings = async (host) => {
+  const { result: app } = await App.findOne({ host, inherited: true });
+  if (!app) return { error: { status: 404, message: 'App not found!' } };
+
+  return { result: _.pick(app, ['googleAnalyticsTag', 'beneficiary']) };
 };

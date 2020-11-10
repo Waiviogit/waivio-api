@@ -1,9 +1,9 @@
-const { Client } = require('dsteem');
+const { Client } = require('@hiveio/dhive');
 const config = require('config');
 
-const steemUrl = config.nodeUrl || 'https://anyx.io';
+const hiveUrls = config.nodeUrls || 'https://api.hive.blog';
+const options = { timeout: 8 * 1000, failoverThreshold: 4, rebrandedApi: true };
 
-const client = new Client(steemUrl);
-const clientAnyx = new Client('https://anyx.io');
-
+const client = new Client(hiveUrls, options);
+const clientAnyx = new Client(hiveUrls, options);
 module.exports = { client, clientAnyx };

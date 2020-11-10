@@ -17,3 +17,8 @@ exports.VALID_FOLLOWERS_SORT = [
   this.FOLLOWERS_SORT.RECENCY,
   this.FOLLOWERS_SORT.RANK,
 ];
+
+exports.SEARCH_SORT = {
+  WEIGHT: 'weight',
+  CREATED: 'createdAt',
+};

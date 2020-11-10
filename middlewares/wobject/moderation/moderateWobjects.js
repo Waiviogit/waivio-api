@@ -6,7 +6,7 @@ const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
 
 exports.moderate = async (req, res, next) => {
-  /*
+    /*
     First need to find app of current request, then correct scheme of
     location wobjects data in response, and then moderate it if need
 

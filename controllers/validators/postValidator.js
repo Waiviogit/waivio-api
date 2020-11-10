@@ -28,3 +28,9 @@ exports.getManyPosts = Joi.array().items(Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
 }));
+
+exports.postSocialInfoSchema = Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  userName: Joi.string().required(),
+});

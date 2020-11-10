@@ -8,7 +8,7 @@ module.exports = {
   ObjectTypeFactory: require('./ObjectTypeFactory/ObjectsTypeFactory'),
   WebsitePaymentsFactory: require('./WebsitePaymentsFactory/WebsitePaymentsFactory'),
   UsersFactory: require('./UsersFactory/UsersFactory'),
-  CampaignFactory: require('./Campaign/CampaignFactory'),
+  CampaignFactory: require('./CampaignFactory/CampaignFactory'),
   BotUpvoteFactory: require('./BotUpvote/BotUpvoteFactory'),
   PaymentHistoryFactory: require('./PaymentHistory/PaymentHistoryFactory'),
 };

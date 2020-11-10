@@ -1,3 +1,4 @@
+/* eslint-disable func-names */
 const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
 const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
@@ -123,9 +124,12 @@ UserSchema.virtual('full_objects_follow', { // get full structure of objects ins
   justOne: false,
 });
 
-// eslint-disable-next-line func-names
-UserSchema.virtual('objects_following_count').get(function () {
-  return this.objects_follow.length;
+UserSchema.virtual('objects_following_count', {
+  ref: 'WobjectSubscriptions',
+  localField: 'name',
+  foreignField: 'follower',
+  justOne: false,
+  count: true,
 });
 
 UserSchema.virtual('objects_shares_count', {
@@ -135,20 +139,26 @@ UserSchema.virtual('objects_shares_count', {
   count: true,
 });
 
-// eslint-disable-next-line func-names
 UserSchema.pre('findOneAndUpdate', async function (next) {
   const doc = await this.model.findOne(this.getQuery());
   if (!doc) this.set({ auth: null });
   next();
 });
 
-// eslint-disable-next-line func-names
 UserSchema.pre('aggregate', function () {
   const session = getNamespace('request-session');
 
   if (!session.get('authorised_user')) {
     this.pipeline().push({ $project: { user_metadata: 0, 'auth.sessions': 0 } });
   }
+});
+
+UserSchema.pre('find', function () {
+  this.populate('objects_following_count');
+});
+
+UserSchema.pre('findOne', function () {
+  this.populate('objects_following_count');
 });
 
 const UserModel = mongoose.model('User', UserSchema);
