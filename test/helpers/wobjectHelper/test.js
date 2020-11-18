@@ -4,7 +4,7 @@ const {
   faker, dropDatabase, expect, wObjectHelper, sinon, postsUtil,
 } = require('test/testHelper');
 const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 
 describe('On wobjectHelper', async () => {
   let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
@@ -828,6 +828,97 @@ describe('On wobjectHelper', async () => {
       it('should return name which was upvoted by owner', async () => {
         expect(result[FIELDS_NAMES.NAME]).to.be.undefined;
       });
+    });
+  });
+
+  describe('on getLinkToPageLoad', async () => {
+    let obj, link, expectedLink, menuList, menuList2, menuPage;
+
+    beforeEach(() => {
+      menuList = { type: 'menuList', body: faker.random.string(), weight: _.random(100, 200) };
+      menuList2 = { type: 'menuList', body: faker.random.string(), weight: _.random(0, 99) };
+      menuPage = { type: 'menuPage', body: faker.random.string() };
+    });
+
+    it('should return proper link on obj type page', async () => {
+      obj = { object_type: OBJECT_TYPES.PAGE, author_permlink: faker.random.string() };
+      expectedLink = `/object/${obj.author_permlink}/page`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return proper link on obj type list', async () => {
+      obj = { object_type: OBJECT_TYPES.LIST, author_permlink: faker.random.string() };
+      expectedLink = `/object/${obj.author_permlink}/list`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return  /object/author_permlink on some obj types', async () => {
+      obj = {
+        object_type: _.sample(Object.values(_.pick(OBJECT_TYPES, ['HASHTAG', 'DISH', 'DRINK', 'CRYPTO']))),
+        author_permlink: faker.random.string(),
+      };
+      expectedLink = `/object/${obj.author_permlink}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return menuList with greater weight if wobject does not have sort custom and have both menuList menuPage', async () => {
+      obj = {
+        object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['LIST', 'PAGE', 'HASHTAG', 'DISH', 'DRINK', 'CRYPTO']))),
+        author_permlink: faker.random.string(),
+        listItem: [menuList, menuList2, menuPage],
+      };
+      expectedLink = `/object/${obj.author_permlink}/menu#${menuList.body}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return menuList with admin vote if wobject does not have sort custom and have both menuList menuPage', async () => {
+      menuList2.adminVote = { timestamp: _.random(1, 100) };
+      obj = {
+        object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['LIST', 'PAGE', 'HASHTAG', 'DISH', 'DRINK', 'CRYPTO']))),
+        author_permlink: faker.random.string(),
+        listItem: [menuList, menuList2, menuPage],
+      };
+      expectedLink = `/object/${obj.author_permlink}/menu#${menuList2.body}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return menuPage if wobject does not have neither sort custom nor menuList', async () => {
+      obj = {
+        object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['LIST', 'PAGE', 'HASHTAG', 'DISH', 'DRINK', 'CRYPTO']))),
+        author_permlink: faker.random.string(),
+        listItem: [menuPage],
+      };
+      expectedLink = `/object/${obj.author_permlink}/page#${menuPage.body}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return first element of array sortCustom in obj', async () => {
+      obj = {
+        object_type: _.sample(Object.values(OBJECT_TYPES)),
+        author_permlink: faker.random.string(),
+        listItem: [menuList, menuPage],
+        sortCustom: [menuPage.body],
+      };
+      expectedLink = `/object/${obj.author_permlink}/page#${menuPage.body}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return /object/author_permlink if can not find sortCustom in listItem', async () => {
+      obj = {
+        object_type: _.sample(Object.values(OBJECT_TYPES)),
+        author_permlink: faker.random.string(),
+        sortCustom: [menuPage.body],
+      };
+      expectedLink = `/object/${obj.author_permlink}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
     });
   });
 });
