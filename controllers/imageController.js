@@ -11,7 +11,7 @@ const saveImage = async (req, res) => {
       return res
         .status(503)
         .send({ error })
-        .end(await Promise.reject(new Error(ERROR_MESSAGE.UNAVAILABLE)));
+        .end(Promise.reject(new Error(ERROR_MESSAGE.UNAVAILABLE)));
     }
     return res.status(422).send({ error });
   }
