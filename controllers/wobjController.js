@@ -1,4 +1,4 @@
-const { Wobj, Post } = require('models');
+const { Wobj, Post, relatedAlbum } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers,
@@ -209,6 +209,29 @@ const getWobjectField = async (req, res, next) => {
   next();
 };
 
+const related = async (req, res, next) => {
+  const value = validators.validate(Object.assign(req.query, {
+    ...req.params, ...req.query,
+  }),
+  validators.wobject.getRelatedAlbum, next);
+  if (!value) return;
+
+  const { items, error } = await relatedAlbum.find({
+    condition: { id: value.authorPermlink },
+    skip: value.skip,
+    limit: value.limit,
+  });
+
+  if (error) return next(error);
+  res.result = {
+    status: 200,
+    json: {
+      body: 'Related', name: 'galleryAlbum', id: value.authorPermlink, items,
+    },
+  };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -221,4 +244,5 @@ module.exports = {
   getByField,
   getChildWobjects,
   getWobjectField,
+  related,
 };

@@ -30,6 +30,7 @@ models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 models.WebsitePayments = require('./schemas/WebsitePaymentsSchema');
 models.WebsiteRefunds = require('./schemas/WebsiteRefundsSchema');
+models.RelatedAlbum = require('./schemas/RelatedAlbumSchema');
 
 module.exports = {
   Mongoose: mongoose,
