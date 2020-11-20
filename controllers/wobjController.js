@@ -5,6 +5,7 @@ const {
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -219,14 +220,18 @@ const related = async (req, res, next) => {
   const { items, error } = await relatedAlbum.find({
     condition: { id: value.authorPermlink },
     skip: value.skip,
-    limit: value.limit,
+    limit: value.limit + 1,
   });
 
   if (error) return next(error);
   res.result = {
     status: 200,
     json: {
-      body: 'Related', name: 'galleryAlbum', id: value.authorPermlink, items,
+      body: 'Related',
+      id: value.authorPermlink,
+      name: FIELDS_NAMES.GALLERY_ALBUM,
+      items: items.slice(0, value.limit),
+      hasMore: items.length === value.limit + 1,
     },
   };
   next();
