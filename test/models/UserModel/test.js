@@ -24,16 +24,19 @@ describe('UserModel', () => {
     });
   });
   describe('On findOneByCondition', async () => {
-    let user;
+    let name;
     beforeEach(async () => {
-      user = await UsersFactory.Create();
+      await dropDatabase();
+      name = faker.name.firstName();
+      await UsersFactory.Create({ name });
     });
-    it('Should return an object', async () => {
-      const myUser = await UserModel.getOne({ name: user.name });
-      expect(myUser).to.be.an('Object');
+    it('Should return right user', async () => {
+      await UsersFactory.Create();
+      const { user } = await UserModel.findOneByCondition({ name });
+      expect(user.name).to.be.eq(name);
     });
     it('Should check that the error exists', async () => {
-      const { error } = await UserModel.getOne({ id: faker.random.string() });
+      const { error } = await UserModel.findOneByCondition([]);
       expect(error).to.be.exist;
     });
   });
@@ -57,21 +60,22 @@ describe('UserModel', () => {
     });
   });
   describe('On getObjectsFollow', async () => {
-    let user;
+    let name;
     beforeEach(async () => {
       await dropDatabase();
-      user = await UsersFactory.Create();
+      name = faker.name.firstName();
+      await UsersFactory.Create({ name });
     });
-    it('Should return an object', async () => {
-      const objFlws = UserModel.getObjectsFollow({ name: user.name, limit: 10, skip: 0 });
-      expect(typeof objFlws).to.be.eq('object');
+    it('Should return an array', async () => {
+      const { wobjects } = await UserModel.getObjectsFollow({ name });
+      expect(Array.isArray(wobjects)).to.be.true;
     });
     it('Should return empty array if username was not transmitted', async () => {
-      const objFlws = UserModel.getObjectsFollow({ limit: 10, skip: 0 });
-      expect(objFlws).to.be.empty;
+      const { wobjects } = await UserModel.getObjectsFollow({ limit: 10, skip: 0 });
+      expect(wobjects).to.be.empty;
     });
-    it('Should return an error if username is empty', async () => {
-      const error = UserModel.getObjectsFollow({ name: '', limit: 10, skip: 0 });
+    it('Should return an error if arguments is null', async () => {
+      const { error } = await UserModel.getObjectsFollow(null);
       expect(error).to.be.exist;
     });
   });
@@ -166,21 +170,27 @@ describe('UserModel', () => {
     });
   });
   describe('On getFollowings', async () => {
-    let user;
+    let name;
+
     beforeEach(async () => {
-      user = await UsersFactory.Create();
+      name = faker.name.firstName();
+      await UsersFactory.Create({ name });
     });
     it('Should return an array', async () => {
-      const { users } = await UserModel.getFollowers({ name: user.name, skip: 0, limit: 10 });
+      const { users } = await UserModel.getFollowings({ name, skip: 0, limit: 10 });
       expect(Array.isArray(users)).to.be.true;
     });
     it('Should return an empty array', async () => {
-      const { users } = await UserModel.getFollowers({ name: user.name, skip: 0, limit: 10 });
+      const { users } = await UserModel.getFollowings({ name, skip: 0, limit: 10 });
       expect(_.isEmpty(users));
     });
-    it('Should return an error if data was wrong', async () => {
-      const { error } = await UserModel.getFollowers({ skip: user, limit: 10 });
-      expect(error).to.be.exist;
+    it('Should return correct users array', async () => {
+      name = faker.name.firstName();
+      const followings = _.random(5, 15);
+      const followingsArray = new Array(followings);
+      await UsersFactory.Create({ name, users_follow: followingsArray });
+      const { users } = await UserModel.getFollowings({ name, skip: 0, limit: followings });
+      expect(users.length).to.be.eq(followings);
     });
   });
   describe('On search', async () => {
@@ -267,11 +277,9 @@ describe('UserModel', () => {
     });
   });
   describe('On findWithSelect', async () => {
-    let userName;
     let usersCount;
     beforeEach(async () => {
       await dropDatabase();
-      // userName = faker.name.firstName();
       usersCount = _.random(1, 10);
       for (let iter = 0; iter < usersCount; iter++) {
         await UsersFactory.Create({ name: `asdf_${faker.name.firstName()}` });
@@ -294,11 +302,9 @@ describe('UserModel', () => {
     });
   });
   describe('On getCustomCount', async () => {
-    let condition;
     let usersCount;
     beforeEach(async () => {
       await dropDatabase();
-      condition = { users_follow: [] };
       usersCount = _.random(1, 10);
       for (let iter = 0; iter < usersCount; iter++) {
         await UsersFactory.Create();
