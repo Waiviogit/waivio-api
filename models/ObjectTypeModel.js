@@ -1,5 +1,6 @@
 const { ObjectType } = require('database').models;
 const { REQUIREDFIELDS } = require('constants/wobjectsData');
+const _ = require('lodash');
 
 const getAll = async ({ limit, skip, wobjects_count: wobjectsCount = 3 }) => {
   let objectTypes;
@@ -92,7 +93,7 @@ const aggregate = async (pipeline = []) => {
   try {
     const result = await ObjectType.aggregate(pipeline);
 
-    if (!result) {
+    if (_.isEmpty(result)) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { result };
