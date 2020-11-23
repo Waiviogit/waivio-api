@@ -1,9 +1,11 @@
 const _ = require('lodash');
 const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
+  Campaign, botUpvoteModel, paymentHistory,
 } = require('models');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+const { RESERVATION_STATUSES } = require('constants/campaignsData');
 
 /**
  * Get wobjects data for particular post
@@ -168,12 +170,111 @@ const fillReblogs = async (posts = [], userName) => {
     }
   }
 };
+const jsonParse = (post) => {
+  try {
+    return JSON.parse(post.json_metadata);
+  } catch (error) {
+    return null;
+  }
+};
+
+const checkUserStatus = async ({
+  sponsor, userName, campaign, reviewPermlink,
+}) => {
+  const { result } = await paymentHistory.findByCondition({ sponsor, userName, 'details.review_permlink': reviewPermlink });
+  if (_.isEmpty(result)) return true;
+  const permlink = _.get(result, '[0].details.reservation_permlink');
+  const user = _.find(campaign.users, (u) => u.permlink === permlink);
+  return !user || _.get(user, 'status') === RESERVATION_STATUSES.REJECTED;
+};
+
+/**
+ * Method calculate and add sponsor obligations to each post if it is review
+ * @beforeCashOut checks either the cashout_time has passed or not
+ */
+const additionalSponsorObligations = async (posts) => {
+  for (const post of posts) {
+    const metadata = post.json_metadata ? jsonParse(post) : null;
+    const _id = _.get(metadata, 'campaignId');
+    // if post metadata doesn't have campaignId it's not review
+    if (!_id) continue;
+
+    const { result: campaign } = await Campaign.findOne({ _id });
+    if (!campaign) continue;
+    // chek whether review is rejected
+    const isRejected = await checkUserStatus({
+      reviewPermlink: post.permlink,
+      sponsor: campaign.guideName,
+      userName: post.author,
+      campaign,
+    });
+    if (isRejected) continue;
+    const beforeCashOut = new Date(post.cashout_time) > new Date();
+    const { result: bots } = await botUpvoteModel
+      .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
+    const totalPayout = beforeCashOut
+      ? parseFloat(_.get(post, 'pending_payout_value', 0))
+      : parseFloat(_.get(post, 'total_payout_value', 0))
+      + parseFloat(_.get(post, 'curator_payout_value', 0));
+    const voteRshares = _.reduce(post.active_votes,
+      (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
+
+    const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
+
+    if (ratio) {
+      let likedSum = 0;
+      const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), campaign.guideName], v.voter));
+      for (const el of registeredVotes) {
+        likedSum += (ratio * parseInt(el.rshares_weight || el.rshares, 10));
+      }
+      const sponsorPayout = campaign.reward - likedSum;
+      if (sponsorPayout <= 0) continue;
+      beforeCashOut
+        ? post.pending_payout_value = (parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout).toFixed(3)
+        : post.curator_payout_value = (parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout).toFixed(3);
+      const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+      if (hasSponsor) {
+        hasSponsor.rshares = parseInt(hasSponsor.rshares, 10) + Math.round(sponsorPayout / ratio);
+        hasSponsor.sponsor = true;
+      } else {
+        post.active_votes.push({
+          voter: campaign.guideName,
+          rshares: Math.round(sponsorPayout / ratio),
+          sponsor: true,
+          percent: 10000,
+        });
+      }
+    } else {
+      beforeCashOut
+        ? post.pending_payout_value = campaign.reward
+        : post.curator_payout_value = campaign.reward;
+      _.forEach(post.active_votes, (el) => {
+        el.rshares ? el.rshares = 0 : el.rshares_weight = 0;
+      });
+      const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+      if (hasSponsor) {
+        hasSponsor.rshares = campaign.reward;
+        hasSponsor.sponsor = true;
+      } else {
+        post.active_votes.push({
+          voter: campaign.guideName,
+          rshares: campaign.reward,
+          sponsor: true,
+          percent: 10000,
+        });
+      }
+    }
+  }
+  return posts;
+};
 
 module.exports = {
-  getPostObjects,
-  getPostsByCategory,
-  getWobjFeedCondition,
+  additionalSponsorObligations,
   addAuthorWobjectsWeight,
-  fillReblogs,
+  getWobjFeedCondition,
+  getPostsByCategory,
+  checkUserStatus,
+  getPostObjects,
   mergePostData,
+  fillReblogs,
 };
