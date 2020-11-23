@@ -16,4 +16,12 @@ const aggregate = async (pipeline) => {
   }
 };
 
-module.exports = { findByCondition, aggregate };
+const findOne = async (condition, select = {}) => {
+  try {
+    return { result: await Campaign.findOne(condition, select).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
+module.exports = { findByCondition, aggregate, findOne };

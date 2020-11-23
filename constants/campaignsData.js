@@ -36,3 +36,8 @@ exports.RESERVATION_STATUSES = {
   REJECTED: 'rejected',
   EXPIRED: 'expired',
 };
+
+exports.BOT_UPVOTE_STATUSES = {
+  UPVOTED: 'upvoted',
+  PENDING: 'pending',
+};

@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
 const Float = require('mongoose-float').loadType(mongoose, 4);
+const { RESERVATION_STATUSES, CAMPAIGN_STATUSES, CAMPAIGN_TYPES } = require('constants/campaignsData');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },
@@ -9,7 +10,7 @@ const userSchema = new mongoose.Schema({
   referral_server: { type: String },
   unreservation_permlink: { type: String },
   status: {
-    type: String, enum: ['assigned', 'unassigned', 'completed'], required: true, default: 'assigned',
+    type: String, enum: Object.values(RESERVATION_STATUSES), required: true, default: 'assigned',
   },
   completedAt: { type: Date },
 }, {
@@ -34,8 +35,8 @@ const campaignSchema = new mongoose.Schema({
     type: String, required: true, maxlength: 256, index: true,
   },
   description: { type: String, maxlength: 512 },
-  type: { type: String, enum: ['reviews'], required: true },
-  status: { type: String, enum: ['pending', 'active', 'inactive', 'expired', 'deleted', 'payed'], default: 'pending' },
+  type: { type: String, enum: Object.values(CAMPAIGN_TYPES), required: true },
+  status: { type: String, enum: Object.values(CAMPAIGN_STATUSES), default: 'pending' },
   note: { type: String, maxlength: 256 },
   compensationAccount: { type: String },
   budget: {
