@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { Post, Wobj, User } = require('models');
 const { appHelper, wObjectHelper } = require('utilities/helpers');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { SHARING_SOCIAL_FIELDS } = require('constants/wobjectsData');
 
 module.exports = async ({ author, permlink }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });
@@ -33,16 +33,10 @@ const getWobjectInfo = async (post) => {
     };
   }
   const wobjects = await wObjectHelper.processWobjects({
-    fields: [
-      FIELDS_NAMES.NAME,
-      FIELDS_NAMES.LINK,
-      FIELDS_NAMES.ADDRESS,
-      FIELDS_NAMES.TAG_CATEGORY,
-      FIELDS_NAMES.CATEGORY_ITEM,
-    ],
+    fields: SHARING_SOCIAL_FIELDS,
     wobjects: result,
-    app,
     topTagsLimit: 3,
+    app,
   });
 
   const tags = addTags(wobjects);
