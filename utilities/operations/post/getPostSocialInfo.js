@@ -3,12 +3,10 @@ const { Post, Wobj, User } = require('models');
 const { appHelper, wObjectHelper } = require('utilities/helpers');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
-module.exports = async ({
-  author, permlink, userName,
-}) => {
+module.exports = async ({ author, permlink }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });
   if (!post || postError) return { error: postError || { status: 404, message: 'Post not found' } };
-  const { userFacebook, userTwitter } = await getUserSocials(userName);
+  const { userFacebook, userTwitter } = await getUserSocials(author);
   const {
     tags, cities, wobjectsTwitter, wobjectsFacebook,
   } = await getWobjectInfo(post);
@@ -35,7 +33,16 @@ const getWobjectInfo = async (post) => {
     };
   }
   const wobjects = await wObjectHelper.processWobjects({
-    wobjects: result, app, fields: [FIELDS_NAMES.ADDRESS, FIELDS_NAMES.NAME, FIELDS_NAMES.LINK],
+    fields: [
+      FIELDS_NAMES.NAME,
+      FIELDS_NAMES.LINK,
+      FIELDS_NAMES.ADDRESS,
+      FIELDS_NAMES.TAG_CATEGORY,
+      FIELDS_NAMES.CATEGORY_ITEM,
+    ],
+    wobjects: result,
+    app,
+    topTagsLimit: 3,
   });
 
   const tags = addTags(wobjects);
@@ -68,7 +75,12 @@ const addTags = (wobjects) => {
     .filter((w) => w.object_type !== 'hashtag')
     .orderBy('weight', 'desc')
     .forEach((w) => {
-      if (tags.length < 5) tags.push((w.name || w.default_name).replace(/ /g, ''));
+      const topTags = _.get(w, 'topTags', []);
+      if (!_.isEmpty(topTags)) {
+        for (const tag of topTags) {
+          if (tags.length < 5) tags.push((tag).replace(/ /g, ''));
+        }
+      }
     })
     .value();
   return tags;
