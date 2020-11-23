@@ -1,10 +1,14 @@
+const _ = require('lodash');
 const { RelatedAlbum } = require('database').models;
 
-exports.find = async ({
-  condition, select, skip, limit,
-}) => {
+exports.aggregate = async (pipeline) => {
   try {
-    return { items: await RelatedAlbum.find(condition, select).skip(skip).limit(limit).lean() };
+    const items = await RelatedAlbum.aggregate(pipeline);
+
+    if (_.isEmpty(items)) {
+      return { error: { status: 404, message: 'Images not found!' } };
+    }
+    return { items };
   } catch (error) {
     return { error };
   }

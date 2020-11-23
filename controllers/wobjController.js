@@ -1,11 +1,10 @@
-const { Wobj, Post, relatedAlbum } = require('models');
+const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getGallery, getWobjField, sortFollowers,
+  getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -211,29 +210,16 @@ const getWobjectField = async (req, res, next) => {
 };
 
 const related = async (req, res, next) => {
-  const value = validators.validate(Object.assign(req.query, {
-    ...req.params, ...req.query,
-  }),
-  validators.wobject.getRelatedAlbum, next);
+  const value = validators.validate(
+    { ...req.params, ...req.query },
+    validators.wobject.getRelatedAlbum,
+    next,
+  );
   if (!value) return;
 
-  const { items, error } = await relatedAlbum.find({
-    condition: { id: value.authorPermlink },
-    skip: value.skip,
-    limit: value.limit + 1,
-  });
-
+  const { json, error } = await getRelated(value);
   if (error) return next(error);
-  res.result = {
-    status: 200,
-    json: {
-      body: 'Related',
-      id: value.authorPermlink,
-      name: FIELDS_NAMES.GALLERY_ALBUM,
-      items: items.slice(0, value.limit),
-      hasMore: items.length === value.limit + 1,
-    },
-  };
+  res.result = { status: 200, json };
   next();
 };
 
