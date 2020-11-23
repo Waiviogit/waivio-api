@@ -1,10 +1,11 @@
 const { UserWobjects } = require('database').models;
+const _ = require('lodash');
 
 const aggregate = async (pipeline) => {
   try {
     const result = await UserWobjects.aggregate(pipeline);
 
-    if (!result) {
+    if (_.isEmpty(result)) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { result };
@@ -30,7 +31,7 @@ const getByWobject = async ({
 
     const experts = await UserWobjects.aggregate(pipeline);
 
-    if (!experts) {
+    if (_.isEmpty(experts)) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { experts };
