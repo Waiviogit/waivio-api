@@ -1,7 +1,7 @@
-const { relatedAlbum } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
 const _ = require('lodash');
 const uuid = require('uuid/v4');
+const { relatedAlbum } = require('models');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 module.exports = async (data) => {
   const pipeline = [
