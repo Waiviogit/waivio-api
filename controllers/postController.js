@@ -70,7 +70,7 @@ exports.getManyPosts = async (req, res, next) => {
 };
 
 exports.getSocialInfo = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.post.postSocialInfoSchema, next);
+  const value = validators.validate(req.query, validators.post.showSchema, next);
 
   if (!value) return;
 
