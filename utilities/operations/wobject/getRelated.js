@@ -1,24 +1,34 @@
 const { relatedAlbum } = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const uuid = require('uuid/v4');
 
 module.exports = async (data) => {
   const pipeline = [
     { $match: { wobjAuthorPermlink: data.authorPermlink } },
     { $unwind: '$images' },
-    { $project: { body: '$images', _id: 1, id: '$wobjAuthorPermlink' } },
     { $skip: data.skip },
     { $limit: data.limit + 1 },
+    { $project: { body: '$images', id: '$wobjAuthorPermlink' } },
   ];
-  const { items, error } = await relatedAlbum.aggregate(pipeline);
-  if (error) return { error };
+
+  const { result, error } = await relatedAlbum.aggregate(pipeline);
+  const { count, error: countError } = await relatedAlbum
+    .countDocuments({ wobjAuthorPermlink: data.authorPermlink });
+  if (error || countError) return { error: error || countError };
 
   return {
     json: {
       body: 'Related',
       id: data.authorPermlink,
+      count,
       name: FIELDS_NAMES.GALLERY_ALBUM,
-      items: items.slice(0, data.limit),
-      hasMore: items.length === data.limit + 1,
+      items: _
+        .chain(result)
+        .slice(0, data.limit)
+        .forEach((el) => { el.permlink = uuid(); })
+        .value(),
+      hasMore: result.length === data.limit + 1,
     },
   };
 };

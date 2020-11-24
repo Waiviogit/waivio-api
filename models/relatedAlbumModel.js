@@ -1,14 +1,17 @@
-const _ = require('lodash');
 const { RelatedAlbum } = require('database').models;
 
 exports.aggregate = async (pipeline) => {
   try {
-    const items = await RelatedAlbum.aggregate(pipeline);
+    const result = await RelatedAlbum.aggregate(pipeline);
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
 
-    if (_.isEmpty(items)) {
-      return { error: { status: 404, message: 'Images not found!' } };
-    }
-    return { items };
+exports.countDocuments = async (condition) => {
+  try {
+    return { count: await RelatedAlbum.countDocuments(condition) };
   } catch (error) {
     return { error };
   }
