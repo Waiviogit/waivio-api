@@ -2,13 +2,14 @@ const {
   ObjectTypeModel, faker, expect, dropDatabase,
 } = require('test/testHelper');
 const _ = require('lodash');
-const { ObjectFactory, ObjectTypeFactory } = require('test/factories');
+const { ObjectTypeFactory, WobjectFactory } = require('test/factories');
 
 describe('ObjectTypeModel', async () => {
   describe('On getAll', async () => {
-    let objCount;
+    let objCount, similarData;
     beforeEach(async () => {
       await dropDatabase();
+      similarData = faker.random.word();
       objCount = _.random(4, 10);
       for (let iter = 0; iter < objCount; iter++) {
         await ObjectTypeFactory.Create();
@@ -28,6 +29,19 @@ describe('ObjectTypeModel', async () => {
       });
       expect(objectTypes.length).to.be.eq(objCount);
     });
+    it('Should', async () => {
+      const wobjectsCount = _.random(1, 3);
+      await ObjectTypeFactory.Create({ name: similarData });
+      for (let iter = 0; iter < objCount; iter++) {
+        await WobjectFactory.Create({ objectType: similarData });
+      }
+      const { objectTypes } = await ObjectTypeModel.getAll({
+        limit: objCount,
+        skip: 0,
+        wobjects_count: wobjectsCount,
+      });
+      expect(objectTypes[0].related_wobjects).to.be.eq(objCount);
+    });
     it('Should check that the error exist', async () => {
       const { error } = await ObjectTypeModel.getAll({
         limit: objCount,
@@ -43,7 +57,6 @@ describe('ObjectTypeModel', async () => {
       await dropDatabase();
       objCount = _.random(4, 10);
       for (let iter = 0; iter < objCount; iter++) {
-        await ObjectFactory.Create();
         await ObjectTypeFactory.Create({
           name: 'asdf',
         });
