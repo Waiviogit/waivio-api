@@ -25,11 +25,12 @@ models.User = require('./schemas/UserSchema');
 models.Post = require('./schemas/PostSchema');
 models.App = require('./schemas/AppSchema');
 models.Campaign = require('./schemas/CampaignSchema');
-models.paymentHistory = require('./schemas/paymentHistorySchema');
+models.PaymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 models.WebsitePayments = require('./schemas/WebsitePaymentsSchema');
 models.WebsiteRefunds = require('./schemas/WebsiteRefundsSchema');
+models.BotUpvote = require('./schemas/BotUpvoteSchema');
 models.RelatedAlbum = require('./schemas/RelatedAlbumSchema');
 
 module.exports = {

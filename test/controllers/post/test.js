@@ -2,7 +2,7 @@ const {
   faker, chai, expect, dropDatabase, app, sinon,
 } = require('test/testHelper');
 const {
-  AppFactory, PostFactory, UsersFactory, AppendObjectFactory,
+  AppFactory, PostFactory, UsersFactory, AppendObjectFactory, ObjectFactory,
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
@@ -21,35 +21,40 @@ describe('On postController', async () => {
   });
   describe('on getSocialInfo', async () => {
     describe('on ok', async () => {
-      let user, wobject;
+      let wobject, hashtag;
       const twitter = faker.random.string();
       const facebook = faker.random.string();
       const city = faker.random.string();
+      const author = faker.random.string();
       beforeEach(async () => {
+        hashtag = await ObjectFactory.Create({ objectType: 'hashtag' });
         ({ wobject } = await AppendObjectFactory.Create({
           name: FIELDS_NAMES.ADDRESS,
           body: JSON.stringify({ city }),
         }));
-        ({ wobject } = await AppendObjectFactory.Create({
+        await AppendObjectFactory.Create({
           name: FIELDS_NAMES.LINK,
           body: JSON.stringify({ linkFacebook: facebook, linkTwitter: twitter }),
           rootWobj: wobject.author_permlink,
-        }));
-        post = await PostFactory.Create({ wobjects: [wobject] });
-        user = await UsersFactory
-          .Create({ posting_json_metadata: JSON.stringify({ profile: { twitter, facebook } }) });
+        });
+        post = await PostFactory.Create({ author, wobjects: [wobject, hashtag] });
+        await UsersFactory
+          .Create({
+            name: author,
+            posting_json_metadata: JSON.stringify({ profile: { twitter, facebook } }),
+          });
         result = await chai.request(app)
           .get('/api/post/social-info')
           .query({
-            author: post.author, permlink: post.permlink, userName: user.name,
+            author: post.author, permlink: post.permlink,
           });
       });
       it('should have status 200', async () => {
         expect(result).to.have.status(200);
       });
-      it('should have same userSocial facebook', async () => {
+      it('should have same fields like mock', async () => {
         const mock = {
-          tags: ['HIVE', 'waivio', wobject.default_name],
+          tags: [hashtag.default_name, 'HIVE', 'waivio'],
           cities: [city],
           userFacebook: facebook,
           userTwitter: twitter,
@@ -71,7 +76,6 @@ describe('On postController', async () => {
           .query({
             author: faker.random.string(),
             permlink: faker.random.string(),
-            userName: faker.random.string(),
           });
         expect(result).to.have.status(404);
       });
