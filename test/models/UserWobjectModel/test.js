@@ -99,6 +99,7 @@ describe('UserWobjects', async () => {
       correctUserWobj = await UserWobjectsFactory.Create({
         username: userName,
         authorPermlink: link,
+        weight: 1,
       });
     });
     it('Should return correct wobject', async () => {
@@ -107,6 +108,14 @@ describe('UserWobjects', async () => {
       });
       expect(experts[0].name).to.be.eq(correctUserWobj.user_name);
     });
+    it('Should return correct user if he has the weight field', async () => {
+      const { experts } = await UserWobjectsModel.getByWobject({
+        authorPermlink: link,
+        weight: 1,
+      });
+      expect(experts[0].name).to.be.eq(correctUserWobj.user_name);
+    });
+
     it('Should check that the error exist', async () => {
       const { error } = await UserWobjectsModel.getByWobject({});
       expect(error).to.be.exist;
@@ -145,8 +154,7 @@ describe('UserWobjects', async () => {
       });
   });
   describe('On aggregate', async () => {
-    let pipeline;
-    let limit;
+    let pipeline, limit;
     beforeEach(async () => {
       limit = _.random(10, 20);
       pipeline = [{ $match: { user_name: userName } },
