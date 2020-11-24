@@ -9,19 +9,22 @@ module.exports = async (data) => {
     { $unwind: '$images' },
     { $skip: data.skip },
     { $limit: data.limit + 1 },
-    { $project: { body: '$images', id: '$wobjAuthorPermlink' } },
+    { $project: { body: '$images', id: '$wobjAuthorPermlink', _id: 0 } },
   ];
-
+  const countPipeline = [
+    { $match: { wobjAuthorPermlink: data.authorPermlink } },
+    { $unwind: '$images' },
+    { $count: 'imagesCount' },
+  ];
   const { result, error } = await relatedAlbum.aggregate(pipeline);
-  const { count, error: countError } = await relatedAlbum
-    .countDocuments({ wobjAuthorPermlink: data.authorPermlink });
+  const { result: [count], error: countError } = await relatedAlbum.aggregate(countPipeline);
   if (error || countError) return { error: error || countError };
 
   return {
     json: {
       body: 'Related',
       id: data.authorPermlink,
-      count,
+      count: _.get(count, 'imagesCount', 0),
       name: FIELDS_NAMES.GALLERY_ALBUM,
       items: _
         .chain(result)

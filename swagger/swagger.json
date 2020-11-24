@@ -2816,12 +2816,14 @@
                   "body": {"type": "string"},
                   "name": {"type": "string"},
                   "id": {"type": "string"},
+                  "count": {"type": "number"},
+                  "hasMore": {"type": "boolean"},
                   "items": {
                     "type": "array",
                     "items" : {
                       "type" : "object",
                       "properties": {
-                        "_id": {"type": "string"},
+                        "permlink": {"type": "string"},
                         "id": {"type": "string"},
                         "body": {"type": "string"}
                       }
