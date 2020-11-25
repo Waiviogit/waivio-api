@@ -8,11 +8,3 @@ exports.aggregate = async (pipeline) => {
     return { error };
   }
 };
-
-exports.countDocuments = async (condition) => {
-  try {
-    return { count: await RelatedAlbum.countDocuments(condition) };
-  } catch (error) {
-    return { error };
-  }
-};
