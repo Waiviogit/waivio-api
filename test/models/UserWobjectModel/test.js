@@ -19,7 +19,7 @@ describe('UserWobjects', async () => {
   describe('On aggregate', async () => {
     let usersWobjCount;
     beforeEach(async () => {
-      dropDatabase();
+      await dropDatabase();
       usersWobjCount = _.random(5, 10);
       userName = faker.name.firstName();
       for (let iter = 0; iter < usersWobjCount; iter++) {
@@ -49,10 +49,14 @@ describe('UserWobjects', async () => {
     });
   });
   describe('On findOne', async () => {
-    beforeEach(async () => {
-    });
     it('Should return correct userWobject', async () => {
       const { result } = await UserWobjectsModel.findOne({ author_permlink: link });
+      expect(result.author_permlink).to.be.eq(link);
+    });
+    it('Shoud return correct userWobject if select was defined', async () => {
+      await UserWobjectsFactory.Create({ userName: faker.name.firstName() });
+      const { result } = await UserWobjectsModel.findOne({ user_name: userName },
+        { author_permlink: link });
       expect(result.author_permlink).to.be.eq(link);
     });
     it('Should check that the error exist', async () => {
@@ -68,10 +72,6 @@ describe('UserWobjects', async () => {
           authorPermlink: faker.internet.url(),
         });
       }
-    });
-    it('Should return all created userWobjects', async () => {
-      const { count } = await UserWobjectsModel.countDocuments({});
-      expect(count).to.be.eq(countUserWobjects + 1);
     });
     it('Should return correct number of userWobjects', async () => {
       const correctCount = _.random(1, 10);
@@ -115,17 +115,6 @@ describe('UserWobjects', async () => {
       });
       expect(experts[0].name).to.be.eq(correctUserWobj.user_name);
     });
-
-    it('Should check that the error exist', async () => {
-      const { error } = await UserWobjectsModel.getByWobject({});
-      expect(error).to.be.exist;
-    });
-    it('Should return the error status 404 if userWobjects not found', async () => {
-      const { error } = await UserWobjectsModel.getByWobject({
-        authorPermlink: faker.random.string(),
-      });
-      expect(error.message).to.be.eq('Not found!');
-    });
   });
   describe('On getByWobject: Returns a single correct wobject', async () => {
     let singleUser;
@@ -142,7 +131,7 @@ describe('UserWobjects', async () => {
           authorPermlink: link,
           username: userName,
         });
-        expect(experts.length).to.be.eq(1);
+        expect(experts).to.have.length(1);
       });
     it('Should return a correct user if the name and the authorPermlink was transmitted',
       async () => {
@@ -156,6 +145,7 @@ describe('UserWobjects', async () => {
   describe('On aggregate', async () => {
     let pipeline, limit;
     beforeEach(async () => {
+      await dropDatabase();
       limit = _.random(10, 20);
       pipeline = [{ $match: { user_name: userName } },
         { $sort: { weight: -1 } },
@@ -170,16 +160,11 @@ describe('UserWobjects', async () => {
     });
     it('Should return correct number of wobjects', async () => {
       const { result } = await UserWobjectsModel.aggregate(pipeline);
-      expect(result.length).to.be.eq(limit);
+      expect(result).to.have.length(limit);
     });
     it('Should check that the error exist', async () => {
       const { error } = await UserWobjectsModel.aggregate({});
       expect(error).to.be.exist;
-    });
-    it('Should return the error status 404 if wobject not found', async () => {
-      pipeline[0] = { $match: { author_permlink: faker.random.string() } };
-      const { error } = await UserWobjectsModel.aggregate(pipeline);
-      expect(error.status).to.be.eq(404);
     });
   });
 });

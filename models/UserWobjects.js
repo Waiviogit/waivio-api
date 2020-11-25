@@ -5,7 +5,7 @@ const aggregate = async (pipeline) => {
   try {
     const result = await UserWobjects.aggregate(pipeline);
 
-    if (_.isEmpty(result)) {
+    if (!result) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { result };
@@ -31,7 +31,7 @@ const getByWobject = async ({
 
     const experts = await UserWobjects.aggregate(pipeline);
 
-    if (_.isEmpty(experts)) {
+    if (!experts) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { experts };
