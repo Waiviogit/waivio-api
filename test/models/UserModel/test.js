@@ -6,18 +6,24 @@ const { UsersFactory, ObjectFactory } = require('test/factories');
 
 describe('UserModel', () => {
   describe('On getOne', () => {
-    let name;
+    let name, alias;
     beforeEach(async () => {
       await dropDatabase();
       name = faker.name.firstName();
-      await UsersFactory.Create({ name });
+      alias = faker.random.word();
+      await UsersFactory.Create({ name, alias });
     });
-    it('Should return the correct object', async () => {
-      const { user } = await UserModel.getOne(name, ['name', 'wobjects_weight']);
+    it('Should return the object with correct name', async () => {
+      const { user } = await UserModel.getOne(name, ['name']);
       expect(user.name).to.be.eq(name);
     });
+    it('Should check that select works', async () => {
+      await UsersFactory.Create();
+      const { user } = await UserModel.getOne(name, ['alias']);
+      expect(user.alias).to.be.eq(alias);
+    });
     it('Should check that the error exists', async () => {
-      const { error } = await UserModel.getOne({ host: faker.random.string() });
+      const { error } = await UserModel.getOne({});
       expect(error).to.be.exist;
     });
     it('Should return null when user can\'t be found', async () => {
@@ -63,11 +69,10 @@ describe('UserModel', () => {
     });
   });
   describe('On getObjectsFollow', async () => {
-    let name, countUsers, limit, link;
+    let name, limit, link;
     const userName = faker.name.firstName();
     beforeEach(async () => {
       await dropDatabase();
-      countUsers = _.random(5, 10);
       limit = _.random(1, 5);
       name = faker.name.firstName();
       link = faker.random.string();
@@ -79,7 +84,7 @@ describe('UserModel', () => {
       const { wobjects } = await UserModel.getObjectsFollow({
         name,
       });
-      expect(Array.isArray(wobjects)).to.be.true;
+      expect(wobjects).to.be.an('array');
     });
     it('Should return empty array if username was not transmitted', async () => {
       const { wobjects } = await UserModel.getObjectsFollow({ limit, skip: 0 });
@@ -89,7 +94,7 @@ describe('UserModel', () => {
       const { wobjects } = await UserModel.getObjectsFollow({
         name: userName,
       });
-      expect(wobjects.length > 0).to.be.true;
+      expect(wobjects).to.be.an('array').that.is.not.empty;
     });
     it('Should return object with correct link', async () => {
       const { wobjects } = await UserModel.getObjectsFollow({
@@ -111,25 +116,27 @@ describe('UserModel', () => {
         await UsersFactory.Create({ name: `asdf_${faker.lorem.word()}` });
       }
     });
-    it('Should return array with correct users.length', async () => {
-      await UsersFactory.Create();
-      const { result } = await UserModel.aggregate([
-        {
-          $match: {
-            name: new RegExp('^asdf_'),
-          },
-        }]);
-      expect(Array.isArray(result)).to.be.true;
-      expect(result.length).to.be.eq(usersCount);
+    describe('Should test array', async () => {
+      let result;
+      beforeEach(async () => {
+        await UsersFactory.Create();
+        result = await UserModel.aggregate([
+          {
+            $match: {
+              name: new RegExp('^asdf_'),
+            },
+          }]);
+      });
+      it('Should return an array', async () => {
+        expect(result.result).to.be.an('array');
+      });
+      it('Should return not empty array', async () => {
+        expect(result.result).to.have.length(usersCount);
+      });
     });
     it('Should return an error if pipeline is not correct', async () => {
       const { error } = await UserModel.aggregate({ name: faker.name.firstName() });
       expect(error).to.be.exist;
-      expect(error).to.be.an('error');
-    });
-    it('Should return an error', async () => {
-      const { error } = await UserModel.aggregate([{ $match: { name: faker.random.string() } }]);
-      expect(error.message).to.be.eq('Not found!');
     });
   });
   describe('On updateOne', async () => {
@@ -141,13 +148,6 @@ describe('UserModel', () => {
       await UsersFactory.Create({ name });
       updateData = faker.random.string();
     });
-    it('Should return an object', async () => {
-      const { user } = await UserModel.updateOne(
-        { name },
-        { alias: updateData },
-      );
-      expect(user.alias).to.be.eq(updateData);
-    });
     it('Should change a field of user', async () => {
       const { user } = await UserModel.updateOne(
         { name },
@@ -156,11 +156,12 @@ describe('UserModel', () => {
       expect(user.alias).to.be.eq(updateData);
     });
     it('Should change the privateEmail field of user', async () => {
+      const newEmail = faker.random.string();
       const { user } = await UserModel.updateOne(
         { privateEmail: true },
-        { privateEmail: false },
+        { privateEmail: newEmail },
       );
-      expect(user.privateEmail === 'false').to.be.true;
+      expect(user.privateEmail).to.be.eq(newEmail);
     });
     it('Should return an error if parameters are wrong', async () => {
       const { error } = await UserModel.updateOne(
@@ -174,9 +175,9 @@ describe('UserModel', () => {
     let user, options;
     beforeEach(async () => {
       await dropDatabase();
-      user = await UsersFactory.Create();
+      user = await UsersFactory.Create({ name: `asdf_${faker.name.firstName()}` });
       options = {
-        string: user.name,
+        string: 'asdf',
         skip: 0,
         limit: 10,
         notGuest: false,
@@ -188,12 +189,7 @@ describe('UserModel', () => {
     });
     it('Should return an array', async () => {
       const { users } = await UserModel.search(options);
-      expect(Array.isArray(users)).to.be.true;
-    });
-    it('Should return an empty array if notGuest', async () => {
-      options.notGuest = true;
-      const { users } = await UserModel.search(options);
-      expect(users).to.be.empty;
+      expect(users).to.be.an('array');
     });
     it('Should return an empty array if users was not found', async () => {
       options.string = faker.random.word();
@@ -202,8 +198,6 @@ describe('UserModel', () => {
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.search({
-        test: _.random(0, 50),
-        host: faker.random.string(),
         skip: user,
       });
       expect(error).to.be.exist;
@@ -215,25 +209,26 @@ describe('UserModel', () => {
       await dropDatabase();
       name = faker.name.firstName();
       userAlias = faker.lorem.word();
-      usersCount = _.random(1, 10);
+      usersCount = _.random(5, 10);
       for (let iter = 0; iter < usersCount; iter++) {
-        await UsersFactory.Create({ name, alias: userAlias });
+        await UsersFactory.Create({ alias: userAlias });
       }
       condition = { alias: userAlias };
     });
-    describe('Should chek that the user data are correct', async () => {
+    describe('Should chek that the user data are correct with select', async () => {
       let usersData;
       beforeEach(async () => {
         usersData = await UserModel.find({
           condition,
           select: { alias: userAlias },
+          sort: { count_posts: 1 },
           skip: 0,
         });
       });
       it('Should return an array', async () => {
-        expect(Array.isArray(usersData.usersData)).to.be.true;
+        expect(usersData.usersData).to.be.an('array');
       });
-      it('Should return correct user in array', async () => {
+      it('Should return user with correct field in array', async () => {
         expect(usersData.usersData[0].alias).to.be.eq(userAlias);
       });
     });
@@ -247,6 +242,14 @@ describe('UserModel', () => {
         limit: 10,
       });
       expect(usersData).to.be.empty;
+    });
+    it('Should return sorted users', async () => {
+      const { usersData } = await UserModel.find({
+        condition,
+        sort: { count_posts: 1 },
+        skip: 0,
+      });
+      expect(usersData[usersData.length - 1].count_posts).to.be.above(usersData[0].count_posts);
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.find({
@@ -269,7 +272,7 @@ describe('UserModel', () => {
     it('Should return an array', async () => {
       const { result } = await UserModel.findWithSelect({},
         'name, alias');
-      expect(Array.isArray(result)).to.be.true;
+      expect(result).to.be.an('array');
     });
     it('Should return correct users', async () => {
       await UsersFactory.Create();
@@ -283,15 +286,6 @@ describe('UserModel', () => {
       const { result } = await UserModel.findWithSelect({ name: { $in: [new RegExp('^asdf_')] } },
         'alias');
       expect(result[randomUser].alias).to.be.eq('');
-      expect(result[randomUser].referral).to.be.undefined;
-      expect(result[randomUser].stage_version).to.be.undefined;
-    });
-    it('Should return users with correct fields', async () => {
-      const alias = faker.random.string();
-      UsersFactory.Create({ name: `asdf_${faker.name.firstName()}`, alias });
-      const { result } = await UserModel.findWithSelect({ name: { $in: [new RegExp('^asdf_')] } },
-        { name: 1, alias: 1 });
-      expect(result[0].objects_follow).to.be.undefined;
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.findWithSelect([]);
@@ -299,7 +293,7 @@ describe('UserModel', () => {
     });
   });
   describe('On getCustomCount', async () => {
-    let usersCount, alias;
+    let usersCount, alias, usersAliasCount;
     beforeEach(async () => {
       await dropDatabase();
       alias = faker.random.string();
@@ -307,16 +301,17 @@ describe('UserModel', () => {
       for (let iter = 0; iter < usersCount; iter++) {
         await UsersFactory.Create();
       }
-    });
-    it('Should return the number of all users', async () => {
-      const { count } = await UserModel.getCustomCount({});
-      expect(count).to.be.eq(usersCount);
-    });
-    it('Should return a correct number of users', async () => {
-      const usersAliasCount = _.random(1, 10);
+      usersAliasCount = _.random(1, 10);
       for (let iter = 0; iter < usersAliasCount; iter++) {
         await UsersFactory.Create({ alias });
       }
+    });
+    it('Should return the number of all users', async () => {
+      const allUsers = usersCount + usersAliasCount;
+      const { count } = await UserModel.getCustomCount({});
+      expect(count).to.be.eq(allUsers);
+    });
+    it('Should return a correct number of users with alias field', async () => {
       const { count } = await UserModel.getCustomCount({ alias });
       expect(count).to.be.eq(usersAliasCount);
     });

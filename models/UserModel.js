@@ -58,7 +58,7 @@ exports.aggregate = async (pipeline) => {
   try {
     const result = await UserModel.aggregate(pipeline).exec();
 
-    if (_.isEmpty(result)) {
+    if (!result) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { result };
