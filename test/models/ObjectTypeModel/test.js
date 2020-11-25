@@ -2,45 +2,49 @@ const {
   ObjectTypeModel, faker, expect, dropDatabase,
 } = require('test/testHelper');
 const _ = require('lodash');
-const { ObjectTypeFactory, WobjectFactory } = require('test/factories');
+const { ObjectTypeFactory, ObjectFactory } = require('test/factories');
 
 describe('ObjectTypeModel', async () => {
   describe('On getAll', async () => {
-    let objCount, similarData;
+    let objCount;
     beforeEach(async () => {
       await dropDatabase();
-      similarData = faker.random.word();
       objCount = _.random(4, 10);
-      for (let iter = 0; iter < objCount; iter++) {
-        await ObjectTypeFactory.Create();
-      }
     });
-    it('Should return an array', async () => {
-      const { objectTypes } = await ObjectTypeModel.getAll({
-        limit: objCount,
-        skip: 0,
+    describe('Should return correct data', async () => {
+      beforeEach(async () => {
+        for (let iter = 0; iter < objCount; iter++) {
+          await ObjectTypeFactory.Create();
+        }
       });
-      expect(Array.isArray(objectTypes)).to.be.true;
-    });
-    it('Should return all types', async () => {
-      const { objectTypes } = await ObjectTypeModel.getAll({
-        limit: objCount,
-        skip: 0,
+      it('Should return an array', async () => {
+        const { objectTypes } = await ObjectTypeModel.getAll({
+          limit: objCount,
+          skip: 0,
+        });
+        expect(Array.isArray(objectTypes)).to.be.true;
       });
-      expect(objectTypes.length).to.be.eq(objCount);
+      it('Should return all types', async () => {
+        const { objectTypes } = await ObjectTypeModel.getAll({
+          limit: objCount,
+          skip: 0,
+        });
+        expect(objectTypes.length).to.be.eq(objCount);
+      });
     });
-    it('Should', async () => {
+    it('Should check that the related_wobjects array is not empty', async () => {
+      const similarData = faker.random.word();
       const wobjectsCount = _.random(1, 3);
       await ObjectTypeFactory.Create({ name: similarData });
       for (let iter = 0; iter < objCount; iter++) {
-        await WobjectFactory.Create({ objectType: similarData });
+        await ObjectFactory.Create({ objectType: similarData });
       }
       const { objectTypes } = await ObjectTypeModel.getAll({
         limit: objCount,
         skip: 0,
         wobjects_count: wobjectsCount,
       });
-      expect(objectTypes[0].related_wobjects).to.be.eq(objCount);
+      expect(objectTypes[0].related_wobjects.length).to.be.eq(wobjectsCount);
     });
     it('Should check that the error exist', async () => {
       const { error } = await ObjectTypeModel.getAll({
