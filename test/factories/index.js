@@ -9,7 +9,6 @@ module.exports = {
   WebsitePaymentsFactory: require('./WebsitePaymentsFactory/WebsitePaymentsFactory'),
   UsersFactory: require('./UsersFactory/UsersFactory'),
   CampaignFactory: require('./CampaignFactory/CampaignFactory'),
-  WobjectFactory: require('./WobjectFactory/WobjectFactory'),
   BotUpvoteFactory: require('./BotUpvote/BotUpvoteFactory'),
   PaymentHistoryFactory: require('./PaymentHistory/PaymentHistoryFactory'),
 };

@@ -2,7 +2,7 @@ const {
   expect, UserModel, faker, dropDatabase,
 } = require('test/testHelper');
 const _ = require('lodash');
-const { UsersFactory, WobjectFactory } = require('test/factories');
+const { UsersFactory, ObjectFactory } = require('test/factories');
 
 describe('UserModel', () => {
   describe('On getOne', () => {
@@ -71,11 +71,8 @@ describe('UserModel', () => {
       limit = _.random(1, 5);
       name = faker.name.firstName();
       link = faker.random.string();
-      for (let iter = 0; iter < countUsers; iter++) {
-        await WobjectFactory.Create({ authorPermlink: link });
-        await UsersFactory.Create({ name, objects_follow: [link] });
-      }
-      await WobjectFactory.Create({ authorPermlink: link });
+      await UsersFactory.Create({ name, objects_follow: [link] });
+      await ObjectFactory.Create({ authorPermlink: link });
       await UsersFactory.Create({ name: userName, objects_follow: [link] });
     });
     it('Should return an array', async () => {
@@ -93,6 +90,12 @@ describe('UserModel', () => {
         name: userName,
       });
       expect(wobjects.length > 0).to.be.true;
+    });
+    it('Should return object with correct link', async () => {
+      const { wobjects } = await UserModel.getObjectsFollow({
+        name: userName,
+      });
+      expect(wobjects[0].author_permlink).to.be.eq(link);
     });
     it('Should return an error if arguments is null', async () => {
       const { error } = await UserModel.getObjectsFollow(null);
