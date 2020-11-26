@@ -18,9 +18,12 @@ describe('UserModel', () => {
       expect(user.name).to.be.eq(name);
     });
     it('Should check that select works', async () => {
-      await UsersFactory.Create();
       const { user } = await UserModel.getOne(name, ['alias']);
-      expect(user.alias).to.be.eq(alias);
+      expect(user).to.have.keys('alias', '_id', 'objects_following_count');
+    });
+    it('Should check that user does not have field alias', async () => {
+      const { user } = await UserModel.getOne(name, ['-alias']);
+      expect(user).to.not.have.keys('alias');
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.getOne({});
@@ -39,11 +42,15 @@ describe('UserModel', () => {
       usersFollow = new Array(_.random(10, 40));
       await UsersFactory.Create({ name, users_follow: usersFollow });
     });
-    it('Should return right user', async () => {
+    it('Should return user with right name', async () => {
       await UsersFactory.Create();
-      const { user } = await UserModel.findOneByCondition({ name, users_follow: usersFollow });
+      const { user } = await UserModel.findOneByCondition({ name });
       expect(user.name).to.be.eq(name);
-      expect(user.users_follow.length).to.be.eq(usersFollow.length);
+    });
+    it('Should return user with right users_follow', async () => {
+      await UsersFactory.Create();
+      const { user } = await UserModel.findOneByCondition({ users_follow: usersFollow });
+      expect(user.users_follow).to.have.length(usersFollow.length);
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.findOneByCondition([]);
@@ -158,7 +165,7 @@ describe('UserModel', () => {
     it('Should change the privateEmail field of user', async () => {
       const newEmail = faker.random.string();
       const { user } = await UserModel.updateOne(
-        { privateEmail: true },
+        { name },
         { privateEmail: newEmail },
       );
       expect(user.privateEmail).to.be.eq(newEmail);
@@ -218,18 +225,30 @@ describe('UserModel', () => {
     describe('Should chek that the user data are correct with select', async () => {
       let usersData;
       beforeEach(async () => {
-        usersData = await UserModel.find({
+        ({ usersData } = await UserModel.find({
           condition,
           select: { alias: userAlias },
           sort: { count_posts: 1 },
           skip: 0,
-        });
+        }));
       });
       it('Should return an array', async () => {
-        expect(usersData.usersData).to.be.an('array');
+        expect(usersData).to.be.an('array');
       });
-      it('Should return user with correct field in array', async () => {
-        expect(usersData.usersData[0].alias).to.be.eq(userAlias);
+      it('Should return user with correct field alias in array', async () => {
+        expect(usersData[0]).to.have.keys('alias', '_id', 'objects_following_count');
+      });
+      it('Should check that alias field does not returns', async () => {
+        expect(usersData[0]).to.not.have.keys('alias');
+      });
+      it('Should return user excludes alias field', async () => {
+        ({ usersData } = await UserModel.find({
+          condition,
+          select: '-alias',
+          sort: { count_posts: 1 },
+          skip: 0,
+        }));
+        expect(usersData[0].alias).to.be.undefined;
       });
     });
     it('Should return an empty array if user not found', async () => {
@@ -244,12 +263,14 @@ describe('UserModel', () => {
       expect(usersData).to.be.empty;
     });
     it('Should return sorted users', async () => {
+      const limit = 5;
       const { usersData } = await UserModel.find({
         condition,
         sort: { count_posts: 1 },
         skip: 0,
+        limit,
       });
-      expect(usersData[usersData.length - 1].count_posts).to.be.above(usersData[0].count_posts);
+      expect(usersData[limit - 1].count_posts).to.be.above(usersData[0].count_posts);
     });
     it('Should check that the error exists', async () => {
       const { error } = await UserModel.find({
