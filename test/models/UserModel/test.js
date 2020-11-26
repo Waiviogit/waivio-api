@@ -238,9 +238,6 @@ describe('UserModel', () => {
       it('Should return user with correct field alias in array', async () => {
         expect(usersData[0]).to.have.keys('alias', '_id', 'objects_following_count');
       });
-      it('Should check that alias field does not returns', async () => {
-        expect(usersData[0]).to.not.have.keys('alias');
-      });
       it('Should return user excludes alias field', async () => {
         ({ usersData } = await UserModel.find({
           condition,
@@ -248,7 +245,7 @@ describe('UserModel', () => {
           sort: { count_posts: 1 },
           skip: 0,
         }));
-        expect(usersData[0].alias).to.be.undefined;
+        expect(usersData[0]).to.not.include.keys('alias');
       });
     });
     it('Should return an empty array if user not found', async () => {
