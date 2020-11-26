@@ -1,5 +1,6 @@
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
+const { ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE } = require('constants/common');
 
 class Image {
   constructor() {
@@ -9,12 +10,7 @@ class Image {
       endpoint: spacesEndpoint,
       accessKeyId: process.env.AWS_ACCESS_KEY_ID,
       secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      params: {
-        Bucket: 'waivio',
-        ACL: 'public-read',
-        ContentType: 'image/webp',
-        ContentEncoding: 'base64',
-      },
+      params: AWSS3_IMAGE_PARAMS,
     });
   }
 
@@ -28,7 +24,8 @@ class Image {
         return new Promise((resolve) => {
           this._s3.upload({ Body: body, Key: `${fileName}${size}` }, (err, data) => {
             if (err) {
-              resolve({ error: `Error upload image:${err}` });
+              if (err.statusCode === 503) resolve({ error: ERROR_MESSAGE.UNAVAILABLE });
+              resolve({ error: `${ERROR_MESSAGE.UPLOAD_IMAGE}:${err}` });
             } if (data) {
               resolve({ imageUrl: data.Location });
             }
@@ -38,14 +35,14 @@ class Image {
         return { error };
       }
     }
-    return { error: 'Error parse image' };
+    return { error: ERROR_MESSAGE.PARSE_IMAGE };
   }
 
   // eslint-disable-next-line class-methods-use-this
   async resizeImage({ buffer, size }) {
-    if (size === '_small') {
+    if (size === IMAGE_SIZE.SMALL) {
       return sharp(buffer).rotate(0).resize(34, 34).toBuffer();
-    } if (size === '_medium') {
+    } if (size === IMAGE_SIZE.MEDIUM) {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
     if (buffer.byteLength > 1500000) {

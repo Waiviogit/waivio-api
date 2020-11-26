@@ -264,12 +264,13 @@ const getLinkToPageLoad = (obj) => {
         return `/object/${obj.author_permlink}`;
     }
   }
+  if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
   const field = _.find(listItem, { body: obj.sortCustom[0] });
   if (!field) return `/object/${obj.author_permlink}`;
   return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
 };
 
-const getTopTags = (obj) => {
+const getTopTags = (obj, limit = 2) => {
   const tagCategories = _.get(obj, 'tagCategory', []);
   if (_.isEmpty(tagCategories)) return [];
   let tags = [];
@@ -279,7 +280,7 @@ const getTopTags = (obj) => {
   return _
     .chain(tags)
     .orderBy('weight', 'desc')
-    .slice(0, 2)
+    .slice(0, limit)
     .map('body')
     .value();
 };
@@ -297,7 +298,7 @@ const createMockPost = (field) => ({
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true,
+  app, returnArray = true, topTagsLimit,
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -355,7 +356,7 @@ const processWobjects = async ({
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
-    if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj);
+    if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);
   }
   if (!returnArray) return filteredWobj[0];

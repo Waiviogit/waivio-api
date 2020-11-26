@@ -2992,12 +2992,6 @@
           "description" : "post permlink",
           "type": "string",
           "required" : true
-        },{
-            "in" : "query",
-            "name" : "userName",
-            "description" : "name of authorised user",
-            "type": "string",
-            "required" : true
         }],
         "responses" : {
           "200" : {

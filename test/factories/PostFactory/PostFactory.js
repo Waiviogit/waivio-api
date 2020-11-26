@@ -1,9 +1,11 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
 const { faker, Post } = require('test/testHelper');
 
 const Create = async ({
-  reblogged, depth, author, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData, parentPermlink,
-  additionsForPost = {}, active_votes = [], app, rootAuthor, permlink, wobjects = [], children, blocked,
+  reblogged, depth, author, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData,
+  additionsForPost = {}, active_votes = [], app, rootAuthor, permlink, wobjects = [], children,
+  pending_payout_value, curator_payout_value, cashout_time, parentPermlink, blocked,
 } = {}) => { // additionsForMetadata(Post) must be an Object
   const jsonMetadata = {
     community: 'waiviotest',
@@ -34,6 +36,9 @@ const Create = async ({
     reblogged_users: reblogged || [],
     root_author: rootAuthor || faker.name.firstName().toLowerCase(),
     blocked_for_apps: blocked || [],
+    pending_payout_value,
+    curator_payout_value,
+    cashout_time,
   };
 
   for (const key in additionsForPost) {
