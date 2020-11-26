@@ -53,12 +53,19 @@ describe('UserWobjects', async () => {
       const { result } = await UserWobjectsModel.findOne({ author_permlink: link });
       expect(result.author_permlink).to.be.eq(link);
     });
-    it('Shoud return correct userWobject if select was defined', async () => {
+    it('Shoud check that userWobject has keys _id and author_permlink', async () => {
       await UserWobjectsFactory.Create({ userName, authorPermlink: faker.random.string() });
       const { result } = await UserWobjectsModel.findOne({ user_name: userName },
-        { author_permlink: link });
-      expect(result.author_permlink).to.be.eq(link);
+        { author_permlink: 1 });
+      expect(result).to.have.keys('_id', 'author_permlink');
     });
+    it('Shoud check that userWobject does not have key author_permlink', async () => {
+      await UserWobjectsFactory.Create({ userName, authorPermlink: faker.random.string() });
+      const { result } = await UserWobjectsModel.findOne({ user_name: userName },
+        { author_permlink: 0 });
+      expect(result).to.not.have.keys('author_permlink');
+    });
+
     it('Should check that the error exist', async () => {
       const { error } = await UserWobjectsModel.findOne(faker.random.string());
       expect(error).to.be.exist;
