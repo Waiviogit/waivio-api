@@ -264,6 +264,7 @@ const getLinkToPageLoad = (obj) => {
         return `/object/${obj.author_permlink}`;
     }
   }
+  if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
   const field = _.find(listItem, { body: obj.sortCustom[0] });
   if (!field) return `/object/${obj.author_permlink}`;
   return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
