@@ -15,5 +15,6 @@ moduleExports.wobjectSubscriptions = require('./wobjectSubscriptionModel');
 moduleExports.websitePayments = require('./websitePaymentsModel');
 moduleExports.websiteRefunds = require('./websiteRefundsModel');
 moduleExports.botUpvoteModel = require('./botUpvoteModel');
+moduleExports.hideModel = require('./hideModel');
 
 module.exports = moduleExports;
