@@ -38,7 +38,7 @@ describe('UserWobjects', async () => {
       const { result } = await UserWobjectsModel.find({
         user_name: userName,
       });
-      expect(result.length).to.be.eq(usersWobjCount);
+      expect(result).to.have.length(usersWobjCount);
     });
     it('Should check that the error exist', async () => {
       const { error } = await UserWobjectsModel.find(
@@ -54,7 +54,7 @@ describe('UserWobjects', async () => {
       expect(result.author_permlink).to.be.eq(link);
     });
     it('Shoud return correct userWobject if select was defined', async () => {
-      await UserWobjectsFactory.Create({ userName: faker.name.firstName() });
+      await UserWobjectsFactory.Create({ userName, authorPermlink: faker.random.string() });
       const { result } = await UserWobjectsModel.findOne({ user_name: userName },
         { author_permlink: link });
       expect(result.author_permlink).to.be.eq(link);
