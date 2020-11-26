@@ -80,6 +80,8 @@ wobjRoutes.route('/wobject/:authorPermlink/followers')
   .post(WobjController.followers);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')
   .get(WobjController.gallery);
+wobjRoutes.route('/wobject/:authorPermlink/related')
+  .get(WobjController.related);
 wobjRoutes.route('/wobject/:authorPermlink/object_expertise')
   .post(WobjController.objectExpertise);
 wobjRoutes.route('/wobjectSearch')
