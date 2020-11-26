@@ -93,7 +93,7 @@ const aggregate = async (pipeline = []) => {
   try {
     const result = await ObjectType.aggregate(pipeline);
 
-    if (_.isEmpty(result)) {
+    if (!result) {
       return { error: { status: 404, message: 'Not found!' } };
     }
     return { result };

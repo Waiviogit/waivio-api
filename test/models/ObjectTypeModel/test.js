@@ -22,7 +22,7 @@ describe('ObjectTypeModel', async () => {
           limit: objCount,
           skip: 0,
         });
-        expect(Array.isArray(objectTypes)).to.be.true;
+        expect(objectTypes).to.be.an('array');
       });
       it('Should return all types', async () => {
         const { objectTypes } = await ObjectTypeModel.getAll({
@@ -44,7 +44,7 @@ describe('ObjectTypeModel', async () => {
         skip: 0,
         wobjects_count: wobjectsCount,
       });
-      expect(objectTypes[0].related_wobjects.length).to.be.eq(wobjectsCount);
+      expect(objectTypes[0].related_wobjects).to.have.length(wobjectsCount);
     });
     it('Should check that the error exist', async () => {
       const { error } = await ObjectTypeModel.getAll({
@@ -56,26 +56,35 @@ describe('ObjectTypeModel', async () => {
     });
   });
   describe('On search', async () => {
-    let objCount;
+    let objCount, supportedTypes, string;
     beforeEach(async () => {
       await dropDatabase();
+      string = faker.random.word();
       objCount = _.random(4, 10);
+      supportedTypes = [string, faker.random.word()];
       for (let iter = 0; iter < objCount; iter++) {
         await ObjectTypeFactory.Create({
-          name: 'asdf',
+          name: string,
         });
       }
     });
     it('Should return an array', async () => {
       const { objectTypes } = await ObjectTypeModel.search({
-        string: 'asdf',
-        supportedTypes: ['test_type'],
+        string,
+        supportedTypes: [faker.random.word()],
       });
-      expect(Array.isArray(objectTypes)).to.be.true;
+      expect(objectTypes).to.be.an('array');
+    });
+    it('Should search by the supportedTypes', async () => {
+      const { objectTypes } = await ObjectTypeModel.search({
+        string,
+        supportedTypes,
+      });
+      expect(objectTypes).to.have.length(1);
     });
     it('Should check that the error exist', async () => {
       const { error } = await ObjectTypeModel.search({
-        string: 'asdf',
+        string,
         limit: faker.lorem.word(),
       });
       expect(error).to.be.exist;
@@ -121,14 +130,7 @@ describe('ObjectTypeModel', async () => {
         { $skip: skip },
         { $match: { name: new RegExp('^asdf_') } },
       ]);
-      expect(result.length).to.be.eq(objCount - skip);
-    });
-    it('Should return an error.status 404', async () => {
-      const { error } = await ObjectTypeModel.aggregate([
-        { $skip: skip },
-        { $match: { name: faker.name.firstName() } },
-      ]);
-      expect(error.status).to.be.eq(404);
+      expect(result).to.have.length(objCount - skip);
     });
     it('Should check that the error exist', async () => {
       const { error } = await ObjectTypeModel.aggregate('test');
