@@ -2778,6 +2778,71 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/related" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return virtual album Related",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "body": {"type": "string"},
+                  "name": {"type": "string"},
+                  "id": {"type": "string"},
+                  "count": {"type": "number"},
+                  "hasMore": {"type": "boolean"},
+                  "items": {
+                    "type": "array",
+                    "items" : {
+                      "type" : "object",
+                      "properties": {
+                        "permlink": {"type": "string"},
+                        "id": {"type": "string"},
+                        "body": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/post/{author}/{permlink}" : {
       "get" : {
         "tags" : [ "post" ],
