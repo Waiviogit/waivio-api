@@ -205,7 +205,7 @@ describe('on additionalSponsorObligations', async () => {
       for (let i = 0; i < reward; i++) {
         activeVotes.push({
           voter: faker.name.firstName(),
-          rshares: _.random(110, 120),
+          rshares: _.random(200, 240),
         });
       }
       rewardOnPost = _.reduce(activeVotes,
@@ -266,8 +266,8 @@ describe('on additionalSponsorObligations', async () => {
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should write sponsor obligations in curator_payout_value', async () => {
-      expect(parseFloat(_.get(post, 'curator_payout_value'))).to.be.eq(reward);
+    it('should write sponsor obligations in total_payout_value', async () => {
+      expect(parseFloat(_.get(post, 'total_payout_value'))).to.be.eq(reward);
     });
   });
   describe('When the cashout_time has not passed', async () => {

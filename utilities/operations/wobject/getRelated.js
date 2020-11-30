@@ -23,13 +23,16 @@ module.exports = async (data) => {
   return {
     json: {
       body: 'Related',
-      id: data.authorPermlink,
+      id: `${data.authorPermlink}-related`,
       count: _.get(count, 'imagesCount', 0),
       name: FIELDS_NAMES.GALLERY_ALBUM,
       items: _
         .chain(result)
         .slice(0, data.limit)
-        .forEach((el) => { el.permlink = uuid(); })
+        .forEach((el) => {
+          el.permlink = uuid();
+          el.id = `${el.id}-related`;
+        })
         .value(),
       hasMore: result.length === data.limit + 1,
     },
