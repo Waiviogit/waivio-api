@@ -8,7 +8,7 @@ describe('UserWobjects', async () => {
   let userName, link, countUserWobjects;
   beforeEach(async () => {
     await dropDatabase();
-    countUserWobjects = _.random(10, 30);
+    countUserWobjects = _.random(20, 30);
     userName = faker.name.firstName();
     link = faker.random.string();
     await UserWobjectsFactory.Create({
@@ -16,7 +16,7 @@ describe('UserWobjects', async () => {
       authorPermlink: link,
     });
   });
-  describe('On aggregate', async () => {
+  describe('On find', async () => {
     let usersWobjCount;
     beforeEach(async () => {
       await dropDatabase();
