@@ -2,7 +2,9 @@ const _ = require('lodash');
 const { getNamespace } = require('cls-hooked');
 const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
 const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
-const { Post, Comment, App } = require('models');
+const {
+  Post, Comment, App, hiddenPostModel,
+} = require('models');
 const { postsUtil } = require('utilities/steemApi');
 
 /**
@@ -16,11 +18,14 @@ const { postsUtil } = require('utilities/steemApi');
  * @param permlink
  * @returns {Promise<{post: Object}|{error: Object}>}
  */
-module.exports = async (author, permlink) => {
+module.exports = async ({ author, permlink, userName }) => {
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   const session = getNamespace('request-session');
   const host = session.get('host');
   const { result: app } = await App.findOne({ host });
-  const { error, post: postResult } = await getPost({ author, permlink, host });
+  const { error, post: postResult } = await getPost({
+    author, permlink, host, hiddenPosts,
+  });
 
   if (error) return { error };
   if (postResult) return { post: postResult };
@@ -31,7 +36,9 @@ module.exports = async (author, permlink) => {
   return { post: commentResult };
 };
 
-const getPost = async ({ author, permlink, host }) => {
+const getPost = async ({
+  author, permlink, host, hiddenPosts,
+}) => {
   // get post with specified author(ordinary post)
   const { result: dbPosts, error: dbError } = await Post.findByBothAuthors({ author, permlink });
 
@@ -40,6 +47,9 @@ const getPost = async ({ author, permlink, host }) => {
   const post = _.get(dbPosts, '[0]');
   /** Not return post which was downvoted by moderator */
   if (_.includes(_.get(post, 'blocked_for_apps', []), host)) {
+    return { error: { status: 404, message: 'Post not found!' } };
+  }
+  if (_.includes(hiddenPosts, _.get(post, '_id', '').toString())) {
     return { error: { status: 404, message: 'Post not found!' } };
   }
 
