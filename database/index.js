@@ -31,7 +31,7 @@ models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
 models.WebsitePayments = require('./schemas/WebsitePaymentsSchema');
 models.WebsiteRefunds = require('./schemas/WebsiteRefundsSchema');
 models.BotUpvote = require('./schemas/BotUpvoteSchema');
-models.Hide = require('./schemas/HideSchema');
+models.HiddenPost = require('./schemas/HiddenPostSchema');
 
 module.exports = {
   Mongoose: mongoose,

@@ -10,10 +10,11 @@ const { Post } = require('database').models;
  * @param limit {Number}
  * @param locales {[String]}
  * @param forApp {String}
+ * @param hiddenPosts {[String]}
  * @returns {Promise<{posts}|{error: *}|undefined>}
  */
 exports.getHot = async ({
-  skip, limit, locales, forApp,
+  skip, limit, locales, forApp, hiddenPosts,
 }) => {
   // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
@@ -36,7 +37,7 @@ exports.getHot = async ({
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds }, blocked_for_apps: { $ne: host } },
+    cond: { _id: { $in: _.difference(postIds, hiddenPosts) }, blocked_for_apps: { $ne: host } },
     sort: { children: -1 },
     limit,
     skip,
@@ -50,10 +51,11 @@ exports.getHot = async ({
  * @param locales {[String]}
  * @param forApp {String}
   * @param prefix
+  * @param hiddenPosts {[String]}
  * @returns {Promise<{posts}|{error: *}|undefined>}
  */
 exports.getTrend = async ({
-  skip, limit, locales, forApp, prefix,
+  skip, limit, locales, forApp, prefix, hiddenPosts,
 }) => {
 // get array of arrays of ids, for every locale
   const idLocaleArrays = await Promise.all(locales.map(async (locale) => {
@@ -78,7 +80,7 @@ exports.getTrend = async ({
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: postIds }, blocked_for_apps: { $ne: host } },
+    cond: { _id: { $in: _.difference(postIds, hiddenPosts) }, blocked_for_apps: { $ne: host } },
     sort: { net_rshares: -1 },
     skip,
     limit,

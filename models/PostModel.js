@@ -1,7 +1,6 @@
 const PostModel = require('database').models.Post;
 const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
-const hideModel = require('models/hideModel');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
@@ -189,16 +188,3 @@ const getBlockedAppCond = () => {
     return {};
   }
 };
-const getHiddenPostsCond = async () => {
-  const { hidePosts = [] } = await hideModel.find('flowmaster');
-  return { $nor: hidePosts };
-};
-
-(async () => {
-  console.time('req')
-  const hideCond = await getHiddenPostsCond();
-  console.timeEnd('req')
-  // const { posts } = await this.getBlog({ name: 'axeman'});
-  // const { posts } = await this.getBlog({ name: 'axeman', hideCond: { $nor: [{ author: 'axeman', permlink: 'canada-1-dollar-regina-1982' }, { author: 'axeman', permlink: '1000-shillings-gorillas-of-africa-coin-02-2003' }] } });
-  console.log('yo');
-})();

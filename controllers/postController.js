@@ -29,6 +29,7 @@ exports.getByCategory = async (req, res, next) => {
     forApp: req.headers.app,
     lastId: req.body.lastId,
     onlyCrypto: req.body.onlyCrypto,
+    userName: req.headers.follower,
   }, validators.post.getPostsByCategorySchema, next);
 
   if (!value) {
