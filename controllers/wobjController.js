@@ -58,6 +58,7 @@ const posts = async (req, res, next) => {
     user_languages: req.body.user_languages,
     forApp: req.headers.app,
     lastId: req.body.lastId,
+    userName: req.headers.follower,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;

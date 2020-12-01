@@ -1,4 +1,4 @@
-const { Wobj } = require('models');
+const { Wobj, hiddenPostModel } = require('models');
 const { getNamespace } = require('cls-hooked');
 const { Post: PostModel } = require('database').models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
@@ -6,7 +6,8 @@ const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 const getPosts = async (data) => {
-  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data });
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
+  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts });
 
   if (conditionError) return { error: conditionError };
   const postsQuery = PostModel
@@ -31,13 +32,18 @@ const getPosts = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, forApp, lastId,
+  author_permlink, skip, limit, user_languages, forApp, lastId, hiddenPosts,
 }) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
   const condition = { blocked_for_apps: { $ne: host } };
   // for moderation posts
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
+  if (!_.isEmpty(hiddenPosts)) {
+    condition._id
+      ? Object.assign(condition._id, { $not: { $in: hiddenPosts } })
+      : condition._id = { $not: { $in: hiddenPosts } };
+  }
 
   const pipeline = [
     { $match: { author_permlink } },
