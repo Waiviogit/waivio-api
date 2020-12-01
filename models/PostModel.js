@@ -117,12 +117,12 @@ exports.getPostsRefs = async ({ skip = 0, limit = 1000 } = {}) => {
 };
 
 exports.getBlog = async ({
-  name, skip = 0, limit = 30, hideCond = {},
+  name, skip = 0, limit = 30, additionalCond = {},
 }) => {
   try {
     return {
       posts: await PostModel
-        .find({ author: name, ...getBlockedAppCond(), ...hideCond })
+        .find({ author: name, ...getBlockedAppCond(), ...additionalCond })
         .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),

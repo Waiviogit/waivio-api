@@ -133,7 +133,7 @@ const feed = async (req, res, next) => {
 
 const blog = async (req, res, next) => {
   const value = validators.validate({
-    name: req.params.userName, ...req.body,
+    name: req.params.userName, ...req.body, userName: req.headers.follower,
   }, validators.user.blogSchema, next);
 
   if (!value) return;

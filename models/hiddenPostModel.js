@@ -22,6 +22,6 @@ exports.getHiddenPosts = async (userName) => {
 
 // (async () => {
 //   const userName = 'flowmaster';
-//   const yo = await this.create({ userName, postId: '5cf72ccf9619f62183aec09a' });
+//   const yo = await this.create({ userName, postId: '5f7accc93409200000000000' });
 //   console.log('yo');
 // })();
