@@ -117,6 +117,7 @@ const feed = async (req, res, next) => {
     filter: req.body.filter,
     forApp: req.headers.app,
     user_languages: req.body.user_languages,
+    userName: req.headers.follower,
   }, validators.user.feedSchema, next);
 
   if (!value) return;

@@ -66,6 +66,7 @@ exports.feedSchema = Joi.object().keys({
   }),
   forApp: Joi.string(),
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
+  userName: Joi.string().required(),
 });
 
 exports.searchSchema = Joi.object().keys({

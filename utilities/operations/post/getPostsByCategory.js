@@ -72,7 +72,7 @@ module.exports = async ({
   category, skip, limit, user_languages, keys, forApp, lastId, onlyCrypto, userName,
 }) => {
   // get user blocked posts id
-  const { hiddenPosts = [] } = await hiddenPostModel.find(userName);
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   if (hiddenPosts.length + skip + limit < HOT_NEWS_CACHE_SIZE - limit) {
     // try to get posts from cache
     const cachedPosts = await getFromCache({
