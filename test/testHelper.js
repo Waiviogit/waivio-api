@@ -19,6 +19,7 @@ const {
   ObjectType: ObjectTypeModel,
   Post: PostModel,
   User: UserModel,
+  UserWobjects: UserWobjectsModel,
   Comment: CommentModel,
   Subscriptions: SubscriptionModel,
 } = require('models');
@@ -44,6 +45,7 @@ module.exports = {
   WobjModel,
   PostModel,
   UserModel,
+  UserWobjectsModel,
   AppModel,
   ObjectTypeModel,
   Mongoose,

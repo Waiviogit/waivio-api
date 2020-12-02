@@ -43,6 +43,7 @@ exports.getObjectsFollow = async (data) => { // list of wobjects which specified
     if (!user || !user.full_objects_follow) {
       return { wobjects: [] };
     }
+
     user.full_objects_follow.forEach((wObject) => {
       wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar'], field.name));
     });
@@ -74,32 +75,6 @@ exports.updateOne = async (condition, updateData = {}) => {
       .select('+user_metadata +privateEmail');
 
     return { user };
-  } catch (error) {
-    return { error };
-  }
-};
-
-exports.getFollowers = async ({ name, skip = 0, limit = 30 }) => {
-  try {
-    return {
-      users: await UserModel
-        .find({ users_follow: name }, { _id: 0, name: 1, wobjects_weight: 1 })
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-    };
-  } catch (error) {
-    return { error };
-  }
-};
-
-exports.getFollowings = async ({ name, skip = 0, limit = 30 }) => {
-  try {
-    const result = await UserModel.findOne(
-      { name }, { _id: 1, users_follow: { $slice: [skip, limit] } },
-    ).lean();
-
-    return { users: _.get(result, 'users_follow', []) };
   } catch (error) {
     return { error };
   }
