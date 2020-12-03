@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { App, User } = require('models');
 
 exports.getSiteAuthorities = async (params, path) => {
@@ -20,6 +21,10 @@ exports.getSiteAuthorities = async (params, path) => {
     name: 1, alias: 1, posting_json_metadata: 1, json_metadata: 1, wobjects_weight: 1,
   });
   if (usersError) return { error: usersError };
+
+  if (!_.isEmpty(users)) {
+    users.sort((a, b) => condition.name.$in.indexOf(b.name) - condition.name.$in.indexOf(a.name));
+  }
 
   return { result: users };
 };
