@@ -22,7 +22,7 @@ const getFeed = async ({
 
   if (filterError) return { error: filterError };
 
-  const { hiddenPosts } = await hiddenPostModel.getHiddenPosts(userName);
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
 
   const { posts, error: postsError } = await Post.getByFollowLists({
     skip,
