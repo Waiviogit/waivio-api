@@ -73,9 +73,9 @@ const findOne = async (condition) => {
   }
 };
 
-const find = async (condition) => {
+const find = async (condition, sort = {}) => {
   try {
-    return { result: await App.find(condition).lean() };
+    return { result: await App.find(condition).sort(sort).lean() };
   } catch (error) {
     return { error };
   }
