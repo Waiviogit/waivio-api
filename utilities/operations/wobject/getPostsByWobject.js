@@ -41,8 +41,8 @@ const getWobjFeedCondition = async ({
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
   if (!_.isEmpty(hiddenPosts)) {
     condition._id
-      ? Object.assign(condition._id, { $not: { $in: hiddenPosts } })
-      : condition._id = { $not: { $in: hiddenPosts } };
+      ? Object.assign(condition._id, { $nin: hiddenPosts })
+      : condition._id = { $nin: hiddenPosts };
   }
 
   const pipeline = [

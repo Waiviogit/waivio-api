@@ -1,9 +1,10 @@
 const _ = require('lodash');
+const moment = require('moment');
 const config = require('config');
 const {
   DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
   HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
-  TREND_FILTERED_NEWS_CACHE_PREFIX,
+  TREND_FILTERED_NEWS_CACHE_PREFIX, DAYS_FOR_CASHED_POSTS,
 } = require('utilities/constants');
 const { getNamespace } = require('cls-hooked');
 const { ObjectId } = require('mongoose').Types;
@@ -62,7 +63,7 @@ const makeConditions = ({
   }
   if (!_.isEmpty(languages)) cond.language = { $in: languages };
   if (forApp) cond.blocked_for_apps = { $ne: forApp };
-  if (!_.isEmpty(hiddenPosts)) Object.assign(cond._id, { $not: { $in: hiddenPosts } });
+  if (!_.isEmpty(hiddenPosts)) Object.assign(cond._id, { $nin: hiddenPosts });
   cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
@@ -71,12 +72,16 @@ module.exports = async ({
   // eslint-disable-next-line camelcase
   category, skip, limit, user_languages, keys, forApp, lastId, onlyCrypto, userName,
 }) => {
+  let lastAddedToHidden = DAYS_FOR_CASHED_POSTS + 1;
   // get user blocked posts id
-  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-  if (hiddenPosts.length + skip + limit < HOT_NEWS_CACHE_SIZE - limit) {
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName, { postId: -1 });
+  if (!_.isEmpty(hiddenPosts)) {
+    lastAddedToHidden = moment().diff(moment(ObjectId(hiddenPosts[0]).getTimestamp()), 'days');
+  }
+  if (lastAddedToHidden > DAYS_FOR_CASHED_POSTS) {
     // try to get posts from cache
     const cachedPosts = await getFromCache({
-      skip, limit, user_languages, category, forApp, onlyCrypto, hiddenPosts,
+      skip, limit, user_languages, category, forApp, onlyCrypto,
     });
     if (cachedPosts) return { posts: cachedPosts };
     if (!cachedPosts && onlyCrypto) return { posts: [] };
@@ -107,7 +112,7 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts,
+  skip, limit, user_languages: locales, category, forApp, onlyCrypto,
 }) => {
   if (onlyCrypto) category = 'beaxyWObjCache';
   let res;
@@ -115,21 +120,21 @@ const getFromCache = async ({
     case 'hot':
       if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getHot({
-          skip, limit, locales, forApp, hiddenPosts,
+          skip, limit, locales, forApp,
         });
       }
       break;
     case 'beaxyWObjCache':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, hiddenPosts,
+          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
         });
       }
       break;
     case 'trending':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX, hiddenPosts,
+          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX,
         });
       }
       break;

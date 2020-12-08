@@ -68,7 +68,7 @@ exports.getByFollowLists = async ({
   }
 
   if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
-  if (!_.isEmpty(hiddenPosts)) cond._id = { $not: { $in: hiddenPosts } };
+  if (!_.isEmpty(hiddenPosts)) cond._id = { $nin: hiddenPosts };
 
   const postsQuery = PostModel.find(cond)
     .sort({ _id: -1 })

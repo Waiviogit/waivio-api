@@ -9,7 +9,7 @@ module.exports = async ({
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   const additionalCond = _.isEmpty(hiddenPosts)
     ? {}
-    : { _id: { $not: { $in: hiddenPosts } } };
+    : { _id: { $nin: hiddenPosts } };
 
   if (userError) return { error: userError };
   if (user && user.auth) {
