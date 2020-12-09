@@ -3358,6 +3358,58 @@
         }
       }
     },
+    "/api/objectType/tags-for-filter": {
+      "get" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return tags for filter",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "objectType",
+          "in" : "query",
+          "description" : "name of object type",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "succesfull operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "tagCategory": {
+                    "type": "string"
+                  },
+                  "tags" : {
+                    "type": "array",
+                    "items": {
+                      "type" : "string"
+                    }
+                  },
+                  "hasMore": {
+                    "type": "boolean"
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
     "/api/generalSearch" : {
       "post" : {
         "tags" : [ "general-search" ],
