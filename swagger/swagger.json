@@ -2926,7 +2926,13 @@
           "description" : "Category of post, aka parent_permlink",
           "required" : true,
           "type" : "string"
-        } ],
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of authorised user",
+          "required" : false,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",

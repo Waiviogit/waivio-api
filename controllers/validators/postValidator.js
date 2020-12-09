@@ -22,7 +22,7 @@ exports.getPostComments = Joi.object().keys({
   author: Joi.string().invalid('').required(),
   permlink: Joi.string().invalid('').required(),
   category: Joi.string().invalid('').required(),
-  forUser: Joi.string().default(''),
+  userName: Joi.string().default(''),
 });
 
 exports.getManyPosts = Joi.array().items(Joi.object().keys({
