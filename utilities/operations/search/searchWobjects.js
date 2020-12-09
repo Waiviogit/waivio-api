@@ -24,7 +24,7 @@ exports.searchWobjects = async ({
     string,
     sort,
     map,
-    limit,
+    limit: limit + 1,
     skip,
     forParent,
     object_type,
@@ -65,6 +65,7 @@ exports.searchWobjects = async ({
   });
   return {
     wobjects: _.take(wobjects, limit),
+    hasMore: wobjects.length > limit,
     error: getWobjError,
   };
 };
@@ -124,7 +125,7 @@ const addFieldsToSearch = ({
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { [sort]: -1 } });
 
-  pipeline.push({ $limit: limit || 10 }, { $skip: skip || 0 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: limit || 10 });
   return pipeline;
 };
 
@@ -144,7 +145,7 @@ const makePipeline = ({
     },
     { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
   } else pipeline.push({ $sort: { weight: -1 } });
-  pipeline.push({ $limit: limit || 10 }, { $skip: skip || 0 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: limit || 10 });
 
   return pipeline;
 };
