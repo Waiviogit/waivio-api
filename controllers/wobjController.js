@@ -121,11 +121,11 @@ const search = async (req, res, next) => {
 
   if (!value) return;
 
-  const { wobjects, error } = await searchWobjects(value);
+  const { wobjects, hasMore, error } = await searchWobjects(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjects };
+  res.result = { status: 200, json: { wobjects, hasMore } };
   next();
 };
 

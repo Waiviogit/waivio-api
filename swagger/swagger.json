@@ -2690,9 +2690,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/inline_response_200_17"
+              "type": "object",
+              "properties": {
+                "wobjects" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/inline_response_200_17"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           }
