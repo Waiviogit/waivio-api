@@ -43,7 +43,6 @@ exports.LANGUAGES = ['en-US',
 
 exports.DAYS_FOR_HOT_FEED = 3;
 exports.DAYS_FOR_TRENDING_FEED = 3;
-exports.DAYS_FOR_CASHED_POSTS = 3;
 
 // some fixed average Waivio rate of user
 exports.MEDIAN_USER_WAIVIO_RATE = Number(process.env.MEDIAN_USER_WAIVIO_RATE) || 25000;
