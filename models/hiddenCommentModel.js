@@ -7,13 +7,3 @@ exports.getHiddenComments = async (...userNames) => {
     return { error };
   }
 };
-
-exports.create = async (data) => {
-  const comment = new HiddenComment(data);
-
-  try {
-    return { comment: await comment.save() };
-  } catch (error) {
-    return { error };
-  }
-};
