@@ -48,7 +48,7 @@ exports.getPostComments = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result, error } = await getPostComments(value);
+  const { result, error } = await getPostComments({ ...value, app: req.appData });
 
   if (error) return next(error);
 
