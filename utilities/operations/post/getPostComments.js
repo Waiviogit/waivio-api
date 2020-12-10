@@ -11,8 +11,8 @@ module.exports = async ({
 
   if (error) return { error };
   const comments = await mergeComments(postState);
-  const adminsArray = _.concat(_.get(app, 'admins'), _.get(app, 'moderators'));
-  const { hiddenComments } = await hiddenCommentModel.getHiddenComments(userName, ...adminsArray);
+  const moderators = _.get(app, 'moderators', []);
+  const { hiddenComments } = await hiddenCommentModel.getHiddenComments(userName, ...moderators);
 
   const result = _.filter(
     comments,
