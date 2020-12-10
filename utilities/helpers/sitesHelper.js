@@ -30,11 +30,14 @@ exports.getParentsList = async () => {
 
 /** Get all user hosts */
 exports.getUserApps = async (params) => {
-  const { result: apps, error } = await App.find({
-    owner: params.userName,
-    inherited: true,
-    $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
-  });
+  const { result: apps, error } = await App.find(
+    {
+      owner: params.userName,
+      inherited: true,
+      $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
+    },
+    { _id: -1 },
+  );
   if (error) return { error };
 
   return { result: _.map(apps, (app) => ({ host: app.host, id: app._id })) };

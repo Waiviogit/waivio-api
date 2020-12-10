@@ -32,7 +32,8 @@ exports.schema = [
   {
     path: '/wobjectSearch',
     method: 'POST',
-    case: 2,
+    case: 6,
+    wobjects_path: 'wobjects',
   },
   // user controller
   {
