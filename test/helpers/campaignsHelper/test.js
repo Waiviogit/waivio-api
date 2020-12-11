@@ -1,12 +1,10 @@
 const _ = require('lodash');
 const {
-  faker, dropDatabase, campaignsHelper, expect, moment,
+  faker, dropDatabase, campaignsHelper, expect,
 } = require('test/testHelper');
 const {
-  CampaignFactory, PostFactory, UsersFactory, ObjectFactory, AppFactory,
+  CampaignFactory, UsersFactory, ObjectFactory,
 } = require('test/factories');
-const sinon = require('sinon');
-const { Wobj } = require('models/index');
 
 describe('Ob addCampaignsToWobjects', async () => {
   let name, user, wobjects, budget, minreward, maxreward, objects, requiredObject, permlink, app;
@@ -113,11 +111,35 @@ describe('Ob addCampaignsToWobjects', async () => {
         budget, reward: maxreward, objects, requiredObject, status: 'active',
       });
     });
-    it('Should return the error message \'Reward more than budget\'', async () => {
-      sinon.spy(console, 'error')
-      const error = await campaignsHelper.addCampaignsToWobjects({ wobjects, user });
-      console.log(error)
-      expect(error).to.be.throw;
+  });
+  describe('If simplified = true', async () => {
+    beforeEach(async () => {
+      await dropDatabase();
+      name = faker.name.firstName();
+      user = await UsersFactory.Create({ name });
+      permlink = faker.random.word();
+      wobjects = [
+        await ObjectFactory.Create({
+          authorPermlink: permlink,
+          objectType: faker.random.word(),
+          weight: _.random(0, 10),
+        }),
+      ];
+      budget = _.random(500, 1000);
+      minreward = _.random(10, 50);
+      maxreward = _.random(50, 100);
+      requiredObject = permlink;
+      objects = [permlink, faker.random.word(), faker.random.word(), faker.random.word()];
+      await CampaignFactory.Create({
+        budget, reward: minreward, objects, status: 'active', requiredObject, guideName: name,
+      });
+      await campaignsHelper.addCampaignsToWobjects({ wobjects, simplified: true, user });
+    });
+    it('Should have properties \'author_permlink\', \'fields\', \'map\', \'weight\'', async () => {
+      expect(wobjects[0]).to.include.keys('author_permlink', 'fields', 'map', 'weight');
+    });
+    it('Should not have property \'author\', \'object_type\', \'authority\',\'creator\'', async () => {
+      expect(wobjects[0]).not.to.include.keys('author', 'object_type', 'authority', 'creator');
     });
   });
 });
