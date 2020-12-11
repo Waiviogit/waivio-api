@@ -12,6 +12,8 @@ const {
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
+const { HOST_FROM_REFERER } = require('constants/regExp');
+const _ = require('lodash');
 
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -45,10 +47,10 @@ process.on('unhandledRejection', (error) => {
 
 // write to store user steemconnect/waivioAuth access_token if it exist
 app.use((req, res, next) => {
-  let { origin, host } = req.headers;
+  let { origin, referer } = req.headers;
   if (origin) {
     origin = origin.replace('www.', '').replace('https://', '').replace('http://', '');
-  } else origin = host;
+  } else origin = _.get(referer.match(HOST_FROM_REFERER), '[3]');
 
   session.set('host', origin);
   session.set('access-token', req.headers['access-token']);
