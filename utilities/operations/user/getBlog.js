@@ -1,15 +1,16 @@
-const { User, Post } = require('models');
-const { getTagsByUser } = require('utilities/helpers/postHelper');
 const _ = require('lodash');
+const { User, Post, hiddenPostModel } = require('models');
+const { getTagsByUser } = require('utilities/helpers/postHelper');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, limit, skip, tagsArray,
+  name, limit, skip, userName, tagsArray,
 }) => {
   const { user, error: userError } = await User.getOne(name);
-  const additionalCond = _.isEmpty(tagsArray)
-    ? {}
-    : { 'wobjects.author_permlink': { $in: tagsArray } };
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
+  const additionalCond = {};
+  if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
+  if (!_.isEmpty(tagsArray)) Object.assign(additionalCond, { 'wobjects.author_permlink': { $in: tagsArray } });
 
   if (userError) return { error: userError };
   if (user && user.auth) {

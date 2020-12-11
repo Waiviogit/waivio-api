@@ -5,6 +5,7 @@ const { customValidationHelper } = require('utilities/helpers');
 exports.showSchema = Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
+  userName: Joi.string().default(''),
 });
 
 exports.getPostsByCategorySchema = Joi.object().keys({
@@ -16,6 +17,7 @@ exports.getPostsByCategorySchema = Joi.object().keys({
   forApp: Joi.string().default('waivio'),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   onlyCrypto: Joi.boolean().default(false),
+  userName: Joi.string().default(''),
 });
 
 exports.getPostComments = Joi.object().keys({

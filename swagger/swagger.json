@@ -2690,9 +2690,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/inline_response_200_17"
+              "type": "object",
+              "properties": {
+                "wobjects" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/inline_response_200_17"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -2772,6 +2780,71 @@
               "type" : "array",
               "items" : {
                 "$ref" : "#/definitions/wobject"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/related" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return virtual album Related",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "required" : false,
+          "type" : "integer"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+                "type" : "object",
+                "properties" : {
+                  "body": {"type": "string"},
+                  "name": {"type": "string"},
+                  "id": {"type": "string"},
+                  "count": {"type": "number"},
+                  "hasMore": {"type": "boolean"},
+                  "items": {
+                    "type": "array",
+                    "items" : {
+                      "type" : "object",
+                      "properties": {
+                        "permlink": {"type": "string"},
+                        "id": {"type": "string"},
+                        "body": {"type": "string"}
+                      }
+                    }
+                  }
+                }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
               }
             }
           }
@@ -3280,6 +3353,58 @@
                 },
                 "hasMore": {
                   "type": "boolean"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/objectType/tags-for-filter": {
+      "get" : {
+        "tags" : [ "object_type" ],
+        "summary" : "Return tags for filter",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "objectType",
+          "in" : "query",
+          "description" : "name of object type",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "succesfull operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "type":"object",
+                "properties": {
+                  "tagCategory": {
+                    "type": "string"
+                  },
+                  "tags" : {
+                    "type": "array",
+                    "items": {
+                      "type" : "string"
+                    }
+                  },
+                  "hasMore": {
+                    "type": "boolean"
+                  }
                 }
               }
             }

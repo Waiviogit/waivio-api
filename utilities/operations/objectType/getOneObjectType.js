@@ -3,8 +3,7 @@ const {
   Wobj, ObjectType, User,
 } = require('models');
 const _ = require('lodash');
-const { campaignsHelper } = require('utilities/helpers');
-const { redisGetter } = require('utilities/redis');
+const { campaignsHelper, objectTypeHelper } = require('utilities/helpers');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -116,25 +115,6 @@ const getWobjWithFilters = async ({
   return { wobjects };
 };
 
-const getTagCategory = async (tagCategory = [], filter) => {
-  const resultArray = [];
-  for (const category of tagCategory) {
-    const { tags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${category}`, start: 0, end: 3 });
-    if (error || !tags.length) continue;
-    resultArray.push({ tagCategory: category, tags: tags.slice(0, 3), hasMore: tags.length > 3 });
-  }
-  if (_.get(filter, 'tagCategory')) {
-    for (const item of filter.tagCategory) {
-      const redisValues = _.find(resultArray, (el) => el.tagCategory === item.categoryName);
-      if (!redisValues) return resultArray;
-      if (!_.includes(redisValues.tags, item.tags[0])) {
-        redisValues.tags.splice(2, 1, item.tags[0]);
-      }
-    }
-  }
-  return resultArray;
-};
-
 module.exports = async ({
   name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
@@ -145,7 +125,7 @@ module.exports = async ({
     tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values', []);
   }
   _.get(tagCategory, 'length')
-    ? objectType.tagsForFilter = await getTagCategory(tagCategory, filter)
+    ? objectType.tagsForFilter = await objectTypeHelper.getTagCategory(tagCategory, filter)
     : objectType.tagsForFilter = [];
   /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');

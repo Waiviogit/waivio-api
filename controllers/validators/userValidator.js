@@ -66,6 +66,7 @@ exports.feedSchema = Joi.object().keys({
   }),
   forApp: Joi.string(),
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
+  userName: Joi.string().default(''),
 });
 
 exports.searchSchema = Joi.object().keys({
@@ -141,6 +142,7 @@ exports.blogSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   start_author: Joi.string().allow('').default(''),
   start_permlink: Joi.string().allow('').default(''),
+  userName: Joi.string().default(''),
   tagsArray: Joi.array().items(Joi.string()).single().default([]),
 });
 

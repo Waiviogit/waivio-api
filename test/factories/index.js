@@ -12,4 +12,5 @@ module.exports = {
   UserWobjectsFactory: require('./UserWobjectsFactory/UserWobjectsFactory'),
   BotUpvoteFactory: require('./BotUpvote/BotUpvoteFactory'),
   PaymentHistoryFactory: require('./PaymentHistory/PaymentHistoryFactory'),
+  RelatedFactory: require('./Related/RelatedFactory'),
 };

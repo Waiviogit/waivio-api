@@ -80,6 +80,8 @@ wobjRoutes.route('/wobject/:authorPermlink/followers')
   .post(WobjController.followers);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')
   .get(WobjController.gallery);
+wobjRoutes.route('/wobject/:authorPermlink/related')
+  .get(WobjController.related);
 wobjRoutes.route('/wobject/:authorPermlink/object_expertise')
   .post(WobjController.objectExpertise);
 wobjRoutes.route('/wobjectSearch')
@@ -165,6 +167,8 @@ objectTypeRoutes.route('/objectType/:objectTypeName/expertise')
   .get(ObjectTypeController.expertise);
 objectTypeRoutes.route('/objectType/showMoreTags')
   .get(ObjectTypeController.showMoreTags);
+objectTypeRoutes.route('/objectType/tags-for-filter')
+  .get(ObjectTypeController.tagsForFilter);
 // endregion
 // region Search
 userRoutes.route('/generalSearch')

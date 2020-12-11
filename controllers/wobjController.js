@@ -1,7 +1,7 @@
 const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getGallery, getWobjField, sortFollowers,
+  getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -58,6 +58,7 @@ const posts = async (req, res, next) => {
     user_languages: req.body.user_languages,
     forApp: req.headers.app,
     lastId: req.body.lastId,
+    userName: req.headers.follower,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;
@@ -121,11 +122,11 @@ const search = async (req, res, next) => {
 
   if (!value) return;
 
-  const { wobjects, error } = await searchWobjects(value);
+  const { wobjects, hasMore, error } = await searchWobjects(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjects };
+  res.result = { status: 200, json: { wobjects, hasMore } };
   next();
 };
 
@@ -209,6 +210,20 @@ const getWobjectField = async (req, res, next) => {
   next();
 };
 
+const related = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.params, ...req.query },
+    validators.wobject.getRelatedAlbum,
+    next,
+  );
+  if (!value) return;
+
+  const { json, error } = await getRelated(value);
+  if (error) return next(error);
+  res.result = { status: 200, json };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -221,4 +236,5 @@ module.exports = {
   getByField,
   getChildWobjects,
   getWobjectField,
+  related,
 };

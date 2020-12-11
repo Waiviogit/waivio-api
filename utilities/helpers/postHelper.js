@@ -140,6 +140,7 @@ const fillReblogs = async (posts = [], userName) => {
   for (const postIdx in posts) {
     if (_.get(posts, `[${postIdx}].reblog_to.author`) && _.get(posts, `[${postIdx}].reblog_to.permlink`)) {
       let sourcePost;
+
       try {
         const author = _.get(posts, `[${postIdx}].reblog_to.author`);
         const permlink = _.get(posts, `[${postIdx}].reblog_to.permlink`);
@@ -228,29 +229,36 @@ const additionalSponsorObligations = async (posts) => {
       campaign,
     });
     if (isRejected) continue;
+
     const beforeCashOut = new Date(post.cashout_time) > new Date();
     const { result: bots } = await botUpvoteModel
-      .find({ author: post.author, permlink: post.permlink }, { botName: 1 });
+      .find({ author: post.root_author, permlink: post.permlink }, { botName: 1 });
+    const postPendingPayout = parseFloat(_.get(post, 'pending_payout_value', 0));
+    const postTotalPayout = parseFloat(_.get(post, 'total_payout_value', 0));
+    const postCuratorPayout = parseFloat(_.get(post, 'curator_payout_value', 0));
     const totalPayout = beforeCashOut
-      ? parseFloat(_.get(post, 'pending_payout_value', 0))
-      : parseFloat(_.get(post, 'total_payout_value', 0))
-      + parseFloat(_.get(post, 'curator_payout_value', 0));
+      ? postPendingPayout
+      : postTotalPayout + postCuratorPayout;
     const voteRshares = _.reduce(post.active_votes,
-      (a, b) => a + parseInt(b.rshares_weight || b.rshares, 10), 0);
-
+      (a, b) => a + parseInt(b.rshares, 10), 0);
     const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
 
     if (ratio) {
       let likedSum = 0;
       const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), campaign.guideName], v.voter));
       for (const el of registeredVotes) {
-        likedSum += (ratio * parseInt(el.rshares_weight || el.rshares, 10));
+        likedSum += (ratio * parseInt(el.rshares, 10));
       }
-      const sponsorPayout = campaign.reward - likedSum;
+      const sponsorPayout = campaign.reward - (likedSum / 2);
       if (sponsorPayout <= 0) continue;
+
+      // eslint-disable-next-line no-nested-ternary
       beforeCashOut
-        ? post.pending_payout_value = (parseFloat(_.get(post, 'pending_payout_value', 0)) + sponsorPayout).toFixed(3)
-        : post.curator_payout_value = (parseFloat(_.get(post, 'curator_payout_value', 0)) + sponsorPayout).toFixed(3);
+        ? post.pending_payout_value = (postPendingPayout + sponsorPayout).toFixed(3)
+        : !_.isEmpty(bots) && !postTotalPayout
+          ? post.total_payout_value = campaign.reward.toFixed(3)
+          : post.total_payout_value = (postTotalPayout + sponsorPayout).toFixed(3);
+
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
       if (hasSponsor) {
         hasSponsor.rshares = parseInt(hasSponsor.rshares, 10) + Math.round(sponsorPayout / ratio);
@@ -266,9 +274,9 @@ const additionalSponsorObligations = async (posts) => {
     } else {
       beforeCashOut
         ? post.pending_payout_value = campaign.reward
-        : post.curator_payout_value = campaign.reward;
+        : post.total_payout_value = campaign.reward;
       _.forEach(post.active_votes, (el) => {
-        el.rshares ? el.rshares = 0 : el.rshares_weight = 0;
+        el.rshares = 0;
       });
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
       if (hasSponsor) {

@@ -81,9 +81,9 @@ describe('on additionalSponsorObligations', async () => {
       const guide = _.find(post.active_votes, (v) => v.voter === campaign.guideName && !!v.sponsor);
       registeredVotes.push(guide);
       for (const el of registeredVotes) {
-        likedSum += (ratio * (el.rshares_weight || el.rshares));
+        likedSum += (ratio * el.rshares);
       }
-      expect(Math.round(likedSum)).to.be.eq(reward);
+      expect(parseInt(likedSum, 10)).to.be.eq(reward);
     });
     it('should change sponsor record if it is in active votes result must be same', async () => {
       post.active_votes.push({
@@ -100,7 +100,7 @@ describe('on additionalSponsorObligations', async () => {
       for (const el of registeredVotes) {
         likedSum += (ratio * (el.rshares_weight || el.rshares));
       }
-      expect(Math.round(likedSum)).to.be.eq(reward);
+      expect(parseInt(likedSum, 10)).to.be.eq(reward);
     });
   });
   describe('When post downvoted', async () => {
@@ -206,7 +206,7 @@ describe('on additionalSponsorObligations', async () => {
       for (let i = 0; i < reward; i++) {
         activeVotes.push({
           voter: faker.name.firstName(),
-          rshares: _.random(110, 120),
+          rshares: _.random(200, 1500),
         });
       }
       rewardOnPost = _.reduce(activeVotes,
@@ -230,7 +230,7 @@ describe('on additionalSponsorObligations', async () => {
       for (const arg of activeVotes) {
         await BotUpvoteFactory.Create({
           bot_name: arg.voter,
-          author: post.author,
+          author: post.root_author,
           permlink: post.permlink,
         });
       }
@@ -267,8 +267,8 @@ describe('on additionalSponsorObligations', async () => {
       });
       [post] = await postHelper.additionalSponsorObligations([post]);
     });
-    it('should write sponsor obligations in curator_payout_value', async () => {
-      expect(parseFloat(_.get(post, 'curator_payout_value'))).to.be.eq(reward);
+    it('should write sponsor obligations in total_payout_value', async () => {
+      expect(parseFloat(_.get(post, 'total_payout_value'))).to.be.eq(reward);
     });
   });
   describe('When the cashout_time has not passed', async () => {

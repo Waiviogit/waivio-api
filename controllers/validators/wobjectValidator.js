@@ -40,6 +40,7 @@ exports.postsScheme = Joi.object().keys({
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
+  userName: Joi.string().default(''),
 });
 
 exports.feedScheme = Joi.object().keys({
@@ -120,4 +121,11 @@ exports.getWobjectField = Joi.object().keys({
   fieldName: Joi.string().required(),
   locale: Joi.string().default('en-US'),
   app: Joi.string().required(),
+});
+
+exports.getRelatedAlbum = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  skip: Joi.number().integer().min(0).default(0),
+  authorPermlink: Joi.string().required(),
 });
