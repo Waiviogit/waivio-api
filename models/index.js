@@ -16,5 +16,6 @@ moduleExports.websitePayments = require('./websitePaymentsModel');
 moduleExports.websiteRefunds = require('./websiteRefundsModel');
 moduleExports.botUpvoteModel = require('./botUpvoteModel');
 moduleExports.relatedAlbum = require('./relatedAlbumModel');
+moduleExports.hiddenPostModel = require('./hiddenPostModel');
 
 module.exports = moduleExports;
