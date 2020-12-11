@@ -141,6 +141,7 @@ exports.blogSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   start_author: Joi.string().allow('').default(''),
   start_permlink: Joi.string().allow('').default(''),
+  tagsArray: Joi.array().items(Joi.string()).single().default([]),
 });
 
 exports.followingUpdates = Joi.object().keys({

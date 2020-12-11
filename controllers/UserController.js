@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer,
-  setMarkers, getObjectsFollow,
+  setMarkers, getObjectsFollow, getPostsByTag,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const validators = require('controllers/validators');
@@ -137,11 +137,11 @@ const blog = async (req, res, next) => {
 
   if (!value) return;
 
-  const { posts, error } = await getBlog(value);
+  const { json, error } = await getBlog(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: posts };
+  res.result = { status: 200, json };
   res.params = req.params;
   next();
 };

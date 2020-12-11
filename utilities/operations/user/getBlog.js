@@ -1,19 +1,25 @@
 const { User, Post } = require('models');
-const { postHelper } = require('utilities/helpers');
+const { getTagsByUser } = require('utilities/helpers/postHelper');
+const _ = require('lodash');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, limit, skip,
+  name, limit, skip, tagsArray,
 }) => {
   const { user, error: userError } = await User.getOne(name);
+  const additionalCond = _.isEmpty(tagsArray)
+    ? {}
+    : { 'wobjects.author_permlink': { $in: tagsArray } };
 
   if (userError) return { error: userError };
   if (user && user.auth) {
-    return getGuestBlog({ name, limit, skip });
+    return Post.getBlog({
+      name, limit, skip, additionalCond,
+    });
   }
-  const { posts, error } = await postHelper.getPostsByCategory(
-    { limit, name, skip: skip !== 0 ? skip - 1 : 0 },
-  );
+  const { posts, error } = await Post.getBlog({
+    limit, name, skip: skip !== 0 ? skip - 1 : 0, additionalCond,
+  });
 
   if (error) return { error };
 
@@ -21,7 +27,7 @@ module.exports = async ({
   posts.forEach((post) => {
     if (post.author !== name) post.reblogged_by = [name];
   });
-  return { posts };
-};
 
-const getGuestBlog = async ({ name, skip, limit }) => Post.getBlog({ name, skip, limit });
+  const { tags } = await getTagsByUser({ author: name, skip });
+  return { json: { tags, posts } };
+};

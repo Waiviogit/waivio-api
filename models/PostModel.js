@@ -114,11 +114,13 @@ exports.getPostsRefs = async ({ skip = 0, limit = 1000 } = {}) => {
   }
 };
 
-exports.getBlog = async ({ name, skip = 0, limit = 30 }) => {
+exports.getBlog = async ({
+  name, skip = 0, limit = 30, additionalCond = {},
+}) => {
   try {
     return {
       posts: await PostModel
-        .find({ author: name, ...getBlockedAppCond() })
+        .find({ author: name, ...getBlockedAppCond(), ...additionalCond })
         .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
@@ -169,9 +171,9 @@ exports.getManyPosts = async (postsRefs) => {
   }
 };
 
-exports.findByCondition = async (condition) => {
+exports.findByCondition = async (condition, select = {}) => {
   try {
-    return { posts: await PostModel.find(condition).lean() };
+    return { posts: await PostModel.find(condition, select).lean() };
   } catch (error) {
     return { error };
   }
