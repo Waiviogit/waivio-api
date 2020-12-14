@@ -33,6 +33,7 @@ models.WebsiteRefunds = require('./schemas/WebsiteRefundsSchema');
 models.BotUpvote = require('./schemas/BotUpvoteSchema');
 models.RelatedAlbum = require('./schemas/RelatedAlbumSchema');
 models.HiddenPost = require('./schemas/HiddenPostSchema');
+models.HiddenComment = require('./schemas/HiddenCommentSchema');
 
 module.exports = {
   Mongoose: mongoose,
