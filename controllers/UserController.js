@@ -194,11 +194,11 @@ const searchUsers = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await searchByUsers({ ...value, string: value.searchString });
+  const { users, hasMore, error } = await searchByUsers({ ...value, string: value.searchString });
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: users };
+  res.result = { status: 200, json: { users, hasMore } };
   next();
 };
 
