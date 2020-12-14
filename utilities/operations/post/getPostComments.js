@@ -14,9 +14,10 @@ module.exports = async ({
   const moderators = _.get(app, 'moderators', []);
   const { hiddenComments } = await hiddenCommentModel.getHiddenComments(userName, ...moderators);
 
-  const result = _.filter(
+  const result = _.differenceWith(
     comments,
-    (el) => !_.some(hiddenComments, (i) => i.author === el.author && i.permlink === el.permlink),
+    hiddenComments,
+    (a, b) => a.author === b.author && a.permlink === b.permlink,
   );
 
   postState.content = _.keyBy(result, (c) => `${c.author}/${c.permlink}`);
