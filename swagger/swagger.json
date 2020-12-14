@@ -1590,6 +1590,13 @@
           "required" : false,
           "type" : "number",
           "default" : 20.0
+        },{
+          "name" : "skip",
+          "in" : "query",
+          "description" : "Number to indicate count of skip users",
+          "required" : false,
+          "type" : "number",
+          "default" : 0
         }, {
           "name" : "notGuest",
           "in" : "query",
@@ -1602,9 +1609,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/inline_response_200_4"
+              "type" : "object",
+              "properties": {
+                "users" : {
+                  "type" : "array",
+                  "items" : {
+                    "$ref" : "#/definitions/inline_response_200_4"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -4313,6 +4328,9 @@
           "type" : "string"
         },
         "wobjects_weight" : {
+          "type" : "number"
+        },
+        "followers_count" : {
           "type" : "number"
         },
         "followsYou": {
