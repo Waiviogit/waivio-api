@@ -58,6 +58,7 @@ const posts = async (req, res, next) => {
     user_languages: req.body.user_languages,
     forApp: req.headers.app,
     lastId: req.body.lastId,
+    userName: req.headers.follower,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;
@@ -121,11 +122,11 @@ const search = async (req, res, next) => {
 
   if (!value) return;
 
-  const { wobjects, error } = await searchWobjects(value);
+  const { wobjects, hasMore, error } = await searchWobjects(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjects };
+  res.result = { status: 200, json: { wobjects, hasMore } };
   next();
 };
 

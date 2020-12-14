@@ -7,12 +7,13 @@ exports.show = async (req, res, next) => {
   const value = validators.validate({
     author: req.params.author,
     permlink: req.params.permlink,
+    userName: req.headers.follower,
   }, validators.post.showSchema, next);
 
   if (!value) {
     return;
   }
-  const { post, error } = await getSinglePost(value.author, value.permlink);
+  const { post, error } = await getSinglePost(value);
 
   if (error) return next(error);
 
@@ -29,6 +30,7 @@ exports.getByCategory = async (req, res, next) => {
     forApp: req.headers.app,
     lastId: req.body.lastId,
     onlyCrypto: req.body.onlyCrypto,
+    userName: req.headers.follower,
   }, validators.post.getPostsByCategorySchema, next);
 
   if (!value) {

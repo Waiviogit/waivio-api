@@ -1,6 +1,6 @@
 const { searchObjectTypes } = require('utilities/operations/search/searchTypes');
 const {
-  getAll, getOne, getExperts, showTags,
+  getAll, getOne, getExperts, showTags, getTagsForFilter,
 } = require('utilities/operations/objectType');
 const validators = require('controllers/validators');
 
@@ -81,6 +81,18 @@ const showMoreTags = async (req, res, next) => {
   next();
 };
 
+const tagsForFilter = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.objectType.tagsForFilterSchema, next,
+  );
+  if (!value) return;
+  const { tags, error } = await getTagsForFilter(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: tags };
+  next();
+};
+
 module.exports = {
-  index, search, show, expertise, showMoreTags,
+  index, search, show, expertise, showMoreTags, tagsForFilter,
 };
