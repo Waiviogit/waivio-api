@@ -19,7 +19,7 @@ exports.searchUsers = async ({
   if (notGuest) condition.auth = { $exists: false };
   const { user } = await User.findOneByCondition(condition);
   const { users, error } = await User.search({
-    string, skip, limit, notGuest,
+    string, skip, limit: limit + 1, notGuest,
   });
   const {
     result: [
@@ -38,5 +38,6 @@ exports.searchUsers = async ({
       })), limit),
     usersCount,
     error: error || countError,
+    hasMore: users.length > limit,
   };
 };
