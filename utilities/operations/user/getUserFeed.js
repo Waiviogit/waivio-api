@@ -1,12 +1,12 @@
 const {
-  User, Post, App, Subscriptions, wobjectSubscriptions,
+  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel,
 } = require('models');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
 
 const getFeed = async ({
   // eslint-disable-next-line camelcase
-  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId,
+  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName,
 }) => {
   const { user, error: userError } = await User.getOne(name);
   const { users, error: subsError } = await Subscriptions
@@ -22,13 +22,16 @@ const getFeed = async ({
 
   if (filterError) return { error: filterError };
 
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
+
   const { posts, error: postsError } = await Post.getByFollowLists({
-    users,
-    author_permlinks: wobjects,
-    user_languages,
     skip,
+    users,
     limit,
     filtersData,
+    hiddenPosts,
+    user_languages,
+    author_permlinks: wobjects,
   });
 
   if (postsError) return { error: postsError };

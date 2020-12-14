@@ -40,6 +40,7 @@ exports.postsScheme = Joi.object().keys({
   user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
+  userName: Joi.string().default(''),
 });
 
 exports.feedScheme = Joi.object().keys({
