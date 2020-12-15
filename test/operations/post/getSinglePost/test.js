@@ -30,22 +30,22 @@ describe('On getSinglePost', async () => {
         );
       });
       it('should return correct post', async () => {
-        const { post: result } = await getSinglePost(post.author, post.permlink);
+        const { post: result } = await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(post.author).to.be.eq(result.author);
       });
       it('should merge db post with hive post', async () => {
-        await getSinglePost(post.author, post.permlink);
+        await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(post.percent_steem_dollars).to.be.exist;
       });
       it('should return error if post not exist in hive', async () => {
         sinon.restore();
         sinon.stub(postsUtil, 'getPost').returns({ error: { status: 404 } });
-        const { error } = await getSinglePost(post.author, post.permlink);
+        const { error } = await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(error.status).to.be.eq(404);
       });
       it('should return hive post even if it not exist in DB', async () => {
         await Post.deleteOne({ _id: post._id });
-        const { post: result } = await getSinglePost(post.author, post.permlink);
+        const { post: result } = await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(result.author).to.be.eq(post.author);
       });
     });
@@ -56,11 +56,11 @@ describe('On getSinglePost', async () => {
         sinon.stub(postsUtil, 'getPost').returns(Promise.resolve({ post }));
       });
       it('should not return post which was downvoted by moderator', async () => {
-        const { error } = await getSinglePost(post.author, post.permlink);
+        const { error } = await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(error.status).to.be.eq(404);
       });
       it('should not find post in hive', async () => {
-        await getSinglePost(post.author, post.permlink);
+        await getSinglePost({ author: post.author, permlink: post.permlink });
         expect(postsUtil.getPost.notCalled).to.be.true;
       });
     });
@@ -86,7 +86,7 @@ describe('On getSinglePost', async () => {
           );
         });
         it('should return comment from hive', async () => {
-          const { post } = await getSinglePost(author, permlink);
+          const { post } = await getSinglePost({ author, permlink });
           expect(post.author).to.be.eq(author);
         });
       });
@@ -109,7 +109,7 @@ describe('On getSinglePost', async () => {
           );
         });
         it('should return 404 error if comment downvoted by moderator', async () => {
-          const { error } = await getSinglePost(author, permlink);
+          const { error } = await getSinglePost({ author, permlink });
           expect(error.status).to.be.eq(404);
         });
       });
@@ -136,7 +136,7 @@ describe('On getSinglePost', async () => {
         );
       });
       it('should return error if moderator downvote guest comment', async () => {
-        const { error } = await getSinglePost(guestName, permlink);
+        const { error } = await getSinglePost({ author: guestName, permlink });
         expect(error.status).to.be.eq(404);
       });
     });
