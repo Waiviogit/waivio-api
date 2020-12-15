@@ -296,7 +296,7 @@ describe('On sitesController', async () => {
       });
       it('should return correct apps', async () => {
         const hosts = _.map(result.body.websites, (site) => `${site.name}.${site.parent}`);
-        expect(hosts).to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
+        expect(hosts).to.be.deep.eq([inactiveApp.host, activeApp.host, pendingApp.host]);
       });
       it('should return correct average dau of pending site', async () => {
         const foundApp = _.find(result.body.websites,
@@ -348,7 +348,7 @@ describe('On sitesController', async () => {
         });
         it('should return correct ownerAppNames', async () => {
           expect(result.body.ownerAppNames)
-            .to.be.deep.eq([pendingApp.host, activeApp.host, inactiveApp.host]);
+            .to.be.deep.eq([inactiveApp.host, activeApp.host, pendingApp.host]);
         });
         it('should return correct dataForPayments at report', async () => {
           const user = await User.findOne({ name: FEE.account }).lean();
