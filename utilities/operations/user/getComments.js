@@ -1,11 +1,14 @@
-const { Comment, User } = require('models');
+const _ = require('lodash');
+const { Comment, User, mutedUserModel } = require('models');
 const { postsUtil } = require('utilities/steemApi');
 const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('utilities/helpers/commentHelper');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, start_permlink, limit, skip,
+  name, start_permlink, limit, skip, app,
 }) => {
+  const { mutedUser } = await mutedUserModel.findOne({ userName: name, mutedForApps: _.get(app, 'host') });
+  if (mutedUser) return { comments: [] };
   if (await isGuestUser(name)) {
     return getGuestComments({ name, skip, limit });
   }

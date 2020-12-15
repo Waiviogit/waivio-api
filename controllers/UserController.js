@@ -138,7 +138,7 @@ const blog = async (req, res, next) => {
 
   if (!value) return;
 
-  const { posts, error } = await getBlog(value);
+  const { posts, error } = await getBlog({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -284,7 +284,7 @@ const getUserComments = async (req, res, next) => {
 
   if (!value) return;
 
-  const { comments, error } = await getComments(value);
+  const { comments, error } = await getComments({ ...value, app: req.appData });
 
   if (error) return next(error);
 

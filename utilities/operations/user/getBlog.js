@@ -1,10 +1,14 @@
 const _ = require('lodash');
-const { User, Post, hiddenPostModel } = require('models');
+const {
+  User, Post, hiddenPostModel, mutedUserModel,
+} = require('models');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, limit, skip, userName,
+  name, limit, skip, userName, app,
 }) => {
+  const { mutedUser } = await mutedUserModel.findOne({ userName: name, mutedForApps: _.get(app, 'host') });
+  if (mutedUser) return { posts: [] };
   const { user, error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   const additionalCond = _.isEmpty(hiddenPosts)
