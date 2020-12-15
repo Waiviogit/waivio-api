@@ -32,7 +32,7 @@ const show = async (req, res, next) => {
   }, validators.user.showSchema, next);
 
   await authorise(value.name);
-  const { userData, error } = await getOneUser(value);
+  const { userData, error } = await getOneUser({ ...value, app: req.appData });
 
   if (error) return next(error);
 

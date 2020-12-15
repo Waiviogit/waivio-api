@@ -18,5 +18,6 @@ moduleExports.botUpvoteModel = require('./botUpvoteModel');
 moduleExports.relatedAlbum = require('./relatedAlbumModel');
 moduleExports.hiddenPostModel = require('./hiddenPostModel');
 moduleExports.hiddenCommentModel = require('./hiddenCommentModel');
+moduleExports.mutedUserModel = require('./mutedUserModel');
 
 module.exports = moduleExports;

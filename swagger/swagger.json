@@ -4062,6 +4062,9 @@
         },
         "followsYou": {
           "type": "boolean"
+        },
+        "muted": {
+          "type": "boolean"
         }
       }
     },

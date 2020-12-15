@@ -1,7 +1,7 @@
 const { User, UserWobjects } = require('database').models;
 const { userUtil: userSteemUtil } = require('utilities/steemApi');
 const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
-const { Subscriptions } = require('models');
+const { Subscriptions, mutedUserModel } = require('models');
 const _ = require('lodash');
 
 const makeCountPipeline = (name) => {
@@ -50,7 +50,7 @@ const getDbUser = async (name) => {
   }
 };
 
-const getOne = async ({ name, with_followings: withFollowings }) => {
+const getOne = async ({ name, with_followings: withFollowings, app }) => {
   const { userData = {} } = await userSteemUtil.getAccount(name);
   // eslint-disable-next-line prefer-const
   let { user, error: dbError } = await getDbUser(name);// get user data from db
@@ -74,7 +74,9 @@ const getOne = async ({ name, with_followings: withFollowings }) => {
   } else user = _.omit(user, ['users_follow', 'objects_follow']);
 
   const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
-  Object.assign(userData, user, counters);// combine data from db and blockchain
+  const { mutedUser } = await mutedUserModel.findOne({ userName: user.name, mutedForApps: _.get(app, 'host') });
+
+  Object.assign(userData, user, counters, { muted: !!mutedUser });
 
   return { userData };
 };
