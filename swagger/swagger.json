@@ -5504,6 +5504,9 @@
             "properties" : { }
           }
         },
+        "canMute": {
+          "type": "boolean"
+        },
         "settings" : {
           "$ref" : "#/definitions/userMetadata_user_metadata_settings"
         }

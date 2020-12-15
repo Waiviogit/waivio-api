@@ -34,6 +34,7 @@ models.BotUpvote = require('./schemas/BotUpvoteSchema');
 models.RelatedAlbum = require('./schemas/RelatedAlbumSchema');
 models.HiddenPost = require('./schemas/HiddenPostSchema');
 models.HiddenComment = require('./schemas/HiddenCommentSchema');
+models.MutedUser = require('./schemas/MutedUserSchema');
 
 module.exports = {
   Mongoose: mongoose,
