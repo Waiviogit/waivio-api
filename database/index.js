@@ -35,6 +35,7 @@ models.RelatedAlbum = require('./schemas/RelatedAlbumSchema');
 models.HiddenPost = require('./schemas/HiddenPostSchema');
 models.HiddenComment = require('./schemas/HiddenCommentSchema');
 models.MutedUser = require('./schemas/MutedUserSchema');
+models.Blacklist = require('./schemas/BlacklistSchema');
 
 module.exports = {
   Mongoose: mongoose,

@@ -19,5 +19,6 @@ moduleExports.relatedAlbum = require('./relatedAlbumModel');
 moduleExports.hiddenPostModel = require('./hiddenPostModel');
 moduleExports.hiddenCommentModel = require('./hiddenCommentModel');
 moduleExports.mutedUserModel = require('./mutedUserModel');
+moduleExports.blacklistModel = require('./blacklistModel');
 
 module.exports = moduleExports;
