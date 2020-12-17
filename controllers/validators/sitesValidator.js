@@ -102,3 +102,7 @@ exports.saveConfigurations = Joi.object().keys({
   host: Joi.string().required(),
   configuration: Joi.object().required(),
 }).options({ allowUnknown: true });
+
+exports.restrictions = Joi.object().keys({
+  userName: Joi.string().required(),
+});

@@ -10,4 +10,5 @@ module.exports = {
   collectSiteDebts: require('./collectSiteDebts'),
   map: require('./map'),
   mapCoordinates: require('./mapCoordinates'),
+  restrictions: require('./restrictions'),
 };

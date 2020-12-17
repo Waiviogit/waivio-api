@@ -17,3 +17,11 @@ exports.getMutedUsers = async (host) => {
     return { error };
   }
 };
+
+exports.find = async ({ condition, select = {}, sort = {} }) => {
+  try {
+    return { result: await MutedUser.find(condition, select).sort(sort).lean() };
+  } catch (error) {
+    return { error };
+  }
+};

@@ -1277,6 +1277,55 @@
         }
       }
     },
+    "/api/sites/restrictions" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get muted and blacklisted users",
+        "description" : "Get muted and blacklisted users of particular site",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "userName",
+          "required": true,
+          "type" : "string"
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "mutedUsers" : {
+                  "$ref": "#/definitions/params_18"
+                },
+                "blacklistUsers" : {
+                  "$ref": "#/definitions/params_18"
+                },
+                "mutedCount": {
+                  "type": "number"
+                },
+                "blacklistedCount": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "Unprocessible Entity",
+            "schema" : {
+              "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
     "/api/users" : {
       "get" : {
         "tags" : [ "user" ],
@@ -5141,20 +5190,6 @@
         }
       }
     },
-    "params_20" : {
-      "type" : "array",
-      "items" : {
-        "type" : "object",
-        "properties" : {
-          "author": {
-            "type": "string"
-          },
-          "permlink": {
-            "type": "string"
-          }
-        }
-      }
-    },
     "params_14" : {
       "type" : "object",
       "properties" : {
@@ -5166,6 +5201,100 @@
         },
         "wobjects_count" : {
           "type" : "integer"
+        }
+      }
+    },
+    "params_15" : {
+      "type" : "object",
+      "properties" : {
+        "userName" : {
+          "type" : "string"
+        },
+        "wobjects_count" : {
+          "type" : "integer"
+        },
+        "wobjects_skip" : {
+          "type" : "integer"
+        },
+        "filter" : {
+          "$ref" : "#/definitions/apiobjectTypename_filter"
+        },
+        "sort" : {
+          "type" : "string"
+        },
+        "simplified": {
+          "type": "boolean"
+        }
+      }
+    },
+    "params_16" : {
+      "type" : "object",
+      "properties" : {
+        "search_string" : {
+          "type" : "string"
+        },
+        "limit" : {
+          "type" : "integer"
+        },
+        "skip" : {
+          "type" : "integer"
+        }
+      }
+    },
+    "params_17" : {
+      "type" : "object",
+      "properties" : {
+        "string" : {
+          "type" : "string"
+        },
+        "userLimit" : {
+          "type" : "integer"
+        },
+        "wobjectsLimit" : {
+          "type" : "integer"
+        },
+        "objectTypesLimit" : {
+          "type" : "integer"
+        },
+        "sortByApp" : {
+          "type" : "string"
+        }
+      }
+    },
+    "params_18": {
+      "type": "array",
+      "items" : {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "followers_count": {
+            "type": "number"
+          },
+          "wobjects_weight": {
+            "type": "number"
+          },
+          "blockedBy":{
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "params_20" : {
+      "type" : "array",
+      "items" : {
+        "type" : "object",
+        "properties" : {
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5198,29 +5327,6 @@
       "properties" : {
         "map" : {
           "$ref" : "#/definitions/apiwobject_map"
-        }
-      }
-    },
-    "params_15" : {
-      "type" : "object",
-      "properties" : {
-        "userName" : {
-          "type" : "string"
-        },
-        "wobjects_count" : {
-          "type" : "integer"
-        },
-        "wobjects_skip" : {
-          "type" : "integer"
-        },
-        "filter" : {
-          "$ref" : "#/definitions/apiobjectTypename_filter"
-        },
-        "sort" : {
-          "type" : "string"
-        },
-        "simplified": {
-          "type": "boolean"
         }
       }
     },
@@ -5279,40 +5385,6 @@
         },
         "weight" : {
           "type" : "number"
-        }
-      }
-    },
-    "params_16" : {
-      "type" : "object",
-      "properties" : {
-        "search_string" : {
-          "type" : "string"
-        },
-        "limit" : {
-          "type" : "integer"
-        },
-        "skip" : {
-          "type" : "integer"
-        }
-      }
-    },
-    "params_17" : {
-      "type" : "object",
-      "properties" : {
-        "string" : {
-          "type" : "string"
-        },
-        "userLimit" : {
-          "type" : "integer"
-        },
-        "wobjectsLimit" : {
-          "type" : "integer"
-        },
-        "objectTypesLimit" : {
-          "type" : "integer"
-        },
-        "sortByApp" : {
-          "type" : "string"
         }
       }
     },
