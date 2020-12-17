@@ -1317,6 +1317,14 @@
               }
             }
           },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not found"
+              }
+            }
+          },
           "422" : {
             "description" : "Unprocessible Entity",
             "schema" : {
