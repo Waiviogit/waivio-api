@@ -62,7 +62,11 @@ const makeConditions = ({
   }
   if (!_.isEmpty(languages)) cond.language = { $in: languages };
   if (forApp) cond.blocked_for_apps = { $ne: forApp };
-  if (!_.isEmpty(hiddenPosts)) Object.assign(cond._id, { $nin: hiddenPosts });
+  if (!_.isEmpty(hiddenPosts)) {
+    _.get(cond, '_id')
+      ? Object.assign(cond._id, { $nin: hiddenPosts })
+      : cond._id = { $nin: hiddenPosts };
+  }
   cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
@@ -105,7 +109,7 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts
+  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts,
 }) => {
   if (onlyCrypto) category = 'beaxyWObjCache';
   let res;
