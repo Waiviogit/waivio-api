@@ -12,7 +12,7 @@ exports.findOne = async (condition) => {
 exports.getMutedUsers = async (host) => {
   try {
     const mutedUsers = await MutedUser.find({ mutedForApps: host }, { userName: 1 }).lean();
-    return { mutedUsers: _.map(mutedUsers, 'userName') };
+    return { mutedUsers: _.uniq(_.map(mutedUsers, 'userName')) };
   } catch (error) {
     return { error };
   }

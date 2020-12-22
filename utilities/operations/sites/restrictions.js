@@ -3,8 +3,9 @@ const { mutedUserModel, blacklistModel, User } = require('models');
 
 exports.get = async ({ app }) => {
   if (!app) return { result: {} };
-  const { result: muted } = await mutedUserModel.find({ condition: { mutedForApps: _.get(app, 'host') }, sort: { _id: -1 } });
+  const { result } = await mutedUserModel.find({ condition: { mutedForApps: _.get(app, 'host') }, sort: { _id: -1 } });
   const { blackLists } = await blacklistModel.find({ user: { $in: [_.get(app, 'owner'), ..._.get(app, 'admins')] } });
+  const muted = _.uniqBy(result, 'userName');
 
   const arrMutedNames = _.map(muted, 'userName');
   let arrBlacklistNames = [];
@@ -14,7 +15,7 @@ exports.get = async ({ app }) => {
     condition: { name: { $in: _.uniq([...arrMutedNames, ...arrBlacklistNames]) } },
     select: { name: 1, followers_count: 1, wobjects_weight: 1 },
   });
-  const { mutedUsers } = getMutedList(muted, usersData);
+  const { mutedUsers } = getMutedList(muted, usersData, result);
   const { blacklistUsers } = getBlacklist(arrBlacklistNames, blackLists, usersData);
 
   return {
@@ -27,16 +28,20 @@ exports.get = async ({ app }) => {
   };
 };
 
-const getMutedList = (muted, usersData) => {
+const getMutedList = (muted, usersData, allMuted) => {
   if (_.isEmpty(muted)) return { mutedUsers: [] };
   return {
     mutedUsers: _.map(muted, (el) => {
       const user = _.find(usersData, (o) => o.name === el.userName);
+      const blockedBy = _.reduce(allMuted, (acc, value) => {
+        if (value.userName === el.userName) return [...acc, value.mutedBy];
+        return acc;
+      }, []);
       return {
         name: _.get(user, 'name', el.userName),
         followers_count: _.get(user, 'followers_count', 0),
         wobjects_weight: _.get(user, 'wobjects_weight', 0),
-        blockedBy: el.mutedBy,
+        blockedBy,
       };
     }),
   };
