@@ -56,6 +56,7 @@ exports.aggregate = async (pipeline) => {
 
 exports.getByFollowLists = async ({
   users, author_permlinks: authorPermlinks, skip, limit, user_languages: userLanguages, filtersData,
+  hiddenPosts = [],
 }) => {
   const cond = {
     $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
@@ -67,6 +68,7 @@ exports.getByFollowLists = async ({
   }
 
   if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
+  if (!_.isEmpty(hiddenPosts)) cond._id = { $nin: hiddenPosts };
 
   const postsQuery = PostModel.find(cond)
     .sort({ _id: -1 })
@@ -114,11 +116,13 @@ exports.getPostsRefs = async ({ skip = 0, limit = 1000 } = {}) => {
   }
 };
 
-exports.getBlog = async ({ name, skip = 0, limit = 30 }) => {
+exports.getBlog = async ({
+  name, skip = 0, limit = 30, additionalCond = {},
+}) => {
   try {
     return {
       posts: await PostModel
-        .find({ author: name, ...getBlockedAppCond() })
+        .find({ author: name, ...getBlockedAppCond(), ...additionalCond })
         .sort({ _id: -1 }).skip(skip).limit(limit)
         .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),

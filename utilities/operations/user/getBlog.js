@@ -1,18 +1,26 @@
-const { User, Post } = require('models');
-const { postHelper } = require('utilities/helpers');
+const _ = require('lodash');
+const { User, Post, hiddenPostModel } = require('models');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, limit, skip,
+  name, limit, skip, userName,
 }) => {
   const { user, error: userError } = await User.getOne(name);
+  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
+  const additionalCond = _.isEmpty(hiddenPosts)
+    ? {}
+    : { _id: { $nin: hiddenPosts } };
 
   if (userError) return { error: userError };
   if (user && user.auth) {
-    return getGuestBlog({ name, limit, skip });
+    return Post.getBlog({
+      name, limit, skip, additionalCond,
+    });
   }
-  const { posts, error } = await postHelper.getPostsByCategory(
-    { limit, name, skip: skip !== 0 ? skip - 1 : 0 },
+  const { posts, error } = await Post.getBlog(
+    {
+      limit, name, skip: skip !== 0 ? skip - 1 : 0, additionalCond,
+    },
   );
 
   if (error) return { error };
@@ -23,5 +31,3 @@ module.exports = async ({
   });
   return { posts };
 };
-
-const getGuestBlog = async ({ name, skip, limit }) => Post.getBlog({ name, skip, limit });

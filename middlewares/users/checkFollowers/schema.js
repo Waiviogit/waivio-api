@@ -15,7 +15,7 @@ exports.schema = [
   {
     path: '/users/search',
     method: 'GET',
-    case: 1,
+    case: 2,
     fields_path: 'users',
     field_name: 'account',
   },
