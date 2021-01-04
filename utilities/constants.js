@@ -59,3 +59,5 @@ exports.HOT_NEWS_CACHE_SIZE = 1000;
 exports.TREND_NEWS_CACHE_PREFIX = 'trend_locale_cache';
 exports.TREND_FILTERED_NEWS_CACHE_PREFIX = 'trend_filtered_locale_cache';
 exports.TREND_NEWS_CACHE_SIZE = 1000;
+
+exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
