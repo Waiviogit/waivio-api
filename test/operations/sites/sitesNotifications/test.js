@@ -1,5 +1,5 @@
 const {
-  faker, expect, sinon, redis, dropDatabase, _, App, moment, AppModel,
+  expect, sinon, dropDatabase, _,
 } = require('test/testHelper');
 const { AppFactory } = require('test/factories');
 const manage = require('utilities/operations/sites/manage');
