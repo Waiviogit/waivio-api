@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { App } = require('models');
 const { redisSetter } = require('utilities/redis');
 const { NOTIFICATION } = require('constants/sitesConstants');
-const { getManagePage } = require('utilities/operations/sites/manage');
+const manage = require('utilities/operations/sites/manage');
 const notificationsHelper = require('utilities/helpers/notificationsHelper');
 
 exports.balanceNotification = async () => {
@@ -12,7 +12,7 @@ exports.balanceNotification = async () => {
   const requestData = [];
 
   for (const owner of owners) {
-    const { accountBalance, error } = await getManagePage({ userName: owner });
+    const { accountBalance, error } = await manage.getManagePage({ userName: owner });
     if (error) continue;
     const remainingDays = _.get(accountBalance, 'remainingDays', 0);
     const paid = _.get(accountBalance, 'paid');
