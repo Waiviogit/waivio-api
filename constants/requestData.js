@@ -56,7 +56,6 @@ const NOTIFICATIONS_API = {
     HOST: 'http://localhost:4000',
     BASE_URL: '/notifications-api',
     SET_NOTIFICATION: '/set',
-
   },
 };
 
