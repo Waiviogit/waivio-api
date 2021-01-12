@@ -7,8 +7,11 @@ module.exports = async ({
   // eslint-disable-next-line camelcase
   name, limit, skip, userName, app,
 }) => {
-  const { mutedUser } = await mutedUserModel.findOne({ userName: name, mutedForApps: _.get(app, 'host') });
-  if (mutedUser) return { posts: [] };
+  const { result: mutedUsers } = await mutedUserModel.find({
+    condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
+  });
+  if (!_.isEmpty(mutedUsers)) return { posts: [] };
+
   const { user, error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   const additionalCond = _.isEmpty(hiddenPosts)

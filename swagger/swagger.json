@@ -1974,6 +1974,12 @@
           "required" : false,
           "type" : "string"
         }, {
+          "name" : "follower",
+          "in" : "header",
+          "description" : "authorised user",
+          "required" : false,
+          "type" : "string"
+        },{
           "name" : "skip",
           "in" : "query",
           "description" : "count of comment to skip(for infinite scroll)",

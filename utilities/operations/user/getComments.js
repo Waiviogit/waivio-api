@@ -5,10 +5,13 @@ const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('utilitie
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
-  name, start_permlink, limit, skip, app,
+  name, start_permlink, limit, skip, app, userName,
 }) => {
-  const { mutedUser } = await mutedUserModel.findOne({ userName: name, mutedForApps: _.get(app, 'host') });
-  if (mutedUser) return { comments: [] };
+  const { result: mutedUsers } = await mutedUserModel.find({
+    condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
+  });
+  if (!_.isEmpty(mutedUsers)) return { comments: [] };
+
   if (await isGuestUser(name)) {
     return getGuestComments({ name, skip, limit });
   }

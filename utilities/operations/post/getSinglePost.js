@@ -3,7 +3,7 @@ const { getNamespace } = require('cls-hooked');
 const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
 const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
 const {
-  Post, Comment, App, hiddenPostModel,
+  Post, Comment, App, hiddenPostModel, mutedUserModel,
 } = require('models');
 const { postsUtil } = require('utilities/steemApi');
 
@@ -20,11 +20,12 @@ const { postsUtil } = require('utilities/steemApi');
  */
 module.exports = async ({ author, permlink, userName }) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
+  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
   const session = getNamespace('request-session');
   const host = session.get('host');
   const { result: app } = await App.findOne({ host });
   const { error, post: postResult } = await getPost({
-    author, permlink, host, hiddenPosts,
+    author, permlink, host, hiddenPosts, muted: _.map(muted, 'userName'),
   });
 
   if (error) return { error };
@@ -37,7 +38,7 @@ module.exports = async ({ author, permlink, userName }) => {
 };
 
 const getPost = async ({
-  author, permlink, host, hiddenPosts,
+  author, permlink, host, hiddenPosts, muted,
 }) => {
   // get post with specified author(ordinary post)
   const { result: dbPosts, error: dbError } = await Post.findByBothAuthors({ author, permlink });
@@ -50,6 +51,9 @@ const getPost = async ({
     return { error: { status: 404, message: 'Post not found!' } };
   }
   if (_.includes(hiddenPosts, _.get(post, '_id', '').toString())) {
+    return { error: { status: 404, message: 'Post not found!' } };
+  }
+  if (_.includes(muted, _.get(post, 'author', ''))) {
     return { error: { status: 404, message: 'Post not found!' } };
   }
 

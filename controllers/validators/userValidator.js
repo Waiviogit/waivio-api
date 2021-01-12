@@ -183,6 +183,7 @@ exports.comments = Joi.object().keys({
   limit: Joi.number().integer().min(0).default(30),
   skip: Joi.number().integer().min(0).default(0),
   start_permlink: Joi.string().invalid('').default(null),
+  userName: Joi.string().default(''),
 });
 
 exports.followingsState = Joi.object().keys({

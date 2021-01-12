@@ -280,6 +280,7 @@ const getUserComments = async (req, res, next) => {
     limit: req.query.limit,
     skip: req.query.skip,
     start_permlink: req.query.start_permlink,
+    userName: req.headers.follower,
   }, validators.user.comments, next);
 
   if (!value) return;
