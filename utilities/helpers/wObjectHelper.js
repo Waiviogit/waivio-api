@@ -118,6 +118,8 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.RATING:
       case FIELDS_NAMES.PHONE:
       case FIELDS_NAMES.BUTTON:
+      case FIELDS_NAMES.BLOG:
+      case FIELDS_NAMES.FORM:
       case FIELDS_NAMES.GALLERY_ITEM:
       case FIELDS_NAMES.LIST_ITEM:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
