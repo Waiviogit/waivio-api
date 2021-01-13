@@ -697,7 +697,7 @@ describe('On sitesController', async () => {
         sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
         result = await chai.request(app)
           .get('/api/sites/restrictions')
-          .query({ userName: faker.random.string() })
+          .query({ userName: faker.random.string(), host: userApp.host })
           .set({ Origin: userApp.host });
       });
       afterEach(() => {
@@ -719,7 +719,7 @@ describe('On sitesController', async () => {
       it('should response 401', async () => {
         result = await chai.request(app)
           .get('/api/sites/restrictions')
-          .query({ userName: faker.random.string() });
+          .query({ userName: faker.random.string(), host: userApp.host});
         expect(result).to.have.status(401);
       });
     });
