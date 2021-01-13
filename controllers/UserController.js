@@ -63,7 +63,7 @@ const getUserMetadata = async (req, res, next) => {
   const {
     user_metadata: userMetadata,
     error, privateEmail,
-  } = await getMetadata(req.params.userName, req.appData);
+  } = await getMetadata(req.params.userName);
 
   if (error) return next(error);
 
