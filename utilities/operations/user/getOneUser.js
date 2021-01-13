@@ -76,9 +76,7 @@ const getOne = async ({ name, with_followings: withFollowings, app }) => {
   const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
   const { mutedUser } = await mutedUserModel.findOne({ userName: user.name, mutedForApps: _.get(app, 'host') });
 
-  Object.assign(userData, user, counters, { muted: !!mutedUser });
-
-  return { userData };
+  return { userData: Object.assign(userData, user, counters, { muted: !!mutedUser }) };
 };
 
 module.exports = getOne;

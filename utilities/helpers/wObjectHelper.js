@@ -83,9 +83,8 @@ const addDataToFields = ({
   for (const field of fields) {
     // recount field weight and filter votes if black list not empty
     if (!_.isEmpty(blacklist)) {
-      field.weight = _.sumBy(field.active_votes,
-        (o) => { if (!_.includes(blacklist, o.voter)) return o.weight; });
       field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
+      field.weight = _.sumBy(field.active_votes, 'weight');
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {

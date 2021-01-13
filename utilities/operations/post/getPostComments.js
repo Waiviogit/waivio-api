@@ -17,10 +17,11 @@ module.exports = async ({
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ mutedBy: userName }, { mutedForApps: _.get(app, 'host') }] },
   });
-
-  const result = _.differenceWith(comments, hiddenComments,
-    (a, b) => a.author === b.author && a.permlink === b.permlink)
-    .filter((comment) => !_.includes(_.map(mutedUsers, 'userName'), comment.author));
+  const result = _
+    .chain(comments)
+    .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
+    .filter((comment) => !_.includes(_.map(mutedUsers, 'userName'), comment.author))
+    .value();
 
   postState.content = _.keyBy(result, (c) => `${c.author}/${c.permlink}`);
   postState.content[`${author}/${permlink}`] = await mergePostData(postState.content[`${author}/${permlink}`]);
