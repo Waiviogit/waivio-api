@@ -105,4 +105,5 @@ exports.saveConfigurations = Joi.object().keys({
 
 exports.restrictions = Joi.object().keys({
   userName: Joi.string().required(),
+  host: Joi.string().required(),
 });

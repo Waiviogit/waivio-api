@@ -268,7 +268,7 @@ exports.getRestrictions = async (req, res, next) => {
   const { error: authError } = await authoriseUser.authorise(value.userName);
   if (authError) return next(authError);
 
-  const { result, error } = await restrictions.get({ app: req.appData });
+  const { result, error } = await restrictions.get(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };

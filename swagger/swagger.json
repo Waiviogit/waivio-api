@@ -1295,7 +1295,13 @@
           "description" : "userName",
           "required": true,
           "type" : "string"
-        } ],
+        } ,{
+          "name" : "host",
+          "in" : "query",
+          "description" : "site host",
+          "required": true,
+          "type" : "string"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",

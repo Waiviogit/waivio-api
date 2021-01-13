@@ -1,9 +1,13 @@
 const _ = require('lodash');
-const { mutedUserModel, blacklistModel, User } = require('models');
+const {
+  mutedUserModel, blacklistModel, User, App,
+} = require('models');
 
-exports.get = async ({ app }) => {
+exports.get = async ({ host }) => {
+  const { app } = await App.getOne({ host });
   if (!app) return { result: {} };
-  const { result } = await mutedUserModel.find({ condition: { mutedForApps: _.get(app, 'host') }, sort: { _id: -1 } });
+  const { result } = await mutedUserModel
+    .find({ condition: { mutedForApps: host }, sort: { _id: -1 } });
   const { blackLists } = await blacklistModel.find({ user: { $in: [_.get(app, 'owner'), ..._.get(app, 'admins')] } });
   const muted = _.uniq(_.map(result, 'userName'));
 
