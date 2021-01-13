@@ -67,7 +67,7 @@ exports.getWebsitePayments = async ({
     if (!byHost) return { ownerAppNames, payments: [] };
   }
   const condition = host
-    ? { host }
+    ? { host, userName: owner }
     : { $or: [{ userName: owner }, { host: { $in: ownerAppNames } }] };
 
   const { error: paymentError, result: payments } = await websitePayments.find({

@@ -3,6 +3,7 @@ const { OBJECT_BOT } = require('constants/requestData');
 const { STATUSES } = require('constants/sitesConstants');
 const { App } = require('models');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { redisGetter } = require('utilities/redis');
 
 exports.deleteWebsite = async ({ host, userName }) => {
   const { result: app, error } = await App.findOne({
@@ -19,3 +20,7 @@ exports.deleteWebsite = async ({ host, userName }) => {
   }
   return { result };
 };
+
+// const deleteAcivatedWebsite = async (app) => {
+//   const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
+// }
