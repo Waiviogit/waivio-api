@@ -10,5 +10,6 @@ moduleExports.customValidationHelper = require('./customValidationHelper');
 moduleExports.appHelper = require('./appHelper');
 moduleExports.sitesHelper = require('./sitesHelper');
 moduleExports.objectTypeHelper = require('./objectTypeHelper');
+moduleExports.notificationsHelper = require('./notificationsHelper');
 
 module.exports = moduleExports;
