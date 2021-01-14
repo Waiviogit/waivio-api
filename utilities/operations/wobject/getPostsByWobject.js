@@ -1,4 +1,4 @@
-const { Wobj, hiddenPostModel } = require('models');
+const { Wobj, hiddenPostModel, mutedUserModel } = require('models');
 const { getNamespace } = require('cls-hooked');
 const { Post: PostModel } = require('database').models;
 const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
@@ -7,7 +7,9 @@ const _ = require('lodash');
 
 const getPosts = async (data) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
-  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts });
+  const { result: muted = [] } = await mutedUserModel
+    .find({ condition: { mutedBy: data.userName } });
+  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts, muted: _.map(muted, 'userName') });
 
   if (conditionError) return { error: conditionError };
   const postsQuery = PostModel
@@ -32,7 +34,7 @@ const getPosts = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, forApp, lastId, hiddenPosts,
+  author_permlink, skip, limit, user_languages, forApp, lastId, hiddenPosts, muted,
 }) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
@@ -44,6 +46,7 @@ const getWobjFeedCondition = async ({
       ? Object.assign(condition._id, { $nin: hiddenPosts })
       : condition._id = { $nin: hiddenPosts };
   }
+  if (!_.isEmpty(muted)) condition.author = { $nin: muted };
 
   const pipeline = [
     { $match: { author_permlink } },

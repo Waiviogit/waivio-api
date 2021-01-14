@@ -32,7 +32,7 @@ const show = async (req, res, next) => {
   }, validators.user.showSchema, next);
 
   await authorise(value.name);
-  const { userData, error } = await getOneUser(value);
+  const { userData, error } = await getOneUser({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -138,7 +138,7 @@ const blog = async (req, res, next) => {
 
   if (!value) return;
 
-  const { posts, error } = await getBlog(value);
+  const { posts, error } = await getBlog({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -280,11 +280,12 @@ const getUserComments = async (req, res, next) => {
     limit: req.query.limit,
     skip: req.query.skip,
     start_permlink: req.query.start_permlink,
+    userName: req.headers.follower,
   }, validators.user.comments, next);
 
   if (!value) return;
 
-  const { comments, error } = await getComments(value);
+  const { comments, error } = await getComments({ ...value, app: req.appData });
 
   if (error) return next(error);
 

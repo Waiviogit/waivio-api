@@ -3,7 +3,7 @@ const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const {
   sites: {
-    objectsFilter, refunds, authorities, reports,
+    objectsFilter, refunds, authorities, reports, restrictions,
     manage, create, configurations, remove, map, mapCoordinates,
   },
 } = require('utilities/operations');
@@ -255,6 +255,20 @@ exports.getSettings = async (req, res, next) => {
   if (!req.query.host) return next({ status: 422, message: 'App host is required' });
 
   const { result, error } = await sitesHelper.getSettings(req.query.host);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getRestrictions = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.sites.restrictions, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await restrictions.get(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
