@@ -1290,6 +1290,12 @@
           "required" : true,
           "type" : "string"
         },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access-token",
+          "required": true,
+          "type" : "string"
+        },{
           "name" : "userName",
           "in" : "query",
           "description" : "userName",
