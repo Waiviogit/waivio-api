@@ -29,6 +29,7 @@ const show = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
     with_followings: req.query.with_followings,
+    userName: req.headers.follower,
   }, validators.user.showSchema, next);
 
   await authorise(value.name);

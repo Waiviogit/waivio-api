@@ -50,7 +50,9 @@ const getDbUser = async (name) => {
   }
 };
 
-const getOne = async ({ name, with_followings: withFollowings, app }) => {
+const getOne = async ({
+  name, with_followings: withFollowings, app, userName,
+}) => {
   const { userData = {} } = await userSteemUtil.getAccount(name);
   // eslint-disable-next-line prefer-const
   let { user, error: dbError } = await getDbUser(name);// get user data from db
@@ -74,7 +76,8 @@ const getOne = async ({ name, with_followings: withFollowings, app }) => {
   } else user = _.omit(user, ['users_follow', 'objects_follow']);
 
   const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
-  const { mutedUser } = await mutedUserModel.findOne({ userName: user.name, mutedForApps: _.get(app, 'host') });
+  const { mutedUser } = await mutedUserModel
+    .findOne({ $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: user.name }] });
 
   return { userData: Object.assign(userData, user, counters, { muted: !!mutedUser }) };
 };
