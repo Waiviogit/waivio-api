@@ -30,6 +30,8 @@ exports.FIELDS_NAMES = {
   LIST_ITEM: 'listItem',
   MENU_ITEM: 'menuItem',
   SORT_CUSTOM: 'sortCustom',
+  BLOG: 'blog',
+  FORM: 'form',
 };
 
 exports.OBJECT_TYPES = {
@@ -78,6 +80,8 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.RATING,
   this.FIELDS_NAMES.BUTTON,
   this.FIELDS_NAMES.PHONE,
+  this.FIELDS_NAMES.BLOG,
+  this.FIELDS_NAMES.FORM,
 ];
 
 exports.REQUIREDFIELDS = [
@@ -105,6 +109,8 @@ exports.REQUIREDFIELDS = [
   this.FIELDS_NAMES.STATUS,
   this.FIELDS_NAMES.TAG_CATEGORY,
   this.FIELDS_NAMES.CATEGORY_ITEM,
+  this.FIELDS_NAMES.BLOG,
+  this.FIELDS_NAMES.FORM,
 ];
 
 exports.REQUIREDFIELDS_PARENT = [
