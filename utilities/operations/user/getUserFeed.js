@@ -1,5 +1,5 @@
 const {
-  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel,
+  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel,
 } = require('models');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
@@ -23,6 +23,7 @@ const getFeed = async ({
   if (filterError) return { error: filterError };
 
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
+  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
 
   const { posts, error: postsError } = await Post.getByFollowLists({
     skip,
@@ -32,6 +33,7 @@ const getFeed = async ({
     hiddenPosts,
     user_languages,
     author_permlinks: wobjects,
+    muted: _.map(muted, 'userName'),
   });
 
   if (postsError) return { error: postsError };

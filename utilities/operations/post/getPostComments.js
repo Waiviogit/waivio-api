@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { postsUtil } = require('utilities/steemApi');
 const { mergeSteemCommentsWithDB } = require('utilities/helpers/commentHelper');
 const { mergePostData } = require('utilities/helpers/postHelper');
-const { hiddenCommentModel } = require('models');
+const { hiddenCommentModel, mutedUserModel } = require('models');
 
 module.exports = async ({
   author, permlink, category, userName, app,
@@ -14,8 +14,14 @@ module.exports = async ({
   const moderators = _.get(app, 'moderators', []);
   const { hiddenComments } = await hiddenCommentModel.getHiddenComments(userName, ...moderators);
 
-  const result = _.differenceWith(comments, hiddenComments,
-    (a, b) => a.author === b.author && a.permlink === b.permlink);
+  const { result: mutedUsers } = await mutedUserModel.find({
+    condition: { $or: [{ mutedBy: userName }, { mutedForApps: _.get(app, 'host') }] },
+  });
+  const result = _
+    .chain(comments)
+    .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
+    .filter((comment) => !_.includes(_.map(mutedUsers, 'userName'), comment.author))
+    .value();
 
   postState.content = _.keyBy(result, (c) => `${c.author}/${c.permlink}`);
   postState.content[`${author}/${permlink}`] = await mergePostData(postState.content[`${author}/${permlink}`]);
