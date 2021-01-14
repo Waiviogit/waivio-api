@@ -61,7 +61,6 @@ exports.getWebsitePayments = async ({
   if (host) {
     ({ result: byHost } = await App.findOne({
       inherited: true,
-      $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
       host,
     }));
     if (!byHost) return { ownerAppNames, payments: [] };
