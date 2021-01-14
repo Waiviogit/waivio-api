@@ -30,6 +30,7 @@ exports.getPostFiltersSchema = Joi.object().keys({
 exports.showSchema = Joi.object().keys({
   name: Joi.string().required(),
   with_followings: Joi.bool().default(false),
+  userName: Joi.string().default(''),
 });
 
 exports.objectsFollowSchema = Joi.object().keys({
