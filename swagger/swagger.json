@@ -647,7 +647,7 @@
         },{
           "name" : "params",
           "in" : "body",
-          "description" : "**userName** - name of user\n, **topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
+          "description" : "**userName** - name of user\n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates **center** (it is array with numbers [latitude, longitude])- coordinates for client \n**zoom** - number, zoom on map (client) \n**height** - string, height on map (client) \n**width** - string, width on map (client) \n",
           "required": true,
           "schema": {
            "type": "object",
@@ -660,7 +660,13 @@
                   ],
                   "bottomPoint": [
                     -131.139244,49.152501
-                  ]
+                  ],
+                  "center" : [
+                  -110.479002, 70.117143
+                  ],
+                  "zoom" : 5,
+                  "height" : "640px",
+                  "width" : "480px"
                 }]
             }
           }
@@ -1288,6 +1294,12 @@
           "in" : "header",
           "description" : "Domain of website",
           "required" : true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access-token",
+          "required": true,
           "type" : "string"
         },{
           "name" : "userName",
