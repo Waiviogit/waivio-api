@@ -9,7 +9,7 @@ exports.sendNotification = async (reqData) => {
   const URL = HOST + BASE_URL + SET_NOTIFICATION;
 
   try {
-    await axios.post(URL, reqData, { headers: { api_key: process.env.NOTIFICATIONS_KEY } });
+    await axios.post(URL, reqData, { headers: { API_KEY: process.env.NOTIFICATIONS_KEY } });
   } catch (error) {
     Sentry.captureException(error);
     return sendSentryNotification(error);
