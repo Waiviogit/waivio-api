@@ -83,8 +83,7 @@ exports.siteMapCoordinates = Joi.object().keys({
     zoom: Joi.number().required(),
     height: Joi.string().required(),
     width: Joi.string().required(),
-  })).min(1).max(30)
-    .required(),
+  })).max(30).required(),
 });
 
 exports.objectsFilter = Joi.object().keys({
