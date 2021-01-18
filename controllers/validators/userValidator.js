@@ -30,6 +30,7 @@ exports.getPostFiltersSchema = Joi.object().keys({
 exports.showSchema = Joi.object().keys({
   name: Joi.string().required(),
   with_followings: Joi.bool().default(false),
+  userName: Joi.string().default(''),
 });
 
 exports.objectsFollowSchema = Joi.object().keys({
@@ -184,6 +185,7 @@ exports.comments = Joi.object().keys({
   limit: Joi.number().integer().min(0).default(30),
   skip: Joi.number().integer().min(0).default(0),
   start_permlink: Joi.string().invalid('').default(null),
+  userName: Joi.string().default(''),
 });
 
 exports.followingsState = Joi.object().keys({

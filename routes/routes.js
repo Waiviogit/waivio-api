@@ -64,6 +64,8 @@ sitesRoutes.route('/sites/map')
   .put(sitesController.setMapCoordinates);
 sitesRoutes.route('/sites/settings')
   .get(sitesController.getSettings);
+sitesRoutes.route('/sites/restrictions')
+  .get(sitesController.getRestrictions);
 
 // endregion
 

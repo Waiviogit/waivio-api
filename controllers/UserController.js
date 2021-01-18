@@ -29,10 +29,11 @@ const show = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
     with_followings: req.query.with_followings,
+    userName: req.headers.follower,
   }, validators.user.showSchema, next);
 
   await authorise(value.name);
-  const { userData, error } = await getOneUser(value);
+  const { userData, error } = await getOneUser({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -138,7 +139,7 @@ const blog = async (req, res, next) => {
 
   if (!value) return;
 
-  const { json, error } = await getBlog(value);
+  const { json, error } = await getBlog({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -194,11 +195,11 @@ const searchUsers = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await searchByUsers({ ...value, string: value.searchString });
+  const { users, hasMore, error } = await searchByUsers({ ...value, string: value.searchString });
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: users };
+  res.result = { status: 200, json: { users, hasMore } };
   next();
 };
 
@@ -280,11 +281,12 @@ const getUserComments = async (req, res, next) => {
     limit: req.query.limit,
     skip: req.query.skip,
     start_permlink: req.query.start_permlink,
+    userName: req.headers.follower,
   }, validators.user.comments, next);
 
   if (!value) return;
 
-  const { comments, error } = await getComments(value);
+  const { comments, error } = await getComments({ ...value, app: req.appData });
 
   if (error) return next(error);
 

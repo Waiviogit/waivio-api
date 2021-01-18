@@ -55,7 +55,7 @@ exports.getWebsitePayments = async ({
   let byHost;
   const { result: apps, error: appsError } = await App.find({
     owner, inherited: true,
-  });
+  }, { _id: -1 });
   if (appsError) return { error: appsError };
   const ownerAppNames = _.map(apps, 'host');
   if (host) {

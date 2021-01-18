@@ -45,6 +45,8 @@ const MapPoints = new Schema({
   bottomPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
   center: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
   zoom: { type: Number, required: true },
+  height: { type: String }, // for client to display zones
+  width: { type: String }, // for client to display zones
 }, { _id: false });
 
 const Colors = new Schema({
