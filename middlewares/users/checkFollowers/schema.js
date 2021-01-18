@@ -62,8 +62,9 @@ exports.schema = [
   {
     path: '/user/:userName/blog',
     method: 'POST',
-    case: 1,
+    case: 2,
     field_name: 'author',
+    fields_path: 'posts',
   },
   {
     path: '/posts',
