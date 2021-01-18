@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer,
-  setMarkers, getObjectsFollow, getPostsByTag,
+  setMarkers, getObjectsFollow,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const validators = require('controllers/validators');
