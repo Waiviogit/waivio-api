@@ -1958,9 +1958,20 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/post"
+              "type" : "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items" : {
+                    "$ref" : "#/definitions/post"
+                  }
+                },
+                "tags": {
+                  "type": "array",
+                  "items" : {
+                    "$ref" : "#/definitions/postTags"
+                  }
+                }
               }
             }
           }
@@ -4324,6 +4335,20 @@
         }
       }
     },
+    "postTags": {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type": "string"
+        },
+        "counter" : {
+          "type": "number"
+        },
+        "author_permlink" : {
+          "type": "string"
+        }
+      }
+    },
     "userMetadata" : {
       "type" : "object",
       "properties" : {
@@ -4660,7 +4685,10 @@
           "type" : "string"
         },
         "tagsCondition" : {
-          "type": "object"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
