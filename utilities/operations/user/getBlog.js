@@ -7,6 +7,7 @@ const { getTagsByUser } = require('utilities/helpers/postHelper');
 module.exports = async ({
   name, limit, skip, userName, app, tagsArray,
 }) => {
+  const additionalCond = {};
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
   });
@@ -14,7 +15,7 @@ module.exports = async ({
 
   const { error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-  const additionalCond = {};
+
   if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
   if (!_.isEmpty(tagsArray)) Object.assign(additionalCond, { 'wobjects.author_permlink': { $in: tagsArray } });
 

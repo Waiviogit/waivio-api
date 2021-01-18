@@ -301,16 +301,14 @@ const getTagsByUser = async ({ author }) => {
 
   _.forEach(posts, (post) => {
     _.forEach(post.wobjects, (wobject) => {
-      const wobj = tags.find((el) => el.author_permlink === wobject.author_permlink);
-      if (wobj) {
-        wobj.counter++;
-      } else {
-        tags.push({
+      const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
+      existsInTags
+        ? existsInTags.counter++
+        : tags.push({
           name: _.get(wobject, 'tagged', _.get(wobject, 'objectName', wobject.author_permlink)),
           counter: 1,
           author_permlink: wobject.author_permlink,
         });
-      }
     });
   });
 
