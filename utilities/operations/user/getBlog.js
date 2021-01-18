@@ -37,5 +37,5 @@ module.exports = async ({
   });
 
   const { tags } = await getTagsByUser({ author: name, skip });
-  return { json: { tags, posts } };
+  return { tags, posts };
 };

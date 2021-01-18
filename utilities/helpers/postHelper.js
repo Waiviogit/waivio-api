@@ -298,6 +298,7 @@ const additionalSponsorObligations = async (posts) => {
 const getTagsByUser = async ({ author }) => {
   const tags = [];
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
+
   _.forEach(posts, (post) => {
     _.forEach(post.wobjects, (wobject) => {
       const wobj = tags.find((el) => el.author_permlink === wobject.author_permlink);
@@ -312,9 +313,8 @@ const getTagsByUser = async ({ author }) => {
       }
     });
   });
-  tags.sort((a, b) => b.counter - a.counter);
 
-  return { tags };
+  return { tags: tags.sort((a, b) => b.counter - a.counter) };
 };
 
 module.exports = {

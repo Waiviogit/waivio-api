@@ -139,11 +139,11 @@ const blog = async (req, res, next) => {
 
   if (!value) return;
 
-  const { json, error } = await getBlog({ ...value, app: req.appData });
+  const { posts, tags, error } = await getBlog({ ...value, app: req.appData });
 
   if (error) return next(error);
 
-  res.result = { status: 200, json };
+  res.result = { status: 200, json: { tags, posts } };
   res.params = req.params;
   next();
 };
