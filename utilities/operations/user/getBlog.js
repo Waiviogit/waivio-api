@@ -28,7 +28,7 @@ module.exports = async ({
   posts.forEach((post) => {
     if (post.author !== name) post.reblogged_by = [name];
   });
-  const { tags } = await getTagsByUser({ author: name, skip });
+  const { tags } = await getTagsByUser({ author: name });
 
   return { tags, posts };
 };

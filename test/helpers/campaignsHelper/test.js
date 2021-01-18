@@ -21,10 +21,6 @@ describe('Ob addCampaignsToWobjects', async () => {
         weight: _.random(0, 10),
       }),
       ];
-      // obj = await ObjectFactory.Create({
-      //   author_permlink: permlink,
-      //   object_type: faker.random.word(),
-      // });
       budget = _.random(500, 1000);
       minreward = _.random(10, 50);
       maxreward = _.random(50, 100);
