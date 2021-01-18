@@ -31,7 +31,6 @@ exports.getManagePage = async ({ userName }) => {
 
   const websites = [];
   for (const site of apps) {
-    if (site.deactivatedAt && site.deactivatedAt < moment.utc().subtract(6, 'month').toDate()) continue;
     websites.push(sitesHelper.getWebsiteData(payments, site));
   }
 

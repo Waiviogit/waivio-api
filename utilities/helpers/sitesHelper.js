@@ -34,7 +34,6 @@ exports.getUserApps = async (params) => {
     {
       owner: params.userName,
       inherited: true,
-      $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
     },
     { _id: -1 },
   );
