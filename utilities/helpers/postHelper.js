@@ -300,13 +300,12 @@ const getTagsByUser = async ({ author }) => {
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
   _.forEach(posts, (post) => {
     _.forEach(post.wobjects, (wobject) => {
-      const tag = _.get(wobject, 'tagged', _.get(post, 'objectName', 'author_permlink'));
-      const wobj = tags.find((el) => el.author_permlink === tag);
+      const wobj = tags.find((el) => el.author_permlink === wobject.author_permlink);
       if (wobj) {
         wobj.counter++;
       } else {
         tags.push({
-          name: tag,
+          name: _.get(wobject, 'tagged', _.get(wobject, 'objectName', wobject.author_permlink)),
           counter: 1,
           author_permlink: wobject.author_permlink,
         });

@@ -11,7 +11,7 @@ module.exports = async ({
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
   });
-  if (!_.isEmpty(mutedUsers)) return { posts: [] };
+  if (!_.isEmpty(mutedUsers)) return { posts: [], tags: [] };
 
   const { user, error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
