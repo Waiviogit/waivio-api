@@ -40,7 +40,6 @@ describe('On manage.js', async () => {
       expect(beforeDelete.accountBalance.paid).to.be.eq(afterDelete.accountBalance.paid);
     });
     it('should paid be eq amount - paymentsCount', async () => {
-      console.log(beforeDelete);
       expect(beforeDelete.accountBalance.paid).to.be.eq(amount - paymentsCount);
     });
   });
