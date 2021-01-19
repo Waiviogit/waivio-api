@@ -7,7 +7,7 @@ const manage = require('utilities/operations/sites/manage');
 
 describe('On manage.js', async () => {
   describe('On getManagePage when owner delete his site', async () => {
-    let beforeDelete, afterDelete, amount;
+    let beforeDelete, afterDelete, amount, paymentsCount;
     beforeEach(async () => {
       await dropDatabase();
       const owner = faker.random.string();
@@ -15,8 +15,9 @@ describe('On manage.js', async () => {
       const app = await AppFactory.Create({ owner });
       const { host } = app;
       amount = _.random(5, 10);
+      paymentsCount = _.random(1, 4);
       await WebsitePaymentsFactory.Create({ name: owner, amount });
-      for (let i = 0; i < amount - 1; i++) {
+      for (let i = 0; i < paymentsCount; i++) {
         await WebsitePaymentsFactory.Create({
           name: owner, amount: 1, type: PAYMENT_TYPES.WRITE_OFF, host,
         });
@@ -36,7 +37,11 @@ describe('On manage.js', async () => {
       afterDelete = await manage.getManagePage({ userName: owner });
     });
     it('should paid be the same before delete and after delete', async () => {
-      expect(beforeDelete.paid).to.be.eq(afterDelete.paid);
+      expect(beforeDelete.accountBalance.paid).to.be.eq(afterDelete.accountBalance.paid);
+    });
+    it('should paid be eq amount - paymentsCount', async () => {
+      console.log(beforeDelete);
+      expect(beforeDelete.accountBalance.paid).to.be.eq(amount - paymentsCount);
     });
   });
 });
