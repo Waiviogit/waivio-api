@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const moment = require('moment');
 const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
 const { STATUSES } = require('../../../constants/sitesConstants.js');
