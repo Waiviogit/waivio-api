@@ -18,15 +18,16 @@ exports.getManagePage = async ({ userName }) => {
   }) || 0;
   const dataForPayments = await sitesHelper.getPaymentsData();
   const prices = { minimumValue: FEE.minimumValue, perUser: FEE.perUser };
+
+  accountBalance.paid -= _.sumBy(payments, (payment) => {
+    if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
+  }) || 0;
+
   if (!apps.length) {
     return {
       accountBalance, dataForPayments, websites: [], prices,
     };
   }
-
-  accountBalance.paid -= _.sumBy(payments, (payment) => {
-    if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
-  }) || 0;
 
   const websites = [];
   for (const site of apps) {
