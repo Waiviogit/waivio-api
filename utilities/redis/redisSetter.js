@@ -3,7 +3,7 @@ const {
   importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
 } = require('./redis');
 const {
-  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX, WEBSITE_SUSPENDED_COUNT,
 } = require('../constants');
 
 exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
@@ -109,3 +109,9 @@ function validateUpdateNewsCache(ids, locale) {
 
 exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zaddAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
 exports.incrementTag = async ({ categoryName, tag }) => tagCategoriesClient.zincrbyAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, 1, tag);
+
+exports.incrementWebsitesSuspended = async ({ key, expire }) => {
+  const counter = await appUsersStatistics.incrAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`);
+  await appUsersStatistics.expireAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
+  return counter;
+};

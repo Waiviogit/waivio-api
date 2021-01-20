@@ -6,6 +6,7 @@ const { updateHotTrendCache } = require('./updateMainFeedsCache');
 const { importUsersJob, importErroredUsersJob } = require('./createNewUsers');
 const { collectWobjExpertsJob } = require('./collectWobjTopUsers');
 const { sendDailyWebsiteDebt } = require('./setDailyWebsiteDebt');
+const { sendBalanceNotification } = require('./websiteBalanceNotifications');
 
 objTypeExpertsJob.start();
 collectExpertsJob.start();
@@ -16,3 +17,4 @@ importUsersJob.start();
 importErroredUsersJob.start();
 collectWobjExpertsJob.start();
 sendDailyWebsiteDebt.start();
+sendBalanceNotification.start();

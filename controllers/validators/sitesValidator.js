@@ -79,16 +79,11 @@ exports.siteMapCoordinates = Joi.object().keys({
         Joi.number().min(-180).max(180),
         Joi.number().min(-90).max(90),
       ).required(),
-    center: Joi
-      .array()
-      .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
-      ).required(),
+    center: Joi.array().items(Joi.number()).required(),
     zoom: Joi.number().required(),
-  })).min(1).max(30)
-    .required(),
-
+    height: Joi.string().required(),
+    width: Joi.string().required(),
+  })).max(30).required(),
 });
 
 exports.objectsFilter = Joi.object().keys({
@@ -102,3 +97,8 @@ exports.saveConfigurations = Joi.object().keys({
   host: Joi.string().required(),
   configuration: Joi.object().required(),
 }).options({ allowUnknown: true });
+
+exports.restrictions = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+});
