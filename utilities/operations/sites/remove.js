@@ -17,8 +17,8 @@ exports.deleteWebsite = async ({ host, userName }) => {
   if (error || !app) return { error: error || { status: 404, message: 'App not found' } };
 
   if (app.status === STATUSES.INACTIVE) {
-    const { error: activatedError } = await deleteActivatedWebsite(app);
-    if (activatedError) return { error: activatedError };
+    const { error: inactiveError } = await deleteInactiveWebsite(app);
+    if (inactiveError) return { error: inactiveError };
   }
 
   const { result, error: createError } = await objectBotRequests.sendCustomJson({ host, userName },
@@ -32,7 +32,7 @@ exports.deleteWebsite = async ({ host, userName }) => {
   return { result };
 };
 
-const deleteActivatedWebsite = async (app) => {
+const deleteInactiveWebsite = async (app) => {
   const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
   const countUsers = _.get(todayUsers, 'length', 0);
   const { accountBalance, error } = await manage.getManagePage({ userName: app.owner });

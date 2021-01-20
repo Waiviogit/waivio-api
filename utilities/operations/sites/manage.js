@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
+const { PAYMENT_TYPES, FEE, STATUSES } = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
-const { STATUSES } = require('../../../constants/sitesConstants.js');
 
 /** Get data for manage page. In this method, we generate a report for the site owner,
  * in which we include the average data on users on his sites for the last 7 days,
