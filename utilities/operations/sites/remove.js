@@ -48,8 +48,8 @@ const deleteInactiveWebsite = async (app) => {
   const { error: invoiceError } = await objectBotRequests.sendCustomJson(data,
     `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
   if (invoiceError) {
-    Sentry.captureException(error);
-    await sendSentryNotification(error);
+    Sentry.captureException(invoiceError);
+    await sendSentryNotification(invoiceError);
     return { error: invoiceError };
   }
   await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
