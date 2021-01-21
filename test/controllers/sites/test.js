@@ -535,6 +535,8 @@ describe('On sitesController', async () => {
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
         center: [+faker.address.longitude(), +faker.address.latitude()],
         zoom: faker.random.number(),
+        height: faker.random.string(),
+        width: faker.random.string(),
       }];
     });
     afterEach(() => {
@@ -683,6 +685,44 @@ describe('On sitesController', async () => {
           .get('/api/sites/settings')
           .query({ host: faker.random.string() });
         expect(result).to.have.status(404);
+      });
+    });
+  });
+
+  describe('On get restrictions', async () => {
+    let userApp, result;
+    beforeEach(async () => {
+      userApp = await AppFactory.Create();
+    });
+    describe('On OK', async () => {
+      beforeEach(async () => {
+        sinon.stub(authoriseUser, 'authorise').returns(Promise.resolve({ result: 'ok' }));
+        result = await chai.request(app)
+          .get('/api/sites/restrictions')
+          .query({ userName: faker.random.string(), host: userApp.host })
+          .set({ Origin: userApp.host });
+      });
+      afterEach(() => {
+        sinon.restore();
+      });
+      it('should response 200', async () => {
+        expect(result).to.have.status(200);
+      });
+      it('should response body have all keys', async () => {
+        expect(result.body).to.have.all.keys(['mutedUsers', 'blacklistUsers', 'mutedCount', 'blacklistedCount']);
+      });
+    });
+    describe('On Error', async () => {
+      it('should response 422', async () => {
+        result = await chai.request(app)
+          .get('/api/sites/restrictions');
+        expect(result).to.have.status(422);
+      });
+      it('should response 401', async () => {
+        result = await chai.request(app)
+          .get('/api/sites/restrictions')
+          .query({ userName: faker.random.string(), host: userApp.host});
+        expect(result).to.have.status(401);
       });
     });
   });

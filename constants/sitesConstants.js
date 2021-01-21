@@ -70,3 +70,9 @@ exports.GET_DEFAULT_COLORS = () => {
   Object.values(this.SUPPORTED_COLORS).forEach((color) => colors[color] = null);
   return colors;
 };
+
+exports.NOTIFICATION = {
+  WARNING: 'Warning: website account balance may run out in',
+  ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
+  BALANCE_ID: 'webSiteBalance',
+};

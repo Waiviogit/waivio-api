@@ -3,12 +3,35 @@ const _ = require('lodash');
 const UserWobjects = require('models/UserWobjects');
 const Wobj = require('models/wObjectModel');
 const ObjectTypeModel = require('models/ObjectTypeModel');
+const blacklistModel = require('models/blacklistModel');
 const { postsUtil } = require('utilities/steemApi');
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
 
+const getBlacklist = async (admins) => {
+  let followList = [];
+  let resultBlacklist = [];
+  if (_.isEmpty(admins)) return resultBlacklist;
+
+  const { blackLists } = await blacklistModel
+    .find({ user: { $in: admins } }, { followLists: 1, blackList: 1 });
+
+  _.forEach(blackLists, (el) => {
+    followList = _.union(followList, el.followLists);
+    resultBlacklist = _.union(resultBlacklist, el.blackList);
+  });
+  if (_.isEmpty(followList)) return resultBlacklist;
+
+  const { blackLists: fromFollows } = await blacklistModel
+    .find({ user: { $in: followList } }, { blackList: 1 });
+
+  _.forEach(fromFollows, (el) => {
+    resultBlacklist = _.union(resultBlacklist, el.blackList);
+  });
+  return resultBlacklist;
+};
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
   const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }, '-_id weight');
@@ -52,12 +75,17 @@ const getFieldVoteRole = (vote) => {
 };
 
 const addDataToFields = ({
-  fields, filter, admins, ownership, administrative, isOwnershipObj, owner,
+  fields, filter, admins, ownership, administrative, isOwnershipObj, owner, blacklist = [],
 }) => {
   /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
 
   for (const field of fields) {
+    // recount field weight and filter votes if black list not empty
+    if (!_.isEmpty(blacklist)) {
+      field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
+      field.weight = _.sumBy(field.active_votes, 'weight');
+    }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
       vote.timestamp = vote._id.getTimestamp().valueOf();
@@ -313,6 +341,7 @@ const processWobjects = async ({
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
+    const owner = _.get(app, 'owner');
     const admins = _.get(app, 'admins', []);
     const ownership = _.intersection(
       _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
@@ -320,7 +349,7 @@ const processWobjects = async ({
     const administrative = _.intersection(
       _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
-
+    const blacklist = await getBlacklist([owner, ...admins]);
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
@@ -335,7 +364,8 @@ const processWobjects = async ({
       admins,
       ownership,
       administrative,
-      owner: _.get(app, 'owner'),
+      owner,
+      blacklist,
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);

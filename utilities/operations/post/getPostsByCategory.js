@@ -8,7 +8,7 @@ const {
 const { getNamespace } = require('cls-hooked');
 const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
-const { hiddenPostModel } = require('models');
+const { hiddenPostModel, mutedUserModel } = require('models');
 const hotTrandGetter = require('./feedCache/hotTrandGetter');
 
 const objectIdFromDaysBefore = (daysCount) => {
@@ -26,7 +26,7 @@ const objectIdFromDaysBefore = (daysCount) => {
 
 // eslint-disable-next-line camelcase
 const makeConditions = ({
-  category, user_languages: languages, forApp, lastId, hiddenPosts,
+  category, user_languages: languages, forApp, lastId, hiddenPosts, muted,
 }) => {
   let cond = {};
   let sort = {};
@@ -67,6 +67,7 @@ const makeConditions = ({
       ? Object.assign(cond._id, { $nin: hiddenPosts })
       : cond._id = { $nin: hiddenPosts };
   }
+  if (!_.isEmpty(muted)) cond.author = { $nin: muted };
   cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
@@ -77,15 +78,17 @@ module.exports = async ({
 }) => {
   // get user blocked posts id
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName, { postId: -1 });
+  // get user muted list
+  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
   // try to get posts from cache
   const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp, onlyCrypto, hiddenPosts,
+    skip, limit, user_languages, category, forApp, onlyCrypto, hiddenPosts, muted: _.map(muted, 'userName'),
   });
   if (cachedPosts) return { posts: cachedPosts };
   if (!cachedPosts && onlyCrypto) return { posts: [] };
 
   const { cond, sort } = makeConditions({
-    category, user_languages, forApp, lastId, hiddenPosts,
+    category, user_languages, forApp, lastId, hiddenPosts, muted: _.map(muted, 'userName'),
   });
 
   const postsQuery = Post
@@ -109,7 +112,7 @@ module.exports = async ({
 };
 
 const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts,
+  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts, muted,
 }) => {
   if (onlyCrypto) category = 'beaxyWObjCache';
   let res;
@@ -117,21 +120,27 @@ const getFromCache = async ({
     case 'hot':
       if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getHot({
-          skip, limit, locales, forApp, hiddenPosts,
+          skip, limit, locales, forApp, hiddenPosts, muted,
         });
       }
       break;
     case 'beaxyWObjCache':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, hiddenPosts,
+          skip,
+          limit,
+          muted,
+          forApp,
+          locales,
+          hiddenPosts,
+          prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
         });
       }
       break;
     case 'trending':
       if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
         res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX, hiddenPosts,
+          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX, hiddenPosts, muted,
         });
       }
       break;
