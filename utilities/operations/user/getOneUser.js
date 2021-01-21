@@ -76,10 +76,18 @@ const getOne = async ({
   } else user = _.omit(user, ['users_follow', 'objects_follow']);
 
   const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
-  const { mutedUser } = await mutedUserModel
-    .findOne({ $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: user.name }] });
 
-  return { userData: Object.assign(userData, user, counters, { muted: !!mutedUser }) };
+  const { result: mutedUsers } = await mutedUserModel.find({
+    condition:
+      { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: user.name }] },
+  });
+
+  return {
+    userData: Object.assign(userData, user, counters, {
+      muted: !_.isEmpty(mutedUsers),
+      mutedBy: _.reduce(mutedUsers, (acc, el) => (_.includes(el.mutedForApps, _.get(app, 'host')) ? [...acc, el.mutedBy] : acc), []),
+    }),
+  };
 };
 
 module.exports = getOne;
