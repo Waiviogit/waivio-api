@@ -85,7 +85,7 @@ const getOne = async ({
   return {
     userData: Object.assign(userData, user, counters, {
       muted: !_.isEmpty(mutedUsers),
-      mutedByModerator: !!_.reduce(mutedUsers, (acc, ell) => { if (_.includes(ell.mutedForApps, _.get(app, 'host'))) return true; }, false),
+      mutedBy: _.reduce(mutedUsers, (acc, el) => (_.includes(el.mutedForApps, _.get(app, 'host')) ? [...acc, el.mutedBy] : acc), []),
     }),
   };
 };
