@@ -1971,6 +1971,9 @@
                   "items" : {
                     "$ref" : "#/definitions/postTags"
                   }
+                },
+                "hasMore" : {
+                  "type": "boolean"
                 }
               }
             }

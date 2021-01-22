@@ -20,7 +20,7 @@ module.exports = async ({
   if (!_.isEmpty(tagsArray)) Object.assign(additionalCond, { 'wobjects.author_permlink': { $in: tagsArray } });
 
   const { posts, error: postError } = await Post.getBlog({
-    limit, name, skip, additionalCond,
+    limit: limit + 1, name, skip, additionalCond,
   });
 
   if (userError || postError) return { error: userError || postError };
@@ -31,5 +31,5 @@ module.exports = async ({
   });
   const { tags } = await getTagsByUser({ author: name });
 
-  return { tags, posts };
+  return { tags, posts: posts.slice(0, limit), hasMore: posts.length === limit + 1 };
 };
