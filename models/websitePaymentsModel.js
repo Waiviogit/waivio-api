@@ -23,3 +23,11 @@ exports.findOne = async (condition) => {
     return { error };
   }
 };
+
+exports.distinct = async ({ field, query = {} }) => {
+  try {
+    return { result: await WebsitePayments.distinct(field, query).lean() };
+  } catch (error) {
+    return { error };
+  }
+};

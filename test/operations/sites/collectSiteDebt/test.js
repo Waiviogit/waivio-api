@@ -92,11 +92,6 @@ describe('on collectSiteDebts', async () => {
           },
           `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
         });
-        it('should not call objects bot method if site deactivated > day ago', async () => {
-          await App.updateOne({ _id: app._id }, { deactivatedAt: moment.utc().subtract(2, 'd').toDate() });
-          await collectSiteDebts.dailyDebt(1);
-          expect(objectBotRequests.sendCustomJson.notCalled).to.be.true;
-        });
       });
     });
 
