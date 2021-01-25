@@ -912,7 +912,7 @@ describe('On wobjectHelper', async () => {
 
     it('should return /object/author_permlink if can not find sortCustom in listItem', async () => {
       obj = {
-        object_type: _.sample(Object.values(OBJECT_TYPES)),
+        object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['LIST']))),
         author_permlink: faker.random.string(),
         sortCustom: [menuPage.body],
       };
