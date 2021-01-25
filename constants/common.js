@@ -2,6 +2,11 @@ exports.ERROR_MESSAGE = {
   UNAVAILABLE: 'Service Unavailable',
   PARSE_IMAGE: 'Error parse image',
   UPLOAD_IMAGE: 'Error upload image',
+  NOT_FOUND: 'Not Found',
+};
+
+exports.RESPONSE_STATUS = {
+  NOT_FOUND: 404,
 };
 
 exports.AWSS3_IMAGE_PARAMS = {

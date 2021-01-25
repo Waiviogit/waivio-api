@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer,
-  setMarkers, getObjectsFollow,
+  setMarkers, getObjectsFollow, getGeoByIp,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const validators = require('controllers/validators');
@@ -338,6 +338,15 @@ const modalWindowMarker = async (req, res, next) => {
   next();
 };
 
+const getGeolocation = async (req, res, next) => {
+  const { location, error } = await getGeoByIp(req.headers['x-real-ip']);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: location };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -359,4 +368,5 @@ module.exports = {
   followingsState,
   usersData,
   modalWindowMarker,
+  getGeolocation,
 };

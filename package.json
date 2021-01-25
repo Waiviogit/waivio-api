@@ -38,6 +38,7 @@
     "jpeg-autorotate": "^5.0.3",
     "lodash": "^4.17.15",
     "migrate-mongoose": "^3.2.2",
+    "mmdb-reader": "^1.2.0",
     "moment": "^2.24.0",
     "mongoose": "^5.3.5",
     "mongoose-float": "^1.0.4",
