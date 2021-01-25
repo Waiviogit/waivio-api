@@ -17,8 +17,8 @@ exports.deleteWebsite = async ({ host, userName }) => {
   if (error || !app) return { error: error || { status: 404, message: 'App not found' } };
 
   if (app.status === STATUSES.INACTIVE) {
-    const { error: inactiveError } = await deleteInactiveWebsite(app);
-    if (inactiveError) return { error: inactiveError };
+    const deleteResult = await deleteInactiveWebsite(app);
+    if (_.has(deleteResult, 'error')) return { error: deleteResult.error };
   }
 
   const { result, error: createError } = await objectBotRequests.sendCustomJson({ host, userName },
