@@ -13,6 +13,7 @@ const Create = async ({
     blockNum: faker.random.number(),
     createdAt: createdAt || new Date(),
   };
+  if (paymentData.type === PAYMENT_TYPES.TRANSFER) delete paymentData.host;
   const payment = new WebsitePayments(paymentData);
   await payment.save();
 

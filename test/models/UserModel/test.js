@@ -120,7 +120,7 @@ describe('UserModel', () => {
       await dropDatabase();
       usersCount = _.random(1, 10);
       for (let iter = 0; iter < usersCount; iter++) {
-        await UsersFactory.Create({ name: `asdf_${faker.lorem.word()}` });
+        await UsersFactory.Create({ name: `asdf_${faker.random.string()}` });
       }
     });
     describe('Should test array', async () => {
