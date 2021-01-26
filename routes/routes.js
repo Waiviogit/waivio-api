@@ -135,7 +135,7 @@ userRoutes.route('/user/:userName/following_wobjects_updates')
   .get(UserController.followingWobjectsUpdates);
 userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
-userRoutes.route('/geolocation')
+userRoutes.route('/user-geolocation')
   .get(UserController.getGeolocation);
 // endregion
 // region Post

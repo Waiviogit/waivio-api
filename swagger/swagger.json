@@ -2265,6 +2265,38 @@
         }
       }
     },
+    "/api/user-geolocation" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "get user latitude and longitude",
+        "description" : "get user latitude and longitude",
+        "produces" : [ "application/json" ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "latitude": {
+                  "type": "number"
+                },
+                "longitude": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "404" : {
+            "description" : "Not Found",
+            "schema" : {
+              "example": {
+                "message": "Not Found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject" : {
       "post" : {
         "tags" : [ "wobject" ],
