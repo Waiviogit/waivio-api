@@ -9,6 +9,11 @@ exports.STATUSES = {
   SUSPENDED: 'suspended',
 };
 
+exports.CAN_DELETE_STATUSES = [
+  this.STATUSES.INACTIVE,
+  this.STATUSES.PENDING,
+];
+
 exports.INACTIVE_STATUSES = [
   this.STATUSES.SUSPENDED,
   this.STATUSES.INACTIVE,

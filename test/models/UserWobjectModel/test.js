@@ -153,7 +153,7 @@ describe('UserWobjects', async () => {
     let pipeline, limit;
     beforeEach(async () => {
       await dropDatabase();
-      limit = _.random(10, 20);
+      limit = _.random(5, 10);
       pipeline = [{ $match: { user_name: userName } },
         { $sort: { weight: -1 } },
         { $skip: 0 },

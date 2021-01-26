@@ -122,7 +122,7 @@ describe('ObjectTypeModel', async () => {
       skip = _.random(1, 3);
       objCount = _.random(4, 10);
       for (let iter = 0; iter < objCount; iter++) {
-        await ObjectTypeFactory.Create({ name: `asdf_${faker.lorem.word()}` });
+        await ObjectTypeFactory.Create({ name: `asdf_${faker.random.string()}` });
       }
     });
     it('Should return a correct array', async () => {

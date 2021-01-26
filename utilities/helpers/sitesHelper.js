@@ -34,7 +34,6 @@ exports.getUserApps = async (params) => {
     {
       owner: params.userName,
       inherited: true,
-      $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
     },
     { _id: -1 },
   );
@@ -57,18 +56,19 @@ exports.getWebsitePayments = async ({
     owner, inherited: true,
   }, { _id: -1 });
   if (appsError) return { error: appsError };
-  const ownerAppNames = _.map(apps, 'host');
+  const { result: allExistingApps } = await websitePayments.distinct({ field: 'host', query: { userName: owner } });
+  const currentApps = _.map(apps, 'host');
+  const ownerAppNames = _.uniq([...currentApps, ...allExistingApps]);
   if (host) {
     ({ result: byHost } = await App.findOne({
       inherited: true,
-      $or: [{ deactivatedAt: null }, { deactivatedAt: { $gt: moment.utc().subtract(6, 'month').toDate() } }],
       host,
     }));
     if (!byHost) return { ownerAppNames, payments: [] };
   }
   const condition = host
-    ? { host }
-    : { $or: [{ userName: owner }, { host: { $in: ownerAppNames } }] };
+    ? { host, userName: owner }
+    : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
 
   const { error: paymentError, result: payments } = await websitePayments.find({
     condition: {

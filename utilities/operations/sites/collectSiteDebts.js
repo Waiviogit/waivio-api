@@ -1,14 +1,12 @@
 const _ = require('lodash');
 const Sentry = require('@sentry/node');
-const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { App, websitePayments, websiteRefunds } = require('models');
+const { App } = require('models');
 const { redisGetter } = require('utilities/redis');
-const { sitesHelper } = require('utilities/helpers');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
 const {
-  redisStatisticsKey, FEE, STATUSES, REFUND_STATUSES, REFUND_TYPES, TEST_DOMAINS,
+  redisStatisticsKey, FEE, STATUSES, TEST_DOMAINS,
 } = require('constants/sitesConstants');
 
 exports.dailyDebt = async (timeout = 200) => {
@@ -19,11 +17,6 @@ exports.dailyDebt = async (timeout = 200) => {
   if (error) return sendError(error);
   for (const app of apps) {
     if (!await this.checkForTestSites(app.parent)) continue;
-    if (app.deactivatedAt && moment.utc(app.deactivatedAt).valueOf()
-        < moment.utc().subtract(1, 'day').startOf('day').valueOf()) {
-      await redisGetter.deleteSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
-      continue;
-    }
 
     /** Collect data for debt calculation */
     const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);

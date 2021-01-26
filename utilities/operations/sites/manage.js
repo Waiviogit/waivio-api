@@ -1,9 +1,6 @@
 const _ = require('lodash');
-const moment = require('moment');
-const { ACTIVE_STATUSES } = require('constants/sitesConstants');
-const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
+const { PAYMENT_TYPES, FEE, STATUSES } = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
-const { STATUSES } = require('../../../constants/sitesConstants.js');
 
 /** Get data for manage page. In this method, we generate a report for the site owner,
  * in which we include the average data on users on his sites for the last 7 days,
@@ -20,19 +17,19 @@ exports.getManagePage = async ({ userName }) => {
   }) || 0;
   const dataForPayments = await sitesHelper.getPaymentsData();
   const prices = { minimumValue: FEE.minimumValue, perUser: FEE.perUser };
+
+  accountBalance.paid -= _.sumBy(payments, (payment) => {
+    if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
+  }) || 0;
+
   if (!apps.length) {
     return {
       accountBalance, dataForPayments, websites: [], prices,
     };
   }
 
-  accountBalance.paid -= _.sumBy(payments, (payment) => {
-    if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;
-  }) || 0;
-
   const websites = [];
   for (const site of apps) {
-    if (site.deactivatedAt && site.deactivatedAt < moment.utc().subtract(6, 'month').toDate()) continue;
     websites.push(sitesHelper.getWebsiteData(payments, site));
   }
 
