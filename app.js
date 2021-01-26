@@ -12,8 +12,7 @@ const {
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { HOST_FROM_REFERER, REPLACE_ORIGIN } = require('constants/regExp');
-const _ = require('lodash');
+const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
 
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -50,7 +49,7 @@ app.use((req, res, next) => {
   let { origin, referer } = req.headers;
   origin
     ? origin = origin.replace(REPLACE_ORIGIN, '')
-    : origin = _.get(referer && referer.match(HOST_FROM_REFERER), '[3]');
+    : origin = referer && referer.replace(REPLACE_REFERER, '');
 
   session.set('host', origin);
   session.set('access-token', req.headers['access-token']);
