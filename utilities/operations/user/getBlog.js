@@ -13,7 +13,6 @@ module.exports = async ({
   });
   if (!_.isEmpty(mutedUsers)) return { posts: [], tags: [] };
 
-  const { error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
 
   if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
@@ -23,7 +22,7 @@ module.exports = async ({
     limit: limit + 1, name, skip, additionalCond,
   });
 
-  if (userError || postError) return { error: userError || postError };
+  if (postError) return { error: postError };
 
   // add field reblogged_by if post not authored by "user" blog requested
   posts.forEach((post) => {
