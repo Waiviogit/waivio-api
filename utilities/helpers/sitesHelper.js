@@ -136,9 +136,9 @@ exports.siteInfo = async (host) => {
   return { result: _.pick(app, ['status']) };
 };
 
-exports.firstLoad = async ({ app }) => ({
-  result: _.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
-    'beneficiary', 'supported_object_types', 'status', 'mainPage']),
+exports.firstLoad = async ({ app, redirect }) => ({
+  result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+    'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
 });
 
 exports.getSessionApp = async () => {
