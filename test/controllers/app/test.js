@@ -44,7 +44,7 @@ describe('On appController', async () => {
         beforeEach(async () => {
           result = await chai.request(app)
             .get(`/api/app/${currentApp.name}`)
-            .set({ 'api-key': apiKey, host: currentApp.host });
+            .set({ 'api-key': apiKey, origin: currentApp.host });
         });
         it('should return status 200', async () => {
           expect(result).to.have.status(200);
