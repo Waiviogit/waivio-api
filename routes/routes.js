@@ -135,7 +135,7 @@ userRoutes.route('/user/:userName/following_wobjects_updates')
   .get(UserController.followingWobjectsUpdates);
 userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
-userRoutes.route('/user-vote-value')
+userRoutes.route('/user/:userName/vote-value')
   .get(UserController.getVoteValue);
 // endregion
 // region Post

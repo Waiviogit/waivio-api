@@ -339,11 +339,12 @@ const modalWindowMarker = async (req, res, next) => {
 };
 
 const getVoteValue = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.user.voteValue, next);
-
+  const value = validators
+    .validate({ ...req.query, ...req.params }, validators.user.voteValue, next);
   if (!value) return;
 
   const result = await calcVoteValue(value);
+
   res.result = { status: 200, json: { result } };
   next();
 };
