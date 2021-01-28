@@ -13,11 +13,6 @@ exports.saveUserIp = async (req, res, next) => {
   const { result, error } = await App.findOne({ host });
   if (error) return next(error);
   if (!result) {
-    if (req.method !== REQ_METHOD.POST || req.url !== `${URL.API}${URL.SITES}`) {
-      return res
-        .status(RESPONSE_STATUS.NOT_FOUND)
-        .send({ message: `Website ${ERROR_MESSAGE.NOT_FOUND}` });
-    }
     req.pathToRedirect = `${URL.HTTPS}${config.appHost}`;
     return next();
   }
