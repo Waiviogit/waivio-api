@@ -535,8 +535,6 @@ describe('On sitesController', async () => {
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
         center: [+faker.address.longitude(), +faker.address.latitude()],
         zoom: faker.random.number(),
-        height: faker.random.string(),
-        width: faker.random.string(),
       }];
     });
     afterEach(() => {
