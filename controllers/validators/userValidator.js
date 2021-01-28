@@ -198,3 +198,8 @@ exports.usersArray = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   name: Joi.string(),
 });
+
+exports.voteValue = Joi.object().keys({
+  user: Joi.string().required(),
+  weight: Joi.number().min(0).max(10000).required(),
+});
