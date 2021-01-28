@@ -81,8 +81,6 @@ exports.siteMapCoordinates = Joi.object().keys({
       ).required(),
     center: Joi.array().items(Joi.number()).required(),
     zoom: Joi.number().required(),
-    height: Joi.string().required(),
-    width: Joi.string().required(),
   })).max(30).required(),
 });
 
