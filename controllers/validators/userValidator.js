@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+const { TOKEN } = require('constants/common');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
@@ -202,4 +203,5 @@ exports.usersArray = Joi.object().keys({
 exports.voteValue = Joi.object().keys({
   user: Joi.string().required(),
   weight: Joi.number().min(0).max(10000).required(),
+  token: Joi.string().valid(TOKEN.HBD, TOKEN.HIVE).default(TOKEN.HBD),
 });

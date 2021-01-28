@@ -32,3 +32,8 @@ exports.IMAGE_SIZE = {
   SMALL: '_small',
   MEDIUM: '_medium',
 };
+
+exports.TOKEN = {
+  HIVE: 'HIVE',
+  HBD: 'HBD',
+};
