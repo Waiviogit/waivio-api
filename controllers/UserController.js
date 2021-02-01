@@ -156,6 +156,7 @@ const userObjectsShares = async (req, res, next) => {
     locale: req.body.locale,
     exclude_object_types: req.body.exclude_object_types,
     object_types: req.body.object_types,
+    withCounters: req.body.withCounters,
   }, validators.user.objectsSharesSchema, next);
 
   if (!value) return;

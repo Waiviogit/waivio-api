@@ -18,7 +18,7 @@ const makePipeline = ({
     },
     { $unwind: '$wobject' },
     { $skip: skip },
-    { $limit: limit },
+    { $limit: limit + 1 },
     {
       $addFields: {
         'wobject.user_weight': '$weight',
@@ -86,16 +86,30 @@ const getUserObjectsShares = async (data) => {
   wobjects.forEach((wObject) => {
     wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar', 'parent'], field.name));
   });
-  const {
-    result:
-      [countResult = { count: 0 }] = [], error,
-  } = await UserWobjects.aggregate(makeCountPipeline(data));
 
-  if (error) {
-    return { error };
+  if (data.withCounters) {
+    const { result: [countHashtag = { count: 0 }] } = await UserWobjects
+      .aggregate(makeCountPipeline({ name: data.name, object_types: ['hashtag'] }));
+    const { result: [countWobj = { count: 0 }] } = await UserWobjects
+      .aggregate(makeCountPipeline({ name: data.name, exclude_object_types: ['hashtag'] }));
+    return {
+      objects_shares:
+        {
+          wobjects: wobjects.slice(0, data.limit),
+          hasMore: wobjects.length > data.limit,
+          hashtagsExpCount: countHashtag.count,
+          wobjectsExpCount: countWobj.count,
+        },
+    };
   }
 
-  return { objects_shares: { wobjects, wobjects_count: countResult.count } };
+  return {
+    objects_shares:
+      {
+        wobjects: wobjects.slice(0, data.limit),
+        hasMore: wobjects.length > data.limit,
+      },
+  };
 };
 
 module.exports = { getUserObjectsShares };

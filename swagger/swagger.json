@@ -1897,7 +1897,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - limit of returned wobjects(for infinite scroll)*(by default - 30)*, \n**skip** - count of skipping wobjects(for infinite scroll)*(by default - 0)*,\n**locale** - locale which wobjects fields need to return,\n**object_types** -types of objects to return,\n**exclude_object_types** - which types esclude from list to return,\n",
+          "description" : "**limit** - limit of returned wobjects(for infinite scroll)*(by default - 30)*, \n**skip** - count of skipping wobjects(for infinite scroll)*(by default - 0)*,\n**locale** - locale which wobjects fields need to return,\n**object_types** -types of objects to return,\n**exclude_object_types** - which types esclude from list to return,\n **withCounters** - boolean - flag that determines whether counters are needed default false",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_4"
@@ -4583,6 +4583,9 @@
           "items" : {
             "type" : "string"
           }
+        },
+        "withCounters" : {
+          "type" : "boolean"
         }
       }
     },
@@ -4637,7 +4640,13 @@
             "$ref" : "#/definitions/inline_response_200_7_wobjects"
           }
         },
-        "wobjects_count" : {
+        "hasMore" : {
+          "type" : "boolean"
+        },
+        "hashtagsExpCount" : {
+          "type" : "integer"
+        },
+        "wobjectsExpCount" : {
           "type" : "integer"
         }
       }
