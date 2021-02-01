@@ -115,3 +115,8 @@ exports.incrementWebsitesSuspended = async ({ key, expire }) => {
   await appUsersStatistics.expireAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
   return counter;
 };
+
+exports.importUserClientHMSet = async ({ key, data, expire }) => {
+  await importUserClient.hmsetAsync(key, data);
+  await importUserClient.expireAsync(key, expire);
+};
