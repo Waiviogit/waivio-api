@@ -1,48 +1,11 @@
-const { UserWobjects } = require('database').models;
 const { userUtil: userSteemUtil } = require('utilities/steemApi');
 const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
 const { Subscriptions, mutedUserModel, User } = require('models');
 const _ = require('lodash');
 
-const makeCountPipeline = (name) => {
-  const pipeline = [
-    { $match: { user_name: name, weight: { $gt: 0 } } },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'author_permlink',
-        foreignField: 'author_permlink',
-        as: 'wobject',
-      },
-    },
-    { $unwind: '$wobject' },
-    {
-      $facet: {
-        hashtagsCount: [
-          { $match: { 'wobject.object_type': 'hashtag' } },
-          { $count: 'hashtagsCount' },
-        ],
-        wobjectsCount: [
-          { $match: { 'wobject.object_type': { $ne: 'hashtag' } } },
-          { $count: 'wobjectsCount' },
-        ],
-      },
-    },
-    {
-      $project: {
-        hashtagsExpCount: { $arrayElemAt: ['$hashtagsCount.hashtagsCount', 0] },
-        wobjectsExpCount: { $arrayElemAt: ['$wobjectsCount.wobjectsCount', 0] },
-      },
-    },
-  ];
-
-  return pipeline;
-};
-
 const getOne = async ({
   name, with_followings: withFollowings, app, userName,
 }) => {
-  console.time('userImport');
   const { userData = {} } = await userSteemUtil.getAccount(name);
   // eslint-disable-next-line prefer-const
   let { user, error: dbError } = await User.getOne(name); // get user data from db
@@ -65,17 +28,14 @@ const getOne = async ({
     const { users } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
     user.users_follow = users || [];
   } else user = _.omit(user, ['users_follow', 'objects_follow']);
-  console.timeEnd('userImport');
-  console.time('counters');
-  const [counters] = await UserWobjects.aggregate(makeCountPipeline(userData.name));
-  console.timeEnd('counters');
+
   const { result: mutedUsers } = await mutedUserModel.find({
     condition:
       { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: user.name }] },
   });
 
   return {
-    userData: Object.assign(userData, user, counters, {
+    userData: Object.assign(userData, user, {
       muted: !_.isEmpty(mutedUsers),
       mutedBy: _.reduce(mutedUsers, (acc, el) => (_.includes(el.mutedForApps, _.get(app, 'host')) ? [...acc, el.mutedBy] : acc), []),
     }),
