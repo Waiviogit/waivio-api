@@ -2287,7 +2287,7 @@
         }, {
           "name" : "weight",
           "in" : "query",
-          "description" : "vote weight",
+          "description" : "vote weight min 0 max 10000",
           "required" : true,
           "minimum": 0,
           "maximum": 10000,
@@ -2322,6 +2322,14 @@
                 "result" : {
                   "type": "number"
                 }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
               }
             }
           }
