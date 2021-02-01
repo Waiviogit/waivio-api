@@ -2263,6 +2263,77 @@
         }
       }
     },
+    "/api/user/{userName}/vote-value" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Estimate user vote value",
+        "description" : "Estimate user vote value in HIVE or HBD",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to calc vote value",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "weight",
+          "in" : "query",
+          "description" : "vote weight min 0 max 10000",
+          "required" : true,
+          "minimum": 0,
+          "maximum": 10000,
+          "type" : "number"
+        } ,{
+          "name" : "token",
+          "in" : "query",
+          "description" : "token HIVE or HBD",
+          "required" : false,
+          "enum": ["HIVE", "HBD"],
+          "default": "HBD",
+          "type" : "string"
+        }, {
+            "name" : "author",
+            "in" : "query",
+            "description" : "post author",
+            "required" : true,
+            "type" : "string"
+          }, {
+          "name" : "permlink",
+          "in" : "query",
+          "description" : "post permlink",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "result" : {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject" : {
       "post" : {
         "tags" : [ "wobject" ],
