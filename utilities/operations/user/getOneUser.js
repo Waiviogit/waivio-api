@@ -23,6 +23,7 @@ const getOne = async ({
     return { userData };
   }
 
+  user.id = user._id.toString(); // for front (was user to json) to render guest users
   if (_.get(user, 'auth.provider')) user.provider = user.auth.provider;
   if (withFollowings) {
     const { users } = await Subscriptions.getFollowings({ follower: name, limit: 0 });
@@ -31,7 +32,7 @@ const getOne = async ({
 
   const { result: mutedUsers } = await mutedUserModel.find({
     condition:
-      { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: user.name }] },
+      { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: name }] },
   });
 
   return {
