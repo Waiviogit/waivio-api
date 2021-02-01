@@ -23,7 +23,7 @@ module.exports = async ({
   }
 
   if (!priceInfo || !account) return 0;
-  // await get_downvoting_power(account)
+
   const { recent_claims, reward_balance, price } = priceInfo;
   const {
     vesting_shares, received_vesting_shares, delegated_vesting_shares, voting_power,
@@ -39,15 +39,3 @@ module.exports = async ({
     ? (rshares / parseFloat(recent_claims)) * parseFloat(reward_balance) * parseFloat(price)
     : (rshares / parseFloat(recent_claims)) * parseFloat(reward_balance);
 };
-
-// const get_downvoting_power = async (account) => {
-//   const totalShares = parseFloat(account.vesting_shares) + parseFloat(account.received_vesting_shares) - parseFloat(account.delegated_vesting_shares) - parseFloat(account.vesting_withdraw_rate);
-//   const elapsed = Math.floor(Date.now() / 1000) - account.downvote_manabar.last_update_time;
-//   const maxMana = totalShares * 1000000 / 4;
-//   let currentMana = parseFloat(account.downvote_manabar.current_mana) + elapsed * maxMana / 432000;
-//   if (currentMana > maxMana) {
-//     currentMana = maxMana;
-//   }
-//   const currentManaPerc = currentMana * 100 / maxMana;
-//   console.log('yo')
-// };
