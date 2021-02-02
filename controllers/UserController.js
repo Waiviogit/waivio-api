@@ -168,6 +168,16 @@ const userObjectsShares = async (req, res, next) => {
   next();
 };
 
+const userObjectsSharesCount = async (req, res, next) => {
+  const { hashtagsExpCount, wobjectsExpCount, error } = await objectsShares
+    .getUserObjectsSharesCounters(req.params.userName);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { hashtagsExpCount, wobjectsExpCount } };
+  next();
+};
+
 const postFilters = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
@@ -370,5 +380,6 @@ module.exports = {
   followingsState,
   usersData,
   modalWindowMarker,
+  userObjectsSharesCount,
   getVoteValue,
 };
