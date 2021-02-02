@@ -156,7 +156,6 @@ const userObjectsShares = async (req, res, next) => {
     locale: req.body.locale,
     exclude_object_types: req.body.exclude_object_types,
     object_types: req.body.object_types,
-    withCounters: req.body.withCounters,
   }, validators.user.objectsSharesSchema, next);
 
   if (!value) return;
@@ -166,6 +165,16 @@ const userObjectsShares = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: objectShares };
+  next();
+};
+
+const userObjectsSharesCount = async (req, res, next) => {
+  const { hashtagsExpCount, wobjectsExpCount, error } = await objectsShares
+    .getUserObjectsSharesCounters(req.params.userName);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { hashtagsExpCount, wobjectsExpCount } };
   next();
 };
 
@@ -360,4 +369,5 @@ module.exports = {
   followingsState,
   usersData,
   modalWindowMarker,
+  userObjectsSharesCount,
 };

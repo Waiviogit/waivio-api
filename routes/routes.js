@@ -120,6 +120,8 @@ userRoutes.route('/user/:userName/comments')
   .get(UserController.getUserComments);
 userRoutes.route('/user/:userName/objects_shares')
   .post(UserController.userObjectsShares);
+userRoutes.route('/user/:userName/expertise-counters')
+  .get(UserController.userObjectsSharesCount);
 userRoutes.route('/user/:userName/get_post_filters')
   .get(UserController.postFilters);
 userRoutes.route('/users/search')

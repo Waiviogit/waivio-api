@@ -1897,7 +1897,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - limit of returned wobjects(for infinite scroll)*(by default - 30)*, \n**skip** - count of skipping wobjects(for infinite scroll)*(by default - 0)*,\n**locale** - locale which wobjects fields need to return,\n**object_types** -types of objects to return,\n**exclude_object_types** - which types esclude from list to return,\n **withCounters** - boolean - flag that determines whether counters are needed default false",
+          "description" : "**limit** - limit of returned wobjects(for infinite scroll)*(by default - 30)*, \n**skip** - count of skipping wobjects(for infinite scroll)*(by default - 0)*,\n**locale** - locale which wobjects fields need to return,\n**object_types** -types of objects to return,\n**exclude_object_types** - which types esclude from list to return,\n",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_4"
@@ -1908,6 +1908,42 @@
             "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/inline_response_200_7"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/expertise-counters" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return users expertise-counters",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name which expertise-counters needs to return",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "hashtagsExpCount" : {
+                  "type" : "integer"
+                },
+                "wobjectsExpCount" : {
+                  "type" : "integer"
+                }
+              }
             }
           }
         }
@@ -4642,12 +4678,6 @@
         },
         "hasMore" : {
           "type" : "boolean"
-        },
-        "hashtagsExpCount" : {
-          "type" : "integer"
-        },
-        "wobjectsExpCount" : {
-          "type" : "integer"
         }
       }
     },

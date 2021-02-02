@@ -87,22 +87,6 @@ const getUserObjectsShares = async (data) => {
     wObject.fields = _.filter(wObject.fields, (field) => _.includes(['name', 'avatar', 'parent'], field.name));
   });
 
-  if (data.withCounters) {
-    const { result: [countHashtag = { count: 0 }] } = await UserWobjects
-      .aggregate(makeCountPipeline({ name: data.name, object_types: ['hashtag'] }));
-    const { result: [countWobj = { count: 0 }] } = await UserWobjects
-      .aggregate(makeCountPipeline({ name: data.name, exclude_object_types: ['hashtag'] }));
-    return {
-      objects_shares:
-        {
-          wobjects: wobjects.slice(0, data.limit),
-          hasMore: wobjects.length > data.limit,
-          hashtagsExpCount: countHashtag.count,
-          wobjectsExpCount: countWobj.count,
-        },
-    };
-  }
-
   return {
     objects_shares:
       {
@@ -112,4 +96,18 @@ const getUserObjectsShares = async (data) => {
   };
 };
 
-module.exports = { getUserObjectsShares };
+const getUserObjectsSharesCounters = async (name) => {
+  const { result: [countHashtag = { count: 0 }], error: hashtagErr } = await UserWobjects
+    .aggregate(makeCountPipeline({ name, object_types: ['hashtag'] }));
+  const { result: [countWobj = { count: 0 }], error: wobjErr } = await UserWobjects
+    .aggregate(makeCountPipeline({ name, exclude_object_types: ['hashtag'] }));
+
+  if (hashtagErr || wobjErr) return { error: hashtagErr || wobjErr };
+
+  return {
+    hashtagsExpCount: countHashtag.count,
+    wobjectsExpCount: countWobj.count,
+  };
+};
+
+module.exports = { getUserObjectsShares, getUserObjectsSharesCounters };
