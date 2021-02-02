@@ -4619,9 +4619,6 @@
           "items" : {
             "type" : "string"
           }
-        },
-        "withCounters" : {
-          "type" : "boolean"
         }
       }
     },
