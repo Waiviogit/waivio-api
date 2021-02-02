@@ -1913,6 +1913,42 @@
         }
       }
     },
+    "/api/user/{userName}/expertise-counters" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return users expertise-counters",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name which expertise-counters needs to return",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "hashtagsExpCount" : {
+                  "type" : "integer"
+                },
+                "wobjectsExpCount" : {
+                  "type" : "integer"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{userName}/blog" : {
       "post" : {
         "tags" : [ "user" ],
@@ -4708,8 +4744,8 @@
             "$ref" : "#/definitions/inline_response_200_7_wobjects"
           }
         },
-        "wobjects_count" : {
-          "type" : "integer"
+        "hasMore" : {
+          "type" : "boolean"
         }
       }
     },
