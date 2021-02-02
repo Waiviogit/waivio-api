@@ -17,7 +17,6 @@ exports.objectsSharesSchema = Joi.object().keys({
   name: Joi.string().required(),
   object_types: Joi.array().items(Joi.string().required()).default(null),
   exclude_object_types: Joi.array().items(Joi.string().required()).default(null),
-  withCounters: Joi.boolean().default(false),
 });
 
 exports.getPostFiltersSchema = Joi.object().keys({
