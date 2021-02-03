@@ -9,6 +9,7 @@ moduleExports.getPostFilters = require('./getPostFilters');
 moduleExports.updateMetadata = require('./updateMetadata');
 moduleExports.objectsShares = require('./objectsShares');
 moduleExports.getMetadata = require('./getUserMetadata');
+moduleExports.calcVoteValue = require('./calcVoteValue');
 moduleExports.getManyUsers = require('./getManyUsers');
 moduleExports.getFollowers = require('./getFollowers');
 moduleExports.getUserFeed = require('./getUserFeed');

@@ -2,7 +2,7 @@ const { authorise } = require('utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
-  getFollowers, getFollowingsUser, importSteemUserBalancer,
+  getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
@@ -165,6 +165,16 @@ const userObjectsShares = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: objectShares };
+  next();
+};
+
+const userObjectsSharesCount = async (req, res, next) => {
+  const { hashtagsExpCount, wobjectsExpCount, error } = await objectsShares
+    .getUserObjectsSharesCounters(req.params.userName);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { hashtagsExpCount, wobjectsExpCount } };
   next();
 };
 
@@ -338,6 +348,17 @@ const modalWindowMarker = async (req, res, next) => {
   next();
 };
 
+const getVoteValue = async (req, res, next) => {
+  const value = validators
+    .validate({ ...req.query, ...req.params }, validators.user.voteValue, next);
+  if (!value) return;
+
+  const result = await calcVoteValue(value);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -359,4 +380,6 @@ module.exports = {
   followingsState,
   usersData,
   modalWindowMarker,
+  userObjectsSharesCount,
+  getVoteValue,
 };
