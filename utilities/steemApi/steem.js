@@ -4,5 +4,5 @@ const hiveUrls = ['https://rpc.esteem.app', 'https://api.openhive.network', 'htt
 const options = { timeout: 8 * 1000, failoverThreshold: 4, rebrandedApi: true };
 
 const client = new Client(hiveUrls, options);
-const clientAnyx = new Client(hiveUrls, options);
-module.exports = { client, clientAnyx };
+
+module.exports = { client };
