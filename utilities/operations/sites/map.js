@@ -7,7 +7,7 @@ exports.getData = async ({
 }) => {
   let user;
   const crucialWobjects = _.get(app, 'supported_objects', []);
-  const supportedTypes = _.get(app, 'supported_object_types', []);
+  const mainMapObjectTypes = _.get(app, 'main_map_object_types', []);
   const forSites = _.get(app, 'inherited');
 
   const condition = {
@@ -16,7 +16,7 @@ exports.getData = async ({
         $box: [bottomPoint, topPoint],
       },
     },
-    object_type: { $in: supportedTypes },
+    object_type: { $in: mainMapObjectTypes },
   };
   if (forSites) condition.author_permlink = { $in: crucialWobjects };
 
