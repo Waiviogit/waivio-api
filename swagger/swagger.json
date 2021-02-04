@@ -2321,26 +2321,16 @@
         }, {
           "name" : "weight",
           "in" : "query",
-          "description" : "vote weight min 0 max 10000",
+          "description" : "vote weight min 0 max 100",
           "required" : true,
-          "minimum": 0,
-          "maximum": 10000,
           "type" : "number"
-        } ,{
-          "name" : "token",
+        }, {
+          "name" : "author",
           "in" : "query",
-          "description" : "token HIVE or HBD",
-          "required" : false,
-          "enum": ["HIVE", "HBD"],
-          "default": "HBD",
+          "description" : "post author",
+          "required" : true,
           "type" : "string"
         }, {
-            "name" : "author",
-            "in" : "query",
-            "description" : "post author",
-            "required" : true,
-            "type" : "string"
-          }, {
           "name" : "permlink",
           "in" : "query",
           "description" : "post permlink",

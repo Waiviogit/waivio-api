@@ -1,7 +1,6 @@
 const { Client } = require('@hiveio/dhive');
-const config = require('config');
 
-const hiveUrls = config.nodeUrls || 'https://api.hive.blog';
+const hiveUrls = ['https://rpc.esteem.app', 'https://api.openhive.network', 'https://hive.roelandp.nl', 'https://hive-api.arcange.eu'];
 const options = { timeout: 8 * 1000, failoverThreshold: 4, rebrandedApi: true };
 
 const client = new Client(hiveUrls, options);

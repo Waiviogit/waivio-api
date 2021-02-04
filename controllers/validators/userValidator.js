@@ -204,6 +204,5 @@ exports.voteValue = Joi.object().keys({
   userName: Joi.string().required(),
   author: Joi.string().required(),
   permlink: Joi.string().required(),
-  weight: Joi.number().min(0).max(10000).required(),
-  token: Joi.string().valid(TOKEN.HBD, TOKEN.HIVE).default(TOKEN.HBD),
+  weight: Joi.number().min(0).max(100).required(),
 });

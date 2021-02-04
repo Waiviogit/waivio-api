@@ -1,41 +1,35 @@
-/* eslint-disable camelcase */
-const _ = require('lodash');
-const { TOKEN } = require('constants/common');
-const { getAccount } = require('utilities/steemApi/userUtil');
-const { redisGetter, redisSetter } = require('utilities/redis');
+const { redisGetter } = require('utilities/redis');
+const { postsUtil, userUtil } = require('utilities/steemApi');
 
 module.exports = async ({
-  userName, weight, token, author, permlink,
+  userName, weight, author, permlink,
 }) => {
   const priceInfo = await redisGetter.importUserClientHGetAll('current_price_info');
-  let account = await redisGetter.importUserClientHGetAll(`temp_user_account:${userName}`);
+  const { userData: account } = await userUtil.getAccount(userName);
 
-  if (!account || _.get(account, 'author') !== author || _.get(account, 'permlink') !== permlink) {
-    ({ userData: account } = await getAccount(userName));
-    account && await redisSetter.importUserClientHMSet({
-      key: `temp_user_account:${userName}`,
-      data: Object.assign(
-        _.pick(account, ['vesting_shares', 'received_vesting_shares', 'delegated_vesting_shares', 'voting_power']),
-        { author, permlink },
-      ),
-      expire: 30,
-    });
-  }
+  const { post } = await postsUtil.getPost(author, permlink);
+  if (!post || !account) return 0;
 
-  if (!priceInfo || !account) return 0;
+  const vests = parseFloat(account.vesting_shares)
+    + parseFloat(account.received_vesting_shares)
+    - parseFloat(account.delegated_vesting_shares);
 
-  const { recent_claims, reward_balance, price } = priceInfo;
-  const {
-    vesting_shares, received_vesting_shares, delegated_vesting_shares, voting_power,
-  } = account;
-  const total_vests = parseFloat(vesting_shares)
-    + parseFloat(received_vesting_shares)
-    - parseFloat(delegated_vesting_shares);
-  const final_vest = total_vests * 1e6;
-  const power = ((voting_power * weight) / 10000) / 50;
-  const rshares = (power * final_vest) / 10000;
+  const previousVoteTime = (new Date().getTime() - new Date(`${account.last_vote_time}Z`).getTime()) / 1000;
+  const accountVotingPower = Math.min(
+    10000,
+    account.voting_power + (10000 * previousVoteTime) / 432000,
+  );
 
-  return token === TOKEN.HBD
-    ? (rshares / parseFloat(recent_claims)) * parseFloat(reward_balance) * parseFloat(price)
-    : (rshares / parseFloat(recent_claims)) * parseFloat(reward_balance);
+  const power = Math.round(((accountVotingPower / 100) * weight) / 50);
+  const rShares = vests * power * 100 - 50000000;
+  const tRShares = parseFloat(post.vote_rshares) + rShares;
+
+  const s = parseFloat(priceInfo.content_constant);
+  const tClaims = (tRShares * (tRShares + 2 * s)) / (tRShares + 4 * s);
+
+  const rewards = parseFloat(priceInfo.reward_balance) / parseFloat(priceInfo.recent_claims);
+  const postValue = tClaims * rewards * parseFloat(priceInfo.price);
+  const voteValue = postValue * (rShares / tRShares);
+
+  return voteValue >= 0 ? voteValue : 0;
 };
