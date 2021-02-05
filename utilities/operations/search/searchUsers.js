@@ -1,5 +1,6 @@
 const { User } = require('models');
 const _ = require('lodash');
+const { getManyUsers } = require('utilities/operations/user');
 
 const makeCountPipeline = ({ string, notGuest }) => {
   const pipeline = [
@@ -13,6 +14,13 @@ const makeCountPipeline = ({ string, notGuest }) => {
 exports.searchUsers = async ({
   string, limit, skip, notGuest = false,
 }) => {
+  if (!string) {
+    const { users } = await getManyUsers.getUsers({ limit: limit + 1, skip });
+    return {
+      users: users.slice(0, limit),
+      hasMore: users.length > limit,
+    };
+  }
   const condition = { name: { $in: [`waivio_${string}`, string] } };
   string = string.replace(/[^a-zA-Z0-9._-]/g, '');
   string = string.replace(/\./g, '\\.');
