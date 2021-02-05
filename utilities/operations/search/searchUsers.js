@@ -1,6 +1,5 @@
 const { User } = require('models');
 const _ = require('lodash');
-const { getManyUsers } = require('utilities/operations/user');
 
 const makeCountPipeline = ({ string, notGuest }) => {
   const pipeline = [
@@ -14,13 +13,8 @@ const makeCountPipeline = ({ string, notGuest }) => {
 exports.searchUsers = async ({
   string, limit, skip, notGuest = false,
 }) => {
-  if (!string) {
-    const { users } = await getManyUsers.getUsers({ limit: limit + 1, skip });
-    return {
-      users: users.slice(0, limit),
-      hasMore: users.length > limit,
-    };
-  }
+  if (!string) return getAllUsers({ skip, limit });
+
   const condition = { name: { $in: [`waivio_${string}`, string] } };
   string = string.replace(/[^a-zA-Z0-9._-]/g, '');
   string = string.replace(/\./g, '\\.');
@@ -46,6 +40,25 @@ exports.searchUsers = async ({
       })), limit),
     usersCount,
     error: error || countError,
+    hasMore: users.length > limit,
+  };
+};
+
+const getAllUsers = async ({ skip, limit }) => {
+  const { usersData: users } = await User.find({
+    condition: {},
+    sort: { wobjects_weight: -1 },
+    limit: limit + 1,
+    skip,
+    select: { name: 1, followers_count: 1, wobjects_weight: 1 },
+  });
+  return {
+    users: _.take(_.map(users, (u) => (
+      {
+        account: u.name,
+        wobjects_weight: u.wobjects_weight,
+        followers_count: u.followers_count,
+      })), limit),
     hasMore: users.length > limit,
   };
 };
