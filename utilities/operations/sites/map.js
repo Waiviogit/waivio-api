@@ -56,7 +56,7 @@ const distanceInmBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
     + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  const distance = Math.round(earthRadiusM * c);
+  const distance = earthRadiusM * c;
 
   return {
     min: Math.round(distance / 40),
