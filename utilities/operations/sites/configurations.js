@@ -1,14 +1,13 @@
 const _ = require('lodash');
 const { App, Wobj } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const { sitesHelper } = require('utilities/helpers');
 
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
 exports.getConfigurationsList = async (host) => {
   let { result } = await App.findOne({ host, inherited: true });
   if (!result) return { error: { status: 404, message: 'App not Found!' } };
-  result = await this.aboutObjectFormat(result);
+  result = await sitesHelper.aboutObjectFormat(result);
   return { result: _.get(result, 'configuration') };
 };
 
@@ -43,14 +42,4 @@ exports.saveConfigurations = async (params) => {
   );
   if (updateError) return { error: updateError };
   return { result: updatedApp.configuration };
-};
-
-exports.aboutObjectFormat = async (app) => {
-  const { result } = await Wobj.findOne(_.get(app, 'configuration.aboutObject'));
-  if (!result) return app;
-  const wobject = await processWobjects({
-    wobjects: [result], returnArray: false, fields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR], app,
-  });
-  app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink');
-  return app;
 };
