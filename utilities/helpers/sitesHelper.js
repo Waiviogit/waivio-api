@@ -243,7 +243,7 @@ exports.distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
   const distance = earthRadiusM * c;
 
   return {
-    min: Math.round(distance / 40),
+    min: distance > 1000 ? Math.round(distance / 40) : 0,
     max: Math.round(distance / 2),
     center,
   };
