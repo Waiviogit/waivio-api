@@ -8,7 +8,8 @@ const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
+const { processWobjects } = require('utilities/helpers/wObjectHelper');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -136,10 +137,13 @@ exports.siteInfo = async (host) => {
   return { result: _.pick(app, ['status']) };
 };
 
-exports.firstLoad = async ({ app, redirect }) => ({
-  result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
-    'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
-});
+exports.firstLoad = async ({ app, redirect }) => {
+  app = await this.aboutObjectFormat(app);
+  return {
+    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+      'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
+  };
+};
 
 exports.getSessionApp = async () => {
   const session = getNamespace('request-session');
@@ -224,4 +228,14 @@ exports.getSettings = async (host) => {
   if (!app) return { error: { status: 404, message: 'App not found!' } };
 
   return { result: _.pick(app, ['googleAnalyticsTag', 'beneficiary']) };
+};
+
+exports.aboutObjectFormat = async (app) => {
+  const { result } = await Wobj.findOne(_.get(app, 'configuration.aboutObject'));
+  if (!result) return app;
+  const wobject = await processWobjects({
+    wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
+  });
+  app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink');
+  return app;
 };
