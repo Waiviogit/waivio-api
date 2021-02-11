@@ -20,7 +20,7 @@ exports.getData = async ({
   };
   if (forSites) condition.author_permlink = { $in: crucialWobjects };
 
-  const { result: wobjects, error } = await Wobj.find(condition, {}, { weight: -1 }, 0, 100);
+  const { result: wobjects, error } = await Wobj.find(condition, {}, { weight: -1 }, 0, 200);
 
   const { min } = distanceInMBetweenEarthCoordinates(bottomPoint, topPoint);
 
@@ -48,7 +48,7 @@ exports.getData = async ({
 
   return {
     result: {
-      wobjects: _.slice(_.filter(wobjects, (el) => !el.filter), 0, 50),
+      wobjects: _.take(_.filter(wobjects, (el) => !el.filter), 50),
       hasMore: wobjects.length > limit,
     },
   };
@@ -70,7 +70,7 @@ const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
   const distance = earthRadiusM * c;
 
   return {
-    min: distance > 1000 ? Math.round(distance / 80) : 0,
+    min: distance > 1000 ? Math.round(distance / 50) : 0,
     distance,
   };
 };
