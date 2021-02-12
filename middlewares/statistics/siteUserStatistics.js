@@ -12,7 +12,9 @@ const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
-  const ip = req.headers['x-forwarded-for'];
+  const ip = process.env.NODE_ENV === 'production'
+    ? req.headers['x-forwarded-for']
+    : req.headers['x-real-ip'];
   const { result, error } = await App.findOne({ host });
   if (error) return next(error);
   if (!result) {
