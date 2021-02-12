@@ -1,19 +1,29 @@
 const _ = require('lodash');
 const { INACTIVE_STATUSES, redisStatisticsKey } = require('constants/sitesConstants');
-const { RESPONSE_STATUS, ERROR_MESSAGE, REQ_METHOD, URL } = require('constants/common');
+const {
+  RESPONSE_STATUS, ERROR_MESSAGE, REQ_METHOD, URL,
+} = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const config = require('config');
 const { redisSetter } = require('utilities/redis');
 const { App } = require('models');
+const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
-  const ip = req.headers['x-real-ip'];
+  const ip = process.env.NODE_ENV === 'production'
+    ? req.headers['x-forwarded-for']
+    : req.headers['x-real-ip'];
   const { result, error } = await App.findOne({ host });
   if (error) return next(error);
   if (!result) {
-    req.pathToRedirect = `${URL.HTTPS}${config.appHost}`;
+    if (!host) {
+      req.pathToRedirect = `${URL.HTTPS}${config.appHost}`;
+      return next();
+    }
+    const path = host.replace(REPLACE_HOST_WITH_PARENT, '');
+    req.pathToRedirect = `${URL.HTTPS}${path}/rewards/all`;
     return next();
   }
   req.appData = result;

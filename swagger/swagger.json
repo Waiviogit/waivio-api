@@ -1653,8 +1653,8 @@
         },{
           "name" : "searchString",
           "in" : "query",
-          "description" : "String to search",
-          "required" : true,
+          "description" : "String to search, when no search string returns top users by wobjects_weight",
+          "required" : false,
           "type" : "string"
         }, {
           "name" : "limit",
