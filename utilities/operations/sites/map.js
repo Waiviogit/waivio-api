@@ -16,7 +16,7 @@ exports.getData = async ({
         $box: [bottomPoint, topPoint],
       },
     },
-    object_type: { $in: supportedTypes },
+    object_type: 'restaurant',
   };
   if (forSites) condition.author_permlink = { $in: crucialWobjects };
 
