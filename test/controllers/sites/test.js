@@ -668,6 +668,7 @@ describe('On sitesController', async () => {
         const mock = {
           googleAnalyticsTag: userApp.googleAnalyticsTag,
           beneficiary: userApp.beneficiary,
+          referralCommissionAcc: userApp.owner,
         };
         expect(result.body).to.be.deep.eq(mock);
       });
