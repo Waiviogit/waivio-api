@@ -226,8 +226,16 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host, inherited: true });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
-
-  return { result: _.pick(app, ['googleAnalyticsTag', 'beneficiary']) };
+  const { googleAnalyticsTag, beneficiary, app_commissions } = app;
+  return {
+    result: {
+      googleAnalyticsTag,
+      beneficiary,
+      referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
+        ? app_commissions.referral_commission_acc
+        : app.owner,
+    },
+  };
 };
 
 exports.aboutObjectFormat = async (app) => {
