@@ -59,7 +59,10 @@ const NOTIFICATIONS_API = {
   },
 };
 
+const GEO_IP_API = 'https://extreme-ip-lookup.com/json/';
+
 module.exports = {
+  GEO_IP_API,
   telegramApi,
   OBJECT_BOT: OBJECT_BOT[process.env.NODE_ENV || 'development'],
   NOTIFICATIONS_API: NOTIFICATIONS_API[process.env.NODE_ENV || 'development'],

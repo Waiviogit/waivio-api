@@ -8,7 +8,7 @@ exports.findOne = async (ip) => {
   }
 };
 
-exports.updateOne = async (data) => {
+exports.findOneAndUpdate = async (data) => {
   try {
     const result = await GeoIp.findOneAndUpdate(
       { network: data.ip },
@@ -18,8 +18,7 @@ exports.updateOne = async (data) => {
         new: true,
         setDefaultsOnInsert: true,
       },
-    );
-
+    ).lean();
     return { result };
   } catch (error) {
     return { error };

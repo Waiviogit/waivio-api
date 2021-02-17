@@ -207,3 +207,8 @@ exports.voteValue = Joi.object().keys({
   weight: Joi.number().min(0).max(10000).required(),
   token: Joi.string().valid(TOKEN.HBD, TOKEN.HIVE).default(TOKEN.HBD),
 });
+
+exports.putGeo = Joi.object().keys({
+  longitude: Joi.number().min(-180).max(180).required(),
+  latitude: Joi.number().min(-90).max(90).required(),
+});
