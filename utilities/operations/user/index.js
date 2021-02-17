@@ -17,5 +17,6 @@ moduleExports.getComments = require('./getComments');
 moduleExports.setMarkers = require('./setMarkers');
 moduleExports.getOneUser = require('./getOneUser');
 moduleExports.getBlog = require('./getBlog');
+moduleExports.geoData = require('./geoData');
 
 module.exports = moduleExports;

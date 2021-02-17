@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
-  setMarkers, getObjectsFollow,
+  setMarkers, getObjectsFollow, geoData,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const validators = require('controllers/validators');
@@ -359,6 +359,20 @@ const getVoteValue = async (req, res, next) => {
   next();
 };
 
+const getGeoByIp = async (req, res, next) => {
+  const result = await geoData.get();
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
+const putUserGeo = async (req, res, next) => {
+  const result = await geoData.put();
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -382,4 +396,6 @@ module.exports = {
   modalWindowMarker,
   userObjectsSharesCount,
   getVoteValue,
+  getGeoByIp,
+  putUserGeo,
 };
