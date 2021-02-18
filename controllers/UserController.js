@@ -6,6 +6,7 @@ const {
   setMarkers, getObjectsFollow, geoData,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
+const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
 
 const index = async (req, res, next) => {
@@ -360,14 +361,17 @@ const getVoteValue = async (req, res, next) => {
 };
 
 const getGeoByIp = async (req, res, next) => {
-  const { longitude, latitude } = await geoData.get(req);
+  const { longitude, latitude } = await geoData.get(getIpFromHeaders(req));
 
   res.result = { status: 200, json: { longitude, latitude } };
   next();
 };
 
 const putUserGeo = async (req, res, next) => {
-  const value = validators.validate(req.body, validators.user.putGeo, next);
+  const value = validators.validate(
+    { ...req.body, ip: getIpFromHeaders(req) }, validators.user.putGeo, next,
+  );
+  if (!value) return;
 
   const { longitude, latitude, error } = await geoData.put({ req, ...value });
   if (error) return next(error);

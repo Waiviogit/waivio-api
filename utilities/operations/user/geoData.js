@@ -1,22 +1,22 @@
-const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const ipRequest = require('utilities/requests/ipRequest');
 const { geoIpModel } = require('models');
 const _ = require('lodash');
 
-exports.get = async (req) => {
-  const ip = getIpFromHeaders(req);
-  if (!ip) return { longitude: '0.0', latitude: '0.0' };
+exports.get = async (ip) => {
+  if (!ip) return { longitude: 0, latitude: 0 };
 
   const { result } = await geoIpModel.findOne(ip);
 
   if (!result) {
     const { geoData } = await ipRequest.getIp(ip);
     if (_.get(geoData, 'lat') && _.get(geoData, 'lon')) {
-      await geoIpModel.findOneAndUpdate({ ip, longitude: geoData.lon, latitude: geoData.lat });
+      await geoIpModel.findOneAndUpdate({
+        ip, longitude: parseFloat(geoData.lon), latitude: parseFloat(geoData.lat),
+      });
     }
     return {
-      longitude: _.get(geoData, 'lon', '0.0'),
-      latitude: _.get(geoData, 'lat', '0.0'),
+      longitude: parseFloat(_.get(geoData, 'lon', '0')),
+      latitude: parseFloat(_.get(geoData, 'lat', '0')),
     };
   }
   return {
@@ -25,14 +25,11 @@ exports.get = async (req) => {
   };
 };
 
-exports.put = async ({ req, longitude, latitude }) => {
-  const ip = getIpFromHeaders(req);
-  if (!ip) return { error: { message: 'yo' } };
-
+exports.put = async ({ ip, longitude, latitude }) => {
   const { result, error } = await geoIpModel.findOneAndUpdate({
     ip,
-    longitude: longitude.toString(),
-    latitude: latitude.toString(),
+    longitude,
+    latitude,
   });
   if (error) return { error };
 
