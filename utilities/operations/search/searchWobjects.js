@@ -111,12 +111,21 @@ const getPipeline = ({
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
-  crucialWobjects, string, object_type, forParent,
+  crucialWobjects, string, object_type, forParent, box,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
     string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
   })];
+  if (box) {
+    pipeline.push({
+      map: {
+        $geoWithin: {
+          $box: [box.bottomPoint, box.topPoint],
+        },
+      },
+    });
+  }
   if (forParent) {
     pipeline.push({
       $addFields: {
