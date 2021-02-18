@@ -8,6 +8,6 @@ const GeoIpSchema = new Schema({
   latitude: { type: Number, required: true },
 }, { versionKey: false });
 
-const GeoIpModel = mongoose.model('geo_ip', GeoIpSchema, 'geo_ip');
+const GeoIpModel = mongoose.model('geo_ips', GeoIpSchema);
 
 module.exports = GeoIpModel;
