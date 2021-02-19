@@ -726,7 +726,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref": "#/definitions/mapCoordinates"
+              "$ref": "#/definitions/getMapCoordinates"
             }
           },
           "422": {
@@ -3860,6 +3860,30 @@
        ]
      }
      ]
+    },
+    "getMapCoordinates": {
+      "type": "object",
+      "properties": {
+        "coordinates" : {
+          "type": "array",
+          "example": [{
+            "topPoint": [
+              -91.479002,68.117143
+            ],
+            "bottomPoint": [
+              -131.139244,49.152501
+            ]
+          }
+          ]
+        },
+        "center" : {
+          "type": "array",
+          "example": [31.479002,68.117143]
+        },
+        "zoom" : {
+          "type": "number"
+        }
+      }
     },
     "firstLoad": {
       "type": "object",

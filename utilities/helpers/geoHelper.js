@@ -1,12 +1,15 @@
+const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('constants/mapConstants');
 const _ = require('lodash');
 
 exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
-  if (_.isEmpty(mapCoordinates)) return { center: [0, 0] };
+  if (_.isEmpty(mapCoordinates)) return DEFAULT_MAP_VIEW;
+
   const { longitude, latitude } = _.reduce(mapCoordinates, (acc, el) => {
     acc.longitude.push(el.topPoint[0], el.bottomPoint[0]);
     acc.latitude.push(el.topPoint[1], el.bottomPoint[1]);
     return acc;
   }, { longitude: [], latitude: [] });
+
   longitude.sort((a, b) => b - a);
   latitude.sort((a, b) => b - a);
 
@@ -21,17 +24,12 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   );
   const zoom = getMapZoomByDistance(distance);
 
-  return {
-    center: zoom === 3
-      ? [26.61185227911829, 8.192942803592587]
-      : center,
-    zoom,
-  };
+  return zoom === 3
+    ? DEFAULT_MAP_VIEW
+    : { center, zoom };
 };
 
 const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
-  const earthRadiusM = 6371000;
-
   const dLat = degreesToRadians(lat2 - lat1);
   const dLon = degreesToRadians(lon2 - lon1);
 
@@ -42,7 +40,7 @@ const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
     + Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1Rad) * Math.cos(lat2Rad);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return Math.round(earthRadiusM * c);
+  return Math.round(EARTH_RADIUS_M * c);
 };
 
 const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -50,14 +48,14 @@ const degreesToRadians = (degrees) => (degrees * Math.PI) / 180;
 const mediumPoint = (point1, point2) => (point1 + point2) / 2;
 
 const getMapZoomByDistance = (distance) => {
-  let zoom = 1;
-  const zoomDistances = [[18, 1268], [17, 2537], [16, 5074], [15, 10147], [14, 20294], [13, 40589], [12, 81176], [11, 162352], [10, 324700], [9, 649357], [8, 1298407], [7, 2594265], [6, 5168868], [5, 10171255], [4, 13396150], [3, 40075000]];
+  let zoom = 3;
 
-  for (let i = 0; i < zoomDistances.length; i++) {
-    if (distance < zoomDistances[i][1]) {
-      [zoom] = zoomDistances[i];
+  for (let i = 0; i < ZOOM_DISTANCE.length; i++) {
+    if (distance < ZOOM_DISTANCE[i][1]) {
+      [zoom] = ZOOM_DISTANCE[i];
       break;
     }
   }
+
   return zoom;
 };
