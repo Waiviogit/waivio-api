@@ -139,6 +139,9 @@ userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
 userRoutes.route('/user/:userName/vote-value')
   .get(UserController.getVoteValue);
+userRoutes.route('/geo-ip')
+  .get(UserController.getGeoByIp)
+  .put(UserController.putUserGeo);
 // endregion
 // region Post
 postRoutes.route('/post/:author/:permlink')

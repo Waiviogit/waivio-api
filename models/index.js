@@ -20,5 +20,6 @@ moduleExports.hiddenPostModel = require('./hiddenPostModel');
 moduleExports.hiddenCommentModel = require('./hiddenCommentModel');
 moduleExports.mutedUserModel = require('./mutedUserModel');
 moduleExports.blacklistModel = require('./blacklistModel');
+moduleExports.geoIpModel = require('./geoIpModel');
 
 module.exports = moduleExports;

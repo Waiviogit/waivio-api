@@ -8,14 +8,14 @@ const config = require('config');
 const { redisSetter } = require('utilities/redis');
 const { App } = require('models');
 const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
+const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
-  const ip = process.env.NODE_ENV === 'production'
-    ? req.headers['x-forwarded-for']
-    : req.headers['x-real-ip'];
+  const ip = getIpFromHeaders(req);
   const { result, error } = await App.findOne({ host });
+
   if (error) return next(error);
   if (!result) {
     if (!host) {
