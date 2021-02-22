@@ -30,12 +30,10 @@ exports.getTagsByTagCategory = async ({ wobjectLinks, tagCategory }) => {
     const tags = _
       .chain(wobjects)
       .reduce((accum, element) => {
-        for (const tag of _.get(element, 'tagCategories', [])) {
+        _.forEach(_.get(element, 'tagCategories', []), (tag) => {
           const filtered = _.filter(_.get(tag, 'categoryItems', []), (filterItem) => filterItem.weight > 0);
-          if (tag.body === categoryName && !_.isEmpty(tag.categoryItems) && !_.isEmpty(filtered)) {
-            accum = [...accum, ...filtered];
-          }
-        }
+          if (tag.body === categoryName && !_.isEmpty(filtered)) accum = [...accum, ...filtered];
+        });
         return accum;
       }, [])
       .orderBy(['weight'], ['desc'])
