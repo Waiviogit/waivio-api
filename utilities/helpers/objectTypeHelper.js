@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { Wobj } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
@@ -19,4 +20,28 @@ exports.getTagCategory = async (tagCategory = [], filter) => {
     }
   }
   return resultArray;
+};
+
+exports.getTagsByTagCategory = async ({ wobjectLinks, tagCategory }) => {
+  const { result: wobjects } = await Wobj
+    .find({ author_permlink: { $in: wobjectLinks } }, { tagCategories: 1 });
+
+  return _.reduce(tagCategory, (resultArr, categoryName) => {
+    const tags = _
+      .chain(wobjects)
+      .reduce((accum, element) => {
+        for (const tag of _.get(element, 'tagCategories', [])) {
+          const filtered = _.filter(_.get(tag, 'categoryItems', []), (filterItem) => filterItem.weight > 0);
+          if (tag.body === categoryName && !_.isEmpty(tag.categoryItems) && !_.isEmpty(filtered)) {
+            accum = [...accum, ...filtered];
+          }
+        }
+        return accum;
+      }, [])
+      .orderBy(['weight'], ['desc'])
+      .map('name')
+      .uniq()
+      .value();
+    return [...resultArr, { tagCategory: categoryName, tags }];
+  }, []);
 };
