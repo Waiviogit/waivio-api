@@ -58,7 +58,7 @@ describe('On userController', async () => {
       });
 
       it('should create record in DB from geo api request', async () => {
-        const { latitude, longitude } = await GeoIp.findOne({ network: ip }).lean();
+        const { latitude, longitude } = await GeoIp.findOne({ ip }).lean();
         expect(parsedReqMock).to.be.deep.eq({ latitude, longitude });
       });
     });
@@ -67,7 +67,7 @@ describe('On userController', async () => {
       let record;
       beforeEach(async () => {
         record = await GeoIpFactory.Create();
-        result = await chai.request(app).get('/api/geo-ip').set({ 'x-real-ip': record.network });
+        result = await chai.request(app).get('/api/geo-ip').set({ 'x-real-ip': record.ip });
       });
 
       it('should return status 200', async () => {
@@ -127,7 +127,7 @@ describe('On userController', async () => {
         });
 
         it('should create record in DB', async () => {
-          const record = await GeoIp.findOne({ network: ip }).lean();
+          const record = await GeoIp.findOne({ ip }).lean();
           expect({ latitude: record.latitude, longitude: record.longitude })
             .to.be.deep.eq({ latitude, longitude });
         });
@@ -138,7 +138,7 @@ describe('On userController', async () => {
         beforeEach(async () => {
           record = await GeoIpFactory.Create();
           result = await chai.request(app).put('/api/geo-ip').set({ 'x-real-ip': ip }).send({ longitude, latitude });
-          updatedRecord = await GeoIp.findOne({ network: ip }).lean();
+          updatedRecord = await GeoIp.findOne({ ip }).lean();
         });
 
         it('should return status 200', async () => {
@@ -146,13 +146,13 @@ describe('On userController', async () => {
         });
 
         it('should updated record in DB has proper longitude and latitude', async () => {
-          updatedRecord = await GeoIp.findOne({ network: ip }).lean();
+          updatedRecord = await GeoIp.findOne({ ip }).lean();
           expect({ latitude: updatedRecord.latitude, longitude: updatedRecord.longitude })
             .to.be.deep.eq({ latitude, longitude });
         });
 
         it('should updated record should be different', async () => {
-          updatedRecord = await GeoIp.findOne({ network: ip }).lean();
+          updatedRecord = await GeoIp.findOne({ ip }).lean();
           expect(record).to.be.not.deep.eq(updatedRecord);
         });
       });

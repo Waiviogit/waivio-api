@@ -4,7 +4,7 @@ const Create = async ({
   ip, longitude, latitude, onlyData,
 } = {}) => {
   const ipData = {
-    network: ip || faker.internet.ip(),
+    ip: ip || faker.internet.ip(),
     longitude: longitude || parseFloat(faker.address.longitude()),
     latitude: latitude || parseFloat(faker.address.latitude()),
   };

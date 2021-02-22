@@ -361,7 +361,7 @@ const getVoteValue = async (req, res, next) => {
 };
 
 const getGeoByIp = async (req, res, next) => {
-  const { longitude, latitude } = await geoData.get(getIpFromHeaders(req));
+  const { longitude, latitude } = await geoData.getLocation(getIpFromHeaders(req));
 
   res.result = { status: 200, json: { longitude, latitude } };
   next();
@@ -373,7 +373,7 @@ const putUserGeo = async (req, res, next) => {
   );
   if (!value) return;
 
-  const { longitude, latitude, error } = await geoData.put({ req, ...value });
+  const { longitude, latitude, error } = await geoData.putLocation({ req, ...value });
   if (error) return next(error);
 
   res.result = { status: 200, json: { longitude, latitude } };

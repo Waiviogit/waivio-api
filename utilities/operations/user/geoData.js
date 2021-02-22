@@ -2,7 +2,7 @@ const ipRequest = require('utilities/requests/ipRequest');
 const { geoIpModel } = require('models');
 const _ = require('lodash');
 
-exports.get = async (ip) => {
+exports.getLocation = async (ip) => {
   if (!ip) return { longitude: 0, latitude: 0 };
 
   const { result } = await geoIpModel.findOne(ip);
@@ -25,7 +25,7 @@ exports.get = async (ip) => {
   };
 };
 
-exports.put = async ({ ip, longitude, latitude }) => {
+exports.putLocation = async ({ ip, longitude, latitude }) => {
   const { result, error } = await geoIpModel.findOneAndUpdate({
     ip,
     longitude,

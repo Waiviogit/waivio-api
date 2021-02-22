@@ -2,7 +2,7 @@ const { GeoIp } = require('database').models;
 
 exports.findOne = async (ip) => {
   try {
-    return { result: await GeoIp.findOne({ network: ip }).lean() };
+    return { result: await GeoIp.findOne({ ip }).lean() };
   } catch (error) {
     return { error };
   }
@@ -11,7 +11,7 @@ exports.findOne = async (ip) => {
 exports.findOneAndUpdate = async (data) => {
   try {
     const result = await GeoIp.findOneAndUpdate(
-      { network: data.ip },
+      { ip: data.ip },
       data,
       {
         upsert: true,
