@@ -2370,6 +2370,108 @@
         }
       }
     },
+    "/api/geo-ip" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user coordinates by ip",
+        "description" : "Get user coordinates by ip",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "x-forwarded-for",
+          "in" : "header",
+          "description" : "ip header prod",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "x-real-ip",
+          "in" : "header",
+          "description" : "ip header staging",
+          "required" : false,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "longitude" : {
+                  "type": "number"
+                },
+                "latitude" : {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "user" ],
+        "summary" : "Set user coordinates by ip",
+        "description" : "Set user coordinates by ip,\n for this request get coordinate only from navigator",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "x-forwarded-for",
+          "in" : "header",
+          "description" : "ip header prod",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "x-real-ip",
+          "in" : "header",
+          "description" : "ip header staging",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**longitude** - double, range of values -180, 180\n**latitude** - double, range of values -90, 90",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "example": {
+              "longitude": 34.0954,
+              "latitude": 76.2323
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "longitude" : {
+                  "type": "number"
+                },
+                "latitude" : {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject" : {
       "post" : {
         "tags" : [ "wobject" ],

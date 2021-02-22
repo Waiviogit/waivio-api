@@ -36,6 +36,7 @@ models.HiddenPost = require('./schemas/HiddenPostSchema');
 models.HiddenComment = require('./schemas/HiddenCommentSchema');
 models.MutedUser = require('./schemas/MutedUserSchema');
 models.Blacklist = require('./schemas/BlacklistSchema');
+models.GeoIp = require('./schemas/GeoIpSchema');
 
 module.exports = {
   Mongoose: mongoose,

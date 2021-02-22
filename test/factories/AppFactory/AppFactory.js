@@ -2,11 +2,12 @@ const {
   faker, App, ObjectID, _,
 } = require('test/testHelper');
 const { STATUSES } = require('constants/sitesConstants');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 
 const Create = async ({
   blacklists, name, admins, moderators, supportedHashtags, coordinates,
   supportedObjects, bots, authority, inherited, canBeExtended, deactivatedAt,
-  host, owner, status, configuration, filters, supportedTypes, parent, activatedAt,
+  host, owner, status, configuration, filters, supportedTypes, parent, activatedAt, main_map_object_types,
 } = {}) => {
   const data = {
     host: host || faker.internet.domainWord(),
@@ -39,6 +40,7 @@ const Create = async ({
       title: faker.random.string(20),
     },
     service_bots: bots || [],
+    main_map_object_types: main_map_object_types || [OBJECT_TYPES.RESTAURANT],
   };
 
   const app = await App.create(data);
