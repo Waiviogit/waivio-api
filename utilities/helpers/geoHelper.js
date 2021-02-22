@@ -24,9 +24,7 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   );
   const zoom = getMapZoomByDistance(distance);
 
-  return zoom === 3
-    ? DEFAULT_MAP_VIEW
-    : { center, zoom };
+  return { center, zoom };
 };
 
 const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
