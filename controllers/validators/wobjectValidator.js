@@ -86,6 +86,20 @@ exports.searchScheme = Joi.object().keys({
   object_type: Joi.string(),
   forParent: Joi.string().invalid('').allow(null),
   required_fields: Joi.array().items(Joi.string()).default([]),
+  box: Joi.object().keys({
+    topPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+    bottomPoint: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ).required(),
+  }),
 });
 
 exports.galleryScheme = Joi.object().keys({
