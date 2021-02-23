@@ -6,7 +6,7 @@ const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 
 exports.searchWobjects = async ({
   // eslint-disable-next-line camelcase
-  string, object_type, limit, skip, app, forParent, required_fields,
+  string, object_type, limit, skip, app, forParent, required_fields, box,
   needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
@@ -30,6 +30,7 @@ exports.searchWobjects = async ({
     object_type,
     supportedTypes,
     required_fields,
+    box,
   });
   const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(pipeline);
 
@@ -89,7 +90,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 const getPipeline = ({
-  forSites, crucialWobjects, string, limit, forExtended, map, sort,
+  forSites, crucialWobjects, string, limit, forExtended, map, sort, box,
   skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
 }) => (forSites || forExtended
   ? addFieldsToSearch({
@@ -104,6 +105,7 @@ const getPipeline = ({
     forParent,
     object_type,
     supportedTypes,
+    box,
   })
   : makePipeline({
     string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
@@ -111,12 +113,23 @@ const getPipeline = ({
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const addFieldsToSearch = ({
-  crucialWobjects, string, object_type, forParent,
+  crucialWobjects, string, object_type, forParent, box,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
     string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
   })];
+  if (box) {
+    pipeline.push({
+      $match: {
+        map: {
+          $geoWithin: {
+            $box: [box.bottomPoint, box.topPoint],
+          },
+        },
+      },
+    });
+  }
   if (forParent) {
     pipeline.push({
       $addFields: {

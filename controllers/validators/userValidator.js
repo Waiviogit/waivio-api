@@ -206,3 +206,9 @@ exports.voteValue = Joi.object().keys({
   permlink: Joi.string().required(),
   weight: Joi.number().min(0).max(100).required(),
 });
+
+exports.putGeo = Joi.object().keys({
+  ip: Joi.string().required(),
+  longitude: Joi.number().min(-180).max(180).required(),
+  latitude: Joi.number().min(-90).max(90).required(),
+});
