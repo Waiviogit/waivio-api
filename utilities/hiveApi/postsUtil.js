@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const { client } = require('utilities/steemApi/steem');
 
-exports.getPostsByCategory = async (data) => {
+exports.getPostsByCategory = async (client, data) => {
   try {
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
       return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
@@ -21,11 +20,12 @@ exports.getPostsByCategory = async (data) => {
 
 /**
  * Return post or comment from steem blockchain if it exist and not deleted
+ * @param client {object}
  * @param author
  * @param permlink
  * @returns {Promise<{error: {message: string, status: number}}|{post: ({author}|any)}>}
  */
-exports.getPost = async (author, permlink) => {
+exports.getPost = async (client, { author, permlink }) => {
   try {
     const post = await client.database.call('get_content', [author, permlink]);
 
@@ -38,9 +38,12 @@ exports.getPost = async (author, permlink) => {
   }
 };
 
-exports.getManyPosts = async (links = []) => {
+exports.getManyPosts = async (client, links = []) => {
   const posts = await Promise.all(links.map(async (link) => {
-    const { post, error } = await this.getPost(_.get(link, 'author'), _.get(link, 'permlink'));
+    const { post, error } = await this.getPost(
+      client,
+      { author: _.get(link, 'author'), permlink: _.get(link, 'permlink') },
+    );
 
     if (post && !error) return post;
   }));
@@ -50,26 +53,31 @@ exports.getManyPosts = async (links = []) => {
 
 /**
  * Get comments authored by specified STEEM user
+ * @param client {object}
  * @param start_author {String} Specified STEEM user
  * @param start_permlink {String} permlink of last received comment(pagination)
  * @param limit {Number} count of comments to return
  * @returns {Promise<{comments: [Object]}|{error: {message: string, status: number}}>}
  */
 // eslint-disable-next-line camelcase
-exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
-  const comments = await client.database.call(
-    'get_discussions_by_comments',
-    [{ start_author, start_permlink, limit }],
-  );
+exports.getUserComments = async (client, { start_author, start_permlink, limit }) => {
+  try {
+    const comments = await client.database.call(
+      'get_discussions_by_comments',
+      [{ start_author, start_permlink, limit }],
+    );
 
-  return { comments };
+    return { comments };
+  } catch (error) {
+    return { error };
+  }
 };
 
 /**
  * Get state of post(comment). State include a lot info, e.x. replies, users etc.
  * @returns {Promise<{error: Object}|{result: Object}>}
  */
-exports.getPostState = async ({ author, permlink, category }) => {
+exports.getPostState = async (client, { author, permlink, category }) => {
   try {
     const result = await client.database.call(
       'get_state',
@@ -83,7 +91,7 @@ exports.getPostState = async ({ author, permlink, category }) => {
   }
 };
 
-exports.getContent = async ({ author, permlink }) => {
+exports.getContent = async (client, { author, permlink }) => {
   try {
     const result = await client.database.call(
       'get_content',

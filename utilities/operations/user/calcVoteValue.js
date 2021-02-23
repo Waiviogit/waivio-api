@@ -1,14 +1,18 @@
+const { postsUtil, userUtil, hiveClient } = require('utilities/hiveApi');
 const { redisGetter } = require('utilities/redis');
-const { postsUtil, userUtil } = require('utilities/steemApi');
+const { Post } = require('models');
+const _ = require('lodash');
 
 module.exports = async ({
   userName, weight, author, permlink,
 }) => {
   const priceInfo = await redisGetter.importUserClientHGetAll('current_price_info');
-  const { userData: account } = await userUtil.getAccount(userName);
+  const { userData: account } = await hiveClient.execute(
+    userUtil.getAccount,
+    userName,
+  );
 
-  const { post } = await postsUtil.getPost(author, permlink);
-  if (!post || !account) return 0;
+  if (!account) return 0;
 
   const vests = parseFloat(account.vesting_shares)
     + parseFloat(account.received_vesting_shares)
@@ -22,7 +26,10 @@ module.exports = async ({
 
   const power = Math.round(((accountVotingPower / 100) * weight) / 50);
   const rShares = vests * power * 100 - 50000000;
-  const tRShares = parseFloat(post.vote_rshares) + rShares;
+
+  const postVoteRhares = await getPostVoteRhares({ author, permlink });
+
+  const tRShares = postVoteRhares + rShares;
 
   const s = parseFloat(priceInfo.content_constant);
   const tClaims = (tRShares * (tRShares + 2 * s)) / (tRShares + 4 * s);
@@ -32,4 +39,17 @@ module.exports = async ({
   const voteValue = postValue * (rShares / tRShares);
 
   return voteValue >= 0 ? voteValue : 0;
+};
+
+const getPostVoteRhares = async ({ author, permlink }) => {
+  let { result: post } = await Post.findByBothAuthors({ author, permlink });
+  if (!post) {
+    ({ post } = await hiveClient.execute(
+      postsUtil.getPost,
+      { author, permlink },
+    ));
+  }
+  return _.get(post, 'vote_rshares')
+    ? parseFloat(post.vote_rshares)
+    : 0;
 };

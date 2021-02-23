@@ -1,6 +1,4 @@
-const { client } = require('utilities/steemApi/steem');
-
-exports.getAccount = async (name) => {
+exports.getAccount = async (client, name) => {
   try {
     const [account] = await client.database.getAccounts([name]);
 
@@ -13,7 +11,7 @@ exports.getAccount = async (name) => {
   }
 };
 
-exports.getFollowingsList = async ({ name, startAccount, limit }) => {
+exports.getFollowingsList = async (client, { name, startAccount, limit }) => {
   try {
     const followings = await client.call(
       'follow_api',
@@ -27,7 +25,7 @@ exports.getFollowingsList = async ({ name, startAccount, limit }) => {
   }
 };
 
-exports.getFollowersList = async ({ name, startAccount, limit }) => {
+exports.getFollowersList = async (client, { name, startAccount, limit }) => {
   try {
     const followers = await client.call(
       'follow_api',
@@ -41,7 +39,7 @@ exports.getFollowersList = async ({ name, startAccount, limit }) => {
 };
 
 // return {account: 'accname', follower_count: 000, following_count: 000}
-exports.getFollowCount = async (name) => {
+exports.getFollowCount = async (client, name) => {
   try {
     const result = await client.call(
       'condenser_api',
@@ -55,12 +53,12 @@ exports.getFollowCount = async (name) => {
   }
 };
 
-exports.searchUserByName = async (name, limit = 20) => {
+exports.searchUserByName = async (client, { name, limit = 20 }) => {
   try {
     const accounts = await client.call('condenser_api', 'get_account_reputations', [name, limit]);
 
     return { accounts };
-  } catch (e) {
-    return { error: e };
+  } catch (error) {
+    return { error };
   }
 };
