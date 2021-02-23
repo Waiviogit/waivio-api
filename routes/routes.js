@@ -120,6 +120,8 @@ userRoutes.route('/user/:userName/comments')
   .get(UserController.getUserComments);
 userRoutes.route('/user/:userName/objects_shares')
   .post(UserController.userObjectsShares);
+userRoutes.route('/user/:userName/expertise-counters')
+  .get(UserController.userObjectsSharesCount);
 userRoutes.route('/user/:userName/get_post_filters')
   .get(UserController.postFilters);
 userRoutes.route('/users/search')
@@ -135,6 +137,11 @@ userRoutes.route('/user/:userName/following_wobjects_updates')
   .get(UserController.followingWobjectsUpdates);
 userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
+userRoutes.route('/user/:userName/vote-value')
+  .get(UserController.getVoteValue);
+userRoutes.route('/geo-ip')
+  .get(UserController.getGeoByIp)
+  .put(UserController.putUserGeo);
 // endregion
 // region Post
 postRoutes.route('/post/:author/:permlink')

@@ -647,7 +647,7 @@
         },{
           "name" : "params",
           "in" : "body",
-          "description" : "**userName** - name of user\n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates **center** (it is array with numbers [latitude, longitude])- coordinates for client \n**zoom** - number, zoom on map (client) \n**height** - string, height on map (client) \n**width** - string, width on map (client) \n",
+          "description" : "**userName** - name of user\n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates **center** (it is array with numbers [latitude, longitude])- coordinates for client \n**zoom** - number, zoom on map (client) \n",
           "required": true,
           "schema": {
            "type": "object",
@@ -664,9 +664,7 @@
                   "center" : [
                   -110.479002, 70.117143
                   ],
-                  "zoom" : 5,
-                  "height" : "640px",
-                  "width" : "480px"
+                  "zoom" : 5
                 }]
             }
           }
@@ -728,7 +726,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "$ref": "#/definitions/mapCoordinates"
+              "$ref": "#/definitions/getMapCoordinates"
             }
           },
           "422": {
@@ -1655,8 +1653,8 @@
         },{
           "name" : "searchString",
           "in" : "query",
-          "description" : "String to search",
-          "required" : true,
+          "description" : "String to search, when no search string returns top users by wobjects_weight",
+          "required" : false,
           "type" : "string"
         }, {
           "name" : "limit",
@@ -1910,6 +1908,42 @@
             "description" : "successful operation",
             "schema" : {
               "$ref" : "#/definitions/inline_response_200_7"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/expertise-counters" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Return users expertise-counters",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name which expertise-counters needs to return",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "hashtagsExpCount" : {
+                  "type" : "integer"
+                },
+                "wobjectsExpCount" : {
+                  "type" : "integer"
+                }
+              }
             }
           }
         }
@@ -2274,6 +2308,179 @@
             "description" : "Max number of users are importing at the moment!",
             "schema" : {
               "$ref" : "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/vote-value" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Estimate user vote value",
+        "description" : "Estimate user vote value in HIVE or HBD",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to calc vote value",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "weight",
+          "in" : "query",
+          "description" : "vote weight min 0 max 10000",
+          "required" : true,
+          "minimum": 0,
+          "maximum": 10000,
+          "type" : "number"
+        } ,{
+          "name" : "token",
+          "in" : "query",
+          "description" : "token HIVE or HBD",
+          "required" : false,
+          "enum": ["HIVE", "HBD"],
+          "default": "HBD",
+          "type" : "string"
+        }, {
+            "name" : "author",
+            "in" : "query",
+            "description" : "post author",
+            "required" : true,
+            "type" : "string"
+          }, {
+          "name" : "permlink",
+          "in" : "query",
+          "description" : "post permlink",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "result" : {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/geo-ip" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get user coordinates by ip",
+        "description" : "Get user coordinates by ip",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "x-forwarded-for",
+          "in" : "header",
+          "description" : "ip header prod",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "x-real-ip",
+          "in" : "header",
+          "description" : "ip header staging",
+          "required" : false,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "longitude" : {
+                  "type": "number"
+                },
+                "latitude" : {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "tags" : [ "user" ],
+        "summary" : "Set user coordinates by ip",
+        "description" : "Set user coordinates by ip,\n for this request get coordinate only from navigator",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "x-forwarded-for",
+          "in" : "header",
+          "description" : "ip header prod",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "x-real-ip",
+          "in" : "header",
+          "description" : "ip header staging",
+          "required" : false,
+          "type" : "string"
+        }, {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**longitude** - double, range of values -180, 180\n**latitude** - double, range of values -90, 90",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "example": {
+              "longitude": 34.0954,
+              "latitude": 76.2323
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "properties": {
+                "longitude" : {
+                  "type": "number"
+                },
+                "latitude" : {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
             }
           }
         }
@@ -2790,7 +2997,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight",
+          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_11"
@@ -3770,6 +3977,30 @@
      }
      ]
     },
+    "getMapCoordinates": {
+      "type": "object",
+      "properties": {
+        "coordinates" : {
+          "type": "array",
+          "example": [{
+            "topPoint": [
+              -91.479002,68.117143
+            ],
+            "bottomPoint": [
+              -131.139244,49.152501
+            ]
+          }
+          ]
+        },
+        "center" : {
+          "type": "array",
+          "example": [31.479002,68.117143]
+        },
+        "zoom" : {
+          "type": "number"
+        }
+      }
+    },
     "firstLoad": {
       "type": "object",
       "example": {
@@ -4667,8 +4898,8 @@
             "$ref" : "#/definitions/inline_response_200_7_wobjects"
           }
         },
-        "wobjects_count" : {
-          "type" : "integer"
+        "hasMore" : {
+          "type" : "boolean"
         }
       }
     },
@@ -5176,6 +5407,19 @@
           "type" : "array",
           "items" : {
             "type" : "string"
+          }
+        },
+        "box" : {
+          "type": "object",
+          "properties": {
+            "topPoint": {
+              "type": "array",
+              "example": [-91.479002,68.117143]
+            },
+            "bottomPoint": {
+              "type": "array",
+              "example": [-131.139244,49.152501]
+            }
           }
         }
       }

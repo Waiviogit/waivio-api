@@ -535,8 +535,6 @@ describe('On sitesController', async () => {
         bottomPoint: [+faker.address.longitude(), +faker.address.latitude()],
         center: [+faker.address.longitude(), +faker.address.latitude()],
         zoom: faker.random.number(),
-        height: faker.random.string(),
-        width: faker.random.string(),
       }];
     });
     afterEach(() => {
@@ -670,6 +668,7 @@ describe('On sitesController', async () => {
         const mock = {
           googleAnalyticsTag: userApp.googleAnalyticsTag,
           beneficiary: userApp.beneficiary,
+          referralCommissionAcc: userApp.owner,
         };
         expect(result.body).to.be.deep.eq(mock);
       });
@@ -721,7 +720,7 @@ describe('On sitesController', async () => {
       it('should response 401', async () => {
         result = await chai.request(app)
           .get('/api/sites/restrictions')
-          .query({ userName: faker.random.string(), host: userApp.host});
+          .query({ userName: faker.random.string(), host: userApp.host });
         expect(result).to.have.status(401);
       });
     });

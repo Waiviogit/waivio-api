@@ -118,6 +118,7 @@ const search = async (req, res, next) => {
     map: req.body.map,
     simplified: req.body.simplified,
     required_fields: req.body.required_fields,
+    box: req.body.box,
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;

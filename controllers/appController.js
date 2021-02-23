@@ -1,7 +1,8 @@
+const { app: AppOperations } = require('utilities/operations');
 const validators = require('controllers/validators');
 const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
-const { app: AppOperations } = require('utilities/operations');
+const config = require('config');
 
 const show = async (req, res, next) => {
   const data = {
@@ -9,7 +10,7 @@ const show = async (req, res, next) => {
   };
   data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
   const session = getNamespace('request-session');
-  data.host = session.get('host');
+  data.host = session.get('host') || config.appHost;
   const { app, error } = await App.getOne(data);
 
   if (error) {
