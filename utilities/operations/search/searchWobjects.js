@@ -1,20 +1,21 @@
-const _ = require('lodash');
-const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
-const { Wobj, ObjectType, User } = require('models');
-const { getSessionApp } = require('utilities/helpers/sitesHelper');
+/* eslint-disable camelcase */
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
+const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
+const { getSessionApp } = require('utilities/helpers/sitesHelper');
+const geoHelper = require('utilities/helpers/geoHelper');
+const { Wobj, ObjectType, User } = require('models');
+const _ = require('lodash');
 
 exports.searchWobjects = async ({
-  // eslint-disable-next-line camelcase
   string, object_type, limit, skip, app, forParent, required_fields, box,
   needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
 
-  const crucialWobjects = _.get(app, 'supported_objects', []);
-  const forSites = _.get(app, 'inherited');
-  const forExtended = _.get(app, 'canBeExtended');
   const supportedTypes = _.get(app, 'supported_object_types', []);
+  const crucialWobjects = _.get(app, 'supported_objects', []);
+  const forExtended = _.get(app, 'canBeExtended');
+  const forSites = _.get(app, 'inherited');
 
   const pipeline = getPipeline({
     forExtended,
@@ -64,6 +65,9 @@ exports.searchWobjects = async ({
   await addCampaignsToWobjects({
     wobjects, app, simplified, user,
   });
+
+  if (box) geoHelper.setFilterByDistance({ wobjects, box });
+
   return {
     wobjects: _.take(wobjects, limit),
     hasMore: wobjects.length > limit,
@@ -144,14 +148,12 @@ const addFieldsToSearch = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  // eslint-disable-next-line camelcase
   string, object_type, limit, skip, crucialWobjects, forParent,
 }) => {
   const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
-        // eslint-disable-next-line camelcase
         crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
@@ -229,7 +231,6 @@ const matchSitesPipe = ({
             { fields: { $elemMatch: { name: { $in: SEARCH_FIELDS }, body: { $regex: string, $options: 'i' } } } },
           ],
         },
-        // eslint-disable-next-line camelcase
         { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
       ],
     },
