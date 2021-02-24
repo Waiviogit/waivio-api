@@ -247,3 +247,7 @@ exports.aboutObjectFormat = async (app) => {
   app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink');
   return app;
 };
+
+exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
+  ? req.headers['x-forwarded-for']
+  : req.headers['x-real-ip']);
