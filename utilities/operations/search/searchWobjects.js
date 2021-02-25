@@ -66,7 +66,10 @@ exports.searchWobjects = async ({
     wobjects, app, simplified, user,
   });
 
-  if (box) geoHelper.setFilterByDistance({ wobjects, box });
+  if (box || forExtended || forSites) {
+    geoHelper.setFilterByDistance({ wobjects, box });
+    wobjects.sort((a, b) => _.has(b, 'campaigns') - _.has(a, 'campaigns'));
+  }
 
   return {
     wobjects: _.take(wobjects, limit),

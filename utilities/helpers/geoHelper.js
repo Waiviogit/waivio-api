@@ -28,6 +28,8 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
 };
 
 exports.setFilterByDistance = ({ wobjects = [], box }) => {
+  if (_.isEmpty(box)) return;
+
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
   const minDistanceBetweenObjects = displayDiagonalDistance > 1000
     ? Math.round(displayDiagonalDistance / 50)
