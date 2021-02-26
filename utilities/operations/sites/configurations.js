@@ -41,5 +41,7 @@ exports.saveConfigurations = async (params) => {
     },
   );
   if (updateError) return { error: updateError };
-  return { result: updatedApp.configuration };
+
+  const result = await sitesHelper.aboutObjectFormat(updatedApp);
+  return { result: _.get(result, 'configuration') };
 };
