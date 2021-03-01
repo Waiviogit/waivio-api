@@ -4,7 +4,7 @@ const { SITE_NAME_REGEX } = require('constants/sitesConstants');
 const options = { allowUnknown: true, stripUnknown: true };
 
 exports.availableCheck = Joi.object().keys({
-  name: Joi.string().pattern(SITE_NAME_REGEX).invalid('www').min(3)
+  name: Joi.string().pattern(SITE_NAME_REGEX).invalid('www').min(1)
     .required(),
   parentId: Joi.string().required(),
 }).options(options);

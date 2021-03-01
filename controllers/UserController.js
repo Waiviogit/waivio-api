@@ -33,6 +33,8 @@ const show = async (req, res, next) => {
     userName: req.headers.follower,
   }, validators.user.showSchema, next);
 
+  if (!value) return;
+
   await authorise(value.name);
   const { userData, error } = await getOneUser({ ...value, app: req.appData });
 
