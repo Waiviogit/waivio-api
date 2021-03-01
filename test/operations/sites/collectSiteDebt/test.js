@@ -112,5 +112,84 @@ describe('on collectSiteDebts', async () => {
         expect(Sentry.captureException.calledOnce).to.be.true;
       });
     });
+
+    describe('on suspended status', async () => {
+      beforeEach(async () => {
+        sinon.spy(objectBotRequests, 'sendCustomJson');
+        await AppFactory.Create({
+          host: `${faker.random.string()}.${parent.host}`, status: STATUSES.SUSPENDED,
+        });
+      });
+      it('should not call objectBotRequests', async () => {
+        expect(objectBotRequests.sendCustomJson.called).to.be.false;
+      });
+    });
+  });
+
+  describe('On dailySuspendedDebt', async () => {
+    let parent, app;
+    beforeEach(async () => {
+      await dropDatabase();
+      sinon.stub(Sentry, 'captureException').returns('Ok');
+      parent = await AppFactory
+        .Create({ inherited: false, canBeExtended: true, host: TEST_DOMAINS[0] });
+    });
+    afterEach(async () => {
+      sinon.restore();
+    });
+
+    describe('on ok', async () => {
+      beforeEach(async () => {
+        sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ result: true }));
+        sinon.stub(collectSiteDebts, 'checkForTestSites').returns(Promise.resolve(true));
+        app = await AppFactory.Create({
+          host: `${faker.random.string()}.${parent.host}`, status: STATUSES.SUSPENDED,
+        });
+      });
+
+      it('should call object bot method', async () => {
+        await collectSiteDebts.dailySuspendedDebt(1);
+        expect(objectBotRequests.sendCustomJson.calledOnce).to.be.true;
+      });
+
+      it('should call object bot method with correct params', async () => {
+        await collectSiteDebts.dailySuspendedDebt(1);
+        expect(objectBotRequests.sendCustomJson.calledWith({
+          amount: FEE.perSuspended, userName: app.owner, countUsers: 0, host: app.host,
+        },
+        `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+      });
+    });
+
+    describe('on error', async () => {
+      beforeEach(async () => {
+        sinon.stub(collectSiteDebts, 'checkForTestSites').returns(Promise.resolve(true));
+        const name = faker.random.string();
+        await AppFactory.Create({ host: `${name}.${parent.host}`, status: STATUSES.SUSPENDED });
+      });
+      it('should call sentry if object bot method return error', async () => {
+        sinon.stub(objectBotRequests, 'sendCustomJson').returns(Promise.resolve({ error: true }));
+        await collectSiteDebts.dailySuspendedDebt(1);
+        expect(Sentry.captureException.calledOnce).to.be.true;
+      });
+      it('should call sentry method with DB error', async () => {
+        sinon.stub(AppModel, 'find').returns(Promise.resolve({ error: true }));
+        await collectSiteDebts.dailySuspendedDebt(1);
+        expect(Sentry.captureException.calledOnce).to.be.true;
+      });
+    });
+
+    describe('on statuses other than suspended', async () => {
+      beforeEach(async () => {
+        sinon.spy(objectBotRequests, 'sendCustomJson');
+        const status = _.sample(Object.values(_.omit(STATUSES, ['SUSPENDED'])));
+        await AppFactory.Create({
+          host: `${faker.random.string()}.${parent.host}`, status,
+        });
+      });
+      it('should not call objectBotRequests', async () => {
+        expect(objectBotRequests.sendCustomJson.called).to.be.false;
+      });
+    });
   });
 });
