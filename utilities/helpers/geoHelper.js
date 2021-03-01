@@ -27,6 +27,32 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   return { center, zoom };
 };
 
+exports.setFilterByDistance = ({ wobjects = [], box }) => {
+  if (_.isEmpty(box)) return;
+
+  const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
+  const minDistanceBetweenObjects = displayDiagonalDistance > 1000
+    ? Math.round(displayDiagonalDistance / 50)
+    : 0;
+
+  for (let i = 0; i < wobjects.length; i++) {
+    for (let j = 0; j < wobjects.length; j++) {
+      if (i !== j) {
+        const distance = distanceInMBetweenEarthCoordinates(
+          wobjects[i].map.coordinates,
+          wobjects[j].map.coordinates,
+        );
+        const cond1 = distance < minDistanceBetweenObjects;
+        const cond2 = wobjects[i].weight > wobjects[j].weight;
+        const cond3 = !_.has(wobjects[j], 'campaigns');
+        if (cond1 && cond2 && cond3) wobjects[j].invisible = true;
+      }
+    }
+  }
+
+  return wobjects;
+};
+
 const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {
   const dLat = degreesToRadians(lat2 - lat1);
   const dLon = degreesToRadians(lon2 - lon1);
