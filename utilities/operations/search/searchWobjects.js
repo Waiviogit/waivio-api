@@ -67,6 +67,7 @@ exports.searchWobjects = async ({
   });
 
   if (box || forExtended || forSites) {
+    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
     geoHelper.setFilterByDistance({ wobjects, box });
     wobjects.sort((a, b) => _.has(b, 'campaigns') - _.has(a, 'campaigns'));
   }
@@ -198,7 +199,7 @@ const matchSitesPipe = ({
         distanceField: 'proximity',
         maxDistance: map.radius,
         spherical: true,
-        limit: 100000,
+        // limit: 100000,
       },
     });
   }
