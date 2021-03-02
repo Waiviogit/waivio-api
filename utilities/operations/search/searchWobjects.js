@@ -7,7 +7,7 @@ const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
 
 exports.searchWobjects = async ({
-  string, object_type, limit, skip, app, forParent, required_fields, box,
+  string = '', object_type, limit = 10, skip, app, forParent, required_fields, box,
   needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
   if (!app) ({ result: app } = await getSessionApp());
