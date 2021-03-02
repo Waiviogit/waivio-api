@@ -1,13 +1,11 @@
 const {
   faker, expect, dropDatabase, _, App,
 } = require('test/testHelper');
+const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
-const { STATUSES } = require('constants/sitesConstants');
-
 const { wobjects } = require('utilities/operations/search');
-
-const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
+const { STATUSES } = require('constants/sitesConstants');
 
 describe('On wobjects search', async () => {
   beforeEach(async () => {
