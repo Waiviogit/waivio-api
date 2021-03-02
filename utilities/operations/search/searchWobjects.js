@@ -94,12 +94,12 @@ const fillTagCategories = async (wobjectsCounts) => {
   wobjectsCounts = wobjectsCounts.map((wobj) => {
     const objectType = _.find(types, { name: wobj.object_type });
     if (!_.get(objectType, 'supposed_updates')) {
-      wobj.tagCategoties = [];
+      wobj.tagCategories = [];
       return wobj;
     }
     const tagCategory = _.find(objectType.supposed_updates,
       { name: FIELDS_NAMES.TAG_CATEGORY });
-    if (tagCategory) wobj.tagCategoties = tagCategory.values;
+    if (tagCategory) wobj.tagCategories = tagCategory.values;
     return wobj;
   });
   return wobjectsCounts;

@@ -44,7 +44,7 @@ describe('On wobjects search', async () => {
 
     it('should return proper wobject counters', async () => {
       expect(result.wobjectsCounts[0])
-        .to.be.deep.eq({ count: counter, object_type: searchedType, tagCategoties: [] });
+        .to.be.deep.eq({ count: counter, object_type: searchedType, tagCategories: [] });
     });
   });
 
@@ -106,6 +106,22 @@ describe('On wobjects search', async () => {
 
         const wobj = _.find(result.wobjects, { author_permlink: wobj2.author_permlink });
         expect(wobj.propositions).to.be.exist;
+      });
+
+      it('should always show wobjects with campaigns on top despite weight', async () => {
+        for (let i = 0; i < _.random(2, 4); i++) {
+          await ObjectFactory.Create({
+            objectType: OBJECT_TYPES.RESTAURANT,
+            map: { type: 'Point', coordinates: [-94.233, 48.224] },
+            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+            weight: _.random(2, 10),
+          });
+        }
+        result = await wobjects.searchWobjects({
+          app: parent,
+          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
+        });
+        expect(result.wobjects[0]).to.have.own.property('campaigns');
       });
     });
 
