@@ -50,4 +50,5 @@ exports.showMoreTagsSchema = Joi.object().keys({
 
 exports.tagsForFilterSchema = Joi.object().keys({
   objectType: Joi.string().required(),
+  wobjectLinks: Joi.array().items(Joi.string()).default([]),
 });
