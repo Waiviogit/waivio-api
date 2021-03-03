@@ -8,7 +8,7 @@ const { PAYMENT_TYPES, FEE, TEST_DOMAINS } = require('constants/sitesConstants')
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
-const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
+const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
 
 /** Check for available domain for user site */
@@ -248,7 +248,7 @@ exports.aboutObjectFormat = async (app) => {
   const wobject = await processWobjects({
     wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
   });
-  app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink');
+  app.configuration.aboutObject = _.pick(wobject, PICK_FIELDS_ABOUT_OBJ);
   return app;
 };
 
