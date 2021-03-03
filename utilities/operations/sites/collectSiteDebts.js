@@ -56,3 +56,33 @@ exports.checkForTestSites = async (parent) => {
   if (process.env.NODE_ENV === 'staging' && _.includes(TEST_DOMAINS, result.host)) return true;
   return process.env.NODE_ENV === 'production' && !_.includes(TEST_DOMAINS, result.host);
 };
+
+exports.dailySuspendedDebt = async (timeout = 200) => {
+  const { result: apps, error } = await App.find({
+    inherited: true, status: STATUSES.SUSPENDED,
+  });
+  if (error) return sendError(error);
+  for (const app of apps) {
+    if (!await this.checkForTestSites(app.parent)) continue;
+
+    const data = {
+      amount: FEE.perSuspended,
+      userName: app.owner,
+      host: app.host,
+      countUsers: 0,
+    };
+
+    const { error: createError } = await objectBotRequests.sendCustomJson(
+      data,
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false,
+    );
+    if (createError) {
+      console.error(`Request for create invoice for suspended host ${data.host} 
+      with amount ${data.amount}, daily users: ${data.countUsers} failed!`);
+      await sendError(Object.assign(createError, data));
+      continue;
+    }
+
+    await new Promise((resolve) => setTimeout(resolve, timeout));
+  }
+};

@@ -4,7 +4,7 @@ const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
-const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
+const { PAYMENT_TYPES, FEE, TEST_DOMAINS } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
@@ -22,7 +22,11 @@ exports.availableCheck = async (params) => {
 
 /** Get list of all parents available for extend */
 exports.getParentsList = async () => {
-  const { result: parents, error } = await App.find({ canBeExtended: true });
+  const condition = process.env.NODE_ENV === 'production'
+    ? { canBeExtended: true, host: { $nin: TEST_DOMAINS } }
+    : { canBeExtended: true };
+
+  const { result: parents, error } = await App.find(condition);
   if (error) return { error };
   return {
     parents: _.map(parents, (parent) => ({ domain: parent.host, _id: parent._id.toString() })),
