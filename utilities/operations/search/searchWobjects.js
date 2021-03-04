@@ -10,13 +10,27 @@ exports.searchWobjects = async ({
   string = '', object_type, limit = 10, skip, app, forParent, required_fields, box,
   needCounters = false, tagCategory, userName, simplified, map, sort,
 }) => {
+  const {
+    supportedTypes, crucialWobjects, forExtended, forSites, sessionApp,
+  } = await getAppInfo({ app });
+
+  return forExtended || forSites
+    ? sitesWobjectSearch()
+    : defaultWobjectSearch()
+};
+
+const getAppInfo = async ({ app }) => {
   if (!app) ({ result: app } = await getSessionApp());
+  return {
+    supportedTypes: _.get(app, 'supported_object_types', []),
+    crucialWobjects: _.get(app, 'supported_objects', []),
+    forExtended: _.get(app, 'canBeExtended'),
+    forSites: _.get(app, 'inherited'),
+    sessionApp: app,
+  };
+};
 
-  const supportedTypes = _.get(app, 'supported_object_types', []);
-  const crucialWobjects = _.get(app, 'supported_objects', []);
-  const forExtended = _.get(app, 'canBeExtended');
-  const forSites = _.get(app, 'inherited');
-
+const defaultWobjectSearch = async () => {
   const pipeline = getPipeline({
     limit: limit + 1,
     crucialWobjects,
@@ -52,7 +66,7 @@ exports.searchWobjects = async ({
   let user;
   if (userName) ({ user } = await User.getOne(userName));
   await addCampaignsToWobjects({
-    wobjects, app, simplified, user,
+    wobjects, app: sessionApp, simplified, user,
   });
 
   if (forExtended || forSites) {
@@ -71,7 +85,64 @@ exports.searchWobjects = async ({
     hasMore: wobjects.length > limit,
     error: getWobjError,
   };
-};
+}
+
+const sitesWobjectSearch = async () => {
+  const pipeline = getPipeline({
+    limit: limit + 1,
+    crucialWobjects,
+    required_fields,
+    supportedTypes,
+    forExtended,
+    object_type,
+    tagCategory,
+    forParent,
+    forSites,
+    string,
+    sort,
+    skip,
+    map,
+    box,
+  });
+  const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(pipeline);
+
+  const { wObject } = await Wobj.getOne(string, object_type, true);
+
+  if (wObject && wobjects.length) {
+    _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
+    wobjects.splice(0, 0, wObject);
+  }
+
+  if (needCounters && !getWobjError) {
+    return searchWithCounters({
+      crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
+    });
+  }
+  /** Fill campaigns for some objects,
+   * be careful, we pass objects by reference and in this method we will directly modify them */
+  let user;
+  if (userName) ({ user } = await User.getOne(userName));
+  await addCampaignsToWobjects({
+    wobjects, app: sessionApp, simplified, user,
+  });
+
+  if (forExtended || forSites) {
+    geoHelper.setFilterByDistance({ wobjects, box });
+    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
+    wobjects.sort((a, b) => {
+      if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
+        return b.campaigns.max_reward - a.campaigns.max_reward;
+      }
+      return _.has(b, 'campaigns') - _.has(a, 'campaigns');
+    });
+  }
+
+  return {
+    wobjects: _.take(wobjects, limit),
+    hasMore: wobjects.length > limit,
+    error: getWobjError,
+  };
+}
 
 const searchWithCounters = async ({
   crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
