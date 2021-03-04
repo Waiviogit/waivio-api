@@ -4190,7 +4190,8 @@
         ],
         "prices": {
           "minimumValue": 1,
-          "perUser": 0.005
+          "perUser": 0.005,
+          "perSuspended": 0.2
         },
         "accountBalance": {
           "paid": 99,
