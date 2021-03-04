@@ -118,19 +118,8 @@ const makeSitePipeline = ({
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
-    string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map,
+    string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map, box,
   })];
-  if (box) {
-    pipeline.push({
-      $match: {
-        map: {
-          $geoWithin: {
-            $box: [box.bottomPoint, box.topPoint],
-          },
-        },
-      },
-    });
-  }
   if (forParent) {
     pipeline.push({
       $addFields: {
@@ -182,9 +171,20 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map,
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box
 }) => {
   const pipeline = [];
+  if (box) {
+    pipeline.push({
+      $match: {
+        map: {
+          $geoWithin: {
+            $box: [box.bottomPoint, box.topPoint],
+          },
+        },
+      },
+    });
+  }
   if (map) {
     pipeline.push({
       $geoNear: {
