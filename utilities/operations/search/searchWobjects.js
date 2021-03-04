@@ -56,9 +56,14 @@ exports.searchWobjects = async ({
   });
 
   if (forExtended || forSites) {
-    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
     geoHelper.setFilterByDistance({ wobjects, box });
-    wobjects.sort((a, b) => _.has(b, 'campaigns') - _.has(a, 'campaigns'));
+    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
+    wobjects.sort((a, b) => {
+      if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
+        return b.campaigns.max_reward - a.campaigns.max_reward;
+      }
+      return _.has(b, 'campaigns') - _.has(a, 'campaigns');
+    });
   }
 
   return {
