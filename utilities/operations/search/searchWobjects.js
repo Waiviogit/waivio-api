@@ -54,6 +54,10 @@ const sitesWobjectSearch = async (data) => {
     object_type: data.object_type,
   });
 
+  if (data.needCounters && !error) {
+    return searchWithCounters({ ...data, wobjects });
+  }
+
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
   result = await addCampaignsToWobjectsSites({ wobjects: _.cloneDeep(wobjects), user, ...data });
