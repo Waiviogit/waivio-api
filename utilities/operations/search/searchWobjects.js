@@ -9,6 +9,9 @@ const _ = require('lodash');
 exports.searchWobjects = async (data) => {
   const appInfo = await getAppInfo(data);
 
+  if (_.isUndefined(data.string)) data.string = '';
+  if (_.isUndefined(data.limit)) data.limit = 10;
+
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
     : defaultWobjectSearch(data);
@@ -37,7 +40,7 @@ const defaultWobjectSearch = async (data) => {
   }
 
   return {
-    wobjects: _.take(wobjects, data.limit || 10),
+    wobjects: _.take(wobjects, data.limit),
     hasMore: wobjects.length > data.limit,
     error,
   };
@@ -57,7 +60,7 @@ const sitesWobjectSearch = async (data) => {
   result = geoHelper.setFilterByDistance({ wobjects: result, box: data.box });
 
   return {
-    wobjects: _.take(result, data.limit || 10),
+    wobjects: _.take(result, data.limit),
     hasMore: result.length > data.limit,
     error,
   };
@@ -75,21 +78,15 @@ const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => 
   return { wobjects, error };
 };
 
-const searchWithCounters = async ({
-  crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string = '', limit = 10,
-}) => {
-  // eslint-disable-next-line prefer-const
-  let { wobjects: wobjectsCounts, error } = await Wobj.fromAggregation(makeCountPipeline({
-    string, crucialWobjects, object_type, forSites, supportedTypes, forExtended,
-  }));
-  if (_.get(wobjectsCounts, 'length')) {
-    wobjectsCounts = await fillTagCategories(wobjectsCounts);
-  }
+const searchWithCounters = async (data) => {
+  const { wobjects: wobjectsCounts, error } = await Wobj.fromAggregation(makeCountPipeline(data));
 
   return {
-    wobjects: _.take(wobjects, limit),
-    wobjectsCounts,
     error,
+    wobjects: _.take(data.wobjects, data.limit),
+    wobjectsCounts: _.get(wobjectsCounts, 'length')
+      ? await fillTagCategories(wobjectsCounts)
+      : wobjectsCounts,
   };
 };
 
@@ -113,7 +110,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipeline = ({
-  crucialWobjects, string = '', object_type, forParent, box,
+  crucialWobjects, string, object_type, forParent, box,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
@@ -144,7 +141,7 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string = '', object_type, limit, skip, crucialWobjects, forParent,
+  string, object_type, limit, skip, crucialWobjects, forParent,
 }) => {
   const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
