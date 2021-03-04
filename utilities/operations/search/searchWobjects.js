@@ -128,7 +128,7 @@ const makeSitePipeline = ({
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { [sort]: -1 } });
 
-  pipeline.push({ $skip: skip || 0 }, { $limit: limit || 10 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
   return pipeline;
 };
 
@@ -146,7 +146,7 @@ const makePipeline = ({
     },
     { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
   } else pipeline.push({ $sort: { weight: -1 } });
-  pipeline.push({ $skip: skip || 0 }, { $limit: limit || 10 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
   return pipeline;
 };
@@ -171,7 +171,7 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box,
 }) => {
   const pipeline = [];
   if (box) {
