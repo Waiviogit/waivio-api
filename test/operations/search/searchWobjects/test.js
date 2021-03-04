@@ -162,4 +162,39 @@ describe('On wobjects search', async () => {
       });
     });
   });
+
+  describe('hasMore test', async () => {
+    let result;
+    const name = faker.random.string();
+    const skip = _.random(0, 3);
+    const limit = _.random(5, 10);
+    const searchedType = _.sample(Object.values(OBJECT_TYPES));
+
+    beforeEach(async () => {
+      for (let i = 0; i < limit; i++) {
+        await ObjectFactory.Create({
+          objectType: searchedType,
+          fields: [{ name: FIELDS_NAMES.NAME, body: name }],
+        });
+      }
+    });
+    describe('default search has more true', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - 1 - skip,
+          object_type: searchedType,
+        });
+      });
+
+      it('should hasMore be true', async () => {
+        expect(result.hasMore).to.be.true;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - 1 - skip);
+      });
+    });
+  });
 });
