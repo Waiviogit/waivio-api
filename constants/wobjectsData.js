@@ -123,6 +123,7 @@ exports.REQUIREDFIELDS_PARENT = [
 
 exports.REQUIREDFIELDS_SEARCH = [
   this.FIELDS_NAMES.NAME,
+  this.FIELDS_NAMES.DESCRIPTION,
   this.FIELDS_NAMES.LIST_ITEM,
   this.FIELDS_NAMES.AVATAR,
   this.FIELDS_NAMES.RATING,
@@ -210,4 +211,8 @@ exports.SHARING_SOCIAL_FIELDS = [
   this.FIELDS_NAMES.ADDRESS,
   this.FIELDS_NAMES.TAG_CATEGORY,
   this.FIELDS_NAMES.CATEGORY_ITEM,
+];
+
+exports.PICK_FIELDS_ABOUT_OBJ = [
+  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description',
 ];

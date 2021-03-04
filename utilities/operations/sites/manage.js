@@ -16,7 +16,11 @@ exports.getManagePage = async ({ userName }) => {
     if (payment.type === PAYMENT_TYPES.TRANSFER) return payment.amount;
   }) || 0;
   const dataForPayments = await sitesHelper.getPaymentsData();
-  const prices = { minimumValue: FEE.minimumValue, perUser: FEE.perUser };
+  const prices = {
+    minimumValue: FEE.minimumValue,
+    perSuspended: FEE.perSuspended,
+    perUser: FEE.perUser,
+  };
 
   accountBalance.paid -= _.sumBy(payments, (payment) => {
     if (payment.type !== PAYMENT_TYPES.TRANSFER) return payment.amount;

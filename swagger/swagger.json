@@ -3675,8 +3675,8 @@
         }
       }
     },
-    "/api/objectType/tags-for-filter": {
-      "get" : {
+    "/api/objectTypes/tags-for-filter": {
+      "post" : {
         "tags" : [ "object_type" ],
         "summary" : "Return tags for filter",
         "produces" : [ "application/json" ],
@@ -3684,15 +3684,19 @@
           "name" : "Origin",
           "in" : "header",
           "description" : "Domain of website",
-          "example": "https://waiviodev.com",
           "required" : true,
           "type" : "string"
         },{
-          "name" : "objectType",
-          "in" : "query",
-          "description" : "name of object type",
+          "in" : "body",
+          "name" : "params",
+          "description" : "**objectType** - string, name  of objectType required\n **wobjectLinks** - array wojects author_permlink",
           "required" : true,
-          "type" : "string"
+          "schema" : {
+            "example": {
+              "objectType": "restaurant",
+              "wobjectLinks": ["wgv-dark-place", "vvr-floret", "iwh-sushi-mura", "kri-not-bad-advice"]
+            }
+          }
         }],
         "responses" : {
           "200" : {
@@ -4186,7 +4190,8 @@
         ],
         "prices": {
           "minimumValue": 1,
-          "perUser": 0.005
+          "perUser": 0.005,
+          "perSuspended": 0.2
         },
         "accountBalance": {
           "paid": 99,
