@@ -165,3 +165,17 @@ exports.addCampaignsToWobjects = async ({
   }));
   return wobjects;
 };
+
+exports.addCampaignsToWobjectsSites = async (data) => {
+  const result = await this.addCampaignsToWobjects(data) || [];
+
+  if (data.map) result.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
+  result.sort((a, b) => {
+    if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
+      return b.campaigns.max_reward - a.campaigns.max_reward;
+    }
+    return _.has(b, 'campaigns') - _.has(a, 'campaigns');
+  });
+
+  return result;
+};
