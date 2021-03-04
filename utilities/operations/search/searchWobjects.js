@@ -6,17 +6,16 @@ const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
 
-exports.searchWobjects = async ({
-  string = '', object_type, limit = 10, skip, app, forParent, required_fields, box,
-  needCounters = false, tagCategory, userName, simplified, map, sort,
-}) => {
+exports.searchWobjects = async (data) => {
   const {
     supportedTypes, crucialWobjects, forExtended, forSites, sessionApp,
-  } = await getAppInfo({ app });
+  } = await getAppInfo(data);
 
   return forExtended || forSites
-    ? sitesWobjectSearch()
-    : defaultWobjectSearch()
+    ? sitesWobjectSearch({
+      ...data, supportedTypes, crucialWobjects, forExtended, forSites, sessionApp,
+    })
+    : defaultWobjectSearch(data);
 };
 
 const getAppInfo = async ({ app }) => {
@@ -30,37 +29,48 @@ const getAppInfo = async ({ app }) => {
   };
 };
 
-const defaultWobjectSearch = async () => {
-  const pipeline = getPipeline({
-    limit: limit + 1,
+const defaultWobjectSearch = async ({
+  string = '', object_type, limit = 10, skip, forParent, required_fields,
+  needCounters = false, supportedTypes, crucialWobjects, forExtended, forSites,
+}) => {
+  const pipeline = makePipeline({
+    string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
+  });
+
+  const { wobjects, error } = await getWobjectsFromAggregation({ pipeline, string, object_type });
+
+  if (needCounters && !error) {
+    return searchWithCounters({
+      crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
+    });
+  }
+
+  return {
+    wobjects: _.take(wobjects, limit),
+    hasMore: wobjects.length > limit,
+    error,
+  };
+};
+
+const sitesWobjectSearch = async ({
+  string = '', object_type, limit = 10, skip, forParent, box, forSites,
+  tagCategory, userName, simplified, map, sort, supportedTypes, crucialWobjects, sessionApp,
+}) => {
+  const pipeline = makeSitePipeline({
     crucialWobjects,
-    required_fields,
     supportedTypes,
-    forExtended,
-    object_type,
     tagCategory,
-    forParent,
+    object_type,
     forSites,
+    forParent,
     string,
+    limit,
     sort,
     skip,
     map,
     box,
   });
-  const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(pipeline);
-
-  const { wObject } = await Wobj.getOne(string, object_type, true);
-
-  if (wObject && wobjects.length) {
-    _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
-    wobjects.splice(0, 0, wObject);
-  }
-
-  if (needCounters && !getWobjError) {
-    return searchWithCounters({
-      crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
-    });
-  }
+  const { wobjects, error } = await getWobjectsFromAggregation({ pipeline, string, object_type });
   /** Fill campaigns for some objects,
    * be careful, we pass objects by reference and in this method we will directly modify them */
   let user;
@@ -69,42 +79,24 @@ const defaultWobjectSearch = async () => {
     wobjects, app: sessionApp, simplified, user,
   });
 
-  if (forExtended || forSites) {
-    geoHelper.setFilterByDistance({ wobjects, box });
-    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
-    wobjects.sort((a, b) => {
-      if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
-        return b.campaigns.max_reward - a.campaigns.max_reward;
-      }
-      return _.has(b, 'campaigns') - _.has(a, 'campaigns');
-    });
-  }
+  geoHelper.setFilterByDistance({ wobjects, box });
+  if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
+  wobjects.sort((a, b) => {
+    if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
+      return b.campaigns.max_reward - a.campaigns.max_reward;
+    }
+    return _.has(b, 'campaigns') - _.has(a, 'campaigns');
+  });
 
   return {
     wobjects: _.take(wobjects, limit),
     hasMore: wobjects.length > limit,
-    error: getWobjError,
+    error,
   };
-}
+};
 
-const sitesWobjectSearch = async () => {
-  const pipeline = getPipeline({
-    limit: limit + 1,
-    crucialWobjects,
-    required_fields,
-    supportedTypes,
-    forExtended,
-    object_type,
-    tagCategory,
-    forParent,
-    forSites,
-    string,
-    sort,
-    skip,
-    map,
-    box,
-  });
-  const { wobjects = [], error: getWobjError } = await Wobj.fromAggregation(pipeline);
+const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => {
+  const { wobjects = [], error } = await Wobj.fromAggregation(pipeline);
 
   const { wObject } = await Wobj.getOne(string, object_type, true);
 
@@ -113,53 +105,24 @@ const sitesWobjectSearch = async () => {
     wobjects.splice(0, 0, wObject);
   }
 
-  if (needCounters && !getWobjError) {
-    return searchWithCounters({
-      crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
-    });
-  }
-  /** Fill campaigns for some objects,
-   * be careful, we pass objects by reference and in this method we will directly modify them */
-  let user;
-  if (userName) ({ user } = await User.getOne(userName));
-  await addCampaignsToWobjects({
-    wobjects, app: sessionApp, simplified, user,
-  });
-
-  if (forExtended || forSites) {
-    geoHelper.setFilterByDistance({ wobjects, box });
-    if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
-    wobjects.sort((a, b) => {
-      if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
-        return b.campaigns.max_reward - a.campaigns.max_reward;
-      }
-      return _.has(b, 'campaigns') - _.has(a, 'campaigns');
-    });
-  }
-
-  return {
-    wobjects: _.take(wobjects, limit),
-    hasMore: wobjects.length > limit,
-    error: getWobjError,
-  };
-}
+  return { wobjects, error };
+};
 
 const searchWithCounters = async ({
   crucialWobjects, supportedTypes, object_type, forExtended, wobjects, forSites, string, limit,
 }) => {
-  let {
-    wobjects: wobjectsCounts,
-    error: getWobjCountError,
-  } = await Wobj.fromAggregation(makeCountPipeline({
+  // eslint-disable-next-line prefer-const
+  let { wobjects: wobjectsCounts, error } = await Wobj.fromAggregation(makeCountPipeline({
     string, crucialWobjects, object_type, forSites, supportedTypes, forExtended,
   }));
   if (_.get(wobjectsCounts, 'length')) {
     wobjectsCounts = await fillTagCategories(wobjectsCounts);
   }
+
   return {
     wobjects: _.take(wobjects, limit),
     wobjectsCounts,
-    error: getWobjCountError,
+    error,
   };
 };
 
@@ -181,30 +144,8 @@ const fillTagCategories = async (wobjectsCounts) => {
   return wobjectsCounts;
 };
 
-const getPipeline = ({
-  forSites, crucialWobjects, string, limit, forExtended, map, sort, box,
-  skip, forParent, object_type, supportedTypes, required_fields, tagCategory,
-}) => (forSites || forExtended
-  ? addFieldsToSearch({
-    crucialWobjects,
-    supportedTypes,
-    tagCategory,
-    object_type,
-    forSites,
-    forParent,
-    string,
-    limit,
-    sort,
-    skip,
-    map,
-    box,
-  })
-  : makePipeline({
-    string, object_type, limit, skip, crucialWobjects, forParent, required_fields,
-  }));
-
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
-const addFieldsToSearch = ({
+const makeSitePipeline = ({
   crucialWobjects, string, object_type, forParent, box,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
