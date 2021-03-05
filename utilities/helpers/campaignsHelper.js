@@ -124,7 +124,7 @@ const getCompletedUsersInSameCampaigns = async (guideName, requiredObject, userN
 };
 
 exports.addCampaignsToWobjects = async ({
-  wobjects, user, simplified = false, app,
+  wobjects, user, simplified = false, app, search,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
 
@@ -160,6 +160,9 @@ exports.addCampaignsToWobjects = async ({
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
     if (secondaryCampaigns.length) {
       wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
+      if (!_.isEmpty(wobj.propositions) && search) {
+        wobj.propositions = [_.maxBy(wobj.propositions, 'reward')];
+      }
     }
     wobjects[index] = wobj;
   }));
@@ -167,14 +170,17 @@ exports.addCampaignsToWobjects = async ({
 };
 
 exports.addCampaignsToWobjectsSites = async (data) => {
-  const result = await this.addCampaignsToWobjects(data) || [];
+  const result = await this.addCampaignsToWobjects({ ...data, search: true }) || [];
 
   if (data.map) result.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
   result.sort((a, b) => {
     if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
-      return b.campaigns.max_reward - a.campaigns.max_reward;
+      return _.get(b, 'campaigns.max_reward', 0) - _.get(a, 'campaigns.max_reward', 0);
     }
-    return _.has(b, 'campaigns') - _.has(a, 'campaigns');
+    if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
+      return _.get(b, 'propositions[0].reward', 0) - _.get(a, 'propositions[0].reward', 0);
+    }
+    return !!_.get(b, 'campaigns', _.get(b, 'propositions')) - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
   });
 
   return result;
