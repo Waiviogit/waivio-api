@@ -8,8 +8,15 @@ const { wobjects } = require('utilities/operations/search');
 const { STATUSES } = require('constants/sitesConstants');
 
 describe('On wobjects search', async () => {
+  let parent;
+  const searchedType = _.sample(Object.values(OBJECT_TYPES));
   beforeEach(async () => {
     await dropDatabase();
+    parent = await AppFactory.Create({
+      inherited: false,
+      canBeExtended: true,
+      supportedTypes: [searchedType, OBJECT_TYPES.RESTAURANT],
+    });
   });
 
   describe('On search with counters', async () => {
@@ -49,9 +56,8 @@ describe('On wobjects search', async () => {
   });
 
   describe('on box search', async () => {
-    let wobj1, wobj2, parent, campaign, result;
+    let wobj1, wobj2, campaign, result;
     beforeEach(async () => {
-      parent = await AppFactory.Create({ inherited: false, canBeExtended: true });
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
@@ -168,7 +174,6 @@ describe('On wobjects search', async () => {
     const name = faker.random.string();
     const skip = _.random(0, 3);
     const limit = _.random(5, 10);
-    const searchedType = _.sample(Object.values(OBJECT_TYPES));
 
     beforeEach(async () => {
       for (let i = 0; i < limit; i++) {
@@ -194,6 +199,65 @@ describe('On wobjects search', async () => {
 
       it('should result.wobjects should have proper length', async () => {
         expect(result.wobjects).to.be.have.length(limit - 1 - skip);
+      });
+    });
+
+    describe('default search has more false', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - skip,
+          object_type: searchedType,
+        });
+      });
+
+      it('should hasMore be false', async () => {
+        expect(result.hasMore).to.be.false;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - skip);
+      });
+    });
+
+    describe('sites search has more true', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - 1 - skip,
+          object_type: searchedType,
+          app: parent,
+        });
+      });
+
+      it('should hasMore be true', async () => {
+        expect(result.hasMore).to.be.true;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - 1 - skip);
+      });
+    });
+
+    describe('sites search has more false', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - skip,
+          object_type: searchedType,
+          app: parent,
+        });
+      });
+
+      it('should hasMore be false', async () => {
+        expect(result.hasMore).to.be.false;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - skip);
       });
     });
   });
