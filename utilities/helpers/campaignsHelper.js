@@ -172,7 +172,6 @@ exports.addCampaignsToWobjects = async ({
 exports.addCampaignsToWobjectsSites = async (data) => {
   const result = await this.addCampaignsToWobjects({ ...data, search: true }) || [];
 
-  if (data.map) result.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
   result.sort((a, b) => {
     if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
       return _.get(b, 'campaigns.max_reward', 0) - _.get(a, 'campaigns.max_reward', 0);
