@@ -21,9 +21,7 @@ exports.dailyDebt = async (timeout = 200) => {
     /** Collect data for debt calculation */
     const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
     const countUsers = _.get(todayUsers, 'length', 0);
-    const invoice = countUsers * FEE.perUser < FEE.minimumValue
-      ? FEE.minimumValue
-      : _.round(countUsers * FEE.perUser, 3);
+    const invoice = calcDailyDebtInvoice({ countUsers, status: app.status });
 
     const data = {
       amount: invoice, userName: app.owner, countUsers, host: app.host,
@@ -66,7 +64,7 @@ exports.dailySuspendedDebt = async (timeout = 200) => {
     if (!await this.checkForTestSites(app.parent)) continue;
 
     const data = {
-      amount: FEE.perSuspended,
+      amount: FEE.perInactive,
       userName: app.owner,
       host: app.host,
       countUsers: 0,
@@ -85,4 +83,14 @@ exports.dailySuspendedDebt = async (timeout = 200) => {
 
     await new Promise((resolve) => setTimeout(resolve, timeout));
   }
+};
+
+const calcDailyDebtInvoice = ({ countUsers, status }) => {
+  if (_.includes([STATUSES.INACTIVE, STATUSES.PENDING], status)) {
+    return FEE.perInactive;
+  }
+
+  return countUsers * FEE.perUser < FEE.minimumValue
+    ? FEE.minimumValue
+    : _.round(countUsers * FEE.perUser, 3);
 };

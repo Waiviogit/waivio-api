@@ -1,5 +1,5 @@
 const {
-  faker, expect, sinon, redis, dropDatabase, _, App, moment, AppModel,
+  faker, expect, sinon, redis, dropDatabase, _, AppModel,
 } = require('test/testHelper');
 const Sentry = require('@sentry/node');
 const { collectSiteDebts } = require('utilities/operations/sites');
@@ -75,20 +75,19 @@ describe('on collectSiteDebts', async () => {
         });
       });
 
-      describe('on deactivated website', async () => {
+      describe('on deactivated or pending website', async () => {
         let app;
         beforeEach(async () => {
           const name = faker.random.string();
           app = await AppFactory.Create({
             host: `${name}.${parent.host}`,
-            status: STATUSES.INACTIVE,
-            deactivatedAt: moment.utc().subtract(1, 'h').toDate(),
+            status: _.sample([STATUSES.INACTIVE, STATUSES.PENDING])
           });
         });
-        it('should call objects bot method with correct params if site deactivated < day ago', async () => {
+        it('should call objects bot method with correct params if site deactivated or pending', async () => {
           await collectSiteDebts.dailyDebt(1);
           expect(objectBotRequests.sendCustomJson.calledWith({
-            amount: FEE.minimumValue, userName: app.owner, countUsers: 0, host: app.host,
+            amount: FEE.perInactive, userName: app.owner, countUsers: 0, host: app.host,
           },
           `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
         });
@@ -155,7 +154,7 @@ describe('on collectSiteDebts', async () => {
       it('should call object bot method with correct params', async () => {
         await collectSiteDebts.dailySuspendedDebt(1);
         expect(objectBotRequests.sendCustomJson.calledWith({
-          amount: FEE.perSuspended, userName: app.owner, countUsers: 0, host: app.host,
+          amount: FEE.perInactive, userName: app.owner, countUsers: 0, host: app.host,
         },
         `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
       });
