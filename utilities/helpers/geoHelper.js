@@ -27,7 +27,7 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   return { center, zoom };
 };
 
-exports.setFilterByDistance = ({ wobjects = [], box, map }) => {
+exports.setFilterByDistance = ({ wobjects = [], box }) => {
   if (_.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
@@ -49,7 +49,7 @@ exports.setFilterByDistance = ({ wobjects = [], box, map }) => {
       }
     }
   }
-  if (map) wobjects.sort((a, b) => _.get(a, 'proximity') - _.get(b, 'proximity'));
+
   return wobjects;
 };
 

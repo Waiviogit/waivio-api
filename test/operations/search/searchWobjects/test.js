@@ -1,5 +1,5 @@
 const {
-  faker, expect, dropDatabase, _, App,
+  faker, expect, dropDatabase, _, App, Campaign,
 } = require('test/testHelper');
 const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
@@ -114,6 +114,7 @@ describe('On wobjects search', async () => {
       });
 
       it('should always show wobjects with campaigns on top despite weight', async () => {
+        await Campaign.updateOne({ _id: campaign._id }, { $set: { objects: [] } });
         for (let i = 0; i < _.random(2, 4); i++) {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
@@ -126,7 +127,7 @@ describe('On wobjects search', async () => {
           app: parent,
           box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
         });
-        expect(result.wobjects[0]).to.have.own.property('campaigns' || 'propositions');
+        expect(result.wobjects[0]).to.have.own.property('campaigns');
       });
     });
 

@@ -63,9 +63,7 @@ const sitesWobjectSearch = async (data) => {
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
-  result = geoHelper.setFilterByDistance({
-    wobjects: _.cloneDeep(wobjects), box: data.box, map: data.map,
-  });
+  result = geoHelper.setFilterByDistance({ wobjects: _.cloneDeep(wobjects), box: data.box });
   result = await addCampaignsToWobjectsSites({ wobjects: result, user, ...data });
 
   return {
@@ -181,23 +179,12 @@ const makeCountPipeline = ({
   return pipeline;
 };
 
-/** If search request for custm sites - find objects only by authorities and supported objects,
+/** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
   crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
   const pipeline = [];
-  if (box) {
-    pipeline.push({
-      $match: {
-        map: {
-          $geoWithin: {
-            $box: [box.bottomPoint, box.topPoint],
-          },
-        },
-      },
-    });
-  }
   if (map) {
     pipeline.push({
       $geoNear: {
@@ -206,6 +193,17 @@ const matchSitesPipe = ({
         maxDistance: map.radius,
         spherical: true,
         limit: 100000,
+      },
+    });
+  }
+  if (box) {
+    pipeline.push({
+      $match: {
+        map: {
+          $geoWithin: {
+            $box: [box.bottomPoint, box.topPoint],
+          },
+        },
       },
     });
   }
