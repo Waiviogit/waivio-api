@@ -1,6 +1,6 @@
 /* eslint-disable camelcase */
+const { FIELDS_NAMES, SEARCH_FIELDS, OBJECT_TYPES } = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
-const { FIELDS_NAMES, SEARCH_FIELDS } = require('constants/wobjectsData');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
@@ -17,13 +17,16 @@ exports.searchWobjects = async (data) => {
     : defaultWobjectSearch(data);
 };
 
-const getAppInfo = async ({ app }) => {
+const getAppInfo = async ({ app, addHashtag }) => {
   if (!app) ({ result: app } = await getSessionApp());
+  const supportedTypes = _.get(app, 'supported_object_types', []);
+  if (addHashtag) supportedTypes.push(OBJECT_TYPES.HASHTAG);
+
   return {
-    supportedTypes: _.get(app, 'supported_object_types', []),
     crucialWobjects: _.get(app, 'supported_objects', []),
     forExtended: _.get(app, 'canBeExtended'),
     forSites: _.get(app, 'inherited'),
+    supportedTypes,
     app,
   };
 };
@@ -116,11 +119,19 @@ const fillTagCategories = async (wobjectsCounts) => {
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipeline = ({
-  crucialWobjects, string, object_type, forParent, box,
+  crucialWobjects, string, object_type, forParent, box, addHashtag,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
-    string, crucialWobjects, object_type, supportedTypes, forSites, tagCategory, map, box,
+    crucialWobjects,
+    supportedTypes,
+    object_type,
+    tagCategory,
+    addHashtag,
+    forSites,
+    string,
+    map,
+    box,
   })];
   if (forParent) {
     pipeline.push({
@@ -173,7 +184,7 @@ const makeCountPipeline = ({
 /** If search request for custm sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box,
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
   const pipeline = [];
   if (box) {
@@ -204,7 +215,7 @@ const matchSitesPipe = ({
       'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
     },
   };
-  if (forSites)matchCond.$match.author_permlink = { $in: crucialWobjects };
+  if (forSites && !addHashtag)matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
   if (tagCategory) {
     const condition = [];
