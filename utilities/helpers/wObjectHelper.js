@@ -295,9 +295,12 @@ const getLinkToPageLoad = (obj) => {
     }
   }
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
+
   const field = _.find(listItem, { body: obj.sortCustom[0] });
-  if (!field) return `/object/${obj.author_permlink}`;
-  return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
+  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === obj.sortCustom[0]);
+  if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
+  if (field) return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
+  return `/object/${obj.author_permlink}`;
 };
 
 const getTopTags = (obj, limit = 2) => {
