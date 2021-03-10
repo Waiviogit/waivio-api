@@ -75,7 +75,7 @@ describe('on collectSiteDebts', async () => {
         });
       });
 
-      describe('on deactivated or pending website', async () => {
+      describe('on inactive or pending website', async () => {
         let app;
         beforeEach(async () => {
           const name = faker.random.string();

@@ -86,11 +86,10 @@ exports.dailySuspendedDebt = async (timeout = 200) => {
 };
 
 const calcDailyDebtInvoice = ({ countUsers, status }) => {
-  if (_.includes([STATUSES.INACTIVE, STATUSES.PENDING], status)) {
-    return FEE.perInactive;
+  if (status === STATUSES.ACTIVE) {
+    return countUsers * FEE.perUser < FEE.minimumValue
+      ? FEE.minimumValue
+      : _.round(countUsers * FEE.perUser, 3);
   }
-
-  return countUsers * FEE.perUser < FEE.minimumValue
-    ? FEE.minimumValue
-    : _.round(countUsers * FEE.perUser, 3);
+  return FEE.perInactive;
 };
