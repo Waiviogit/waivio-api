@@ -1,5 +1,5 @@
 const {
-  faker, expect, dropDatabase, _, App,
+  faker, expect, dropDatabase, _, App, Campaign,
 } = require('test/testHelper');
 const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
@@ -8,14 +8,20 @@ const { wobjects } = require('utilities/operations/search');
 const { STATUSES } = require('constants/sitesConstants');
 
 describe('On wobjects search', async () => {
+  let parent;
+  const searchedType = _.sample(Object.values(OBJECT_TYPES));
   beforeEach(async () => {
     await dropDatabase();
+    parent = await AppFactory.Create({
+      inherited: false,
+      canBeExtended: true,
+      supportedTypes: [searchedType, OBJECT_TYPES.RESTAURANT],
+    });
   });
 
   describe('On search with counters', async () => {
     let result;
     const counter = _.random(5, 10);
-    const searchedType = _.sample(Object.values(OBJECT_TYPES));
     const notSearchedTypes = Object.values(OBJECT_TYPES);
     notSearchedTypes.splice(notSearchedTypes.indexOf(searchedType), 1);
 
@@ -49,9 +55,8 @@ describe('On wobjects search', async () => {
   });
 
   describe('on box search', async () => {
-    let wobj1, wobj2, parent, campaign, result;
+    let wobj1, wobj2, campaign, result;
     beforeEach(async () => {
-      parent = await AppFactory.Create({ inherited: false, canBeExtended: true });
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
@@ -109,6 +114,7 @@ describe('On wobjects search', async () => {
       });
 
       it('should always show wobjects with campaigns on top despite weight', async () => {
+        await Campaign.updateOne({ _id: campaign._id }, { $set: { objects: [] } });
         for (let i = 0; i < _.random(2, 4); i++) {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
@@ -159,6 +165,124 @@ describe('On wobjects search', async () => {
 
         const wobj = _.find(result.wobjects, { author_permlink: wobj2.author_permlink });
         expect(wobj).to.be.undefined;
+      });
+
+      describe('addHashtag test', async () => {
+        let hashtag;
+        beforeEach(async () => {
+          hashtag = await ObjectFactory.Create({
+            objectType: OBJECT_TYPES.HASHTAG,
+            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+          });
+        });
+
+        it('should return hashtag when has property addHashtag true', async () => {
+          result = await wobjects.searchWobjects({
+            app: child,
+            addHashtag: true,
+          });
+
+          expect(_.map(result.wobjects, 'author_permlink')).to.include(hashtag.author_permlink);
+        });
+
+        it('should not return hashtag when has property addHashtag true', async () => {
+          result = await wobjects.searchWobjects({ app: child });
+
+          expect(_.map(result.wobjects, 'author_permlink')).to.not.include(hashtag.author_permlink);
+        });
+      });
+    });
+  });
+
+  describe('hasMore test', async () => {
+    let result;
+    const name = faker.random.string();
+    const skip = _.random(0, 3);
+    const limit = _.random(5, 10);
+
+    beforeEach(async () => {
+      for (let i = 0; i < limit; i++) {
+        await ObjectFactory.Create({
+          objectType: searchedType,
+          fields: [{ name: FIELDS_NAMES.NAME, body: name }],
+        });
+      }
+    });
+    describe('default search has more true', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - 1 - skip,
+          object_type: searchedType,
+        });
+      });
+
+      it('should hasMore be true', async () => {
+        expect(result.hasMore).to.be.true;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - 1 - skip);
+      });
+    });
+
+    describe('default search has more false', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - skip,
+          object_type: searchedType,
+        });
+      });
+
+      it('should hasMore be false', async () => {
+        expect(result.hasMore).to.be.false;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - skip);
+      });
+    });
+
+    describe('sites search has more true', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - 1 - skip,
+          object_type: searchedType,
+          app: parent,
+        });
+      });
+
+      it('should hasMore be true', async () => {
+        expect(result.hasMore).to.be.true;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - 1 - skip);
+      });
+    });
+
+    describe('sites search has more false', async () => {
+      beforeEach(async () => {
+        result = await wobjects.searchWobjects({
+          string: name,
+          skip,
+          limit: limit - skip,
+          object_type: searchedType,
+          app: parent,
+        });
+      });
+
+      it('should hasMore be false', async () => {
+        expect(result.hasMore).to.be.false;
+      });
+
+      it('should result.wobjects should have proper length', async () => {
+        expect(result.wobjects).to.be.have.length(limit - skip);
       });
     });
   });
