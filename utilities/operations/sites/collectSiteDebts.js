@@ -21,10 +21,12 @@ exports.dailyDebt = async (timeout = 200) => {
     /** Collect data for debt calculation */
     const todayUsers = await redisGetter.getSiteActiveUser(`${redisStatisticsKey}:${app.host}`);
     const countUsers = _.get(todayUsers, 'length', 0);
-    const invoice = calcDailyDebtInvoice({ countUsers, status: app.status });
 
     const data = {
-      amount: invoice, userName: app.owner, countUsers, host: app.host,
+      amount: calcDailyDebtInvoice({ countUsers, status: app.status }),
+      userName: app.owner,
+      countUsers,
+      host: app.host,
     };
     const { error: createError } = await objectBotRequests.sendCustomJson(data,
       `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
