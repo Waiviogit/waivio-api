@@ -179,7 +179,7 @@ exports.addCampaignsToWobjectsSites = async (data) => {
     if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
       return _.get(b, 'propositions[0].reward', 0) - _.get(a, 'propositions[0].reward', 0);
     }
-    return !!_.get(b, 'campaigns', _.get(b, 'propositions')) - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
+    return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
   });
 
   return result;
