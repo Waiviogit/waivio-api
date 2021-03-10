@@ -100,6 +100,7 @@ exports.searchScheme = Joi.object().keys({
         Joi.number().min(-90).max(90),
       ).required(),
   }),
+  addHashtag: Joi.boolean().default(false),
 });
 
 exports.galleryScheme = Joi.object().keys({
