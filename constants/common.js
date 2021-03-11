@@ -37,3 +37,7 @@ exports.TOKEN = {
   HIVE: 'HIVE',
   HBD: 'HBD',
 };
+
+exports.DEVICE = {
+  MOBILE: 'mobile',
+};
