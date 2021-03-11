@@ -46,7 +46,7 @@ process.on('unhandledRejection', (error) => {
 
 // write to store user steemconnect/waivioAuth access_token if it exist
 app.use((req, res, next) => {
-  let { origin, referer } = req.headers;
+  let { origin, referer, device } = req.headers;
   origin
     ? origin = origin.replace(REPLACE_ORIGIN, '')
     : origin = referer && referer.replace(REPLACE_REFERER, '');
@@ -54,6 +54,7 @@ app.use((req, res, next) => {
   session.set('host', origin);
   session.set('access-token', req.headers['access-token']);
   session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
+  session.set('device', device);
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));

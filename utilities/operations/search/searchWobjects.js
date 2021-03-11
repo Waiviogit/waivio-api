@@ -14,7 +14,7 @@ exports.searchWobjects = async (data) => {
 
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
-    : defaultWobjectSearch(data);
+    : defaultWobjectSearch({ ...data, ...appInfo });
 };
 
 const getAppInfo = async ({ app, addHashtag }) => {
