@@ -289,6 +289,7 @@ const getLinkToPageLoad = (obj) => {
             .value();
           return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
         }
+        if (_.get(obj, 'blog')) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
         return `/object/${obj.author_permlink}`;
       default:
         return `/object/${obj.author_permlink}`;
