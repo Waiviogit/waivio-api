@@ -9,6 +9,8 @@ const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
+const { DEVICE } = require('constants/common');
+const { getNamespace } = require('cls-hooked');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -263,6 +265,7 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
 };
 
 const getLinkToPageLoad = (obj) => {
+  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) return `/object/${obj.author_permlink}/about`;
   let listItem = _.get(obj, 'listItem', []);
   if (!_.get(obj, 'sortCustom', []).length) {
     switch (obj.object_type) {
@@ -289,15 +292,19 @@ const getLinkToPageLoad = (obj) => {
             .value();
           return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
         }
+        if (_.get(obj, 'blog')) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
         return `/object/${obj.author_permlink}`;
       default:
         return `/object/${obj.author_permlink}`;
     }
   }
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
+
   const field = _.find(listItem, { body: obj.sortCustom[0] });
-  if (!field) return `/object/${obj.author_permlink}`;
-  return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
+  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === obj.sortCustom[0]);
+  if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
+  if (field) return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
+  return `/object/${obj.author_permlink}`;
 };
 
 const getTopTags = (obj, limit = 2) => {

@@ -52,7 +52,7 @@ exports.FEE = {
   perUser: 0.005,
   account: 'waivio.hosting',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
-  perSuspended: 0.2,
+  perInactive: 0.2,
 };
 
 exports.SUPPORTED_COLORS = {

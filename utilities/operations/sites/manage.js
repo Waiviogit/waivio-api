@@ -18,7 +18,7 @@ exports.getManagePage = async ({ userName }) => {
   const dataForPayments = await sitesHelper.getPaymentsData();
   const prices = {
     minimumValue: FEE.minimumValue,
-    perSuspended: FEE.perSuspended,
+    perSuspended: FEE.perInactive,
     perUser: FEE.perUser,
   };
 

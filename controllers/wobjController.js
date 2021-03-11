@@ -119,6 +119,7 @@ const search = async (req, res, next) => {
     simplified: req.body.simplified,
     required_fields: req.body.required_fields,
     box: req.body.box,
+    addHashtag: req.body.addHashtag,
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;
