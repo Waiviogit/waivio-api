@@ -77,3 +77,8 @@ exports.NOTIFICATION = {
   ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
   BALANCE_ID: 'webSiteBalance',
 };
+
+exports.PAYMENT_DESCRIPTION = {
+  HOSTING_FEE: 'hosting fee',
+  RESERVATION: 'reservation',
+};
