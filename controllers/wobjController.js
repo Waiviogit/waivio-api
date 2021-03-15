@@ -106,20 +106,7 @@ const followers = async (req, res, next) => {
 const search = async (req, res, next) => {
   const value = validators.validate({
     string: req.body.search_string,
-    limit: req.body.limit,
-    skip: req.body.skip,
-    locale: req.body.locale,
-    tagCategory: req.body.tagCategory,
-    object_type: req.body.object_type,
-    sortByApp: req.body.sortByApp,
-    sort: req.body.sort,
-    forParent: req.body.forParent,
-    userName: req.body.userName,
-    map: req.body.map,
-    simplified: req.body.simplified,
-    required_fields: req.body.required_fields,
-    box: req.body.box,
-    addHashtag: req.body.addHashtag,
+    ...req.body,
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;

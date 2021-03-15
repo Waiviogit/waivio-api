@@ -5395,6 +5395,9 @@
         },
         "addHashtag": {
           "type": "boolean"
+        },
+        "mapMarkers": {
+          "type": "boolean"
         }
       }
     },

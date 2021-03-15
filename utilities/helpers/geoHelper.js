@@ -27,13 +27,13 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   return { center, zoom };
 };
 
-exports.setFilterByDistance = ({ wobjects = [], box }) => {
-  if (_.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
+exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
+  if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
-  const minDistanceBetweenObjects = displayDiagonalDistance > 1000
-    ? Math.round(displayDiagonalDistance / 50)
-    : 0;
+  if (displayDiagonalDistance < 1000) return wobjects;
+
+  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / 50);
 
   for (let i = 0; i < wobjects.length; i++) {
     for (let j = 0; j < wobjects.length; j++) {
@@ -50,7 +50,7 @@ exports.setFilterByDistance = ({ wobjects = [], box }) => {
     }
   }
 
-  return wobjects;
+  return _.filter(wobjects, (el) => !el.invisible);
 };
 
 const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {

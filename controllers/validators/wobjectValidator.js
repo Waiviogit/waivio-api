@@ -3,6 +3,8 @@ const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
 
+const options = { allowUnknown: true, stripUnknown: true };
+
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
@@ -101,7 +103,8 @@ exports.searchScheme = Joi.object().keys({
       ).required(),
   }),
   addHashtag: Joi.boolean().default(false),
-});
+  mapMarkers: Joi.boolean().default(false),
+}).options(options);
 
 exports.galleryScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
