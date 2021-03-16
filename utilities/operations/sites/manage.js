@@ -1,4 +1,6 @@
-const { PAYMENT_TYPES, FEE, STATUSES } = require('constants/sitesConstants');
+const {
+  PAYMENT_TYPES, FEE, INACTIVE_STATUSES,
+} = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
@@ -38,11 +40,7 @@ exports.getManagePage = async ({ userName }) => {
 
   accountBalance.avgDau = _.sumBy(websites, (site) => site.averageDau) || 0;
 
-  accountBalance.dailyCost = _.chain(websites)
-    .filter((site) => site.status !== STATUSES.SUSPENDED)
-    .sumBy((site) => (site.averageDau < FEE.minimumValue / FEE.perUser ? 1 : site.averageDau * FEE.perUser))
-    .round(3)
-    .value() || 0;
+  accountBalance.dailyCost = getDailyCost(websites).toNumber();
 
   accountBalance.remainingDays = accountBalance.dailyCost > 0
     ? Math.trunc(accountBalance.paid > 0 ? accountBalance.paid / accountBalance.dailyCost : 0)
@@ -60,4 +58,14 @@ const getSumByPaymentType = (payments, type) => _
   .chain(payments)
   .filter((el) => el.type === type)
   .reduce((acc, payment) => BigNumber(payment.amount).plus(acc), BigNumber(0))
+  .value();
+
+const getDailyCost = (websites) => _
+  .chain(websites)
+  .reduce((acc, site) => {
+    if (_.includes(INACTIVE_STATUSES, site.status)) return BigNumber(FEE.perInactive).plus(acc);
+    return site.averageDau < FEE.minimumValue / FEE.perUser
+      ? BigNumber(FEE.minimumValue).plus(acc)
+      : BigNumber(site.averageDau).multipliedBy(FEE.perUser).plus(acc);
+  }, BigNumber(0))
   .value();
