@@ -57,7 +57,6 @@ exports.searchTags = async (params) => {
 exports.getWebsitePayments = async ({
   owner, host, startDate, endDate,
 }) => {
-  let byHost;
   const { result: apps, error: appsError } = await App.find({
     owner, inherited: true,
   }, { _id: -1 });
@@ -65,13 +64,7 @@ exports.getWebsitePayments = async ({
   const { result: allExistingApps } = await websitePayments.distinct({ field: 'host', query: { userName: owner } });
   const currentApps = _.map(apps, 'host');
   const ownerAppNames = _.uniq([...currentApps, ...allExistingApps]);
-  if (host) {
-    ({ result: byHost } = await App.findOne({
-      inherited: true,
-      host,
-    }));
-    if (!byHost) return { ownerAppNames, payments: [] };
-  }
+
   const condition = host
     ? { host, userName: owner }
     : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
