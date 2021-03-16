@@ -60,11 +60,9 @@ const getSumByPaymentType = (payments, type) => _
   .value();
 
 const getDailyCost = (websites) => _
-  .chain(websites)
-  .reduce((acc, site) => {
+  .reduce(websites, (acc, site) => {
     if (_.includes(INACTIVE_STATUSES, site.status)) return BigNumber(FEE.perInactive).plus(acc);
     return site.averageDau < FEE.minimumValue / FEE.perUser
       ? BigNumber(FEE.minimumValue).plus(acc)
       : BigNumber(site.averageDau).multipliedBy(FEE.perUser).plus(acc);
-  }, BigNumber(0))
-  .value();
+  }, BigNumber(0));
