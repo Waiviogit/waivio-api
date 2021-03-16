@@ -15,7 +15,6 @@ exports.getManagePage = async ({ userName }) => {
   const accountBalance = {
     paid: 0, avgDau: 0, dailyCost: 0, remainingDays: 0,
   };
-
   accountBalance.paid = getSumByPaymentType(payments, PAYMENT_TYPES.TRANSFER)
     .minus(getSumByPaymentType(payments, PAYMENT_TYPES.WRITE_OFF))
     .toNumber();
