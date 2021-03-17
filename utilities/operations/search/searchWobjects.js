@@ -63,7 +63,9 @@ const sitesWobjectSearch = async (data) => {
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
-  result = geoHelper.setFilterByDistance({ wobjects: _.cloneDeep(wobjects), box: data.box });
+  result = geoHelper.setFilterByDistance({
+    mapMarkers: data.mapMarkers, wobjects: _.cloneDeep(wobjects), box: data.box,
+  });
   result = await addCampaignsToWobjectsSites({ wobjects: result, user, ...data });
 
   return {
@@ -117,7 +119,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipeline = ({
-  crucialWobjects, string, object_type, forParent, box, addHashtag,
+  crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
   const pipeline = [...matchSitesPipe({
@@ -139,7 +141,7 @@ const makeSitePipeline = ({
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { [sort]: -1 } });
 
-  pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 100 : limit + 1 });
   return pipeline;
 };
 
@@ -213,7 +215,7 @@ const matchSitesPipe = ({
       'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
     },
   };
-  if (forSites && !addHashtag)matchCond.$match.author_permlink = { $in: crucialWobjects };
+  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
   if (tagCategory) {
     const condition = [];

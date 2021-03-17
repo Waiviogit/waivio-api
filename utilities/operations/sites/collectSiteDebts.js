@@ -6,7 +6,7 @@ const { redisGetter } = require('utilities/redis');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { OBJECT_BOT } = require('constants/requestData');
 const {
-  redisStatisticsKey, FEE, STATUSES, TEST_DOMAINS,
+  redisStatisticsKey, FEE, STATUSES, TEST_DOMAINS, PAYMENT_DESCRIPTION,
 } = require('constants/sitesConstants');
 
 exports.dailyDebt = async (timeout = 200) => {
@@ -24,6 +24,7 @@ exports.dailyDebt = async (timeout = 200) => {
 
     const data = {
       amount: calcDailyDebtInvoice({ countUsers, status: app.status }),
+      description: addDescriptionMessage(app.status),
       userName: app.owner,
       countUsers,
       host: app.host,
@@ -66,6 +67,7 @@ exports.dailySuspendedDebt = async (timeout = 200) => {
     if (!await this.checkForTestSites(app.parent)) continue;
 
     const data = {
+      description: addDescriptionMessage(app.status),
       amount: FEE.perInactive,
       userName: app.owner,
       host: app.host,
@@ -94,4 +96,9 @@ const calcDailyDebtInvoice = ({ countUsers, status }) => {
       : _.round(countUsers * FEE.perUser, 3);
   }
   return FEE.perInactive;
+};
+
+const addDescriptionMessage = (status) => {
+  if (status === STATUSES.ACTIVE) return PAYMENT_DESCRIPTION.HOSTING_FEE;
+  return PAYMENT_DESCRIPTION.RESERVATION;
 };

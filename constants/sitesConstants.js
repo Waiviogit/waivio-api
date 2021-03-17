@@ -24,11 +24,6 @@ exports.TEST_DOMAINS = [
   'dining.pp.ua',
 ];
 
-exports.ACTIVE_STATUSES = [
-  this.STATUSES.ACTIVE,
-  this.STATUSES.PENDING,
-];
-
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
@@ -76,4 +71,9 @@ exports.NOTIFICATION = {
   WARNING: 'Warning: website account balance may run out in',
   ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
   BALANCE_ID: 'webSiteBalance',
+};
+
+exports.PAYMENT_DESCRIPTION = {
+  HOSTING_FEE: 'hosting fee',
+  RESERVATION: 'reservation',
 };

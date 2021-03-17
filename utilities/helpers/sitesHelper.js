@@ -10,6 +10,7 @@ const {
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const BigNumber = require('bignumber.js');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -56,7 +57,6 @@ exports.searchTags = async (params) => {
 exports.getWebsitePayments = async ({
   owner, host, startDate, endDate,
 }) => {
-  let byHost;
   const { result: apps, error: appsError } = await App.find({
     owner, inherited: true,
   }, { _id: -1 });
@@ -64,13 +64,7 @@ exports.getWebsitePayments = async ({
   const { result: allExistingApps } = await websitePayments.distinct({ field: 'host', query: { userName: owner } });
   const currentApps = _.map(apps, 'host');
   const ownerAppNames = _.uniq([...currentApps, ...allExistingApps]);
-  if (host) {
-    ({ result: byHost } = await App.findOne({
-      inherited: true,
-      host,
-    }));
-    if (!byHost) return { ownerAppNames, payments: [] };
-  }
+
   const condition = host
     ? { host, userName: owner }
     : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
@@ -97,12 +91,12 @@ exports.getPaymentsTable = (payments) => {
   payments = _.map(payments, (payment) => {
     switch (payment.type) {
       case PAYMENT_TYPES.TRANSFER:
-        payment.balance = payable + payment.amount;
+        payment.balance = BigNumber(payable).plus(payment.amount).toNumber();
         payable = payment.balance;
         return _.pick(payment, ['userName', 'balance', 'createdAt', 'amount', 'type', '_id']);
       case PAYMENT_TYPES.WRITE_OFF:
       case PAYMENT_TYPES.REFUND:
-        payment.balance = payable - payment.amount;
+        payment.balance = BigNumber(payable).minus(payment.amount).toNumber();
         payable = payment.balance;
         return _.pick(payment, ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', '_id']);
     }
@@ -144,7 +138,7 @@ exports.siteInfo = async (host) => {
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
   return {
-    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag', 'parentHost',
       'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
   };
 };
