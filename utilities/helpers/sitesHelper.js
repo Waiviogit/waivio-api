@@ -138,7 +138,7 @@ exports.siteInfo = async (host) => {
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
   return {
-    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag', 'parentHost',
       'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
   };
 };
