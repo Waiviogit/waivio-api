@@ -24,11 +24,6 @@ exports.TEST_DOMAINS = [
   'dining.pp.ua',
 ];
 
-exports.ACTIVE_STATUSES = [
-  this.STATUSES.ACTIVE,
-  this.STATUSES.PENDING,
-];
-
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
