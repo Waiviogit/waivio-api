@@ -4,7 +4,9 @@ const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
-const { PAYMENT_TYPES, FEE, TEST_DOMAINS } = require('constants/sitesConstants');
+const {
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, PAYMENT_FIELDS_WRITEOFF,
+} = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
@@ -93,12 +95,12 @@ exports.getPaymentsTable = (payments) => {
       case PAYMENT_TYPES.TRANSFER:
         payment.balance = BigNumber(payable).plus(payment.amount).toNumber();
         payable = payment.balance;
-        return _.pick(payment, ['userName', 'balance', 'createdAt', 'amount', 'type', '_id']);
+        return _.pick(payment, PAYMENT_FIELDS_TRANSFER);
       case PAYMENT_TYPES.WRITE_OFF:
       case PAYMENT_TYPES.REFUND:
         payment.balance = BigNumber(payable).minus(payment.amount).toNumber();
         payable = payment.balance;
-        return _.pick(payment, ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', '_id']);
+        return _.pick(payment, PAYMENT_FIELDS_WRITEOFF);
     }
   });
   _.reverse(payments);
