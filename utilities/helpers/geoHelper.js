@@ -33,7 +33,7 @@ exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
   if (displayDiagonalDistance < 1000) return wobjects;
 
-  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / 50);
+  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / 100);
 
   for (let i = 0; i < wobjects.length; i++) {
     for (let j = 0; j < wobjects.length; j++) {
@@ -43,9 +43,11 @@ exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
           wobjects[j].map.coordinates,
         );
         const cond1 = distance < minDistanceBetweenObjects;
-        const cond2 = wobjects[i].weight > wobjects[j].weight;
+        const cond2 = wobjects[i].weight >= wobjects[j].weight;
         const cond3 = !_.has(wobjects[j], 'campaigns');
+        const cond4 = _.has(wobjects[i], 'campaigns') && _.has(wobjects[j], 'campaigns');
         if (cond1 && cond2 && cond3) wobjects[j].invisible = true;
+        if (cond1 && cond2 && cond4) wobjects[j].invisible = true;
       }
     }
   }
