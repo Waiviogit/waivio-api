@@ -45,7 +45,7 @@ exports.FEE = {
   minimumValue: 1,
   currency: 'HBD',
   perUser: 0.005,
-  account: 'waivio.hosting',
+  account: 'waivio.web',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
   perInactive: 0.2,
 };
@@ -77,3 +77,7 @@ exports.PAYMENT_DESCRIPTION = {
   HOSTING_FEE: 'hosting fee',
   RESERVATION: 'reservation',
 };
+
+exports.PAYMENT_FIELDS_TRANSFER = ['userName', 'balance', 'createdAt', 'amount', 'type', 'transferTo', '_id'];
+
+exports.PAYMENT_FIELDS_WRITEOFF = ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', 'description', '_id'];
