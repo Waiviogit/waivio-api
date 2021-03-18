@@ -1,5 +1,7 @@
 const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('constants/mapConstants');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
+const { DEVICE } = require('constants/common');
 
 exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   if (_.isEmpty(mapCoordinates)) return DEFAULT_MAP_VIEW;
@@ -29,11 +31,14 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
 
 exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
   if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
+  const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
+    ? 50
+    : 100;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
   if (displayDiagonalDistance < 1000) return wobjects;
 
-  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / 100);
+  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / divideBy);
 
   for (let i = 0; i < wobjects.length; i++) {
     for (let j = 0; j < wobjects.length; j++) {
