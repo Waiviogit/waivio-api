@@ -63,10 +63,10 @@ const sitesWobjectSearch = async (data) => {
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
+  result = await addCampaignsToWobjectsSites({ wobjects: _.cloneDeep(wobjects), user, ...data });
   result = geoHelper.setFilterByDistance({
-    mapMarkers: data.mapMarkers, wobjects: _.cloneDeep(wobjects), box: data.box,
+    mapMarkers: data.mapMarkers, wobjects: result, box: data.box,
   });
-  result = await addCampaignsToWobjectsSites({ wobjects: result, user, ...data });
 
   return {
     wobjects: _.take(result, data.limit),
@@ -141,7 +141,7 @@ const makeSitePipeline = ({
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { [sort]: -1 } });
 
-  pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 100 : limit + 1 });
+  pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
 };
 

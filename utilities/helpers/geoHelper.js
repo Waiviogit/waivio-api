@@ -1,5 +1,7 @@
 const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('constants/mapConstants');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
+const { DEVICE } = require('constants/common');
 
 exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   if (_.isEmpty(mapCoordinates)) return DEFAULT_MAP_VIEW;
@@ -29,11 +31,14 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
 
 exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
   if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
+  const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
+    ? 50
+    : 100;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
   if (displayDiagonalDistance < 1000) return wobjects;
 
-  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / 50);
+  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / divideBy);
 
   for (let i = 0; i < wobjects.length; i++) {
     for (let j = 0; j < wobjects.length; j++) {
@@ -43,9 +48,11 @@ exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
           wobjects[j].map.coordinates,
         );
         const cond1 = distance < minDistanceBetweenObjects;
-        const cond2 = wobjects[i].weight > wobjects[j].weight;
+        const cond2 = wobjects[i].weight >= wobjects[j].weight;
         const cond3 = !_.has(wobjects[j], 'campaigns');
+        const cond4 = _.has(wobjects[i], 'campaigns') && _.has(wobjects[j], 'campaigns');
         if (cond1 && cond2 && cond3) wobjects[j].invisible = true;
+        if (cond1 && cond2 && cond4) wobjects[j].invisible = true;
       }
     }
   }
