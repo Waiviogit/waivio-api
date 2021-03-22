@@ -389,7 +389,7 @@ const processWobjects = async ({
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
-      obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink']));
+      obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
     }
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });

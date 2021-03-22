@@ -43,6 +43,7 @@ exports.postsScheme = Joi.object().keys({
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   userName: Joi.string().default(''),
+  newsPermlink: Joi.string().default(''),
 });
 
 exports.feedScheme = Joi.object().keys({

@@ -34,7 +34,7 @@ const getPosts = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, forApp, lastId, hiddenPosts, muted,
+  author_permlink, skip, limit, user_languages, forApp, lastId, hiddenPosts, muted, newsPermlink,
 }) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
@@ -56,7 +56,7 @@ const getWobjFeedCondition = async ({
 
   if (error) return { error };
 
-  if (!wObject.newsFilter) {
+  if (!newsPermlink) {
     if (!skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty(user_languages)) {
       // if wobject have no newsFilter and count of
       // posts less than cashed count => get posts from cashed array
@@ -70,7 +70,8 @@ const getWobjFeedCondition = async ({
     return { condition };
   }
 
-  const { newsFilter } = wObject;
+  const filterField = _.find(wObject.fields, (f) => f.permlink === newsPermlink);
+  const newsFilter = JSON.parse(_.get(filterField, 'body', '{}'));
 
   if (!newsFilter.allowList && !newsFilter.ignoreList) {
     return { error: { message: 'Format not include all required fields' } };
