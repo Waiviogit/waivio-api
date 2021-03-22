@@ -10,7 +10,7 @@ exports.find = async ({ condition, sort }) => {
 
 exports.aggregate = async (condition) => {
   try {
-    return { result: await WebsitePayments.aggregate(condition).lean() };
+    return { result: await WebsitePayments.aggregate(condition) };
   } catch (error) {
     return { error };
   }
