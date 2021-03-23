@@ -2,105 +2,96 @@ const {
   expect, WebsitePaymentsModel, faker, dropDatabase,
 } = require('test/testHelper');
 const { WebsitePaymentsFactory } = require('test/factories');
+const _ = require('lodash');
 const { PAYMENT_TYPES } = require('../../../constants/sitesConstants');
 
 describe('WebsitePaymentsModel', () => {
   describe('On find', () => {
-    let host, condition, sort, websitePayments;
+    const host = faker.random.string();
+    const counter = _.random(3, 10);
     beforeEach(async () => {
       await dropDatabase();
-      host = faker.random.string();
-      condition = { host };
-      sort = { createAt: 1 };
-
-      const websitePayment1 = {
-        host,
-        type: PAYMENT_TYPES.WRITE_OFF,
-        amount: 10,
-      };
-      const websitePayment2 = {
-        host,
-        type: PAYMENT_TYPES.REFUND,
-        amount: 15,
-      };
-      const websitePayment3 = {
-        host,
-        type: PAYMENT_TYPES.WRITE_OFF,
-        amount: 20,
-      };
-      const websitePayment4 = {
-        type: PAYMENT_TYPES.REFUND,
-        amount: 13,
-      };
-      websitePayments = [websitePayment1, websitePayment2, websitePayment3, websitePayment4];
-      for (const websitePayment of websitePayments) {
-        await WebsitePaymentsFactory.Create({ ...websitePayment });
+      for (let i = 0; i < counter; i++) {
+        await WebsitePaymentsFactory.Create({
+          host,
+          type: PAYMENT_TYPES.WRITE_OFF,
+          amount: _.random(1, 20),
+        });
+      }
+      for (let i = 0; i < _.random(1, 3); i++) {
+        await WebsitePaymentsFactory.Create({
+          type: PAYMENT_TYPES.WRITE_OFF,
+          amount: _.random(1, 20),
+        });
       }
     });
-
-    it('Should return array 3 elements long', async () => {
-      const { result } = await WebsitePaymentsModel.find({ condition, sort });
-      expect(result).to.have.length(3);
+    it('Should return array "counter" elements long', async () => {
+      const { result } = await WebsitePaymentsModel.find(
+        { condition: { host }, sort: { amount: 1 } },
+      );
+      expect(result).to.have.length(counter);
     });
-    it('Should return array without one element and when searching not to find it', async () => {
-      const { result } = await WebsitePaymentsModel.find({ condition, sort });
-      expect(result).to.not.include(websitePayments[3]);
+    it('Should return return an array where "host" is equal to the specified value', async () => {
+      const { result } = await WebsitePaymentsModel.find(
+        { condition: { host }, sort: { amount: 1 } },
+      );
+      result.forEach((element) => expect(element.host).to.be.eq(host));
     });
-    it('Should return array whose first element will contain the smallest amount & the last largest', async () => {
-      const { result } = await WebsitePaymentsModel.find({ condition, sort });
-      expect(result[0].amount).to.be.eq(websitePayments[0].amount);
-      expect(result[2].amount).to.be.eq(websitePayments[2].amount);
+    it('Should return a sorted array of elements where "amount" of the first element is less than "amount" of the last element', async () => {
+      const { result } = await WebsitePaymentsModel.find(
+        { condition: { host }, sort: { amount: 1 } },
+      );
+      expect(result[0].amount).to.be.lessThan(result[result.length - 1].amount);
     });
-    it('Should check that the result will be undefined', async () => {
-      const { error } = await WebsitePaymentsModel.find(faker.random.string());
-      expect(error).to.be.undefined;
+    it('Should return a sorted array of elements where "amount" of the first element is greater than "amount" of the last element', async () => {
+      const { result } = await WebsitePaymentsModel.find(
+        { condition: { host }, sort: { amount: -1 } },
+      );
+      expect(result[0].amount).to.be.greaterThan(result[result.length - 1].amount);
     });
   });
 
   describe('On aggregate', () => {
-    let websitePayments, condition, name;
+    const name = faker.name.firstName();
+    const counter = _.random(3, 10);
     beforeEach(async () => {
       await dropDatabase();
-      name = faker.name.firstName();
-      condition = [{ $match: { userName: name } }];
-      const websitePayment1 = { name };
-      const websitePayment2 = { name };
-      const websitePayment3 = { name: faker.name.firstName() };
-      const websitePayment4 = { name: faker.name.firstName() };
-      websitePayments = [websitePayment1, websitePayment2, websitePayment3, websitePayment4];
-      for (const websitePayment of websitePayments) {
-        await WebsitePaymentsFactory.Create({ ...websitePayment });
+      for (let i = 0; i < counter; i++) {
+        await WebsitePaymentsFactory.Create({
+          name,
+        });
+      }
+      for (let i = 0; i < _.random(1, 3); i++) {
+        await WebsitePaymentsFactory.Create({});
       }
     });
-    it('Should return an array in which the names match the condition', async () => {
-      const { result } = await WebsitePaymentsModel.aggregate(condition);
-      expect(result).to.have.length(2);
+    it('Should return an array of length equal "counter" in which the specified condition is met', async () => {
+      const { result } = await WebsitePaymentsModel.aggregate([{ $match: { userName: name } }]);
+      expect(result).to.have.length(counter);
     });
-    it('Should return an array that does not contain elements that satisfy the condition', async () => {
-      const { result } = await WebsitePaymentsModel.aggregate(condition);
-      expect(result).to.not.include(websitePayments[2]);
-      expect(result).to.not.include(websitePayments[3]);
+    it('Should return an array where the name is equal to the given condition', async () => {
+      const { result } = await WebsitePaymentsModel.aggregate([{ $match: { userName: name } }]);
+      result.forEach((element) => expect(element.userName).to.be.eq(name));
     });
   });
 
   describe('On findOne', () => {
-    let websitePayments, condition, name;
+    const name = faker.name.firstName();
+    const counter = _.random(3, 10);
     beforeEach(async () => {
       await dropDatabase();
-      name = faker.name.firstName();
-      condition = { userName: name };
-      const websitePayment1 = { name };
-      const websitePayment2 = { name: faker.name.firstName() };
-      const websitePayment3 = { name: faker.name.firstName() };
-      const websitePayment4 = { name: faker.name.firstName() };
-      websitePayments = [websitePayment1, websitePayment2, websitePayment3, websitePayment4];
-      for (const websitePayment of websitePayments) {
-        await WebsitePaymentsFactory.Create({ ...websitePayment });
+      for (let i = 0; i < counter; i++) {
+        await WebsitePaymentsFactory.Create({
+          name,
+        });
+      }
+      for (let i = 0; i < _.random(1, 3); i++) {
+        await WebsitePaymentsFactory.Create({});
       }
     });
     it('Should return one element that satisfies the condition', async () => {
-      const { result } = await WebsitePaymentsModel.findOne(condition);
-      expect(result.userName).to.be.eq(websitePayments[0].name);
+      const { result } = await WebsitePaymentsModel.findOne({ userName: name });
+      expect(result.userName).to.be.eq(name);
     });
     it('Should check that the error exist', async () => {
       const { error } = await WebsitePaymentsModel.findOne(faker.random.string());
@@ -109,28 +100,30 @@ describe('WebsitePaymentsModel', () => {
   });
 
   describe('On distinct', () => {
-    let websitePayments, name1, name2, field, query;
+    const name1 = faker.name.firstName();
+    const name2 = faker.name.firstName();
+    const amount = _.random(10, 25);
+    const counter = _.random(3, 10);
     beforeEach(async () => {
       await dropDatabase();
-      field = 'userName';
-      query = { amount: 15 };
-      name1 = faker.name.firstName();
-      name2 = faker.name.firstName();
-      const websitePayment1 = { name: name1, amount: 15 };
-      const websitePayment2 = { name: name1, amount: 12 };
-      const websitePayment3 = { name: name2, amount: 15 };
-      const websitePayment4 = { amount: 13 };
-      websitePayments = [websitePayment1, websitePayment2, websitePayment3, websitePayment4];
-      for (const websitePayment of websitePayments) {
-        await WebsitePaymentsFactory.Create({ ...websitePayment });
+      for (let i = 0; i < counter; i++) {
+        await WebsitePaymentsFactory.Create({
+          name: _.sample([name1, name2]),
+          amount,
+        });
+      }
+      for (let i = 0; i < _.random(1, 3); i++) {
+        await WebsitePaymentsFactory.Create({
+          amount: _.random(1, 20),
+        });
       }
     });
     it('Should return an array of two unique elements', async () => {
-      const { result } = await WebsitePaymentsModel.distinct({ field, query });
-      expect(result).to.have.members([websitePayments[2].name, websitePayments[0].name]);
+      const { result } = await WebsitePaymentsModel.distinct({ field: 'userName', query: { amount } });
+      expect(result).to.have.members([name1, name2]);
     });
-    it('Should return an array of only unique elements', async () => {
-      const { result } = await WebsitePaymentsModel.distinct({ field, query });
+    it('Should return an array length of which must be equal to the number of unique elements', async () => {
+      const { result } = await WebsitePaymentsModel.distinct({ field: 'userName', query: { amount } });
       expect(result).to.have.length(2);
     });
     it('Should check that the error exist', async () => {
