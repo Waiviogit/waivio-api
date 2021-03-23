@@ -49,6 +49,10 @@ describe('WebsitePaymentsModel', () => {
       );
       expect(result[0].amount).to.be.greaterThan(result[result.length - 1].amount);
     });
+    it('Should check that the error exist', async () => {
+      const { error } = await WebsitePaymentsModel.find({ condition: host, sort: { amount: 1 } });
+      expect(error).to.be.exist;
+    });
   });
 
   describe('On aggregate', () => {
@@ -72,6 +76,10 @@ describe('WebsitePaymentsModel', () => {
     it('Should return an array where the name is equal to the given condition', async () => {
       const { result } = await WebsitePaymentsModel.aggregate([{ $match: { userName: name } }]);
       result.forEach((element) => expect(element.userName).to.be.eq(name));
+    });
+    it('Should check that the error exist', async () => {
+      const { error } = await WebsitePaymentsModel.aggregate({ $match: { userName: name } });
+      expect(error).to.be.exist;
     });
   });
 
