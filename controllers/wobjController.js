@@ -59,6 +59,7 @@ const posts = async (req, res, next) => {
     forApp: req.headers.app,
     lastId: req.body.lastId,
     userName: req.headers.follower,
+    newsPermlink: req.body.newsPermlink,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;
