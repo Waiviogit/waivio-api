@@ -127,10 +127,11 @@ exports.getByFieldScheme = Joi.object().keys({
 });
 
 exports.getChildWobjects = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100)
+  limit: Joi.number().integer().min(0).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  author_permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  excludeTypes: Joi.array().items(Joi.string()).default([]).single(),
 });
 
 exports.getWobjectField = Joi.object().keys({

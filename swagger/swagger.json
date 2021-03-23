@@ -2886,6 +2886,11 @@
           "required" : false,
           "type" : "integer"
         }, {
+            "name" : "excludeTypes",
+            "in" : "query",
+            "required" : false,
+            "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "required" : false,
