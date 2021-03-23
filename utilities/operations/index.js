@@ -7,5 +7,6 @@ moduleExports.objectType = require('./objectType');
 moduleExports.post = require('./post');
 moduleExports.app = require('./app');
 moduleExports.sites = require('./sites');
+moduleExports.vipTickets = require('./vipTickets');
 
 module.exports = moduleExports;

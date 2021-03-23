@@ -8,6 +8,7 @@ const {
   ImageController,
   globalSearchController,
   sitesController,
+  vipTicketsController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -17,6 +18,7 @@ const postRoutes = new Router();
 const appRoutes = new Router();
 const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
+const ticketsRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -24,6 +26,7 @@ apiRoutes.use('/api', postRoutes);
 apiRoutes.use('/api', appRoutes);
 apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
+apiRoutes.use('/api', ticketsRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -183,4 +186,9 @@ objectTypeRoutes.route('/objectTypes/tags-for-filter')
 userRoutes.route('/generalSearch')
   .post(globalSearchController.globalSearch);
 // endregion
+// region Vip-tickets
+ticketsRoutes.route('/vip-tickets')
+  .get(vipTicketsController.getVipTickets);
+// endregion
+
 module.exports = apiRoutes;
