@@ -16,3 +16,17 @@ exports.find = async ({
     return { error };
   }
 };
+
+exports.addNote = async ({ ticket, note }) => {
+  try {
+    return {
+      result: await VipTicket.findOneAndUpdate(
+        { ticket },
+        { note },
+        { new: true },
+      ).lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

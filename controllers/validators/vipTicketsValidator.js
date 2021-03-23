@@ -11,3 +11,9 @@ exports.getTicketsSchema = Joi.object().keys({
   consumedLimit: Joi.number().integer().min(0).max(100)
     .default(30),
 }).options(options);
+
+exports.addNoteSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  ticket: Joi.string().required(),
+  note: Joi.string().required(),
+}).options(options);
