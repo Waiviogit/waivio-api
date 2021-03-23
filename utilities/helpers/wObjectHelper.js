@@ -152,6 +152,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.FORM:
       case FIELDS_NAMES.GALLERY_ITEM:
       case FIELDS_NAMES.LIST_ITEM:
+      case FIELDS_NAMES.NEWS_FILTER:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -387,7 +388,9 @@ const processWobjects = async ({
       );
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
-    if (obj.newsFilter) obj.newsFilter = JSON.parse(obj.newsFilter);
+    if (obj.newsFilter) {
+      obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
+    }
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });

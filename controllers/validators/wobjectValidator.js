@@ -43,6 +43,7 @@ exports.postsScheme = Joi.object().keys({
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   userName: Joi.string().default(''),
+  newsPermlink: Joi.string().default(''),
 });
 
 exports.feedScheme = Joi.object().keys({
@@ -126,10 +127,11 @@ exports.getByFieldScheme = Joi.object().keys({
 });
 
 exports.getChildWobjects = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100)
+  limit: Joi.number().integer().min(0).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  author_permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  excludeTypes: Joi.array().items(Joi.string()).default([]).single(),
 });
 
 exports.getWobjectField = Joi.object().keys({
