@@ -17,12 +17,12 @@ exports.find = async ({
   }
 };
 
-exports.addNote = async ({ ticket, note }) => {
+exports.updateTicket = async ({ ticket, data }) => {
   try {
     return {
       result: await VipTicket.findOneAndUpdate(
         { ticket },
-        { note },
+        data,
         { new: true },
       ).lean(),
     };

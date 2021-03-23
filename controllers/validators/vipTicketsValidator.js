@@ -17,3 +17,8 @@ exports.addNoteSchema = Joi.object().keys({
   ticket: Joi.string().required(),
   note: Joi.string().required(),
 }).options(options);
+
+exports.validateTicketSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  ticket: Joi.string().required(),
+}).options(options);

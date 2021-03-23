@@ -189,7 +189,8 @@ userRoutes.route('/generalSearch')
 // region Vip-tickets
 ticketsRoutes.route('/vip-tickets')
   .get(vipTicketsController.getVipTickets)
-  .patch(vipTicketsController.addTicketNote);
+  .patch(vipTicketsController.addTicketNote)
+  .post(vipTicketsController.validateVipTicket);
 // endregion
 
 module.exports = apiRoutes;
