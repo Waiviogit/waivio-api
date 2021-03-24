@@ -122,7 +122,7 @@ describe('WebsitePaymentsModel', () => {
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await WebsitePaymentsFactory.Create({
-          amount: _.random(1, 20),
+          amount: _.random(26, 40),
         });
       }
     });
