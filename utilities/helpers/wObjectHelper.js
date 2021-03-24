@@ -314,8 +314,8 @@ const getDefaultLink = (obj) => {
       .value();
     return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
   }
-  if (_.get(obj, 'newsFilter')) return `/object/${obj.author_permlink}/newsFilter/${obj.newsFilter[0].permlink}`;
-  if (_.get(obj, 'blog')) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
+  if (_.get(obj, 'newsFilter', []).length) return `/object/${obj.author_permlink}/newsFilter/${obj.newsFilter[0].permlink}`;
+  if (_.get(obj, 'blog', []).length) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
 
   return `/object/${obj.author_permlink}`;
 };
