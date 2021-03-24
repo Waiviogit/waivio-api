@@ -282,7 +282,7 @@ const getLinkToPageLoad = (obj) => {
     case OBJECT_TYPES.PLACE:
     case OBJECT_TYPES.HOTEL:
     case OBJECT_TYPES.RESTAURANT:
-      return getDefaultShowlink(obj);
+      return getDefaultLink(obj);
     default:
       return `/object/${obj.author_permlink}`;
   }
@@ -301,7 +301,7 @@ const getCustomSortLink = (obj) => {
   return `/object/${obj.author_permlink}`;
 };
 
-const getDefaultShowlink = (obj) => {
+const getDefaultLink = (obj) => {
   let listItem = _.get(obj, 'listItem', []);
   if (listItem.length) {
     _.find(listItem, (list) => list.type === 'menuList')
