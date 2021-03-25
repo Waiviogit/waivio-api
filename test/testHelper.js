@@ -22,6 +22,7 @@ const {
   UserWobjects: UserWobjectsModel,
   Comment: CommentModel,
   Subscriptions: SubscriptionModel,
+  websitePayments: WebsitePaymentsModel,
 } = require('models');
 
 const dropDatabase = async () => {
@@ -46,6 +47,7 @@ module.exports = {
   PostModel,
   UserModel,
   UserWobjectsModel,
+  WebsitePaymentsModel,
   AppModel,
   ObjectTypeModel,
   Mongoose,
