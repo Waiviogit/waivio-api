@@ -4,6 +4,7 @@ const { schema } = require('middlewares/wobject/moderation/schema');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
+const config = require('config');
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -65,7 +66,7 @@ const getApp = async () => {
   const session = getNamespace('request-session');
   let host = session.get('host');
   if (!host) {
-    host = session.get('ssrHost');
+    host = config.appHost;
   }
   return App.findOne({ host });
 };
