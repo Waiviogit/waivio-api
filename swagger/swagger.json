@@ -2666,7 +2666,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of posts to return (*default* 30),\n**user_languages** - array of lanugages to filter result posts\n\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
+          "description" : "**limit** - Count of posts to return (*default* 30),\n**user_languages** - array of lanugages to filter result posts\n**newsPermlink** - string ( news filter permlink)\n\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_7"
@@ -2886,6 +2886,11 @@
           "required" : false,
           "type" : "integer"
         }, {
+            "name" : "excludeTypes",
+            "in" : "query",
+            "required" : false,
+            "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "required" : false,

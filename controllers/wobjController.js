@@ -59,6 +59,7 @@ const posts = async (req, res, next) => {
     forApp: req.headers.app,
     lastId: req.body.lastId,
     userName: req.headers.follower,
+    newsPermlink: req.body.newsPermlink,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;
@@ -170,11 +171,10 @@ const getByField = async (req, res, next) => {
 };
 
 const getChildWobjects = async (req, res, next) => {
-  const value = validators.validate({
-    skip: req.query.skip,
-    limit: req.query.limit,
-    author_permlink: req.params.authorPermlink,
-  }, validators.wobject.getChildWobjects, next);
+  const value = validators.validate(
+    { ...req.params, ...req.query },
+    validators.wobject.getChildWobjects, next,
+  );
 
   if (!value) return;
   const { wobjects, error } = await Wobj.getChildWobjects(value);

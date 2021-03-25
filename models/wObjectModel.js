@@ -54,11 +54,15 @@ const getByField = async ({ fieldName, fieldBody }) => {
 };
 
 // eslint-disable-next-line camelcase
-const getChildWobjects = async ({ skip, limit, author_permlink }) => {
+const getChildWobjects = async ({
+  skip, limit, authorPermlink, excludeTypes = [],
+}) => {
   try {
-    const wobjects = await WObjectModel.find(
-      { parent: author_permlink },
-    ).sort({ weight: -1, _id: -1 }).skip(skip).limit(limit)
+    const wobjects = await WObjectModel
+      .find({ parent: authorPermlink, object_type: { $nin: excludeTypes } })
+      .sort({ weight: -1, _id: -1 })
+      .skip(skip)
+      .limit(limit)
       .lean();
 
     if (_.isEmpty(wobjects)) return { wobjects: [] };

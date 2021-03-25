@@ -152,6 +152,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.FORM:
       case FIELDS_NAMES.GALLERY_ITEM:
       case FIELDS_NAMES.LIST_ITEM:
+      case FIELDS_NAMES.NEWS_FILTER:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -266,44 +267,56 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
 
 const getLinkToPageLoad = (obj) => {
   if (getNamespace('request-session').get('device') === DEVICE.MOBILE) return `/object/${obj.author_permlink}/about`;
-  let listItem = _.get(obj, 'listItem', []);
-  if (!_.get(obj, 'sortCustom', []).length) {
-    switch (obj.object_type) {
-      case OBJECT_TYPES.PAGE:
-        return `/object/${obj.author_permlink}/page`;
-      case OBJECT_TYPES.LIST:
-        return `/object/${obj.author_permlink}/list`;
-      case OBJECT_TYPES.BUSINESS:
-      case OBJECT_TYPES.PRODUCT:
-      case OBJECT_TYPES.SERVICE:
-      case OBJECT_TYPES.COMPANY:
-      case OBJECT_TYPES.PERSON:
-      case OBJECT_TYPES.PLACE:
-      case OBJECT_TYPES.HOTEL:
-      case OBJECT_TYPES.RESTAURANT:
-        if (listItem.length) {
-          _.find(listItem, (list) => list.type === 'menuList')
-            ? listItem = _.filter(listItem, (list) => list.type === 'menuList')
-            : null;
-          const item = _
-            .chain(listItem)
-            .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
-            .first()
-            .value();
-          return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
-        }
-        if (_.get(obj, 'blog')) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
-        return `/object/${obj.author_permlink}`;
-      default:
-        return `/object/${obj.author_permlink}`;
-    }
+  if (_.get(obj, 'sortCustom', []).length) return getCustomSortLink(obj);
+
+  switch (obj.object_type) {
+    case OBJECT_TYPES.PAGE:
+      return `/object/${obj.author_permlink}/page`;
+    case OBJECT_TYPES.LIST:
+      return `/object/${obj.author_permlink}/list`;
+    case OBJECT_TYPES.BUSINESS:
+    case OBJECT_TYPES.PRODUCT:
+    case OBJECT_TYPES.SERVICE:
+    case OBJECT_TYPES.COMPANY:
+    case OBJECT_TYPES.PERSON:
+    case OBJECT_TYPES.PLACE:
+    case OBJECT_TYPES.HOTEL:
+    case OBJECT_TYPES.RESTAURANT:
+      return getDefaultLink(obj);
+    default:
+      return `/object/${obj.author_permlink}`;
   }
+};
+
+const getCustomSortLink = (obj) => {
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
 
-  const field = _.find(listItem, { body: obj.sortCustom[0] });
+  const field = _.find(_.get(obj, 'listItem', []), { body: obj.sortCustom[0] });
   const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === obj.sortCustom[0]);
-  if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
+  const news = _.find(_.get(obj, 'newsFilter', []), (el) => el.permlink === obj.sortCustom[0]);
   if (field) return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
+  if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
+  if (news) return `/object/${obj.author_permlink}/newsFilter/${news.permlink}`;
+
+  return `/object/${obj.author_permlink}`;
+};
+
+const getDefaultLink = (obj) => {
+  let listItem = _.get(obj, 'listItem', []);
+  if (listItem.length) {
+    _.find(listItem, (list) => list.type === 'menuList')
+      ? listItem = _.filter(listItem, (list) => list.type === 'menuList')
+      : null;
+    const item = _
+      .chain(listItem)
+      .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
+      .first()
+      .value();
+    return `/object/${obj.author_permlink}/${item.type === 'menuPage' ? 'page' : 'menu'}#${item.body}`;
+  }
+  if (_.get(obj, 'newsFilter', []).length) return `/object/${obj.author_permlink}/newsFilter/${obj.newsFilter[0].permlink}`;
+  if (_.get(obj, 'blog', []).length) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
+
   return `/object/${obj.author_permlink}`;
 };
 
@@ -387,7 +400,9 @@ const processWobjects = async ({
       );
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
-    if (obj.newsFilter) obj.newsFilter = JSON.parse(obj.newsFilter);
+    if (obj.newsFilter) {
+      obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
+    }
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });
