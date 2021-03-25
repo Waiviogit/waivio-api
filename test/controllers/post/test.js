@@ -8,8 +8,9 @@ const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const _ = require('lodash');
-const { IGNORED_AUTHORS } = require('../../../constants/postsData');
-const hotTrandGetter = require('../../../utilities/operations/post/feedCache/hotTrandGetter');
+const { IGNORED_AUTHORS } = require('constants/postsData');
+const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
+const { MEDIAN_USER_WAIVIO_RATE } = require('utilities/constants');
 
 describe('On postController', async () => {
   let currentApp, session, result, post;
@@ -86,13 +87,19 @@ describe('On postController', async () => {
   });
 
   describe('on getPostsByCategory', async () => {
-    const counter = _.random(2, 9);
     const postsIds = [];
     beforeEach(async () => {
       await dropDatabase();
-      for (let i = 0; i < counter; i++) {
+      for (let i = 0; i < _.random(2, 9); i++) {
         const newPost = await PostFactory.Create({
-          author: _.sample([faker.name.firstName().toLowerCase(), IGNORED_AUTHORS[0]]),
+          author: _.sample(IGNORED_AUTHORS),
+          author_weight: MEDIAN_USER_WAIVIO_RATE,
+        });
+        postsIds.push(newPost._id.toString());
+      }
+      for (let i = 0; i < _.random(2, 9); i++) {
+        const newPost = await PostFactory.Create({
+          author_weight: MEDIAN_USER_WAIVIO_RATE,
         });
         postsIds.push(newPost._id.toString());
       }
@@ -102,18 +109,13 @@ describe('On postController', async () => {
     });
     it('Should return posts without ignored author from Redis', async () => {
       sinon.stub(hotTrandGetter, 'getTopFromArrays').returns(postsIds);
-      hotTrandGetter.getTopFromArrays(postsIds);
-
       result = await chai.request(app)
         .post('/api/posts/')
         .send({
           category: 'trending',
-          limit: 10,
-          skip: 0,
-          user_languages: ['en-US'],
         });
       result.body.forEach(
-        (element) => expect(element.author).to.be.not.include(IGNORED_AUTHORS[0]),
+        (element) => expect(IGNORED_AUTHORS).to.not.include(element.author),
       );
     });
 
@@ -122,13 +124,18 @@ describe('On postController', async () => {
         .post('/api/posts/')
         .send({
           category: 'trending',
-          limit: 10,
-          skip: 0,
-          user_languages: ['en-US'],
         });
       result.body.forEach(
-        (element) => expect(element.author).to.be.not.include(IGNORED_AUTHORS[0]),
+        (element) => expect(IGNORED_AUTHORS).to.not.include(element.author),
       );
+    });
+    it('The returned array must not be empty', async () => {
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+        });
+      expect(result.body).not.to.be.empty;
     });
   });
 });

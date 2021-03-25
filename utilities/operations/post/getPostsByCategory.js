@@ -9,8 +9,8 @@ const { getNamespace } = require('cls-hooked');
 const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
 const { hiddenPostModel, mutedUserModel } = require('models');
+const { IGNORED_AUTHORS } = require('constants/postsData');
 const hotTrandGetter = require('./feedCache/hotTrandGetter');
-const { IGNORED_AUTHORS } = require('../../../constants/postsData');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();

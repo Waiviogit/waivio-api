@@ -3,7 +3,7 @@ const config = require('config');
 const { getNamespace } = require('cls-hooked');
 const { redisGetter } = require('utilities/redis');
 const { Post } = require('database').models;
-const { IGNORED_AUTHORS } = require('../../../../constants/postsData');
+const { IGNORED_AUTHORS } = require('constants/postsData');
 
 /**
  * Get HOT posts by locales using indexes from redis cache
