@@ -7,6 +7,9 @@ const {
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const { IGNORED_AUTHORS } = require('../../../constants/postsData');
+const hotTrandGetter = require('../../../utilities/operations/post/feedCache/hotTrandGetter');
 
 describe('On postController', async () => {
   let currentApp, session, result, post;
@@ -79,6 +82,53 @@ describe('On postController', async () => {
           });
         expect(result).to.have.status(404);
       });
+    });
+  });
+
+  describe('on getPostsByCategory', async () => {
+    const counter = _.random(2, 9);
+    const postsIds = [];
+    beforeEach(async () => {
+      await dropDatabase();
+      for (let i = 0; i < counter; i++) {
+        const newPost = await PostFactory.Create({
+          author: _.sample([faker.name.firstName().toLowerCase(), IGNORED_AUTHORS[0]]),
+        });
+        postsIds.push(newPost._id.toString());
+      }
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('Should return posts without ignored author from Redis', async () => {
+      sinon.stub(hotTrandGetter, 'getTopFromArrays').returns(postsIds);
+      hotTrandGetter.getTopFromArrays(postsIds);
+
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+          limit: 10,
+          skip: 0,
+          user_languages: ['en-US'],
+        });
+      result.body.forEach(
+        (element) => expect(element.author).to.be.not.include(IGNORED_AUTHORS[0]),
+      );
+    });
+
+    it('Should return posts without ignored author from MongoDB', async () => {
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+          limit: 10,
+          skip: 0,
+          user_languages: ['en-US'],
+        });
+      result.body.forEach(
+        (element) => expect(element.author).to.be.not.include(IGNORED_AUTHORS[0]),
+      );
     });
   });
 });

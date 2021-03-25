@@ -3,6 +3,7 @@ const config = require('config');
 const { getNamespace } = require('cls-hooked');
 const { redisGetter } = require('utilities/redis');
 const { Post } = require('database').models;
+const { IGNORED_AUTHORS } = require('../../../../constants/postsData');
 
 /**
  * Get HOT posts by locales using indexes from redis cache
@@ -32,13 +33,17 @@ exports.getHot = async ({
   }));
 
   // get ids of needed posts range
-  const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
+  const postIds = this.getTopFromArrays(idLocaleArrays, limit, skip);
   const session = getNamespace('request-session');
   let host = session.get('host');
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: _.difference(postIds, hiddenPosts) }, blocked_for_apps: { $ne: host }, author: { $nin: muted } },
+    cond: {
+      _id: { $in: _.difference(postIds, hiddenPosts) },
+      blocked_for_apps: { $ne: host },
+      author: { $nin: muted },
+    },
     sort: { children: -1 },
     limit,
     skip,
@@ -75,14 +80,18 @@ exports.getTrend = async ({
   }));
 
   // get ids of needed posts range
-  const postIds = getTopFromArrays(idLocaleArrays, limit, skip);
+  const postIds = this.getTopFromArrays(idLocaleArrays, limit, skip);
 
   const session = getNamespace('request-session');
   let host = session.get('host');
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
-    cond: { _id: { $in: _.difference(postIds, hiddenPosts) }, blocked_for_apps: { $ne: host }, author: { $nin: muted } },
+    cond: {
+      _id: { $in: _.difference(postIds, hiddenPosts) },
+      blocked_for_apps: { $ne: host },
+      author: { $nin: _.union(muted, IGNORED_AUTHORS) },
+    },
     sort: { net_rshares: -1 },
     skip,
     limit,
@@ -95,19 +104,17 @@ Instead of merge all items to on array, sort inside
 and get top N => use this custom method for only
 get top N items by compare each array top element.
  */
-function getTopFromArrays(arrays, limit, skip) {
-  return _
-    .chain(arrays)
-    .flattenDeep()
-    .map((post) => {
-      const data = post.split('_');
-      return { id: data[1], weight: +data[0] };
-    })
-    .orderBy(['weight'], ['desc'])
-    // .slice(skip, skip + limit)
-    .map('id')
-    .value();
-}
+exports.getTopFromArrays = (arrays, limit, skip) => _
+  .chain(arrays)
+  .flattenDeep()
+  .map((post) => {
+    const data = post.split('_');
+    return { id: data[1], weight: +data[0] };
+  })
+  .orderBy(['weight'], ['desc'])
+// .slice(skip, skip + limit)
+  .map('id')
+  .value();
 
 const getFromDb = async ({
   cond, sort, skip, limit,

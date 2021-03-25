@@ -10,6 +10,7 @@ const { ObjectId } = require('mongoose').Types;
 const { Post } = require('database').models;
 const { hiddenPostModel, mutedUserModel } = require('models');
 const hotTrandGetter = require('./feedCache/hotTrandGetter');
+const { IGNORED_AUTHORS } = require('../../../constants/postsData');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();
@@ -56,6 +57,7 @@ const makeConditions = ({
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_TRENDING_FEED) },
         author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
+        author: { $nin: IGNORED_AUTHORS },
       };
       sort = { net_rshares: -1 };
       break;
@@ -67,7 +69,11 @@ const makeConditions = ({
       ? Object.assign(cond._id, { $nin: hiddenPosts })
       : cond._id = { $nin: hiddenPosts };
   }
-  if (!_.isEmpty(muted)) cond.author = { $nin: muted };
+  if (!_.isEmpty(muted)) {
+    _.get(cond, 'author')
+      ? Object.assign(cond.author, { $nin: _.union(muted, IGNORED_AUTHORS) })
+      : cond.author = { $nin: muted };
+  }
   cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
@@ -86,7 +92,6 @@ module.exports = async ({
   });
   if (cachedPosts) return { posts: cachedPosts };
   if (!cachedPosts && onlyCrypto) return { posts: [] };
-
   const { cond, sort } = makeConditions({
     category, user_languages, forApp, lastId, hiddenPosts, muted: _.map(muted, 'userName'),
   });
