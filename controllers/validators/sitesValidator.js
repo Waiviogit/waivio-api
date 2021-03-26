@@ -70,14 +70,14 @@ exports.siteMapCoordinates = Joi.object().keys({
     topPoint: Joi
       .array()
       .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
+        Joi.number().min(-180).max(180).required(),
+        Joi.number().min(-90).max(90).required(),
       ).required(),
     bottomPoint: Joi
       .array()
       .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
+        Joi.number().min(-180).max(180).required(),
+        Joi.number().min(-90).max(90).required(),
       ).required(),
     center: Joi.array().items(Joi.number()).required(),
     zoom: Joi.number().required(),

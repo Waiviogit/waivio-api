@@ -153,7 +153,12 @@ exports.getSessionApp = async () => {
 };
 
 exports.updateSupportedObjects = async ({ host, app }) => {
-  if (!app)({ result: app } = await App.findOne({ host }));
+  if (!app) {
+    ({ result: app } = await App.findOne(
+      { host },
+      { supported_objects: 0, configuration: 0 },
+    ));
+  }
 
   if (!app) {
     await sendSentryNotification();
@@ -251,3 +256,14 @@ exports.aboutObjectFormat = async (app) => {
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
   ? req.headers['x-forwarded-for']
   : req.headers['x-real-ip']);
+
+exports.updateSupportedObjectsTask = async () => {
+  const { result: apps } = await App.find(
+    { inherited: true, canBeExtended: false },
+    {},
+    { host: 1 },
+  );
+  for (const host of _.map(apps, 'host')) {
+    await this.updateSupportedObjects({ host });
+  }
+};
