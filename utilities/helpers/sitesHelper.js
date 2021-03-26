@@ -5,7 +5,8 @@ const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
 const {
-  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, PAYMENT_FIELDS_WRITEOFF,
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
@@ -156,7 +157,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   if (!app) {
     ({ result: app } = await App.findOne(
       { host },
-      { supported_objects: 0, configuration: 0 },
+      REQUIRED_FIELDS_UPD_WOBJ,
     ));
   }
 
@@ -220,7 +221,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   if (orMapCond.length)condition.$and[0].$or.push(...orMapCond);
   if (orTagsCond.length) condition.$and.push({ $or: orTagsCond });
 
-  const { result, error } = await Wobj.find(condition);
+  const { result, error } = await Wobj.find(condition, { author_permlink: 1, _id: 0 });
   if (error) {
     await sendSentryNotification();
     return Sentry.captureException(error);
@@ -261,9 +262,9 @@ exports.updateSupportedObjectsTask = async () => {
   const { result: apps } = await App.find(
     { inherited: true, canBeExtended: false },
     {},
-    { host: 1 },
+    REQUIRED_FIELDS_UPD_WOBJ,
   );
-  for (const host of _.map(apps, 'host')) {
-    await this.updateSupportedObjects({ host });
+  for (const app of apps) {
+    await this.updateSupportedObjects({ app });
   }
 };

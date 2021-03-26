@@ -81,3 +81,5 @@ exports.PAYMENT_DESCRIPTION = {
 exports.PAYMENT_FIELDS_TRANSFER = ['userName', 'balance', 'createdAt', 'amount', 'type', 'transferTo', '_id'];
 
 exports.PAYMENT_FIELDS_WRITEOFF = ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', 'description', '_id'];
+
+exports.REQUIRED_FIELDS_UPD_WOBJ = ['inherited', 'canBeExtended', 'authority', 'mapCoordinates', 'object_filters', 'supported_object_types'];
