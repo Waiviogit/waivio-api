@@ -8,5 +8,6 @@ moduleExports.AppController = require('./appController');
 moduleExports.ImageController = require('./imageController');
 moduleExports.globalSearchController = require('./globalSearchController');
 moduleExports.sitesController = require('./sitesController');
+moduleExports.vipTicketsController = require('./vipTicketsController');
 
 module.exports = moduleExports;
