@@ -7,6 +7,10 @@ const {
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const { IGNORED_AUTHORS } = require('constants/postsData');
+const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
+const { MEDIAN_USER_WAIVIO_RATE } = require('utilities/constants');
 
 describe('On postController', async () => {
   let currentApp, session, result, post;
@@ -79,6 +83,59 @@ describe('On postController', async () => {
           });
         expect(result).to.have.status(404);
       });
+    });
+  });
+
+  describe('on getPostsByCategory', async () => {
+    const postsIds = [];
+    beforeEach(async () => {
+      await dropDatabase();
+      for (let i = 0; i < _.random(2, 9); i++) {
+        const newPost = await PostFactory.Create({
+          author: _.sample(IGNORED_AUTHORS),
+          author_weight: MEDIAN_USER_WAIVIO_RATE,
+        });
+        postsIds.push(newPost._id.toString());
+      }
+      for (let i = 0; i < _.random(2, 9); i++) {
+        const newPost = await PostFactory.Create({
+          author_weight: MEDIAN_USER_WAIVIO_RATE,
+        });
+        postsIds.push(newPost._id.toString());
+      }
+    });
+    afterEach(() => {
+      sinon.restore();
+    });
+    it('Should return posts without ignored author from Redis', async () => {
+      sinon.stub(hotTrandGetter, 'getTopFromArrays').returns(postsIds);
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+        });
+      result.body.forEach(
+        (element) => expect(IGNORED_AUTHORS).to.not.include(element.author),
+      );
+    });
+
+    it('Should return posts without ignored author from MongoDB', async () => {
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+        });
+      result.body.forEach(
+        (element) => expect(IGNORED_AUTHORS).to.not.include(element.author),
+      );
+    });
+    it('The returned array must not be empty', async () => {
+      result = await chai.request(app)
+        .post('/api/posts/')
+        .send({
+          category: 'trending',
+        });
+      expect(result.body).not.to.be.empty;
     });
   });
 });

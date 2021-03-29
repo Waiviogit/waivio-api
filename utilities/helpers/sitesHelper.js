@@ -5,7 +5,8 @@ const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
 const {
-  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, PAYMENT_FIELDS_WRITEOFF,
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
@@ -153,7 +154,12 @@ exports.getSessionApp = async () => {
 };
 
 exports.updateSupportedObjects = async ({ host, app }) => {
-  if (!app)({ result: app } = await App.findOne({ host }));
+  if (!app) {
+    ({ result: app } = await App.findOne(
+      { host },
+      REQUIRED_FIELDS_UPD_WOBJ,
+    ));
+  }
 
   if (!app) {
     await sendSentryNotification();
@@ -215,7 +221,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   if (orMapCond.length)condition.$and[0].$or.push(...orMapCond);
   if (orTagsCond.length) condition.$and.push({ $or: orTagsCond });
 
-  const { result, error } = await Wobj.find(condition);
+  const { result, error } = await Wobj.find(condition, { author_permlink: 1, _id: 0 });
   if (error) {
     await sendSentryNotification();
     return Sentry.captureException(error);
@@ -251,3 +257,14 @@ exports.aboutObjectFormat = async (app) => {
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
   ? req.headers['x-forwarded-for']
   : req.headers['x-real-ip']);
+
+exports.updateSupportedObjectsTask = async () => {
+  const { result: apps } = await App.find(
+    { inherited: true, canBeExtended: false },
+    {},
+    REQUIRED_FIELDS_UPD_WOBJ,
+  );
+  for (const app of apps) {
+    await this.updateSupportedObjects({ app });
+  }
+};
