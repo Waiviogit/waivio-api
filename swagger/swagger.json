@@ -142,7 +142,6 @@
           "name" : "Origin",
           "in" : "header",
           "description" : "Domain of website",
-          "example": "https://waiviodev.com",
           "required" : true,
           "type" : "string"
         },{
@@ -168,64 +167,6 @@
           "200": {
             "schema": {
               "$ref": "#/definitions/vipTicket"
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "example": {
-                "message": "Token not valid!"
-              }
-            }
-          },
-          "422": {
-            "description": "ValidationError",
-            "schema": {
-              "example": {
-                "message": "Validation Error"
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags" : [ "vipTickets" ],
-        "description" : "validate vip ticket",
-        "produces" : [ "application/json" ],
-        "parameters" : [ {
-          "name" : "Origin",
-          "in" : "header",
-          "description" : "Domain of website",
-          "example": "https://waiviodev.com",
-          "required" : true,
-          "type" : "string"
-        },{
-          "name" : "access-token",
-          "in" : "header",
-          "description" : "Hive user access token",
-          "required" : true,
-          "type" : "string"
-        },{
-          "name" : "params",
-          "in" : "body",
-          "description" : "**userName** - name of authorised user\n**ticket** - vip ticket",
-          "required": true,
-          "schema": {
-            "example": {
-              "userName": "grampo",
-              "ticket": "4534-dfds-54345-45325-5434"
-            }
-          }
-        }],
-        "responses": {
-          "200": {
-            "schema": {
-              "type": "object",
-              "properties": {
-                "valid": {
-                  "type": "boolean"
-                }
-              }
             }
           },
           "401": {
