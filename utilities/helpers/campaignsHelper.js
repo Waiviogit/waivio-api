@@ -170,6 +170,8 @@ exports.addCampaignsToWobjects = async ({
 };
 
 exports.addCampaignsToWobjectsSites = async (data) => {
+  if (data.addHashtag) return data.wobjects;
+
   const result = await this.addCampaignsToWobjects({ ...data, search: true }) || [];
 
   result.sort((a, b) => {

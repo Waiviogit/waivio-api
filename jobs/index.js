@@ -7,7 +7,7 @@ const { importUsersJob, importErroredUsersJob } = require('./createNewUsers');
 const { collectWobjExpertsJob } = require('./collectWobjTopUsers');
 const { sendDailyWebsiteDebt } = require('./setDailyWebsiteDebt');
 const { sendBalanceNotification } = require('./websiteBalanceNotifications');
-// const { updateSiteWobjects } = require('./updateSiteWobjects');
+const { updateSiteWobjects } = require('./updateSiteWobjects');
 
 objTypeExpertsJob.start();
 collectExpertsJob.start();
@@ -19,4 +19,4 @@ importErroredUsersJob.start();
 collectWobjExpertsJob.start();
 sendDailyWebsiteDebt.start();
 sendBalanceNotification.start();
-// updateSiteWobjects.start();
+updateSiteWobjects.start();
