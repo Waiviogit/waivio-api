@@ -81,7 +81,7 @@ const getWobjFeedCondition = async ({
   if (Array.isArray(newsFilter.allowList)
       && !_.isEmpty(newsFilter.allowList)
       && _.some(newsFilter.allowList, (rule) => Array.isArray(rule) && rule.length)) {
-    const orCondArr = [{ 'wobjects.author_permlink': author_permlink }];
+    const orCondArr = [];
 
     newsFilter.allowList.forEach((allowRule) => {
       if (Array.isArray(allowRule) && allowRule.length) {
