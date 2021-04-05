@@ -2,7 +2,9 @@ const _ = require('lodash');
 const {
   faker, chai, expect, dropDatabase, sinon, app,
 } = require('test/testHelper');
-const { AppFactory, RelatedFactory } = require('test/factories');
+const {
+  AppFactory, RelatedFactory, UserWobjectsFactory, ObjectFactory,
+} = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 
@@ -93,6 +95,39 @@ describe('On wobjController', async () => {
           .query({ limit: faker.random.string() });
         expect(result).to.have.status(422);
       });
+    });
+  });
+
+  describe('On objectExpertise', async () => {
+    let skip, limit, authorPermlink;
+    beforeEach(async () => {
+      await dropDatabase();
+      skip = _.random(1, 3);
+      limit = _.random(5, 9);
+      authorPermlink = faker.random.string(10);
+
+      await ObjectFactory.Create({
+        authorPermlink,
+      });
+
+      for (let i = 0; i < _.random(10, 20); i++) {
+        await UserWobjectsFactory.Create({
+          authorPermlink,
+          weight: _.random(1, 25),
+        });
+      }
+    });
+
+    it('should return an array of experts whose weight is sorted in descending order', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result.body.users[0].weight).to.be
+        .greaterThan(result.body.users[result.body.users.length - 1].weight);
+    });
+    it('should return an array of experts whose length must be equal to the "limit"', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result.body.users).to.have.length(limit);
     });
   });
 });
