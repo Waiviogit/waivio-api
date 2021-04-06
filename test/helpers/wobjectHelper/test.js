@@ -1,15 +1,10 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  faker, dropDatabase, dropRedisDb, expect, wObjectHelper, sinon, postsUtil,
+  faker, dropDatabase, expect, wObjectHelper, sinon, postsUtil,
 } = require('test/testHelper');
 const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
-const { cacheAllWobjectExperts } = require('utilities/helpers/cacheAllWobjectExperts');
-const { redisGetter } = require('utilities/redis');
-const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
-const UserWobjectsFactory = require('test/factories/UserWobjectsFactory/UserWobjectsFactory');
-const { UserWobjects } = require('models');
 
 describe('On wobjectHelper', async () => {
   let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
@@ -924,47 +919,6 @@ describe('On wobjectHelper', async () => {
       expectedLink = `/object/${obj.author_permlink}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
       expect(link).to.be.eq(expectedLink);
-    });
-  });
-
-  describe('on cacheAllWobjectExperts', async () => {
-    let authorPermlink;
-    beforeEach(async () => {
-      await dropDatabase();
-      await dropRedisDb();
-      authorPermlink = faker.random.string(10);
-
-      await ObjectFactory.Create({
-        authorPermlink,
-      });
-      for (let i = 0; i < _.random(6, 15); i++) {
-        await UserWobjectsFactory.Create({
-          authorPermlink,
-          weight: _.random(1, 1000),
-        });
-      }
-    });
-    afterEach(() => {
-      sinon.restore();
-    });
-    it('the saved array of experts in Redis must contain the same names as the array of experts in MongoDB', async () => {
-      const redisExpertsNames = [];
-      const mongoExpertsNames = [];
-      await cacheAllWobjectExperts(_.random(2, 10));
-
-      const redisData = await redisGetter.getTopWobjUsers(authorPermlink);
-      for (const data of redisData) {
-        const experts = data.split(':');
-        redisExpertsNames.push(experts[0]);
-      }
-
-      const { result: mongoData } = await UserWobjects.find(
-        { author_permlink: authorPermlink }, { weight: -1 }, 5,
-      );
-      for (const data of mongoData) {
-        mongoExpertsNames.push(data.user_name);
-      }
-      expect(redisExpertsNames).to.have.members(mongoExpertsNames);
     });
   });
 });

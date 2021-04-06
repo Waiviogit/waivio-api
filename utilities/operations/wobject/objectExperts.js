@@ -1,5 +1,4 @@
-const { UserWobjects, User } = require('models');
-const wObjectModel = require('models/wObjectModel');
+const { UserWobjects, User, Wobj } = require('models');
 const _ = require('lodash');
 
 const getWobjExperts = async ({
@@ -7,11 +6,9 @@ const getWobjExperts = async ({
   author_permlink, skip = 0, limit = 30, user,
 }) => {
   let userExpert;
-  const wobjErrors = {};
 
-  const { error: wobjErr } = await wObjectModel.findOne(author_permlink);
-  wobjErrors.error = wobjErr;
-  if (wobjErrors.error) return { error: wobjErrors.error };
+  const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
+  if (wobjErr || !wobj) return { error: wobjErr || { status: 404, message: 'Wobject not found!' } };
 
   if (user) {
     const { experts, error } = await UserWobjects.getByWobject({

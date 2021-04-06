@@ -103,7 +103,7 @@ describe('On wobjController', async () => {
     beforeEach(async () => {
       await dropDatabase();
       skip = _.random(1, 3);
-      limit = _.random(5, 9);
+      limit = _.random(6, 9);
       authorPermlink = faker.random.string(10);
 
       await ObjectFactory.Create({
@@ -117,7 +117,6 @@ describe('On wobjController', async () => {
         });
       }
     });
-
     it('should return an array of experts whose weight is sorted in descending order', async () => {
       result = await chai.request(app)
         .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
@@ -128,6 +127,18 @@ describe('On wobjController', async () => {
       result = await chai.request(app)
         .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
       expect(result.body.users).to.have.length(limit);
+    });
+    it('should return status 200', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result).to.have.status(200);
+    });
+    it('should return status 422 on validation error', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${faker.random.string()}/object_expertise`).send({
+          limit: faker.random.string(), skip: faker.random.string(),
+        });
+      expect(result).to.have.status(422);
     });
   });
 });

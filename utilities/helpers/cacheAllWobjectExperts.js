@@ -1,15 +1,14 @@
 const { redisSetter, redisGetter } = require('utilities/redis');
-const { UserWobjects } = require('models');
-const wObjectModel = require('models/wObjectModel');
+const { UserWobjects, Wobj } = require('models');
 const _ = require('lodash');
 
 /** cache wobject top users for fast request work */
-const cacheAllWobjectExperts = async (limit) => {
-  const { result: hashtags } = await wObjectModel.find(
+exports.cacheAllWobjectExperts = async (limit) => {
+  const { result: hashtags } = await Wobj.find(
     { weight: { $gt: 0 }, object_type: 'hashtag' },
     { author_permlink: 1, _id: 1 }, { weight: -1 }, 0, limit,
   );
-  const { result: objects } = await wObjectModel.find(
+  const { result: objects } = await Wobj.find(
     { weight: { $gt: 0 }, object_type: { $ne: 'hashtag' } },
     { author_permlink: 1, _id: 1 }, { weight: -1 }, 0, limit,
   );
@@ -25,5 +24,3 @@ const cacheAllWobjectExperts = async (limit) => {
     }
   }
 };
-
-module.exports = { cacheAllWobjectExperts };

@@ -33,9 +33,7 @@ const dropDatabase = async () => {
   }
 };
 
-const dropRedisDb = async () => {
-  wobjRefsClient.flushdbAsync();
-};
+const dropRedisDb = async () => wobjRefsClient.flushdbAsync();
 
 module.exports = {
   app: require('app'),
