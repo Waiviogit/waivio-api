@@ -5,7 +5,7 @@ const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('con
 module.exports = async ({
   authorPermlink, author, fieldName, locale, app, permlink,
 }) => {
-  const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink, fieldName);
+  const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink);
   const { error: appError, result: appData } = await appHelper.getApp();
   if (error || appError) return { error: error || appError };
 
