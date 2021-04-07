@@ -206,7 +206,6 @@ exports.TOP_WOBJ_USERS_KEY = 'topUsers';
 
 exports.FIELDS_TO_PARSE = [
   this.FIELDS_NAMES.SORT_CUSTOM,
-  this.FIELDS_NAMES.NEWS_FILTER,
 ];
 
 exports.SHARING_SOCIAL_FIELDS = [

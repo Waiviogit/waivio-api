@@ -95,6 +95,9 @@
             "schema" : {
               "type": "object",
               "properties": {
+                "price": {
+                  "type": "number"
+                },
                 "activeTickets": {
                   "type": "array",
                   "items": {
