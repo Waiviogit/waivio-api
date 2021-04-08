@@ -1,4 +1,5 @@
 const { validateTicketRequest } = require('utilities/requests/hiveOnBoardRequests');
+const { VIP_TICKET_PRICE } = require('constants/common');
 const { vipTicketsModel } = require('models');
 const _ = require('lodash');
 
@@ -12,6 +13,7 @@ module.exports = async ({
 
   return {
     result: {
+      price: VIP_TICKET_PRICE,
       activeTickets: _.take(activeTickets, activeLimit),
       consumedTickets: _.take(consumedTickets, consumedLimit),
       hasMoreActive: activeTickets.length > activeLimit,

@@ -41,3 +41,5 @@ exports.TOKEN = {
 exports.DEVICE = {
   MOBILE: 'mobile',
 };
+
+exports.VIP_TICKET_PRICE = 5;
