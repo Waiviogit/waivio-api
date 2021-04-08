@@ -144,6 +144,7 @@ const objectExpertise = async (req, res, next) => {
     skip: req.body.skip,
     limit: req.body.limit,
     user: req.body.user,
+    newsFilter: req.body.newsFilter,
   }, validators.wobject.objectExpertiseScheme, next);
 
   if (!value) return;

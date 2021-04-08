@@ -6,7 +6,7 @@ const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
 
 const Create = async ({
   creator, name, weight, body, rootWobj, additionalFields = {}, tagCategory,
-  activeVotes, id, administrative, ownership, timestamp, objectType, map,
+  activeVotes, id, administrative, ownership, timestamp, objectType, map, permlink,
 } = {}) => {
   const appendObject = {
     _id: objectIdFromDateString(timestamp || moment.utc().valueOf()),
@@ -16,7 +16,7 @@ const Create = async ({
     weight: weight || faker.random.number(1000),
     creator: creator || faker.name.firstName().toLowerCase(),
     author: faker.name.firstName().toLowerCase(),
-    permlink: faker.random.string(20),
+    permlink: permlink || faker.random.string(20),
     active_votes: activeVotes || [],
   };
   if (tagCategory) appendObject.tagCategory = tagCategory;
