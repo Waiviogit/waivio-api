@@ -14,6 +14,7 @@ const { Mongoose } = require('database');
 faker.random.string = (length = 5) => faker.internet.password(length, false, /[a-z]/);
 
 const {
+  websitePayments: WebsitePaymentsModel,
   Subscriptions: SubscriptionModel,
   UserWobjects: UserWobjectsModel,
   ObjectType: ObjectTypeModel,
@@ -40,6 +41,7 @@ module.exports = {
   sinon: require('sinon'),
   _: require('lodash'),
   app: require('app'),
+  WebsitePaymentsModel,
   SubscriptionModel,
   UserWobjectsModel,
   ObjectTypeModel,

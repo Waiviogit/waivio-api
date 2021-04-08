@@ -37,6 +37,7 @@ models.HiddenComment = require('./schemas/HiddenCommentSchema');
 models.MutedUser = require('./schemas/MutedUserSchema');
 models.Blacklist = require('./schemas/BlacklistSchema');
 models.GeoIp = require('./schemas/GeoIpSchema');
+models.VipTicket = require('./schemas/VipTicketSchema');
 
 module.exports = {
   Mongoose: mongoose,

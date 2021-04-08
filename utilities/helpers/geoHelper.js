@@ -1,5 +1,7 @@
 const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('constants/mapConstants');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
+const { DEVICE } = require('constants/common');
 
 exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   if (_.isEmpty(mapCoordinates)) return DEFAULT_MAP_VIEW;
@@ -27,13 +29,16 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
   return { center, zoom };
 };
 
-exports.setFilterByDistance = ({ wobjects = [], box }) => {
-  if (_.isEmpty(box)) return;
+exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
+  if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
+  const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
+    ? 50
+    : 100;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
-  const minDistanceBetweenObjects = displayDiagonalDistance > 1000
-    ? Math.round(displayDiagonalDistance / 50)
-    : 0;
+  if (displayDiagonalDistance < 1000) return wobjects;
+
+  const minDistanceBetweenObjects = Math.round(displayDiagonalDistance / divideBy);
 
   for (let i = 0; i < wobjects.length; i++) {
     for (let j = 0; j < wobjects.length; j++) {
@@ -43,14 +48,16 @@ exports.setFilterByDistance = ({ wobjects = [], box }) => {
           wobjects[j].map.coordinates,
         );
         const cond1 = distance < minDistanceBetweenObjects;
-        const cond2 = wobjects[i].weight > wobjects[j].weight;
+        const cond2 = wobjects[i].weight >= wobjects[j].weight;
         const cond3 = !_.has(wobjects[j], 'campaigns');
+        const cond4 = _.has(wobjects[i], 'campaigns') && _.has(wobjects[j], 'campaigns');
         if (cond1 && cond2 && cond3) wobjects[j].invisible = true;
+        if (cond1 && cond2 && cond4) wobjects[j].invisible = true;
       }
     }
   }
 
-  return wobjects;
+  return _.filter(wobjects, (el) => !el.invisible);
 };
 
 const distanceInMBetweenEarthCoordinates = ([lon1, lat1], [lon2, lat2]) => {

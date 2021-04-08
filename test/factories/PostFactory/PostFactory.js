@@ -3,7 +3,7 @@ const _ = require('lodash');
 const { faker, Post } = require('test/testHelper');
 
 const Create = async ({
-  reblogged, depth, author, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData,
+  reblogged, depth, author, author_weight, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData,
   additionsForPost = {}, active_votes = [], app, rootAuthor, permlink, wobjects = [], children,
   pending_payout_value, curator_payout_value, cashout_time, parentPermlink, blocked,
 } = {}) => { // additionsForMetadata(Post) must be an Object
@@ -19,6 +19,7 @@ const Create = async ({
   const post = {
     id: faker.random.number(10000),
     author: author || faker.name.firstName().toLowerCase(),
+    author_weight: author_weight || 0,
     permlink: permlink || faker.random.string(20),
     parent_author: parentAuthor || '', // if it's post -> parent_author not exists
     parent_permlink: _.isNil(parentPermlink) ? faker.random.string(20) : parentPermlink,

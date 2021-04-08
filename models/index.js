@@ -21,5 +21,6 @@ moduleExports.hiddenCommentModel = require('./hiddenCommentModel');
 moduleExports.mutedUserModel = require('./mutedUserModel');
 moduleExports.blacklistModel = require('./blacklistModel');
 moduleExports.geoIpModel = require('./geoIpModel');
+moduleExports.vipTicketsModel = require('./vipTicketsModel');
 
 module.exports = moduleExports;

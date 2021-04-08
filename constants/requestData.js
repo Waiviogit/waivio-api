@@ -61,12 +61,19 @@ const NOTIFICATIONS_API = {
 
 const GEO_IP_API = 'https://extreme-ip-lookup.com/json/';
 
+const HIVE_ON_BOARD = {
+  HOST: 'https://hiveonboard.com',
+  BASE_URL: '/api',
+  TICKETS: '/tickets',
+};
+
 const NODE_URLS = ['https://rpc.esteem.app', 'https://api.openhive.network', 'https://hive.roelandp.nl', 'https://hive-api.arcange.eu'];
 
 module.exports = {
   NODE_URLS,
   GEO_IP_API,
   telegramApi,
+  HIVE_ON_BOARD,
   OBJECT_BOT: OBJECT_BOT[process.env.NODE_ENV || 'development'],
   NOTIFICATIONS_API: NOTIFICATIONS_API[process.env.NODE_ENV || 'development'],
 };

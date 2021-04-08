@@ -37,3 +37,9 @@ exports.TOKEN = {
   HIVE: 'HIVE',
   HBD: 'HBD',
 };
+
+exports.DEVICE = {
+  MOBILE: 'mobile',
+};
+
+exports.VIP_TICKET_PRICE = 5;
