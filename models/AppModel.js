@@ -65,17 +65,17 @@ const findOneAndUpdate = async (condition, updateData) => {
   }
 };
 
-const findOne = async (condition) => {
+const findOne = async (condition, select = {}) => {
   try {
-    return { result: await App.findOne(condition).lean() };
+    return { result: await App.findOne(condition, select).lean() };
   } catch (error) {
     return { error };
   }
 };
 
-const find = async (condition, sort = {}) => {
+const find = async (condition, sort = {}, select = {}) => {
   try {
-    return { result: await App.find(condition).sort(sort).lean() };
+    return { result: await App.find(condition, select).sort(sort).lean() };
   } catch (error) {
     return { error };
   }

@@ -3,6 +3,8 @@ const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
 
+const options = { allowUnknown: true, stripUnknown: true };
+
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
@@ -41,6 +43,7 @@ exports.postsScheme = Joi.object().keys({
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   userName: Joi.string().default(''),
+  newsPermlink: Joi.string().default(''),
 });
 
 exports.feedScheme = Joi.object().keys({
@@ -100,7 +103,9 @@ exports.searchScheme = Joi.object().keys({
         Joi.number().min(-90).max(90),
       ).required(),
   }),
-});
+  addHashtag: Joi.boolean().default(false),
+  mapMarkers: Joi.boolean().default(false),
+}).options(options);
 
 exports.galleryScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
@@ -122,10 +127,11 @@ exports.getByFieldScheme = Joi.object().keys({
 });
 
 exports.getChildWobjects = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100)
+  limit: Joi.number().integer().min(0).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  author_permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  excludeTypes: Joi.array().items(Joi.string()).default([]).single(),
 });
 
 exports.getWobjectField = Joi.object().keys({

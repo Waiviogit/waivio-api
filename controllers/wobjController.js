@@ -59,6 +59,7 @@ const posts = async (req, res, next) => {
     forApp: req.headers.app,
     lastId: req.body.lastId,
     userName: req.headers.follower,
+    newsPermlink: req.body.newsPermlink,
   }, validators.wobject.postsScheme, next);
 
   if (!value) return;
@@ -106,19 +107,7 @@ const followers = async (req, res, next) => {
 const search = async (req, res, next) => {
   const value = validators.validate({
     string: req.body.search_string,
-    limit: req.body.limit,
-    skip: req.body.skip,
-    locale: req.body.locale,
-    tagCategory: req.body.tagCategory,
-    object_type: req.body.object_type,
-    sortByApp: req.body.sortByApp,
-    sort: req.body.sort,
-    forParent: req.body.forParent,
-    userName: req.body.userName,
-    map: req.body.map,
-    simplified: req.body.simplified,
-    required_fields: req.body.required_fields,
-    box: req.body.box,
+    ...req.body,
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;
@@ -182,11 +171,10 @@ const getByField = async (req, res, next) => {
 };
 
 const getChildWobjects = async (req, res, next) => {
-  const value = validators.validate({
-    skip: req.query.skip,
-    limit: req.query.limit,
-    author_permlink: req.params.authorPermlink,
-  }, validators.wobject.getChildWobjects, next);
+  const value = validators.validate(
+    { ...req.params, ...req.query },
+    validators.wobject.getChildWobjects, next,
+  );
 
   if (!value) return;
   const { wobjects, error } = await Wobj.getChildWobjects(value);

@@ -83,7 +83,7 @@ const showMoreTags = async (req, res, next) => {
 
 const tagsForFilter = async (req, res, next) => {
   const value = validators.validate(
-    req.query,
+    req.body,
     validators.objectType.tagsForFilterSchema, next,
   );
   if (!value) return;

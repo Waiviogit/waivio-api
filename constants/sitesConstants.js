@@ -24,11 +24,6 @@ exports.TEST_DOMAINS = [
   'dining.pp.ua',
 ];
 
-exports.ACTIVE_STATUSES = [
-  this.STATUSES.ACTIVE,
-  this.STATUSES.PENDING,
-];
-
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
@@ -50,9 +45,9 @@ exports.FEE = {
   minimumValue: 1,
   currency: 'HBD',
   perUser: 0.005,
-  account: 'waivio.hosting',
+  account: 'waivio.web',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
-  perSuspended: 0.2,
+  perInactive: 0.2,
 };
 
 exports.SUPPORTED_COLORS = {
@@ -77,3 +72,14 @@ exports.NOTIFICATION = {
   ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
   BALANCE_ID: 'webSiteBalance',
 };
+
+exports.PAYMENT_DESCRIPTION = {
+  HOSTING_FEE: 'hosting fee',
+  RESERVATION: 'reservation',
+};
+
+exports.PAYMENT_FIELDS_TRANSFER = ['userName', 'balance', 'createdAt', 'amount', 'type', 'transferTo', '_id'];
+
+exports.PAYMENT_FIELDS_WRITEOFF = ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', 'description', '_id'];
+
+exports.REQUIRED_FIELDS_UPD_WOBJ = ['host', 'inherited', 'canBeExtended', 'authority', 'mapCoordinates', 'object_filters', 'supported_object_types'];

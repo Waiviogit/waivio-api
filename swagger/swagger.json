@@ -31,10 +31,166 @@
   }, {
     "name" : "app",
     "description" : "Get some info about registered \"Apps\" on waivio"
-  } ],
+  }, {
+    "name" : "sites",
+    "description" : "Create and manage sites"
+  }, {
+    "name" : "vipTickets",
+    "description" : "Buy and manage vip tickets"
+  }  ],
   "schemes" : [ "https", "http" ],
   "paths" : {
-
+    "/api/vip-tickets": {
+      "get": {
+        "tags" : [ "vipTickets" ],
+        "description" : "Return list two lists: activeTickets & consumedTickets",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "query",
+          "description" : "name of hive user",
+          "required": true,
+          "type" : "string"
+        }, {
+          "name" : "activeSkip",
+          "in" : "query",
+          "description" : "skip active tickets list",
+          "required": false,
+          "type" : "number"
+        }, {
+            "name" : "consumedSkip",
+            "in" : "query",
+            "description" : "skip consumed tickets list",
+            "required": false,
+            "type" : "number"
+          }, {
+          "name" : "activeLimit",
+          "in" : "query",
+          "description" : "limit active tickets list",
+          "required": false,
+          "type" : "number"
+        }, {
+          "name" : "consumedLimit",
+          "in" : "query",
+          "description" : "limit consumed tickets list",
+          "required": false,
+          "type" : "number"
+        }],
+        "responses": {
+          "200": {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "price": {
+                  "type": "number"
+                },
+                "activeTickets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/vipTicket"
+                  }
+                },
+                "consumedTickets": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/vipTicket"
+                  }
+                },
+                "hasMoreActive": {
+                  "type": "boolean"
+                },
+                "hasMoreConsumed": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not valid!"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "patch": {
+        "tags" : [ "vipTickets" ],
+        "description" : "edit vipTicket note",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**userName** - name of authorised user\n**ticket** - vip ticket\n**note** - note",
+          "required": true,
+          "schema": {
+            "example": {
+              "userName": "grampo",
+              "ticket": "4534-dfds-54345-45325-5434",
+              "note": "my note"
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/vipTicket"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "example": {
+                "message": "Token not valid!"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/sites" : {
       "get" : {
         "tags" : [ "sites" ],
@@ -2680,7 +2836,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of posts to return (*default* 30),\n**user_languages** - array of lanugages to filter result posts\n\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
+          "description" : "**limit** - Count of posts to return (*default* 30),\n**user_languages** - array of lanugages to filter result posts\n**newsPermlink** - string ( news filter permlink)\n\n----------------Infinite scroll---------------\n*For infinite scroll, use **skip** or **lastId** param, preferably **lastId** *\n**skip** - count of skipping posts*(by default - 0)*,\n**lastId** - *_id* of last retrieved post",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_7"
@@ -2900,6 +3056,11 @@
           "required" : false,
           "type" : "integer"
         }, {
+            "name" : "excludeTypes",
+            "in" : "query",
+            "required" : false,
+            "type" : "string"
+        },{
           "name" : "app",
           "in" : "header",
           "required" : false,
@@ -2997,7 +3158,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates",
+          "description" : "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates\n **addHashtag** - boolean - if true add hashtag on wobj search(for sites)",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_11"
@@ -3689,8 +3850,8 @@
         }
       }
     },
-    "/api/objectType/tags-for-filter": {
-      "get" : {
+    "/api/objectTypes/tags-for-filter": {
+      "post" : {
         "tags" : [ "object_type" ],
         "summary" : "Return tags for filter",
         "produces" : [ "application/json" ],
@@ -3698,15 +3859,19 @@
           "name" : "Origin",
           "in" : "header",
           "description" : "Domain of website",
-          "example": "https://waiviodev.com",
           "required" : true,
           "type" : "string"
         },{
-          "name" : "objectType",
-          "in" : "query",
-          "description" : "name of object type",
+          "in" : "body",
+          "name" : "params",
+          "description" : "**objectType** - string, name  of objectType required\n **wobjectLinks** - array wojects author_permlink",
           "required" : true,
-          "type" : "string"
+          "schema" : {
+            "example": {
+              "objectType": "restaurant",
+              "wobjectLinks": ["wgv-dark-place", "vvr-floret", "iwh-sushi-mura", "kri-not-bad-advice"]
+            }
+          }
         }],
         "responses" : {
           "200" : {
@@ -3965,6 +4130,29 @@
     }
   },
   "definitions" : {
+    "vipTicket": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "valid": {
+          "type": "boolean"
+        },
+        "userName": {
+          "type": "string"
+        },
+        "ticket": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
     "mapCoordinates": {
       "type": "array",
      "example": [{
@@ -4200,7 +4388,8 @@
         ],
         "prices": {
           "minimumValue": 1,
-          "perUser": 0.005
+          "perUser": 0.005,
+          "perSuspended": 0.2
         },
         "accountBalance": {
           "paid": 99,
@@ -5421,6 +5610,12 @@
               "example": [-131.139244,49.152501]
             }
           }
+        },
+        "addHashtag": {
+          "type": "boolean"
+        },
+        "mapMarkers": {
+          "type": "boolean"
         }
       }
     },

@@ -8,6 +8,8 @@ const websiteHistorySchema = new mongoose.Schema({
   host: { type: String },
   countUsers: { type: Number, default: 0 },
   blockNum: { type: Number, required: true },
+  description: { type: String },
+  transferTo: { type: String },
 }, { timestamps: true });
 
 websiteHistorySchema.index({ createdAt: -1 });

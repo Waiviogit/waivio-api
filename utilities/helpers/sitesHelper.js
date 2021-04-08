@@ -4,12 +4,16 @@ const Sentry = require('@sentry/node');
 const moment = require('moment');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { redisGetter } = require('utilities/redis');
-const { PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
+const {
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
+} = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
-const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH } = require('constants/wobjectsData');
+const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const BigNumber = require('bignumber.js');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -22,7 +26,11 @@ exports.availableCheck = async (params) => {
 
 /** Get list of all parents available for extend */
 exports.getParentsList = async () => {
-  const { result: parents, error } = await App.find({ canBeExtended: true });
+  const condition = process.env.NODE_ENV === 'production'
+    ? { canBeExtended: true, host: { $nin: TEST_DOMAINS } }
+    : { canBeExtended: true };
+
+  const { result: parents, error } = await App.find(condition);
   if (error) return { error };
   return {
     parents: _.map(parents, (parent) => ({ domain: parent.host, _id: parent._id.toString() })),
@@ -52,7 +60,6 @@ exports.searchTags = async (params) => {
 exports.getWebsitePayments = async ({
   owner, host, startDate, endDate,
 }) => {
-  let byHost;
   const { result: apps, error: appsError } = await App.find({
     owner, inherited: true,
   }, { _id: -1 });
@@ -60,13 +67,7 @@ exports.getWebsitePayments = async ({
   const { result: allExistingApps } = await websitePayments.distinct({ field: 'host', query: { userName: owner } });
   const currentApps = _.map(apps, 'host');
   const ownerAppNames = _.uniq([...currentApps, ...allExistingApps]);
-  if (host) {
-    ({ result: byHost } = await App.findOne({
-      inherited: true,
-      host,
-    }));
-    if (!byHost) return { ownerAppNames, payments: [] };
-  }
+
   const condition = host
     ? { host, userName: owner }
     : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
@@ -93,14 +94,14 @@ exports.getPaymentsTable = (payments) => {
   payments = _.map(payments, (payment) => {
     switch (payment.type) {
       case PAYMENT_TYPES.TRANSFER:
-        payment.balance = payable + payment.amount;
+        payment.balance = BigNumber(payable).plus(payment.amount).toNumber();
         payable = payment.balance;
-        return _.pick(payment, ['userName', 'balance', 'createdAt', 'amount', 'type', '_id']);
+        return _.pick(payment, PAYMENT_FIELDS_TRANSFER);
       case PAYMENT_TYPES.WRITE_OFF:
       case PAYMENT_TYPES.REFUND:
-        payment.balance = payable - payment.amount;
+        payment.balance = BigNumber(payable).minus(payment.amount).toNumber();
         payable = payment.balance;
-        return _.pick(payment, ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', '_id']);
+        return _.pick(payment, PAYMENT_FIELDS_WRITEOFF);
     }
   });
   _.reverse(payments);
@@ -140,7 +141,7 @@ exports.siteInfo = async (host) => {
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
   return {
-    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag',
+    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag', 'parentHost',
       'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
   };
 };
@@ -153,7 +154,12 @@ exports.getSessionApp = async () => {
 };
 
 exports.updateSupportedObjects = async ({ host, app }) => {
-  if (!app)({ result: app } = await App.findOne({ host }));
+  if (!app) {
+    ({ result: app } = await App.findOne(
+      { host },
+      REQUIRED_FIELDS_UPD_WOBJ,
+    ));
+  }
 
   if (!app) {
     await sendSentryNotification();
@@ -215,7 +221,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   if (orMapCond.length)condition.$and[0].$or.push(...orMapCond);
   if (orTagsCond.length) condition.$and.push({ $or: orTagsCond });
 
-  const { result, error } = await Wobj.find(condition);
+  const { result, error } = await Wobj.find(condition, { author_permlink: 1, _id: 0 });
   if (error) {
     await sendSentryNotification();
     return Sentry.captureException(error);
@@ -244,10 +250,21 @@ exports.aboutObjectFormat = async (app) => {
   const wobject = await processWobjects({
     wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
   });
-  app.configuration.aboutObject = _.pick(wobject, 'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink');
+  app.configuration.aboutObject = _.pick(wobject, PICK_FIELDS_ABOUT_OBJ);
   return app;
 };
 
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
   ? req.headers['x-forwarded-for']
   : req.headers['x-real-ip']);
+
+exports.updateSupportedObjectsTask = async () => {
+  const { result: apps } = await App.find(
+    { inherited: true, canBeExtended: false },
+    {},
+    REQUIRED_FIELDS_UPD_WOBJ,
+  );
+  for (const app of apps) {
+    await this.updateSupportedObjects({ app });
+  }
+};
