@@ -119,7 +119,7 @@ exports.objectExpertiseScheme = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   author_permlink: Joi.string().required(),
   user: Joi.string().allow('').default(null),
-  newsFilter: Joi.string().default(null),
+  newsFilter: Joi.string().default(''),
 });
 
 exports.getByFieldScheme = Joi.object().keys({
