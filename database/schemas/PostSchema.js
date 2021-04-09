@@ -25,6 +25,7 @@ const PostSchema = new Schema({
     author_permlink: { type: String },
     percent: { type: Number },
     tagged: { type: String },
+    objectType: { type: String, index: true },
   }],
   language: { type: String, default: 'en-US' },
   author_weight: { type: Number },

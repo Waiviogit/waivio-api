@@ -12,6 +12,7 @@
     "bellToSubscriptions": "NODE_PATH=. node ./utilities/tasks/bellToSubscriptions/run.js",
     "changeAvatarLinks": "NODE_PATH=. node ./utilities/tasks/changeAvatarLinks/run.js",
     "fixCustomSort": "NODE_PATH=. node ./utilities/tasks/fixCustomSortBody/run.js",
+    "addObjectTypeToPost": "NODE_PATH=. node ./utilities/tasks/addObjectTypeOnPost/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {

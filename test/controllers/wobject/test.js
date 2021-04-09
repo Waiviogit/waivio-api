@@ -2,9 +2,12 @@ const _ = require('lodash');
 const {
   faker, chai, expect, dropDatabase, sinon, app,
 } = require('test/testHelper');
-const { AppFactory, RelatedFactory } = require('test/factories');
+const {
+  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory,
+} = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 
 describe('On wobjController', async () => {
   let currentApp, session, result;
@@ -92,6 +95,43 @@ describe('On wobjController', async () => {
           .get(`/api/wobject/${faker.random.string()}/related`)
           .query({ limit: faker.random.string() });
         expect(result).to.have.status(422);
+      });
+    });
+  });
+
+  describe('On /wobject/:authorPermlink/posts', async () => {
+    let wobj, post, postWobj, newApp;
+    describe('with typeList newFilter', async () => {
+      beforeEach(async () => {
+        sinon.restore();
+        postWobj = await ObjectFactory.Create({ objectType: OBJECT_TYPES.RESTAURANT });
+        newApp = await AppFactory.Create({
+          status: STATUSES.ACTIVE,
+          supportedObjects: [postWobj.author_permlink],
+          supportedTypes: [OBJECT_TYPES.RESTAURANT],
+        });
+        wobj = await AppendObjectFactory.Create({
+          body: JSON.stringify({
+            allowList: [[]],
+            ignoreList: [],
+            typeList: [OBJECT_TYPES.RESTAURANT],
+          }),
+        });
+        post = await PostFactory.Create({
+          wobjects: [{
+            author_permlink: postWobj.author_permlink,
+            objectType: postWobj.object_type,
+          }],
+        });
+      });
+      it('should ', async () => {
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+          .send({
+            newsPermlink: wobj.appendObject.permlink,
+            user_languages: ['en-US'],
+          })
+          .set({ origin: newApp.host });
       });
     });
   });
