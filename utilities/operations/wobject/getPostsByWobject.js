@@ -19,14 +19,12 @@ module.exports = async (data) => {
   });
   if (conditionError) return { error: conditionError };
 
-  const pipeline = makePipeLine({
-    matchCondition: { $match: condition },
+  const { posts, error } = await Post.findWithPopulateByWobjects({
+    condition,
     limit: data.limit,
-    skip: data.skip,
     lastId: data.lastId,
+    skip: data.skip,
   });
-
-  const { posts, error } = await Post.aggregate(pipeline);
   if (error) return { error };
 
   return { posts };
@@ -122,24 +120,4 @@ const newsFilterCondition = ({
   condition.$and = [firstCond, secondCond];
 
   return { condition };
-};
-
-const makePipeLine = ({
-  matchCondition, limit, lastId, skip,
-}) => {
-  const pipeline = [
-    matchCondition,
-    { $sort: { _id: -1 } },
-    { $limit: limit },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'wobjects',
-      },
-    },
-  ];
-  if (!lastId) pipeline.splice(-2, 0, { $skip: skip });
-  return pipeline;
 };

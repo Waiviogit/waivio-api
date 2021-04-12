@@ -3,7 +3,8 @@ const {
   faker, chai, expect, dropDatabase, sinon, app, App, Post, moment,
 } = require('test/testHelper');
 const {
-  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory, HiddenPostsFactory,
+  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory,
+  HiddenPostsFactory, MutedUsersFactory,
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
@@ -106,9 +107,9 @@ describe('On wobjController', async () => {
 
     describe('on req without newsFilter', async () => {
       beforeEach(async () => {
-        wobj = await ObjectFactory.Create();
+        wobj = await ObjectFactory.Create({ objectType: _.sample(OBJECT_TYPES) });
         post = await PostFactory.Create({
-          wobjects: [{ author_permlink: wobj.author_permlink }],
+          wobjects: [{ author_permlink: wobj.author_permlink, object_type: wobj.object_type }],
         });
         result = await chai.request(app)
           .post(`/api/wobject/${wobj.author_permlink}/posts`);
@@ -122,6 +123,10 @@ describe('On wobjController', async () => {
         expect({ author: post.author, permlink: post.permlink })
           .to.be.deep.eq({ author: resPost.author, permlink: resPost.permlink });
       });
+      it('should show posts by wobject author_permlink', async () => {
+        const { body: [resPost] } = result;
+        expect(resPost.wobjects[0].author_permlink).to.be.eq(wobj.author_permlink);
+      });
       it('should not return reblogs', async () => {
         await Post.updateOne(
           { _id: post._id },
@@ -129,7 +134,7 @@ describe('On wobjController', async () => {
         );
         result = await chai.request(app)
           .post(`/api/wobject/${wobj.author_permlink}/posts`);
-        expect(result.status).to.be.eq(404);
+        expect(result.body).to.be.an('array').that.is.empty;
       });
       it('should not return post blocked for apps', async () => {
         await Post.updateOne(
@@ -138,7 +143,7 @@ describe('On wobjController', async () => {
         );
         result = await chai.request(app)
           .post(`/api/wobject/${wobj.author_permlink}/posts`);
-        expect(result.status).to.be.eq(404);
+        expect(result.body).to.be.an('array').that.is.empty;
       });
 
       it('should return error if object doesn\'t exist', async () => {
@@ -147,12 +152,20 @@ describe('On wobjController', async () => {
         expect(result.status).to.be.eq(404);
       });
       it('should not return post if user hide it', async () => {
-        const hide = await HiddenPostsFactory.Create({ userName, postId: post._id });
+        await HiddenPostsFactory.Create({ userName, postId: post._id });
         result = await chai.request(app)
           .post(`/api/wobject/${wobj.author_permlink}/posts`)
           .set({ follower: userName });
 
-        expect(result.status).to.be.eq(404);
+        expect(result.body).to.be.an('array').that.is.empty;
+      });
+      it('should not return post if user mute author', async () => {
+        await MutedUsersFactory.Create({ mutedBy: userName, userName: post.author });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`)
+          .set({ follower: userName });
+
+        expect(result.body).to.be.an('array').that.is.empty;
       });
       it('should return olderPost post if lastId as parametr', async () => {
         const olderPost = await PostFactory.Create({
@@ -165,6 +178,13 @@ describe('On wobjController', async () => {
         const { body: [resPost] } = result;
         expect({ author: olderPost.author, permlink: olderPost.permlink })
           .to.be.deep.eq({ author: resPost.author, permlink: resPost.permlink });
+      });
+      it('should not return post not supported languages', async () => {
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`)
+          .send({ user_languages: ['pl-PL'] });
+
+        expect(result.body).to.be.an('array').that.is.empty;
       });
     });
     describe('with typeList newFilter for inherited apps', async () => {
@@ -208,10 +228,8 @@ describe('On wobjController', async () => {
             newsPermlink: wobj.appendObject.permlink,
           })
           .set({ origin: inheritedApp.host });
-
-        expect(result.status).to.be.eq(404);
+        expect(result.body).to.be.an('array').that.is.empty;
       });
-
       it('should not return post not in supported types', async () => {
         await App.updateOne({ host: inheritedApp.host },
           { $set: { supported_object_types: [faker.random.string()] } });
@@ -221,20 +239,7 @@ describe('On wobjController', async () => {
             newsPermlink: wobj.appendObject.permlink,
           })
           .set({ origin: inheritedApp.host });
-
-        expect(result.status).to.be.eq(404);
-      });
-
-      it('should not return post not supported languages', async () => {
-        result = await chai.request(app)
-          .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
-          .send({
-            newsPermlink: wobj.appendObject.permlink,
-            user_languages: ['pl-PL'],
-          })
-          .set({ origin: inheritedApp.host });
-
-        expect(result.status).to.be.eq(404);
+        expect(result.body).to.be.an('array').that.is.empty;
       });
     });
   });

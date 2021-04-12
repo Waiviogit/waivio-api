@@ -15,4 +15,5 @@ module.exports = {
   RelatedFactory: require('./Related/RelatedFactory'),
   GeoIpFactory: require('./GeoIpFactory/GeoIpFactory'),
   HiddenPostsFactory: require('./HiddenPosts/HiddenPostsFactory'),
+  MutedUsersFactory: require('./MutedUsers/MutedUsersFactory'),
 };
