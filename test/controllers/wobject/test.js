@@ -101,6 +101,25 @@ describe('On wobjController', async () => {
 
   describe('On /wobject/:authorPermlink/posts', async () => {
     let wobj, post, postWobj, inheritedApp;
+    describe('on req without newsFilter', async () => {
+      beforeEach(async () => {
+        wobj = await ObjectFactory.Create();
+        post = await PostFactory.Create({
+          wobjects: [{ author_permlink: wobj.author_permlink }],
+        });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`);
+      });
+
+      it('should have status 200', async () => {
+        expect(result.status).to.be.eq(200);
+      });
+      it('should show proper posts', async () => {
+        const { body: [resPost] } = result;
+        expect({ author: post.author, permlink: post.permlink })
+          .to.be.deep.eq({ author: resPost.author, permlink: resPost.permlink });
+      });
+    });
     describe('with typeList newFilter for inherited apps', async () => {
       beforeEach(async () => {
         sinon.restore();
@@ -129,7 +148,6 @@ describe('On wobjController', async () => {
           .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
           .send({
             newsPermlink: wobj.appendObject.permlink,
-            user_languages: ['en-US'],
           })
           .set({ origin: inheritedApp.host });
         const { body: [resPost] } = result;
@@ -141,7 +159,6 @@ describe('On wobjController', async () => {
           .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
           .send({
             newsPermlink: wobj.appendObject.permlink,
-            user_languages: ['en-US'],
           })
           .set({ origin: inheritedApp.host });
 
@@ -155,7 +172,18 @@ describe('On wobjController', async () => {
           .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
           .send({
             newsPermlink: wobj.appendObject.permlink,
-            user_languages: ['en-US'],
+          })
+          .set({ origin: inheritedApp.host });
+
+        expect(result.status).to.be.eq(404);
+      });
+
+      it('should not return post not supported languages', async () => {
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+          .send({
+            newsPermlink: wobj.appendObject.permlink,
+            user_languages: ['pl-PL'],
           })
           .set({ origin: inheritedApp.host });
 

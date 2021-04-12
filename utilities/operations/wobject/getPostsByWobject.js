@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
@@ -5,12 +6,17 @@ const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
-const getPosts = async (data) => {
+module.exports = async (data) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
   const { result: muted = [] } = await mutedUserModel
     .find({ condition: { mutedBy: data.userName } });
-  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts, muted: _.map(muted, 'userName') });
 
+  const { wObject, error: wobjError } = await Wobj.getOne(data.author_permlink);
+  if (wobjError) return { error: wobjError };
+
+  const { condition, error: conditionError } = await getWobjFeedCondition({
+    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject,
+  });
   if (conditionError) return { error: conditionError };
 
   const pipeline = makePipeLine({
@@ -28,11 +34,13 @@ const getPosts = async (data) => {
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
-  // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, lastId, hiddenPosts, muted, newsPermlink, app,
+  author_permlink, skip, limit, user_languages,
+  lastId, hiddenPosts, muted, newsPermlink, app, wObject,
 }) => {
-  const condition = { blocked_for_apps: { $ne: _.get(app, 'host') } };
-
+  const condition = {
+    blocked_for_apps: { $ne: _.get(app, 'host') },
+    reblog_to: null,
+  };
   // for moderation posts
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
   if (!_.isEmpty(hiddenPosts)) {
@@ -41,36 +49,43 @@ const getWobjFeedCondition = async ({
       : condition._id = { $nin: hiddenPosts };
   }
   if (!_.isEmpty(muted)) condition.author = { $nin: muted };
+  if (!_.isEmpty(user_languages)) condition.language = { $in: user_languages };
 
-  const { wObject, error } = await Wobj.getOne(author_permlink);
+  if (newsPermlink) {
+    return newsFilterCondition({
+      condition, wObject, newsPermlink, app, author_permlink,
+    });
+  }
 
-  if (error) return { error };
-
-  if (!newsPermlink) {
-    if (!skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty(user_languages)) {
-      // if wobject have no newsFilter and count of
-      // posts less than cashed count => get posts from cashed array
-      condition._id = { $in: [...wObject.latest_posts || []] };
-      return { condition };
-    }
-    // eslint-disable-next-line camelcase
-    condition['wobjects.author_permlink'] = author_permlink;
-    if (!_.isEmpty(user_languages)) condition.language = { $in: user_languages };
-    condition.reblog_to = null;
+  // we will never use this condition
+  if (!skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty(user_languages)) {
+    // if wobject have no newsFilter and count of
+    // posts less than cashed count => get posts from cashed array
+    condition._id = { $in: [...wObject.latest_posts || []] };
     return { condition };
   }
 
-  const filterField = _.find(wObject.fields, (f) => f.permlink === newsPermlink);
-  const newsFilter = JSON.parse(_.get(filterField, 'body', '{}'));
+  condition['wobjects.author_permlink'] = author_permlink;
+  return { condition };
+};
+
+const newsFilterCondition = ({
+  condition, wObject, newsPermlink, app, author_permlink,
+}) => {
+  const newsFilter = JSON.parse(_.get(
+    _.find(wObject.fields, (f) => f.permlink === newsPermlink),
+    'body',
+    '{}',
+  ));
+  let firstCond;
+  const secondCond = { 'wobjects.author_permlink': { $nin: _.get(newsFilter, 'ignoreList', []) } };
 
   if (!newsFilter.allowList && !newsFilter.ignoreList) {
     return { error: { message: 'Format not include all required fields' } };
   }
-  let firstCond;
 
-  if (Array.isArray(newsFilter.allowList)
-      && !_.isEmpty(newsFilter.allowList)
-      && _.some(newsFilter.allowList, (rule) => Array.isArray(rule) && rule.length)) {
+  if (!_.isEmpty(newsFilter.allowList)
+    && _.some(newsFilter.allowList, (rule) => !_.isEmpty(rule))) {
     const orCondArr = [];
 
     newsFilter.allowList.forEach((allowRule) => {
@@ -100,15 +115,11 @@ const getWobjFeedCondition = async ({
       : firstCond = typeCondition;
   }
 
-  if (_.some(newsFilter.allowList, (rule) => !rule.length) && _.isEmpty(_.get(newsFilter, 'typeList'))) {
+  if (_.some(newsFilter.allowList, (rule) => _.isEmpty(rule)) && _.isEmpty(_.get(newsFilter, 'typeList'))) {
     firstCond = { 'wobjects.author_permlink': author_permlink };
   }
 
-  const secondCond = { 'wobjects.author_permlink': { $nin: _.get(newsFilter, 'ignoreList', []) } };
-
   condition.$and = [firstCond, secondCond];
-  if (!_.isEmpty(user_languages)) condition.$and.push({ language: { $in: user_languages } });
-  condition.reblog_to = null;
 
   return { condition };
 };
@@ -131,12 +142,4 @@ const makePipeLine = ({
   ];
   if (!lastId) pipeline.splice(-2, 0, { $skip: skip });
   return pipeline;
-};
-
-module.exports = async (data) => {
-  // data: { author_permlink, limit, skip, user_name }
-  const { posts, error: getPostsError } = await getPosts(data);
-
-  if (getPostsError) return { error: getPostsError };
-  return { posts };
 };
