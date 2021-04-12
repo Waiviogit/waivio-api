@@ -1,7 +1,6 @@
 const {
-  Wobj, hiddenPostModel, mutedUserModel, Post, App,
+  Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { getNamespace } = require('cls-hooked');
 const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -10,39 +9,30 @@ const getPosts = async (data) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
   const { result: muted = [] } = await mutedUserModel
     .find({ condition: { mutedBy: data.userName } });
-  const { pipeline, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts, muted: _.map(muted, 'userName') });
+  const { condition, error: conditionError } = await getWobjFeedCondition({ ...data, hiddenPosts, muted: _.map(muted, 'userName') });
 
   if (conditionError) return { error: conditionError };
+
+  const pipeline = makePipeLine({
+    matchCondition: { $match: condition },
+    limit: data.limit,
+    skip: data.skip,
+    lastId: data.lastId,
+  });
 
   const { posts, error } = await Post.aggregate(pipeline);
   if (error) return { error };
 
   return { posts };
 };
+
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip, limit, user_languages, lastId, hiddenPosts, muted, newsPermlink,
+  author_permlink, skip, limit, user_languages, lastId, hiddenPosts, muted, newsPermlink, app,
 }) => {
-  const pipeline = [
-    { $sort: { _id: -1 } },
-    { $limit: limit },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'wobjects',
-      },
-    },
-  ];
-  if (!lastId) pipeline.splice(-2, 0, { $skip: skip });
+  const condition = { blocked_for_apps: { $ne: _.get(app, 'host') } };
 
-  const session = getNamespace('request-session');
-  const host = session.get('host');
-  const condition = { blocked_for_apps: { $ne: host } };
-  // #TODO get from req app
-  const { app } = await App.getOne({ host });
   // for moderation posts
   if (lastId) condition._id = { $lt: new ObjectId(lastId) };
   if (!_.isEmpty(hiddenPosts)) {
@@ -61,16 +51,13 @@ const getWobjFeedCondition = async ({
       // if wobject have no newsFilter and count of
       // posts less than cashed count => get posts from cashed array
       condition._id = { $in: [...wObject.latest_posts || []] };
-
-      pipeline.unshift({ $match: condition });
-      return { pipeline };
+      return { condition };
     }
     // eslint-disable-next-line camelcase
     condition['wobjects.author_permlink'] = author_permlink;
     if (!_.isEmpty(user_languages)) condition.language = { $in: user_languages };
     condition.reblog_to = null;
-    pipeline.unshift({ $match: condition });
-    return { pipeline };
+    return { condition };
   }
 
   const filterField = _.find(wObject.fields, (f) => f.permlink === newsPermlink);
@@ -123,8 +110,27 @@ const getWobjFeedCondition = async ({
   if (!_.isEmpty(user_languages)) condition.$and.push({ language: { $in: user_languages } });
   condition.reblog_to = null;
 
-  pipeline.unshift({ $match: condition });
-  return { pipeline };
+  return { condition };
+};
+
+const makePipeLine = ({
+  matchCondition, limit, lastId, skip,
+}) => {
+  const pipeline = [
+    matchCondition,
+    { $sort: { _id: -1 } },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'wobjects.author_permlink',
+        foreignField: 'author_permlink',
+        as: 'wobjects',
+      },
+    },
+  ];
+  if (!lastId) pipeline.splice(-2, 0, { $skip: skip });
+  return pipeline;
 };
 
 module.exports = async (data) => {

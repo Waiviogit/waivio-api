@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  faker, chai, expect, dropDatabase, sinon, app,
+  faker, chai, expect, dropDatabase, sinon, app, App,
 } = require('test/testHelper');
 const {
   AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory,
@@ -100,12 +100,12 @@ describe('On wobjController', async () => {
   });
 
   describe('On /wobject/:authorPermlink/posts', async () => {
-    let wobj, post, postWobj, newApp;
-    describe('with typeList newFilter', async () => {
+    let wobj, post, postWobj, inheritedApp;
+    describe('with typeList newFilter for inherited apps', async () => {
       beforeEach(async () => {
         sinon.restore();
         postWobj = await ObjectFactory.Create({ objectType: OBJECT_TYPES.RESTAURANT });
-        newApp = await AppFactory.Create({
+        inheritedApp = await AppFactory.Create({
           status: STATUSES.ACTIVE,
           supportedObjects: [postWobj.author_permlink],
           supportedTypes: [OBJECT_TYPES.RESTAURANT],
@@ -123,16 +123,43 @@ describe('On wobjController', async () => {
             object_type: postWobj.object_type,
           }],
         });
-
       });
-      it('should ', async () => {
+      it('should response post has required object type', async () => {
         result = await chai.request(app)
           .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
           .send({
             newsPermlink: wobj.appendObject.permlink,
             user_languages: ['en-US'],
           })
-          .set({ origin: newApp.host });
+          .set({ origin: inheritedApp.host });
+        const { body: [resPost] } = result;
+        expect(resPost.wobjects[0].object_type).to.be.eq(postWobj.object_type);
+      });
+      it('should not return post if it not in supportedObjects', async () => {
+        await App.updateOne({ host: inheritedApp.host }, { $set: { supported_objects: [] } });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+          .send({
+            newsPermlink: wobj.appendObject.permlink,
+            user_languages: ['en-US'],
+          })
+          .set({ origin: inheritedApp.host });
+
+        expect(result.status).to.be.eq(404);
+      });
+
+      it('should not return post not in supported types', async () => {
+        await App.updateOne({ host: inheritedApp.host },
+          { $set: { supported_object_types: [faker.random.string()] } });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+          .send({
+            newsPermlink: wobj.appendObject.permlink,
+            user_languages: ['en-US'],
+          })
+          .set({ origin: inheritedApp.host });
+
+        expect(result.status).to.be.eq(404);
       });
     });
   });

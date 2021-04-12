@@ -64,7 +64,7 @@ const posts = async (req, res, next) => {
 
   if (!value) return;
 
-  const { posts: wobjectPosts, error } = await getPostsByWobject(value);
+  const { posts: wobjectPosts, error } = await getPostsByWobject({...value, app: req.appData});
 
   if (error) return next(error);
 
