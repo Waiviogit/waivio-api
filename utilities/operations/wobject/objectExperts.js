@@ -1,7 +1,6 @@
-const { UserWobjects, User } = require('models');
-const { WObject } = require('database').models;
+const { UserWobjects, User, Wobj } = require('models');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
-const { redisSetter, redisGetter } = require('utilities/redis');
 
 // eslint-disable-next-line camelcase
 const getMultipliers = (newsFilter, author_permlink) => {
@@ -49,19 +48,13 @@ const makePipeline = ({
 
 const getWobjExperts = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip = 0, limit = 30, user,
+  author_permlink, skip = 0, limit = 30, user, newsFilter,
 }) => {
-  let wobj;
   let userExpert;
+  const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
+  if (wobjErr || !wobj) return { error: wobjErr || { status: 404, message: 'Wobject not found!' } };
 
-  try {
-    wobj = await WObject.findOne({ author_permlink }).lean();
-    if (!wobj) return { error: { status: 404, message: 'Wobject not found!' } };
-  } catch (error) {
-    return { error };
-  }
-
-  if (!wobj.newsFilter) {
+  if (!newsFilter) {
     if (user) {
       const { experts, error } = await UserWobjects.getByWobject({
         authorPermlink: author_permlink, username: user,
@@ -78,7 +71,10 @@ const getWobjExperts = async ({
     return { experts: result, userExpert };
   }
 
-  const multipliers = getMultipliers(wobj.newsFilter, author_permlink);
+  const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
+  const fullField = Object.assign(field, jsonHelper.parseJson(field.body));
+
+  const multipliers = getMultipliers(fullField, author_permlink);
   const pipeline = makePipeline({ multipliers, skip, limit });
   const { result: experts, error: aggregationError } = await UserWobjects.aggregate(pipeline);
 
@@ -115,25 +111,4 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   };
 };
 
-/** cache wobject top users for fast request work */
-const cacheAllObjectExperts = async (limit) => {
-  const hashtags = await WObject.find({ weight: { $gt: 0 }, object_type: 'hashtag' }).sort({ weight: -1 })
-    .limit(limit).select({ author_permlink: 1, _id: 1 })
-    .lean();
-  const objects = await WObject.find({ weight: { $gt: 0 }, object_type: { $ne: 'hashtag' } })
-    .sort({ weight: -1 }).limit(limit).select({ author_permlink: 1, _id: 1 })
-    .lean();
-
-  for (const wobj of _.concat(hashtags, objects)) {
-    await redisGetter.removeTopWobjUsers(wobj.author_permlink);
-    const { result: userWobjects } = await UserWobjects.find(
-      { author_permlink: wobj.author_permlink }, { weight: -1 }, 5,
-    );
-    const ids = _.map(userWobjects, (user) => `${user.user_name}:${user.weight}`);
-    if (ids && ids.length) {
-      await redisSetter.addTopWobjUsers(wobj.author_permlink, ids);
-    }
-  }
-};
-
-module.exports = { getWobjExperts, cacheAllObjectExperts };
+module.exports = { getWobjExperts };

@@ -141,9 +141,7 @@ const gallery = async (req, res, next) => {
 const objectExpertise = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
-    skip: req.body.skip,
-    limit: req.body.limit,
-    user: req.body.user,
+    ...req.body,
   }, validators.wobject.objectExpertiseScheme, next);
 
   if (!value) return;
