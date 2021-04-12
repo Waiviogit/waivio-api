@@ -101,12 +101,8 @@ const newsFilterCondition = ({
       ? newsFilter.typeList
       : _.filter(newsFilter.typeList, (el) => _.includes(app.supported_object_types, el));
 
-    const typeCondition = {
-      $and: [
-        { 'wobjects.author_permlink': { $in: _.get(app, 'supported_objects', ['']) } },
-        { 'wobjects.object_type': { $in: objectTypes } },
-      ],
-    };
+    const typeCondition = { $and: [{ 'wobjects.object_type': { $in: objectTypes } }] };
+    if (app.inherited) typeCondition.$and.push({ 'wobjects.author_permlink': { $in: _.get(app, 'supported_objects') } });
 
     firstCond
       ? firstCond.$or.push(typeCondition)
