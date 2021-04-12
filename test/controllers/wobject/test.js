@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  faker, chai, expect, dropDatabase, sinon, app, UserWobjectsModel, App, Post, moment,
+  faker, chai, expect, dropDatabase, sinon, app, UserWobjectsModel, App, Post, moment, WObject,
 } = require('test/testHelper');
 const {
   AppFactory, RelatedFactory, UserWobjectsFactory, AppendObjectFactory, PostFactory, ObjectFactory,
@@ -179,7 +179,7 @@ describe('On wobjController', async () => {
   });
 
   describe('On /wobject/:authorPermlink/posts', async () => {
-    let wobj, post, postWobj, inheritedApp, extendededApp;
+    let wobj, post, postWobj, inheritedApp, extendededApp, rulePost, ruleWobj;
     const userName = faker.random.string();
 
     describe('on req without newsFilter', async () => {
@@ -292,6 +292,13 @@ describe('On wobjController', async () => {
             object_type: postWobj.object_type,
           }],
         });
+        ruleWobj = await ObjectFactory.Create({ objectType: OBJECT_TYPES.CRYPTO });
+        rulePost = await PostFactory.Create({
+          wobjects: [{
+            author_permlink: ruleWobj.author_permlink,
+            object_type: ruleWobj.object_type,
+          }],
+        });
       });
       describe('for inherited apps', async () => {
         it('should response post has required object type', async () => {
@@ -325,6 +332,74 @@ describe('On wobjController', async () => {
             .set({ origin: inheritedApp.host });
           expect(result.body).to.be.an('array').that.is.empty;
         });
+        it('should not return post if in ignore list', async () => {
+          await WObject.updateOne(
+            {
+              author_permlink: wobj.wobject.author_permlink,
+              'fields.author': wobj.appendObject.author,
+              'fields.permlink': wobj.appendObject.permlink,
+            },
+            {
+              $set: {
+                'fields.$.body': JSON.stringify({
+                  allowList: [[]],
+                  ignoreList: [postWobj.author_permlink],
+                  typeList: [OBJECT_TYPES.RESTAURANT],
+                }),
+              },
+            },
+          );
+
+          result = await chai.request(app)
+            .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+            .send({
+              newsPermlink: wobj.appendObject.permlink,
+            })
+            .set({ origin: inheritedApp.host });
+          expect(result.body).to.be.an('array').that.is.empty;
+        });
+      });
+      describe('with rule', async () => {
+        beforeEach(async () => {
+          await WObject.updateOne(
+            {
+              author_permlink: wobj.wobject.author_permlink,
+              'fields.author': wobj.appendObject.author,
+              'fields.permlink': wobj.appendObject.permlink,
+            },
+            {
+              $set: {
+                'fields.$.body': JSON.stringify({
+                  allowList: [[ruleWobj.author_permlink]],
+                  ignoreList: [],
+                  typeList: [OBJECT_TYPES.RESTAURANT],
+                }),
+              },
+            },
+          );
+          result = await chai.request(app)
+            .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+            .send({
+              newsPermlink: wobj.appendObject.permlink,
+            })
+            .set({ origin: inheritedApp.host });
+        });
+        it('should find rule post even if it not ins supported types', async () => {
+          const { body: [post1] } = result;
+          expect(post1._id).to.be.eq(rulePost._id.toString());
+        });
+        it('should rule post be in not supported listTypes', async () => {
+          const { body: [post1] } = result;
+          expect(post1.wobjects[0].object_type).to.be.eq(OBJECT_TYPES.CRYPTO);
+        });
+        it('should has typeList results', async () => {
+          const { body: [, post2] } = result;
+          expect(post2._id).to.be.eq(post._id.toString());
+        });
+        it('should has typeList objectType', async () => {
+          const { body: [, post2] } = result;
+          expect(post2.wobjects[0].object_type).to.be.eq(OBJECT_TYPES.RESTAURANT);
+        });
       });
       describe('for extended apps', async () => {
         it('should response post has required object type', async () => {
@@ -337,6 +412,32 @@ describe('On wobjController', async () => {
           const { body: [resPost] } = result;
           expect(resPost.wobjects[0].object_type).to.be.eq(postWobj.object_type);
         });
+        it('should not return post if in ignore list', async () => {
+          await WObject.updateOne(
+            {
+              author_permlink: wobj.wobject.author_permlink,
+              'fields.author': wobj.appendObject.author,
+              'fields.permlink': wobj.appendObject.permlink,
+            },
+            {
+              $set: {
+                'fields.$.body': JSON.stringify({
+                  allowList: [[]],
+                  ignoreList: [postWobj.author_permlink],
+                  typeList: [OBJECT_TYPES.RESTAURANT],
+                }),
+              },
+            },
+          );
+
+          result = await chai.request(app)
+            .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+            .send({
+              newsPermlink: wobj.appendObject.permlink,
+            })
+            .set({ origin: extendededApp.host });
+          expect(result.body).to.be.an('array').that.is.empty;
+        });
         it('should not return post not in supported types', async () => {
           await App.updateOne({ host: extendededApp.host },
             { $set: { supported_object_types: [faker.random.string()] } });
@@ -347,6 +448,48 @@ describe('On wobjController', async () => {
             })
             .set({ origin: extendededApp.host });
           expect(result.body).to.be.an('array').that.is.empty;
+        });
+        describe('with rule', async () => {
+          beforeEach(async () => {
+            await WObject.updateOne(
+              {
+                author_permlink: wobj.wobject.author_permlink,
+                'fields.author': wobj.appendObject.author,
+                'fields.permlink': wobj.appendObject.permlink,
+              },
+              {
+                $set: {
+                  'fields.$.body': JSON.stringify({
+                    allowList: [[ruleWobj.author_permlink]],
+                    ignoreList: [],
+                    typeList: [OBJECT_TYPES.RESTAURANT],
+                  }),
+                },
+              },
+            );
+            result = await chai.request(app)
+              .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
+              .send({
+                newsPermlink: wobj.appendObject.permlink,
+              })
+              .set({ origin: extendededApp.host });
+          });
+          it('should find rule post even if it not ins supported types', async () => {
+            const { body: [post1] } = result;
+            expect(post1._id).to.be.eq(rulePost._id.toString());
+          });
+          it('should rule post be in not supported listTypes', async () => {
+            const { body: [post1] } = result;
+            expect(post1.wobjects[0].object_type).to.be.eq(OBJECT_TYPES.CRYPTO);
+          });
+          it('should has typeList results', async () => {
+            const { body: [, post2] } = result;
+            expect(post2._id).to.be.eq(post._id.toString());
+          });
+          it('should has typeList objectType', async () => {
+            const { body: [, post2] } = result;
+            expect(post2.wobjects[0].object_type).to.be.eq(OBJECT_TYPES.RESTAURANT);
+          });
         });
       });
     });
