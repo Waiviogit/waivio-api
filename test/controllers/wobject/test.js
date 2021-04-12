@@ -120,9 +120,10 @@ describe('On wobjController', async () => {
         post = await PostFactory.Create({
           wobjects: [{
             author_permlink: postWobj.author_permlink,
-            objectType: postWobj.object_type,
+            object_type: postWobj.object_type,
           }],
         });
+
       });
       it('should ', async () => {
         result = await chai.request(app)

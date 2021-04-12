@@ -104,7 +104,7 @@ const getWobjFeedCondition = async ({
     const typeCondition = {
       $and: [
         { 'wobjects.author_permlink': { $in: _.get(app, 'supported_objects', ['']) } },
-        { 'wobjects.objectType': { $in: objectTypes } },
+        { 'wobjects.object_type': { $in: objectTypes } },
       ],
     };
 
