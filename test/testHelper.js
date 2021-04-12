@@ -3,6 +3,7 @@ const sinonChai = require('sinon-chai');
 const chaiAsPromised = require('chai-as-promised');
 const chaiHttp = require('chai-http');
 const faker = require('faker');
+const { wobjRefsClient } = require('utilities/redis/redis');
 const { ObjectID } = require('bson');
 
 chai.use(chaiAsPromised);
@@ -32,6 +33,8 @@ const dropDatabase = async () => {
   }
 };
 
+const dropRedisDb = async () => wobjRefsClient.flushdbAsync();
+
 module.exports = {
   app: require('app'),
   ...require('database').models,
@@ -55,5 +58,6 @@ module.exports = {
   chai,
   expect,
   dropDatabase,
+  dropRedisDb,
   ObjectID,
 };

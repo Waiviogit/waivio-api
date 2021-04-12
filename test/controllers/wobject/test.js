@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const {
-  faker, chai, expect, dropDatabase, sinon, app, App, Post, moment,
+  faker, chai, expect, dropDatabase, sinon, app, UserWobjectsModel, App, Post, moment,
 } = require('test/testHelper');
 const {
-  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory,
+  AppFactory, RelatedFactory, UserWobjectsFactory, AppendObjectFactory, PostFactory, ObjectFactory,
   HiddenPostsFactory, MutedUsersFactory,
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
@@ -98,6 +98,83 @@ describe('On wobjController', async () => {
           .query({ limit: faker.random.string() });
         expect(result).to.have.status(422);
       });
+    });
+  });
+
+  describe('On objectExpertise', async () => {
+    let skip, limit, authorPermlink, newsFilterPermlink, allowObjectPermlinks;
+    beforeEach(async () => {
+      await dropDatabase();
+      skip = _.random(1, 3);
+      limit = _.random(6, 9);
+      authorPermlink = faker.random.string(100);
+      newsFilterPermlink = faker.random.string(100);
+      allowObjectPermlinks = faker.random.string(100);
+
+      await AppendObjectFactory.Create({
+        rootWobj: authorPermlink,
+        permlink: newsFilterPermlink,
+        body: JSON.stringify({ allowList: [[allowObjectPermlinks]] }),
+      });
+
+      for (let i = 0; i < _.random(10, 15); i++) {
+        await UserWobjectsFactory.Create({
+          authorPermlink,
+          weight: _.random(1, 10000),
+        });
+      }
+      for (let i = 0; i < _.random(10, 15); i++) {
+        await UserWobjectsFactory.Create({
+          authorPermlink: allowObjectPermlinks,
+          weight: _.random(1, 10000),
+        });
+      }
+    });
+    it('should return a sorted array of "newsFilter" experts and be equal to the returned from MongoDB', async () => {
+      const mongoExpertsNames = [];
+      const resultExpertsNames = [];
+
+      const pipeline = [
+        { $match: { author_permlink: allowObjectPermlinks } },
+        { $sort: { weight: -1 } },
+        { $skip: skip },
+        { $limit: limit },
+      ];
+
+      const { result: mongoData } = await UserWobjectsModel.aggregate(pipeline);
+      for (const data of mongoData) {
+        mongoExpertsNames.push(data.user_name);
+      }
+
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip, newsFilter: newsFilterPermlink });
+      for (const data of result.body.users) {
+        resultExpertsNames.push(data.name);
+      }
+      expect(resultExpertsNames).to.have.members(mongoExpertsNames);
+    });
+    it('should return an array of experts whose weight is sorted in descending order', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result.body.users[0].weight).to.be
+        .greaterThan(result.body.users[result.body.users.length - 1].weight);
+    });
+    it('should return an array of experts whose length must be equal to the "limit"', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result.body.users).to.have.length(limit);
+    });
+    it('should return status 200', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`).send({ limit, skip });
+      expect(result).to.have.status(200);
+    });
+    it('should return status 422 on validation error', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${faker.random.string()}/object_expertise`).send({
+          limit: faker.random.string(), skip: faker.random.string(),
+        });
+      expect(result).to.have.status(422);
     });
   });
 

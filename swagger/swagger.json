@@ -3095,7 +3095,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of users to return (*default* 5), \n**skip** - count of skipping users(*default* 5), use for infinite scroll,\n**user** - UserName, which weight add to response\n",
+          "description" : "**limit** - Count of users to return (*default* 5), \n**skip** - count of skipping users(*default* 5), use for infinite scroll,\n**user** - UserName, which weight add to response\n, \n**newsFilter** - filter's permlink on which we will look for experts(*default* null), display experts by a specific filter",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_10"
@@ -5417,6 +5417,9 @@
           "type" : "integer"
         },
         "user" : {
+          "type" : "string"
+        },
+        "newsFilter" : {
           "type" : "string"
         }
       }

@@ -29,10 +29,6 @@ const getByWobject = async ({
     if (weight) pipeline[0].$match.weight = { $gt: 0 };
 
     const experts = await UserWobjects.aggregate(pipeline);
-
-    if (!experts) {
-      return { error: { status: 404, message: 'Not found!' } };
-    }
     return { experts };
   } catch (error) {
     return { error };
