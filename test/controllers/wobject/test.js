@@ -1,13 +1,14 @@
 const _ = require('lodash');
 const {
-  faker, chai, expect, dropDatabase, sinon, app, App,
+  faker, chai, expect, dropDatabase, sinon, app, App, Post, moment,
 } = require('test/testHelper');
 const {
-  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory,
+  AppFactory, RelatedFactory, AppendObjectFactory, PostFactory, ObjectFactory, HiddenPostsFactory,
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { ObjectId } = require('mongoose').Types;
 
 describe('On wobjController', async () => {
   let currentApp, session, result;
@@ -101,6 +102,8 @@ describe('On wobjController', async () => {
 
   describe('On /wobject/:authorPermlink/posts', async () => {
     let wobj, post, postWobj, inheritedApp;
+    const userName = faker.random.string();
+
     describe('on req without newsFilter', async () => {
       beforeEach(async () => {
         wobj = await ObjectFactory.Create();
@@ -117,6 +120,50 @@ describe('On wobjController', async () => {
       it('should show proper posts', async () => {
         const { body: [resPost] } = result;
         expect({ author: post.author, permlink: post.permlink })
+          .to.be.deep.eq({ author: resPost.author, permlink: resPost.permlink });
+      });
+      it('should not return reblogs', async () => {
+        await Post.updateOne(
+          { _id: post._id },
+          { reblog_to: { author: faker.random.string(), permlink: faker.random.string() } },
+        );
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`);
+        expect(result.status).to.be.eq(404);
+      });
+      it('should not return post blocked for apps', async () => {
+        await Post.updateOne(
+          { _id: post._id },
+          { blocked_for_apps: currentApp.host },
+        );
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`);
+        expect(result.status).to.be.eq(404);
+      });
+
+      it('should return error if object doesn\'t exist', async () => {
+        result = await chai.request(app)
+          .post(`/api/wobject/${faker.random.string()}/posts`);
+        expect(result.status).to.be.eq(404);
+      });
+      it('should not return post if user hide it', async () => {
+        const hide = await HiddenPostsFactory.Create({ userName, postId: post._id });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`)
+          .set({ follower: userName });
+
+        expect(result.status).to.be.eq(404);
+      });
+      it('should return olderPost post if lastId as parametr', async () => {
+        const olderPost = await PostFactory.Create({
+          additionsForPost: { _id: new ObjectId(moment().subtract(7, 'days').unix()) },
+          wobjects: [{ author_permlink: wobj.author_permlink }],
+        });
+        result = await chai.request(app)
+          .post(`/api/wobject/${wobj.author_permlink}/posts`)
+          .send({ lastId: post._id.toString() });
+        const { body: [resPost] } = result;
+        expect({ author: olderPost.author, permlink: olderPost.permlink })
           .to.be.deep.eq({ author: resPost.author, permlink: resPost.permlink });
       });
     });
