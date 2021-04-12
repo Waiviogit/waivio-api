@@ -230,7 +230,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
-  const { result: app } = await App.findOne({ host, inherited: true });
+  const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const { googleAnalyticsTag, beneficiary, app_commissions } = app;
   return {
