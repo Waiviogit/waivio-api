@@ -39,7 +39,7 @@ exports.postsScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
-  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
+  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['en-US']),
   forApp: Joi.string(),
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   userName: Joi.string().default(''),
