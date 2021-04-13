@@ -55,14 +55,14 @@ exports.aggregate = async (pipeline) => {
 };
 
 exports.getByFollowLists = async ({
-  users,
   author_permlinks: authorPermlinks,
+  user_languages: userLanguages,
+  hiddenPosts = [],
+  filtersData,
+  users,
+  muted,
   skip,
   limit,
-  user_languages: userLanguages,
-  filtersData,
-  hiddenPosts = [],
-  muted,
 }) => {
   const cond = {
     $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
@@ -188,7 +188,7 @@ exports.findByCondition = async (condition) => {
   }
 };
 
-exports.findWithPopulateByWobjects = async ({
+exports.getWobjectPosts = async ({
   condition, limit, lastId, skip,
 }) => {
   try {

@@ -19,7 +19,7 @@ module.exports = async (data) => {
   });
   if (conditionError) return { error: conditionError };
 
-  const { posts, error } = await Post.findWithPopulateByWobjects({
+  const { posts, error } = await Post.getWobjectPosts({
     condition,
     limit: data.limit,
     lastId: data.lastId,
@@ -50,7 +50,7 @@ const getWobjFeedCondition = async ({
   if (!_.isEmpty(user_languages)) condition.language = { $in: user_languages };
 
   if (newsPermlink) {
-    return newsFilterCondition({
+    return getNewsFilterCondition({
       condition, wObject, newsPermlink, app, author_permlink,
     });
   }
@@ -67,7 +67,7 @@ const getWobjFeedCondition = async ({
   return { condition };
 };
 
-const newsFilterCondition = ({
+const getNewsFilterCondition = ({
   condition, wObject, newsPermlink, app, author_permlink,
 }) => {
   const newsFilter = JSON.parse(_.get(
