@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+const { EXPERTS_SORT } = require('constants/sortData');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
@@ -117,6 +118,7 @@ exports.objectExpertiseScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(5),
   skip: Joi.number().integer().min(0).default(0),
+  sort: Joi.string().default(EXPERTS_SORT.RANK),
   author_permlink: Joi.string().required(),
   user: Joi.string().allow('').default(null),
   newsFilter: Joi.string().default(''),

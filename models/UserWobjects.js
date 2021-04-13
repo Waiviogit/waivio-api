@@ -1,4 +1,6 @@
+const _ = require('lodash');
 const { UserWobjects } = require('database').models;
+const { EXPERTS_SORT } = require('constants/sortData');
 
 const aggregate = async (pipeline) => {
   try {
@@ -13,23 +15,55 @@ const aggregate = async (pipeline) => {
   }
 };
 
-const getByWobject = async ({
-  authorPermlink, skip = 0, limit = 30, username, weight,
+const getByWobject = async (data) => {
+  switch (data.sort) {
+    case EXPERTS_SORT.RANK:
+      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
+    case EXPERTS_SORT.ALPHABET:
+      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { name: -1 } } });
+    case EXPERTS_SORT.FOLLOWERS:
+      return getExpertsByFollowers({ ...data });
+    case EXPERTS_SORT.RECENCY:
+      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
+  }
+};
+
+const getExpertsWithoutMergingCollections = async ({
+  authorPermlink, skip = 0, limit = 30, sort, username, weight,
+}) => {
+  const pipeline = [
+    { $match: { author_permlink: authorPermlink } },
+    sort,
+    { $skip: skip },
+    { $limit: limit },
+    { $project: { _id: 0, name: '$user_name', weight: 1 } },
+  ];
+
+  if (username) pipeline[0].$match.user_name = username;
+  if (weight) pipeline[0].$match.weight = { $gt: 0 };
+  try {
+    return { experts: await UserWobjects.aggregate(pipeline) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const getExpertsByFollowers = async ({
+  authorPermlink, skip = 0, limit = 30,
 }) => {
   try {
-    const pipeline = [
-      { $match: { author_permlink: authorPermlink } },
-      { $sort: { weight: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-      { $project: { _id: 0, name: '$user_name', weight: 1 } },
-    ];
+    const userWobjWithFollowersCount = await UserWobjects
+      .find({ author_permlink: authorPermlink })
+      .select('user_name')
+      .skip(skip)
+      .limit(limit)
+      .populate({ path: 'full_user', select: { followers_count: 1, _id: 0 } })
+      .lean();
 
-    if (username) pipeline[0].$match.user_name = username;
-    if (weight) pipeline[0].$match.weight = { $gt: 0 };
-
-    const experts = await UserWobjects.aggregate(pipeline);
-    return { experts };
+    const result = _.orderBy(
+      userWobjWithFollowersCount, ['user_followers_count.followers_count'], ['desc'],
+    );
+    return { experts: result };
   } catch (error) {
     return { error };
   }

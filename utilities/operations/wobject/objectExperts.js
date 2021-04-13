@@ -48,7 +48,7 @@ const makePipeline = ({
 
 const getWobjExperts = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip = 0, limit = 30, user, newsFilter,
+  author_permlink, skip = 0, limit = 30, sort, user, newsFilter,
 }) => {
   let userExpert;
   const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
@@ -63,12 +63,16 @@ const getWobjExperts = async ({
       userExpert = _.get(experts, '[0]');
     }
     const { experts, error } = await UserWobjects.getByWobject({
-      authorPermlink: author_permlink, skip, limit, weight: true,
+      authorPermlink: author_permlink, skip, limit, sort, weight: true,
     });
     if (error) return { error };
-    const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
-    if (getFollowersErr) return { error: getFollowersErr };
-    return { experts: result, userExpert };
+
+    if (_.isEmpty(sort)) {
+      const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
+      if (getFollowersErr) return { error: getFollowersErr };
+      return { experts: result, userExpert };
+    }
+    return { experts };
   }
 
   const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
