@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { Wobj } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { processWobjects } = require('utilities/helpers/wObjectHelper');
 
 exports.getTagCategory = async (tagCategory = [], filter) => {
   const resultArray = [];
@@ -22,22 +23,26 @@ exports.getTagCategory = async (tagCategory = [], filter) => {
   return resultArray;
 };
 
-exports.getTagsByTagCategory = async ({ wobjectLinks, tagCategory }) => {
-  const { result: wobjects } = await Wobj
-    .find({ author_permlink: { $in: wobjectLinks } }, { tagCategories: 1 });
+exports.getTagsByTagCategory = async ({ wobjectLinks, tagCategory, app }) => {
+  const { result } = await Wobj.find({ author_permlink: { $in: wobjectLinks } });
+  const wobjects = await processWobjects({
+    fields: [FIELDS_NAMES.TAG_CATEGORY, FIELDS_NAMES.CATEGORY_ITEM],
+    wobjects: result,
+    app,
+  });
 
   return _.reduce(tagCategory, (resultArr, categoryName) => {
     const tags = _
       .chain(wobjects)
       .reduce((accum, element) => {
-        _.forEach(_.get(element, 'tagCategories', []), (tag) => {
-          const filtered = _.filter(_.get(tag, 'categoryItems', []), (filterItem) => filterItem.weight > 0);
+        _.forEach(_.get(element, 'tagCategory', []), (tag) => {
+          const filtered = _.filter(_.get(tag, 'items', []), (filterItem) => filterItem.weight > 0);
           if (tag.body === categoryName && !_.isEmpty(filtered)) accum = [...accum, ...filtered];
         });
         return accum;
       }, [])
       .orderBy(['weight'], ['desc'])
-      .map('name')
+      .map('body')
       .uniq()
       .value();
     return [...resultArr, { tagCategory: categoryName, tags }];

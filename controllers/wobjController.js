@@ -64,7 +64,7 @@ const posts = async (req, res, next) => {
 
   if (!value) return;
 
-  const { posts: wobjectPosts, error } = await getPostsByWobject(value);
+  const { posts: wobjectPosts, error } = await getPostsByWobject({ ...value, app: req.appData });
 
   if (error) return next(error);
 
@@ -141,9 +141,7 @@ const gallery = async (req, res, next) => {
 const objectExpertise = async (req, res, next) => {
   const value = validators.validate({
     author_permlink: req.params.authorPermlink,
-    skip: req.body.skip,
-    limit: req.body.limit,
-    user: req.body.user,
+    ...req.body,
   }, validators.wobject.objectExpertiseScheme, next);
 
   if (!value) return;
