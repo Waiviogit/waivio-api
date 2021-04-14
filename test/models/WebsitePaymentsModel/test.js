@@ -108,15 +108,18 @@ describe('WebsitePaymentsModel', () => {
   });
 
   describe('On distinct', () => {
-    const name1 = faker.name.firstName();
-    const name2 = faker.name.firstName();
+    const name1 = faker.random.string(20);
+    const name2 = faker.random.string(20);
     const amount = _.random(10, 25);
-    const counter = _.random(3, 10);
+    let name;
     beforeEach(async () => {
       await dropDatabase();
-      for (let i = 0; i < counter; i++) {
+      for (let i = 0; i < _.random(25, 40); i++) {
+        if (i % 2 === 0) {
+          name = name1;
+        } else name = name2;
         await WebsitePaymentsFactory.Create({
-          name: _.sample([name1, name2]),
+          name,
           amount,
         });
       }
