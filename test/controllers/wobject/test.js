@@ -107,12 +107,12 @@ describe('On wobjController', async () => {
       await dropDatabase();
       skip = _.random(1, 3);
       limit = _.random(6, 9);
-      authorPermlink = faker.random.string(10);
-      newsFilterPermlink = faker.random.string(100);
-      allowObjectPermlinks = faker.random.string(1000);
+      authorPermlink = faker.random.string(20);
+      newsFilterPermlink = faker.random.string(20);
+      allowObjectPermlinks = faker.random.string(20);
 
       await AppendObjectFactory.Create({
-        name: faker.random.string(1000),
+        name: faker.random.string(20),
         rootWobj: authorPermlink,
         permlink: newsFilterPermlink,
         body: JSON.stringify({ allowList: [[allowObjectPermlinks]] }),

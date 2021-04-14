@@ -108,8 +108,8 @@ describe('WebsitePaymentsModel', () => {
   });
 
   describe('On distinct', () => {
-    const name1 = faker.random.string(1000);
-    const name2 = faker.random.string(100);
+    const name1 = faker.random.string(20);
+    const name2 = faker.random.string(20);
     const amount = _.random(10, 25);
     let name;
     beforeEach(async () => {
