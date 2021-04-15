@@ -20,9 +20,9 @@ const getByWobject = async (data) => {
     case EXPERTS_SORT.RANK:
       return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
     case EXPERTS_SORT.ALPHABET:
-      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { name: -1 } } });
+      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
     case EXPERTS_SORT.FOLLOWERS:
-      return getExpertsByFollowers({ ...data });
+      return getExpertsByFollowersFromUserModel({ ...data });
     case EXPERTS_SORT.RECENCY:
       return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
   }
@@ -36,7 +36,7 @@ const getExpertsWithoutMergingCollections = async ({
     sort,
     { $skip: skip },
     { $limit: limit },
-    { $project: { _id: 0, name: '$user_name', weight: 1 } },
+    { $project: { _id: 1, name: '$user_name', weight: 1 } },
   ];
 
   if (username) pipeline[0].$match.user_name = username;
@@ -48,11 +48,11 @@ const getExpertsWithoutMergingCollections = async ({
   }
 };
 
-const getExpertsByFollowers = async ({
+const getExpertsByFollowersFromUserModel = async ({
   authorPermlink, skip = 0, limit = 30,
 }) => {
   try {
-    const userWobjWithFollowersCount = await UserWobjects
+    const usersWobjWithFollowersCount = await UserWobjects
       .find({ author_permlink: authorPermlink })
       .select('user_name')
       .skip(skip)
@@ -61,7 +61,7 @@ const getExpertsByFollowers = async ({
       .lean();
 
     const result = _.orderBy(
-      userWobjWithFollowersCount, ['user_followers_count.followers_count'], ['desc'],
+      usersWobjWithFollowersCount, ['full_user.followers_count'], ['desc'],
     );
     return { experts: result };
   } catch (error) {

@@ -1,6 +1,7 @@
 const { UserWobjects, User, Wobj } = require('models');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const { EXPERTS_SORT } = require('constants/sortData');
 
 // eslint-disable-next-line camelcase
 const getMultipliers = (newsFilter, author_permlink) => {
@@ -67,12 +68,10 @@ const getWobjExperts = async ({
     });
     if (error) return { error };
 
-    if (_.isEmpty(sort)) {
-      const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
-      if (getFollowersErr) return { error: getFollowersErr };
-      return { experts: result, userExpert };
-    }
-    return { experts };
+    if (sort === EXPERTS_SORT.FOLLOWERS) return { experts };
+    const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
+    if (getFollowersErr) return { error: getFollowersErr };
+    return { experts: result, userExpert };
   }
 
   const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
