@@ -191,8 +191,25 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
-  const filteredFields = _.filter(fields,
-    (field) => filterFieldValidation(filter, field, locale, ownership));
+  const fieldTypes = _.reduce(fields, (acc, el) => {
+    if (_.has(acc, `${el.name}`)) {
+      acc[el.name].push(el);
+      return acc;
+    }
+    acc[el.name] = [el];
+    return acc;
+  }, {});
+
+  const filteredFields = _.reduce(fieldTypes, (acc, el) => {
+    const nativeLang = _
+      .filter(el, (field) => filterFieldValidation(filter, field, locale, ownership));
+
+    _.isEmpty(nativeLang) && locale !== 'en-US'
+      ? acc = [...acc, ..._.filter(el, (field) => filterFieldValidation(filter, field, 'en-US', ownership))]
+      : acc = [...acc, ...nativeLang];
+    return acc;
+  }, []);
+
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
