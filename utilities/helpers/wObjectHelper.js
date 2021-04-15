@@ -188,9 +188,16 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   return result;
 };
 
-const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
-  locale = locale === 'auto' ? 'en-US' : locale;
-  const winningFields = {};
+/**
+ * the method sorts the fields by name, then for each individual type checks if there are fields
+ * with the requested locale, if there are - processes them if not, requests the English locale
+ * @param fields {*[]}
+ * @param locale {String}
+ * @param filter {*[]}
+ * @param ownership {*[]}
+ * @returns {*[]}
+ */
+const getFilteredFields = (fields, locale, filter, ownership) => {
   const fieldTypes = _.reduce(fields, (acc, el) => {
     if (_.has(acc, `${el.name}`)) {
       acc[el.name].push(el);
@@ -200,7 +207,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     return acc;
   }, {});
 
-  const filteredFields = _.reduce(fieldTypes, (acc, el) => {
+  return _.reduce(fieldTypes, (acc, el) => {
     const nativeLang = _
       .filter(el, (field) => filterFieldValidation(filter, field, locale, ownership));
 
@@ -209,6 +216,12 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       : acc = [...acc, ...nativeLang];
     return acc;
   }, []);
+};
+
+const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
+  locale = locale === 'auto' ? 'en-US' : locale;
+  const winningFields = {};
+  const filteredFields = getFilteredFields(fields, locale, filter, ownership);
 
   if (!filteredFields.length) return {};
 
