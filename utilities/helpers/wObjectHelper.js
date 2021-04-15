@@ -191,11 +191,11 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
 /**
  * the method sorts the fields by name, then for each individual type checks if there are fields
  * with the requested locale, if there are - processes them if not, requests the English locale
- * @param fields {*[]}
+ * @param fields {[Object]}
  * @param locale {String}
- * @param filter {*[]}
- * @param ownership {*[]}
- * @returns {*[]}
+ * @param filter {[String]}
+ * @param ownership {[String]}
+ * @returns {[Object]}
  */
 const getFilteredFields = (fields, locale, filter, ownership) => {
   const fieldTypes = _.reduce(fields, (acc, el) => {
