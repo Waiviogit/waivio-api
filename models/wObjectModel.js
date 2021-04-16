@@ -59,7 +59,11 @@ const getChildWobjects = async ({
 }) => {
   try {
     const wobjects = await WObjectModel
-      .find({ parent: authorPermlink, object_type: { $nin: excludeTypes } })
+      .find({
+        parent: authorPermlink,
+        object_type: { $nin: excludeTypes },
+        'status.title': { $nin: ['unavailable', 'nsfw'] },
+      })
       .sort({ weight: -1, _id: -1 })
       .skip(skip)
       .limit(limit)

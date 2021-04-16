@@ -188,11 +188,41 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   return result;
 };
 
+/**
+ * the method sorts the fields by name, then for each individual type checks if there are fields
+ * with the requested locale, if there are - processes them if not, requests the English locale
+ * @param fields {[Object]}
+ * @param locale {String}
+ * @param filter {[String]}
+ * @param ownership {[String]}
+ * @returns {[Object]}
+ */
+const getFilteredFields = (fields, locale, filter, ownership) => {
+  const fieldTypes = _.reduce(fields, (acc, el) => {
+    if (_.has(acc, `${el.name}`)) {
+      acc[el.name].push(el);
+      return acc;
+    }
+    acc[el.name] = [el];
+    return acc;
+  }, {});
+
+  return _.reduce(fieldTypes, (acc, el) => {
+    const nativeLang = _
+      .filter(el, (field) => filterFieldValidation(filter, field, locale, ownership));
+
+    _.isEmpty(nativeLang) && locale !== 'en-US'
+      ? acc = [...acc, ..._.filter(el, (field) => filterFieldValidation(filter, field, 'en-US', ownership))]
+      : acc = [...acc, ...nativeLang];
+    return acc;
+  }, []);
+};
+
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
-  const filteredFields = _.filter(fields,
-    (field) => filterFieldValidation(filter, field, locale, ownership));
+  const filteredFields = getFilteredFields(fields, locale, filter, ownership);
+
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
