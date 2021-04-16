@@ -755,9 +755,14 @@ describe('On wobjectHelper', async () => {
         wobjects: [_.cloneDeep(object)], app, returnArray: false, locale: 'ms-MY', hiveData: true,
       });
     });
-    it('should not return field with another locale', async () => {
-      expect(result[FIELDS_NAMES.NAME]).to.be.undefined;
+    it('should get name from field with en-US locale if can\'t find user locale', async () => {
+      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
     });
+
+    it('should field locale be eq en-US ', async () => {
+      expect(result.fields[0].locale).to.be.eq('en-US');
+    });
+
     it('should return field in all fields with approve percent', async () => {
       const field = _.find(result.fields, { body, name: FIELDS_NAMES.NAME });
       expect(field.approvePercent).to.be.eq(100);
