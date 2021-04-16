@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { UserWobjects } = require('database').models;
-const { EXPERTS_SORT } = require('constants/sortData');
 
 const aggregate = async (pipeline) => {
   try {
@@ -12,19 +11,6 @@ const aggregate = async (pipeline) => {
     return { result };
   } catch (error) {
     return { error };
-  }
-};
-
-const getByWobject = async (data) => {
-  switch (data.sort) {
-    case EXPERTS_SORT.RANK:
-      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
-    case EXPERTS_SORT.ALPHABET:
-      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
-    case EXPERTS_SORT.FOLLOWERS:
-      return getExpertsByFollowersFromUserModel({ ...data });
-    case EXPERTS_SORT.RECENCY:
-      return getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
   }
 };
 
@@ -54,15 +40,13 @@ const getExpertsByFollowersFromUserModel = async ({
   try {
     const usersWobjWithFollowersCount = await UserWobjects
       .find({ author_permlink: authorPermlink })
-      .select('user_name')
-      .skip(skip)
-      .limit(limit)
+      .select(['author_permlink', 'user_name', 'weight'])
       .populate({ path: 'full_user', select: { followers_count: 1, _id: 0 } })
       .lean();
 
     const result = _.orderBy(
       usersWobjWithFollowersCount, ['full_user.followers_count'], ['desc'],
-    );
+    ).slice(skip, (limit + skip));
     return { experts: result };
   } catch (error) {
     return { error };
@@ -97,6 +81,7 @@ module.exports = {
   find,
   findOne,
   aggregate,
-  getByWobject,
   countDocuments,
+  getExpertsWithoutMergingCollections,
+  getExpertsByFollowersFromUserModel,
 };

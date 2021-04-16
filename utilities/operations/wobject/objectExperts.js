@@ -57,13 +57,13 @@ const getWobjExperts = async ({
 
   if (!newsFilter) {
     if (user) {
-      const { experts, error } = await UserWobjects.getByWobject({
+      const { experts, error } = await getExpertsByUserWobject({
         authorPermlink: author_permlink, username: user,
       });
       if (error) return { error };
       userExpert = _.get(experts, '[0]');
     }
-    const { experts, error } = await UserWobjects.getByWobject({
+    const { experts, error } = await getExpertsByUserWobject({
       authorPermlink: author_permlink, skip, limit, sort, weight: true,
     });
     if (error) return { error };
@@ -114,4 +114,16 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   };
 };
 
-module.exports = { getWobjExperts };
+const getExpertsByUserWobject = async (data) => {
+  switch (data.sort) {
+    case EXPERTS_SORT.RANK:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
+    case EXPERTS_SORT.ALPHABET:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
+    case EXPERTS_SORT.FOLLOWERS:
+      return UserWobjects.getExpertsByFollowersFromUserModel({ ...data });
+    case EXPERTS_SORT.RECENCY:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
+  }
+};
+module.exports = { getWobjExperts, getExpertsByUserWobject };
