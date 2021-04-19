@@ -204,8 +204,8 @@ describe('On wobjController', async () => {
       result = await chai.request(app)
         .post(`/api/wobject/${authorPermlink}/object_expertise`)
         .send({ limit, skip, sort: EXPERTS_SORT.FOLLOWERS });
-      expect(result.body.users[0].full_user.followers_count).to.be
-        .greaterThan(result.body.users[result.body.users.length - 1].full_user.followers_count);
+      expect(result.body.users[0].followers_count).to.be
+        .greaterThan(result.body.users[result.body.users.length - 1].followers_count);
     });
     it('should return a sorted array by creation time', async () => {
       result = await chai.request(app)
