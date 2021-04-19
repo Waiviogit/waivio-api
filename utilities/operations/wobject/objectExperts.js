@@ -75,7 +75,7 @@ const getWobjExperts = async ({
   }
 
   const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
-  const fullField = Object.assign(field, jsonHelper.parseJson(field.body));
+  const fullField = Object.assign(field, jsonHelper.parseJson(_.get(field.body)));
 
   const multipliers = getMultipliers(fullField, author_permlink);
   const pipeline = makePipeline({ multipliers, skip, limit });
