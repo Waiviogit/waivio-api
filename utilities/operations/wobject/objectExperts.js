@@ -126,4 +126,4 @@ const getExpertsByUserWobject = async (data) => {
       return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
   }
 };
-module.exports = { getWobjExperts, getExpertsByUserWobject };
+module.exports = { getWobjExperts };

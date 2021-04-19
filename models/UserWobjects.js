@@ -44,10 +44,11 @@ const getExpertsByFollowersFromUserModel = async ({
       .populate({ path: 'full_user', select: { followers_count: 1, _id: 0 } })
       .lean();
 
-    const result = _.orderBy(
-      usersWobjWithFollowersCount, ['full_user.followers_count'], ['desc'],
-    ).slice(skip, (limit + skip));
-    return { experts: result };
+    return {
+      experts: _.chain(usersWobjWithFollowersCount)
+        .orderBy(['full_user.followers_count'], ['desc'])
+        .slice(skip, (limit + skip)).value(),
+    };
   } catch (error) {
     return { error };
   }
