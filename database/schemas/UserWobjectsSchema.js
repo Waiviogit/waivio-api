@@ -11,6 +11,13 @@ const UserWobjectsSchema = new Schema({
 UserWobjectsSchema.index({ user_name: 1 });
 UserWobjectsSchema.index({ author_permlink: 1, user_name: 1 }, { unique: true });
 
+UserWobjectsSchema.virtual('full_user', {
+  ref: 'User',
+  localField: 'user_name',
+  foreignField: 'name',
+  justOne: true,
+});
+
 const UserWobjects = mongoose.model('user_wobjects', UserWobjectsSchema);
 
 module.exports = UserWobjects;
