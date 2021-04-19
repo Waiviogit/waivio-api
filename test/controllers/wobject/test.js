@@ -1,10 +1,11 @@
 const _ = require('lodash');
+const { EXPERTS_SORT } = require('constants/sortData');
 const {
   faker, chai, expect, dropDatabase, sinon, app, UserWobjectsModel, App, Post, moment, WObject,
 } = require('test/testHelper');
 const {
   AppFactory, RelatedFactory, UserWobjectsFactory, AppendObjectFactory, PostFactory, ObjectFactory,
-  HiddenPostsFactory, MutedUsersFactory,
+  HiddenPostsFactory, MutedUsersFactory, UsersFactory,
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
@@ -119,15 +120,20 @@ describe('On wobjController', async () => {
       });
 
       for (let i = 0; i < _.random(15, 25); i++) {
-        await UserWobjectsFactory.Create({
-          userName: faker.random.string(1000),
+        const userWobj = await UserWobjectsFactory.Create({
+          id: new ObjectId(moment().subtract(i, 'minute').unix()),
+          userName: faker.random.string(20),
           authorPermlink,
           weight: _.random(1, 10000),
+        });
+        await UsersFactory.Create({
+          name: userWobj.user_name,
+          followers_count: _.random(0, 100),
         });
       }
       for (let i = 0; i < _.random(15, 25); i++) {
         await UserWobjectsFactory.Create({
-          userName: faker.random.string(1000),
+          userName: faker.random.string(20),
           authorPermlink: allowObjectPermlinks,
           weight: _.random(1, 10000),
         });
@@ -178,6 +184,35 @@ describe('On wobjController', async () => {
           limit: faker.random.string(), skip: faker.random.string(),
         });
       expect(result).to.have.status(422);
+    });
+    it('should return a sorted array by weight', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`)
+        .send({ limit, skip, sort: EXPERTS_SORT.RANK });
+      expect(result.body.users[0].weight).to.be
+        .greaterThan(result.body.users[result.body.users.length - 1].weight);
+    });
+    it('should return a sorted array by alphabet', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`)
+        .send({ limit, skip, sort: EXPERTS_SORT.ALPHABET });
+      expect(result.body.users[result.body.users.length - 1].name
+        .localeCompare(result.body.users[0].name))
+        .to.be.eq(1);
+    });
+    it('should return a sorted array by number of subscribers of the expert', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`)
+        .send({ limit, skip, sort: EXPERTS_SORT.FOLLOWERS });
+      expect(result.body.users[0].full_user.followers_count).to.be
+        .greaterThan(result.body.users[result.body.users.length - 1].full_user.followers_count);
+    });
+    it('should return a sorted array by creation time', async () => {
+      result = await chai.request(app)
+        .post(`/api/wobject/${authorPermlink}/object_expertise`)
+        .send({ limit, skip, sort: EXPERTS_SORT.RECENCY });
+      expect(ObjectId(result.body.users[0]._id).getTimestamp()).to.be
+        .greaterThan(ObjectId(result.body.users[result.body.users.length - 1]._id).getTimestamp());
     });
   });
 

@@ -62,7 +62,7 @@ const getChildWobjects = async ({
       .find({
         parent: authorPermlink,
         object_type: { $nin: excludeTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw'] },
+        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
       })
       .sort({ weight: -1, _id: -1 })
       .skip(skip)
