@@ -49,6 +49,12 @@ const getExpertsByFollowersFromUserModel = async ({
         .chain(usersWobjWithFollowersCount)
         .orderBy(['full_user.followers_count'], ['desc'])
         .slice(skip, (limit + skip))
+        .map((user) => ({
+          _id: user._id,
+          weight: user.weight,
+          name: user.user_name,
+          followers_count: _.get(user, 'full_user.followers_count', 0),
+        }))
         .value(),
     };
   } catch (error) {
