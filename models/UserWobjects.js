@@ -53,7 +53,7 @@ const getExpertsByFollowersFromUserModel = async ({
           _id: user._id,
           weight: user.weight,
           name: user.user_name,
-          followers_count: user.full_user.followers_count,
+          followers_count: _.get(user, 'full_user.followers_count', 0),
         }))
         .value(),
     };
