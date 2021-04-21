@@ -1,6 +1,7 @@
 const { UserWobjects, User, Wobj } = require('models');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const { EXPERTS_SORT } = require('constants/sortData');
 
 // eslint-disable-next-line camelcase
 const getMultipliers = (newsFilter, author_permlink) => {
@@ -48,7 +49,7 @@ const makePipeline = ({
 
 const getWobjExperts = async ({
   // eslint-disable-next-line camelcase
-  author_permlink, skip = 0, limit = 30, user, newsFilter,
+  author_permlink, skip = 0, limit = 30, sort, user, newsFilter,
 }) => {
   let userExpert;
   const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
@@ -56,23 +57,25 @@ const getWobjExperts = async ({
 
   if (!newsFilter) {
     if (user) {
-      const { experts, error } = await UserWobjects.getByWobject({
+      const { experts, error } = await getExpertsByUserWobject({
         authorPermlink: author_permlink, username: user,
       });
       if (error) return { error };
       userExpert = _.get(experts, '[0]');
     }
-    const { experts, error } = await UserWobjects.getByWobject({
-      authorPermlink: author_permlink, skip, limit, weight: true,
+    const { experts, error } = await getExpertsByUserWobject({
+      authorPermlink: author_permlink, skip, limit, sort, weight: true,
     });
     if (error) return { error };
+
+    if (sort === EXPERTS_SORT.FOLLOWERS) return { experts };
     const { result, error: getFollowersErr } = await getFollowersCount({ experts, userExpert });
     if (getFollowersErr) return { error: getFollowersErr };
     return { experts: result, userExpert };
   }
 
   const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
-  const fullField = Object.assign(field, jsonHelper.parseJson(field.body));
+  const fullField = Object.assign(field, jsonHelper.parseJson(_.get(field, 'body')));
 
   const multipliers = getMultipliers(fullField, author_permlink);
   const pipeline = makePipeline({ multipliers, skip, limit });
@@ -111,4 +114,16 @@ const getFollowersCount = async ({ experts, userExpert }) => {
   };
 };
 
+const getExpertsByUserWobject = async (data) => {
+  switch (data.sort) {
+    case EXPERTS_SORT.RANK:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
+    case EXPERTS_SORT.ALPHABET:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
+    case EXPERTS_SORT.FOLLOWERS:
+      return UserWobjects.getExpertsByFollowersFromUserModel({ ...data });
+    case EXPERTS_SORT.RECENCY:
+      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
+  }
+};
 module.exports = { getWobjExperts };

@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { UserWobjects } = require('database').models;
 
 const aggregate = async (pipeline) => {
@@ -13,23 +14,49 @@ const aggregate = async (pipeline) => {
   }
 };
 
-const getByWobject = async ({
-  authorPermlink, skip = 0, limit = 30, username, weight,
+const getExpertsWithoutMergingCollections = async ({
+  authorPermlink, skip = 0, limit = 30, sort, username, weight,
+}) => {
+  const pipeline = [
+    { $match: { author_permlink: authorPermlink } },
+    sort,
+    { $skip: skip },
+    { $limit: limit },
+    { $project: { _id: 1, name: '$user_name', weight: 1 } },
+  ];
+
+  if (username) pipeline[0].$match.user_name = username;
+  if (weight) pipeline[0].$match.weight = { $gt: 0 };
+  try {
+    return { experts: await UserWobjects.aggregate(pipeline) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const getExpertsByFollowersFromUserModel = async ({
+  authorPermlink, skip = 0, limit = 30,
 }) => {
   try {
-    const pipeline = [
-      { $match: { author_permlink: authorPermlink } },
-      { $sort: { weight: -1 } },
-      { $skip: skip },
-      { $limit: limit },
-      { $project: { _id: 0, name: '$user_name', weight: 1 } },
-    ];
+    const usersWobjWithFollowersCount = await UserWobjects
+      .find({ author_permlink: authorPermlink })
+      .select(['author_permlink', 'user_name', 'weight'])
+      .populate({ path: 'full_user', select: { followers_count: 1, _id: 0 } })
+      .lean();
 
-    if (username) pipeline[0].$match.user_name = username;
-    if (weight) pipeline[0].$match.weight = { $gt: 0 };
-
-    const experts = await UserWobjects.aggregate(pipeline);
-    return { experts };
+    return {
+      experts: _
+        .chain(usersWobjWithFollowersCount)
+        .orderBy(['full_user.followers_count'], ['desc'])
+        .slice(skip, (limit + skip))
+        .map((user) => ({
+          _id: user._id,
+          weight: user.weight,
+          name: user.user_name,
+          followers_count: _.get(user, 'full_user.followers_count', 0),
+        }))
+        .value(),
+    };
   } catch (error) {
     return { error };
   }
@@ -63,6 +90,7 @@ module.exports = {
   find,
   findOne,
   aggregate,
-  getByWobject,
   countDocuments,
+  getExpertsWithoutMergingCollections,
+  getExpertsByFollowersFromUserModel,
 };
