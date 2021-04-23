@@ -5,6 +5,8 @@ const {
 } = require('test/testHelper');
 const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { getNamespace } = require('cls-hooked');
+const { DEVICE } = require('constants/common');
 
 describe('On wobjectHelper', async () => {
   let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
@@ -865,6 +867,28 @@ describe('On wobjectHelper', async () => {
         author_permlink: faker.random.string(),
       };
       expectedLink = `/object/${obj.author_permlink}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return /object/author_permlink on hashtag obj type', async () => {
+      sinon.stub(getNamespace('request-session'), 'get').returns(DEVICE.MOBILE);
+      obj = {
+        object_type: OBJECT_TYPES.HASHTAG,
+        author_permlink: faker.random.string(),
+      };
+      expectedLink = `/object/${obj.author_permlink}`;
+      link = wObjectHelper.getLinkToPageLoad(obj);
+      expect(link).to.be.eq(expectedLink);
+    });
+
+    it('should return /object/author_permlink on any obj type except hashtag type', async () => {
+      sinon.stub(getNamespace('request-session'), 'get').returns(DEVICE.MOBILE);
+      obj = {
+        object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['HASHTAG']))),
+        author_permlink: faker.random.string(),
+      };
+      expectedLink = `/object/${obj.author_permlink}/about`;
       link = wObjectHelper.getLinkToPageLoad(obj);
       expect(link).to.be.eq(expectedLink);
     });

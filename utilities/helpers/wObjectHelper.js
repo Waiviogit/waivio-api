@@ -296,7 +296,11 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
 };
 
 const getLinkToPageLoad = (obj) => {
-  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) return `/object/${obj.author_permlink}/about`;
+  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) {
+    return obj.object_type === OBJECT_TYPES.HASHTAG
+      ? `/object/${obj.author_permlink}`
+      : `/object/${obj.author_permlink}/about`;
+  }
   if (_.get(obj, 'sortCustom', []).length) return getCustomSortLink(obj);
 
   switch (obj.object_type) {
