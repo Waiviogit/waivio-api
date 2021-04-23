@@ -75,7 +75,7 @@ const AppSchema = new Schema({
   googleAnalyticsTag: { type: String, default: null },
   beneficiary: {
     account: { type: String, default: 'waivio' },
-    percent: { type: Number, default: 300 },
+    percent: { type: Number, default: 500 },
   },
   configuration: { type: Configuration, default: () => ({}) },
   host: {
