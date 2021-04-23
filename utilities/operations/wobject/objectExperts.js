@@ -52,7 +52,7 @@ const getWobjExperts = async ({
   author_permlink, skip = 0, limit = 30, sort, user, newsFilter,
 }) => {
   let userExpert;
-  const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
+  const { result: wobj, error: wobjErr } = await Wobj.findOne({ author_permlink });
   if (wobjErr || !wobj) return { error: wobjErr || { status: 404, message: 'Wobject not found!' } };
 
   if (!newsFilter) {

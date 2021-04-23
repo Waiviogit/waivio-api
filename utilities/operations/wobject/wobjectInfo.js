@@ -16,20 +16,21 @@ const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
  */
 const getItemsCount = async (authorPermlink, handledItems, recursive = false) => {
   let count = 0;
-  const { result: wobject, error } = await Wobj.findOne(authorPermlink);
+  const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (error || !wobject) return 0;
+  if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM), 'body');
 
-  const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM), 'body');
+    if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
 
-  if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
-
-  for (const item of listWobjects) {
+    for (const item of listWobjects) {
     // condition for exit from looping
-    if (!handledItems.includes(item)) {
-      handledItems.push(item);
-      count += await getItemsCount(item, handledItems, true);
+      if (!handledItems.includes(item)) {
+        handledItems.push(item);
+        count += await getItemsCount(item, handledItems, true);
+      }
     }
-  }
+  } else count++;
   return count;
 };
 
@@ -50,14 +51,16 @@ const getListItems = async (wobject, data, app) => {
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
+    // #TODO: идет в British Columbia Updates ищет там по названию "List item" берет количество = 2
     if (wobj.object_type.toLowerCase() === 'list') {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
     });
+    // #TODO: ????? запрашивает type у объекта хотя его нет и получает undefined
     wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
-
+    // #TODO: тут listItemsCount from Pacific.Dining.Gifts
     wobj.listItemsCount = await getItemsCount(
       wobj.author_permlink,
       [wobject.author_permlink, wobj.author_permlink],
