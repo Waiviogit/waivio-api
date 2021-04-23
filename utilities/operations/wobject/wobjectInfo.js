@@ -51,16 +51,13 @@ const getListItems = async (wobject, data, app) => {
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
-    // #TODO: идет в British Columbia Updates ищет там по названию "List item" берет количество = 2
     if (wobj.object_type.toLowerCase() === 'list') {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
     });
-    // #TODO: ????? запрашивает type у объекта хотя его нет и получает undefined
     wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
-    // #TODO: тут listItemsCount from Pacific.Dining.Gifts
     wobj.listItemsCount = await getItemsCount(
       wobj.author_permlink,
       [wobject.author_permlink, wobj.author_permlink],
