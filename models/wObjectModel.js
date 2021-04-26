@@ -105,9 +105,9 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
-const findOne = async (authorPermlink) => {
+const findOne = async (condition, select = {}) => {
   try {
-    return { result: await WObjectModel.findOne({ author_permlink: authorPermlink }).lean() };
+    return { result: await WObjectModel.findOne(condition, select).lean() };
   } catch (error) {
     return { error };
   }

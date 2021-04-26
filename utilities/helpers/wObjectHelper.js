@@ -42,7 +42,7 @@ const getUserSharesInWobj = async (name, author_permlink) => {
 };
 
 const getWobjectFields = async (permlink) => {
-  const { result } = await Wobj.findOne(permlink);
+  const { result } = await Wobj.findOne({ author_permlink: permlink });
   if (!result) return { error: { status: 404, message: 'Wobject not found' } };
   return { wobject: result };
 };
