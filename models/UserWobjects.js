@@ -39,7 +39,7 @@ const getExpertsByFollowersFromUserModel = async ({
 }) => {
   try {
     const usersWobjWithFollowersCount = await UserWobjects
-      .find({ author_permlink: authorPermlink })
+      .find({ author_permlink: authorPermlink, weight: { $gt: 0 } })
       .select(['author_permlink', 'user_name', 'weight'])
       .populate({ path: 'full_user', select: { followers_count: 1, _id: 0 } })
       .lean();
