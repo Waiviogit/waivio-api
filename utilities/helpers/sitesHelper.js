@@ -70,7 +70,7 @@ exports.getWebsitePayments = async ({
 
   const condition = host
     ? { host, userName: owner }
-    : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
+    : { userName: owner };
 
   const { error: paymentError, result: payments } = await websitePayments.find({
     condition: {
