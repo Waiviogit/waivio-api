@@ -61,6 +61,8 @@ const WObjectSchema = new Schema({
   status: { type: Object },
   last_posts_count: { type: Number, default: 0 },
   last_posts_counts_by_hours: { type: [Number], default: [] },
+  activeCampaigns: { type: [mongoose.Types.ObjectId], default: [] },
+  activeCampaignsCount: { type: Number, default: 0 },
 },
 {
   toObject: { virtuals: true }, timestamps: true, strict: false,
