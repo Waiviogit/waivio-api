@@ -182,7 +182,7 @@ exports.addCampaignsToWobjectsSites = async (data) => {
     if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
       return new BigNumber(_.get(b, 'propositions[0].reward', 0)).minus(_.get(a, 'propositions[0].reward', 0));
     }
-    return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
+    return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(b, 'propositions'));
   });
 
   return result;
