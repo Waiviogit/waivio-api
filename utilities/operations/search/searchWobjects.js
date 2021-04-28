@@ -139,7 +139,7 @@ const makeSitePipeline = ({
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
-  } else pipeline.push({ $sort: { [sort]: -1 } });
+  } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
