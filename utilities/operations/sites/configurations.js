@@ -28,7 +28,7 @@ exports.saveConfigurations = async (params) => {
 
   /** Check wobject to exist */
   if (_.get(params, 'configuration.aboutObject')) {
-    const { result } = await Wobj.findOne(params.configuration.aboutObject);
+    const { result } = await Wobj.findOne({ author_permlink: params.configuration.aboutObject });
     if (!result) return { error: { status: 422, message: 'Configuration validation failed, aboutObject not exist' } };
   }
 

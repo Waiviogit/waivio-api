@@ -70,7 +70,7 @@ exports.getWebsitePayments = async ({
 
   const condition = host
     ? { host, userName: owner }
-    : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
+    : { userName: owner };
 
   const { error: paymentError, result: payments } = await websitePayments.find({
     condition: {
@@ -245,7 +245,7 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
-  const { result } = await Wobj.findOne(_.get(app, 'configuration.aboutObject'));
+  const { result } = await Wobj.findOne({ author_permlink: _.get(app, 'configuration.aboutObject') });
   if (!result) return app;
   const wobject = await processWobjects({
     wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,

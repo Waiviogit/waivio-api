@@ -52,7 +52,7 @@ const getWobjExperts = async ({
   author_permlink, skip = 0, limit = 30, sort, user, newsFilter,
 }) => {
   let userExpert;
-  const { result: wobj, error: wobjErr } = await Wobj.findOne(author_permlink);
+  const { result: wobj, error: wobjErr } = await Wobj.findOne({ author_permlink });
   if (wobjErr || !wobj) return { error: wobjErr || { status: 404, message: 'Wobject not found!' } };
 
   if (!newsFilter) {
@@ -75,8 +75,7 @@ const getWobjExperts = async ({
   }
 
   const field = _.find(wobj.fields, (element) => element.permlink === newsFilter);
-  const fullField = Object.assign(field, jsonHelper.parseJson(_.get(field, 'body')));
-
+  const fullField = !_.isEmpty(field) ? Object.assign(field, jsonHelper.parseJson(_.get(field, 'body'))) : {};
   const multipliers = getMultipliers(fullField, author_permlink);
   const pipeline = makePipeline({ multipliers, skip, limit });
   const { result: experts, error: aggregationError } = await UserWobjects.aggregate(pipeline);
