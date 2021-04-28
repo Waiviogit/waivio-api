@@ -6,6 +6,7 @@ const {
 } = require('models');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
 const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
+const BigNumber = require('bignumber.js');
 
 const wobjectHelper = require('./wObjectHelper');
 
@@ -176,10 +177,10 @@ exports.addCampaignsToWobjectsSites = async (data) => {
 
   result.sort((a, b) => {
     if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
-      return _.get(b, 'campaigns.max_reward', 0) - _.get(a, 'campaigns.max_reward', 0);
+      return new BigNumber(_.get(b, 'campaigns.max_reward', 0)).minus(_.get(a, 'campaigns.max_reward', 0));
     }
     if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
-      return _.get(b, 'propositions[0].reward', 0) - _.get(a, 'propositions[0].reward', 0);
+      return new BigNumber(_.get(b, 'propositions[0].reward', 0)).minus(_.get(a, 'propositions[0].reward', 0));
     }
     return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
   });
