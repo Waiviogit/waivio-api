@@ -8,13 +8,12 @@ exports.getGlobalSearch = async ({
   searchString, userLimit, wobjectsLimit, objectsTypeLimit, sortByApp,
 }) => {
   const { result: app } = await getSessionApp();
-  const escapedString = searchString.replace(/[.?+*|{}[\]()"\\@]/g, '\\\\$&');
 
   const { objectTypes, objectTypesCount } = await searchObjectTypes(
     { string: searchString, limit: objectsTypeLimit, supportedTypes: _.get(app, 'supported_object_types', []) },
   );
   const { wobjects, wobjectsCounts } = await searchWobjects({
-    string: escapedString, limit: wobjectsLimit, sortByApp, needCounters: true, app,
+    string: searchString, limit: wobjectsLimit, sortByApp, needCounters: true, app,
   });
   const { users, usersCount } = await searchUsers({ string: searchString, limit: userLimit });
 
