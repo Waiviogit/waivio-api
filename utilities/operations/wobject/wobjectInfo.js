@@ -19,13 +19,13 @@ const getItemsCount = async (authorPermlink, handledItems, recursive = false, ap
   let count = 0;
   const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (error || !wobject) return 0;
+  const wobj = await wObjectHelper.processWobjects({
+    wobjects: [wobject],
+    fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+    app,
+    returnArray: false,
+  });
   if (wobject.object_type === OBJECT_TYPES.LIST) {
-    const wobj = await wObjectHelper.processWobjects({
-      wobjects: [wobject],
-      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
-      app,
-      returnArray: false,
-    });
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
 
     if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
