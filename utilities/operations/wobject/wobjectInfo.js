@@ -12,14 +12,21 @@ const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
  * @param authorPermlink {String} Permlink of list
  * @param recursive {Boolean} Boolean flag for recursive call
  * @param handledItems {String[]} Array of author_permlinks which already handled(to avoid looping)
+ * @param app {String} Get app admins and wobj administrators in processWobjects
  * @returns {Promise<number>}
  */
-const getItemsCount = async (authorPermlink, handledItems, recursive = false) => {
+const getItemsCount = async (authorPermlink, handledItems, recursive = false, app) => {
   let count = 0;
   const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (error || !wobject) return 0;
   if (wobject.object_type === OBJECT_TYPES.LIST) {
-    const listWobjects = _.map(_.filter(wobject.fields, (field) => field.name === FIELDS_NAMES.LIST_ITEM), 'body');
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
 
     if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
 
@@ -61,6 +68,7 @@ const getListItems = async (wobject, data, app) => {
     wobj.listItemsCount = await getItemsCount(
       wobj.author_permlink,
       [wobject.author_permlink, wobj.author_permlink],
+      app,
     );
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
