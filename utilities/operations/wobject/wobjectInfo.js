@@ -15,17 +15,19 @@ const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
  * @param app {String} Get app admins and wobj administrators in processWobjects
  * @returns {Promise<number>}
  */
-const getItemsCount = async (authorPermlink, handledItems, recursive = false, app) => {
+const getItemsCount = async ({
+  authorPermlink, handledItems, app, recursive = false,
+}) => {
   let count = 0;
   const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (error || !wobject) return 0;
-  const wobj = await wObjectHelper.processWobjects({
-    wobjects: [wobject],
-    fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
-    app,
-    returnArray: false,
-  });
   if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
 
     if (_.isEmpty(listWobjects)) return recursive ? 1 : 0;
@@ -34,7 +36,9 @@ const getItemsCount = async (authorPermlink, handledItems, recursive = false, ap
     // condition for exit from looping
       if (!handledItems.includes(item)) {
         handledItems.push(item);
-        count += await getItemsCount(item, handledItems, true);
+        count += await getItemsCount({
+          authorPermlink: item, handledItems, app, recursive: true,
+        });
       }
     }
   } else count++;
@@ -65,11 +69,11 @@ const getListItems = async (wobject, data, app) => {
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
     });
     wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
-    wobj.listItemsCount = await getItemsCount(
-      wobj.author_permlink,
-      [wobject.author_permlink, wobj.author_permlink],
+    wobj.listItemsCount = await getItemsCount({
+      authorPermlink: wobj.author_permlink,
+      handledItems: [wobject.author_permlink, wobj.author_permlink],
       app,
-    );
+    });
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
