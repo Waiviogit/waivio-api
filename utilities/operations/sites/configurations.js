@@ -5,7 +5,7 @@ const { sitesHelper } = require('utilities/helpers');
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
 exports.getConfigurationsList = async (host) => {
-  let { result } = await App.findOne({ host, inherited: true });
+  let { result } = await App.findOne({ host });
   if (!result) return { error: { status: 404, message: 'App not Found!' } };
   result = await sitesHelper.aboutObjectFormat(result);
   return { result: _.get(result, 'configuration') };
