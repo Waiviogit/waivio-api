@@ -93,62 +93,6 @@ describe('UserWobjects', async () => {
       expect(count).to.be.eq(correctCount);
     });
   });
-  describe('On getByWobject', async () => {
-    let correctUserWobj;
-    beforeEach(async () => {
-      await dropDatabase();
-      for (let iter = 0; iter < countUserWobjects; iter++) {
-        await UserWobjectsFactory.Create({
-          username: userName,
-          authorPermlink: faker.internet.url(),
-        });
-      }
-      correctUserWobj = await UserWobjectsFactory.Create({
-        username: userName,
-        authorPermlink: link,
-        weight: 1,
-      });
-    });
-    it('Should return correct wobject', async () => {
-      const { experts } = await UserWobjectsModel.getByWobject({
-        authorPermlink: link,
-      });
-      expect(experts[0].name).to.be.eq(correctUserWobj.user_name);
-    });
-    it('Should return correct user if he has the weight field', async () => {
-      const { experts } = await UserWobjectsModel.getByWobject({
-        authorPermlink: link,
-        weight: 1,
-      });
-      expect(experts[0].name).to.be.eq(correctUserWobj.user_name);
-    });
-  });
-  describe('On getByWobject: Returns a single correct wobject', async () => {
-    let singleUser;
-    beforeEach(async () => {
-      await dropDatabase();
-      singleUser = await UserWobjectsFactory.Create({
-        userName,
-        authorPermlink: link,
-      });
-    });
-    it('Should return a single user if the name and the authorPermlink was transmitted',
-      async () => {
-        const { experts } = await UserWobjectsModel.getByWobject({
-          authorPermlink: link,
-          username: userName,
-        });
-        expect(experts).to.have.length(1);
-      });
-    it('Should return a correct user if the name and the authorPermlink was transmitted',
-      async () => {
-        const { experts } = await UserWobjectsModel.getByWobject({
-          authorPermlink: link,
-          username: userName,
-        });
-        expect(experts[0].username).to.be.eq(singleUser.username);
-      });
-  });
   describe('On aggregate', async () => {
     let pipeline, limit;
     beforeEach(async () => {

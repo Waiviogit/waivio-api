@@ -42,7 +42,7 @@ const getUserSharesInWobj = async (name, author_permlink) => {
 };
 
 const getWobjectFields = async (permlink) => {
-  const { result } = await Wobj.findOne(permlink);
+  const { result } = await Wobj.findOne({ author_permlink: permlink });
   if (!result) return { error: { status: 404, message: 'Wobject not found' } };
   return { wobject: result };
 };
@@ -188,11 +188,41 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   return result;
 };
 
+/**
+ * the method sorts the fields by name, then for each individual type checks if there are fields
+ * with the requested locale, if there are - processes them if not, requests the English locale
+ * @param fields {[Object]}
+ * @param locale {String}
+ * @param filter {[String]}
+ * @param ownership {[String]}
+ * @returns {[Object]}
+ */
+const getFilteredFields = (fields, locale, filter, ownership) => {
+  const fieldTypes = _.reduce(fields, (acc, el) => {
+    if (_.has(acc, `${el.name}`)) {
+      acc[el.name].push(el);
+      return acc;
+    }
+    acc[el.name] = [el];
+    return acc;
+  }, {});
+
+  return _.reduce(fieldTypes, (acc, el) => {
+    const nativeLang = _
+      .filter(el, (field) => filterFieldValidation(filter, field, locale, ownership));
+
+    _.isEmpty(nativeLang) && locale !== 'en-US'
+      ? acc = [...acc, ..._.filter(el, (field) => filterFieldValidation(filter, field, 'en-US', ownership))]
+      : acc = [...acc, ...nativeLang];
+    return acc;
+  }, []);
+};
+
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
-  const filteredFields = _.filter(fields,
-    (field) => filterFieldValidation(filter, field, locale, ownership));
+  const filteredFields = getFilteredFields(fields, locale, filter, ownership);
+
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
@@ -266,7 +296,11 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
 };
 
 const getLinkToPageLoad = (obj) => {
-  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) return `/object/${obj.author_permlink}/about`;
+  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) {
+    return obj.object_type === OBJECT_TYPES.HASHTAG
+      ? `/object/${obj.author_permlink}`
+      : `/object/${obj.author_permlink}/about`;
+  }
   if (_.get(obj, 'sortCustom', []).length) return getCustomSortLink(obj);
 
   switch (obj.object_type) {
