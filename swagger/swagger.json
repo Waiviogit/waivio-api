@@ -2138,7 +2138,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**start_author** - for steem user blog feed(for infinite scroll),\n**start_permlink** - for steem user blog feed(for infinite scroll),\n**tagsCondition** - condition to filtering posts by tags.\n",
+          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**tagsCondition** - condition to filtering posts by tags (array author_permlink).\n",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_5"

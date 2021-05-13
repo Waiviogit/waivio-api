@@ -1,8 +1,6 @@
-const _ = require('lodash');
-const {
-  User, Post, hiddenPostModel, mutedUserModel,
-} = require('models');
+const { Post, hiddenPostModel, mutedUserModel } = require('models');
 const { getTagsByUser } = require('utilities/helpers/postHelper');
+const _ = require('lodash');
 
 module.exports = async ({
   name, limit, skip, userName, app, tagsArray,
