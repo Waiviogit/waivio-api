@@ -5101,12 +5101,6 @@
         "skip" : {
           "type" : "integer"
         },
-        "start_author" : {
-          "type" : "string"
-        },
-        "start_permlink" : {
-          "type" : "string"
-        },
         "tagsCondition" : {
           "type": "array",
           "items": {
