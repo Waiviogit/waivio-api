@@ -180,9 +180,9 @@ exports.getManyPosts = async (postsRefs) => {
   }
 };
 
-exports.findByCondition = async (condition) => {
+exports.findByCondition = async (condition, select = {}) => {
   try {
-    return { posts: await PostModel.find(condition).lean() };
+    return { posts: await PostModel.find(condition, select).lean() };
   } catch (error) {
     return { error };
   }

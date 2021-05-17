@@ -1,40 +1,32 @@
+const { Post, hiddenPostModel, mutedUserModel } = require('models');
+const { getTagsByUser } = require('utilities/helpers/postHelper');
 const _ = require('lodash');
-const {
-  User, Post, hiddenPostModel, mutedUserModel,
-} = require('models');
 
 module.exports = async ({
-  // eslint-disable-next-line camelcase
-  name, limit, skip, userName, app,
+  name, limit, skip, userName, app, tagsArray,
 }) => {
+  const additionalCond = {};
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
   });
-  if (!_.isEmpty(mutedUsers)) return { posts: [] };
+  if (!_.isEmpty(mutedUsers)) return { posts: [], tags: [] };
 
-  const { user, error: userError } = await User.getOne(name);
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-  const additionalCond = _.isEmpty(hiddenPosts)
-    ? {}
-    : { _id: { $nin: hiddenPosts } };
 
-  if (userError) return { error: userError };
-  if (user && user.auth) {
-    return Post.getBlog({
-      name, limit, skip, additionalCond,
-    });
-  }
-  const { posts, error } = await Post.getBlog(
-    {
-      limit, name, skip: skip !== 0 ? skip - 1 : 0, additionalCond,
-    },
-  );
+  if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
+  if (!_.isEmpty(tagsArray)) Object.assign(additionalCond, { 'wobjects.author_permlink': { $in: tagsArray } });
 
-  if (error) return { error };
+  const { posts, error: postError } = await Post.getBlog({
+    limit: limit + 1, name, skip, additionalCond,
+  });
+
+  if (postError) return { error: postError };
 
   // add field reblogged_by if post not authored by "user" blog requested
   posts.forEach((post) => {
     if (post.author !== name) post.reblogged_by = [name];
   });
-  return { posts };
+  const { tags } = await getTagsByUser({ author: name });
+
+  return { tags, posts: posts.slice(0, limit), hasMore: posts.length === limit + 1 };
 };

@@ -127,8 +127,8 @@ describe('ObjectTypeModel', async () => {
     });
     it('Should return a correct array', async () => {
       const { result } = await ObjectTypeModel.aggregate([
-        { $skip: skip },
         { $match: { name: new RegExp('^asdf_') } },
+        { $skip: skip },
       ]);
       expect(result).to.have.length(objCount - skip);
     });
