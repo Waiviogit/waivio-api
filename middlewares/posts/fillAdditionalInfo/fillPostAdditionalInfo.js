@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const { schema } = require('middlewares/posts/fillAdditionalInfo/schema');
-const { postHelper, campaignsHelper } = require('utilities/helpers');
-const userModel = require('models/UserModel');
+const { postHelper } = require('utilities/helpers');
 /**
  * Middleware which fill some specific info on each post before send those to client.
  * - fill wobjects on post by full info about wobjects(with fields and others);
@@ -18,44 +17,39 @@ exports.fill = async (req, res, next) => {
 
   const userName = _.get(req, 'params.userName', _.get(req, 'headers.follower', req.headers.following));
   // separate requests which return array of posts and which return single post
-  if (_.isArray(res.result.json)) {
-    // replace reblog post blank to source post
-    await postHelper.fillReblogs(res.result.json, userName);
-    // fill wobjects on post by full info about wobjects(with fields and others);
-    res.result.json = await fillObjects(res.result.json, userName);
-    // add current "author_wobjects_weight" to each post;
-    await postHelper.addAuthorWobjectsWeight(res.result.json);
-    // if review  add additional sponsor obligations to calculations
-    res.result.json = await postHelper.additionalSponsorObligations(res.result.json);
-  } else {
-    // replace reblog post blank to source post
-    await postHelper.fillReblogs([res.result.json], userName);
-    // fill wobjects on post by full info about wobjects(with fields and others);
-    [res.result.json] = await fillObjects([res.result.json]);
-    // add current "author_wobjects_weight" to each post;
-    await postHelper.addAuthorWobjectsWeight(
-      [res.result.json], _.get(req, 'headers.app'), userName,
-    );
-    // if review  add additional sponsor obligations to calculations
-    [res.result.json] = await postHelper.additionalSponsorObligations([res.result.json]);
+  switch (currentSchema.case) {
+    case 1:
+      // replace reblog post blank to source post
+      await postHelper.fillReblogs(res.result.json, userName);
+      // fill wobjects on post by full info about wobjects(with fields and others);
+      res.result.json = await postHelper.fillObjects(res.result.json, userName);
+      // add current "author_wobjects_weight" to each post;
+      await postHelper.addAuthorWobjectsWeight(res.result.json);
+      // if review  add additional sponsor obligations to calculations
+      res.result.json = await postHelper.additionalSponsorObligations(res.result.json);
+      break;
+    case 2:
+      // replace reblog post blank to source post
+      await postHelper.fillReblogs([res.result.json], userName);
+      // fill wobjects on post by full info about wobjects(with fields and others);
+      [res.result.json] = await postHelper.fillObjects([res.result.json]);
+      // add current "author_wobjects_weight" to each post;
+      await postHelper.addAuthorWobjectsWeight(
+        [res.result.json], _.get(req, 'headers.app'), userName,
+      );
+      // if review  add additional sponsor obligations to calculations
+      [res.result.json] = await postHelper.additionalSponsorObligations([res.result.json]);
+      break;
+    case 3:
+      // replace reblog post blank to source post
+      await postHelper.fillReblogs(res.result.json.posts, userName);
+      // fill wobjects on post by full info about wobjects(with fields and others);
+      res.result.json.posts = await postHelper.fillObjects(res.result.json.posts, userName);
+      // add current "author_wobjects_weight" to each post;
+      await postHelper.addAuthorWobjectsWeight(res.result.json.posts);
+      // if review  add additional sponsor obligations to calculations
+      res.result.json.posts = await postHelper.additionalSponsorObligations(res.result.json.posts);
+      break;
   }
   next();
-};
-
-const fillObjects = async (posts, userName, wobjectsPath = 'fullObjects') => {
-  let user;
-  if (userName) {
-    ({ user } = await userModel.getOne(userName));
-  }
-  for (const post of posts) {
-    for (let wObject of _.get(post, 'wobjects') || []) {
-      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
-    }
-    post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
-    post.wobjects = await campaignsHelper.addCampaignsToWobjects(
-      { wobjects: post.wobjects, user },
-    );
-    delete post[wobjectsPath];
-  }
-  return posts;
 };

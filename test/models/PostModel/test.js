@@ -108,7 +108,9 @@ describe('Post Model', async () => {
       nameAuthor = faker.name.firstName();
       for (let count = 0; count < postCount; count++) {
         if (count === 0) post = await PostFactory.Create({ author: nameAuthor });
-        else await PostFactory.Create();
+        else {
+          await PostFactory.Create();
+        }
       }
     });
     afterEach(async () => {
@@ -209,6 +211,21 @@ describe('Post Model', async () => {
       sinon.stub(Post, 'find').throws('DataBase is not responding');
       const { error } = await PostModel.getBlog({ name: faker.name.firstName() });
       expect(error).to.be.exist;
+    });
+    it('Should return users with correct tags', async () => {
+      const name = faker.name.firstName();
+      const permlink = faker.random.string();
+      const wobj = { author_permlink: permlink };
+      const postsCount = _.random(5, 20);
+      for (let iter = 0; iter < postsCount; iter++) {
+        await PostFactory.Create({ author: name, wobjects: wobj });
+      }
+      const { posts } = await PostModel.getBlog({
+        name,
+        skip: 0,
+        additionalCond: { 'wobjects.author_permlink': { $in: [permlink] } },
+      });
+      expect(posts).to.have.length(postsCount);
     });
   });
   describe('On getManyPosts', async () => {
