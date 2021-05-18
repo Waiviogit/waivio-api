@@ -182,7 +182,7 @@ exports.getManyPosts = async (postsRefs) => {
 
 exports.findByCondition = async (condition, select = {}) => {
   try {
-    return { posts: await PostModel.find(condition, select).lean() };
+    return { posts: await PostModel.find({ ...condition, ...getBlockedAppCond() }, select).lean() };
   } catch (error) {
     return { error };
   }

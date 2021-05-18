@@ -2138,7 +2138,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**tagsCondition** - condition to filtering posts by tags (array author_permlink).\n",
+          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**tagsArray** - condition to filtering posts by tags (array author_permlink).\n",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_5"
@@ -5101,7 +5101,7 @@
         "skip" : {
           "type" : "integer"
         },
-        "tagsCondition" : {
+        "tagsArray" : {
           "type": "array",
           "items": {
             "type": "string"
