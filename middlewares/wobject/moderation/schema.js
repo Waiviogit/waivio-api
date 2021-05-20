@@ -50,8 +50,9 @@ exports.schema = [
   {
     path: '/user/:userName/blog',
     method: 'POST',
-    case: 4,
+    case: 7,
     wobjects_path: 'wobjects',
+    array_path: 'posts',
   },
   {
     path: '/user/:userName/objects_shares',
