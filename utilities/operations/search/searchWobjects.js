@@ -10,12 +10,26 @@ exports.searchWobjects = async (data) => {
   const appInfo = await getAppInfo(data);
 
   if (_.isUndefined(data.string)) data.string = '';
-  data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
+  data.string = createSearchString(data.string);
   if (_.isUndefined(data.limit)) data.limit = 10;
 
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
     : defaultWobjectSearch({ ...data, ...appInfo });
+};
+
+const createSearchString = (searchQuery) => {
+  let regex;
+  const words = searchQuery.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&').split(' ');
+
+  words.forEach((word, index) => {
+    let charSequence = '';
+    Array.from(word).forEach((letter) => charSequence += `.?${letter}.?`);
+    if (index === 0) regex = `^(?=.*${charSequence})`;
+    if (index !== 0 && index < words.length - 1) regex += `(?=.*${charSequence})`;
+    if (index === words.length - 1) regex += `(?=.*${charSequence}).*$`;
+  });
+  return regex;
 };
 
 const getAppInfo = async ({ app, addHashtag }) => {
