@@ -23,11 +23,11 @@ const createSearchString = (searchQuery) => {
   const words = searchQuery.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&').split(' ');
 
   words.forEach((word, index) => {
-    let charPossibility = '';
-    Array.from(word).forEach((letter) => charPossibility += `.?${letter}.?`);
-    if (index === 0) regex = `^(?=.*${charPossibility})`;
-    if (index !== 0 && index < words.length - 1) regex += `(?=.*${charPossibility})`;
-    if (index === words.length - 1) regex += `(?=.*${charPossibility}).*$`;
+    let charSequence = '';
+    Array.from(word).forEach((letter) => charSequence += `.?${letter}.?`);
+    if (index === 0) regex = `^(?=.*${charSequence})`;
+    if (index !== 0 && index < words.length - 1) regex += `(?=.*${charSequence})`;
+    if (index === words.length - 1) regex += `(?=.*${charSequence}).*$`;
   });
   return regex;
 };
