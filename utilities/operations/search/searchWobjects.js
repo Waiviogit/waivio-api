@@ -21,13 +21,10 @@ exports.searchWobjects = async (data) => {
 const createSearchString = (searchQuery) => {
   let regex;
   const words = searchQuery.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&').split(' ');
-
   words.forEach((word, index) => {
-    let charSequence = '';
-    Array.from(word).forEach((letter) => charSequence += `.?${letter}.?`);
-    if (index === 0) regex = `^(?=.*${charSequence})`;
-    if (index !== 0 && index < words.length - 1) regex += `(?=.*${charSequence})`;
-    if (index === words.length - 1) regex += `(?=.*${charSequence}).*$`;
+    if (index === 0) regex = `^(?=.*${word})`;
+    if (index !== 0 && index < words.length - 1) regex += `(?=.*${word})`;
+    if (index === words.length - 1) regex += `(?=.*${word}).*$`;
   });
   return regex;
 };
