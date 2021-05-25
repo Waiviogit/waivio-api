@@ -22,7 +22,7 @@ const createSearchString = (searchQuery) => {
   let regex;
   const words = searchQuery.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&').split(' ');
   words.forEach((word, index) => {
-    if (index === 0) regex = `^(?=.*${word})`;
+    if (index === 0) regex = `(?=^${word}$)(^(?=.*${word}))`;
     if (index !== 0 && index < words.length - 1) regex += `(?=.*${word})`;
     if (index === words.length - 1) regex += `(?=.*${word}).*$`;
   });
