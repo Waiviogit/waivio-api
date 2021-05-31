@@ -299,8 +299,9 @@ const getTagsByUser = async ({ author }) => {
   const tags = [];
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
 
-  _.forEach(posts, (post) => {
-    _.forEach(post.wobjects, (wobject) => {
+  for (const post of posts) {
+    for (const wobject of post.wobjects) {
+      if (!wobject.author_permlink) continue;
       const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
       existsInTags
         ? existsInTags.counter++
@@ -309,8 +310,8 @@ const getTagsByUser = async ({ author }) => {
           counter: 1,
           author_permlink: wobject.author_permlink,
         });
-    });
-  });
+    }
+  }
 
   return { tags: tags.sort((a, b) => b.counter - a.counter) };
 };
