@@ -14,12 +14,12 @@ const getGuestCreationDate = async (name) => {
   const { user, error } = await User.getOne(name);
   if (error) return { error };
 
-  return { timestamp: moment(user.createdAt).valueOf() };
+  return { timestamp: moment(user.createdAt).unix() };
 };
 
 const getHiveCreationDate = async (name) => {
   const { userData = {}, error } = await userUtil.getAccount(name);
   if (error) return { error };
 
-  return { timestamp: moment(userData.created).valueOf() };
+  return { timestamp: moment(userData.created).unix() };
 };
