@@ -2555,7 +2555,7 @@
         },{
           "name" : "userName",
           "in" : "path",
-          "description" : "Name authorized user",
+          "description" : "user name",
           "required" : true,
           "type" : "string"
         }
