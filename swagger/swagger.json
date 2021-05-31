@@ -2555,7 +2555,7 @@
         },{
           "name" : "userName",
           "in" : "path",
-          "description" : "Name authorized user",
+          "description" : "user name",
           "required" : true,
           "type" : "string"
         }
@@ -2568,7 +2568,7 @@
               "properties": {
                 "timestamp": {
                   "type": "number",
-                  "example": 1513391133000
+                  "example": 1513391133
                 }
               }
             }
