@@ -2568,7 +2568,7 @@
               "properties": {
                 "timestamp": {
                   "type": "number",
-                  "example": 1513391133000
+                  "example": 1513391133
                 }
               }
             }
