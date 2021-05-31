@@ -145,6 +145,8 @@ userRoutes.route('/user/:userName/vote-value')
 userRoutes.route('/geo-ip')
   .get(UserController.getGeoByIp)
   .put(UserController.putUserGeo);
+userRoutes.route('/user/:userName/creation-date')
+  .get(UserController.getCreationDate);
 // endregion
 // region Post
 postRoutes.route('/post/:author/:permlink')

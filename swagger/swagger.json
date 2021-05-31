@@ -2540,6 +2540,50 @@
         }
       }
     },
+    "/api/user/{userName}/creation-date" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "return timestamp(ms) creation date of acc",
+        "description" : "return timestamp(ms) creation date of acc",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name authorized user",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "number",
+                  "example": 1513391133000
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "example": {
+                "message": "Not Found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/geo-ip" : {
       "get" : {
         "tags" : [ "user" ],
