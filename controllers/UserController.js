@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
-  setMarkers, getObjectsFollow, geoData,
+  setMarkers, getObjectsFollow, geoData, getUserCreationDate,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -384,6 +384,14 @@ const putUserGeo = async (req, res, next) => {
   next();
 };
 
+const getCreationDate = async (req, res, next) => {
+  const { timestamp, error } = await getUserCreationDate(req.params.userName);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { timestamp } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -409,4 +417,5 @@ module.exports = {
   getVoteValue,
   getGeoByIp,
   putUserGeo,
+  getCreationDate,
 };
