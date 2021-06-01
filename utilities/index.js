@@ -1,6 +1,6 @@
 const moduleExports = {};
 
-moduleExports.steemApi = require('./steemApi');
+moduleExports.hiveApi = require('./hiveApi');
 moduleExports.helpers = require('./helpers');
 
 module.exports = moduleExports;

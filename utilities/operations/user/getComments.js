@@ -1,7 +1,7 @@
-const _ = require('lodash');
-const { Comment, User, mutedUserModel } = require('models');
-const { postsUtil } = require('utilities/steemApi');
 const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('utilities/helpers/commentHelper');
+const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { Comment, User, mutedUserModel } = require('models');
+const _ = require('lodash');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
@@ -33,7 +33,10 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
   const cond = start_permlink
     ? { start_author, start_permlink, limit: limit + 1 }
     : { start_author, limit };
-  const { comments: steemComments } = await postsUtil.getUserComments(cond);
+  const { comments: steemComments } = await hiveClient.execute(
+    postsUtil.getUserComments,
+    cond,
+  );
 
   if (steemComments.error) return { error: steemComments.error };
 

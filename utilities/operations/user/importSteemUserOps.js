@@ -1,6 +1,6 @@
-const _ = require('lodash');
+const { userUtil, hiveClient } = require('utilities/hiveApi');
 const { User, Subscriptions } = require('models');
-const { userUtil } = require('utilities/steemApi');
+const _ = require('lodash');
 
 /**
  * Import full user info from STEEM to mongodb:
@@ -32,10 +32,18 @@ exports.importUser = async (userName) => {
  * @returns {Promise<{data: (Object)}|{error: (*|string)}>}
  */
 exports.getUserSteemInfo = async (name) => {
-  const { userData, error: steemError } = await userUtil.getAccount(name);
+  const { userData, error: steemError } = await hiveClient.execute(
+    userUtil.getAccount,
+    name,
+  );
+
   if (steemError || !userData) return { error: steemError || `User ${name} not exist, can't import.` };
 
-  const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
+  const { result: followCountRes, error: followCountErr } = await hiveClient.execute(
+    userUtil.getFollowCount,
+    name,
+  );
+
   if (followCountErr) return { error: followCountErr };
 
   const { count: guestFollCount, error: guestFollErr } = await Subscriptions
@@ -76,9 +84,10 @@ const updateUserFollowings = async (name) => {
   let hiveArray = [];
 
   do {
-    const { followings = [], error } = await userUtil.getFollowingsList({
-      name, startAccount, limit: batchSize,
-    });
+    const { followings = [], error } = await hiveClient.execute(
+      userUtil.getFollowingsList,
+      { name, startAccount, limit: batchSize },
+    );
 
     if (error || followings.error) {
       console.error(error || followings.error);
@@ -107,9 +116,10 @@ const updateUserFollowers = async (name) => {
   let hiveArray = [];
 
   do {
-    const { followers = [], error } = await userUtil.getFollowersList({
-      name, startAccount, limit: batchSize,
-    });
+    const { followers = [], error } = await hiveClient.execute(
+      userUtil.getFollowersList,
+      { name, startAccount, limit: batchSize },
+    );
 
     if (error || followers.error) {
       console.error(error || followers.error);

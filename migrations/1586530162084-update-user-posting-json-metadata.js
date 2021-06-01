@@ -1,5 +1,5 @@
 const { User } = require('database').models;
-const { userUtil } = require('utilities/steemApi');
+const { userUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
 
 /**
