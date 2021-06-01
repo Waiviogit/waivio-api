@@ -70,7 +70,7 @@ exports.getWebsitePayments = async ({
 
   const condition = host
     ? { host, userName: owner }
-    : { $or: [{ userName: owner }, { host: { $in: currentApps } }] };
+    : { userName: owner };
 
   const { error: paymentError, result: payments } = await websitePayments.find({
     condition: {
@@ -230,7 +230,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
-  const { result: app } = await App.findOne({ host, inherited: true });
+  const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const { googleAnalyticsTag, beneficiary, app_commissions } = app;
   return {
@@ -245,7 +245,7 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
-  const { result } = await Wobj.findOne(_.get(app, 'configuration.aboutObject'));
+  const { result } = await Wobj.findOne({ author_permlink: _.get(app, 'configuration.aboutObject') });
   if (!result) return app;
   const wobject = await processWobjects({
     wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,

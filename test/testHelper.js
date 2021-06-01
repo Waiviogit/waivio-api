@@ -1,3 +1,4 @@
+const { wobjRefsClient } = require('utilities/redis/redis');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 const chaiHttp = require('chai-http');
@@ -32,6 +33,8 @@ const dropDatabase = async () => {
   }
 };
 
+const dropRedisDb = async () => wobjRefsClient.flushdbAsync();
+
 module.exports = {
   ...require('utilities/helpers'),
   ...require('utilities/hiveApi'),
@@ -45,8 +48,9 @@ module.exports = {
   SubscriptionModel,
   UserWobjectsModel,
   ObjectTypeModel,
-  dropDatabase,
   CommentModel,
+  dropDatabase,
+  dropRedisDb,
   WobjModel,
   PostModel,
   UserModel,

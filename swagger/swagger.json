@@ -2138,7 +2138,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**start_author** - for steem user blog feed(for infinite scroll),\n**start_permlink** - for steem user blog feed(for infinite scroll).\n",
+          "description" : "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*,\n**tagsArray** - condition to filtering posts by tags (array author_permlink).\n",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_5"
@@ -2148,9 +2148,23 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/post"
+              "type" : "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items" : {
+                    "$ref" : "#/definitions/post"
+                  }
+                },
+                "tags": {
+                  "type": "array",
+                  "items" : {
+                    "$ref" : "#/definitions/postTags"
+                  }
+                },
+                "hasMore" : {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -2510,6 +2524,50 @@
             "schema": {
               "example": {
                 "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/creation-date" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "return timestamp(ms) creation date of acc",
+        "description" : "return timestamp(ms) creation date of acc",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "timestamp": {
+                  "type": "number",
+                  "example": 1513391133
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "example": {
+                "message": "Not Found"
               }
             }
           }
@@ -3085,7 +3143,7 @@
         }, {
           "in" : "body",
           "name" : "params",
-          "description" : "**limit** - Count of users to return (*default* 5), \n**skip** - count of skipping users(*default* 5), use for infinite scroll,\n**user** - UserName, which weight add to response\n",
+          "description" : "**limit** - Count of users to return (*default* 5), \n**skip** - count of skipping users(*default* 5), use for infinite scroll,\n**user** - UserName, which weight add to response\n, \n**newsFilter** - filter's permlink on which we will look for experts(*default* null), display experts by a specific filter",
           "required" : false,
           "schema" : {
             "$ref" : "#/definitions/params_10"
@@ -4734,6 +4792,20 @@
         }
       }
     },
+    "postTags": {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type": "string"
+        },
+        "counter" : {
+          "type": "number"
+        },
+        "author_permlink" : {
+          "type": "string"
+        }
+      }
+    },
     "userMetadata" : {
       "type" : "object",
       "properties" : {
@@ -5063,11 +5135,11 @@
         "skip" : {
           "type" : "integer"
         },
-        "start_author" : {
-          "type" : "string"
-        },
-        "start_permlink" : {
-          "type" : "string"
+        "tagsArray" : {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5407,6 +5479,9 @@
           "type" : "integer"
         },
         "user" : {
+          "type" : "string"
+        },
+        "newsFilter" : {
           "type" : "string"
         }
       }

@@ -3,6 +3,7 @@ const {
   CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
   Campaign, botUpvoteModel, paymentHistory,
 } = require('models');
+const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 const { RESERVATION_STATUSES } = require('constants/campaignsData');
@@ -171,6 +172,24 @@ const fillReblogs = async (posts = [], userName) => {
   }
 };
 
+const fillObjects = async (posts, userName, wobjectsPath = 'fullObjects') => {
+  let user;
+  if (userName) {
+    ({ user } = await User.getOne(userName));
+  }
+  for (const post of posts) {
+    for (let wObject of _.get(post, 'wobjects') || []) {
+      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
+    }
+    post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
+    post.wobjects = await addCampaignsToWobjects(
+      { wobjects: post.wobjects, user },
+    );
+    delete post[wobjectsPath];
+  }
+  return posts;
+};
+
 const jsonParse = (post) => {
   try {
     return JSON.parse(post.json_metadata);
@@ -276,6 +295,27 @@ const additionalSponsorObligations = async (posts) => {
   return posts;
 };
 
+const getTagsByUser = async ({ author }) => {
+  const tags = [];
+  const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
+
+  for (const post of posts) {
+    for (const wobject of post.wobjects) {
+      if (!wobject.author_permlink) continue;
+      const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
+      existsInTags
+        ? existsInTags.counter++
+        : tags.push({
+          name: _.get(wobject, 'tagged', _.get(wobject, 'objectName', wobject.author_permlink)),
+          counter: 1,
+          author_permlink: wobject.author_permlink,
+        });
+    }
+  }
+
+  return { tags: tags.sort((a, b) => b.counter - a.counter) };
+};
+
 module.exports = {
   additionalSponsorObligations,
   addAuthorWobjectsWeight,
@@ -285,4 +325,6 @@ module.exports = {
   getPostObjects,
   mergePostData,
   fillReblogs,
+  fillObjects,
+  getTagsByUser,
 };

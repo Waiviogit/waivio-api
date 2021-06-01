@@ -59,7 +59,11 @@ const getChildWobjects = async ({
 }) => {
   try {
     const wobjects = await WObjectModel
-      .find({ parent: authorPermlink, object_type: { $nin: excludeTypes } })
+      .find({
+        parent: authorPermlink,
+        object_type: { $nin: excludeTypes },
+        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      })
       .sort({ weight: -1, _id: -1 })
       .skip(skip)
       .limit(limit)
@@ -101,9 +105,9 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
-const findOne = async (authorPermlink) => {
+const findOne = async (condition, select = {}) => {
   try {
-    return { result: await WObjectModel.findOne({ author_permlink: authorPermlink }).lean() };
+    return { result: await WObjectModel.findOne(condition, select).lean() };
   } catch (error) {
     return { error };
   }
