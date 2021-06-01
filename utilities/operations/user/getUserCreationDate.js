@@ -1,4 +1,4 @@
-const { userUtil } = require('utilities/steemApi');
+const { userUtil, hiveClient } = require('utilities/hiveApi');
 const { GUEST_NAME } = require('constants/regExp');
 const { User } = require('models');
 const moment = require('moment');
@@ -18,7 +18,10 @@ const getGuestCreationDate = async (name) => {
 };
 
 const getHiveCreationDate = async (name) => {
-  const { userData = {}, error } = await userUtil.getAccount(name);
+  const { userData = {}, error } = await hiveClient.execute(
+    userUtil.getAccount,
+    name,
+  );
   if (error) return { error };
 
   return { timestamp: moment(userData.created).unix() };
