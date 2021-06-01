@@ -1,16 +1,16 @@
-const moment = require('moment');
-const _ = require('lodash');
-const UserWobjects = require('models/UserWobjects');
-const Wobj = require('models/wObjectModel');
-const ObjectTypeModel = require('models/ObjectTypeModel');
-const blacklistModel = require('models/blacklistModel');
-const { postsUtil } = require('utilities/steemApi');
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
+const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const ObjectTypeModel = require('models/ObjectTypeModel');
+const blacklistModel = require('models/blacklistModel');
+const UserWobjects = require('models/UserWobjects');
 const { DEVICE } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
+const Wobj = require('models/wObjectModel');
+const moment = require('moment');
+const _ = require('lodash');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -271,7 +271,8 @@ const getParentInfo = async ({
 };
 
 const fillObjectByHiveData = async (obj, exposedFields) => {
-  const { result } = await postsUtil.getPostState(
+  const { result } = await hiveClient.execute(
+    postsUtil.getPostState,
     { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
   );
   if (!result) {
@@ -389,7 +390,9 @@ const processWobjects = async ({
   let parents = [];
   const parentPermlinks = _.chain(wobjects).map('parent').compact().uniq()
     .value();
-  if (parentPermlinks.length) ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
+  if (parentPermlinks.length) {
+    ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
+  }
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';

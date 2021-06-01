@@ -1,7 +1,7 @@
-const _ = require('lodash');
+const { userUtil, hiveClient } = require('utilities/hiveApi');
 const { User } = require('database').models;
 const { Subscriptions } = require('models');
-const { getFollowingsList } = require('utilities/steemApi').userUtil;
+const _ = require('lodash');
 
 const writeToCollection = async ({ array, doc }) => {
   if (array.length) {
@@ -25,11 +25,10 @@ exports.add = async () => {
     let error, followings, startAccount = '';
     if (!_.get(doc, 'auth.provider', null)) {
       do {
-        ({ followings, error } = await getFollowingsList({
-          name: doc.name,
-          startAccount,
-          limit: 1000,
-        }));
+        ({ followings, error } = await hiveClient.execute(
+          userUtil.getFollowingsList,
+          { name: doc.name, startAccount, limit: 1000 },
+        ));
         if (_.get(error, 'error.message', '') === 'Request Timeout') {
           await new Promise((resolve) => setTimeout(resolve, 2000));
           continue;

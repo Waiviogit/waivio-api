@@ -1,11 +1,11 @@
-const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
-const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
-const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
 const {
   Post, Comment, App, hiddenPostModel, mutedUserModel,
 } = require('models');
-const { postsUtil } = require('utilities/steemApi');
+const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
+const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
+const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { getNamespace } = require('cls-hooked');
+const _ = require('lodash');
 
 /**
  * Return single post/comment of steem blockchain (if it exist).
@@ -16,6 +16,7 @@ const { postsUtil } = require('utilities/steemApi');
  * related with which author post/comment was requested(guest or proxy-bot)
  * @param author
  * @param permlink
+ * @param userName
  * @returns {Promise<{post: Object}|{error: Object}>}
  */
 module.exports = async ({ author, permlink, userName }) => {
@@ -31,7 +32,10 @@ module.exports = async ({ author, permlink, userName }) => {
   if (error) return { error };
   if (postResult) return { post: postResult };
 
-  const { error: commentError, comment: commentResult } = await getComment({ author, permlink, app });
+  const {
+    error: commentError,
+    comment: commentResult,
+  } = await getComment({ author, permlink, app });
 
   if (commentError) return { error: commentError };
   return { post: commentResult };
@@ -57,8 +61,10 @@ const getPost = async ({
     return { error: { status: 404, message: 'Post not found!' } };
   }
 
-  const { post: steemPost } = await postsUtil
-    .getPost(post ? post.root_author || post.author : author, permlink);
+  const { post: steemPost } = await hiveClient.execute(
+    postsUtil.getPost,
+    { author: post ? post.root_author || post.author : author, permlink },
+  );
 
   if (!steemPost || steemPost.parent_author) return { post: null };
 
@@ -85,7 +91,10 @@ const getComment = async ({ author, permlink, app }) => {
 
   // if comment not found in DB, it still might exist in STEEM
   if (!_.get(result, '[0]')) {
-    const { post: comment, error: steemError } = await postsUtil.getPost(author, permlink);
+    const { post: comment, error: steemError } = await hiveClient.execute(
+      await postsUtil.getPost,
+      { author, permlink },
+    );
     if (steemError) return { error: steemError };
     if (await checkBlackListedComment({ app, votes: comment.active_votes })) {
       return { error: { status: 404, message: 'Post not found!' } };
@@ -97,7 +106,10 @@ const getComment = async ({ author, permlink, app }) => {
 };
 
 const mergeCommentData = async (comment, app) => {
-  const { post: steemComment, error } = await postsUtil.getPost(comment.author, comment.permlink);
+  const { post: steemComment, error } = await hiveClient.execute(
+    postsUtil.getPost,
+    { author: comment.author, permlink: comment.permlink },
+  );
   if (error) return { error };
 
   // add guest votes to comment votes (if they exists)

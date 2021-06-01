@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getFollowCount } = require('utilities/steemApi/userUtil');
+const { getFollowCount } = require('utilities/hiveApi/userUtil');
 const { User } = require('database').models;
 const { Subscriptions: subscriptionsModel } = require('models');
 

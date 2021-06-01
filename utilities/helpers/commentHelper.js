@@ -1,7 +1,7 @@
-const _ = require('lodash');
+const { postsUtil, hiveClient } = require('utilities/hiveApi');
 const { Comment, User, App } = require('models');
-const { postsUtil } = require('utilities/steemApi');
 const { getNamespace } = require('cls-hooked');
+const _ = require('lodash');
 
 /**
  * Merge data between array of steemComments and dbComments
@@ -64,7 +64,8 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
   const { result: app } = await App.findOne({ host });
 
   if (!steemComments || _.isEmpty(steemComments)) {
-    const { posts: stComments } = await postsUtil.getManyPosts(
+    const { posts: stComments } = await hiveClient.execute(
+      postsUtil.getManyPosts,
       dbComments.map((c) => ({ ..._.pick(c, ['author', 'permlink']) })),
     );
 
@@ -76,9 +77,13 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
     if (steemComment) {
       steemComment.active_votes.push(...dbComment.active_votes);
       steemComment.guestInfo = dbComment.guestInfo;
-      if (!await this.checkBlackListedComment({ app, votes: steemComment.active_votes })) return steemComment;
+      if (!await this.checkBlackListedComment({ app, votes: steemComment.active_votes })) {
+        return steemComment;
+      }
     }
-    if (!await this.checkBlackListedComment({ app, votes: dbComment.active_votes })) return dbComment;
+    if (!await this.checkBlackListedComment({ app, votes: dbComment.active_votes })) {
+      return dbComment;
+    }
   }));
 };
 
