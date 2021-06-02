@@ -300,6 +300,7 @@ const getTagsByUser = async ({ author }) => {
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
 
   for (const post of posts) {
+    if (!_.isArray(post.wobjects)) continue;
     for (const wobject of post.wobjects) {
       if (!wobject.author_permlink) continue;
       const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
