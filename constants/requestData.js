@@ -67,7 +67,7 @@ const HIVE_ON_BOARD = {
   TICKETS: '/tickets',
 };
 
-const NODE_URLS = ['https://rpc.esteem.app', 'https://api.openhive.network', 'https://hive.roelandp.nl', 'https://hive-api.arcange.eu'];
+const NODE_URLS = ['https://rpc.esteem.app', 'https://api.openhive.network', 'https://api.hive.blog', 'https://hive-api.arcange.eu'];
 
 module.exports = {
   NODE_URLS,
