@@ -1,6 +1,7 @@
 const moduleExports = {};
 
 moduleExports.importSteemUserBalancer = require('./importSteemUserBalancer');
+moduleExports.getUserCreationDate = require('./getUserCreationDate');
 moduleExports.getFollowingUpdates = require('./getFollowingUpdates');
 moduleExports.importSteemUserOps = require('./importSteemUserOps');
 moduleExports.getFollowingsUser = require('./getFollowingsUser');
@@ -16,7 +17,7 @@ moduleExports.getUserFeed = require('./getUserFeed');
 moduleExports.getComments = require('./getComments');
 moduleExports.setMarkers = require('./setMarkers');
 moduleExports.getOneUser = require('./getOneUser');
-moduleExports.getBlog = require('./getBlog');
 moduleExports.geoData = require('./geoData');
+moduleExports.getBlog = require('./getBlog');
 
 module.exports = moduleExports;
