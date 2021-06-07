@@ -54,6 +54,7 @@ class Image {
     return buffer;
   }
 }
+
 const gzipPromised = (body) => new Promise(((resolve, reject) => {
   zlib.gzip(body, (err, res) => {
     if (err) return reject(err);
