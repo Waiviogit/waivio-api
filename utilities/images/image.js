@@ -1,6 +1,7 @@
+const { ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE } = require('constants/common');
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
-const { ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE } = require('constants/common');
+const zlib = require('zlib');
 
 class Image {
   constructor() {
@@ -20,9 +21,10 @@ class Image {
         // eslint-disable-next-line no-buffer-constructor
         const buffer = new Buffer(base64, 'base64');
         const body = await this.resizeImage({ buffer, size });
+        const gzip = await gzipPromised(body);
 
         return new Promise((resolve) => {
-          this._s3.upload({ Body: body, Key: `${fileName}${size}` }, (err, data) => {
+          this._s3.upload({ ContentEncoding: 'gzip', Body: gzip, Key: `${fileName}${size}` }, (err, data) => {
             if (err) {
               if (err.statusCode === 503) resolve({ error: ERROR_MESSAGE.UNAVAILABLE });
               resolve({ error: `${ERROR_MESSAGE.UPLOAD_IMAGE}:${err}` });
@@ -46,12 +48,19 @@ class Image {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
     if (buffer.byteLength > 1500000) {
-      return sharp(buffer).resize(1980).withMetadata().toFormat('jpeg')
+      return sharp(buffer).resize(1980).withMetadata().toFormat('webp')
         .toBuffer();
     }
     return buffer;
   }
 }
+
+const gzipPromised = (body) => new Promise(((resolve, reject) => {
+  zlib.gzip(body, (err, res) => {
+    if (err) return reject(err);
+    return resolve(res);
+  });
+}));
 
 const image = new Image();
 
