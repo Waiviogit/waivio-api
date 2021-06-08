@@ -132,6 +132,7 @@ exports.REQUIREDFIELDS_SEARCH = [
   this.FIELDS_NAMES.BLOG,
   this.FIELDS_NAMES.SORT_CUSTOM,
   this.FIELDS_NAMES.NEWS_FILTER,
+  this.FIELDS_NAMES.TITLE,
 ];
 
 exports.REQUIREDFIELDS_SIMPLIFIED = [
@@ -218,5 +219,5 @@ exports.SHARING_SOCIAL_FIELDS = [
 ];
 
 exports.PICK_FIELDS_ABOUT_OBJ = [
-  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description',
+  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title',
 ];
