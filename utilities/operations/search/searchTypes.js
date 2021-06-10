@@ -2,7 +2,7 @@ const { ObjectType } = require('models');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 
 const makeCountPipeline = (string, supportedTypes) => {
-  const condition = { $and: [{ name: { $regex: `${string}`, $options: 'i' } }] };
+  const condition = { $and: [{ name: { $regex: `${string}`, $options: 'i' } }, { firstCreated: true }] };
   if (supportedTypes.length)condition.$and.push({ name: { $in: supportedTypes } });
   return [{ $match: condition }, { $count: 'count' }];
 };

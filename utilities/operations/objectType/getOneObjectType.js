@@ -119,7 +119,7 @@ module.exports = async ({
   name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
 }) => {
   let tagCategory = [];
-  const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
+  const { objectType, error: objTypeError } = await ObjectType.getOne({ name, firstCreated: true });
   if (objTypeError) return { error: objTypeError };
   if (_.has(objectType, 'supposed_updates')) {
     tagCategory = _.get(_.find(objectType.supposed_updates, (o) => o.name === 'tagCategory'), 'values', []);

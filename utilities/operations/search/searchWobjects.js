@@ -102,7 +102,7 @@ const searchWithCounters = async (data) => {
 
 const fillTagCategories = async (wobjectsCounts) => {
   const { result: types } = await ObjectType.aggregate(
-    [{ $match: { name: { $in: _.map(wobjectsCounts, 'object_type') } } }],
+    [{ $match: { name: { $in: _.map(wobjectsCounts, 'object_type') }, firstCreated: true } }],
   );
   wobjectsCounts = wobjectsCounts.map((wobj) => {
     const objectType = _.find(types, { name: wobj.object_type });

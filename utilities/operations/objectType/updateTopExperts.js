@@ -44,7 +44,7 @@ const getExpertsByType = async (objectTypeName) => {
 };
 
 exports.updateObjectTypeExperts = async () => {
-  const cursor = ObjectType.find().cursor({ batchSize: 1000 });
+  const cursor = ObjectType.find({firstCreated: true}).cursor({ batchSize: 1000 });
   let successCount = 0;
 
   await cursor.eachAsync(async (doc) => {
@@ -52,7 +52,7 @@ exports.updateObjectTypeExperts = async () => {
 
     if (!_.isEmpty(experts)) {
       const res = await ObjectType.updateOne(
-        { name: doc.name }, { $set: { top_experts: experts } },
+        { _id: doc._id }, { $set: { top_experts: experts } },
       );
 
       if (res.nModified) {

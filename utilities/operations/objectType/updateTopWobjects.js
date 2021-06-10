@@ -2,7 +2,7 @@ const { WObject, ObjectType } = require('database').models;
 const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
 
 exports.updateObjectTypes = async (isLog = false) => {
-  const cursor = ObjectType.find().cursor({ batchSize: 1000 });
+  const cursor = ObjectType.find({ firstCreated: true }).cursor({ batchSize: 1000 });
 
   await cursor.eachAsync(async (doc) => {
     const wobjsArray = await WObject.aggregate([
