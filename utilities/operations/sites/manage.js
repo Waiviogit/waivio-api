@@ -1,6 +1,4 @@
-const {
-  PAYMENT_TYPES, FEE, INACTIVE_STATUSES,
-} = require('constants/sitesConstants');
+const { PAYMENT_TYPES, FEE, INACTIVE_STATUSES } = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
@@ -15,8 +13,8 @@ exports.getManagePage = async ({ userName }) => {
   const accountBalance = {
     paid: 0, avgDau: 0, dailyCost: 0, remainingDays: 0,
   };
-  accountBalance.paid = getSumByPaymentType(payments, PAYMENT_TYPES.TRANSFER)
-    .minus(getSumByPaymentType(payments, PAYMENT_TYPES.WRITE_OFF))
+  accountBalance.paid = sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.TRANSFER)
+    .minus(sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.WRITE_OFF))
     .toNumber();
 
   const dataForPayments = await sitesHelper.getPaymentsData();
@@ -52,12 +50,6 @@ exports.getManagePage = async ({ userName }) => {
     prices,
   };
 };
-
-const getSumByPaymentType = (payments, type) => _
-  .chain(payments)
-  .filter((el) => el.type === type)
-  .reduce((acc, payment) => BigNumber(payment.amount).plus(acc), BigNumber(0))
-  .value();
 
 const getDailyCost = (websites) => _
   .reduce(websites, (acc, site) => {
