@@ -268,3 +268,9 @@ exports.updateSupportedObjectsTask = async () => {
     await this.updateSupportedObjects({ app });
   }
 };
+
+exports.getSumByPaymentType = (payments, type) => _
+  .chain(payments)
+  .filter((el) => el.type === type)
+  .reduce((acc, payment) => new BigNumber(payment.amount).plus(acc), new BigNumber(0))
+  .value();
