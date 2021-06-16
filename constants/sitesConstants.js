@@ -12,6 +12,7 @@ exports.STATUSES = {
 exports.CAN_DELETE_STATUSES = [
   this.STATUSES.INACTIVE,
   this.STATUSES.PENDING,
+  this.STATUSES.SUSPENDED,
 ];
 
 exports.INACTIVE_STATUSES = [
