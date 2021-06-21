@@ -43,3 +43,8 @@ exports.DEVICE = {
 };
 
 exports.VIP_TICKET_PRICE = 5;
+
+exports.SUPPORTED_CURRENCIES = {
+  USD: 'USD',
+  CAD: 'CAD',
+};

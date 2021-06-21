@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const _ = require('lodash');
 const { STATUSES, SUPPORTED_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
 
 const { Schema } = mongoose;
 
@@ -66,7 +67,6 @@ const Configuration = new Schema({
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
   colors: { type: Colors, default: () => ({}) },
-
 }, { _id: false });
 
 const AppSchema = new Schema({
@@ -113,7 +113,11 @@ const AppSchema = new Schema({
   app_commissions: { type: AppCommissions },
   referralsData: { type: [ReferralTimersSchema], default: [] },
   tagsData: { type: TagsData },
-  main_map_object_types: { type: [String], default: [] },
+  currency: {
+    type: String,
+    enum: Object.values(SUPPORTED_CURRENCIES),
+    default: SUPPORTED_CURRENCIES.USD,
+  },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {
