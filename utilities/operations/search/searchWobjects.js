@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { FIELDS_NAMES, SEARCH_FIELDS, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
@@ -140,6 +140,9 @@ const makeSitePipeline = ({
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
+  }
+  if (string !== '') {
+    pipeline.push({ $sort: { score: { $meta: 'textScore' } } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
@@ -159,6 +162,8 @@ const makePipeline = ({
       },
     },
     { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
+  } else if (string !== '') {
+    pipeline.push({ $sort: { score: { $meta: 'textScore' } } });
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
@@ -210,6 +215,14 @@ const matchSitesPipe = ({
       },
     });
   }
+  if (string !== '') {
+    pipeline.push({
+      $match: {
+        $text: { $search: string },
+        object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
+      },
+    });
+  }
   const matchCond = {
     $match: {
       object_type: { $in: supportedTypes },
@@ -233,33 +246,13 @@ const matchSitesPipe = ({
     }
     pipeline.push({ $match: { $or: condition } });
   }
-  pipeline.push({
-    $match: {
-      $and: [
-        {
-          $or: [
-            { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
-            { fields: { $elemMatch: { name: { $in: SEARCH_FIELDS }, body: { $regex: string, $options: 'i' } } } },
-          ],
-        },
-        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-      ],
-    },
-  });
   return pipeline;
 };
 
 const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
-    $and: [
-      {
-        $or: [
-          { fields: { $elemMatch: { name: FIELDS_NAMES.NAME, body: { $regex: string, $options: 'i' } } } },
-          { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
-        ],
-      },
-      { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-    ],
+    $text: { $search: string },
+    object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
     'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
   },
 });

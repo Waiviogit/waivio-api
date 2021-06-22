@@ -7,6 +7,14 @@ const AuthoritySchema = new Schema({
   ownership: { type: [String], default: [] },
 }, { _id: false });
 
+const SearchSchema = new Schema({
+  author_permlink: { type: String },
+  name: { type: [String], default: [] },
+  email: { type: [String], default: [] },
+  phone: { type: [String], default: [] },
+  address: { type: [String], default: [] },
+});
+
 const FieldsSchema = new Schema({
   name: { type: String },
   body: { type: String },
@@ -63,6 +71,7 @@ const WObjectSchema = new Schema({
   last_posts_counts_by_hours: { type: [Number], default: [] },
   activeCampaigns: { type: [mongoose.Types.ObjectId], default: [] },
   activeCampaignsCount: { type: Number, default: 0 },
+  search: { type: SearchSchema, default: () => ({}) },
 },
 {
   toObject: { virtuals: true }, timestamps: true, strict: false,
@@ -73,6 +82,23 @@ WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });
 FieldsSchema.index({ name: -1, body: -1 });
+WObjectSchema.index({
+  'search.name': 'text',
+  'search.email': 'text',
+  'search.address': 'text',
+  'search.phone': 'text',
+  'search.author_permlink': 'text',
+},
+{
+  weights: {
+    'search.author_permlink': 15,
+    'search.name': 10,
+    'search.email': 5,
+    'search.address': 3,
+    'search.phone': 1,
+  },
+  name: 'searchIndex',
+});
 
 WObjectSchema.virtual('followers', {
   ref: 'User',
