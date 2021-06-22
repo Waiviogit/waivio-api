@@ -10,7 +10,7 @@ module.exports = async ({
     condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName }] },
   });
 
-  const muted = mutedUsers.reduce((mute, user) => {
+  const muted = _.reduce(mutedUsers, (mute, user) => {
     name === user.userName
       ? mute.author.push(user)
       : mute.users.push(user);
