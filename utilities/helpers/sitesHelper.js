@@ -1,9 +1,3 @@
-const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
-const Sentry = require('@sentry/node');
-const moment = require('moment');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { redisGetter } = require('utilities/redis');
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
@@ -12,8 +6,16 @@ const {
   App, websitePayments, User, Wobj,
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
+const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
+const currenciesRequests = require('utilities/requests/currenciesRequests');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
+const { redisGetter } = require('utilities/redis');
+const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
+const Sentry = require('@sentry/node');
+const moment = require('moment');
+const _ = require('lodash');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -232,7 +234,13 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
-  const { googleAnalyticsTag, beneficiary, app_commissions } = app;
+  const {
+    googleAnalyticsTag, beneficiary, app_commissions, currency,
+  } = app;
+
+  const { rate, error } = await getCurrencyRate(currency);
+  if (error) return { error };
+
   return {
     result: {
       googleAnalyticsTag,
@@ -240,6 +248,7 @@ exports.getSettings = async (host) => {
       referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
         ? app_commissions.referral_commission_acc
         : app.owner,
+      currency: { type: currency, rate },
     },
   };
 };
@@ -274,3 +283,12 @@ exports.getSumByPaymentType = (payments, type) => _
   .filter((el) => el.type === type)
   .reduce((acc, payment) => new BigNumber(payment.amount).plus(acc), new BigNumber(0))
   .value();
+
+const getCurrencyRate = async (symbols) => {
+  if (symbols === SUPPORTED_CURRENCIES.USD) return { rate: 1 };
+  const { result, error } = await currenciesRequests
+    .getCurrencyLatestRate({ base: SUPPORTED_CURRENCIES.USD, symbols });
+  if (error) return { error };
+
+  return { rate: result[symbols] };
+};
