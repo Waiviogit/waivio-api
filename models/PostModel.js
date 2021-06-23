@@ -75,7 +75,10 @@ exports.getByFollowLists = async ({
 
   if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
   if (!_.isEmpty(hiddenPosts)) cond._id = { $nin: hiddenPosts };
-  if (!_.isEmpty(muted)) cond.author = { $nin: muted };
+  if (!_.isEmpty(muted)) {
+    cond.author = { $nin: muted };
+    cond['reblog_to.author'] = { $nin: muted };
+  }
 
   const postsQuery = PostModel.find(cond)
     .sort({ _id: -1 })
