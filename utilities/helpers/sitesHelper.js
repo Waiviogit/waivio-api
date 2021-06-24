@@ -254,8 +254,13 @@ exports.aboutObjectFormat = async (app) => {
   return app;
 };
 
+/**
+ * if production and child site x-forwarded-for - undefined - need to get headers from x-real-ip
+ * @param req
+ * @returns {*}
+ */
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
-  ? req.headers['x-forwarded-for']
+  ? req.headers['x-forwarded-for'] || req.headers['x-real-ip']
   : req.headers['x-real-ip']);
 
 exports.updateSupportedObjectsTask = async () => {
