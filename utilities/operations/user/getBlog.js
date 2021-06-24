@@ -7,13 +7,22 @@ module.exports = async ({
 }) => {
   const additionalCond = {};
   const { result: mutedUsers } = await mutedUserModel.find({
-    condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { userName: name, mutedBy: userName }] },
+    condition: { $or: [{ userName: name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName }] },
   });
-  if (!_.isEmpty(mutedUsers)) return { posts: [], tags: [] };
+
+  const muted = _.reduce(mutedUsers, (mute, user) => {
+    name === user.userName
+      ? mute.author.push(user)
+      : mute.users.push(user);
+    return mute;
+  }, { author: [], users: [] });
+
+  if (!_.isEmpty(muted.author)) return { posts: [], tags: [] };
+  if (!_.isEmpty(muted.users)) Object.assign(additionalCond, { 'reblog_to.author': { $nin: _.map(muted.users, 'userName') } });
 
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-
   if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
+
   if (!_.isEmpty(tagsArray)) Object.assign(additionalCond, { 'wobjects.author_permlink': { $in: tagsArray } });
 
   const { posts, error: postError } = await Post.getBlog({
