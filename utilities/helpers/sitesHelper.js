@@ -1,6 +1,6 @@
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
-  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
@@ -142,9 +142,12 @@ exports.siteInfo = async (host) => {
 
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
+  const { currency } = app;
+  const { rate } = await getCurrencyRate(currency);
+  app.currency = { type: currency, rate: rate || 1 };
+
   return {
-    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag', 'parentHost',
-      'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
+    result: Object.assign(_.pick(app, FIRST_LOAD_FIELDS), { redirect }),
   };
 };
 
