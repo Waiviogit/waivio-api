@@ -10,6 +10,7 @@ const {
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const sitesHelper = require('utilities/helpers/sitesHelper');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { configurationMock } = require('./mocks');
 
@@ -669,6 +670,7 @@ describe('On sitesController', async () => {
           googleAnalyticsTag: userApp.googleAnalyticsTag,
           beneficiary: userApp.beneficiary,
           referralCommissionAcc: userApp.owner,
+          currency: { type: SUPPORTED_CURRENCIES.USD, rate: 1 },
         };
         expect(result.body).to.be.deep.eq(mock);
       });
