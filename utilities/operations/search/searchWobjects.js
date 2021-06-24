@@ -141,7 +141,7 @@ const makeSitePipeline = ({
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
   }
-  if (string !== '') {
+  if (string) {
     pipeline.push({ $sort: { score: { $meta: 'textScore' } } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
 
@@ -153,7 +153,9 @@ const makeSitePipeline = ({
 const makePipeline = ({
   string, object_type, limit, skip, crucialWobjects, forParent,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type })];
+  let pipeline;
+  pipeline = [matchSimplePipe({ object_type })];
+  if (string) pipeline = [matchSimpleSearchPipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
@@ -162,7 +164,7 @@ const makePipeline = ({
       },
     },
     { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
-  } else if (string !== '') {
+  } else if (string) {
     pipeline.push({ $sort: { score: { $meta: 'textScore' } } });
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
@@ -182,7 +184,9 @@ const makeCountPipeline = ({
       string, crucialWobjects, object_type, supportedTypes, forSites,
     }));
   } else {
-    pipeline.unshift(matchSimplePipe({ string, object_type }));
+    string
+      ? pipeline.unshift(matchSimpleSearchPipe({ string, object_type }))
+      : pipeline.unshift(matchSimplePipe({ object_type }));
   }
   return pipeline;
 };
@@ -215,7 +219,7 @@ const matchSitesPipe = ({
       },
     });
   }
-  if (string !== '') {
+  if (string) {
     pipeline.push({
       $match: {
         $text: { $search: string },
@@ -249,7 +253,14 @@ const matchSitesPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type }) => ({
+const matchSimplePipe = ({ object_type }) => ({
+  $match: {
+    object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
+    'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+  },
+});
+
+const matchSimpleSearchPipe = ({ string, object_type }) => ({
   $match: {
     $text: { $search: string },
     object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },

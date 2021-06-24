@@ -24,18 +24,21 @@ describe('On wobjects search', async () => {
     const counter = _.random(5, 10);
     const notSearchedTypes = Object.values(OBJECT_TYPES);
     notSearchedTypes.splice(notSearchedTypes.indexOf(searchedType), 1);
+    const fieldInfo = { name: FIELDS_NAMES.NAME, body: faker.random.string() };
 
     beforeEach(async () => {
       for (let i = 0; i < counter; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+          fields: [fieldInfo],
+          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await ObjectFactory.Create({
           objectType: _.sample(notSearchedTypes),
-          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+          fields: [fieldInfo],
+          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
       result = await wobjects.searchWobjects({
@@ -198,12 +201,14 @@ describe('On wobjects search', async () => {
     const name = faker.random.string();
     const skip = _.random(0, 3);
     const limit = _.random(5, 10);
+    const fieldInfo = { name: FIELDS_NAMES.NAME, body: name };
 
     beforeEach(async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [{ name: FIELDS_NAMES.NAME, body: name }],
+          fields: [fieldInfo],
+          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
     });
