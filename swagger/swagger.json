@@ -1416,7 +1416,12 @@
                   "account" : "string",
                   "percent" :"number"
                 },
-                "googleAnalyticsTag" : "string"
+                "googleAnalyticsTag" : "string",
+                "referralCommissionAcc": "string",
+                "currency": {
+                  "type": "string",
+                  "rate": "number"
+                }
               }
             }
           },

@@ -62,18 +62,20 @@ const getListItems = async (wobject, data, app) => {
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
+    const fieldInList = _.find(fields, (field) => field.body === wobj.author_permlink);
     if (wobj.object_type.toLowerCase() === 'list') {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
       locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
     });
-    wobj.type = _.find(fields, (field) => field.body === wobj.author_permlink).type;
+    wobj.type = _.get(fieldInList, 'type');
     wobj.listItemsCount = await getItemsCount({
       authorPermlink: wobj.author_permlink,
       handledItems: [wobject.author_permlink, wobj.author_permlink],
       app,
     });
+    wobj.addedAt = fieldInList._id && fieldInList._id.getTimestamp();
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
