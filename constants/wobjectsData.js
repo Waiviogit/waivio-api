@@ -221,3 +221,15 @@ exports.SHARING_SOCIAL_FIELDS = [
 exports.PICK_FIELDS_ABOUT_OBJ = [
   'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title',
 ];
+
+exports.STATUSES = {
+  RELISTED: 'relisted',
+  UNAVAILABLE: 'unavailable',
+  NSFW: 'nsfw',
+  FLAGGED: 'flagged',
+};
+
+exports.REMOVE_OBJ_STATUSES = [
+  this.STATUSES.RELISTED,
+  this.STATUSES.UNAVAILABLE,
+];

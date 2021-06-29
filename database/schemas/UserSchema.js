@@ -2,6 +2,7 @@
 const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
 const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
 
 const { Schema } = mongoose;
 const { LANGUAGES } = require('../../utilities/constants');
@@ -52,6 +53,11 @@ const UserMetadataSchema = new Schema({
     }, // default percent of your upvotes
     votingPower: { type: Boolean, default: true }, // dynamic toggle of vote power on each vote
     userNotifications: { type: UserNotificationsSchema, default: () => ({}) },
+    currency: {
+      type: String,
+      enum: Object.values(SUPPORTED_CURRENCIES),
+      default: SUPPORTED_CURRENCIES.USD,
+    },
   },
   bookmarks: { type: [String], default: [] },
   drafts: {

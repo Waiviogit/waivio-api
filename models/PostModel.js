@@ -199,7 +199,7 @@ exports.getWobjectPosts = async ({
       .find(condition)
       .sort({ _id: -1 })
       .limit(limit)
-      .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
+      .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name status' })
       .lean();
 
     if (!lastId) postsQuery.skip(skip);
