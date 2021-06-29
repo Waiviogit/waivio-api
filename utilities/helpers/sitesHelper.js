@@ -7,9 +7,7 @@ const {
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const currenciesRequests = require('utilities/requests/currenciesRequests');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { redisGetter } = require('utilities/redis');
 const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
@@ -142,9 +140,6 @@ exports.siteInfo = async (host) => {
 
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
-  const { currency } = app;
-  const { rate } = await getCurrencyRate(currency);
-  app.currency = { type: currency, rate: rate || 1 };
 
   return {
     result: Object.assign(_.pick(app, FIRST_LOAD_FIELDS), { redirect }),
@@ -241,9 +236,6 @@ exports.getSettings = async (host) => {
     googleAnalyticsTag, beneficiary, app_commissions, currency,
   } = app;
 
-  const { rate, error } = await getCurrencyRate(currency);
-  if (error) return { error };
-
   return {
     result: {
       googleAnalyticsTag,
@@ -251,7 +243,7 @@ exports.getSettings = async (host) => {
       referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
         ? app_commissions.referral_commission_acc
         : app.owner,
-      currency: { type: currency, rate },
+      currency,
     },
   };
 };
@@ -291,12 +283,3 @@ exports.getSumByPaymentType = (payments, type) => _
   .filter((el) => el.type === type)
   .reduce((acc, payment) => new BigNumber(payment.amount).plus(acc), new BigNumber(0))
   .value();
-
-const getCurrencyRate = async (symbols) => {
-  if (symbols === SUPPORTED_CURRENCIES.USD) return { rate: 1 };
-  const { result, error } = await currenciesRequests
-    .getCurrencyLatestRate({ base: SUPPORTED_CURRENCIES.USD, symbols });
-  if (error) return { error };
-
-  return { rate: result[symbols] };
-};

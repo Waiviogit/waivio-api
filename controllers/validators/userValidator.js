@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const { TOKEN } = require('constants/common');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
@@ -97,6 +97,8 @@ exports.updateMetadataSchema = Joi.object().keys({
       hiveBeneficiaryAccount: Joi.string().default('').allow(''),
       votePercent: Joi.number().min(1).max(10000).default(5000),
       votingPower: Joi.boolean().default(false),
+      currency: Joi.string().valid(...Object.values(SUPPORTED_CURRENCIES))
+        .default(SUPPORTED_CURRENCIES.USD),
       userNotifications: Joi.object().keys({
         activationCampaign: Joi.boolean().default(true),
         follow: Joi.boolean().default(true),
