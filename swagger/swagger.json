@@ -1418,10 +1418,7 @@
                 },
                 "googleAnalyticsTag" : "string",
                 "referralCommissionAcc": "string",
-                "currency": {
-                  "type": "string",
-                  "rate": "number"
-                }
+                "currency": "string"
               }
             }
           },
@@ -4243,6 +4240,7 @@
           "desktopLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
           "mobileLogo": "https://images.hive.blog/800x600/https://images.hive.blog/p/HNWT6DgoBc196q36ADoGty1WEUBMYTezBR2yx2cmqPwhtM3UzUiz5qh45JxQmtbGZS9PVgVvxPEdKkRDNxzZmkcgxxdnLXMFfLgav4f8ftPqqgVfrVZ3x1kLRtE",
           "aboutObject": "hive",
+          "currency": "USD",
           "desktopMap": {
             "topPoint": [
               34.435,
@@ -6098,6 +6096,11 @@
         },
         "votingPower" : {
           "type" : "boolean"
+        },
+        "currency": {
+          "type": "string",
+          "example": "USD",
+          "enum": ["USD", "CAD"]
         }
       }
     },
