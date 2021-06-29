@@ -1,11 +1,11 @@
-const moment = require('moment');
-const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const {
   User, Wobj, paymentHistory, Campaign, App,
 } = require('models');
+const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
-const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED } = require('constants/wobjectsData');
+const { getNamespace } = require('cls-hooked');
+const moment = require('moment');
+const _ = require('lodash');
 
 const wobjectHelper = require('./wObjectHelper');
 
@@ -138,6 +138,7 @@ exports.addCampaignsToWobjects = async ({
     { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
   );
   await Promise.all(wobjects.map(async (wobj, index) => {
+    if (_.includes(REMOVE_OBJ_STATUSES, _.get(wobjects[index], 'status.title'))) return;
     if (simplified) {
       wobj.fields = _.filter(wobj.fields,
         (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
