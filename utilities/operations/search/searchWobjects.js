@@ -197,6 +197,14 @@ const matchSitesPipe = ({
   crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
   const pipeline = [];
+  if (string) {
+    pipeline.push({
+      $match: {
+        $text: { $search: string },
+        object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
+      },
+    });
+  }
   if (map) {
     pipeline.push({
       $geoNear: {
@@ -216,14 +224,6 @@ const matchSitesPipe = ({
             $box: [box.bottomPoint, box.topPoint],
           },
         },
-      },
-    });
-  }
-  if (string) {
-    pipeline.push({
-      $match: {
-        $text: { $search: string },
-        object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
       },
     });
   }

@@ -290,4 +290,47 @@ describe('On wobjects search', async () => {
       });
     });
   });
+
+  describe('tests with search string', async () => {
+    let wobj1, wobj2, result;
+    const wobj1Name = faker.random.string();
+    const wobj2Name = faker.random.string();
+
+    beforeEach(async () => {
+      wobj1 = await ObjectFactory.Create({
+        objectType: OBJECT_TYPES.RESTAURANT,
+        map: { type: 'Point', coordinates: [-94.233, 48.224] },
+        fields: [{ name: FIELDS_NAMES.NAME, body: wobj1Name }],
+        searchField: { name: wobj1Name },
+      });
+      wobj2 = await ObjectFactory.Create({
+        objectType: OBJECT_TYPES.RESTAURANT,
+        map: { type: 'Point', coordinates: [-95.233, 48.224] },
+        fields: [{ name: FIELDS_NAMES.NAME, body: wobj2Name }],
+        searchField: { name: wobj2Name },
+      });
+    });
+
+    describe('for sites', async () => {
+      let host, child;
+      beforeEach(async () => {
+        host = `${faker.random.string()}.${parent.host}`;
+        child = await AppFactory.Create({
+          parent: parent._id,
+          host,
+          supportedObjects: [wobj1.author_permlink, wobj2.author_permlink],
+          status: STATUSES.ACTIVE,
+        });
+      });
+
+      it('should return wobject by search string, if it in search box and in site supported objects ', async () => {
+        result = await wobjects.searchWobjects({
+          app: child,
+          string: wobj1Name,
+          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
+        });
+        expect(result.wobjects).to.have.length(1);
+      });
+    });
+  });
 });
