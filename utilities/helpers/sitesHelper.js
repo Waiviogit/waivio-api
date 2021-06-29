@@ -7,9 +7,7 @@ const {
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const currenciesRequests = require('utilities/requests/currenciesRequests');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { redisGetter } = require('utilities/redis');
 const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
