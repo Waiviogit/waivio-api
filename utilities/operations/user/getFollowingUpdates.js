@@ -11,7 +11,7 @@ const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) 
   const users = await followersHelper.sortUsers({
     collection: FOLLOWERS_SORT.USER_SUB,
     field: FOLLOWERS_SORT.FOLLOWER,
-    limit: users_count + 10,
+    limit: users_count + 1,
     name,
     skip: 0,
     sort: FOLLOWERS_SORT.RANK,
@@ -117,13 +117,13 @@ const getUsersUpdates = async ({ name, skip, limit }) => {
   const users = await followersHelper.sortUsers({
     collection: FOLLOWERS_SORT.USER_SUB,
     field: FOLLOWERS_SORT.FOLLOWER,
-    limit: limit + 10,
+    limit: limit + 1,
     name,
     skip,
     sort: FOLLOWERS_SORT.RANK,
   });
 
-  return getUpdatesByUsersList({ users_follow: _.map(users, 'name'), skip, limit });
+  return getUpdatesByUsersList({ users_follow: _.map(users, 'name'), limit });
 };
 
 const getUpdatesByUsersList = async ({ users_follow = [], limit = 3, skip = 0 }) => {
