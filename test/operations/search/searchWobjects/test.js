@@ -30,14 +30,12 @@ describe('On wobjects search', async () => {
       for (let i = 0; i < counter; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [fieldInfo],
           searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await ObjectFactory.Create({
           objectType: _.sample(notSearchedTypes),
-          fields: [fieldInfo],
           searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
@@ -59,16 +57,18 @@ describe('On wobjects search', async () => {
 
   describe('on box search', async () => {
     let wobj1, wobj2, campaign, result;
+    const name = faker.random.string();
+
     beforeEach(async () => {
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+        searchField: { name },
       });
       wobj2 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-95.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+        searchField: { name: faker.random.string() },
       });
       campaign = await CampaignFactory.Create({
         status: CAMPAIGN_STATUSES.ACTIVE,
@@ -150,8 +150,16 @@ describe('On wobjects search', async () => {
           app: child,
           box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
         });
-
         expect(result.wobjects).to.have.length(2);
+      });
+
+      it('should return wobject by search string, if it in search box and in site supported objects', async () => {
+        result = await wobjects.searchWobjects({
+          app: child,
+          string: name,
+          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
+        });
+        expect(result.wobjects).to.have.length(1);
       });
 
       it('should not return object if it not in supported objects', async () => {
@@ -207,7 +215,6 @@ describe('On wobjects search', async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [fieldInfo],
           searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
         });
       }
@@ -287,49 +294,6 @@ describe('On wobjects search', async () => {
 
       it('should result.wobjects should have proper length', async () => {
         expect(result.wobjects).to.be.have.length(limit - skip);
-      });
-    });
-  });
-
-  describe('tests with search string', async () => {
-    let wobj1, wobj2, result;
-    const wobj1Name = faker.random.string();
-    const wobj2Name = faker.random.string();
-
-    beforeEach(async () => {
-      wobj1 = await ObjectFactory.Create({
-        objectType: OBJECT_TYPES.RESTAURANT,
-        map: { type: 'Point', coordinates: [-94.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: wobj1Name }],
-        searchField: { name: wobj1Name },
-      });
-      wobj2 = await ObjectFactory.Create({
-        objectType: OBJECT_TYPES.RESTAURANT,
-        map: { type: 'Point', coordinates: [-95.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: wobj2Name }],
-        searchField: { name: wobj2Name },
-      });
-    });
-
-    describe('for sites', async () => {
-      let host, child;
-      beforeEach(async () => {
-        host = `${faker.random.string()}.${parent.host}`;
-        child = await AppFactory.Create({
-          parent: parent._id,
-          host,
-          supportedObjects: [wobj1.author_permlink, wobj2.author_permlink],
-          status: STATUSES.ACTIVE,
-        });
-      });
-
-      it('should return wobject by search string, if it in search box and in site supported objects ', async () => {
-        result = await wobjects.searchWobjects({
-          app: child,
-          string: wobj1Name,
-          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
-        });
-        expect(result.wobjects).to.have.length(1);
       });
     });
   });
