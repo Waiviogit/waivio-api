@@ -1,19 +1,19 @@
-const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
-const Sentry = require('@sentry/node');
-const moment = require('moment');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { redisGetter } = require('utilities/redis');
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
-  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj,
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
+const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const { redisGetter } = require('utilities/redis');
+const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
+const Sentry = require('@sentry/node');
+const moment = require('moment');
+const _ = require('lodash');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -140,9 +140,9 @@ exports.siteInfo = async (host) => {
 
 exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
+
   return {
-    result: Object.assign(_.pick(app, ['configuration', 'host', 'googleAnalyticsTag', 'parentHost',
-      'beneficiary', 'supported_object_types', 'status', 'mainPage']), { redirect }),
+    result: Object.assign(_.pick(app, FIRST_LOAD_FIELDS), { redirect }),
   };
 };
 
@@ -232,7 +232,10 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
-  const { googleAnalyticsTag, beneficiary, app_commissions } = app;
+  const {
+    googleAnalyticsTag, beneficiary, app_commissions, currency,
+  } = app;
+
   return {
     result: {
       googleAnalyticsTag,
@@ -240,6 +243,7 @@ exports.getSettings = async (host) => {
       referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
         ? app_commissions.referral_commission_acc
         : app.owner,
+      currency,
     },
   };
 };
@@ -254,8 +258,13 @@ exports.aboutObjectFormat = async (app) => {
   return app;
 };
 
+/**
+ * if production and child site x-forwarded-for - undefined - need to get headers from x-real-ip
+ * @param req
+ * @returns {*}
+ */
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
-  ? req.headers['x-forwarded-for']
+  ? req.headers['x-forwarded-for'] || req.headers['x-real-ip']
   : req.headers['x-real-ip']);
 
 exports.updateSupportedObjectsTask = async () => {

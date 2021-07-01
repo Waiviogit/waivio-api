@@ -59,6 +59,33 @@ const NOTIFICATIONS_API = {
   },
 };
 
+const CURRENCIES_API = {
+  production: {
+    HOST: 'https://www.waivio.com',
+    BASE_URL: '/currencies-api',
+    RATE: '/rate',
+    LATEST: '/latest',
+  },
+  staging: {
+    HOST: 'https://waiviodev.com',
+    BASE_URL: '/currencies-api',
+    RATE: '/rate',
+    LATEST: '/latest',
+  },
+  development: {
+    HOST: 'http://localhost:8001',
+    BASE_URL: '/currencies-api',
+    RATE: '/rate',
+    LATEST: '/latest',
+  },
+  test: {
+    HOST: 'http://localhost:8001',
+    BASE_URL: '/currencies-api',
+    RATE: '/rate',
+    LATEST: '/latest',
+  },
+};
+
 const GEO_IP_API = 'https://extreme-ip-lookup.com/json/';
 
 const HIVE_ON_BOARD = {
@@ -76,4 +103,5 @@ module.exports = {
   HIVE_ON_BOARD,
   OBJECT_BOT: OBJECT_BOT[process.env.NODE_ENV || 'development'],
   NOTIFICATIONS_API: NOTIFICATIONS_API[process.env.NODE_ENV || 'development'],
+  CURRENCIES_API: CURRENCIES_API[process.env.NODE_ENV || 'development'],
 };

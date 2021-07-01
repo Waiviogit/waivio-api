@@ -1,20 +1,31 @@
 const {
-  User: UserService, Wobj: WobjectService, Subscriptions, wobjectSubscriptions,
+  User: UserService, Wobj: WobjectService, wobjectSubscriptions,
 } = require('models');
+const { FOLLOWERS_SORT } = require('constants/sortData');
+const { followersHelper } = require('utilities/helpers');
+const _ = require('lodash');
 
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
-  const { users, error: subscribeError } = await Subscriptions
-    .getFollowings({ follower: name, limit: users_count + 10 });
+
+  const users = await followersHelper.sortUsers({
+    collection: FOLLOWERS_SORT.USER_SUB,
+    field: FOLLOWERS_SORT.FOLLOWER,
+    limit: users_count + 1,
+    name,
+    skip: 0,
+    sort: FOLLOWERS_SORT.RANK,
+  });
+
   const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
 
-  if (getUserError || !user || subscribeError) {
-    return { error: getUserError || subscribeError || { status: 404, message: 'User not found!' } };
+  if (getUserError || !user) {
+    return { error: getUserError || { status: 404, message: 'User not found!' } };
   }
 
   // eslint-disable-next-line camelcase
   const { users_updates } = await getUpdatesByUsersList({
-    users_follow: users, limit: users_count,
+    users_follow: _.map(users, 'name'), limit: users_count,
   });
 
   // eslint-disable-next-line camelcase
@@ -103,10 +114,16 @@ const getUpdatesByWobjectsList = async ({
 };
 
 const getUsersUpdates = async ({ name, skip, limit }) => {
-  const { users, error } = await Subscriptions.getFollowings({ follower: name, limit: limit + 10 });
-  if (error) return { error };
+  const users = await followersHelper.sortUsers({
+    collection: FOLLOWERS_SORT.USER_SUB,
+    field: FOLLOWERS_SORT.FOLLOWER,
+    limit: limit + 1,
+    name,
+    skip,
+    sort: FOLLOWERS_SORT.RANK,
+  });
 
-  return getUpdatesByUsersList({ users_follow: users, skip, limit });
+  return getUpdatesByUsersList({ users_follow: _.map(users, 'name'), limit });
 };
 
 const getUpdatesByUsersList = async ({ users_follow = [], limit = 3, skip = 0 }) => {
