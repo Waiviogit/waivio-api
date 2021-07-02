@@ -51,14 +51,6 @@ exports.OBJECT_TYPES = {
   HOTEL: 'hotel',
 };
 
-exports.SEARCH_FIELDS = [
-  this.FIELDS_NAMES.ADDRESS,
-  this.FIELDS_NAMES.TITLE,
-  this.FIELDS_NAMES.DESCRIPTION,
-  this.FIELDS_NAMES.CATEGORY_ITEM,
-  this.FIELDS_NAMES.NAME,
-];
-
 exports.ADMIN_ROLES = {
   OWNER: 'owner',
   ADMIN: 'admin',
