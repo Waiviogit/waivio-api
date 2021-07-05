@@ -31,18 +31,15 @@ module.exports = async ({
 
   const tRShares = postVoteRhares + rShares;
 
-  const s = parseFloat(priceInfo.content_constant);
-  const tClaims = (tRShares * (tRShares + 2 * s)) / (tRShares + 4 * s);
-
   const rewards = parseFloat(priceInfo.reward_balance) / parseFloat(priceInfo.recent_claims);
-  const postValue = tClaims * rewards * parseFloat(priceInfo.price);
+  const postValue = tRShares * rewards * parseFloat(priceInfo.price);
   const voteValue = postValue * (rShares / tRShares);
 
   return voteValue >= 0 ? voteValue : 0;
 };
 
 const getPostVoteRhares = async ({ author, permlink }) => {
-  let { result: post } = await Post.findByBothAuthors({ author, permlink });
+  let { result: [post] } = await Post.findByBothAuthors({ author, permlink });
   if (!post) {
     ({ post } = await hiveClient.execute(
       postsUtil.getPost,
