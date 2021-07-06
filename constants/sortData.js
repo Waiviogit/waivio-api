@@ -1,4 +1,5 @@
 exports.FOLLOWERS_SORT = {
+  FOLLOWING_UPDATES: 'followingUpdates',
   WOBJECT_SUB: 'wobjectSubscription',
   FOLLOWING_PATH: 'followingPath',
   FOLLOWER_PATH: 'followerPath',

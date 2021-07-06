@@ -61,7 +61,7 @@ const sortAfterPopulate = async ({
     .chain(users)
     .map(`${path}`)
     .compact()
-    .orderBy([`${sortData}`], 'desc')
+    .orderBy(sortData.sort, sortData.order)
     .slice(skip, limit + skip)
     .value();
 };
@@ -89,8 +89,15 @@ const sortUsers = async ({
       });
     case FOLLOWERS_SORT.RANK:
     case FOLLOWERS_SORT.FOLLOWERS:
+    case FOLLOWERS_SORT.FOLLOWING_UPDATES:
+      populate.select.last_posts_count = 1;
+      const sortCondition = {
+        wobjects_weight: { sort: ['wobjects_weight'], order: ['desc'] },
+        followers_count: { sort: ['followers_count'], order: ['desc'] },
+        followingUpdates: { sort: ['last_posts_count', 'wobjects_weight'], order: ['desc', 'desc'] },
+      };
       return sortAfterPopulate({
-        limit, skip, select, path, condition, populate, sortData: sort === FOLLOWERS_SORT.RANK ? 'wobjects_weight' : 'followers_count', collection,
+        limit, skip, select, path, condition, populate, sortData: sortCondition[sort], collection,
       });
   }
 };
