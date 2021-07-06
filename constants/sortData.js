@@ -38,6 +38,11 @@ exports.SEARCH_SORT = {
   CREATED: 'createdAt',
 };
 
+exports.FIELD_IMPORTANT_PRECENTS = {
+  RELEVANCE: 0.6,
+  EXPERTISE: 0.4,
+};
+
 exports.SORT_CONDITION = {
   [this.FOLLOWERS_SORT.RANK]: { sort: ['wobjects_weight'], order: ['desc'] },
   [this.FOLLOWERS_SORT.FOLLOWERS]: { sort: ['followers_count'], order: ['desc'] },
