@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { FOLLOWERS_SORT } = require('constants/sortData');
+const { FOLLOWERS_SORT, SORT_CONDITION } = require('constants/sortData');
 const { User, Subscriptions, wobjectSubscriptions } = require('models');
 
 const getFollowers = async (data) => {
@@ -61,7 +61,7 @@ const sortAfterPopulate = async ({
     .chain(users)
     .map(`${path}`)
     .compact()
-    .orderBy([`${sortData}`], 'desc')
+    .orderBy(sortData.sort, sortData.order)
     .slice(skip, limit + skip)
     .value();
 };
@@ -79,7 +79,9 @@ const sortUsers = async ({
     path = FOLLOWERS_SORT.FOLLOWER_PATH;
   }
   const condition = { [`${field}`]: name };
-  const populate = { path, select: { wobjects_weight: 1, followers_count: 1 } };
+  const populate = {
+    path, select: { wobjects_weight: 1, followers_count: 1, last_posts_count: 1 },
+  };
 
   switch (sort) {
     case FOLLOWERS_SORT.RECENCY:
@@ -89,8 +91,9 @@ const sortUsers = async ({
       });
     case FOLLOWERS_SORT.RANK:
     case FOLLOWERS_SORT.FOLLOWERS:
+    case FOLLOWERS_SORT.FOLLOWING_UPDATES:
       return sortAfterPopulate({
-        limit, skip, select, path, condition, populate, sortData: sort === FOLLOWERS_SORT.RANK ? 'wobjects_weight' : 'followers_count', collection,
+        limit, skip, select, path, condition, populate, sortData: SORT_CONDITION[sort], collection,
       });
   }
 };
