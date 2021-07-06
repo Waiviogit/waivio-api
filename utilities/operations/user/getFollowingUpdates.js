@@ -1,20 +1,20 @@
+/* eslint-disable camelcase */
 const {
   User: UserService, Wobj: WobjectService, wobjectSubscriptions,
 } = require('models');
 const { FOLLOWERS_SORT } = require('constants/sortData');
 const { followersHelper } = require('utilities/helpers');
-const _ = require('lodash');
 
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);
 
   const users = await followersHelper.sortUsers({
+    sort: FOLLOWERS_SORT.FOLLOWING_UPDATES,
     collection: FOLLOWERS_SORT.USER_SUB,
     field: FOLLOWERS_SORT.FOLLOWER,
     limit: users_count + 1,
     name,
     skip: 0,
-    sort: FOLLOWERS_SORT.RANK,
   });
 
   const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
@@ -23,12 +23,11 @@ const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) 
     return { error: getUserError || { status: 404, message: 'User not found!' } };
   }
 
-  // eslint-disable-next-line camelcase
-  const { users_updates } = await getUpdatesByUsersList({
-    users_follow: _.map(users, 'name'), limit: users_count,
-  });
+  const users_updates = {
+    users: users.slice(0, users_count),
+    hasMore: users.length > users_count,
+  };
 
-  // eslint-disable-next-line camelcase
   const { wobjects_updates } = await getUpdatesByWobjectsList({
     name: user.name, objects_follow: wobjects, limit: wobjects_count,
   });
@@ -52,11 +51,9 @@ const getWobjectsUpdates = async ({
 };
 
 const getUpdatesByWobjectsList = async ({
-  // eslint-disable-next-line camelcase
   objects_follow = [], skip = 0, limit = 3, name, object_type,
 }) => {
   let pipeline = [
-    // eslint-disable-next-line camelcase
     { $match: { author_permlink: { $in: [...objects_follow] } } },
     {
       $lookup: {
@@ -90,9 +87,7 @@ const getUpdatesByWobjectsList = async ({
     { $project: { _id: 0, object_type: '$_id', related_wobjects: { $slice: ['$wobjects', limit + 1] } } },
   ];
 
-  // eslint-disable-next-line camelcase
   if (object_type) {
-    // eslint-disable-next-line camelcase
     pipeline[0].$match.object_type = object_type;
     pipeline = pipeline.slice(0, -2); // cutting off part with group results by object_type
     pipeline.splice(pipeline.length - 1, 0, { $skip: skip }, { $limit: limit + 1 });
@@ -115,37 +110,18 @@ const getUpdatesByWobjectsList = async ({
 
 const getUsersUpdates = async ({ name, skip, limit }) => {
   const users = await followersHelper.sortUsers({
+    sort: FOLLOWERS_SORT.FOLLOWING_UPDATES,
     collection: FOLLOWERS_SORT.USER_SUB,
     field: FOLLOWERS_SORT.FOLLOWER,
     limit: limit + 1,
     name,
     skip,
-    sort: FOLLOWERS_SORT.RANK,
   });
-
-  return getUpdatesByUsersList({ users_follow: _.map(users, 'name'), limit });
-};
-
-const getUpdatesByUsersList = async ({ users_follow = [], limit = 3, skip = 0 }) => {
-  const { result = [], error } = await UserService.aggregate([
-    { $match: { name: { $in: users_follow } } },
-    { $addFields: { priority: { $cond: { if: { $gt: ['$last_posts_count', 0] }, then: 1, else: 0 } } } },
-    { $sort: { priority: -1, wobjects_weight: -1 } },
-    { $skip: skip },
-    { $limit: limit + 1 },
-    {
-      $project: {
-        _id: 0, name: 1, last_posts_count: 1, wobjects_weight: 1,
-      },
-    },
-  ]);
-
-  if (error) return { error };
 
   return {
     users_updates: {
-      users: result.slice(0, limit),
-      hasMore: result.length > limit,
+      users: users.slice(0, limit),
+      hasMore: users.length > limit,
     },
   };
 };
