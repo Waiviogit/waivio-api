@@ -105,7 +105,7 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
-const findOne = async ({ condition, select = {}, sort }) => {
+const findOne = async (condition, select = {}, sort) => {
   try {
     return { result: await WObjectModel.findOne(condition, select).sort(sort).lean() };
   } catch (error) {
@@ -113,9 +113,7 @@ const findOne = async ({ condition, select = {}, sort }) => {
   }
 };
 
-const find = async ({
-  condition, select, sort = {}, skip = 0, limit,
-}) => {
+const find = async (condition, select, sort = {}, skip = 0, limit) => {
   try {
     return {
       result: await WObjectModel

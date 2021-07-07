@@ -126,7 +126,7 @@ exports.importUserClientHMSet = async ({ key, data, expire }) => {
 };
 
 exports.setMaxWobjWeight = async () => {
-  const { result: wobject, error } = await WObjectModel.findOne({ sort: { weight: -1 } });
+  const { result: wobject, error } = await WObjectModel.findOne({}, {}, { weight: -1 });
   if (error) {
     sendSentryNotification();
     Sentry.captureException(error);
