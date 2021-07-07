@@ -10,34 +10,22 @@ const { RESERVATION_STATUSES } = require('constants/campaignsData');
 
 /**
  * Get wobjects data for particular post
- * @param author {String}
- * @param permlink {String}
+ * @param wobjects {[{}]}
  * @returns {Promise<{wObjectsData: *, wobjectPercents: *}>}
  * wObjectsData - full wobjects info(fields, def.name, posts counts etc.),
  * wobjectPercent - author_permlinks with percent which author noticed on particular post
  */
-const getPostObjects = async (author = '', permlink = '') => {
-  const { commentRef } = await CommentRef.getRef(`${author}_${permlink}`);
-
-  if (_.isString(_.get(commentRef, 'wobjects'))) {
-    let wobjs;
-
-    try {
-      wobjs = JSON.parse(commentRef.wobjects);
-    } catch (e) {
-      console.log(e);
-    }
-    if (Array.isArray(wobjs) && !_.isEmpty(wobjs)) {
-      const { result: wObjectsData } = await Wobj.find(
-        { author_permlink: { $in: _.map(wobjs, 'author_permlink') } }, {
-          fields: 1, author_permlink: 1, weight: 1, object_type: 1, default_name: 1, parent: 1,
-        },
-      );
-      wObjectsData.forEach((wobj) => {
-        wobj.fields = wobj.fields.filter((field) => _.includes(REQUIREDFIELDS_POST, field.name));
-      });
-      return { wObjectsData, wobjectPercents: wobjs };
-    }
+const getPostObjects = async (wobjects) => {
+  if (Array.isArray(wobjects) && !_.isEmpty(wobjects)) {
+    const { result: wObjectsData } = await Wobj.find(
+      { author_permlink: { $in: _.map(wobjects, 'author_permlink') } }, {
+        fields: 1, author_permlink: 1, weight: 1, object_type: 1, default_name: 1, parent: 1,
+      },
+    );
+    wObjectsData.forEach((wobj) => {
+      wobj.fields = wobj.fields.filter((field) => _.includes(REQUIREDFIELDS_POST, field.name));
+    });
+    return { wObjectsData, wobjectPercents: wobjects };
   }
 };
 
