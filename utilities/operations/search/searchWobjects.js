@@ -280,7 +280,7 @@ const searchPipeline = ({ string, object_type, maxWeight = 0 }) => ([
 ]);
 
 const addSearchWeightPipe = (maxWeight) => ({
-  $set: {
+  $addFields: {
     searchWeight: {
       $sum: [
         { $multiply: [FIELD_IMPORTANT_PRECENTS.RELEVANCE, { $divide: [{ $meta: 'textScore' }, 100] }] },
