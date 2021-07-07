@@ -1,6 +1,3 @@
-const Sentry = require('@sentry/node');
-const WObjectModel = require('models/wObjectModel');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
   importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
@@ -123,13 +120,4 @@ exports.incrementWebsitesSuspended = async ({ key, expire }) => {
 exports.importUserClientHMSet = async ({ key, data, expire }) => {
   await importUserClient.hmsetAsync(key, data);
   await importUserClient.expireAsync(key, expire);
-};
-
-exports.setMaxWobjWeight = async () => {
-  const { result: wobject, error } = await WObjectModel.findOne({}, {}, { weight: -1 });
-  if (error) {
-    sendSentryNotification();
-    Sentry.captureException(error);
-  }
-  await importUserClient.setAsync('max_wobject_weight', wobject.weight);
 };
