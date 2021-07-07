@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  CommentRef, Wobj, User, Post: PostRepository, Subscriptions,
+  Wobj, User, Post: PostRepository, Subscriptions,
   Campaign, botUpvoteModel, paymentHistory,
 } = require('models');
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
