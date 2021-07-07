@@ -48,7 +48,7 @@ async function getDbPostsIds(type, appName) {
 }
 
 const getFilteredDBPosts = async (trendingIds) => {
-  const { result: wobject } = await Wobj.findOne({ condition: { author_permlink: 'xka-crypto-ia-wtrade' } });
+  const { result: wobject } = await Wobj.findOne({ author_permlink: 'xka-crypto-ia-wtrade' });
   const filteredIds = [];
   let filterPermlinks = [];
   try {

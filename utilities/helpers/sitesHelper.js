@@ -221,7 +221,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   if (orMapCond.length)condition.$and[0].$or.push(...orMapCond);
   if (orTagsCond.length) condition.$and.push({ $or: orTagsCond });
 
-  const { result, error } = await Wobj.find({ condition, select: { author_permlink: 1, _id: 0 } });
+  const { result, error } = await Wobj.find(condition, { author_permlink: 1, _id: 0 });
   if (error) {
     await sendSentryNotification();
     return Sentry.captureException(error);
