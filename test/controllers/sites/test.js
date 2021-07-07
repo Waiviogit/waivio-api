@@ -670,7 +670,7 @@ describe('On sitesController', async () => {
           googleAnalyticsTag: userApp.googleAnalyticsTag,
           beneficiary: userApp.beneficiary,
           referralCommissionAcc: userApp.owner,
-          currency: { type: SUPPORTED_CURRENCIES.USD, rate: 1 },
+          currency: SUPPORTED_CURRENCIES.USD,
         };
         expect(result.body).to.be.deep.eq(mock);
       });
