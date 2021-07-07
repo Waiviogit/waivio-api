@@ -18,9 +18,7 @@ exports.getData = async ({
   };
   if (forSites) condition.author_permlink = { $in: crucialWobjects };
 
-  const { result: wobjects, error } = await Wobj.find({
-    condition, select: {}, sort: { weight: -1 }, skip: 0, limit: limit + 1,
-  });
+  const { result: wobjects, error } = await Wobj.find(condition, {}, { weight: -1 }, 0, limit + 1);
 
   if (error) return { error };
   if (userName) ({ user } = await User.getOne(userName));
