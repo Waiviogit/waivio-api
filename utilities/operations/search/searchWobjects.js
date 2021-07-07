@@ -120,9 +120,9 @@ const fillTagCategories = async (wobjectsCounts) => {
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipeline = ({
-                            crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
-                            skip, limit, supportedTypes, forSites, tagCategory, map, sort,
-                          }) => {
+  crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
+  skip, limit, supportedTypes, forSites, tagCategory, map, sort,
+}) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
     supportedTypes,
@@ -148,17 +148,17 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-                        string, object_type, limit, skip, crucialWobjects, forParent,
-                      }) => {
+  string, object_type, limit, skip, crucialWobjects, forParent,
+}) => {
   const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
-        $addFields: {
-          crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
-          priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
-        },
+      $addFields: {
+        crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
+        priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
-      { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
+    },
+    { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
@@ -166,8 +166,8 @@ const makePipeline = ({
 };
 
 const makeCountPipeline = ({
-                             string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
-                           }) => {
+  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+}) => {
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
     { $project: { _id: 0, object_type: '$_id', count: 1 } },
@@ -185,8 +185,8 @@ const makeCountPipeline = ({
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-                          crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
-                        }) => {
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
+}) => {
   const pipeline = [];
   if (map) {
     pipeline.push({
