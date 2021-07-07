@@ -42,7 +42,7 @@ const getUserSharesInWobj = async (name, author_permlink) => {
 };
 
 const getWobjectFields = async (permlink) => {
-  const { result } = await Wobj.findOne({ author_permlink: permlink });
+  const { result } = await Wobj.findOne({ condition: { author_permlink: permlink } });
   if (!result) return { error: { status: 404, message: 'Wobject not found' } };
   return { wobject: result };
 };
@@ -393,7 +393,9 @@ const processWobjects = async ({
   const parentPermlinks = _.chain(wobjects).map('parent').compact().uniq()
     .value();
   if (parentPermlinks.length) {
-    ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
+    ({ result: parents } = await Wobj.find({
+      condition: { author_permlink: { $in: parentPermlinks } },
+    }));
   }
   for (let obj of wobjects) {
     let exposedFields = [];
