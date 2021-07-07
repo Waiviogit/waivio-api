@@ -76,6 +76,14 @@ exports.getTagCategories = async ({ key, start, end }) => {
   }
 };
 
+exports.getMaxWobjWeight = async () => {
+  try {
+    return { weight: parseFloat(await importUserClient.getAsync('max_wobject_weight')) };
+  } catch (error) {
+    return { error };
+  }
+};
+
 /**
  * Get active users from redis for collect statistics and invoicing
  */

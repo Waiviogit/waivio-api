@@ -1,9 +1,13 @@
+const Sentry = require('@sentry/node');
+const WObjectModel = require('models/wObjectModel');
+const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
 const {
   importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
 } = require('./redis');
 const {
-  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX, WEBSITE_SUSPENDED_COUNT,
+  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  WEBSITE_SUSPENDED_COUNT,
 } = require('../constants');
 
 exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
@@ -119,4 +123,13 @@ exports.incrementWebsitesSuspended = async ({ key, expire }) => {
 exports.importUserClientHMSet = async ({ key, data, expire }) => {
   await importUserClient.hmsetAsync(key, data);
   await importUserClient.expireAsync(key, expire);
+};
+
+exports.setMaxWobjWeight = async () => {
+  const { result: wobject, error } = await WObjectModel.findOne({ sort: { weight: -1 } });
+  if (error) {
+    sendSentryNotification();
+    Sentry.captureException(error);
+  }
+  await importUserClient.setAsync('max_wobject_weight', wobject.weight);
 };
