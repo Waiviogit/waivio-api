@@ -1,4 +1,5 @@
 exports.FOLLOWERS_SORT = {
+  FOLLOWING_UPDATES: 'followingUpdates',
   WOBJECT_SUB: 'wobjectSubscription',
   FOLLOWING_PATH: 'followingPath',
   FOLLOWER_PATH: 'followerPath',
@@ -35,4 +36,10 @@ exports.VALID_EXPERTS_SORT = [
 exports.SEARCH_SORT = {
   WEIGHT: 'weight',
   CREATED: 'createdAt',
+};
+
+exports.SORT_CONDITION = {
+  [this.FOLLOWERS_SORT.RANK]: { sort: ['wobjects_weight'], order: ['desc'] },
+  [this.FOLLOWERS_SORT.FOLLOWERS]: { sort: ['followers_count'], order: ['desc'] },
+  [this.FOLLOWERS_SORT.FOLLOWING_UPDATES]: { sort: ['last_posts_count', 'wobjects_weight'], order: ['desc', 'desc'] },
 };

@@ -3,7 +3,8 @@ const {
   importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
 } = require('./redis');
 const {
-  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX, WEBSITE_SUSPENDED_COUNT,
+  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  WEBSITE_SUSPENDED_COUNT,
 } = require('../constants');
 
 exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);

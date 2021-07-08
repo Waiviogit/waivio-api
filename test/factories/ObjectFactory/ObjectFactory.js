@@ -23,4 +23,5 @@ const Create = async ({
   const newObject = await WObject.create(object);
   return newObject.toObject();
 };
+
 module.exports = { Create };
