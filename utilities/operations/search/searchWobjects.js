@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { FIELDS_NAMES, SEARCH_FIELDS, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
@@ -236,12 +236,7 @@ const matchSitesPipe = ({
   pipeline.push({
     $match: {
       $and: [
-        {
-          $or: [
-            { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
-            { fields: { $elemMatch: { name: { $in: SEARCH_FIELDS }, body: { $regex: string, $options: 'i' } } } },
-          ],
-        },
+        { search: { $regex: string, $options: 'i' } },
         { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
       ],
     },
@@ -252,12 +247,7 @@ const matchSitesPipe = ({
 const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
     $and: [
-      {
-        $or: [
-          { fields: { $elemMatch: { name: FIELDS_NAMES.NAME, body: { $regex: string, $options: 'i' } } } },
-          { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
-        ],
-      },
+      { search: { $regex: string, $options: 'i' } },
       { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
     ],
     'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
