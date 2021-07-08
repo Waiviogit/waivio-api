@@ -1,20 +1,16 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
-const { FIELD_IMPORTANT_PRECENTS } = require('constants/sortData');
+const { FIELDS_NAMES, SEARCH_FIELDS, OBJECT_TYPES } = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
-const redisGetter = require('utilities/redis/redisGetter');
+const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await getAppInfo(data);
 
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
-  const { weight } = await redisGetter.getMaxWobjWeight();
-  data.maxWeight = weight;
   if (_.isUndefined(data.limit)) data.limit = 10;
 
   return appInfo.forExtended || appInfo.forSites
@@ -144,9 +140,6 @@ const makeSitePipeline = ({
         priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
-  }
-  if (string) {
-    pipeline.push({ $sort: { searchWeight: -1 } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
@@ -155,13 +148,9 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, object_type, limit, skip, crucialWobjects, forParent, maxWeight,
+  string, object_type, limit, skip, crucialWobjects, forParent,
 }) => {
-  let pipeline;
-  pipeline = [matchSimplePipe({ object_type })];
-  if (string) {
-    pipeline = [...searchPipeline({ string, object_type, maxWeight })];
-  }
+  const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
@@ -170,8 +159,6 @@ const makePipeline = ({
       },
     },
     { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
-  } else if (string) {
-    pipeline.push({ $sort: { searchWeight: -1 } });
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
@@ -179,7 +166,7 @@ const makePipeline = ({
 };
 
 const makeCountPipeline = ({
-  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended, maxWeight,
+  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
 }) => {
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
@@ -190,9 +177,7 @@ const makeCountPipeline = ({
       string, crucialWobjects, object_type, supportedTypes, forSites,
     }));
   } else {
-    string
-      ? pipeline.unshift(...searchPipeline({ string, object_type, maxWeight }))
-      : pipeline.unshift(matchSimplePipe({ object_type }));
+    pipeline.unshift(matchSimplePipe({ string, object_type }));
   }
   return pipeline;
 };
@@ -200,19 +185,9 @@ const makeCountPipeline = ({
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box,
-  addHashtag, maxWeight,
+  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
   const pipeline = [];
-  if (string) {
-    pipeline.push({
-      $match: {
-        $text: { $search: string },
-        object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
-      },
-    },
-    addSearchWeightPipe(maxWeight));
-  }
   if (map) {
     pipeline.push({
       $geoNear: {
@@ -258,34 +233,33 @@ const matchSitesPipe = ({
     }
     pipeline.push({ $match: { $or: condition } });
   }
+  pipeline.push({
+    $match: {
+      $and: [
+        {
+          $or: [
+            { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
+            { fields: { $elemMatch: { name: { $in: SEARCH_FIELDS }, body: { $regex: string, $options: 'i' } } } },
+          ],
+        },
+        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+      ],
+    },
+  });
   return pipeline;
 };
 
-const matchSimplePipe = ({ object_type }) => ({
+const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
-    object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
+    $and: [
+      {
+        $or: [
+          { fields: { $elemMatch: { name: FIELDS_NAMES.NAME, body: { $regex: string, $options: 'i' } } } },
+          { author_permlink: { $regex: `${_.get(string, '[3]') === '-' ? `^${string}` : '_'}`, $options: 'i' } },
+        ],
+      },
+      { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+    ],
     'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-  },
-});
-
-const searchPipeline = ({ string, object_type, maxWeight = 0 }) => ([
-  {
-    $match: {
-      $text: { $search: string },
-      object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' },
-      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-    },
-  },
-  addSearchWeightPipe(maxWeight),
-]);
-
-const addSearchWeightPipe = (maxWeight) => ({
-  $addFields: {
-    searchWeight: {
-      $sum: [
-        { $multiply: [FIELD_IMPORTANT_PRECENTS.RELEVANCE, { $divide: [{ $meta: 'textScore' }, 100] }] },
-        { $multiply: [FIELD_IMPORTANT_PRECENTS.EXPERTISE, { $divide: [{ $meta: 'textScore' }, maxWeight] }] },
-      ],
-    },
   },
 });

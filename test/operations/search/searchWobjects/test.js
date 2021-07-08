@@ -24,19 +24,18 @@ describe('On wobjects search', async () => {
     const counter = _.random(5, 10);
     const notSearchedTypes = Object.values(OBJECT_TYPES);
     notSearchedTypes.splice(notSearchedTypes.indexOf(searchedType), 1);
-    const fieldInfo = { name: FIELDS_NAMES.NAME, body: faker.random.string() };
 
     beforeEach(async () => {
       for (let i = 0; i < counter; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
+          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
         });
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await ObjectFactory.Create({
           objectType: _.sample(notSearchedTypes),
-          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
+          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
         });
       }
       result = await wobjects.searchWobjects({
@@ -57,18 +56,16 @@ describe('On wobjects search', async () => {
 
   describe('on box search', async () => {
     let wobj1, wobj2, campaign, result;
-    const name = faker.random.string();
-
     beforeEach(async () => {
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
-        searchField: { name },
+        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
       });
       wobj2 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-95.233, 48.224] },
-        searchField: { name: faker.random.string() },
+        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
       });
       campaign = await CampaignFactory.Create({
         status: CAMPAIGN_STATUSES.ACTIVE,
@@ -150,16 +147,8 @@ describe('On wobjects search', async () => {
           app: child,
           box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
         });
-        expect(result.wobjects).to.have.length(2);
-      });
 
-      it('should return wobject by search string, if it in search box and in site supported objects', async () => {
-        result = await wobjects.searchWobjects({
-          app: child,
-          string: name,
-          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
-        });
-        expect(result.wobjects).to.have.length(1);
+        expect(result.wobjects).to.have.length(2);
       });
 
       it('should not return object if it not in supported objects', async () => {
@@ -209,13 +198,12 @@ describe('On wobjects search', async () => {
     const name = faker.random.string();
     const skip = _.random(0, 3);
     const limit = _.random(5, 10);
-    const fieldInfo = { name: FIELDS_NAMES.NAME, body: name };
 
     beforeEach(async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          searchField: { [`${fieldInfo.name}`]: fieldInfo.body },
+          fields: [{ name: FIELDS_NAMES.NAME, body: name }],
         });
       }
     });
