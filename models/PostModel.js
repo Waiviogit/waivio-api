@@ -77,6 +77,7 @@ exports.getByFollowLists = async ({
   if (!_.isEmpty(hiddenPosts)) cond._id = { $nin: hiddenPosts };
   if (!_.isEmpty(muted)) {
     cond.author = { $nin: muted };
+    cond.reblog_from = { $nin: muted };
     cond['reblog_to.author'] = { $nin: muted };
   }
 
