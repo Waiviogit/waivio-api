@@ -18,7 +18,12 @@ module.exports = async ({
   }, { author: [], users: [] });
 
   if (!_.isEmpty(muted.author)) return { posts: [], tags: [] };
-  if (!_.isEmpty(muted.users)) Object.assign(additionalCond, { 'reblog_to.author': { $nin: _.map(muted.users, 'userName') } });
+  if (!_.isEmpty(muted.users)) {
+    Object.assign(additionalCond, {
+      reblog_from: { $nin: _.map(muted.users, 'userName') },
+      'reblog_to.author': { $nin: _.map(muted.users, 'userName') },
+    });
+  }
 
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   if (!_.isEmpty(hiddenPosts)) Object.assign(additionalCond, { _id: { $nin: hiddenPosts } });
