@@ -63,6 +63,7 @@ const WObjectSchema = new Schema({
   last_posts_counts_by_hours: { type: [Number], default: [] },
   activeCampaigns: { type: [mongoose.Types.ObjectId], default: [] },
   activeCampaignsCount: { type: Number, default: 0 },
+  search: { type: [String], default: [] },
 },
 {
   toObject: { virtuals: true }, timestamps: true, strict: false,
@@ -73,6 +74,7 @@ WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });
 FieldsSchema.index({ name: -1, body: -1 });
+WObjectSchema.index({ search: -1 });
 
 WObjectSchema.virtual('followers', {
   ref: 'User',

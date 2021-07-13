@@ -2,7 +2,7 @@ const { faker, WObject } = require('test/testHelper');
 
 const Create = async ({
   author, authorPermlink, defaultName, creator, map, weight,
-  latestPosts, fields, objectType, administrative, ownership,
+  latestPosts, fields, objectType, administrative, ownership, searchWords,
 } = {}) => {
   const object = {
     authority: {
@@ -18,6 +18,7 @@ const Create = async ({
     latest_posts: latestPosts,
     fields: fields || [],
     weight: weight || 1,
+    search: searchWords || [],
   };
 
   const newObject = await WObject.create(object);
