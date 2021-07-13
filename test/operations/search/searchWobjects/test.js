@@ -120,7 +120,7 @@ describe('On wobjects search', async () => {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
             map: { type: 'Point', coordinates: [-94.233, 48.224] },
-            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+            searchWords: [faker.random.string()],
             weight: _.random(2, 10),
           });
         }
@@ -173,7 +173,7 @@ describe('On wobjects search', async () => {
         beforeEach(async () => {
           hashtag = await ObjectFactory.Create({
             objectType: OBJECT_TYPES.HASHTAG,
-            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+            searchWords: [faker.random.string()],
           });
         });
 
