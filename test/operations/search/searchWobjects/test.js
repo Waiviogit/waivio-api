@@ -2,7 +2,7 @@ const {
   faker, expect, dropDatabase, _, App,
 } = require('test/testHelper');
 const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { wobjects } = require('utilities/operations/search');
 const { STATUSES } = require('constants/sitesConstants');
@@ -24,18 +24,19 @@ describe('On wobjects search', async () => {
     const counter = _.random(5, 10);
     const notSearchedTypes = Object.values(OBJECT_TYPES);
     notSearchedTypes.splice(notSearchedTypes.indexOf(searchedType), 1);
+    const searchWords = [faker.random.string()];
 
     beforeEach(async () => {
       for (let i = 0; i < counter; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+          searchWords,
         });
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await ObjectFactory.Create({
           objectType: _.sample(notSearchedTypes),
-          fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+          searchWords,
         });
       }
       result = await wobjects.searchWobjects({
@@ -60,12 +61,12 @@ describe('On wobjects search', async () => {
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+        searchWords: [faker.random.string()],
       });
       wobj2 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-95.233, 48.224] },
-        fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+        searchWords: [faker.random.string()],
       });
       campaign = await CampaignFactory.Create({
         status: CAMPAIGN_STATUSES.ACTIVE,
@@ -118,7 +119,7 @@ describe('On wobjects search', async () => {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
             map: { type: 'Point', coordinates: [-94.233, 48.224] },
-            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+            searchWords: [faker.random.string()],
             weight: _.random(2, 10),
           });
         }
@@ -171,7 +172,7 @@ describe('On wobjects search', async () => {
         beforeEach(async () => {
           hashtag = await ObjectFactory.Create({
             objectType: OBJECT_TYPES.HASHTAG,
-            fields: [{ name: FIELDS_NAMES.NAME, body: faker.random.string() }],
+            searchWords: [faker.random.string()],
           });
         });
 
@@ -203,7 +204,7 @@ describe('On wobjects search', async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          fields: [{ name: FIELDS_NAMES.NAME, body: name }],
+          searchWords: [name],
         });
       }
     });
