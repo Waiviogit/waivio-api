@@ -3,7 +3,9 @@ const { getNamespace } = require('cls-hooked');
 const {
   Wobj, Campaign, User, App, wobjectSubscriptions,
 } = require('models');
-const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const {
+  REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
+} = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 
 /**
@@ -81,6 +83,11 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
+
+  wobjects = _.filter(wobjects, (wobj) => _.isEmpty(wobj.status) || !_.includes(
+    REMOVE_OBJ_STATUSES, JSON.parse(wobj.status).title,
+  ));
+
   return { wobjects };
 };
 
