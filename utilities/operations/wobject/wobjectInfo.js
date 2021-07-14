@@ -56,7 +56,10 @@ const getListItems = async (wobject, data, app) => {
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
   if (!fields) return { wobjects: [] };
-  let { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
+  let { result: wobjects } = await Wobj.find({
+    author_permlink: { $in: _.map(fields, 'body') },
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
 
   let user;
   if (data.userName) {
@@ -83,10 +86,6 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
-
-  wobjects = _.filter(wobjects, (wobj) => _.isEmpty(wobj.status) || !_.includes(
-    REMOVE_OBJ_STATUSES, JSON.parse(wobj.status).title,
-  ));
 
   return { wobjects };
 };
