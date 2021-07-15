@@ -3,7 +3,9 @@ const { getNamespace } = require('cls-hooked');
 const {
   Wobj, Campaign, User, App, wobjectSubscriptions,
 } = require('models');
-const { REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const {
+  REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
+} = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 
 /**
@@ -54,7 +56,10 @@ const getListItems = async (wobject, data, app) => {
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
   if (!fields) return { wobjects: [] };
-  let { result: wobjects } = await Wobj.find({ author_permlink: { $in: _.map(fields, 'body') } });
+  let { result: wobjects } = await Wobj.find({
+    author_permlink: { $in: _.map(fields, 'body') },
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
 
   let user;
   if (data.userName) {
@@ -81,6 +86,7 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
+
   return { wobjects };
 };
 
