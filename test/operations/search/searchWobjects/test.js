@@ -6,7 +6,6 @@ const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { wobjects } = require('utilities/operations/search');
 const { STATUSES } = require('constants/sitesConstants');
-const { getWobjsNearby } = require('utilities/operations').wobject;
 
 describe('On wobjects search', async () => {
   let parent;
@@ -285,53 +284,6 @@ describe('On wobjects search', async () => {
       it('should result.wobjects should have proper length', async () => {
         expect(result.wobjects).to.be.have.length(limit - skip);
       });
-    });
-  });
-  describe('Nearby tests', async () => {
-    let wobj1, wobj2, wobj3, result;
-    beforeEach(async () => {
-      wobj1 = await ObjectFactory.Create({
-        app: parent.name, objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [-73.9928, 40.7193] },
-      });
-      wobj2 = await ObjectFactory.Create({
-        app: parent.name, objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [-73.9928, 40.7193] },
-      });
-      wobj3 = await ObjectFactory.Create({
-        app: parent.name, objectType: OBJECT_TYPES.RESTAURANT, map: { type: 'Point', coordinates: [95.233, -48.224] },
-      });
-    });
-    it('should return objects from the search area', async () => {
-      const wobj = await ObjectFactory.Create({
-        app: parent.name, map: { type: 'Point', coordinates: [-73.9928, 40.7193] },
-      });
-      result = await getWobjsNearby({
-        authorPermlink: wobj.author_permlink, app: parent, radius: 200,
-      });
-      expect(_.map(result.wobjects, 'author_permlink')).to.be.include(wobj1.author_permlink, wobj2.author_permlink);
-    });
-    it('should return object of the correct type', async () => {
-      const wobj = await ObjectFactory.Create({
-        app: parent.name, objectType: OBJECT_TYPES.HASHTAG, map: { type: 'Point', coordinates: [-73.9928, 40.7193] },
-      });
-      result = await getWobjsNearby({
-        authorPermlink: wobj.author_permlink, app: parent, radius: 200,
-      });
-      expect(_.map(result.wobjects, 'author_permlink')).to.be.not.include(wobj.author_permlink);
-    });
-    it('should return objects that correspond to a specific app', async () => {
-      const wobj = await ObjectFactory.Create({
-        objectType: OBJECT_TYPES.HASHTAG, map: { type: 'Point', coordinates: [-73.9928, 40.7193] },
-      });
-      result = await getWobjsNearby({
-        authorPermlink: wobj1.author_permlink, app: parent, radius: 20000,
-      });
-      expect(_.map(result.wobjects, 'author_permlink')).to.be.not.include(wobj.author_permlink);
-    });
-    it('should return empty array if there are no objects nearby', async () => {
-      result = await getWobjsNearby({
-        authorPermlink: wobj3.author_permlink, app: parent, radius: 10,
-      });
-      expect(result.wobjects).to.be.empty;
     });
   });
 });

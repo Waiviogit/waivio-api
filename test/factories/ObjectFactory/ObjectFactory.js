@@ -1,7 +1,7 @@
 const { faker, WObject } = require('test/testHelper');
 
 const Create = async ({
-  author, authorPermlink, defaultName, creator, map, weight, app,
+  author, authorPermlink, defaultName, creator, map, weight,
   latestPosts, fields, objectType, administrative, ownership, searchWords,
 } = {}) => {
   const object = {
@@ -15,7 +15,6 @@ const Create = async ({
     default_name: defaultName || faker.name.firstName(),
     creator: creator || faker.name.firstName(),
     map: map || null,
-    app: app || '',
     latest_posts: latestPosts,
     fields: fields || [],
     weight: weight || 1,
