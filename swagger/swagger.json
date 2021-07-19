@@ -3124,6 +3124,57 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/nearby" : {
+      "get" : {
+        "tags" : [ "wobject" ],
+        "summary" : "Return objects that are nearby",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "authorPermlink",
+          "in" : "path",
+          "description" : "author_permlink of specified wobject",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "required" : false,
+          "minimum": 0,
+          "default": 0,
+          "type" : "integer"
+        },{
+          "name" : "limit",
+          "in" : "query",
+          "required" : false,
+          "minimum": 1,
+          "maximum": 100,
+          "default": 5,
+          "type" : "integer"
+        }, {
+          "name" : "radius",
+          "in" : "query",
+          "required" : false,
+          "minimum": 0,
+          "default": 20000,
+          "type" : "integer"
+          }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref" : "#/definitions/wobjects_nearby_metadata"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject/{authorPermlink}/object_expertise" : {
       "post" : {
         "tags" : [ "wobject" ],
@@ -6128,6 +6179,17 @@
         },
         "settings" : {
           "$ref" : "#/definitions/userMetadata_user_metadata_settings"
+        }
+      }
+    },
+    "wobjects_nearby_metadata": {
+      "type": "object",
+      "properties": {
+        "wobjects": {
+          "type": "array",
+          "items": {
+            "$ref" : "#/definitions/wobjectonlist"
+          }
         }
       }
     }

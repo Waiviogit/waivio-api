@@ -147,6 +147,14 @@ exports.getWobjectField = Joi.object().keys({
   app: Joi.string().required(),
 });
 
+exports.getWobjectsNearby = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(1).max(100)
+    .default(5),
+  radius: Joi.number().integer().min(0).default(20000),
+});
+
 exports.getRelatedAlbum = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),
