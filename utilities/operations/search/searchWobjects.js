@@ -1,13 +1,13 @@
 /* eslint-disable camelcase */
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
+const searchHelper = require('utilities/helpers/searchHelper');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
-const { getSessionApp } = require('utilities/helpers/sitesHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
-const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
-  const appInfo = await getAppInfo(data);
+  const appInfo = await searchHelper.getAppInfo(data);
 
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
@@ -16,20 +16,6 @@ exports.searchWobjects = async (data) => {
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
     : defaultWobjectSearch({ ...data, ...appInfo });
-};
-
-const getAppInfo = async ({ app, addHashtag }) => {
-  if (!app) ({ result: app } = await getSessionApp());
-  const supportedTypes = _.get(app, 'supported_object_types', []);
-  if (addHashtag) supportedTypes.push(OBJECT_TYPES.HASHTAG);
-
-  return {
-    crucialWobjects: _.get(app, 'supported_objects', []),
-    forExtended: _.get(app, 'canBeExtended'),
-    forSites: _.get(app, 'inherited'),
-    supportedTypes,
-    app,
-  };
 };
 
 const defaultWobjectSearch = async (data) => {
