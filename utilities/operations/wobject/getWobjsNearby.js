@@ -5,10 +5,10 @@ const searchHelper = require('utilities/helpers/searchHelper');
 module.exports = async ({
   authorPermlink, app, skip, limit, radius,
 }) => {
-  let wobjects = [];
+  const wobjects = [];
   const appInfo = await searchHelper.getAppInfo({ app });
   const { result: wobj, error: wobjErr } = await Wobj.findOne({ author_permlink: authorPermlink });
-  if (wobjErr || !wobj) return { error: wobjErr || { status: 404, message: 'Wobject not found!' } };
+  if (wobjErr || !wobj) return { wobjects };
 
   const coordinates = _.get(wobj, 'map.coordinates');
   if (_.isEmpty(coordinates)) return { wobjects };
@@ -16,8 +16,10 @@ module.exports = async ({
   const pipeline = makeNearbyPipe({
     coordinates, radius, skip, limit, ...appInfo, authorPermlink,
   });
-  wobjects = await Wobj.fromAggregation(pipeline);
-  return wobjects;
+  const { wobjects: wobjs, error } = await Wobj.fromAggregation(pipeline);
+  if (error) return { wobjects };
+
+  return { wobjects: wobjs };
 };
 
 const makeNearbyPipe = ({
