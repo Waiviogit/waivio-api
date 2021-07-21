@@ -39,7 +39,6 @@ exports.schema = [
     path: '/wobject/:authorPermlink/nearby',
     method: 'GET',
     case: 2,
-    wobjects_path: 'wobjects',
   },
   // user controller
   {
