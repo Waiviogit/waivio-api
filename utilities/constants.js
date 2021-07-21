@@ -62,3 +62,7 @@ exports.TREND_FILTERED_NEWS_CACHE_PREFIX = 'trend_filtered_locale_cache';
 exports.TREND_NEWS_CACHE_SIZE = 1000;
 
 exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
+
+exports.PROXY_HIVE_IMAGES = 'https://images.hive.blog/0x0/';
+
+exports.NOT_FOUND_IMAGE_URL = 'https://waivio.nyc3.digitaloceanspaces.com/ImageNotFound';
