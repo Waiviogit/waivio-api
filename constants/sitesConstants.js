@@ -69,9 +69,9 @@ exports.GET_DEFAULT_COLORS = () => {
 };
 
 exports.NOTIFICATION = {
-  WARNING: 'Warning: website account balance may run out in',
-  ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
-  BALANCE_ID: 'webSiteBalance',
+  WARNING: 1,
+  ATTENTION: 2,
+  BALANCE_ID: 3,
 };
 
 exports.PAYMENT_DESCRIPTION = {

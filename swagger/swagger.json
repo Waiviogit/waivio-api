@@ -6192,6 +6192,74 @@
           }
         }
       }
+    },
+    "notification_status_codes": {
+      "type" : "array",
+      "items": {
+        "type" : "object",
+        "properties": {
+          "1": {
+            "type" : "string",
+            "example": "Warning: website account balance may run out in"
+          },
+          "2": {
+            "type" : "string",
+            "example": "Attention! All your websites are now suspended due to the negative balance on your website account"
+          },
+          "3": {
+            "type" : "string",
+            "example": "webSiteBalance"
+          },
+          "#.90": {
+            "type" : "string",
+            "example": "3 month"
+          },
+          "#.60": {
+            "type" : "string",
+            "example": "2 month"
+          },
+          "#.30": {
+            "type" : "string",
+            "example": "1 month"
+          },
+          "#.21": {
+            "type" : "string",
+            "example": "3 weeks"
+          },
+          "#.12": {
+            "type" : "string",
+            "example": "2 weeks"
+          },
+          "#.7": {
+            "type" : "string",
+            "example": "a week"
+          },
+          "#.6": {
+            "type" : "string",
+            "example": "6 days"
+          },
+          "#.5": {
+            "type" : "string",
+            "example": "5 days"
+          },
+          "#.4": {
+            "type" : "string",
+            "example": "4 days"
+          },
+          "#.3": {
+            "type" : "string",
+            "example": "3 days"
+          },
+          "#.2": {
+            "type" : "string",
+            "example": "2 days"
+          },
+          "#.1": {
+            "type" : "string",
+            "example": "a day"
+          }
+        }
+      }
     }
   }
 }

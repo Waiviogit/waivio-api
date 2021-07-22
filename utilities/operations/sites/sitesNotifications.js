@@ -32,18 +32,18 @@ const getMessage = async ({ remainingDays, paid, owner }) => {
     return '';
   }
   const messages = {
-    90: () => `${NOTIFICATION.WARNING} 3 month`,
-    60: () => `${NOTIFICATION.WARNING} 2 month`,
-    30: () => `${NOTIFICATION.WARNING} 1 month`,
-    21: () => `${NOTIFICATION.WARNING} 3 weeks`,
-    14: () => `${NOTIFICATION.WARNING} 2 weeks`,
-    7: () => `${NOTIFICATION.WARNING} a week`,
-    6: () => `${NOTIFICATION.WARNING} 6 days`,
-    5: () => `${NOTIFICATION.WARNING} 5 days`,
-    4: () => `${NOTIFICATION.WARNING} 4 days`,
-    3: () => `${NOTIFICATION.WARNING} 3 days`,
-    2: () => `${NOTIFICATION.WARNING} 2 days`,
-    1: () => `${NOTIFICATION.WARNING} a day`,
+    90: () => `${NOTIFICATION.WARNING}.90`,
+    60: () => `${NOTIFICATION.WARNING}.60`,
+    30: () => `${NOTIFICATION.WARNING}.30`,
+    21: () => `${NOTIFICATION.WARNING}.21`,
+    14: () => `${NOTIFICATION.WARNING}.14`,
+    7: () => `${NOTIFICATION.WARNING}.7`,
+    6: () => `${NOTIFICATION.WARNING}.6`,
+    5: () => `${NOTIFICATION.WARNING}.5`,
+    4: () => `${NOTIFICATION.WARNING}.4`,
+    3: () => `${NOTIFICATION.WARNING}.3`,
+    2: () => `${NOTIFICATION.WARNING}.2`,
+    1: () => `${NOTIFICATION.WARNING}.1`,
     default: () => '',
   };
   return (messages[remainingDays] || messages.default)();

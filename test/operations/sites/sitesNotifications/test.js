@@ -38,7 +38,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 90 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} 3 month` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.90` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 90 } }));
     await balanceNotification();
@@ -46,7 +46,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 60 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} 2 month` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.60` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 60 } }));
     await balanceNotification();
@@ -54,7 +54,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 30 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} 1 month` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.30` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 30 } }));
     await balanceNotification();
@@ -62,7 +62,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 21 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} 3 weeks` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.21` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 21 } }));
     await balanceNotification();
@@ -70,7 +70,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 14 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} 2 weeks` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.14` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 14 } }));
     await balanceNotification();
@@ -78,15 +78,15 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 7 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} a week` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.7` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 7 } }));
     await balanceNotification();
     expect(notificationsHelper.sendNotification).to.calledWithExactly(reqData);
   });
-  it('should send notification called with 6 -2  days message', async () => {
+  it('should send notification called with 6-2  days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} ${randomTwoSix} days` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.${randomTwoSix}` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: randomTwoSix } }));
     await balanceNotification();
@@ -94,7 +94,7 @@ describe('On balanceNotification', async () => {
   });
   it('should send notification called with 1 days message', async () => {
     const reqData = {
-      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING} a day` }],
+      id: NOTIFICATION.BALANCE_ID, data: [{ owner: app.owner, message: `${NOTIFICATION.WARNING}.1` }],
     };
     await sinon.stub(manage, 'getManagePage').returns(Promise.resolve({ accountBalance: { remainingDays: 1 } }));
     await balanceNotification();
