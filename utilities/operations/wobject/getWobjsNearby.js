@@ -14,7 +14,7 @@ module.exports = async ({
   if (_.isEmpty(coordinates)) return { wobjects };
 
   const pipeline = makeNearbyPipe({
-    coordinates, radius, skip, limit, ...appInfo, authorPermlink,
+    coordinates, radius, skip, limit, ...appInfo, authorPermlink, object_type: wobj.object_type,
   });
   const { wobjects: wobjs, error } = await Wobj.fromAggregation(pipeline);
   if (error) return { wobjects };
@@ -23,8 +23,8 @@ module.exports = async ({
 };
 
 const makeNearbyPipe = ({
-  coordinates, radius, skip = 0, limit = 5, crucialWobjects, supportedTypes,
-  forSites, authorPermlink,
+  coordinates, radius, skip = 0, limit = 5, crucialWobjects,
+  forSites, authorPermlink, object_type,
 }) => {
   const pipeline = [];
   pipeline.push({
@@ -32,6 +32,7 @@ const makeNearbyPipe = ({
       near: { type: 'Point', coordinates },
       distanceField: 'proximity',
       maxDistance: radius,
+      num: 100000,
       spherical: true,
     },
   });
@@ -39,9 +40,9 @@ const makeNearbyPipe = ({
     $match: {
       'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
       author_permlink: { $ne: authorPermlink },
+      object_type,
     },
   };
-  if (!_.isEmpty(supportedTypes)) matchCond.$match.object_type = { $in: supportedTypes };
   if (forSites) matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
   pipeline.push({ $skip: skip }, { $limit: limit });
