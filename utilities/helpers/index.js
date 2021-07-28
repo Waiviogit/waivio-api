@@ -13,5 +13,6 @@ moduleExports.sitesHelper = require('./sitesHelper');
 moduleExports.objectTypeHelper = require('./objectTypeHelper');
 moduleExports.notificationsHelper = require('./notificationsHelper');
 moduleExports.geoHelper = require('./geoHelper');
+moduleExports.searchHelper = require('./searchHelper');
 
 module.exports = moduleExports;

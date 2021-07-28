@@ -1,7 +1,7 @@
 const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
-  getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
+  getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated, getWobjsNearby,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -197,6 +197,20 @@ const getWobjectField = async (req, res, next) => {
   next();
 };
 
+const getWobjectsNearby = async (req, res, next) => {
+  const value = validators.validate({
+    authorPermlink: req.params.authorPermlink,
+    ...req.query,
+  },
+  validators.wobject.getWobjectsNearby, next);
+  if (!value) return;
+  const { wobjects, error } = await getWobjsNearby(value);
+
+  if (error) return next(error);
+  res.result = { status: 200, json: wobjects };
+  next();
+};
+
 const related = async (req, res, next) => {
   const value = validators.validate(
     { ...req.params, ...req.query },
@@ -223,5 +237,6 @@ module.exports = {
   getByField,
   getChildWobjects,
   getWobjectField,
+  getWobjectsNearby,
   related,
 };
