@@ -6,11 +6,20 @@ const hiveClients = (() => {
   const clients = [];
   for (const node of NODE_URLS) {
     clients.push(new HIVE.Client(node, {
-      timeout: 8 * 1000, failoverThreshold: 4, rebrandedApi: true,
+      timeout: 8 * 1000, failoverThreshold: 1, rebrandedApi: true,
     }));
   }
   return clients;
 })();
+
+const reloadClients = () => {
+  hiveClients.length = 0;
+  for (const node of NODE_URLS) {
+    hiveClients.push(new HIVE.Client(node, {
+      timeout: 8 * 1000, failoverThreshold: 1, rebrandedApi: true,
+    }));
+  }
+};
 
 const getHiveClient = (hiveClient) => {
   if (!hiveClient) return hiveClients[0];
@@ -26,10 +35,13 @@ exports.execute = async (method, params) => {
     const data = await method(this.client, params);
     if (!_.get(data, 'error')) return data;
     if (i === hiveClients.length - 1) {
+      reloadClients();
+      console.log('---------------renew clients');
       return { error: data.error };
     }
     if (data.error) {
-      this.client = getHiveClient(this.client);
+      console.log('---------------switch client');
+      this.client = await getHiveClient(this.client);
     }
   }
 };
