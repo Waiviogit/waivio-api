@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const HIVE = require('@hiveio/dhive');
 const { NODE_URLS } = require('constants/requestData');
+const { DONT_SWITCH_CLIENT_ERR } = require('constants/regExp');
 
 const hiveClients = (() => {
   const clients = [];
@@ -40,8 +41,11 @@ exports.execute = async (method, params) => {
       return { error: data.error };
     }
     if (data.error) {
-      console.log('---------------switch client');
+      if (DONT_SWITCH_CLIENT_ERR.test(_.get(data, 'error.message', ''))) {
+        return { error: data.error };
+      }
       this.client = await getHiveClient(this.client);
+      console.log('---------------switch client', _.get(data, 'error.message', ''));
     }
   }
 };
