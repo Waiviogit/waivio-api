@@ -13,6 +13,7 @@ const {
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
+const processHelper = require('utilities/helpers/processHelper');
 
 const swaggerDocument = require('./swagger');
 require('jobs');
@@ -56,7 +57,7 @@ app.use((req, res, next) => {
   session.set('access-token', req.headers['access-token']);
   session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
   session.set('device', device);
-  session.set('startTime', process.hrtime());
+  session.set('reqInfo', { timeStart: process.hrtime(), utl: req.url, method: req.method });
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
@@ -95,22 +96,9 @@ app.use(Sentry.Handlers.errorHandler({
 
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
-const getDurationInMilliseconds = (start) => {
-  const NS_PER_SEC = 1e9;
-  const NS_TO_MS = 1e6;
-  const diff = process.hrtime(start);
-
-  return (diff[0] * NS_PER_SEC + diff[1]) / NS_TO_MS;
-};
-
 app.use((req, res, next) => {
-  res.on('finish', () => {
-    const requestTime = getDurationInMilliseconds(session.get('startTime'));
-    console.log('------------finish', requestTime);
-  });
   res.on('close', () => {
-    const requestTime = getDurationInMilliseconds(session.get('startTime'));
-    console.log('------------close', requestTime);
+    processHelper.responseOnClose({ session });
   });
   res.status(res.result.status || 200).json(res.result.json);
 });
