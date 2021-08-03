@@ -35,6 +35,11 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/wobject/:authorPermlink/nearby',
+    method: 'GET',
+    case: 2,
+  },
   // user controller
   {
     path: '/user/:userName/following_objects',

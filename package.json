@@ -13,6 +13,7 @@
     "addStatusTitles": "NODE_PATH=. node ./utilities/tasks/addStatusTitles/run.js",
     "changeAvatarLinks": "NODE_PATH=. node ./utilities/tasks/changeAvatarLinks/run.js",
     "fixCustomSort": "NODE_PATH=. node ./utilities/tasks/fixCustomSortBody/run.js",
+    "updateImagesOnPages": "NODE_PATH=. node utilities/tasks/updateImagesOnPages/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
