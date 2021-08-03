@@ -99,6 +99,8 @@ wobjRoutes.route('/wobject/:authorPermlink/child_wobjects')
   .get(WobjController.getChildWobjects);
 wobjRoutes.route('/wobject/:authorPermlink/nearby')
   .get(WobjController.getWobjectsNearby);
+wobjRoutes.route('/wobject/wobjCountersByArea')
+  .post(WobjController.countWobjectsByArea);
 // endregion
 // region User
 userRoutes.route('/users')
