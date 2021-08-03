@@ -56,3 +56,5 @@ exports.SUPPORTED_CURRENCIES = {
   RUB: 'RUB',
   UAH: 'UAH',
 };
+
+exports.WARNING_REQ_TIME = 15000;
