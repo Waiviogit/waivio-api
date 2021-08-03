@@ -6,4 +6,6 @@ exports.REPLACE_HOST_WITH_PARENT = new RegExp(/.+?(?=\.)./);
 
 exports.GUEST_NAME = new RegExp('_');
 
-exports.DONT_SWITCH_CLIENT_ERR = new RegExp(/(User not found|Post not found|Invalid parameters)/i);
+exports.DONT_SWITCH_CLIENT_ERR = new RegExp(/(User not found|Post not found)/i);
+
+exports.NETWORK_TIMEOUT = new RegExp(/network timeout/i);

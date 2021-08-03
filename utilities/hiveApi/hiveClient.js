@@ -1,14 +1,12 @@
 const _ = require('lodash');
 const HIVE = require('@hiveio/dhive');
 const { NODE_URLS } = require('constants/requestData');
-const { DONT_SWITCH_CLIENT_ERR } = require('constants/regExp');
+const { DONT_SWITCH_CLIENT_ERR, NETWORK_TIMEOUT } = require('constants/regExp');
 
 const hiveClients = (() => {
   const clients = [];
   for (const node of NODE_URLS) {
-    clients.push(new HIVE.Client(node, {
-      timeout: 8 * 1000, failoverThreshold: 1, rebrandedApi: true,
-    }));
+    clients.push(new HIVE.Client(node, { timeout: 8 * 1000 }));
   }
   return clients;
 })();
@@ -16,9 +14,7 @@ const hiveClients = (() => {
 const reloadClients = () => {
   hiveClients.length = 0;
   for (const node of NODE_URLS) {
-    hiveClients.push(new HIVE.Client(node, {
-      timeout: 8 * 1000, failoverThreshold: 1, rebrandedApi: true,
-    }));
+    hiveClients.push(new HIVE.Client(node, { timeout: 8 * 1000 }));
   }
 };
 
@@ -36,16 +32,15 @@ exports.execute = async (method, params) => {
     const data = await method(this.client, params);
     if (!_.get(data, 'error')) return data;
     if (i === hiveClients.length - 1) {
-      reloadClients();
-      console.log('---------------renew clients');
+      if (NETWORK_TIMEOUT.test(_.get(data, 'error.message', ''))) {
+        reloadClients();
+        console.log('---------------renew clients');
+      }
       return { error: data.error };
     }
-    if (data.error) {
-      if (DONT_SWITCH_CLIENT_ERR.test(_.get(data, 'error.message', ''))) {
-        return { error: data.error };
-      }
-      this.client = await getHiveClient(this.client);
-      console.log('---------------switch client', _.get(data, 'error.message', ''));
+    if (data.error && DONT_SWITCH_CLIENT_ERR.test(_.get(data, 'error.message', ''))) {
+      return { error: data.error };
     }
+    this.client = await getHiveClient(this.client);
   }
 };
