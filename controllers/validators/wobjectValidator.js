@@ -157,7 +157,6 @@ exports.getWobjectsNearby = Joi.object().keys({
 
 exports.countWobjectsByArea = Joi.object().keys({
   objectType: Joi.string().required(),
-  cities: Joi.array().items(Joi.string()).required(),
 });
 
 exports.getRelatedAlbum = Joi.object().keys({

@@ -11,6 +11,7 @@ exports.getAppInfo = async ({ app, addHashtag }) => {
     crucialWobjects: _.get(app, 'supported_objects', []),
     forExtended: _.get(app, 'canBeExtended'),
     forSites: _.get(app, 'inherited'),
+    cities: _.get(app, 'configuration.availableCities'),
     supportedTypes,
     app,
   };

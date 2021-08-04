@@ -61,11 +61,11 @@ const Colors = new Schema({
 
 const Configuration = new Schema({
   configurationFields: { type: [String] },
-  desktopLogo: { type: String },
   mobileLogo: { type: String },
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
+  availableCities: { type: [String] },
   colors: { type: Colors, default: () => ({}) },
 }, { _id: false });
 

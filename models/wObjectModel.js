@@ -130,23 +130,22 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
 };
 
 const countWobjectsByArea = async ({
-  cities, objectType, crucialWobjects,
+  objectType, cities, crucialWobjects,
 }) => {
   try {
     if (_.isEmpty(cities)) return { error: { status: 404, message: 'Cities not specified!' } };
     const result = await Promise.all(cities.map(async (city) => {
-      const wobject = await WObjectModel.aggregate([{
+      const matchCond = {
         $match: {
           $and: [
             { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: city, $options: 'i' } } } },
             { object_type: objectType },
           ],
           'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-          author_permlink: { $in: crucialWobjects },
         },
-      },
-      { $count: 'count' },
-      ]);
+      };
+      if (!_.isEmpty(crucialWobjects)) matchCond.$match.author_permlink = { $in: crucialWobjects };
+      const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]);
       return { [city]: _.get(wobject[0], 'count', 0) };
     }));
     return { result };

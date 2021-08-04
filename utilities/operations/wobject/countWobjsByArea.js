@@ -2,11 +2,11 @@ const { Wobj } = require('models');
 const searchHelper = require('utilities/helpers/searchHelper');
 
 module.exports = async ({
-  objectType, cities,
+  objectType,
 }) => {
   const appInfo = await searchHelper.getAppInfo({});
   const { result, error } = await Wobj.countWobjectsByArea({
-    cities, objectType, ...appInfo,
+    objectType, ...appInfo,
   });
   if (error || !result) return { error };
   return { wobjects: result };
