@@ -8,6 +8,7 @@ const { collectWobjExpertsJob } = require('./collectWobjTopUsers');
 const { sendDailyWebsiteDebt } = require('./setDailyWebsiteDebt');
 const { sendBalanceNotification } = require('./websiteBalanceNotifications');
 const { updateSiteWobjects } = require('./updateSiteWobjects');
+const { cacheHivePrice } = require('./cacheHivePrice');
 
 objTypeExpertsJob.start();
 collectExpertsJob.start();
@@ -20,3 +21,4 @@ collectWobjExpertsJob.start();
 sendDailyWebsiteDebt.start();
 sendBalanceNotification.start();
 updateSiteWobjects.start();
+cacheHivePrice.start();
