@@ -100,3 +100,14 @@ exports.restrictions = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),
 });
+
+exports.createPref = Joi.object().keys({
+  name: Joi.string().required(),
+  category: Joi.string().required(),
+  route: Joi.string(),
+  image: Joi.string(),
+});
+
+exports.updatePrefsList = Joi.object().keys({
+  names: Joi.array().items(Joi.string()).required(),
+});

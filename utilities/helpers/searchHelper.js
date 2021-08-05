@@ -12,6 +12,7 @@ exports.getAppInfo = async ({ app, addHashtag }) => {
     forExtended: _.get(app, 'canBeExtended'),
     forSites: _.get(app, 'inherited'),
     cities: _.get(app, 'configuration.availableCities'),
+    prefetches: _.get(app, 'prefetches'),
     supportedTypes,
     app,
   };

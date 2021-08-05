@@ -118,6 +118,7 @@ const AppSchema = new Schema({
     enum: Object.values(SUPPORTED_CURRENCIES),
     default: SUPPORTED_CURRENCIES.USD,
   },
+  prefetches: { type: [String] },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {

@@ -1,6 +1,7 @@
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
+const prefetchWobjs = require('utilities/operations/sites/prefetchWobjs');
 const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
@@ -272,6 +273,39 @@ exports.getRestrictions = async (req, res, next) => {
   const { result, error } = await restrictions.get(value);
   if (error) return next(error);
 
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getPrefetchesList = async (req, res, next) => {
+  const { result, error } = await prefetchWobjs.getPrefsList();
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.createPrefetch = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.sites.createPref, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.createPref(value);
+
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.updatePrefetchesList = async (req, res, next) => {
+  const value = validators.validate(
+    { names: req.body.names },
+    validators.sites.updatePrefsList, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.updatePrefsList(value);
+
+  if (error) return next(error);
   res.result = { status: 200, json: result };
   next();
 };

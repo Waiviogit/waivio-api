@@ -12,4 +12,5 @@ module.exports = {
   mapCoordinates: require('./mapCoordinates'),
   sitesNotifications: require('./sitesNotifications'),
   restrictions: require('./restrictions'),
+  prefetchWobjs: require('./prefetchWobjs'),
 };

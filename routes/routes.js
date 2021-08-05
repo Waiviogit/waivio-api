@@ -69,7 +69,10 @@ sitesRoutes.route('/sites/settings')
   .get(sitesController.getSettings);
 sitesRoutes.route('/sites/restrictions')
   .get(sitesController.getRestrictions);
-
+sitesRoutes.route('/sites/prefetch')
+  .get(sitesController.getPrefetchesList)
+  .post(sitesController.createPrefetch)
+  .put(sitesController.updatePrefetchesList);
 // endregion
 
 // region Wobject
