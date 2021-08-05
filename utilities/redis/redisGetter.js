@@ -84,3 +84,19 @@ exports.getSiteActiveUser = async (key) => appUsersStatistics.smembersAsync(key)
 exports.deleteSiteActiveUser = async (key) => appUsersStatistics.delAsync(key);
 
 exports.importUserClientHGetAll = async (key) => importUserClient.hgetallAsync(key);
+
+exports.getHashAll = async ({ key, client = importUserClient }) => {
+  try {
+    return { result: await client.hgetallAsync(key) };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getAsync = async ({ key, client = importUserClient }) => {
+  try {
+    return { result: await client.getAsync(key) };
+  } catch (error) {
+    return { error };
+  }
+};

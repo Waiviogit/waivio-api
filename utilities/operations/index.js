@@ -8,5 +8,6 @@ moduleExports.post = require('./post');
 moduleExports.app = require('./app');
 moduleExports.sites = require('./sites');
 moduleExports.vipTickets = require('./vipTickets');
+moduleExports.hive = require('./hive');
 
 module.exports = moduleExports;

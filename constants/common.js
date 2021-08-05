@@ -58,3 +58,14 @@ exports.SUPPORTED_CURRENCIES = {
 };
 
 exports.WARNING_REQ_TIME = 15000;
+
+exports.CACHE_KEY = {
+  REWARD_FUND: 'reward_fund',
+  CURRENT_MEDIAN_HISTORY_PRICE: 'current_median_history_price',
+};
+
+exports.BLOCK_NUM_KEYS = {
+  LAST_BLOCK_NUM: 'last_block_num',
+  LAST_VOTE_BLOCK_NUM: 'last_vote_block_num',
+  LAST_BLOCK_NUM_CAMPAIGN: 'campaign_last_block_num',
+};
