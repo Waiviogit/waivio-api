@@ -121,3 +121,11 @@ exports.importUserClientHMSet = async ({ key, data, expire }) => {
   await importUserClient.hmsetAsync(key, data);
   await importUserClient.expireAsync(key, expire);
 };
+
+exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
+  try {
+    return { result: await client.hmsetAsync(key, data) };
+  } catch (error) {
+    return { error };
+  }
+};

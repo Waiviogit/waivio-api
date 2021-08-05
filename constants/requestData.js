@@ -95,14 +95,14 @@ const HIVE_ON_BOARD = {
 };
 
 const NODE_URLS = [
+  'https://rpc.esteem.app',
+  'https://api.openhive.network',
+  'https://api.hive.blog',
   'https://hive.roelandp.nl',
   'https://rpc.ausbit.dev',
   'https://api.deathwing.me',
   'https://hived.emre.sh',
-  'https://api.hive.blog',
-  'https://rpc.esteem.app',
   'https://hive-api.arcange.eu',
-  'https://api.openhive.network',
 ];
 
 module.exports = {
