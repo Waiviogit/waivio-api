@@ -1,4 +1,4 @@
-const { postsUtil, userUtil, hiveClient } = require('utilities/hiveApi');
+const { postsUtil, userUtil } = require('utilities/hiveApi');
 const { redisGetter } = require('utilities/redis');
 const { Post } = require('models');
 const _ = require('lodash');
@@ -7,10 +7,7 @@ module.exports = async ({
   userName, weight, author, permlink,
 }) => {
   const priceInfo = await redisGetter.importUserClientHGetAll('current_price_info');
-  const { userData: account } = await hiveClient.execute(
-    userUtil.getAccount,
-    userName,
-  );
+  const { userData: account } = await userUtil.getAccount(userName);
 
   if (!account) return 0;
 
@@ -41,10 +38,7 @@ module.exports = async ({
 const getPostVoteRhares = async ({ author, permlink }) => {
   let { result: [post] } = await Post.findByBothAuthors({ author, permlink });
   if (!post) {
-    ({ post } = await hiveClient.execute(
-      postsUtil.getPost,
-      { author, permlink },
-    ));
+    ({ post } = await postsUtil.getPost({ author, permlink }));
   }
   return _.get(post, 'vote_rshares')
     ? parseFloat(post.vote_rshares)

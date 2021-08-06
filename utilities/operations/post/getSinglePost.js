@@ -3,7 +3,7 @@ const {
 } = require('models');
 const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
 const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
-const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { postsUtil } = require('utilities/hiveApi');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
 
@@ -61,8 +61,7 @@ const getPost = async ({
     return { error: { status: 404, message: 'Post not found!' } };
   }
 
-  const { post: steemPost } = await hiveClient.execute(
-    postsUtil.getPost,
+  const { post: steemPost } = await postsUtil.getPost(
     { author: post ? post.root_author || post.author : author, permlink },
   );
 
@@ -91,8 +90,7 @@ const getComment = async ({ author, permlink, app }) => {
 
   // if comment not found in DB, it still might exist in STEEM
   if (!_.get(result, '[0]')) {
-    const { post: comment, error: steemError } = await hiveClient.execute(
-      await postsUtil.getPost,
+    const { post: comment, error: steemError } = await postsUtil.getPost(
       { author, permlink },
     );
     if (steemError) return { error: steemError };
@@ -106,8 +104,7 @@ const getComment = async ({ author, permlink, app }) => {
 };
 
 const mergeCommentData = async (comment, app) => {
-  const { post: steemComment, error } = await hiveClient.execute(
-    postsUtil.getPost,
+  const { post: steemComment, error } = await postsUtil.getPost(
     { author: comment.author, permlink: comment.permlink },
   );
   if (error) return { error };

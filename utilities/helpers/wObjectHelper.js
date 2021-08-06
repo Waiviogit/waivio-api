@@ -2,7 +2,7 @@ const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
 } = require('constants/wobjectsData');
-const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const blacklistModel = require('models/blacklistModel');
 const UserWobjects = require('models/UserWobjects');
@@ -273,8 +273,7 @@ const getParentInfo = async ({
 };
 
 const fillObjectByHiveData = async (obj, exposedFields) => {
-  const { result } = await hiveClient.execute(
-    postsUtil.getPostState,
+  const { result } = await postsUtil.getPostState(
     { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
   );
   if (!result) {

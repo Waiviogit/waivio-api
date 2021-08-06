@@ -1,4 +1,9 @@
-exports.getAccount = async (client, name) => {
+const { Client } = require('@hiveio/dhive');
+const { NODE_URLS } = require('constants/requestData');
+
+const client = new Client(NODE_URLS, { failoverThreshold: 0, timeout: 10 * 1000 });
+
+exports.getAccount = async (name) => {
   try {
     const [account] = await client.database.getAccounts([name]);
 
@@ -11,7 +16,7 @@ exports.getAccount = async (client, name) => {
   }
 };
 
-exports.getFollowingsList = async (client, { name, startAccount, limit }) => {
+exports.getFollowingsList = async ({ name, startAccount, limit }) => {
   try {
     const followings = await client.call(
       'follow_api',
@@ -25,7 +30,7 @@ exports.getFollowingsList = async (client, { name, startAccount, limit }) => {
   }
 };
 
-exports.getFollowersList = async (client, { name, startAccount, limit }) => {
+exports.getFollowersList = async ({ name, startAccount, limit }) => {
   try {
     const followers = await client.call(
       'follow_api',
@@ -38,11 +43,10 @@ exports.getFollowersList = async (client, { name, startAccount, limit }) => {
   }
 };
 
-// return {account: 'accname', follower_count: 000, following_count: 000}
-exports.getFollowCount = async (client, name) => {
+exports.getFollowCount = async (name) => {
   try {
     const result = await client.call(
-      'condenser_api',
+      'follow_api',
       'get_follow_count',
       [name],
     );
@@ -53,9 +57,9 @@ exports.getFollowCount = async (client, name) => {
   }
 };
 
-exports.searchUserByName = async (client, { name, limit = 20 }) => {
+exports.searchUserByName = async ({ name, limit = 20 }) => {
   try {
-    const accounts = await client.call('condenser_api', 'get_account_reputations', [name, limit]);
+    const accounts = await client.call('follow_api', 'get_account_reputations', [name, limit]);
 
     return { accounts };
   } catch (error) {

@@ -1,15 +1,12 @@
 const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
 const { Subscriptions, mutedUserModel, User } = require('models');
-const { userUtil, hiveClient } = require('utilities/hiveApi');
+const { userUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
 
 const getOne = async ({
   name, with_followings: withFollowings, app, userName,
 }) => {
-  const { userData = {} } = await hiveClient.execute(
-    userUtil.getAccount,
-    name,
-  );
+  const { userData = {} } = await userUtil.getAccount(name);
   // eslint-disable-next-line prefer-const
   let { user, error: dbError } = await User.getOne(name); // get user data from db
 

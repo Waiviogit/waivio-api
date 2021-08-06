@@ -1,6 +1,10 @@
 const _ = require('lodash');
+const { Client } = require('@hiveio/dhive');
+const { NODE_URLS } = require('constants/requestData');
 
-exports.getPostsByCategory = async (client, data) => {
+const client = new Client(NODE_URLS, { failoverThreshold: 0, timeout: 10 * 1000 });
+
+exports.getPostsByCategory = async (data) => {
   try {
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
       return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
@@ -25,7 +29,7 @@ exports.getPostsByCategory = async (client, data) => {
  * @param permlink
  * @returns {Promise<{error: {message: string, status: number}}|{post: ({author}|any)}>}
  */
-exports.getPost = async (client, { author, permlink }) => {
+exports.getPost = async ({ author, permlink }) => {
   try {
     const post = await client.database.call('get_content', [author, permlink]);
 
@@ -38,10 +42,9 @@ exports.getPost = async (client, { author, permlink }) => {
   }
 };
 
-exports.getManyPosts = async (client, links = []) => {
+exports.getManyPosts = async (links = []) => {
   const posts = await Promise.all(links.map(async (link) => {
     const { post, error } = await this.getPost(
-      client,
       { author: _.get(link, 'author'), permlink: _.get(link, 'permlink') },
     );
 
@@ -60,7 +63,7 @@ exports.getManyPosts = async (client, links = []) => {
  * @returns {Promise<{comments: [Object]}|{error: {message: string, status: number}}>}
  */
 // eslint-disable-next-line camelcase
-exports.getUserComments = async (client, { start_author, start_permlink, limit }) => {
+exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
   try {
     const comments = await client.database.call(
       'get_discussions_by_comments',
@@ -77,7 +80,7 @@ exports.getUserComments = async (client, { start_author, start_permlink, limit }
  * Get state of post(comment). State include a lot info, e.x. replies, users etc.
  * @returns {Promise<{error: Object}|{result: Object}>}
  */
-exports.getPostState = async (client, { author, permlink, category }) => {
+exports.getPostState = async ({ author, permlink, category }) => {
   try {
     const result = await client.database.call(
       'get_state',
@@ -91,7 +94,7 @@ exports.getPostState = async (client, { author, permlink, category }) => {
   }
 };
 
-exports.getContent = async (client, { author, permlink }) => {
+exports.getContent = async ({ author, permlink }) => {
   try {
     const result = await client.database.call(
       'get_content',
