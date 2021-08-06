@@ -1,14 +1,13 @@
 const { mergeSteemCommentsWithDB } = require('utilities/helpers/commentHelper');
 const { mergePostData } = require('utilities/helpers/postHelper');
 const { hiddenCommentModel, mutedUserModel } = require('models');
-const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { postsUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
 
 module.exports = async ({
   author, permlink, category, userName, app,
 }) => {
-  const { result: postState, error } = await hiveClient.execute(
-    postsUtil.getPostState,
+  const { result: postState, error } = await postsUtil.getPostState(
     { author, permlink, category },
   );
 

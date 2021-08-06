@@ -1,4 +1,4 @@
-const { userUtil, hiveClient } = require('utilities/hiveApi');
+const { userUtil } = require('utilities/hiveApi');
 const { User, Subscriptions } = require('models');
 const _ = require('lodash');
 
@@ -32,17 +32,11 @@ exports.importUser = async (userName) => {
  * @returns {Promise<{data: (Object)}|{error: (*|string)}>}
  */
 exports.getUserSteemInfo = async (name) => {
-  const { userData, error: steemError } = await hiveClient.execute(
-    userUtil.getAccount,
-    name,
-  );
+  const { userData, error: steemError } = await userUtil.getAccount(name);
 
   if (steemError || !userData) return { error: steemError || `User ${name} not exist, can't import.` };
 
-  const { result: followCountRes, error: followCountErr } = await hiveClient.execute(
-    userUtil.getFollowCount,
-    name,
-  );
+  const { result: followCountRes, error: followCountErr } = await userUtil.getFollowCount(name);
 
   if (followCountErr) return { error: followCountErr };
 
@@ -84,8 +78,7 @@ const updateUserFollowings = async (name) => {
   let hiveArray = [];
 
   do {
-    const { followings = [], error } = await hiveClient.execute(
-      userUtil.getFollowingsList,
+    const { followings = [], error } = await userUtil.getFollowingsList(
       { name, startAccount, limit: batchSize },
     );
 
@@ -116,8 +109,7 @@ const updateUserFollowers = async (name) => {
   let hiveArray = [];
 
   do {
-    const { followers = [], error } = await hiveClient.execute(
-      userUtil.getFollowersList,
+    const { followers = [], error } = await userUtil.getFollowersList(
       { name, startAccount, limit: batchSize },
     );
 

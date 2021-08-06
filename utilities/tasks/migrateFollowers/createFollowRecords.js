@@ -1,4 +1,4 @@
-const { userUtil, hiveClient } = require('utilities/hiveApi');
+const { userUtil } = require('utilities/hiveApi');
 const { User } = require('database').models;
 const { Subscriptions } = require('models');
 const _ = require('lodash');
@@ -25,8 +25,7 @@ exports.add = async () => {
     let error, followings, startAccount = '';
     if (!_.get(doc, 'auth.provider', null)) {
       do {
-        ({ followings, error } = await hiveClient.execute(
-          userUtil.getFollowingsList,
+        ({ followings, error } = await userUtil.getFollowingsList(
           { name: doc.name, startAccount, limit: 1000 },
         ));
         if (_.get(error, 'error.message', '') === 'Request Timeout') {
