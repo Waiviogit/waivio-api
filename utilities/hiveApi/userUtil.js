@@ -1,7 +1,4 @@
-const { Client } = require('@hiveio/dhive');
-const { NODE_URLS } = require('constants/requestData');
-
-const client = new Client(NODE_URLS, { failoverThreshold: 0, timeout: 10 * 1000 });
+const { userClient: client } = require('utilities/hiveApi/hiveClient');
 
 exports.getAccount = async (name) => {
   try {

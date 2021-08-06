@@ -1,8 +1,5 @@
+const { postClient: client } = require('utilities/hiveApi/hiveClient');
 const _ = require('lodash');
-const { Client } = require('@hiveio/dhive');
-const { NODE_URLS } = require('constants/requestData');
-
-const client = new Client(NODE_URLS, { failoverThreshold: 0, timeout: 10 * 1000 });
 
 exports.getPostsByCategory = async (data) => {
   try {

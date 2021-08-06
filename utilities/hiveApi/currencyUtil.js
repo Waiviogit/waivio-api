@@ -1,7 +1,4 @@
-const { NODE_URLS } = require('constants/requestData');
-const { Client } = require('@hiveio/dhive');
-
-const client = new Client(NODE_URLS, { failoverThreshold: 0, timeout: 10 * 1000 });
+const { currencyClient: client } = require('utilities/hiveApi/hiveClient');
 
 exports.getRewardFund = async () => {
   try {
