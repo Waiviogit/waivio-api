@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi');
-const { SITE_NAME_REGEX } = require('constants/sitesConstants');
+const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
 
 const options = { allowUnknown: true, stripUnknown: true };
 
@@ -101,10 +101,19 @@ exports.restrictions = Joi.object().keys({
   host: Joi.string().required(),
 });
 
+exports.showAllPrefs = Joi.object().keys({
+  type: Joi.string().required(),
+});
+
+exports.getPref = Joi.object().keys({
+  type: Joi.string().required(),
+});
+
 exports.createPref = Joi.object().keys({
   name: Joi.string().required(),
-  category: Joi.string().required(),
-  route: Joi.string(),
+  tag: Joi.string().required(),
+  type: Joi.string().required().valid('restaurant', 'dish', 'drink'),
+  category: Joi.string().required().valid(...CATEGORY_ITEMS),
   image: Joi.string(),
 });
 

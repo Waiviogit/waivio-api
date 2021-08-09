@@ -284,6 +284,30 @@ exports.getPrefetchesList = async (req, res, next) => {
   next();
 };
 
+exports.showAllPrefetches = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query },
+    validators.sites.showAllPrefs, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.showAllPrefs(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getPrefetchesList = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query },
+    validators.sites.getPref, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.getPrefsList(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
 exports.createPrefetch = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body },
@@ -299,7 +323,7 @@ exports.createPrefetch = async (req, res, next) => {
 
 exports.updatePrefetchesList = async (req, res, next) => {
   const value = validators.validate(
-    { names: req.body.names },
+    { ...req.body },
     validators.sites.updatePrefsList, next,
   );
   if (!value) return;

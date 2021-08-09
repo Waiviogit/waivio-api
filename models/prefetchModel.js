@@ -31,14 +31,19 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
 const create = async (data) => {
   try {
     if (data.image) {
-      const { imageUrl, error } = await image.uploadInS3(await base64ByUrl(data.image), await generateFileName({}));
+      const { imageUrl, error } = await image.uploadInS3(
+        await base64ByUrl(data.image),
+        await generateFileName({}),
+      );
       data.image = imageUrl;
       if (error) return console.log('Error download image to S3', error);
     }
     const prefetch = await new Prefetch({
       name: _.get(data, 'name'),
+      tag: _.get(data, 'tag'),
+      type: _.get(data, 'type'),
       category: _.get(data, 'category'),
-      route: _.get(data, 'route'),
+      route: `type=${data.type}&${data.category}=${data.tag}`,
       image: _.get(data, 'image'),
     }).save();
     return { result: prefetch.toObject() };

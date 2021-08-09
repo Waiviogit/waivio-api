@@ -76,6 +76,8 @@ sitesRoutes.route('/sites/prefetch')
   .get(sitesController.getPrefetchesList)
   .post(sitesController.createPrefetch)
   .put(sitesController.updatePrefetchesList);
+sitesRoutes.route('/sites/allPrefetches')
+  .get(sitesController.showAllPrefetches);
 // endregion
 
 // region Wobject

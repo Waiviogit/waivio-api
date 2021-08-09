@@ -1,9 +1,17 @@
 const searchHelper = require('utilities/helpers/searchHelper');
 const { App, PrefetchModel } = require('models');
 
-exports.getPrefsList = async () => {
+exports.showAllPrefs = async (data) => {
+  const { result, error } = await PrefetchModel.find({ type: data.type });
+  if (error || !result) return { error };
+  return { result };
+};
+
+exports.getPrefsList = async (data) => {
   const appInfo = await searchHelper.getAppInfo({});
-  const { result, error } = await PrefetchModel.find({ name: { $in: appInfo.prefetches } });
+  const { result, error } = await PrefetchModel.find(
+    { name: { $in: appInfo.prefetches }, type: data.type },
+  );
   if (error || !result) return { error };
   return { result };
 };
