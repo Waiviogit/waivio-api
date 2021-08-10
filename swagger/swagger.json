@@ -1625,6 +1625,96 @@
         }
       }
     },
+    "/api/sites/prefetch" : {
+      "get" : {
+        "tags" : [ "sites" ],
+        "summary" : "Get list of prefetches by app",
+        "description" : "Return list of prefetches that have been added to the app",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://dining.pp.ua",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "type",
+          "in" : "query",
+          "description" : "type by which the selections will be searched",
+          "required": true,
+          "type" : "string",
+          "enum": ["restaurant", "dish", "drink"]
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/created_prefetch_schema"
+              }
+            }
+          }
+        }
+      },
+      "post" : {
+        "tags" : [ "sites" ],
+        "summary" : "Created new prefetch",
+        "description" : "Created new prefetch, do not attach to any application",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "params",
+          "in" : "body",
+          "description" : "**name** - name for the new prefetch,\n**tag** - main search parameter,\n**type** - type of objects by which the search will be performed,\n**category** - the category in which the tag will be searched,\n**image** - link to image that will be saved and used for display\n",
+          "required": true,
+          "schema": {
+            "$ref": "#/definitions/prefetch_schema"
+          }
+        }],
+          "responses" : {
+            "200" : {
+              "description" : "successful operation",
+              "schema" : {
+                "$ref": "#/definitions/created_prefetch_schema"
+               }
+            }
+          }
+        },
+      "put": {"tags" : [ "sites" ],
+        "summary" : "Updated the prefetch list",
+        "description" : "Updated the prefetch list for a specific app",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://dining.pp.ua",
+          "required" : true,
+          "type" : "string"
+          }, {
+          "name" : "params",
+          "in" : "body",
+          "description" : "**names** - array of prefetch names that will be saved to the app,\n",
+          "required": true,
+          "schema": {
+            "example": {
+              "names": ["Vancouver Restaurants", "Breakfast Places"]
+            }
+          }
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation, return updated array of prefetches by app",
+            "schema" : {
+              "example": {
+                "names": ["Vancouver Restaurants", "Breakfast Places"]
+              }
+            }
+          }
+        }
+      }
+      },
     "/api/users" : {
       "get" : {
         "tags" : [ "user" ],
@@ -3527,6 +3617,52 @@
             "schema": {
               "example": {
                 "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/wobjCountersByArea": {
+      "post" : {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return array of wobjects with counters",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "description": "Domain of website",
+            "example": "https://waiviodev.com",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "objectType",
+            "description": "**objectType** - only objects of this type will be taken into account when searching",
+            "required": true,
+            "schema": {
+              "$ref" : "#/definitions/objectTypeParam"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref" : "#/definitions/wobjCountersByArea"
+            }
+          },
+          "404": {
+            "description": "Return error if cities not specify in app",
+            "schema": {
+              "example": {
+                "message": "Cities not specified!"
               }
             }
           }
@@ -6296,6 +6432,86 @@
         },
         "settings" : {
           "$ref" : "#/definitions/userMetadata_user_metadata_settings"
+        }
+      }
+    },
+    "objectTypeParam" : {
+      "type": "object",
+      "properties": {
+        "object_type" : {
+          "type" : "string",
+          "enum": ["restaurant", "dish", "drink"]
+          }
+        }
+      },
+    "wobjCountersByArea": {
+    "type": "array",
+    "items": {
+      "type": "object",
+      "properties": {
+        "city": {
+          "type": "string"
+        },
+        "counter": {
+          "type": "number"
+        }
+      }
+    }
+  },
+    "prefetch_schema": {
+      "type": "object",
+      "properties": {
+        "name":{
+          "type": "string",
+          "example": "Vancouver Restaurants"
+        },
+        "tag": {
+          "type": "string",
+          "example": "italian"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["restaurant", "dish", "drink"]
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Cuisine", "Features", "Good+For", "Ingredients", "Category"]
+        },
+        "image": {
+          "type": "string",
+          "description": "link to the uploaded image",
+          "example": "https://images.unsplash.com/photo-1546549032-9571c=crop&w=334&q=80"
+        }
+      }
+    },
+    "created_prefetch_schema": {
+      "type": "object",
+      "properties": {
+        "name":{
+          "type": "string",
+          "example": "Vancouver Restaurants"
+        },
+        "tag": {
+          "type": "string",
+          "example": "italian"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["restaurant", "dish", "drink"]
+        },
+        "category": {
+          "type": "string",
+          "enum": ["Cuisine", "Features", "Good+For", "Ingredients", "Category"]
+        },
+        "image": {
+          "type": "string",
+          "description": "link to the uploaded image",
+          "example": "https://images.digitalocean.com/photo-1546549032-9571c=crop&w=334&q=80"
+        },
+        "route": {
+          "type": "string",
+          "description": "prepared route for searching on the map",
+          "example": "type=restaurant&Cuisine=italian"
         }
       }
     },

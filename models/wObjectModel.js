@@ -146,7 +146,7 @@ const countWobjectsByArea = async ({
       };
       if (!_.isEmpty(crucialWobjects)) matchCond.$match.author_permlink = { $in: crucialWobjects };
       const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]);
-      return { [city]: _.get(wobject[0], 'count', 0) };
+      return { city, counter: _.get(wobject[0], 'count', 0) };
     }));
     return { result };
   } catch (error) {

@@ -24,7 +24,7 @@ exports.updatePrefsList = async (prefetches) => {
   const { result } = await App.findOneAndUpdate(
     { name: app.name }, { prefetches: prefetches.names },
   );
-  return { result: result.prefetches };
+  return { result: { names: result.prefetches } };
 };
 
 exports.createPref = async (data) => {

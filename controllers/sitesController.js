@@ -277,13 +277,6 @@ exports.getRestrictions = async (req, res, next) => {
   next();
 };
 
-exports.getPrefetchesList = async (req, res, next) => {
-  const { result, error } = await prefetchWobjs.getPrefsList();
-  if (error) return next(error);
-  res.result = { status: 200, json: result };
-  next();
-};
-
 exports.showAllPrefetches = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query },

@@ -4,7 +4,7 @@ const { faker } = require('test/testHelper');
 exports.configurationMock = ({
   desktop, mobile, object,
 } = {}) => ({
-  configurationFields: ['desktopLogo', 'mobileLogo', 'aboutObject', 'desktopMap', 'mobileMap', 'colors'],
+  configurationFields: ['desktopLogo', 'mobileLogo', 'aboutObject', 'desktopMap', 'mobileMap', 'colors', 'availableCities'],
   desktopLogo: desktop || faker.image.imageUrl(),
   mobileLogo: mobile || faker.image.imageUrl(),
   aboutObject: object || faker.random.string(),
