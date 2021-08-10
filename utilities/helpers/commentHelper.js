@@ -1,4 +1,4 @@
-const { postsUtil, hiveClient } = require('utilities/hiveApi');
+const { postsUtil } = require('utilities/hiveApi');
 const { Comment, User, App } = require('models');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
@@ -64,8 +64,7 @@ exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
   const { result: app } = await App.findOne({ host });
 
   if (!steemComments || _.isEmpty(steemComments)) {
-    const { posts: stComments } = await hiveClient.execute(
-      postsUtil.getManyPosts,
+    const { posts: stComments } = await postsUtil.getManyPosts(
       dbComments.map((c) => ({ ..._.pick(c, ['author', 'permlink']) })),
     );
 
