@@ -1,8 +1,8 @@
-const Joi = require('@hapi/joi');
-const { EXPERTS_SORT, VALID_EXPERTS_SORT } = require('constants/sortData');
-const { LANGUAGES } = require('utilities/constants');
-const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
+const { EXPERTS_SORT, VALID_EXPERTS_SORT } = require('constants/sortData');
+const { customValidationHelper } = require('utilities/helpers');
+const { LANGUAGES } = require('constants/common');
+const Joi = require('@hapi/joi');
 
 const options = { allowUnknown: true, stripUnknown: true };
 

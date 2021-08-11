@@ -43,7 +43,7 @@ exports.getFollowersList = async ({ name, startAccount, limit }) => {
 exports.getFollowCount = async (name) => {
   try {
     const result = await client.call(
-      'follow_api',
+      'condenser_api',
       'get_follow_count',
       [name],
     );
@@ -56,7 +56,7 @@ exports.getFollowCount = async (name) => {
 
 exports.searchUserByName = async ({ name, limit = 20 }) => {
   try {
-    const accounts = await client.call('follow_api', 'get_account_reputations', [name, limit]);
+    const accounts = await client.call('condenser_api', 'get_account_reputations', [name, limit]);
 
     return { accounts };
   } catch (error) {

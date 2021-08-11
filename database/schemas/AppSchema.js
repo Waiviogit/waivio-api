@@ -1,8 +1,9 @@
-const mongoose = require('mongoose');
 const _ = require('lodash');
+const mongoose = require('mongoose');
 const { STATUSES, SUPPORTED_COLORS } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
+const { APP_LANGUAGES } = require('constants/common');
 
 const { Schema } = mongoose;
 
@@ -118,6 +119,11 @@ const AppSchema = new Schema({
     type: String,
     enum: Object.values(SUPPORTED_CURRENCIES),
     default: SUPPORTED_CURRENCIES.USD,
+  },
+  language: {
+    type: String,
+    enum: APP_LANGUAGES,
+    default: 'en-US',
   },
   prefetches: { type: [String] },
 }, { timestamps: true });
