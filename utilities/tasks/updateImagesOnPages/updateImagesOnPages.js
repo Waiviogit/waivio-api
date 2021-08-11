@@ -4,7 +4,7 @@ const image = require('utilities/images/image');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const { base64ByUrl } = require('utilities/helpers/imagesHelper');
 const { BUSY_ORG_LINK, IMAGE_NAME } = require('constants/regExp');
-const { PROXY_HIVE_IMAGES, NOT_FOUND_IMAGE_URL } = require('utilities/constants');
+const { PROXY_HIVE_IMAGES, NOT_FOUND_IMAGE_URL } = require('constants/common');
 
 exports.updateImagesOnPages = async () => {
   const wobjects = await WObject.find({ object_type: 'page' }).lean();

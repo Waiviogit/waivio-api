@@ -1,16 +1,15 @@
 const {
-  faker, chai, expect, dropDatabase, app, sinon,
-} = require('test/testHelper');
-const {
   AppFactory, PostFactory, UsersFactory, AppendObjectFactory, ObjectFactory,
 } = require('test/factories');
-const { getNamespace } = require('cls-hooked');
-const { STATUSES } = require('constants/sitesConstants');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const _ = require('lodash');
-const { IGNORED_AUTHORS } = require('constants/postsData');
+const {
+  faker, chai, expect, dropDatabase, app, sinon,
+} = require('test/testHelper');
 const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
-const { MEDIAN_USER_WAIVIO_RATE } = require('utilities/constants');
+const { IGNORED_AUTHORS, MEDIAN_USER_WAIVIO_RATE } = require('constants/postsData');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { STATUSES } = require('constants/sitesConstants');
+const { getNamespace } = require('cls-hooked');
+const _ = require('lodash');
 
 describe('On postController', async () => {
   let currentApp, session, result, post;
