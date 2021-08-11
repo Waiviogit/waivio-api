@@ -1,9 +1,9 @@
-const _ = require('lodash');
-const moment = require('moment');
 const { importUser } = require('utilities/operations/user/importSteemUserOps');
 const { redisGetter, redisSetter } = require('utilities/redis');
-const { MAX_IMPORTING_USERS } = require('utilities/constants');
+const { MAX_IMPORTING_USERS } = require('constants/common');
 const { User } = require('models');
+const moment = require('moment');
+const _ = require('lodash');
 
 /**
  * Validate current importing users state, check for already importing specified user

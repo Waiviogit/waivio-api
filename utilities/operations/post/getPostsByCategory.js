@@ -1,16 +1,15 @@
-const _ = require('lodash');
-const config = require('config');
 const {
-  DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, MEDIAN_USER_WAIVIO_RATE,
-  HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
-  TREND_FILTERED_NEWS_CACHE_PREFIX,
-} = require('utilities/constants');
-const { getNamespace } = require('cls-hooked');
-const { ObjectId } = require('mongoose').Types;
-const { Post } = require('database').models;
+  IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, HOT_NEWS_CACHE_SIZE,
+  TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  MEDIAN_USER_WAIVIO_RATE,
+} = require('constants/postsData');
+const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
 const { hiddenPostModel, mutedUserModel } = require('models');
-const { IGNORED_AUTHORS } = require('constants/postsData');
-const hotTrandGetter = require('./feedCache/hotTrandGetter');
+const { ObjectId } = require('mongoose').Types;
+const { getNamespace } = require('cls-hooked');
+const { Post } = require('database').models;
+const config = require('config');
+const _ = require('lodash');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();

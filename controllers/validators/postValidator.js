@@ -1,6 +1,6 @@
-const Joi = require('@hapi/joi');
-const { LANGUAGES } = require('utilities/constants');
 const { customValidationHelper } = require('utilities/helpers');
+const { LANGUAGES } = require('constants/common');
+const Joi = require('@hapi/joi');
 
 exports.showSchema = Joi.object().keys({
   author: Joi.string().required(),
