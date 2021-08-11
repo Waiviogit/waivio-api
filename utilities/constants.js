@@ -1,4 +1,5 @@
-const _ = require("lodash");
+const _ = require('lodash');
+
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',
