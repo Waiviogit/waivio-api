@@ -1,3 +1,4 @@
+const _ = require("lodash");
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',
@@ -41,6 +42,8 @@ exports.LANGUAGES = ['en-US',
   'af-ZA',
   'auto',
 ];
+
+exports.APP_LANGUAGES = _.filter(this.LANGUAGES, (el) => el !== 'auto');
 
 exports.DAYS_FOR_HOT_FEED = 3;
 exports.DAYS_FOR_TRENDING_FEED = 3;
