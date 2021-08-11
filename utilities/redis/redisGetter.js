@@ -3,7 +3,7 @@ const {
 } = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
-} = require('utilities/constants');
+} = require('constants/postsData');
 const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
 
 exports.removeTopWobjUsers = async (key) => mainFeedsCacheClient.delAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);

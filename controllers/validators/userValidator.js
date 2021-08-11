@@ -1,8 +1,7 @@
-const Joi = require('@hapi/joi');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
-const { LANGUAGES } = require('utilities/constants');
-const { customValidationHelper } = require('utilities/helpers');
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
+const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
+const { customValidationHelper } = require('utilities/helpers');
+const Joi = require('@hapi/joi');
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),

@@ -97,3 +97,5 @@ exports.FIRST_LOAD_FIELDS = [
   'status',
   'host',
 ];
+
+exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
