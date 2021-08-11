@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const image = require('utilities/images/image');
 const { Prefetch } = require('database').models;
-const { base64ByUrl, generateFileName } = require('utilities/helpers/imagesHelper');
+const prefetchHelper = require('utilities/helpers/prefetchHelper');
 
 const findOne = async (condition, select) => {
   try {
@@ -13,7 +12,9 @@ const findOne = async (condition, select) => {
   }
 };
 
-const find = async (condition, select, sort = {}, skip = 0, limit) => {
+const find = async ({
+  condition, select, sort = {}, skip = 0, limit = 100,
+}) => {
   try {
     return {
       result: await Prefetch
@@ -30,20 +31,13 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
 
 const create = async (data) => {
   try {
-    if (data.image) {
-      const { imageUrl, error } = await image.uploadInS3(
-        await base64ByUrl(data.image),
-        await generateFileName({}),
-      );
-      data.image = imageUrl;
-      if (error) return console.log('Error download image to S3', error);
-    }
+    if (data.image) data.image = await prefetchHelper.parseImage(data);
     const prefetch = await new Prefetch({
       name: _.get(data, 'name'),
       tag: _.get(data, 'tag'),
       type: _.get(data, 'type'),
       category: _.get(data, 'category'),
-      route: `type=${data.type}&${data.category}=${data.tag}`,
+      route: prefetchHelper.createRoute(data),
       image: _.get(data, 'image'),
     }).save();
     return { result: prefetch.toObject() };

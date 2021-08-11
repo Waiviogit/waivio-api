@@ -3,13 +3,14 @@ const { ObjectFactory } = require('test/factories');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const { dropDatabase, expect } = require('test/testHelper');
 const { countWobjectsByArea } = require('models/wObjectModel');
+const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 
 describe('Wobject Model', async () => {
   beforeEach(async () => {
     await dropDatabase();
   });
   describe('On countWobjectsByArea', async () => {
-    const objectType = _.sample(['restaurant', 'dish', 'drink']);
+    const objectType = _.sample(MAIN_OBJECT_TYPES);
     const countVacouverWobjects = _.random(1, 50);
     const countRichmondWobjects = _.random(1, 50);
     const countPentictonWobjects = _.random(1, 50);

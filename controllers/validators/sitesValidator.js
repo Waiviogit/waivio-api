@@ -1,4 +1,5 @@
 const Joi = require('@hapi/joi');
+const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
 
 const options = { allowUnknown: true, stripUnknown: true };
@@ -101,22 +102,27 @@ exports.restrictions = Joi.object().keys({
   host: Joi.string().required(),
 });
 
-exports.showAllPrefs = Joi.object().keys({
+exports.showAllPrefetches = Joi.object().keys({
   type: Joi.string().required(),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(20),
 });
 
-exports.getPref = Joi.object().keys({
+exports.getPrefetchList = Joi.object().keys({
   type: Joi.string().required(),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(20),
 });
 
-exports.createPref = Joi.object().keys({
+exports.createPrefetch = Joi.object().keys({
   name: Joi.string().required(),
   tag: Joi.string().required(),
-  type: Joi.string().required().valid('restaurant', 'dish', 'drink'),
+  type: Joi.string().required().valid(...MAIN_OBJECT_TYPES),
   category: Joi.string().required().valid(...CATEGORY_ITEMS),
-  image: Joi.string(),
+  image: Joi.string().uri(),
 });
 
-exports.updatePrefsList = Joi.object().keys({
+exports.updatePrefetchList = Joi.object().keys({
+  userName: Joi.string().required(),
   names: Joi.array().items(Joi.string()).required(),
 });

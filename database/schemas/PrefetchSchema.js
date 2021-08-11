@@ -11,7 +11,7 @@ const PrefetchSchema = new Schema({
   image: { type: String },
 });
 
-PrefetchSchema.index({ name: 1 });
+PrefetchSchema.index({ type: 1 });
 PrefetchSchema.index({ name: 1, type: 1 });
 
 const PrefetchModel = mongoose.model('prefetch', PrefetchSchema);

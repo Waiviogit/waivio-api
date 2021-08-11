@@ -1645,7 +1645,19 @@
           "required": true,
           "type" : "string",
           "enum": ["restaurant", "dish", "drink"]
-        } ],
+        }, {
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of prefetches to skip",
+          "required" : false,
+          "type" : "number"
+        }, {
+          "name" : "limit",
+          "in" : "query",
+          "description" : "limit prefetches in list",
+          "required" : false,
+          "type" : "number"
+        }],
         "responses" : {
           "200" : {
             "description" : "successful operation",
@@ -1678,10 +1690,19 @@
               "schema" : {
                 "$ref": "#/definitions/created_prefetch_schema"
                }
+            },
+            "406": {
+              "description": "Return error if it was not possible save image to S3",
+              "schema": {
+                "example": {
+                  "message": "Error download image to S3"
+                }
+              }
             }
           }
         },
-      "put": {"tags" : [ "sites" ],
+      "put": {
+        "tags" : [ "sites" ],
         "summary" : "Updated the prefetch list",
         "description" : "Updated the prefetch list for a specific app",
         "produces" : [ "application/json" ],
@@ -1693,6 +1714,18 @@
           "required" : true,
           "type" : "string"
           }, {
+          "name" : "userName",
+          "in" : "header",
+          "description" : "name of authorised user",
+          "required" : false,
+          "type" : "string"
+        },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "access-token",
+          "required": true,
+          "type" : "string"
+        },{
           "name" : "params",
           "in" : "body",
           "description" : "**names** - array of prefetch names that will be saved to the app,\n",
@@ -1715,6 +1748,47 @@
         }
       }
       },
+    "/api/sites/allPrefetches" : {
+      "get": {
+        "tags": ["sites"],
+        "summary": "Get list of all prefetches",
+        "description": "Get a list of all prefetches of a specific type (no matter the app)",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "type",
+            "in": "query",
+            "description": "type by which the selections will be searched",
+            "required": true,
+            "type": "string",
+            "enum": ["restaurant", "dish", "drink"]
+          },{
+          "name" : "skip",
+          "in" : "query",
+          "description" : "count of prefetches to skip",
+          "required" : false,
+          "type" : "number"
+          },{
+          "name" : "limit",
+          "in" : "query",
+          "description" : "limit prefetches in list",
+          "required" : false,
+          "type" : "number"
+          }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/created_prefetch_schema"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users" : {
       "get" : {
         "tags" : [ "user" ],
@@ -3637,7 +3711,7 @@
             "name": "Origin",
             "in": "header",
             "description": "Domain of website",
-            "example": "https://waiviodev.com",
+            "example": "https://dining.pp.ua",
             "required": true,
             "type": "string"
           },
@@ -6438,7 +6512,7 @@
     "objectTypeParam" : {
       "type": "object",
       "properties": {
-        "object_type" : {
+        "objectType" : {
           "type" : "string",
           "enum": ["restaurant", "dish", "drink"]
           }
@@ -6506,7 +6580,7 @@
         "image": {
           "type": "string",
           "description": "link to the uploaded image",
-          "example": "https://images.digitalocean.com/photo-1546549032-9571c=crop&w=334&q=80"
+          "example": "https://waivio.nyc3.digitaloceanspaces.com/photo-1546549032-9571c=crop&w=334&q=80"
         },
         "route": {
           "type": "string",

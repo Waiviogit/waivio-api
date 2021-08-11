@@ -7,7 +7,7 @@ const { Prefetch } = require('test/testHelper');
 const searchHelper = require('utilities/helpers/searchHelper');
 const { AppFactory, PrefetchFactory } = require('test/factories');
 const {
-  showAllPrefs, getPrefsList, updatePrefsList,
+  showAllPrefetches, getPrefetchList, updatePrefetchList, createPrefetch,
 } = require('utilities/operations/sites/prefetchWobjs');
 
 describe('On prefetchWobjs.js', async () => {
@@ -24,12 +24,12 @@ describe('On prefetchWobjs.js', async () => {
       }
     });
     it('should return all prefetches', async () => {
-      const { result } = await showAllPrefs(data);
+      const { result } = await showAllPrefetches(data);
       expect(result).to.have.length(countPrefetches);
     });
   });
 
-  describe('On getPrefsList', async () => {
+  describe('On getPrefetchList', async () => {
     appInfo = { prefetches: ['Vancouver Restaurants', 'Richmond Dishes', 'Penticton Restaurants'] };
     beforeEach(async () => {
       await dropDatabase();
@@ -42,19 +42,19 @@ describe('On prefetchWobjs.js', async () => {
       sinon.restore();
     });
     it('should return prefetches by app & object_type', async () => {
-      const { result } = await getPrefsList(
+      const { result } = await getPrefetchList(
         { name: { $in: appInfo.prefetches }, type: data.type },
       );
       expect(result).to.have.length(2);
     });
     it('should return an empty array if prefetches by the given criteria are not found', async () => {
-      const { result } = await getPrefsList(
+      const { result } = await getPrefetchList(
         { name: { $in: [faker.random.string()] }, type: faker.random.string() },
       );
       expect(result).to.be.empty;
     });
   });
-  describe('On updatePrefsList', async () => {
+  describe('On updatePrefetchList', async () => {
     let app;
     beforeEach(async () => {
       countPrefetches = _.random(1, 10);
@@ -72,16 +72,16 @@ describe('On prefetchWobjs.js', async () => {
     });
     it('should return updated prefetch list by app', async () => {
       const prefetches = { names: ['French Cuisine', 'Vegan Options'] };
-      const { result } = await updatePrefsList(prefetches);
+      const { result } = await updatePrefetchList(prefetches);
       expect(result).to.be.deep.eq(prefetches);
     });
     it('should return error if prefetch not found', async () => {
       const prefetches = { names: [faker.random.string()] };
-      const { error } = await updatePrefsList(prefetches);
+      const { error } = await updatePrefetchList(prefetches);
       expect(error).to.be.deep.eq({ status: 404, message: 'Prefetches not found!' });
     });
   });
-  describe('On createPrefsList', async () => {
+  describe('On createPrefetch', async () => {
     let prefetch;
     const tag = faker.random.string();
     const category = faker.random.string();
@@ -90,7 +90,7 @@ describe('On prefetchWobjs.js', async () => {
     };
     beforeEach(async () => {
       await dropDatabase();
-      prefetch = await PrefetchFactory.Create(createParams);
+      prefetch = (await createPrefetch(createParams)).result;
     });
     it('should return created prefetch', async () => {
       expect(_.omit(prefetch, ['_id', '__v'])).to.be.deep.eq(

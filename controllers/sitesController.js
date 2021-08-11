@@ -280,10 +280,10 @@ exports.getRestrictions = async (req, res, next) => {
 exports.showAllPrefetches = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query },
-    validators.sites.showAllPrefs, next,
+    validators.sites.showAllPrefetches, next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.showAllPrefs(value);
+  const { result, error } = await prefetchWobjs.showAllPrefetches(value);
   if (error) return next(error);
   res.result = { status: 200, json: result };
   next();
@@ -292,10 +292,10 @@ exports.showAllPrefetches = async (req, res, next) => {
 exports.getPrefetchesList = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query },
-    validators.sites.getPref, next,
+    validators.sites.getPrefetchList, next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.getPrefsList(value);
+  const { result, error } = await prefetchWobjs.getPrefetchList(value);
   if (error) return next(error);
   res.result = { status: 200, json: result };
   next();
@@ -304,10 +304,10 @@ exports.getPrefetchesList = async (req, res, next) => {
 exports.createPrefetch = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body },
-    validators.sites.createPref, next,
+    validators.sites.createPrefetch, next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.createPref(value);
+  const { result, error } = await prefetchWobjs.createPrefetch(value);
 
   if (error) return next(error);
   res.result = { status: 200, json: result };
@@ -316,11 +316,15 @@ exports.createPrefetch = async (req, res, next) => {
 
 exports.updatePrefetchesList = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
-    validators.sites.updatePrefsList, next,
+    { userName: req.headers.username, ...req.body },
+    validators.sites.updatePrefetchList, next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.updatePrefsList(value);
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await prefetchWobjs.updatePrefetchList(value);
 
   if (error) return next(error);
   res.result = { status: 200, json: result };

@@ -14,6 +14,7 @@ const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CATEGORY_ITEMS } = require('constants/sitesConstants');
+const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 const { configurationMock } = require('./mocks');
 
 describe('On sitesController', async () => {
@@ -609,7 +610,9 @@ describe('On sitesController', async () => {
           .post('/api/sites/map')
           .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
         const wobj = _.find(result.body.wobjects, { author_permlink: wobj1.author_permlink });
-        expect(wobj.campaigns).to.be.deep.eq({ min_reward: campaign.reward, max_reward: campaign.reward });
+        expect(wobj.campaigns).to.be.deep.eq({
+          min_reward: campaign.reward, max_reward: campaign.reward,
+        });
       });
       it('should return secondary campaign if it exist', async () => {
         const result = await chai.request(app)
@@ -764,10 +767,12 @@ describe('On sitesController', async () => {
         myApp = await AppFactory.Create({ status: STATUSES.ACTIVE });
         sinon.restore();
         sinon.stub(session, 'get').returns(myApp.host);
+        sinon.stub(authoriseUser, 'authorise').returns({});
         prefetch1 = await PrefetchFactory.Create({ type: 'restaurant' });
         prefetch2 = await PrefetchFactory.Create({ type: 'dish' });
         result = await chai.request(app).put('/api/sites/prefetch')
-          .send({ names: [prefetch1.name, prefetch2.name] });
+          .send({ names: [prefetch1.name, prefetch2.name] })
+          .set({ userName: faker.random.string() });
       });
       afterEach(() => {
         sinon.restore();
@@ -793,7 +798,7 @@ describe('On sitesController', async () => {
         data = {
           name: faker.random.string(10),
           tag: faker.random.string(),
-          type: _.sample(['restaurant', 'dish', 'drink']),
+          type: _.sample(MAIN_OBJECT_TYPES),
           category: _.sample(CATEGORY_ITEMS),
         };
         result = await chai.request(app).post(`/api/sites/prefetch?type=${data.type}`).send(data);
