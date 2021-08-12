@@ -9,7 +9,7 @@ const {
 } = require('test/factories');
 const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
 const { ObjectId } = require('mongoose').Types;
 
 describe('On wobjController', async () => {
@@ -530,6 +530,46 @@ describe('On wobjController', async () => {
           });
         });
       });
+    });
+  });
+
+  describe('On countWobjectsByArea', async () => {
+    let myApp;
+    const countVacouverWobjects = _.random(1, 50);
+    const countRichmondWobjects = _.random(1, 50);
+    const countPentictonWobjects = _.random(1, 50);
+    beforeEach(async () => {
+      await dropDatabase();
+      myApp = await AppFactory.Create({
+        status: STATUSES.ACTIVE, configuration: { availableCities: ['Vancouver', 'Richmond', 'Penticton'] },
+      });
+      sinon.restore();
+      sinon.stub(session, 'get').returns(myApp.host);
+
+      for (let i = 0; i < countVacouverWobjects; i++) {
+        await ObjectFactory.Create({
+          fields: [{ name: FIELDS_NAMES.ADDRESS, body: '{"city":"Vancouver","country":"Canada"}' }], objectType: 'restaurant',
+        });
+      }
+      for (let i = 0; i < countRichmondWobjects; i++) {
+        await ObjectFactory.Create({
+          fields: [{ name: FIELDS_NAMES.ADDRESS, body: '{"city":"Richmond","country":"Canada"}' }], objectType: 'restaurant',
+        });
+      }
+      for (let i = 0; i < countPentictonWobjects; i++) {
+        await ObjectFactory.Create({
+          fields: [{ name: FIELDS_NAMES.ADDRESS, body: '{"city":"Penticton","country":"Canada"}' }], objectType: 'restaurant',
+        });
+      }
+      result = await chai.request(app).get('/api/wobject/count/by-area')
+        .query({ objectType: 'restaurant' }).set({ Origin: myApp.host });
+    });
+    it('should return an array of cities with correct counters', () => {
+      expect(result.body).to.be.deep.eq([
+        { city: 'Vancouver', counter: countVacouverWobjects },
+        { city: 'Richmond', counter: countRichmondWobjects },
+        { city: 'Penticton', counter: countPentictonWobjects },
+      ]);
     });
   });
 });

@@ -1,6 +1,7 @@
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
+const prefetchWobjs = require('utilities/operations/sites/prefetchWobjs');
 const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
@@ -272,6 +273,60 @@ exports.getRestrictions = async (req, res, next) => {
   const { result, error } = await restrictions.get(value);
   if (error) return next(error);
 
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.showAllPrefetches = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query },
+    validators.sites.showAllPrefetches, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.showAllPrefetches(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getPrefetchesList = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query },
+    validators.sites.getPrefetchList, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.getPrefetchList(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.createPrefetch = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.sites.createPrefetch, next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.createPrefetch(value);
+
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.updatePrefetchesList = async (req, res, next) => {
+  const value = validators.validate(
+    { userName: req.headers.username, ...req.body },
+    validators.sites.updatePrefetchList, next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await prefetchWobjs.updatePrefetchList(value);
+
+  if (error) return next(error);
   res.result = { status: 200, json: result };
   next();
 };

@@ -99,3 +99,5 @@ exports.FIRST_LOAD_FIELDS = [
 ];
 
 exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
+
+exports.CATEGORY_ITEMS = ['Cuisine', 'Features', 'Good+For', 'Ingredients', 'Category'];
