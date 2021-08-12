@@ -43,7 +43,13 @@ const makeNearbyPipe = ({
       object_type,
     },
   };
-  if (forSites) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  if (forSites) {
+    matchCond.$match = {
+      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      $and: [{ author_permlink: { $ne: authorPermlink } }, { author_permlink: { $in: crucialWobjects } }],
+      object_type,
+    };
+  }
   pipeline.push(matchCond);
   pipeline.push({ $skip: skip }, { $limit: limit });
   return pipeline;
