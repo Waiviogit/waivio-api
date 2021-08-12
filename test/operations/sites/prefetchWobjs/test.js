@@ -55,14 +55,15 @@ describe('On prefetchWobjs.js', async () => {
     });
   });
   describe('On updatePrefetchList', async () => {
-    let app;
+    let app, owner;
     beforeEach(async () => {
       countPrefetches = _.random(1, 10);
+      owner = faker.random.string();
       await PrefetchFactory.Create({ name: 'French Cuisine', type: data.type });
       await PrefetchFactory.Create({ name: 'Vegan Options', type: data.type });
 
       app = await AppFactory.Create({
-        prefetches: ['Vancouver Restaurants', 'Richmond Dishes', 'Penticton Restaurants'],
+        prefetches: ['Vancouver Restaurants', 'Richmond Dishes', 'Penticton Restaurants'], owner, admins: [owner],
       });
       const session = getNamespace('request-session');
       sinon.stub(session, 'get').returns(app.host);
@@ -71,9 +72,9 @@ describe('On prefetchWobjs.js', async () => {
       sinon.restore();
     });
     it('should return updated prefetch list by app', async () => {
-      const prefetches = { names: ['French Cuisine', 'Vegan Options'] };
+      const prefetches = { names: ['French Cuisine', 'Vegan Options'], userName: owner };
       const { result } = await updatePrefetchList(prefetches);
-      expect(result).to.be.deep.eq(prefetches);
+      expect(result.names).to.be.deep.eq(prefetches.names);
     });
     it('should return error if prefetch not found', async () => {
       const prefetches = { names: [faker.random.string()] };

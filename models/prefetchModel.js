@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const { Prefetch } = require('database').models;
-const prefetchHelper = require('utilities/helpers/prefetchHelper');
 
 const findOne = async (condition, select) => {
   try {
@@ -31,13 +30,12 @@ const find = async ({
 
 const create = async (data) => {
   try {
-    if (data.image) data.image = await prefetchHelper.parseImage(data);
     const prefetch = await new Prefetch({
       name: _.get(data, 'name'),
       tag: _.get(data, 'tag'),
       type: _.get(data, 'type'),
       category: _.get(data, 'category'),
-      route: prefetchHelper.createRoute(data),
+      route: _.get(data, 'route'),
       image: _.get(data, 'image'),
     }).save();
     return { result: prefetch.toObject() };

@@ -765,7 +765,9 @@ describe('On sitesController', async () => {
       let myApp, prefetch1, prefetch2, result;
       beforeEach(async () => {
         await dropDatabase();
-        myApp = await AppFactory.Create({ status: STATUSES.ACTIVE });
+        myApp = await AppFactory.Create({
+          status: STATUSES.ACTIVE, owner, admins: [owner],
+        });
         sinon.restore();
         sinon.stub(session, 'get').returns(myApp.host);
         sinon.stub(authoriseUser, 'authorise').returns({});
@@ -773,7 +775,7 @@ describe('On sitesController', async () => {
         prefetch2 = await PrefetchFactory.Create({ type: 'dish' });
         result = await chai.request(app).put('/api/sites/prefetch')
           .send({ names: [prefetch1.name, prefetch2.name] })
-          .set({ userName: faker.random.string() });
+          .set({ userName: owner });
       });
       afterEach(() => {
         sinon.restore();

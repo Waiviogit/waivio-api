@@ -1744,6 +1744,14 @@
                 "names": ["Vancouver Restaurants", "Breakfast Places"]
               }
             }
+          },
+          "403": {
+            "description": "Return error if the user who makes the changes is not the owner or admin of the app",
+            "schema": {
+              "example": {
+                "message": "Access denied"
+              }
+            }
           }
         }
       }
