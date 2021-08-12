@@ -561,7 +561,7 @@ describe('On wobjController', async () => {
           fields: [{ name: FIELDS_NAMES.ADDRESS, body: '{"city":"Penticton","country":"Canada"}' }], objectType: 'restaurant',
         });
       }
-      result = await chai.request(app).post('/api/wobject/wobjCountersByArea')
+      result = await chai.request(app).post('/api/wobject/count/byArea')
         .send({ objectType: 'restaurant' }).set({ Origin: myApp.host });
     });
     it('should return an array of cities with correct counters', () => {

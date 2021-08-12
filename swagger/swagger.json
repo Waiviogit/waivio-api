@@ -3705,7 +3705,7 @@
         }
       }
     },
-    "/api/wobject/wobjCountersByArea": {
+    "/api/wobject/count/byArea": {
       "post" : {
         "tags": [
           "wobject"
