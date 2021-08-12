@@ -8,10 +8,10 @@ const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
   AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory, CampaignFactory, PrefetchFactory,
 } = require('test/factories');
-const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
-const sitesHelper = require('utilities/helpers/sitesHelper');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
+const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
+const sitesHelper = require('utilities/helpers/sitesHelper');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CATEGORY_ITEMS } = require('constants/sitesConstants');
 const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
@@ -676,6 +676,7 @@ describe('On sitesController', async () => {
           beneficiary: userApp.beneficiary,
           referralCommissionAcc: userApp.owner,
           currency: SUPPORTED_CURRENCIES.USD,
+          language: userApp.language,
         };
         expect(result.body).to.be.deep.eq(mock);
       });
