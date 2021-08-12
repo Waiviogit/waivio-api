@@ -213,7 +213,7 @@ const getWobjectsNearby = async (req, res, next) => {
 };
 
 const countWobjectsByArea = async (req, res, next) => {
-  const value = validators.validate({ ...req.body },
+  const value = validators.validate({ ...req.query },
     validators.wobject.countWobjectsByArea, next);
   if (!value) return;
   const { wobjects: wobjectCounts, error } = await countWobjsByArea(value);

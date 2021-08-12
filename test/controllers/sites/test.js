@@ -751,12 +751,12 @@ describe('On sitesController', async () => {
       });
       it('should return the correct prefetch count (all)', async () => {
         const result = await chai.request(app)
-          .get(`/api/sites/allPrefetches?type=${type}`);
+          .get(`/api/sites/all-prefetches?type=${type}`);
         expect(result.body).to.have.length(count);
       });
       it('should return prefetches of the correct type', async () => {
         const result = await chai.request(app)
-          .get(`/api/sites/allPrefetches?type=${type}`);
+          .get(`/api/sites/all-prefetches?type=${type}`);
         expect(_.map(result.body, name)).to.be.not.include(prefetch.name);
       });
     });

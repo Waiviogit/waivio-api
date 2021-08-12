@@ -23,7 +23,7 @@ exports.updatePrefetchList = async (data) => {
   }
   const { app } = await searchHelper.getAppInfo({});
 
-  if (data.userName !== app.owner && !_.includes(app.admins, data.userName)) {
+  if (!_.includes([app.owner, ...app.admins, ...app.moderators], data.userName)) {
     return { error: { status: 403, message: 'Access denied' } };
   }
   const { result } = await App.findOneAndUpdate(

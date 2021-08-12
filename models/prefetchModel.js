@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const { Prefetch } = require('database').models;
 
 const findOne = async (condition, select) => {
@@ -30,14 +29,7 @@ const find = async ({
 
 const create = async (data) => {
   try {
-    const prefetch = await new Prefetch({
-      name: _.get(data, 'name'),
-      tag: _.get(data, 'tag'),
-      type: _.get(data, 'type'),
-      category: _.get(data, 'category'),
-      route: _.get(data, 'route'),
-      image: _.get(data, 'image'),
-    }).save();
+    const prefetch = await new Prefetch(data).save();
     return { result: prefetch.toObject() };
   } catch (error) {
     return { error };

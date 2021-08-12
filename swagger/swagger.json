@@ -1756,7 +1756,7 @@
         }
       }
       },
-    "/api/sites/allPrefetches" : {
+    "/api/sites/all-prefetches" : {
       "get": {
         "tags": ["sites"],
         "summary": "Get list of all prefetches",
@@ -3705,8 +3705,8 @@
         }
       }
     },
-    "/api/wobject/count/byArea": {
-      "post" : {
+    "/api/wobject/count/by-area": {
+      "get" : {
         "tags": [
           "wobject"
         ],
@@ -3724,13 +3724,12 @@
             "type": "string"
           },
           {
-            "in": "body",
-            "name": "objectType",
-            "description": "**objectType** - only objects of this type will be taken into account when searching",
+            "name" : "objectType",
+            "in" : "query",
+            "description" : "object type of wobjects to return",
             "required": true,
-            "schema": {
-              "$ref" : "#/definitions/objectTypeParam"
-            }
+            "type": "string",
+            "enum": ["restaurant", "dish", "drink"]
           }
         ],
         "responses": {

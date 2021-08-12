@@ -76,7 +76,7 @@ sitesRoutes.route('/sites/prefetch')
   .get(sitesController.getPrefetchesList)
   .post(sitesController.createPrefetch)
   .put(sitesController.updatePrefetchesList);
-sitesRoutes.route('/sites/allPrefetches')
+sitesRoutes.route('/sites/all-prefetches')
   .get(sitesController.showAllPrefetches);
 // endregion
 
@@ -107,8 +107,8 @@ wobjRoutes.route('/wobject/:authorPermlink/child_wobjects')
   .get(WobjController.getChildWobjects);
 wobjRoutes.route('/wobject/:authorPermlink/nearby')
   .get(WobjController.getWobjectsNearby);
-wobjRoutes.route('/wobject/count/byArea')
-  .post(WobjController.countWobjectsByArea);
+wobjRoutes.route('/wobject/count/by-area')
+  .get(WobjController.countWobjectsByArea);
 // endregion
 // region User
 userRoutes.route('/users')
