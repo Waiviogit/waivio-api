@@ -1,17 +1,20 @@
 const {
-  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID, moment, User, WebsitePayments,
+  faker, chai, expect, dropDatabase, app, sinon, App, _, ObjectID,
+  moment, User, WebsitePayments, Prefetch, AppModel,
 } = require('test/testHelper');
 const { getNamespace } = require('cls-hooked');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { STATUSES, PAYMENT_TYPES, FEE } = require('constants/sitesConstants');
 const {
-  AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory, CampaignFactory,
+  AppFactory, WebsitePaymentsFactory, UsersFactory, ObjectFactory, CampaignFactory, PrefetchFactory,
 } = require('test/factories');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
 const sitesHelper = require('utilities/helpers/sitesHelper');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { CATEGORY_ITEMS } = require('constants/sitesConstants');
+const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 const { configurationMock } = require('./mocks');
 
 describe('On sitesController', async () => {
@@ -607,7 +610,9 @@ describe('On sitesController', async () => {
           .post('/api/sites/map')
           .send({ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] });
         const wobj = _.find(result.body.wobjects, { author_permlink: wobj1.author_permlink });
-        expect(wobj.campaigns).to.be.deep.eq({ min_reward: campaign.reward, max_reward: campaign.reward });
+        expect(wobj.campaigns).to.be.deep.eq({
+          min_reward: campaign.reward, max_reward: campaign.reward,
+        });
       });
       it('should return secondary campaign if it exist', async () => {
         const result = await chai.request(app)
@@ -725,6 +730,91 @@ describe('On sitesController', async () => {
           .get('/api/sites/restrictions')
           .query({ userName: faker.random.string(), host: userApp.host });
         expect(result).to.have.status(401);
+      });
+    });
+  });
+
+  describe('On prefetches', async () => {
+    describe('on show', async () => {
+      let prefetch;
+      const count = _.random(1, 10);
+      const type = _.sample(['restaurant', 'dish']);
+      beforeEach(async () => {
+        await dropDatabase();
+        for (let i = 0; i < count; i++) {
+          await PrefetchFactory.Create({ type });
+        }
+        prefetch = await PrefetchFactory.Create({ type: 'drink' });
+      });
+      afterEach(() => {
+        sinon.restore();
+      });
+      it('should return the correct prefetch count (all)', async () => {
+        const result = await chai.request(app)
+          .get(`/api/sites/all-prefetches?type=${type}`);
+        expect(result.body).to.have.length(count);
+      });
+      it('should return prefetches of the correct type', async () => {
+        const result = await chai.request(app)
+          .get(`/api/sites/all-prefetches?type=${type}`);
+        expect(_.map(result.body, name)).to.be.not.include(prefetch.name);
+      });
+    });
+
+    describe('On get prefetches by app and update prefetches list in app', async () => {
+      let myApp, prefetch1, prefetch2, result;
+      beforeEach(async () => {
+        await dropDatabase();
+        myApp = await AppFactory.Create({
+          status: STATUSES.ACTIVE, owner, admins: [owner],
+        });
+        sinon.restore();
+        sinon.stub(session, 'get').returns(myApp.host);
+        sinon.stub(authoriseUser, 'authorise').returns({});
+        prefetch1 = await PrefetchFactory.Create({ type: 'restaurant' });
+        prefetch2 = await PrefetchFactory.Create({ type: 'dish' });
+        result = await chai.request(app).put('/api/sites/prefetch')
+          .send({ names: [prefetch1.name, prefetch2.name] })
+          .set({ userName: owner });
+      });
+      afterEach(() => {
+        sinon.restore();
+      });
+      it('should return list of added prefetches', async () => {
+        expect(result.body).to.be.deep.eq({ names: [prefetch1.name, prefetch2.name] });
+      });
+      it('should have added prefetches to the app', async () => {
+        const { result: application } = await AppModel.findOne({ name: myApp.name });
+        expect(application.prefetches).to.be.deep.eq([prefetch1.name, prefetch2.name]);
+      });
+      it('On get. Should return prefetches by app', async () => {
+        const res = await chai.request(app)
+          .get(`/api/sites/prefetch?type=${prefetch1.type}`);
+        expect(res.body[0].name).to.be.eq(prefetch1.name);
+      });
+    });
+
+    describe('On create', async () => {
+      let data, result;
+      beforeEach(async () => {
+        await dropDatabase();
+        data = {
+          name: faker.random.string(10),
+          tag: faker.random.string(),
+          type: _.sample(MAIN_OBJECT_TYPES),
+          category: _.sample(CATEGORY_ITEMS),
+        };
+        result = await chai.request(app).post(`/api/sites/prefetch?type=${data.type}`).send(data);
+      });
+      afterEach(() => {
+        sinon.restore();
+      });
+      it('should return new prefetch', async () => {
+        expect(result.body.name).to.be.eq(data.name);
+      });
+      it('should have created a new prefetch', async () => {
+        const { result: prefetch } = await Prefetch.findOne({ name: data.name, type: data.type });
+        expect(prefetch).to.be.exist;
       });
     });
   });
