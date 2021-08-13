@@ -38,6 +38,7 @@ models.MutedUser = require('./schemas/MutedUserSchema');
 models.Blacklist = require('./schemas/BlacklistSchema');
 models.GeoIp = require('./schemas/GeoIpSchema');
 models.VipTicket = require('./schemas/VipTicketSchema');
+models.Prefetch = require('./schemas/PrefetchSchema');
 
 module.exports = {
   Mongoose: mongoose,

@@ -11,6 +11,7 @@ exports.ERROR_MESSAGE = {
 exports.RESPONSE_STATUS = {
   NOT_FOUND: 404,
   FORBIDDEN: 403,
+  NOT_ACCEPTABLE: 406,
 };
 
 exports.REQ_METHOD = {

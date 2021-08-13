@@ -67,6 +67,7 @@ const Configuration = new Schema({
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
+  availableCities: { type: [String] },
   colors: { type: Colors, default: () => ({}) },
 }, { _id: false });
 
@@ -124,6 +125,7 @@ const AppSchema = new Schema({
     enum: APP_LANGUAGES,
     default: 'en-US',
   },
+  prefetches: { type: [String] },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {

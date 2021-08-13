@@ -7,7 +7,7 @@ const { SUPPORTED_CURRENCIES } = require('constants/common');
 const Create = async ({
   blacklists, name, admins, moderators, supportedHashtags, coordinates, currency,
   supportedObjects, bots, authority, inherited, canBeExtended, deactivatedAt,
-  host, owner, status, configuration, filters, supportedTypes, parent, activatedAt,
+  host, owner, status, configuration, filters, supportedTypes, parent, activatedAt, prefetches,
 } = {}) => {
   const data = {
     host: host || faker.internet.domainWord(),
@@ -41,6 +41,7 @@ const Create = async ({
     },
     service_bots: bots || [],
     currency: currency || SUPPORTED_CURRENCIES.USD,
+    prefetches: prefetches || [],
   };
 
   const app = await App.create(data);

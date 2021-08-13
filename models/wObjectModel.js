@@ -1,6 +1,7 @@
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
@@ -128,6 +129,31 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
   }
 };
 
+const countWobjectsByArea = async ({
+  objectType, cities, crucialWobjects,
+}) => {
+  try {
+    if (_.isEmpty(cities)) return { error: { status: 404, message: 'Cities not specified!' } };
+    const result = await Promise.all(cities.map(async (city) => {
+      const matchCond = {
+        $match: {
+          $and: [
+            { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: city, $options: 'i' } } } },
+            { object_type: objectType },
+          ],
+          'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+        },
+      };
+      if (!_.isEmpty(crucialWobjects)) matchCond.$match.author_permlink = { $in: crucialWobjects };
+      const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]);
+      return { city, counter: _.get(wobject[0], 'count', 0) };
+    }));
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   getOne,
   find,
@@ -137,5 +163,6 @@ module.exports = {
   getChildWobjects,
   getWobjectsRefs,
   getFieldsRefs,
+  countWobjectsByArea,
   findOne,
 };
