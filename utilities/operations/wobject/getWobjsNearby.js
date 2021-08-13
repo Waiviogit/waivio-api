@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { Wobj } = require('models');
 const searchHelper = require('utilities/helpers/searchHelper');
+const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 
 module.exports = async ({
   authorPermlink, app, skip, limit, radius,
@@ -38,15 +39,17 @@ const makeNearbyPipe = ({
   });
   const matchCond = {
     $match: {
-      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
       author_permlink: { $ne: authorPermlink },
       object_type,
     },
   };
   if (forSites) {
     matchCond.$match = {
-      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
-      $and: [{ author_permlink: { $ne: authorPermlink } }, { author_permlink: { $in: crucialWobjects } }],
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      $and: [
+        { author_permlink: { $ne: authorPermlink } }, { author_permlink: { $in: crucialWobjects } },
+      ],
       object_type,
     };
   }

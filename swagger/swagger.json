@@ -1717,7 +1717,7 @@
           "name" : "userName",
           "in" : "header",
           "description" : "name of authorised user",
-          "required" : false,
+          "required" : true,
           "type" : "string"
         },{
           "name" : "access-token",

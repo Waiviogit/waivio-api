@@ -222,6 +222,7 @@ exports.STATUSES = {
 };
 
 exports.REMOVE_OBJ_STATUSES = [
+  this.STATUSES.NSFW,
   this.STATUSES.RELISTED,
   this.STATUSES.UNAVAILABLE,
 ];
