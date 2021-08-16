@@ -14,7 +14,7 @@ const getCondition = (data) => {
   }
 
   if (data.object_types.length) {
-    findParams.object_type = { $in: [...data.object_types, ...EXCLUDE_OBJECT_TYPES] };
+    findParams.object_type = { $in: data.object_types };
   } else if (data.exclude_object_types.length) {
     findParams.object_type = { $nin: [...data.exclude_object_types, ...EXCLUDE_OBJECT_TYPES] };
   }
