@@ -7,6 +7,7 @@ const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 const { RESERVATION_STATUSES } = require('constants/campaignsData');
+const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
 
 /**
  * Get wobjects data for particular post
@@ -294,15 +295,23 @@ const getTagsByUser = async ({ author }) => {
       const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
       existsInTags
         ? existsInTags.counter++
-        : tags.push({
-          name: _.get(wobject, 'tagged', _.get(wobject, 'objectName', wobject.author_permlink)),
-          counter: 1,
-          author_permlink: wobject.author_permlink,
-        });
+        : tags.push({ counter: 1, author_permlink: wobject.author_permlink });
     }
   }
+  const { result: wobjects } = await getCurrentNames(_.map(tags, 'author_permlink'));
+  const result = _.map(wobjects, (wobject) => {
+    for (const tag of tags) {
+      if (tag.author_permlink === wobject.author_permlink) {
+        return {
+          name: _.get(wobject, 'name', _.get(wobject, 'author_permlink')),
+          author_permlink: wobject.author_permlink,
+          counter: tag.counter,
+        };
+      }
+    }
+  });
 
-  return { tags: tags.sort((a, b) => b.counter - a.counter) };
+  return { tags: result.sort((a, b) => b.counter - a.counter) };
 };
 
 module.exports = {
