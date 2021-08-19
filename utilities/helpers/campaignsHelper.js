@@ -73,8 +73,11 @@ exports.campaignFilter = async (campaigns, user, app) => {
         totalPayed,
       };
 
-      campaign.assigned = user ? !!_.find(campaign.users,
-        (doer) => doer.name === user.name && doer.status === RESERVATION_STATUSES.ASSIGNED) : false;
+      campaign.assigned = user
+        ? !!_.find(campaign.users,
+          (doer) => doer.name === user.name
+            && _.includes([RESERVATION_STATUSES.ASSIGNED, RESERVATION_STATUSES.COMPLETED], doer.status))
+        : false;
       campaign.requirement_filters = await this.requirementFilters(campaign, user);
 
       validCampaigns.push(_.omit(campaign, ['payments', 'map', 'objects']));
