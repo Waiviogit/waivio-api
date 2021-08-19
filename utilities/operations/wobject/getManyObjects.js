@@ -3,12 +3,11 @@ const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const {
-  REQUIREDFIELDS, REQUIREDFIELDS_SEARCH, EXCLUDE_OBJECT_TYPES, REMOVE_OBJ_STATUSES,
+  REQUIREDFIELDS, REQUIREDFIELDS_SEARCH, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 
 const getCondition = (data) => {
   const findParams = {};
-  findParams.object_type = { $nin: EXCLUDE_OBJECT_TYPES };
   if (data.author_permlinks.length) {
     findParams.author_permlink = { $in: data.author_permlinks };
   }
@@ -16,7 +15,7 @@ const getCondition = (data) => {
   if (data.object_types.length) {
     findParams.object_type = { $in: data.object_types };
   } else if (data.exclude_object_types.length) {
-    findParams.object_type = { $nin: [...data.exclude_object_types, ...EXCLUDE_OBJECT_TYPES] };
+    findParams.object_type = { $nin: data.exclude_object_types };
   }
   if (data.sample) {
     findParams['status.title'] = { $nin: REMOVE_OBJ_STATUSES };

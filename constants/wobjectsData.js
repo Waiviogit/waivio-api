@@ -52,7 +52,7 @@ exports.OBJECT_TYPES = {
   INDICES: 'indices',
   STOCKS: 'stocks',
   CURRENCIES: 'currencies',
-  COMMODITIES: 'commodities',
+  COMMODITY: 'commodity',
   CAR: 'car',
   TEST: 'test',
 };
@@ -237,16 +237,4 @@ exports.MAIN_OBJECT_TYPES = [
   this.OBJECT_TYPES.RESTAURANT,
   this.OBJECT_TYPES.DISH,
   this.OBJECT_TYPES.DRINK,
-];
-
-exports.EXCLUDE_OBJECT_TYPES = [
-  this.OBJECT_TYPES.LIST,
-  this.OBJECT_TYPES.CRYPTO,
-  this.OBJECT_TYPES.INDICES,
-  this.OBJECT_TYPES.STOCKS,
-  this.OBJECT_TYPES.CURRENCIES,
-  this.OBJECT_TYPES.COMMODITIES,
-  this.OBJECT_TYPES.CAR,
-  this.OBJECT_TYPES.TEST,
-  this.OBJECT_TYPES.PAGE,
 ];
