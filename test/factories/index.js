@@ -16,4 +16,5 @@ module.exports = {
   GeoIpFactory: require('./GeoIpFactory/GeoIpFactory'),
   HiddenPostsFactory: require('./HiddenPosts/HiddenPostsFactory'),
   MutedUsersFactory: require('./MutedUsers/MutedUsersFactory'),
+  PrefetchFactory: require('./PrefetchFactory/PrefetchFactory'),
 };

@@ -1,11 +1,12 @@
-const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
+const {
+  TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+} = require('constants/postsData');
+const { WEBSITE_SUSPENDED_COUNT } = require('constants/sitesConstants');
 const {
   importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
-} = require('./redis');
-const {
-  LANGUAGES, TREND_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
-  WEBSITE_SUSPENDED_COUNT,
-} = require('../constants');
+} = require('utilities/redis/redis');
+const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
+const { LANGUAGES } = require('constants/common');
 
 exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
 

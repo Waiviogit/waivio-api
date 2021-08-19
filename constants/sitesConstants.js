@@ -85,4 +85,19 @@ exports.PAYMENT_FIELDS_WRITEOFF = ['userName', 'balance', 'host', 'createdAt', '
 
 exports.REQUIRED_FIELDS_UPD_WOBJ = ['host', 'inherited', 'canBeExtended', 'authority', 'mapCoordinates', 'object_filters', 'supported_object_types'];
 
-exports.FIRST_LOAD_FIELDS = ['configuration', 'host', 'googleAnalyticsTag', 'parentHost', 'beneficiary', 'supported_object_types', 'status', 'mainPage', 'currency'];
+exports.FIRST_LOAD_FIELDS = [
+  'supported_object_types',
+  'googleAnalyticsTag',
+  'configuration',
+  'beneficiary',
+  'parentHost',
+  'mainPage',
+  'currency',
+  'language',
+  'status',
+  'host',
+];
+
+exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
+
+exports.CATEGORY_ITEMS = ['Cuisine', 'Features', 'Good+For', 'Ingredients', 'Category'];

@@ -1,11 +1,10 @@
 /* eslint-disable func-names */
+const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
+const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
-const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
 
 const { Schema } = mongoose;
-const { LANGUAGES } = require('../../utilities/constants');
 
 const ReferralsSchema = new Schema({
   agent: { type: String, index: true },

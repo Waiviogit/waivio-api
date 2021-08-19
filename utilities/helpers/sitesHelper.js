@@ -233,7 +233,7 @@ exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const {
-    googleAnalyticsTag, beneficiary, app_commissions, currency,
+    googleAnalyticsTag, beneficiary, app_commissions, currency, language,
   } = app;
 
   return {
@@ -244,6 +244,7 @@ exports.getSettings = async (host) => {
         ? app_commissions.referral_commission_acc
         : app.owner,
       currency,
+      language,
     },
   };
 };

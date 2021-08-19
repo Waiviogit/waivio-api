@@ -1,3 +1,5 @@
+const _ = require('lodash');
+
 exports.ERROR_MESSAGE = {
   UNAVAILABLE: 'Service Unavailable',
   PARSE_IMAGE: 'Error parse image',
@@ -9,6 +11,7 @@ exports.ERROR_MESSAGE = {
 exports.RESPONSE_STATUS = {
   NOT_FOUND: 404,
   FORBIDDEN: 403,
+  NOT_ACCEPTABLE: 406,
 };
 
 exports.REQ_METHOD = {
@@ -69,3 +72,62 @@ exports.BLOCK_NUM_KEYS = {
   LAST_VOTE_BLOCK_NUM: 'last_vote_block_num',
   LAST_BLOCK_NUM_CAMPAIGN: 'campaign_last_block_num',
 };
+
+exports.LANGUAGES = ['en-US',
+  'id-ID',
+  'ms-MY',
+  'ca-ES',
+  'cs-CZ',
+  'da-DK',
+  'de-DE',
+  'et-EE',
+  'es-ES',
+  'fil-PH',
+  'fr-FR',
+  'hr-HR',
+  'it-IT',
+  'hu-HU',
+  'nl-HU',
+  'no-NO',
+  'pl-PL',
+  'pt-BR',
+  'ro-RO',
+  'sl-SI',
+  'sv-SE',
+  'vi-VN',
+  'tr-TR',
+  'yo-NG',
+  'el-GR',
+  'bg-BG',
+  'ru-RU',
+  'uk-UA',
+  'he-IL',
+  'ar-SA',
+  'ne-NP',
+  'hi-IN',
+  'as-IN',
+  'bn-IN',
+  'ta-IN',
+  'lo-LA',
+  'th-TH',
+  'ko-KR',
+  'ja-JP',
+  'zh-CN',
+  'af-ZA',
+  'auto',
+];
+
+exports.APP_LANGUAGES = _.filter(this.LANGUAGES, (el) => el !== 'auto');
+
+exports.COMMENT_REF_TYPES = {
+  postWithWobjects: 'post_with_wobj',
+  createWobj: 'create_wobj',
+  appendWobj: 'append_wobj',
+  wobjType: 'wobj_type',
+};
+
+exports.MAX_IMPORTING_USERS = 20;
+
+exports.PROXY_HIVE_IMAGES = 'https://images.hive.blog/0x0/';
+
+exports.NOT_FOUND_IMAGE_URL = 'https://waivio.nyc3.digitaloceanspaces.com/ImageNotFound';

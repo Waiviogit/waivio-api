@@ -1,9 +1,9 @@
+const _ = require('lodash');
 const {
   expect, WebsitePaymentsModel, faker, dropDatabase,
 } = require('test/testHelper');
 const { WebsitePaymentsFactory } = require('test/factories');
-const _ = require('lodash');
-const { PAYMENT_TYPES } = require('../../../constants/sitesConstants');
+const { PAYMENT_TYPES } = require('constants/sitesConstants');
 
 describe('WebsitePaymentsModel', () => {
   describe('On find', () => {
