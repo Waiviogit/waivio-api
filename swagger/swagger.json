@@ -2043,6 +2043,7 @@
     },
     "/api/user/{username}/getFollowingsState" : {
       "get" : {
+        "deprecated": true,
         "tags" : [ "user" ],
         "summary" : "Check user followings",
         "description" : "Return array with names of users and boolean markers for each",
