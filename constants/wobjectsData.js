@@ -52,7 +52,7 @@ exports.OBJECT_TYPES = {
   INDICES: 'indices',
   STOCKS: 'stocks',
   CURRENCIES: 'currencies',
-  COMMODITIES: 'commodities',
+  COMMODITY: 'commodity',
   CAR: 'car',
   TEST: 'test',
 };
