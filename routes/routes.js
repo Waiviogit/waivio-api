@@ -119,8 +119,6 @@ userRoutes.route('/user/getUsersData')
   .post(UserController.usersData);
 userRoutes.route('/user/:userName/setState')
   .get(UserController.modalWindowMarker);
-userRoutes.route('/user/:userName/getFollowingsState')
-  .get(UserController.followingsState);
 userRoutes.route('/user/:userName/following_objects')
   .post(UserController.objectsFollow);
 userRoutes.route('/user/:userName/following_users')
@@ -159,6 +157,9 @@ userRoutes.route('/geo-ip')
   .put(UserController.putUserGeo);
 userRoutes.route('/user/:userName/creation-date')
   .get(UserController.getCreationDate);
+// Deprecated. Used for subscribe button for users who liked the post
+// userRoutes.route('/user/:userName/getFollowingsState')
+//   .get(UserController.followingsState);
 // endregion
 // region Post
 postRoutes.route('/post/:author/:permlink')
