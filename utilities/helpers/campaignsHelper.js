@@ -127,15 +127,6 @@ exports.addCampaignsToWobjects = async ({
   wobjects, user, simplified = false, app, search,
 }) => {
   const permlinks = _.map(wobjects, 'author_permlink');
-  const { result: wobjsWithStatus } = await Wobj.find({ author_permlink: { $in: permlinks } }, { 'status.title': 1, author_permlink: 1 });
-
-  wobjects = _.map(wobjects, (wobject) => {
-    for (const wobj of wobjsWithStatus) {
-      if (wobj.author_permlink === wobject.author_permlink) {
-        return Object.assign(wobject, wobj);
-      }
-    }
-  });
 
   if (!app) {
     const session = getNamespace('request-session');
