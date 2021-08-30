@@ -751,12 +751,17 @@ describe('On sitesController', async () => {
       });
       it('should return the correct prefetch count (all)', async () => {
         const result = await chai.request(app)
-          .get(`/api/sites/all-prefetches?type=${type}`);
+          .get(`/api/sites/all-prefetches?types=${type}`);
         expect(result.body).to.have.length(count);
+      });
+      it('should return all the generated prefetches and one that was created separately', async () => {
+        const result = await chai.request(app)
+          .get(`/api/sites/all-prefetches?types=${type},drink`);
+        expect(result.body).to.have.length(count + 1);
       });
       it('should return prefetches of the correct type', async () => {
         const result = await chai.request(app)
-          .get(`/api/sites/all-prefetches?type=${type}`);
+          .get(`/api/sites/all-prefetches?types=${type}`);
         expect(_.map(result.body, name)).to.be.not.include(prefetch.name);
       });
     });
@@ -789,8 +794,13 @@ describe('On sitesController', async () => {
       });
       it('On get. Should return prefetches by app', async () => {
         const res = await chai.request(app)
-          .get(`/api/sites/prefetch?type=${prefetch1.type}`);
+          .get(`/api/sites/prefetch?types=${prefetch1.type}`);
         expect(res.body[0].name).to.be.eq(prefetch1.name);
+      });
+      it('Should return prefetches by app and many types', async () => {
+        const res = await chai.request(app)
+          .get(`/api/sites/prefetch?types=${prefetch1.type},${prefetch2.type}`);
+        expect(_.map(res.body, 'name')).to.have.all.members([prefetch1.name, prefetch2.name]);
       });
     });
 

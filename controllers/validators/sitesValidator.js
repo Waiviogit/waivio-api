@@ -1,5 +1,6 @@
 const Joi = require('@hapi/joi');
 const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
+const { customJoi } = require('controllers/validators/customSchema');
 const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
 
 const options = { allowUnknown: true, stripUnknown: true };
@@ -103,13 +104,13 @@ exports.restrictions = Joi.object().keys({
 });
 
 exports.showAllPrefetches = Joi.object().keys({
-  type: Joi.string().required(),
+  types: customJoi.stringArray().items(Joi.string()).single(),
   skip: Joi.number().default(0),
   limit: Joi.number().default(20),
 });
 
 exports.getPrefetchList = Joi.object().keys({
-  type: Joi.string().required(),
+  types: customJoi.stringArray().items(Joi.string()).single(),
   skip: Joi.number().default(0),
   limit: Joi.number().default(20),
 });
