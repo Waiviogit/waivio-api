@@ -3,7 +3,9 @@ const { App, PrefetchModel } = require('models');
 const _ = require('lodash');
 
 exports.showAllPrefetches = async (data) => {
-  const { result, error } = await PrefetchModel.find({ condition: { type: data.type }, ...data });
+  const { result, error } = await PrefetchModel.find({
+    condition: { type: { $in: _.get(data, 'types') } }, ...data,
+  });
   if (error || !result) return { error };
   return { result };
 };
@@ -11,7 +13,8 @@ exports.showAllPrefetches = async (data) => {
 exports.getPrefetchList = async (data) => {
   const appInfo = await searchHelper.getAppInfo({});
   const { result, error } = await PrefetchModel.find({
-    condition: { name: { $in: appInfo.prefetches }, type: data.type }, ...data,
+    condition: { name: { $in: appInfo.prefetches }, type: { $in: _.get(data, 'types') } },
+    ...data,
   });
   if (error || !result) return { error };
   return { result };
