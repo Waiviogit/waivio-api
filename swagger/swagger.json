@@ -1639,12 +1639,14 @@
           "required" : true,
           "type" : "string"
         },{
-          "name" : "type",
+          "name" : "types",
           "in" : "query",
           "description" : "types by which the selections will be searched",
           "required": true,
-          "type" : "string",
-          "enum": ["restaurant", "dish", "drink", "dish,drink"]
+          "schema": {
+            "type": "string",
+            "example": "restaurant,dish,drink"
+          }
         }, {
           "name" : "skip",
           "in" : "query",
@@ -1765,12 +1767,14 @@
           "application/json"
         ],
         "parameters": [{
-            "name": "type",
+            "name": "types",
             "in": "query",
             "description": "types by which the selections will be searched",
             "required": true,
+          "schema": {
             "type": "string",
-            "enum": ["restaurant", "dish", "drink", "dish,drink"]
+            "example": "restaurant,dish,drink"
+          }
           },{
           "name" : "skip",
           "in" : "query",
