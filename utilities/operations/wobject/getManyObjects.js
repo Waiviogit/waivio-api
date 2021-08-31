@@ -7,7 +7,7 @@ const {
 } = require('constants/wobjectsData');
 
 const getCondition = (data) => {
-  const findParams = {};
+  const findParams = { 'status.title': { $nin: REMOVE_OBJ_STATUSES } };
   if (data.author_permlinks.length) {
     findParams.author_permlink = { $in: data.author_permlinks };
   }
@@ -16,9 +16,6 @@ const getCondition = (data) => {
     findParams.object_type = { $in: data.object_types };
   } else if (data.exclude_object_types.length) {
     findParams.object_type = { $nin: data.exclude_object_types };
-  }
-  if (data.sample) {
-    findParams['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
   }
   return findParams;
 };
