@@ -24,7 +24,7 @@ describe('On prefetchWobjs.js', async () => {
       }
     });
     it('should return all prefetches', async () => {
-      const { result } = await showAllPrefetches(data);
+      const { result } = await showAllPrefetches({ types: data.type });
       expect(result).to.have.length(countPrefetches);
     });
   });
@@ -43,7 +43,7 @@ describe('On prefetchWobjs.js', async () => {
     });
     it('should return prefetches by app & object_type', async () => {
       const { result } = await getPrefetchList(
-        { name: { $in: appInfo.prefetches }, type: data.type },
+        { name: { $in: appInfo.prefetches }, types: data.type },
       );
       expect(result).to.have.length(2);
     });

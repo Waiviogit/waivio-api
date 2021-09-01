@@ -1,12 +1,12 @@
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const WObjectModel = require('database').models.WObject;
 const createError = require('http-errors');
 const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
     const matchStage = { author_permlink: authorPermlink };
-    if (unavailable) matchStage['status.title'] = { $nin: ['unavailable', 'nsfw'] };
+    if (unavailable) matchStage['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
     if (objectType) matchStage.object_type = objectType;
     const wObject = await WObjectModel.findOne(matchStage).lean();
 
@@ -63,7 +63,7 @@ const getChildWobjects = async ({
       .find({
         parent: authorPermlink,
         object_type: { $nin: excludeTypes },
-        'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
       })
       .sort({ weight: -1, _id: -1 })
       .skip(skip)
@@ -138,15 +138,15 @@ const countWobjectsByArea = async ({
       const matchCond = {
         $match: {
           $and: [
-            { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: city, $options: 'i' } } } },
+            { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: _.get(city, 'city', ''), $options: 'i' } } } },
             { object_type: objectType },
           ],
-          'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+          'status.title': { $nin: REMOVE_OBJ_STATUSES },
         },
       };
       if (!_.isEmpty(crucialWobjects)) matchCond.$match.author_permlink = { $in: crucialWobjects };
       const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]);
-      return { city, counter: _.get(wobject[0], 'count', 0) };
+      return { ...city, counter: _.get(wobject[0], 'count', 0) };
     }));
     return { result };
   } catch (error) {

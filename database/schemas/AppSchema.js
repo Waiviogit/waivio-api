@@ -60,6 +60,11 @@ const Colors = new Schema({
   [SUPPORTED_COLORS.LINKS]: { type: String, default: '' },
 }, { _id: false });
 
+const CitySchema = new Schema({
+  city: { type: String },
+  route: { type: String },
+});
+
 const Configuration = new Schema({
   configurationFields: { type: [String] },
   desktopLogo: { type: String },
@@ -67,7 +72,7 @@ const Configuration = new Schema({
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
-  availableCities: { type: [String] },
+  availableCities: { type: [CitySchema], default: [] },
   colors: { type: Colors, default: () => ({}) },
 }, { _id: false });
 

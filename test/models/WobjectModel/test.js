@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { ObjectFactory } = require('test/factories');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
-const { dropDatabase, expect } = require('test/testHelper');
+const { dropDatabase, expect, faker } = require('test/testHelper');
 const { countWobjectsByArea } = require('models/wObjectModel');
 const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 
@@ -34,9 +34,14 @@ describe('Wobject Model', async () => {
     });
     it('should return an array of cities with correct counters', async () => {
       const { result } = await countWobjectsByArea({
-        objectType, cities: ['Vancouver', 'Richmond'],
+        objectType,
+        cities: [
+          { city: 'Vancouver', route: faker.random.string() },
+          { city: 'Richmond', route: faker.random.string() },
+        ],
       });
-      expect(result).to.be.deep.eq([
+      const actual = _.map(result, (wobject) => _.omit(wobject, ['route']));
+      expect(actual).to.be.deep.eq([
         { city: 'Vancouver', counter: countVacouverWobjects },
         { city: 'Richmond', counter: countRichmondWobjects },
       ]);
@@ -52,7 +57,9 @@ describe('Wobject Model', async () => {
         fields: [{ name: FIELDS_NAMES.ADDRESS, body: '{"city":"Vancouver","country":"Canada"}' }], objectType,
       });
       const { result } = await countWobjectsByArea({
-        objectType, cities: ['Vancouver'], crucialWobjects: [crucialWobject.author_permlink],
+        objectType,
+        cities: [{ city: 'Vancouver', route: faker.random.string() }],
+        crucialWobjects: [crucialWobject.author_permlink],
       });
       expect(result).to.have.length(1);
     });
