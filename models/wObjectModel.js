@@ -138,7 +138,7 @@ const countWobjectsByArea = async ({
       const matchCond = {
         $match: {
           $and: [
-            { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: city.name, $options: 'i' } } } },
+            { fields: { $elemMatch: { name: FIELDS_NAMES.ADDRESS, body: { $regex: _.get(city, 'city', ''), $options: 'i' } } } },
             { object_type: objectType },
           ],
           'status.title': { $nin: REMOVE_OBJ_STATUSES },

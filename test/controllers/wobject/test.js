@@ -544,9 +544,9 @@ describe('On wobjController', async () => {
         status: STATUSES.ACTIVE,
         configuration: {
           availableCities: [
-            { name: 'Vancouver', route: faker.random.string() },
-            { name: 'Richmond', route: faker.random.string() },
-            { name: 'Penticton', route: faker.random.string() },
+            { city: 'Vancouver', route: faker.random.string() },
+            { city: 'Richmond', route: faker.random.string() },
+            { city: 'Penticton', route: faker.random.string() },
           ],
         },
       });
@@ -574,9 +574,9 @@ describe('On wobjController', async () => {
     it('should return an array of cities with correct counters', () => {
       const actual = _.map(result.body, (wobject) => _.omit(wobject, ['route', '_id']));
       expect(actual).to.be.deep.eq([
-        { name: 'Vancouver', counter: countVacouverWobjects },
-        { name: 'Richmond', counter: countRichmondWobjects },
-        { name: 'Penticton', counter: countPentictonWobjects },
+        { city: 'Vancouver', counter: countVacouverWobjects },
+        { city: 'Richmond', counter: countRichmondWobjects },
+        { city: 'Penticton', counter: countPentictonWobjects },
       ]);
     });
   });
