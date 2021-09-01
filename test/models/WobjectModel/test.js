@@ -36,14 +36,14 @@ describe('Wobject Model', async () => {
       const { result } = await countWobjectsByArea({
         objectType,
         cities: [
-          { name: 'Vancouver', route: faker.random.string() },
-          { name: 'Richmond', route: faker.random.string() },
+          { city: 'Vancouver', route: faker.random.string() },
+          { city: 'Richmond', route: faker.random.string() },
         ],
       });
       const actual = _.map(result, (wobject) => _.omit(wobject, ['route']));
       expect(actual).to.be.deep.eq([
-        { name: 'Vancouver', counter: countVacouverWobjects },
-        { name: 'Richmond', counter: countRichmondWobjects },
+        { city: 'Vancouver', counter: countVacouverWobjects },
+        { city: 'Richmond', counter: countRichmondWobjects },
       ]);
     });
     it('should return an error if cities were not specified', async () => {
@@ -58,7 +58,7 @@ describe('Wobject Model', async () => {
       });
       const { result } = await countWobjectsByArea({
         objectType,
-        cities: [{ name: 'Vancouver', route: faker.random.string() }],
+        cities: [{ city: 'Vancouver', route: faker.random.string() }],
         crucialWobjects: [crucialWobject.author_permlink],
       });
       expect(result).to.have.length(1);
