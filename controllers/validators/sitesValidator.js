@@ -106,13 +106,13 @@ exports.restrictions = Joi.object().keys({
 exports.showAllPrefetches = Joi.object().keys({
   types: customJoi.stringArray().items(Joi.string()).single().required(),
   skip: Joi.number().default(0),
-  limit: Joi.number().default(20),
+  limit: Joi.number(),
 });
 
 exports.getPrefetchList = Joi.object().keys({
   types: customJoi.stringArray().items(Joi.string()).single().required(),
   skip: Joi.number().default(0),
-  limit: Joi.number().default(20),
+  limit: Joi.number().default(30),
 });
 
 exports.createPrefetch = Joi.object().keys({
