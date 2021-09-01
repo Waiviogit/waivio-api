@@ -541,7 +541,14 @@ describe('On wobjController', async () => {
     beforeEach(async () => {
       await dropDatabase();
       myApp = await AppFactory.Create({
-        status: STATUSES.ACTIVE, configuration: { availableCities: ['Vancouver', 'Richmond', 'Penticton'] },
+        status: STATUSES.ACTIVE,
+        configuration: {
+          availableCities: [
+            { name: 'Vancouver', route: faker.random.string() },
+            { name: 'Richmond', route: faker.random.string() },
+            { name: 'Penticton', route: faker.random.string() },
+          ],
+        },
       });
       sinon.restore();
       sinon.stub(session, 'get').returns(myApp.host);
@@ -565,10 +572,11 @@ describe('On wobjController', async () => {
         .query({ objectType: 'restaurant' }).set({ Origin: myApp.host });
     });
     it('should return an array of cities with correct counters', () => {
-      expect(result.body).to.be.deep.eq([
-        { city: 'Vancouver', counter: countVacouverWobjects },
-        { city: 'Richmond', counter: countRichmondWobjects },
-        { city: 'Penticton', counter: countPentictonWobjects },
+      const actual = _.map(result.body, (wobject) => _.omit(wobject, ['route', '_id']));
+      expect(actual).to.be.deep.eq([
+        { name: 'Vancouver', counter: countVacouverWobjects },
+        { name: 'Richmond', counter: countRichmondWobjects },
+        { name: 'Penticton', counter: countPentictonWobjects },
       ]);
     });
   });

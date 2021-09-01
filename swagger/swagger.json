@@ -1652,12 +1652,14 @@
           "in" : "query",
           "description" : "count of prefetches to skip",
           "required" : false,
+          "default": 0,
           "type" : "number"
         }, {
           "name" : "limit",
           "in" : "query",
           "description" : "limit prefetches in list",
           "required" : false,
+          "default": 30,
           "type" : "number"
         }],
         "responses" : {
@@ -1780,6 +1782,7 @@
           "in" : "query",
           "description" : "count of prefetches to skip",
           "required" : false,
+          "default": 0,
           "type" : "number"
           },{
           "name" : "limit",
@@ -6536,10 +6539,16 @@
       "type": "object",
       "properties": {
         "city": {
-          "type": "string"
+          "type": "string",
+          "example": "Vancouver"
+        },
+        "route": {
+          "type": "string",
+          "example": "center=49.25997734756513%2C-123.16840544074762&zoom=13"
         },
         "counter": {
-          "type": "number"
+          "type": "number",
+          "example": 2135
         }
       }
     }
