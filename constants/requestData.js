@@ -94,14 +94,25 @@ const HIVE_ON_BOARD = {
   TICKETS: '/tickets',
 };
 
-const NODE_URLS = [
-  'https://rpc.esteem.app',
-  'https://rpc.ausbit.dev',
-  'https://rpc.ecency.com',
-  'https://hived.emre.sh',
-  'https://api.deathwing.me',
+const PRODUCTION_REQUEST_NODES = [
+  'https://api.openhive.network',
   'https://api.hive.blog',
+  'https://rpc.ecency.com',
+  'https://anyx.io',
 ];
+
+const STAGING_REQUEST_NODES = [
+  'https://api.openhive.network',
+  'https://api.pharesim.me',
+  'https://rpc.esteem.app',
+  'https://hive-api.arcange.eu',
+  'https://hive.roelandp.nl',
+  'https://rpc.ausbit.dev',
+];
+
+const NODE_URLS = process.env.NODE_ENV === 'production'
+  ? PRODUCTION_REQUEST_NODES
+  : STAGING_REQUEST_NODES;
 
 module.exports = {
   NODE_URLS,
