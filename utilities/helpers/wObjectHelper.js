@@ -285,8 +285,7 @@ const fillObjectByHiveData = async (obj, exposedFields) => {
       delete obj.fields[index];
       return;
     }
-
-    let post = _.get(result, `content.${field.author}/${field.permlink}`);
+    let post = _.get(result, `content['${field.author}/${field.permlink}']`);
     if (!post || !post.author) post = createMockPost(field);
 
     Object.assign(field,
