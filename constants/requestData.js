@@ -95,18 +95,16 @@ const HIVE_ON_BOARD = {
 };
 
 const PRODUCTION_REQUEST_NODES = [
-  'https://api.openhive.network',
-  'https://api.hive.blog',
   'https://rpc.ecency.com',
+  'https://api.hive.blog',
   'https://anyx.io',
+  'https://api.openhive.network',
 ];
 
 const STAGING_REQUEST_NODES = [
-  'https://api.openhive.network',
-  'https://api.pharesim.me',
   'https://rpc.esteem.app',
+  'https://api.openhive.network',
   'https://hive-api.arcange.eu',
-  'https://hive.roelandp.nl',
   'https://rpc.ausbit.dev',
 ];
 
