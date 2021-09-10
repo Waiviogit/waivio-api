@@ -127,6 +127,14 @@ const makeSitePipeline = ({
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
+  if (object_type && object_type !== 'restaurant') {
+    pipeline.push(
+      { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
+      { $sort: { 'children.weight': -1 } },
+      { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
+      { $replaceRoot: { newRoot: '$biggestWeight' } },
+    );
+  }
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
