@@ -13,4 +13,4 @@ exports.parseImage = async (data) => {
   return imageUrl;
 };
 
-exports.createRoute = (data) => `type=${data.type}&${data.category}=${data.tag}`;
+exports.createRoute = (data) => `type=${data.type}&${data.category}=${data.tag}&searchString=${data.tag}`;
