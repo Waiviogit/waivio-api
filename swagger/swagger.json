@@ -1676,7 +1676,7 @@
       },
       "post" : {
         "tags" : [ "sites" ],
-        "summary" : "Created new prefetch",
+        "summary" : "Create new prefetch",
         "description" : "Created new prefetch, do not attach to any application",
         "produces" : [ "application/json" ],
         "parameters" : [{
@@ -1707,7 +1707,7 @@
         },
       "put": {
         "tags" : [ "sites" ],
-        "summary" : "Updated the prefetch list",
+        "summary" : "Update the prefetch list by app",
         "description" : "Updated the prefetch list for a specific app",
         "produces" : [ "application/json" ],
         "parameters" : [{
@@ -6606,7 +6606,7 @@
         "route": {
           "type": "string",
           "description": "prepared route for searching on the map",
-          "example": "type=restaurant&Cuisine=italian"
+          "example": "type=restaurant&Cuisine=italian&searchString=italian"
         }
       }
     },
