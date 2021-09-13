@@ -131,9 +131,17 @@ const makeSitePipeline = ({
     pipeline.push(
       { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
       { $sort: { 'children.weight': -1 } },
-      { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
-      { $replaceRoot: { newRoot: '$biggestWeight' } },
     );
+    mapMarkers
+      ? pipeline.push(
+        { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
+        { $replaceRoot: { newRoot: '$biggestWeight' } },
+      )
+      : pipeline.push(
+        { $project: { firstThree: { $slice: ['$children', 3] } } },
+        { $unwind: { path: '$firstThree' } },
+        { $replaceRoot: { newRoot: '$firstThree' } },
+      );
   }
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
