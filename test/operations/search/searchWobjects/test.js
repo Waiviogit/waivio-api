@@ -1,8 +1,10 @@
 const {
   faker, expect, dropDatabase, _, App,
 } = require('test/testHelper');
+const {
+  OBJECT_TYPES, SITE_SEARCH_EXCLUDED_FIELDS, SEARCH_FIELDS,
+} = require('constants/wobjectsData');
 const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { wobjects } = require('utilities/operations/search');
 const { STATUSES } = require('constants/sitesConstants');
@@ -30,13 +32,13 @@ describe('On wobjects search', async () => {
       for (let i = 0; i < counter; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          searchWords,
+          searchParams: { name: searchWords },
         });
       }
       for (let i = 0; i < _.random(1, 3); i++) {
         await ObjectFactory.Create({
           objectType: _.sample(notSearchedTypes),
-          searchWords,
+          searchParams: { name: searchWords },
         });
       }
       result = await wobjects.searchWobjects({
@@ -61,12 +63,12 @@ describe('On wobjects search', async () => {
       wobj1 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-94.233, 48.224] },
-        searchWords: [faker.random.string()],
+        searchParams: { name: [faker.random.string()] },
       });
       wobj2 = await ObjectFactory.Create({
         objectType: OBJECT_TYPES.RESTAURANT,
         map: { type: 'Point', coordinates: [-95.233, 48.224] },
-        searchWords: [faker.random.string()],
+        searchParams: { title: [faker.random.string()] },
       });
       campaign = await CampaignFactory.Create({
         status: CAMPAIGN_STATUSES.ACTIVE,
@@ -119,7 +121,6 @@ describe('On wobjects search', async () => {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
             map: { type: 'Point', coordinates: [-94.233, 48.224] },
-            searchWords: [faker.random.string()],
             weight: _.random(2, 10),
           });
         }
@@ -128,6 +129,47 @@ describe('On wobjects search', async () => {
           box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
         });
         expect(result.wobjects[0]).to.have.own.property('campaigns');
+      });
+
+      it('should return wobjects created in beforeEach & this check. Should search by all fields exclude address, phone and email', async () => {
+        const text = faker.random.string();
+        const count = _.random(2, 4);
+        const fieldName = _.chain(SEARCH_FIELDS)
+          .filter((field) => !_.includes(SITE_SEARCH_EXCLUDED_FIELDS, field))
+          .sample();
+        for (let i = 0; i < count; i++) {
+          await ObjectFactory.Create({
+            objectType: OBJECT_TYPES.RESTAURANT,
+            map: { type: 'Point', coordinates: [-94.233, 48.224] },
+            weight: _.random(2, 10),
+            searchParams: { [fieldName]: [text] },
+          });
+        }
+        result = await wobjects.searchWobjects({
+          app: parent,
+          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
+        });
+        expect(result.wobjects).to.have.length(count + 2);
+      });
+
+      it('should return objects created in beforeEach and should not find objects by phone, email or address', async () => {
+        const text = faker.random.string();
+        const count = _.random(2, 4);
+        const fieldName = _.sample(SITE_SEARCH_EXCLUDED_FIELDS);
+        console.log(fieldName);
+        for (let i = 0; i < count; i++) {
+          await ObjectFactory.Create({
+            objectType: OBJECT_TYPES.RESTAURANT,
+            map: { type: 'Point', coordinates: [-94.233, 48.224] },
+            weight: _.random(2, 10),
+            searchParams: { [fieldName]: [text] },
+          });
+        }
+        result = await wobjects.searchWobjects({
+          app: parent,
+          box: { topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] },
+        });
+        expect(result.wobjects).to.have.length(2);
       });
     });
 
@@ -172,7 +214,7 @@ describe('On wobjects search', async () => {
         beforeEach(async () => {
           hashtag = await ObjectFactory.Create({
             objectType: OBJECT_TYPES.HASHTAG,
-            searchWords: [faker.random.string()],
+            searchParams: { name: [faker.random.string()] },
           });
         });
 
@@ -204,7 +246,7 @@ describe('On wobjects search', async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
           objectType: searchedType,
-          searchWords: [name],
+          searchParams: { name: [name] },
         });
       }
     });
