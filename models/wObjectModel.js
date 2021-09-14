@@ -21,7 +21,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 
 const fromAggregation = async (pipeline) => {
   try {
-    const wobjects = await WObjectModel.aggregate([...pipeline]);
+    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true);
 
     if (!wobjects || _.isEmpty(wobjects)) {
       return { error: { status: 404, message: 'Wobjects not found!' } };
