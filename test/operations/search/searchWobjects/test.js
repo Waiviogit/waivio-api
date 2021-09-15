@@ -245,7 +245,7 @@ describe('On wobjects search', async () => {
     beforeEach(async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
-          objectType: searchedType,
+          objectType: OBJECT_TYPES.RESTAURANT,
           searchParams: { name: [name] },
         });
       }
@@ -256,7 +256,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - 1 - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
         });
       });
 
@@ -275,7 +275,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
         });
       });
 
@@ -294,7 +294,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - 1 - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
           app: parent,
         });
       });
@@ -314,7 +314,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
           app: parent,
         });
       });
