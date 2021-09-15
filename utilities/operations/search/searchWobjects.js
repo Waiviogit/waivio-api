@@ -1,10 +1,12 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const searchHelper = require('utilities/helpers/searchHelper');
+const {
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, SEARCH_FIELDS, SITE_SEARCH_EXCLUDED_FIELDS,
+} = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
+const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
+const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
@@ -215,7 +217,7 @@ const matchSitesPipe = ({
   const matchCond = {
     $match: {
       object_type: { $in: supportedTypes },
-      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
   };
   if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
@@ -237,10 +239,11 @@ const matchSitesPipe = ({
   }
   pipeline.push({
     $match: {
-      $and: [
-        { search: { $regex: string, $options: 'i' } },
-        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-      ],
+      $or: _.chain(SEARCH_FIELDS)
+        .filter((field) => !_.includes(SITE_SEARCH_EXCLUDED_FIELDS, field))
+        .map((field) => ({
+          $and: [{ [`search.${field}`]: { $regex: string, $options: 'i' } }, { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } }],
+        })).value(),
     },
   });
   return pipeline;
@@ -248,10 +251,12 @@ const matchSitesPipe = ({
 
 const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
-    $and: [
-      { search: { $regex: string, $options: 'i' } },
-      { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-    ],
-    'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+    $or: _.map(SEARCH_FIELDS, (field) => ({
+      $and: [
+        { [`search.${field}`]: { $regex: string, $options: 'i' } },
+        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+      ],
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    })),
   },
 });
