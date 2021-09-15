@@ -15,7 +15,7 @@ const SearchSchema = new Schema({
   author_permlink: { type: [String], default: [] },
   description: { type: [String], default: [] },
   title: { type: [String], default: [] },
-  tag: { type: [String], default: [] },
+  categoryItem: { type: [String], default: [] },
 }, { _id: false });
 
 const FieldsSchema = new Schema({
@@ -92,7 +92,7 @@ SearchSchema.index({ phone: 1 });
 SearchSchema.index({ address: 1 });
 SearchSchema.index({ description: 1 });
 SearchSchema.index({ title: 1 });
-SearchSchema.index({ tag: 1 });
+SearchSchema.index({ categoryItem: 1 });
 
 WObjectSchema.virtual('followers', {
   ref: 'User',
