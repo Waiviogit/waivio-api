@@ -54,29 +54,6 @@ const getByField = async ({ fieldName, fieldBody }) => {
   }
 };
 
-// eslint-disable-next-line camelcase
-const getChildWobjects = async ({
-  skip, limit, authorPermlink, excludeTypes = [],
-}) => {
-  try {
-    const wobjects = await WObjectModel
-      .find({
-        parent: authorPermlink,
-        object_type: { $nin: excludeTypes },
-        'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      })
-      .sort({ weight: -1, _id: -1 })
-      .skip(skip)
-      .limit(limit)
-      .lean();
-
-    if (_.isEmpty(wobjects)) return { wobjects: [] };
-    return { wobjects };
-  } catch (error) {
-    return { error };
-  }
-};
-
 // method for redis restore wobjects author and author_permlink
 const getWobjectsRefs = async () => {
   try {
@@ -155,14 +132,13 @@ const countWobjectsByArea = async ({
 };
 
 module.exports = {
-  getOne,
-  find,
+  countWobjectsByArea,
   fromAggregation,
-  isFieldExist,
-  getByField,
-  getChildWobjects,
   getWobjectsRefs,
   getFieldsRefs,
-  countWobjectsByArea,
+  isFieldExist,
+  getByField,
   findOne,
+  getOne,
+  find,
 };
