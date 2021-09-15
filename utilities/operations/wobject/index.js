@@ -10,5 +10,6 @@ moduleExports.getGallery = require('./getGallery');
 moduleExports.getWobjField = require('./getWobjField');
 moduleExports.sortFollowers = require('./sortFollowers');
 moduleExports.getRelated = require('./getRelated');
+moduleExports.getChildren = require('./getChildren');
 
 module.exports = moduleExports;
