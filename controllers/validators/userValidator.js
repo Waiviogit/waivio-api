@@ -100,6 +100,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         .default(SUPPORTED_CURRENCIES.USD),
       userNotifications: Joi.object().keys({
         activationCampaign: Joi.boolean().default(true),
+        deactivationCampaign: Joi.boolean().default(true),
         follow: Joi.boolean().default(true),
         fillOrder: Joi.boolean().default(true),
         mention: Joi.boolean().default(true),
