@@ -7,17 +7,6 @@ const AuthoritySchema = new Schema({
   ownership: { type: [String], default: [] },
 }, { _id: false });
 
-const SearchSchema = new Schema({
-  name: { type: [String], default: [] },
-  email: { type: [String], default: [] },
-  phone: { type: [String], default: [] },
-  address: { type: [String], default: [] },
-  author_permlink: { type: [String], default: [] },
-  description: { type: [String], default: [] },
-  title: { type: [String], default: [] },
-  categoryItem: { type: [String], default: [] },
-}, { _id: false });
-
 const FieldsSchema = new Schema({
   name: { type: String },
   body: { type: String },
@@ -74,7 +63,7 @@ const WObjectSchema = new Schema({
   last_posts_counts_by_hours: { type: [Number], default: [] },
   activeCampaigns: { type: [mongoose.Types.ObjectId], default: [] },
   activeCampaignsCount: { type: Number, default: 0 },
-  search: { type: SearchSchema, default: () => ({}) },
+  search: { type: [String], default: [] },
 },
 {
   toObject: { virtuals: true }, timestamps: true, strict: false,
@@ -85,14 +74,7 @@ WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });
 FieldsSchema.index({ name: -1, body: -1 });
-SearchSchema.index({ author_permlink: 1 });
-SearchSchema.index({ name: 1 });
-SearchSchema.index({ email: 1 });
-SearchSchema.index({ phone: 1 });
-SearchSchema.index({ address: 1 });
-SearchSchema.index({ description: 1 });
-SearchSchema.index({ title: 1 });
-SearchSchema.index({ categoryItem: 1 });
+WObjectSchema.index({ search: -1 });
 
 WObjectSchema.virtual('followers', {
   ref: 'User',
