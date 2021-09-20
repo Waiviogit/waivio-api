@@ -1,8 +1,6 @@
 /* eslint-disable camelcase */
-const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, SEARCH_FIELDS, SITE_SEARCH_EXCLUDED_FIELDS,
-} = require('constants/wobjectsData');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
@@ -239,11 +237,10 @@ const matchSitesPipe = ({
   }
   pipeline.push({
     $match: {
-      $or: _.chain(SEARCH_FIELDS)
-        .filter((field) => !_.includes(SITE_SEARCH_EXCLUDED_FIELDS, field))
-        .map((field) => ({
-          $and: [{ [`search.${field}`]: { $regex: string, $options: 'i' } }, { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } }],
-        })).value(),
+      $and: [
+        { search: { $regex: string, $options: 'i' } },
+        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+      ],
     },
   });
   return pipeline;
@@ -251,12 +248,10 @@ const matchSitesPipe = ({
 
 const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
-    $or: _.map(SEARCH_FIELDS, (field) => ({
-      $and: [
-        { [`search.${field}`]: { $regex: string, $options: 'i' } },
-        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-      ],
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    })),
+    $and: [
+      { search: { $regex: string, $options: 'i' } },
+      { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+    ],
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
   },
 });
