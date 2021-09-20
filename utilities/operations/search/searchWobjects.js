@@ -235,7 +235,7 @@ const matchSitesPipe = ({
         },
       });
     }
-    pipeline.push({ $match: { $or: condition } });
+    pipeline.push({ $match: { $and: condition } });
   }
   pipeline.push({
     $match: {
