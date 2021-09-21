@@ -175,15 +175,17 @@ exports.addCampaignsToWobjectsSites = async (data) => {
 
   const result = await this.addCampaignsToWobjects({ ...data, search: true }) || [];
 
-  result.sort((a, b) => {
-    if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
-      return _.get(b, 'campaigns.max_reward', 0) - _.get(a, 'campaigns.max_reward', 0);
-    }
-    if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
-      return _.get(b, 'propositions[0].reward', 0) - _.get(a, 'propositions[0].reward', 0);
-    }
-    return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
-  });
+  if (!_.isEmpty(_.filter(data, (item) => _.has(item, 'campaigns') || _.has(item, 'propositions')))) {
+    result.sort((a, b) => {
+      if (_.has(b, 'campaigns') && _.has(a, 'campaigns')) {
+        return _.get(b, 'campaigns.max_reward', 0) - _.get(a, 'campaigns.max_reward', 0);
+      }
+      if (_.has(b, 'propositions') && _.has(a, 'propositions')) {
+        return _.get(b, 'propositions[0].reward', 0) - _.get(a, 'propositions[0].reward', 0);
+      }
+      return !!_.get(b, 'campaigns') - !!_.get(a, 'campaigns', _.get(a, 'propositions'));
+    });
+  }
 
   return result;
 };
