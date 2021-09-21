@@ -221,18 +221,10 @@ const matchSitesPipe = ({
   if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
   if (tagCategory) {
-    const condition = [];
-    for (const category of tagCategory) {
-      condition.push({
-        fields: {
-          $elemMatch: {
-            name: FIELDS_NAMES.CATEGORY_ITEM,
-            body: { $in: category.tags },
-            tagCategory: category.categoryName,
-          },
-        },
-      });
-    }
+    const condition = _.reduce(tagCategory, (acc, category) => {
+      _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
+      return acc;
+    }, []);
     pipeline.push({ $match: { $and: condition } });
   }
   pipeline.push({
