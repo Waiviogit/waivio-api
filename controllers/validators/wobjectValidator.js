@@ -1,6 +1,7 @@
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
 const { EXPERTS_SORT, VALID_EXPERTS_SORT } = require('constants/sortData');
 const { customValidationHelper } = require('utilities/helpers');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
 const Joi = require('@hapi/joi');
 
@@ -175,4 +176,12 @@ exports.mapExpertsScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
+});
+
+exports.mapLastPostScheme = Joi.object().keys({
+  box: boxScheme,
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  skip: Joi.number().integer().min(0).default(0),
+  objectType: Joi.string().valid(...Object.values(OBJECT_TYPES)).default(OBJECT_TYPES.RESTAURANT),
 });

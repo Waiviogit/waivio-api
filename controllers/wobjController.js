@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
-  getWobjsNearby, countWobjsByArea, getChildren, mapObjectExperts,
+  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -245,12 +245,29 @@ const getMapObjectExperts = async (req, res, next) => {
   );
   if (!value) return;
 
-  const { users, hasMore, error } = await mapObjectExperts.getExpertsFromArea(
+  const { users, hasMore, error } = await objectsOnMap.getExpertsFromArea(
     { ...value, app: req.appData },
   );
 
   if (error) return next(error);
   res.result = { status: 200, json: { users, hasMore } };
+  next();
+};
+
+const getMapObjectLastPost = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.mapLastPostScheme,
+    next,
+  );
+  if (!value) return;
+
+  const { wobjects, hasMore, error } = await objectsOnMap.getLastPostOnObjectFromArea(
+    { ...value, app: req.appData },
+  );
+
+  if (error) return next(error);
+  res.result = { status: 200, json: { wobjects, hasMore } };
   next();
 };
 
@@ -270,4 +287,5 @@ module.exports = {
   countWobjectsByArea,
   related,
   getMapObjectExperts,
+  getMapObjectLastPost,
 };

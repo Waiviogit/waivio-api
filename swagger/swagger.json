@@ -2975,6 +2975,44 @@
         }
       }
     },
+    "/api/wobjects/map/last-post": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return list of wobjects on area with last post",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Origin",
+            "in": "header",
+            "description": "Domain of website",
+            "example": "https://waiviodev.com",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "description": "**limit** - limit of returned users(by default - 30),\n**skip** - count of skipping users(for infinite scroll, default 0),\n**box** - map coordinates\n**objectType** -type of objects, default - restaurant",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/params_wobject_map_last_post"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/res_wobject_map_last_post"
+            }
+          }
+        }
+      }
+    },
     "/api/wobjects/map/experts": {
       "post": {
         "tags" : [ "wobject" ],
@@ -6091,6 +6129,60 @@
         },
         "mapMarkers": {
           "type": "boolean"
+        }
+      }
+    },
+    "params_wobject_map_last_post": {
+      "type": "object",
+      "properties": {
+        "box": {
+          "$ref" : "#/definitions/box_params"
+        },
+        "skip": {
+          "type": "number"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "objectType": {
+          "type": "string"
+        }
+      }
+    },
+    "res_wobject_map_last_post": {
+      "type": "object",
+      "properties": {
+        "hasMore": {
+          "type": "boolean"
+        },
+        "wobjects": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "author_permlink": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "defaultShowLink": {
+                "type": "string"
+              },
+              "default_name": {
+                "type": "string"
+              },
+              "object_type": {
+                "type": "string"
+              },
+              "post": {
+                "$ref": "#/definitions/post"
+              }
+            }
+          }
         }
       }
     },

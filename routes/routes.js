@@ -111,6 +111,8 @@ wobjRoutes.route('/wobject/count/by-area')
   .get(WobjController.countWobjectsByArea);
 wobjRoutes.route('/wobjects/map/experts')
   .post(WobjController.getMapObjectExperts);
+wobjRoutes.route('/wobjects/map/last-post')
+  .post(WobjController.getMapObjectLastPost);
 // endregion
 // region User
 userRoutes.route('/users')
