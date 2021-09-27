@@ -2975,6 +2975,54 @@
         }
       }
     },
+    "/api/wobjects/map/experts": {
+      "post": {
+        "tags" : [ "wobject" ],
+        "summary" : "Return list of waivio expert on certain area",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name" : "Origin",
+            "in" : "header",
+            "description" : "Domain of website",
+            "example": "https://waiviodev.com",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "name" : "follower",
+            "in" : "header",
+            "description" : "Name of user to check for followers",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "name" : "following",
+            "in" : "header",
+            "description" : "Name of user to check for following",
+            "required" : false,
+            "type" : "string"
+          },
+          {
+            "in" : "body",
+            "name" : "params",
+            "description" : "**limit** - limit of returned users(by default - 30),\n**skip** - count of skipping users(for infinite scroll, default 0),\n**box** - map coordinates",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/definitions/params_wobject_map_experts"
+            }
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "**hasMore** - Boolean flag of of existing more wobjects,\n**wobjects** - array of Waivio objects\n",
+            "schema" : {
+              "$ref" : "#/definitions/res_wobject_map_experts"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject" : {
       "post" : {
         "tags" : [ "wobject" ],
@@ -6036,23 +6084,71 @@
           }
         },
         "box" : {
-          "type": "object",
-          "properties": {
-            "topPoint": {
-              "type": "array",
-              "example": [-91.479002,68.117143]
-            },
-            "bottomPoint": {
-              "type": "array",
-              "example": [-131.139244,49.152501]
-            }
-          }
+          "$ref" : "#/definitions/box_params"
         },
         "addHashtag": {
           "type": "boolean"
         },
         "mapMarkers": {
           "type": "boolean"
+        }
+      }
+    },
+    "params_wobject_map_experts": {
+      "type": "object",
+      "properties": {
+        "box": {
+          "$ref" : "#/definitions/box_params"
+        },
+        "skip": {
+          "type": "number"
+        },
+        "limit": {
+          "type": "number"
+        }
+      }
+    },
+    "res_wobject_map_experts": {
+      "type": "object",
+      "properties": {
+        "users": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "followers_count": {
+                "type": "number"
+              },
+              "weight": {
+                "type": "number"
+              },
+              "followsYou": {
+                "type": "boolean"
+              },
+              "youFollows": {
+                "type": "boolean"
+              }
+            }
+          }
+        },
+        "hasMore": {
+          "type": "boolean"
+        }
+      }
+    },
+    "box_params": {
+      "type": "object",
+      "properties": {
+        "topPoint": {
+          "type": "array",
+          "example": [-91.479002,68.117143]
+        },
+        "bottomPoint": {
+          "type": "array",
+          "example": [-131.139244,49.152501]
         }
       }
     },
