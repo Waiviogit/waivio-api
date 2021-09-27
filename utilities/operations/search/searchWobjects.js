@@ -132,7 +132,7 @@ const makeSitePipeline = ({
       { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
       { $sort: { 'children.weight': -1 } },
     );
-    mapMarkers || !string
+    mapMarkers || (!string && !tagCategory)
       ? pipeline.push(
         { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
         { $replaceRoot: { newRoot: '$biggestWeight' } },
