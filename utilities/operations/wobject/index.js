@@ -11,5 +11,6 @@ moduleExports.getWobjField = require('./getWobjField');
 moduleExports.sortFollowers = require('./sortFollowers');
 moduleExports.getRelated = require('./getRelated');
 moduleExports.getChildren = require('./getChildren');
+moduleExports.mapObjectExperts = require('./mapObjectExperts');
 
 module.exports = moduleExports;

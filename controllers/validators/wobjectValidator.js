@@ -6,6 +6,21 @@ const Joi = require('@hapi/joi');
 
 const options = { allowUnknown: true, stripUnknown: true };
 
+const boxScheme = Joi.object().keys({
+  topPoint: Joi
+    .array()
+    .ordered(
+      Joi.number().min(-180).max(180),
+      Joi.number().min(-90).max(90),
+    ).required(),
+  bottomPoint: Joi
+    .array()
+    .ordered(
+      Joi.number().min(-180).max(180),
+      Joi.number().min(-90).max(90),
+    ).required(),
+});
+
 exports.showSchema = Joi.object().keys({
   author_permlink: Joi.string().required(),
   locale: Joi.string(),
@@ -90,20 +105,7 @@ exports.searchScheme = Joi.object().keys({
   object_type: Joi.string(),
   forParent: Joi.string().invalid('').allow(null),
   required_fields: Joi.array().items(Joi.string()).default([]),
-  box: Joi.object().keys({
-    topPoint: Joi
-      .array()
-      .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
-      ).required(),
-    bottomPoint: Joi
-      .array()
-      .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
-      ).required(),
-  }),
+  box: boxScheme,
   addHashtag: Joi.boolean().default(false),
   mapMarkers: Joi.boolean().default(false),
 }).options(options);
@@ -166,4 +168,11 @@ exports.getRelatedAlbum = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   authorPermlink: Joi.string().required(),
+});
+
+exports.mapExpertsScheme = Joi.object().keys({
+  box: boxScheme,
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  skip: Joi.number().integer().min(0).default(0),
 });
