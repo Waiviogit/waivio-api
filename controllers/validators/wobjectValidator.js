@@ -136,6 +136,8 @@ exports.getChildWobjects = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   authorPermlink: Joi.string().required(),
   excludeTypes: Joi.array().items(Joi.string()).default([]).single(),
+  searchString: Joi.string().default(''),
+  userName: Joi.string().default(''),
 });
 
 exports.getWobjectField = Joi.object().keys({

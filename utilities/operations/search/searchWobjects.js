@@ -1,10 +1,10 @@
 /* eslint-disable camelcase */
-const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const searchHelper = require('utilities/helpers/searchHelper');
 const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
+const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
@@ -132,7 +132,7 @@ const makeSitePipeline = ({
       { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
       { $sort: { 'children.weight': -1 } },
     );
-    mapMarkers || !string
+    mapMarkers || (!string && !tagCategory)
       ? pipeline.push(
         { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
         { $replaceRoot: { newRoot: '$biggestWeight' } },
@@ -215,25 +215,17 @@ const matchSitesPipe = ({
   const matchCond = {
     $match: {
       object_type: { $in: supportedTypes },
-      'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
   };
   if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
   if (tagCategory) {
-    const condition = [];
-    for (const category of tagCategory) {
-      condition.push({
-        fields: {
-          $elemMatch: {
-            name: FIELDS_NAMES.CATEGORY_ITEM,
-            body: { $in: category.tags },
-            tagCategory: category.categoryName,
-          },
-        },
-      });
-    }
-    pipeline.push({ $match: { $or: condition } });
+    const condition = _.reduce(tagCategory, (acc, category) => {
+      _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
+      return acc;
+    }, []);
+    pipeline.push({ $match: { $and: condition } });
   }
   pipeline.push({
     $match: {
@@ -252,6 +244,6 @@ const matchSimplePipe = ({ string, object_type }) => ({
       { search: { $regex: string, $options: 'i' } },
       { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
     ],
-    'status.title': { $nin: ['unavailable', 'nsfw', 'relisted'] },
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
   },
 });

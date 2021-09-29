@@ -2,9 +2,9 @@ const {
   faker, expect, dropDatabase, _, App,
 } = require('test/testHelper');
 const { ObjectFactory, AppFactory, CampaignFactory } = require('test/factories');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
 const { wobjects } = require('utilities/operations/search');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { STATUSES } = require('constants/sitesConstants');
 
 describe('On wobjects search', async () => {
@@ -119,7 +119,6 @@ describe('On wobjects search', async () => {
           await ObjectFactory.Create({
             objectType: OBJECT_TYPES.RESTAURANT,
             map: { type: 'Point', coordinates: [-94.233, 48.224] },
-            searchWords: [faker.random.string()],
             weight: _.random(2, 10),
           });
         }
@@ -203,7 +202,7 @@ describe('On wobjects search', async () => {
     beforeEach(async () => {
       for (let i = 0; i < limit; i++) {
         await ObjectFactory.Create({
-          objectType: searchedType,
+          objectType: OBJECT_TYPES.RESTAURANT,
           searchWords: [name],
         });
       }
@@ -214,7 +213,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - 1 - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
         });
       });
 
@@ -233,7 +232,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
         });
       });
 
@@ -252,7 +251,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - 1 - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
           app: parent,
         });
       });
@@ -272,7 +271,7 @@ describe('On wobjects search', async () => {
           string: name,
           skip,
           limit: limit - skip,
-          object_type: searchedType,
+          object_type: OBJECT_TYPES.RESTAURANT,
           app: parent,
         });
       });
