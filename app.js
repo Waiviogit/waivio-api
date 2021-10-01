@@ -15,6 +15,8 @@ const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
 const processHelper = require('utilities/helpers/processHelper');
 
+require('dotenv').config({ path: `env/${process.env.NODE_ENV || 'development'}.env` });
+
 const swaggerDocument = require('./swagger');
 require('jobs');
 
