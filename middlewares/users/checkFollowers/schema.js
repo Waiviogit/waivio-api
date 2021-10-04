@@ -1,4 +1,33 @@
 exports.schema = [
+  // wobject controller
+  {
+    path: '/wobject/:authorPermlink/followers',
+    method: 'POST',
+    case: 2,
+    fields_path: 'wobjectFollowers',
+    field_name: 'name',
+  },
+  {
+    path: '/wobject/:authorPermlink/object_expertise',
+    method: 'POST',
+    case: 2,
+    fields_path: 'users',
+    field_name: 'name',
+  },
+  {
+    path: '/wobjects/map/experts',
+    method: 'POST',
+    case: 2,
+    fields_path: 'users',
+    field_name: 'name',
+  },
+  {
+    path: '/wobject/:authorPermlink/posts',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
+  // user controller
   {
     path: '/users',
     method: 'GET',
@@ -40,20 +69,6 @@ exports.schema = [
     field_name: 'name',
   },
   {
-    path: '/wobject/:authorPermlink/followers',
-    method: 'POST',
-    case: 2,
-    fields_path: 'wobjectFollowers',
-    field_name: 'name',
-  },
-  {
-    path: '/wobject/:authorPermlink/object_expertise',
-    method: 'POST',
-    case: 2,
-    fields_path: 'users',
-    field_name: 'name',
-  },
-  {
     path: '/user/:userName/feed',
     method: 'POST',
     case: 1,
@@ -67,6 +82,14 @@ exports.schema = [
     fields_path: 'posts',
   },
   {
+    path: '/user/getUsersData',
+    method: 'POST',
+    case: 2,
+    fields_path: 'users',
+    field_name: 'name',
+  },
+  // post controller
+  {
     path: '/posts',
     method: 'POST',
     case: 1,
@@ -77,18 +100,5 @@ exports.schema = [
     method: 'GET',
     case: 3,
     field_name: 'author',
-  },
-  {
-    path: '/wobject/:authorPermlink/posts',
-    method: 'POST',
-    case: 1,
-    field_name: 'author',
-  },
-  {
-    path: '/user/getUsersData',
-    method: 'POST',
-    case: 2,
-    fields_path: 'users',
-    field_name: 'name',
   },
 ];
