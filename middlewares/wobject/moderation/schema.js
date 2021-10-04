@@ -40,6 +40,12 @@ exports.schema = [
     method: 'GET',
     case: 2,
   },
+  {
+    path: '/wobjects/map/last-post',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
   // user controller
   {
     path: '/user/:userName/following_objects',
