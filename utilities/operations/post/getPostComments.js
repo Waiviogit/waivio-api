@@ -53,9 +53,23 @@ const filterMutedUsers = async ({
   return _
     .chain(comments)
     .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
-    .filter((comment) => (!_.includes(_.map(mainMuted, 'userName'), comment.author)))
-    .filter((comment) => (
-      !_.find(subMuted,
-        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author)))
+    .reject((comment) => {
+      const condition = _.includes(_.map(mainMuted, 'userName'), comment.author);
+      const condition2 = _.find(subMuted,
+        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
+      if (condition || condition2) removeRepliesFromComment({ comments, comment });
+      return condition || condition2;
+    })
     .value();
+};
+
+const removeRepliesFromComment = ({ comments, comment }) => {
+  const parentComment = _.find(
+    comments,
+    (root) => root.author === comment.parent_author && root.permlink === comment.parent_permlink,
+  );
+  parentComment.replies = _.filter(
+    parentComment.replies,
+    (permlink) => permlink !== `${comment.author}/${comment.permlink}`,
+  );
 };
