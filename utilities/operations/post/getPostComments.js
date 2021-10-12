@@ -68,7 +68,7 @@ const removeRepliesFromComment = ({ comments, comment }) => {
     comments,
     (root) => root.author === comment.parent_author && root.permlink === comment.parent_permlink,
   );
-  if (!parentComment) return;
+  if (!parentComment && !parentComment.replies) return;
   parentComment.replies = _.filter(
     parentComment.replies,
     (permlink) => permlink !== `${comment.author}/${comment.permlink}`,
