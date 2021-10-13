@@ -14,6 +14,13 @@ exports.RESPONSE_STATUS = {
   NOT_ACCEPTABLE: 406,
 };
 
+exports.ERROR_OBJ = {
+  NOT_FOUND: {
+    status: this.RESPONSE_STATUS.NOT_FOUND,
+    message: this.ERROR_MESSAGE.NOT_FOUND,
+  },
+};
+
 exports.REQ_METHOD = {
   POST: 'POST',
 };

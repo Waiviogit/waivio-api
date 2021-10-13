@@ -185,3 +185,10 @@ exports.mapLastPostScheme = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   objectType: Joi.string().valid(...Object.values(OBJECT_TYPES)).default(OBJECT_TYPES.RESTAURANT),
 });
+
+exports.byRequiredWobjectScheme = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  skip: Joi.number().integer().min(0).default(0),
+  requiredObject: Joi.string().required(),
+});
