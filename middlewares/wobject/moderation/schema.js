@@ -46,6 +46,12 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/wobjects/campaign/required-object',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
   // user controller
   {
     path: '/user/:userName/following_objects',
