@@ -57,8 +57,11 @@ const filterMutedUsers = async ({
       const condition = _.includes(_.map(mainMuted, 'userName'), comment.author);
       const condition2 = _.find(subMuted,
         (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
-      if (condition || condition2) removeRepliesFromComment({ comments, comment });
-      return condition || condition2;
+      const conditionGuest = _.includes(_.map(mainMuted, 'userName'), _.get(comment, 'guestInfo.userId'));
+      if (condition || condition2 || conditionGuest) {
+        removeRepliesFromComment({ comments, comment });
+      }
+      return condition || condition2 || conditionGuest;
     })
     .value();
 };

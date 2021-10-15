@@ -3061,6 +3061,40 @@
         }
       }
     },
+    "/api/wobjects/campaign/required-object": {
+      "post": {
+        "tags" : [ "wobject" ],
+        "summary" : "Return list of waivio expert on certain area",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name" : "Origin",
+            "in" : "header",
+            "description" : "Domain of website",
+            "example": "https://waiviodev.com",
+            "required" : true,
+            "type" : "string"
+          },
+          {
+            "in" : "body",
+            "name" : "params",
+            "description" : "**limit** - limit of returned users(by default - 30),\n**skip** - count of skipping users(for infinite scroll, default 0),\n**requiredObject** - primary object on campaign",
+            "required" : true,
+            "schema" : {
+              "$ref" : "#/definitions/params_wobject_campaign_required"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/res_wobject_campaign_required"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject" : {
       "post" : {
         "tags" : [ "wobject" ],
@@ -6186,6 +6220,20 @@
         }
       }
     },
+    "res_wobject_campaign_required": {
+      "type": "object",
+      "properties": {
+        "hasMore": {
+          "type": "boolean"
+        },
+        "wobjects": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
     "params_wobject_map_experts": {
       "type": "object",
       "properties": {
@@ -6197,6 +6245,20 @@
         },
         "limit": {
           "type": "number"
+        }
+      }
+    },
+    "params_wobject_campaign_required": {
+      "type": "object",
+      "properties": {
+        "skip": {
+          "type": "number"
+        },
+        "limit": {
+          "type": "number"
+        },
+        "requiredObject": {
+          "type": "string"
         }
       }
     },
