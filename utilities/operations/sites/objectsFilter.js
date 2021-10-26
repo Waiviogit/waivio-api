@@ -28,9 +28,17 @@ exports.saveObjectsFilter = async (params) => {
     }
   }
   const { result: updatedApp, error: updateError } = await App.findOneAndUpdate(
-    { _id: result._id }, { object_filters: params.objectsFilter },
+    { _id: result._id }, { object_filters: filtersToLowerCase(params.objectsFilter) },
   );
   if (updateError) return { error: updateError };
   await sitesHelper.updateSupportedObjects({ host: result.host, app: updatedApp });
   return { result: updatedApp.object_filters };
 };
+
+const filtersToLowerCase = (filters) => _.reduce(filters, (acc, objectType, objectTypeIndex) => {
+  acc[objectTypeIndex] = _.reduce(objectType, (acc2, category, categoryIndex) => {
+    acc2[categoryIndex] = _.map(category, (value) => value.toLocaleLowerCase());
+    return acc2;
+  }, {});
+  return acc;
+}, {});
