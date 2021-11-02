@@ -61,6 +61,8 @@ exports.SUPPORTED_COLORS = {
   BORDER: 'border',
   FOCUS: 'focus',
   LINKS: 'links',
+  MAP_MARKER_BODY: 'mapMarkerBody',
+  MAP_MARKER_TEXT: 'mapMarkerText',
 };
 
 exports.GET_DEFAULT_COLORS = () => {
