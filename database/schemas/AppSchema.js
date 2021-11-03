@@ -58,6 +58,8 @@ const Colors = new Schema({
   [SUPPORTED_COLORS.BORDER]: { type: String, default: '' },
   [SUPPORTED_COLORS.FOCUS]: { type: String, default: '' },
   [SUPPORTED_COLORS.LINKS]: { type: String, default: '' },
+  [SUPPORTED_COLORS.MAP_MARKER_BODY]: { type: String, default: '' },
+  [SUPPORTED_COLORS.MAP_MARKER_TEXT]: { type: String, default: '' },
 }, { _id: false });
 
 const CitySchema = new Schema({
