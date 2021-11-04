@@ -127,7 +127,6 @@ module.exports = async ({
   _.get(tagCategory, 'length')
     ? objectType.tagsForFilter = await objectTypeHelper.getTagCategory(tagCategory, filter, name)
     : objectType.tagsForFilter = [];
-
   /** search user for check allow nsfw flag */
   const { user } = await User.getOne(userName, '+user_metadata');
   /** get related wobjects for current object type */
