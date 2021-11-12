@@ -183,7 +183,7 @@ exports.findForUpdate = async ({ author, permlink, updateData }) => {
       result: await PostModel.findOneAndUpdate(
         { $or: [{ author, permlink }, { root_author: author, permlink }] },
         { $set: updateData },
-        { returnOriginal: false },
+        { new: true },
       ),
     };
   } catch (error) {

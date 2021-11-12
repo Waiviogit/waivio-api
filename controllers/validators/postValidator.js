@@ -27,7 +27,7 @@ exports.getPostComments = Joi.object().keys({
   userName: Joi.string().default(''),
 });
 
-exports.getLikedPost = Joi.object().keys({
+exports.likePost = Joi.object().keys({
   operations: Joi.array()
     .items(
       Joi.array().items(

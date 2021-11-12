@@ -1,5 +1,5 @@
 const {
-  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo, getLikedPost,
+  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo, likePost,
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 
@@ -58,15 +58,15 @@ exports.getPostComments = async (req, res, next) => {
   next();
 };
 
-exports.getLikedPost = async (req, res, next) => {
-  const value = validators.validate(req.body, validators.post.getLikedPost, next);
+exports.likePost = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.post.likePost, next);
   if (!value) return;
 
-  const { posts, error } = await getLikedPost(value);
+  const { post, error } = await likePost(value);
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: posts };
+  res.result = { status: 200, json: post };
   next();
 };
 

@@ -170,8 +170,8 @@ userRoutes.route('/user/:userName/creation-date')
 // region Post
 postRoutes.route('/post/:author/:permlink')
   .get(PostController.show);
-postRoutes.route('/post/getLikedPost')
-  .post(PostController.getLikedPost);
+postRoutes.route('/post/like-post')
+  .post(PostController.likePost);
 postRoutes.route('/posts/getMany')
   .post(PostController.getManyPosts);
 postRoutes.route('/posts')
