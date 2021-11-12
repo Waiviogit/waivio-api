@@ -4167,6 +4167,138 @@
         }
       }
     },
+    "/api/post/like-post": {
+      "post" : {
+        "tags" : [ "post" ],
+        "summary" : "Return update post",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "in" : "body",
+          "name" : "params",
+          "description" : "**objectType** - string, name  of objectType required\n **wobjectLinks** - array wojects author_permlink",
+          "required" : true,
+          "schema" : {
+            "example": {
+              "operations":[
+                [ "vote"],
+                {
+                  "voter":"krnel",
+                  "author":"johan-nygren",
+                  "permlink":"psychiatric-science-is-just-a-mythology-to-legitimize-human-ritual-sacrifice",
+                  "weight":5000
+                }
+              ]
+            }
+          }
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/post/social-info" : {
+      "get" : {
+        "tags" : [ "post" ],
+        "summary" : "Return list of posts by authors and permlinks",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "example": "https://waiviodev.com",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "app",
+          "in" : "header",
+          "description" : "Specify app to enable waivio-wobject moderation",
+          "required" : false,
+          "type" : "string"
+        },{
+          "in" : "query",
+          "name" : "author",
+          "description" : "author of post",
+          "type": "string",
+          "required" : true
+        },{
+          "in" : "query",
+          "name" : "permlink",
+          "description" : "post permlink",
+          "type": "string",
+          "required" : true
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "userFacebook" : {
+                  "type": "string"
+                },
+                "userTwitter" : {
+                  "type": "string"
+                },
+                "tags": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "cities": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "wobjectsTwitter": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "wobjectsFacebook": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          },
+          "404": {
+            "description": "NotFound",
+            "schema": {
+              "example": {
+                "message": "Post not found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/objectTypes" : {
       "post" : {
         "tags" : [ "object_type" ],
