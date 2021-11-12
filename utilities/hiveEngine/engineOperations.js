@@ -35,5 +35,5 @@ exports.calculateHiveEngineVote = async ({
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
 
   const engineVotePrice = rshares * price * rewards;
-  return { engineVotePrice };
+  return { engineVotePrice, rshares };
 };

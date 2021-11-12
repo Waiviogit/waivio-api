@@ -32,6 +32,11 @@ const PostSchema = new Schema({
   reblog_to: { type: { author: String, permlink: String } },
   reblogged_users: { type: [String], default: [] },
   blocked_for_apps: { type: [String], default: [] },
+  net_rshares: { type: Number },
+  net_rshares_waiv: { type: Number },
+  total_payout_WAIV: { type: Number },
+  pending_payout_value: { type: String },
+
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true },
