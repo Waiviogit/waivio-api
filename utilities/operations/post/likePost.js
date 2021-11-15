@@ -31,6 +31,8 @@ module.exports = async (value) => {
     });
   updateData.net_rshares = post.net_rshares + rShares;
 
+  updateData.updatePost = true;
+
   updateData.net_rshares_WAIV = post.net_rshares_WAIV ? (post.net_rshares_WAIV + rshares) : rshares;
 
   updateData.pending_payout_value = postValue < 0 ? '0.000 HBD' : `${postValue.toFixed(3)} HBD`;
