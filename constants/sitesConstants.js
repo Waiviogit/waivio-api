@@ -75,6 +75,7 @@ exports.NOTIFICATION = {
   WARNING: 'Warning: website account balance may run out in',
   ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
   BALANCE_ID: 'webSiteBalance',
+  TYPE: 'balance_run_out',
 };
 
 exports.PAYMENT_DESCRIPTION = {

@@ -17,13 +17,32 @@ exports.balanceNotification = async () => {
     const remainingDays = _.get(accountBalance, 'remainingDays', 0);
     const paid = _.get(accountBalance, 'paid');
     const message = await getMessage({ remainingDays, paid, owner });
-    if (message) requestData.push({ owner, message });
+    const notificationType = await getType(remainingDays);
+    if (message) requestData.push({ owner, message, notificationType });
   }
 
   if (_.isEmpty(requestData)) return;
   return notificationsHelper.sendNotification({ id: NOTIFICATION.BALANCE_ID, data: requestData });
 };
 
+const getType = (remainingDays) => {
+  const notificationType = {
+    90: () => `${NOTIFICATION.TYPE} 3 month`,
+    60: () => `${NOTIFICATION.TYPE} 2 month`,
+    30: () => `${NOTIFICATION.TYPE} 1 month`,
+    21: () => `${NOTIFICATION.TYPE} 3 weeks`,
+    14: () => `${NOTIFICATION.TYPE} 2 weeks`,
+    7: () => `${NOTIFICATION.TYPE} a week`,
+    6: () => `${NOTIFICATION.TYPE} 6 days`,
+    5: () => `${NOTIFICATION.TYPE} 5 days`,
+    4: () => `${NOTIFICATION.TYPE} 4 days`,
+    3: () => `${NOTIFICATION.TYPE} 3 days`,
+    2: () => `${NOTIFICATION.TYPE} 2 days`,
+    1: () => `${NOTIFICATION.TYPE} a day`,
+    default: () => '',
+  };
+  return (notificationType[remainingDays] || notificationType.default)();
+};
 const getMessage = async ({ remainingDays, paid, owner }) => {
   if (paid < 0) {
     const suspendedDays = await redisSetter
@@ -31,6 +50,7 @@ const getMessage = async ({ remainingDays, paid, owner }) => {
     if (suspendedDays < 8) return NOTIFICATION.ATTENTION;
     return '';
   }
+
   const messages = {
     90: () => `${NOTIFICATION.WARNING} 3 month`,
     60: () => `${NOTIFICATION.WARNING} 2 month`,
