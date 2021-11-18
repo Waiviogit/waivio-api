@@ -102,8 +102,8 @@ const PRODUCTION_REQUEST_NODES = [
 ];
 
 const STAGING_REQUEST_NODES = [
-  'https://rpc.esteem.app',
   'https://api.openhive.network',
+  'https://rpc.esteem.app',
   'https://hive-api.arcange.eu',
   'https://rpc.ausbit.dev',
 ];
