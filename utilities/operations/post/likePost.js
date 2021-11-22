@@ -1,15 +1,13 @@
 const _ = require('lodash');
 const { Post } = require('models');
-const updatePost = require('utilities/operations/post/updatePost');
+const likePostHelper = require('utilities/helpers/likePosHelper');
 
 module.exports = async (value) => {
-  const voteInfo = _.get(value, 'operations[1]');
+  const { hive, waiv, getPost } = await likePostHelper(value);
 
-  const { hive, waiv, getPost } = await updatePost(voteInfo);
+  const { rShares, postValue } = hive;
 
-  const { rShares, postValue, rewards } = hive;
-
-  const { rshares } = waiv;
+  const { rshares, rewards } = waiv;
 
   const { post, error } = getPost;
 
@@ -17,21 +15,21 @@ module.exports = async (value) => {
 
   const updateData = {};
 
-  const voteInPost = _.find(post.active_votes, (v) => v.voter === voteInfo.voter);
+  const voteInPost = _.find(post.active_votes, (v) => v.voter === value.voter);
   voteInPost
     ? Object.assign(
       post.active_votes[post.active_votes.indexOf(voteInPost)],
       { rshares: Math.round(rShares), weight: Math.round(rShares * 1e-6) },
     )
     : post.active_votes.push({
-      voter: voteInfo.voter,
-      percent: voteInfo.weight,
+      voter: value.voter,
+      percent: value.weight,
       rshares: Math.round(rShares),
       weight: Math.round(rShares * 1e-6),
     });
   updateData.net_rshares = post.net_rshares + rShares;
 
-  updateData.updatePost = true;
+  updateData.processed = true;
 
   updateData.net_rshares_WAIV = post.net_rshares_WAIV ? (post.net_rshares_WAIV + rshares) : rshares;
 
@@ -41,7 +39,7 @@ module.exports = async (value) => {
 
   updateData.active_votes = post.active_votes;
 
-  const { result, error: updateError } = await Post.findForUpdate({ author: voteInfo.author, permlink: voteInfo.permlink, updateData });
+  const { result, error: updateError } = await Post.findOneAndUpdate({ $or: [{ root_author: value.author, permlink: value.permlink }] }, { $set: updateData }, { new: true });
 
   if (!result || updateError) return { updateError };
   return { post: result };

@@ -177,13 +177,13 @@ exports.findOneByBothAuthors = async ({ author, permlink }) => {
   }
 };
 
-exports.findForUpdate = async ({ author, permlink, updateData }) => {
+exports.findOneAndUpdate = async (fitter, updateData, options) => {
   try {
     return {
       result: await PostModel.findOneAndUpdate(
-        { $or: [{ author, permlink }, { root_author: author, permlink }] },
-        { $set: updateData },
-        { new: true },
+        fitter,
+        updateData,
+        options,
       ),
     };
   } catch (error) {

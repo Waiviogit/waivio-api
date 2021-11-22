@@ -75,7 +75,19 @@ exports.NOTIFICATION = {
   WARNING: 'Warning: website account balance may run out in',
   ATTENTION: 'Attention! All your websites are now suspended due to the negative balance on your website account',
   BALANCE_ID: 'webSiteBalance',
-  TYPE: 'balance_run_out',
+  SUSPENDED: 'website_account_suspended',
+  OUT_THREE_MONTHS: 'balance_run_out_three_months',
+  OUT_TWO_MONTHS: 'balance_run_out_two_months',
+  OUT_MONTH: 'balance_run_out_month',
+  OUT_THREE_WEEKS: 'balance_run_out_three_weeks',
+  OUT_TWO_WEEKS: 'balance_run_out_two_weeks',
+  OUT_WEEK: 'balance_run_out_week',
+  OUT_SIX_DAYS: 'balance_run_out_six_days',
+  OUT_FIVE_DAYS: 'balance_run_out_five_days',
+  OUT_FOUR_DAYS: 'balance_run_out_four_days',
+  OUT_THREE_DAYS: 'balance_run_out_three_days',
+  OUT_TWO_DAYS: 'balance_run_out_two_days',
+  OUT_DAY: 'balance_run_out_day',
 };
 
 exports.PAYMENT_DESCRIPTION = {

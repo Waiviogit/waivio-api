@@ -28,19 +28,11 @@ exports.getPostComments = Joi.object().keys({
 });
 
 exports.likePost = Joi.object().keys({
-  operations: Joi.array()
-    .items(
-      Joi.array().items(
-        Joi.string().invalid('').required(),
-      ),
-      Joi.object().keys({
-        author: Joi.string().invalid('').required(),
-        permlink: Joi.string().invalid('').required(),
-        voter: Joi.string().invalid('').required(),
-        weight: Joi.number()
-          .integer()
-          .min(-10000)
-          .max(10000),
-      }),
-    ),
+  author: Joi.string().invalid('').required(),
+  permlink: Joi.string().invalid('').required(),
+  voter: Joi.string().invalid('').required(),
+  weight: Joi.number()
+    .integer()
+    .min(-10000)
+    .max(10000),
 });
