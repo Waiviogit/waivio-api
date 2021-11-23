@@ -130,9 +130,7 @@ exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
     return { error };
   }
 };
-exports.zadde = async ({
-  key, now, valuee, client = processedPostClient,
-}) => {
-  client.zadd(key, now, valuee);
-};
 
+exports.zadd = async ({
+  key, now, keyValue, client = processedPostClient,
+}) => { client.zaddAsync(key, now, keyValue); };

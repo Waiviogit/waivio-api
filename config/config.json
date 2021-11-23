@@ -16,7 +16,7 @@
       "mainFeedsCache": 10,
       "appDayUsers": 11,
       "tagCategories": 9,
-      "processedPost": 5
+      "processedPost": 8
     },
     "swaggerHost": "www.waivio.com",
     "appHost": "waivio.com"
@@ -39,7 +39,7 @@
       "mainFeedsCache": 10,
       "appDayUsers": 11,
       "tagCategories": 9,
-      "processedPost": 5
+      "processedPost": 8
     },
     "swaggerHost": "waiviodev.com",
     "appHost": "waiviodev.com"
@@ -62,7 +62,7 @@
       "mainFeedsCache": 10,
       "appDayUsers": 11,
       "tagCategories": 9,
-      "processedPost": 5
+      "processedPost": 8
     },
     "swaggerHost": "localhost:3000",
     "appHost": "waiviodev.com"

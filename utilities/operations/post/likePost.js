@@ -2,7 +2,6 @@ const _ = require('lodash');
 const { Post } = require('models');
 const likePostHelper = require('utilities/helpers/likePosHelper');
 const moment = require('moment');
-const redisGetter = require('utilities/redis/redisGetter');
 const redisSetter = require('utilities/redis/redisSetter');
 
 module.exports = async (value) => {
@@ -41,9 +40,9 @@ module.exports = async (value) => {
   updateData.active_votes = post.active_votes;
 
   const key = 'processed_likes';
-  const valuee = `${value.voter}:${value.author}:${value.permlink}`;
+  const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
   const now = moment().valueOf();
-  await redisSetter.zadde({ key, now, valuee });
+  await redisSetter.zadd({ key, now, keyValue });
 
   const { result, error: updateError } = await Post.findOneAndUpdate({ $or: [{ root_author: value.author, permlink: value.permlink }] }, { $set: updateData }, { new: true });
 
