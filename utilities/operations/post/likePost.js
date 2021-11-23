@@ -1,6 +1,9 @@
 const _ = require('lodash');
 const { Post } = require('models');
 const likePostHelper = require('utilities/helpers/likePosHelper');
+const moment = require('moment');
+const redisGetter = require('utilities/redis/redisGetter');
+const redisSetter = require('utilities/redis/redisSetter');
 
 module.exports = async (value) => {
   const { hive, waiv, getPost } = await likePostHelper(value);
@@ -29,8 +32,6 @@ module.exports = async (value) => {
     });
   updateData.net_rshares = post.net_rshares + rShares;
 
-  updateData.processed = true;
-
   updateData.net_rshares_WAIV = post.net_rshares_WAIV ? (post.net_rshares_WAIV + rshares) : rshares;
 
   updateData.pending_payout_value = postValue < 0 ? '0.000 HBD' : `${postValue.toFixed(3)} HBD`;
@@ -38,6 +39,11 @@ module.exports = async (value) => {
   updateData.total_payout_WAIV = updateData.net_rshares_WAIV * rewards;
 
   updateData.active_votes = post.active_votes;
+
+  const key = 'processed_likes';
+  const valuee = `${value.voter}:${value.author}:${value.permlink}`;
+  const now = moment().valueOf();
+  await redisSetter.zadde({ key, now, valuee });
 
   const { result, error: updateError } = await Post.findOneAndUpdate({ $or: [{ root_author: value.author, permlink: value.permlink }] }, { $set: updateData }, { new: true });
 

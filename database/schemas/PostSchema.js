@@ -34,7 +34,6 @@ const PostSchema = new Schema({
   blocked_for_apps: { type: [String], default: [] },
   net_rshares: { type: Number },
   net_rshares_WAIV: { type: Number },
-  processed: { type: Boolean },
   total_payout_WAIV: { type: Number },
   pending_payout_value: { type: String },
 

@@ -3,7 +3,7 @@ const {
 } = require('constants/postsData');
 const { WEBSITE_SUSPENDED_COUNT } = require('constants/sitesConstants');
 const {
-  importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
+  importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics, processedPostClient,
 } = require('utilities/redis/redis');
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
@@ -130,3 +130,9 @@ exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
     return { error };
   }
 };
+exports.zadde = async ({
+  key, now, valuee, client = processedPostClient,
+}) => {
+  client.zadd(key, now, valuee);
+};
+
