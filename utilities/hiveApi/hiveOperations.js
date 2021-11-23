@@ -7,10 +7,9 @@ const _ = require('lodash');
 exports.calcHiveVote = async ({
   userName, weight, author, permlink,
 }) => {
-  // eslint-disable-next-line camelcase
-  const { reward_balance, recent_claims, price } = await redisGetter
-    .importUserClientHGetAll('current_price_info');
-  const { userData: account } = await userUtil.getAccount(userName);
+  const {
+    account, rewardBalance, recentClaims, price,
+  } = await getAccountAndCurrentPrice({ userName });
 
   if (!account) return { hiveVotePrice: 0 };
 
@@ -31,12 +30,49 @@ exports.calcHiveVote = async ({
 
   const tRShares = postVoteRhares + rShares;
 
-  const rewards = parseFloat(reward_balance) / parseFloat(recent_claims);
-  const postValue = tRShares * rewards * parseFloat(price);
+  const rewards = rewardBalance / recentClaims;
+  const postValue = tRShares * rewards * price;
   const voteValue = postValue * (rShares / tRShares);
 
   const hiveVotePrice = voteValue >= 0 ? voteValue : 0;
   return { hiveVotePrice };
+};
+
+// estimated maximum value
+exports.calcHiveVoteValue = async ({
+  userName,
+}) => {
+  const {
+    account, rewardBalance, recentClaims, price,
+  } = await getAccountAndCurrentPrice({ userName });
+  if (!account) return { estimatedHIVE: 0 };
+
+  const vests = parseFloat(account.vesting_shares)
+    + parseFloat(account.received_vesting_shares)
+    - parseFloat(account.delegated_vesting_shares);
+
+  const secondsAgo = (new Date().getTime() - new Date(`${account.last_vote_time}Z`).getTime()) / 1000;
+  const accountVotingPower = Math.min(10000, account.voting_power + (10000 * secondsAgo) / 432000);
+
+  const power = Math.round((accountVotingPower + 49) / 50);
+  const rshares = vests * power * 100 - 50000000;
+  const rewards = rewardBalance / recentClaims;
+
+  const estimate = rshares * rewards * price;
+  return { estimatedHIVE: estimate };
+};
+
+const getAccountAndCurrentPrice = async ({ userName }) => {
+  // eslint-disable-next-line camelcase
+  const { reward_balance, recent_claims, price } = await redisGetter
+    .importUserClientHGetAll('current_price_info');
+  const { userData: account } = await userUtil.getAccount(userName);
+  return {
+    account,
+    rewardBalance: parseFloat(reward_balance),
+    recentClaims: parseFloat(recent_claims),
+    price: parseFloat(price),
+  };
 };
 
 const getPostVoteRhares = async ({ author, permlink }) => {
