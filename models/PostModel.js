@@ -177,11 +177,11 @@ exports.findOneByBothAuthors = async ({ author, permlink }) => {
   }
 };
 
-exports.findOneAndUpdate = async (fitter, updateData, options) => {
+exports.findOneAndUpdate = async (filter, updateData, options) => {
   try {
     return {
       result: await PostModel.findOneAndUpdate(
-        fitter,
+        filter,
         updateData,
         options,
       ),
