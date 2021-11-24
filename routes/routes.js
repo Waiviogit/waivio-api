@@ -158,6 +158,8 @@ userRoutes.route('/import_steem_user')
   .get(UserController.importUserFromSteem);
 userRoutes.route('/user/:userName/vote-value')
   .get(UserController.getVoteValue);
+userRoutes.route('/user/:userName/vote-value-info')
+  .get(UserController.getEstimatedVote);
 userRoutes.route('/geo-ip')
   .get(UserController.getGeoByIp)
   .put(UserController.putUserGeo);

@@ -358,9 +358,16 @@ const getVoteValue = async (req, res, next) => {
     .validate({ ...req.query, ...req.params }, validators.user.voteValue, next);
   if (!value) return;
 
-  const result = await calcVoteValue(value);
+  const result = await calcVoteValue.sliderCalc(value);
 
   res.result = { status: 200, json: { result } };
+  next();
+};
+
+const getEstimatedVote = async (req, res, next) => {
+  const result = await calcVoteValue.userInfoCalc(req.params);
+
+  res.result = { status: 200, json: result };
   next();
 };
 
@@ -418,4 +425,5 @@ module.exports = {
   getGeoByIp,
   putUserGeo,
   getCreationDate,
+  getEstimatedVote,
 };
