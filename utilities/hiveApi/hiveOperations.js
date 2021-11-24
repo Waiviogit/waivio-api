@@ -59,7 +59,7 @@ exports.calcHiveVoteValue = async ({
   const rewards = rewardBalance / recentClaims;
 
   const estimate = rshares * rewards * price;
-  return { estimatedHIVE: estimate };
+  return { estimatedHIVE: estimate < 0 ? 0 : estimate };
 };
 
 const getAccountAndCurrentPrice = async ({ userName }) => {
