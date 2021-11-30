@@ -36,7 +36,6 @@ const PostSchema = new Schema({
   net_rshares_WAIV: { type: Number },
   total_payout_WAIV: { type: Number },
   pending_payout_value: { type: String },
-
 }, {
   toObject: { virtuals: true },
   toJSON: { virtuals: true },
