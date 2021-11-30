@@ -2,7 +2,6 @@ const engineOperations = require('utilities/hiveEngine/engineOperations');
 const hiveOperations = require('utilities/hiveApi/hiveOperations');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
 const { Post } = require('models');
-const _ = require('lodash');
 
 module.exports = async (
   voteInfo) => {
@@ -25,7 +24,7 @@ module.exports = async (
 
     Post.findOneByBothAuthors({
       author: voteInfo.author,
-      permlink: voteInfo.permlink
+      permlink: voteInfo.permlink,
     }),
   ]);
   const [hive, waiv, getPost] = requests;

@@ -27,6 +27,11 @@ exports.getPostComments = Joi.object().keys({
   userName: Joi.string().default(''),
 });
 
+exports.getManyPosts = Joi.array().items(Joi.object().keys({
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+}));
+
 exports.likePost = Joi.object().keys({
   author: Joi.string().invalid('').required(),
   permlink: Joi.string().invalid('').required(),
@@ -34,5 +39,6 @@ exports.likePost = Joi.object().keys({
   weight: Joi.number()
     .integer()
     .min(-10000)
-    .max(10000),
+    .max(10000)
+    .required(),
 });

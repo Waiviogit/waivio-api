@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { Post } = require('models');
-const likePostHelper = require('utilities/helpers/likePosHelper');
+const likePostHelper = require('utilities/helpers/likePostHelper');
 const moment = require('moment');
 const redisSetter = require('utilities/redis/redisSetter');
 
