@@ -31,3 +31,14 @@ exports.getManyPosts = Joi.array().items(Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
 }));
+
+exports.likePost = Joi.object().keys({
+  author: Joi.string().invalid('').required(),
+  permlink: Joi.string().invalid('').required(),
+  voter: Joi.string().invalid('').required(),
+  weight: Joi.number()
+    .integer()
+    .min(-10000)
+    .max(10000)
+    .required(),
+});

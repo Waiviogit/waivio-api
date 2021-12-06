@@ -35,7 +35,7 @@ exports.calcHiveVote = async ({
   const voteValue = postValue * (rShares / tRShares);
 
   const hiveVotePrice = voteValue >= 0 ? voteValue : 0;
-  return { hiveVotePrice };
+  return { hiveVotePrice, rShares, postValue, rewards };
 };
 
 // estimated maximum value
