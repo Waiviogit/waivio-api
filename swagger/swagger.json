@@ -4225,6 +4225,12 @@
           "required" : true,
           "type" : "string"
         },{
+          "name" : "access-token",
+          "in" : "header",
+          "description" : "Hive user access token",
+          "required" : true,
+          "type" : "string"
+          },{
           "in" : "body",
           "name" : "params",
           "description" : "",
