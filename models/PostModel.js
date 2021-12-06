@@ -165,6 +165,32 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
   }
 };
 
+exports.findOneByBothAuthors = async ({ author, permlink }) => {
+  try {
+    return {
+      post: await PostModel.findOne(
+        { root_author: author, permlink },
+      ).lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.findOneAndUpdate = async (filter, updateData, options) => {
+  try {
+    return {
+      result: await PostModel.findOneAndUpdate(
+        filter,
+        updateData,
+        options,
+      ),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
 /**
  * Find and return posts by array [{author, permlink}] of posts refs
  * @param postsRefs {Array<Object>}

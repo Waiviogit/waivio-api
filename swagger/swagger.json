@@ -4213,6 +4213,45 @@
         }
       }
     },
+    "/api/post/like-post": {
+      "post" : {
+        "tags" : [ "post" ],
+        "summary" : "Return update post",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "in" : "body",
+          "name" : "params",
+          "description" : "",
+          "required" : true,
+          "schema" : {
+            "example":
+                {
+                  "voter":"krnel",
+                  "author":"johan-nygren",
+                  "permlink":"psychiatric-science-is-just-a-mythology-to-legitimize-human-ritual-sacrifice",
+                  "weight":5000
+                }
+          }
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/objectTypes" : {
       "post" : {
         "tags" : [ "object_type" ],

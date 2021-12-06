@@ -2,7 +2,7 @@ const axios = require('axios');
 const _ = require('lodash');
 
 module.exports = async ({
-  hostUrl = 'https://api.hive-engine.com/rpc',
+  hostUrl = 'https://api2.hive-engine.com/rpc',
   method = 'find',
   params,
   endpoint = '/contracts',

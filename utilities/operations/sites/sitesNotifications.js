@@ -28,22 +28,23 @@ const getMessage = async ({ remainingDays, paid, owner }) => {
   if (paid < 0) {
     const suspendedDays = await redisSetter
       .incrementWebsitesSuspended({ key: owner, expire: 3600 * 25 });
-    if (suspendedDays < 8) return NOTIFICATION.ATTENTION;
+    if (suspendedDays < 8) return NOTIFICATION.SUSPENDED;
     return '';
   }
+
   const messages = {
-    90: () => `${NOTIFICATION.WARNING} 3 month`,
-    60: () => `${NOTIFICATION.WARNING} 2 month`,
-    30: () => `${NOTIFICATION.WARNING} 1 month`,
-    21: () => `${NOTIFICATION.WARNING} 3 weeks`,
-    14: () => `${NOTIFICATION.WARNING} 2 weeks`,
-    7: () => `${NOTIFICATION.WARNING} a week`,
-    6: () => `${NOTIFICATION.WARNING} 6 days`,
-    5: () => `${NOTIFICATION.WARNING} 5 days`,
-    4: () => `${NOTIFICATION.WARNING} 4 days`,
-    3: () => `${NOTIFICATION.WARNING} 3 days`,
-    2: () => `${NOTIFICATION.WARNING} 2 days`,
-    1: () => `${NOTIFICATION.WARNING} a day`,
+    90: () => NOTIFICATION.OUT_THREE_MONTHS,
+    60: () => NOTIFICATION.OUT_TWO_MONTHS,
+    30: () => NOTIFICATION.OUT_MONTH,
+    21: () => NOTIFICATION.OUT_THREE_WEEKS,
+    14: () => NOTIFICATION.OUT_TWO_WEEKS,
+    7: () => NOTIFICATION.OUT_WEEK,
+    6: () => NOTIFICATION.OUT_SIX_DAYS,
+    5: () => NOTIFICATION.OUT_FIVE_DAYS,
+    4: () => NOTIFICATION.OUT_FOUR_DAYS,
+    3: () => NOTIFICATION.OUT_THREE_DAYS,
+    2: () => NOTIFICATION.OUT_TWO_DAYS,
+    1: () => NOTIFICATION.OUT_DAY,
     default: () => '',
   };
   return (messages[remainingDays] || messages.default)();
