@@ -184,7 +184,7 @@ exports.findOneAndUpdate = async (filter, updateData, options) => {
         filter,
         updateData,
         options,
-      ),
+      ).lean(),
     };
   } catch (error) {
     return { error };

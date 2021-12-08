@@ -5,6 +5,7 @@ const likePostHelper = require('utilities/helpers/likePostHelper');
 const moment = require('moment');
 const redisSetter = require('utilities/redis/redisSetter');
 const { ERROR_MESSAGE, REDIS_KEYS } = require('constants/common');
+const { getPostObjects } = require('utilities/helpers/postHelper');
 
 module.exports = async (value) => {
   const { hive, waiv, getPost } = await likePostHelper(value);
@@ -37,6 +38,10 @@ module.exports = async (value) => {
   const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
   const now = moment().valueOf();
   await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES, now, keyValue });
+  const wobjects = await getPostObjects(_.get(result, 'wobjects', []));
+
+  result.wobjects = _.get(wobjects, 'wobjectPercents', []);
+  result.fullObjects = _.get(wobjects, 'wObjectsData', []);
 
   return { post: result };
 };
@@ -51,8 +56,8 @@ const formUpdateData = ({
 
   if (weight === 0) {
     if (voteInPost) {
-      net_rshares -= voteInPost.rshares;
-      net_rshares_WAIV -= voteInPost.net_rshares_WAIV;
+      net_rshares -= _.get(voteInPost, 'rshares', 0);
+      net_rshares_WAIV -= _.get(voteInPost, 'rsharesWAIV', 0);
     }
   } else {
     net_rshares += hive.rShares;
