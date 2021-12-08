@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
 const { Post } = require('models');
 const likePostHelper = require('utilities/helpers/likePostHelper');
@@ -8,41 +9,17 @@ const { ERROR_MESSAGE, REDIS_KEYS } = require('constants/common');
 module.exports = async (value) => {
   const { hive, waiv, getPost } = await likePostHelper(value);
 
-  const { rShares, postValue } = hive;
-
-  const { rshares, rewards } = waiv;
-
   const { post, error } = getPost;
+  if (!post) return { error: new Error(ERROR_MESSAGE.NOT_FOUND) };
+  if (error) return { error };
 
-  if (!post || error) return { error };
-
-  const updateData = {};
-
-  const voteInPost = _.find(post.active_votes, (v) => v.voter === value.voter);
-  voteInPost
-    ? Object.assign(
-      post.active_votes[post.active_votes.indexOf(voteInPost)],
-      { rshares: Math.round(rShares), weight: Math.round(rShares * 1e-6) },
-    )
-    : post.active_votes.push({
-      voter: value.voter,
-      percent: value.weight,
-      rshares: Math.round(rShares),
-      weight: Math.round(rShares * 1e-6),
-    });
-  updateData.net_rshares = post.net_rshares + rShares;
-
-  updateData.net_rshares_WAIV = post.net_rshares_WAIV ? (post.net_rshares_WAIV + rshares) : rshares;
-
-  updateData.pending_payout_value = postValue < 0 ? '0.000 HBD' : `${postValue.toFixed(3)} HBD`;
-
-  updateData.total_payout_WAIV = updateData.net_rshares_WAIV * rewards;
-
-  updateData.active_votes = post.active_votes;
-
-  const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
-  const now = moment().valueOf();
-  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES, now, keyValue });
+  const updateData = formUpdateData({
+    weight: value.weight,
+    voter: value.voter,
+    post,
+    hive,
+    waiv,
+  });
 
   const { result, error: updateError } = await Post.findOneAndUpdate(
     {
@@ -56,5 +33,74 @@ module.exports = async (value) => {
   );
 
   if (!result || updateError) return { error: updateError || new Error(ERROR_MESSAGE.NOT_FOUND) };
+
+  const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
+  const now = moment().valueOf();
+  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES, now, keyValue });
+
   return { post: result };
+};
+
+const formUpdateData = ({
+  post, hive, waiv, weight, voter,
+}) => {
+  const voteInPost = _.find(post.active_votes, (v) => v.voter === voter);
+
+  let { net_rshares } = post;
+  let net_rshares_WAIV = post.net_rshares_WAIV || 0;
+
+  if (weight === 0) {
+    if (voteInPost) {
+      net_rshares -= voteInPost.rshares;
+      net_rshares_WAIV -= voteInPost.net_rshares_WAIV;
+    }
+  } else {
+    net_rshares += hive.rShares;
+    net_rshares_WAIV += waiv.rshares;
+  }
+
+  const total_payout_WAIV = net_rshares_WAIV * waiv.rewards;
+  const pending_payout_value = net_rshares * hive.rewards * hive.price;
+
+  return {
+    net_rshares,
+    net_rshares_WAIV,
+    pending_payout_value: pending_payout_value < 0 ? '0.000 HBD' : `${pending_payout_value.toFixed(3)} HBD`,
+    total_payout_WAIV: total_payout_WAIV < 0 ? 0 : total_payout_WAIV,
+    active_votes: getActiveVotes({
+      post, voteInPost, weight, voter, waiv, hive,
+    }),
+  };
+};
+
+const getActiveVotes = ({
+  weight, post, voter, waiv, hive, voteInPost,
+}) => {
+  if (weight === 0 && voteInPost) {
+    Object.assign(
+      post.active_votes[post.active_votes.indexOf(voteInPost)],
+      {
+        rshares: 0, weight: 0, rsharesWAIV: 0, percent: 0,
+      },
+    );
+  } else {
+    voteInPost
+      ? Object.assign(
+        post.active_votes[post.active_votes.indexOf(voteInPost)],
+        {
+          percent: weight,
+          rshares: Math.round(hive.rShares),
+          weight: Math.round(hive.rShares * 1e-6),
+          rsharesWAIV: waiv.rshares,
+        },
+      )
+      : post.active_votes.push({
+        voter,
+        percent: weight,
+        rshares: Math.round(hive.rShares) || 1,
+        weight: Math.round(hive.rShares * 1e-6),
+        rsharesWAIV: waiv.rshares || 1,
+      });
+  }
+  return post.active_votes;
 };
