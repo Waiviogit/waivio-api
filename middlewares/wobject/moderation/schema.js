@@ -99,6 +99,12 @@ exports.schema = [
     wobjects_path: 'wobjects',
   },
   {
+    path: '/post/like-post',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
+  {
     path: '/posts',
     method: 'POST',
     case: 4,
