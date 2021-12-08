@@ -3,6 +3,7 @@ const { Post } = require('models');
 const likePostHelper = require('utilities/helpers/likePostHelper');
 const moment = require('moment');
 const redisSetter = require('utilities/redis/redisSetter');
+const { ERROR_MESSAGE, REDIS_KEYS } = require('constants/common');
 
 module.exports = async (value) => {
   const { hive, waiv, getPost } = await likePostHelper(value);
@@ -39,13 +40,21 @@ module.exports = async (value) => {
 
   updateData.active_votes = post.active_votes;
 
-  const key = 'processed_likes';
   const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
   const now = moment().valueOf();
-  await redisSetter.zadd({ key, now, keyValue });
+  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES, now, keyValue });
 
-  const { result, error: updateError } = await Post.findOneAndUpdate({ $or: [{ root_author: value.author, permlink: value.permlink }] }, { $set: updateData }, { new: true });
+  const { result, error: updateError } = await Post.findOneAndUpdate(
+    {
+      $or: [
+        { root_author: value.author, permlink: value.permlink },
+        { author: value.author, permlink: value.permlink },
+      ],
+    },
+    { $set: updateData },
+    { new: true },
+  );
 
-  if (!result || updateError) return { updateError };
+  if (!result || updateError) return { error: updateError || new Error(ERROR_MESSAGE.NOT_FOUND) };
   return { post: result };
 };

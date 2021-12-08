@@ -4249,10 +4249,7 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
                 "$ref" : "#/definitions/post"
-              }
             }
           }
         }

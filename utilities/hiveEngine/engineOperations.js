@@ -17,7 +17,7 @@ exports.calculateHiveEngineVote = async ({
 
   for (const req of requests) {
     if (_.has(req, 'error') || _.isEmpty(req)) {
-      return { engineVotePrice: 0 };
+      return { engineVotePrice: 0, rshares: 0, rewards: 0 };
     }
   }
   const [balances, votingPowers, dieselPools, smtPool, hiveCurrency] = requests;
