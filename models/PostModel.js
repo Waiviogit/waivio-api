@@ -168,9 +168,9 @@ exports.findByBothAuthors = async ({ author, permlink }) => {
 exports.findOneByBothAuthors = async ({ author, permlink }) => {
   try {
     return {
-      post: await PostModel.findOne(
-        { root_author: author, permlink },
-      ).lean(),
+      post: await PostModel.findOne({
+        $or: [{ author, permlink }, { root_author: author, permlink }],
+      }).lean(),
     };
   } catch (error) {
     return { error };
