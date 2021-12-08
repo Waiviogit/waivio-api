@@ -4231,6 +4231,11 @@
           "required" : true,
           "type" : "string"
           },{
+          "name" : "waivio-auth",
+          "in" : "header",
+          "description" : "send if it is guest",
+          "type" : "boolean"
+        },{
           "in" : "body",
           "name" : "params",
           "description" : "",

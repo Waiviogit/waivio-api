@@ -37,4 +37,9 @@ exports.schema = [
     method: 'POST',
     case: 1,
   },
+  {
+    path: '/post/like-post',
+    method: 'POST',
+    case: 2,
+  },
 ];

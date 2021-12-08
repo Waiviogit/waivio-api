@@ -20,6 +20,8 @@ const PostSchema = new Schema({
     voter: { type: String },
     weight: { type: Number },
     percent: { type: Number },
+    rshares: { type: Number },
+    rsharesWAIV: { type: Number },
   }],
   wobjects: [{
     author_permlink: { type: String },
