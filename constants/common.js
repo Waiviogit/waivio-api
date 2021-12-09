@@ -72,6 +72,8 @@ exports.WARNING_REQ_TIME = 15000;
 exports.CACHE_KEY = {
   REWARD_FUND: 'reward_fund',
   CURRENT_MEDIAN_HISTORY_PRICE: 'current_median_history_price',
+  SMT_POOL: 'smt_pool',
+  CURRENT_PRICE_INFO: 'current_price_info',
 };
 
 exports.BLOCK_NUM_KEYS = {
