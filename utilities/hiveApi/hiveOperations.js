@@ -11,7 +11,14 @@ exports.calcHiveVote = async ({
     account, rewardBalance, recentClaims, price,
   } = await getAccountAndCurrentPrice({ userName });
 
-  if (!account) return { hiveVotePrice: 0 };
+  if (!account) {
+    return {
+      hiveVotePrice: 0,
+      rShares: 0,
+      rewards: 0,
+      price: 0,
+    };
+  }
 
   const vests = parseFloat(account.vesting_shares)
     + parseFloat(account.received_vesting_shares)
@@ -26,7 +33,7 @@ exports.calcHiveVote = async ({
   const power = Math.round(((accountVotingPower / 100) * weight) / 50);
   const rShares = vests * power * 100 - 50000000;
 
-  const postVoteRhares = await getPostVoteRhares({ author, permlink });
+  const postVoteRhares = await getPostNetRshares({ author, permlink });
 
   const tRShares = postVoteRhares + rShares;
 
@@ -35,7 +42,10 @@ exports.calcHiveVote = async ({
   const voteValue = postValue * (rShares / tRShares);
 
   const hiveVotePrice = voteValue >= 0 ? voteValue : 0;
-  return { hiveVotePrice };
+
+  return {
+    hiveVotePrice, rShares, rewards, price,
+  };
 };
 
 // estimated maximum value
@@ -75,12 +85,12 @@ const getAccountAndCurrentPrice = async ({ userName }) => {
   };
 };
 
-const getPostVoteRhares = async ({ author, permlink }) => {
+const getPostNetRshares = async ({ author, permlink }) => {
   let { result: [post] } = await Post.findByBothAuthors({ author, permlink });
   if (!post) {
     ({ post } = await postsUtil.getPost({ author, permlink }));
   }
-  return _.get(post, 'vote_rshares')
-    ? parseFloat(post.vote_rshares)
+  return _.get(post, 'net_rshares')
+    ? parseFloat(post.net_rshares)
     : 0;
 };

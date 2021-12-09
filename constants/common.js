@@ -80,6 +80,10 @@ exports.BLOCK_NUM_KEYS = {
   LAST_BLOCK_NUM_CAMPAIGN: 'campaign_last_block_num',
 };
 
+exports.REDIS_KEYS = {
+  PROCESSED_LIKES: 'processed_likes',
+};
+
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',

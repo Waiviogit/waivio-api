@@ -1,7 +1,8 @@
 const {
-  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo,
+  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo, likePost,
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
+const authoriseUser = require('utilities/authorization/authoriseUser');
 
 exports.show = async (req, res, next) => {
   const value = validators.validate({
@@ -55,6 +56,21 @@ exports.getPostComments = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
+  next();
+};
+
+exports.likePost = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.post.likePost, next);
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.voter);
+  if (authError) return next(authError);
+
+  const { post, error } = await likePost(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: post };
   next();
 };
 

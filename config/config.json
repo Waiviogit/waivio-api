@@ -15,7 +15,8 @@
       "importUser": 2,
       "mainFeedsCache": 10,
       "appDayUsers": 11,
-      "tagCategories": 9
+      "tagCategories": 9,
+      "processedPost": 8
     },
     "swaggerHost": "www.waivio.com",
     "appHost": "waivio.com"
@@ -37,7 +38,8 @@
       "importUser": 2,
       "mainFeedsCache": 10,
       "appDayUsers": 11,
-      "tagCategories": 9
+      "tagCategories": 9,
+      "processedPost": 8
     },
     "swaggerHost": "waiviodev.com",
     "appHost": "waiviodev.com"
@@ -59,7 +61,8 @@
       "importUser": 2,
       "mainFeedsCache": 10,
       "appDayUsers": 11,
-      "tagCategories": 9
+      "tagCategories": 9,
+      "processedPost": 8
     },
     "swaggerHost": "localhost:3000",
     "appHost": "waiviodev.com"
@@ -80,7 +83,8 @@
       "importUser": 7,
       "mainFeedsCache": 7,
       "appDayUsers": 7,
-      "tagCategories": 7
+      "tagCategories": 7,
+      "processedPost": 7
     },
     "swaggerHost": "localhost:3000",
     "appHost": "localhost:3000"

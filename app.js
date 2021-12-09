@@ -55,7 +55,7 @@ app.use((req, res, next) => {
 
   session.set('host', appHost);
   session.set('access-token', req.headers['access-token']);
-  session.set('waivio-auth', Boolean(req.headers['waivio-auth']));
+  session.set('waivio-auth', req.headers['waivio-auth'] === 'true');
   session.set('device', device);
   session.set('reqInfo', { timeStart: process.hrtime(), utl: req.url, method: req.method });
   next();
