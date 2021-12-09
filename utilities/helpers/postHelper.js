@@ -280,6 +280,7 @@ const additionalSponsorObligations = async (posts) => {
         });
       }
     }
+    post.net_rshares = _.reduce(post.active_votes, (acc, el) => acc + el.rshares, 0);
   }
   return posts;
 };
