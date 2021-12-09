@@ -1,6 +1,7 @@
 const userUtil = require('utilities/hiveApi/userUtil');
 const postsUtil = require('utilities/hiveApi/postsUtil');
 const { redisGetter } = require('utilities/redis');
+const { CACHE_KEY } = require('constants/common');
 const { Post } = require('models');
 const _ = require('lodash');
 
@@ -10,13 +11,14 @@ exports.calcHiveVote = async ({
   const {
     account, rewardBalance, recentClaims, price,
   } = await getAccountAndCurrentPrice({ userName });
+  const rewards = rewardBalance / recentClaims;
 
   if (!account) {
     return {
       hiveVotePrice: 0,
       rShares: 0,
-      rewards: 0,
-      price: 0,
+      rewards,
+      price,
     };
   }
 
@@ -37,7 +39,6 @@ exports.calcHiveVote = async ({
 
   const tRShares = postVoteRhares + rShares;
 
-  const rewards = rewardBalance / recentClaims;
   const postValue = tRShares * rewards * price;
   const voteValue = postValue * (rShares / tRShares);
 
@@ -75,7 +76,7 @@ exports.calcHiveVoteValue = async ({
 const getAccountAndCurrentPrice = async ({ userName }) => {
   // eslint-disable-next-line camelcase
   const { reward_balance, recent_claims, price } = await redisGetter
-    .importUserClientHGetAll('current_price_info');
+    .importUserClientHGetAll(CACHE_KEY.CURRENT_PRICE_INFO);
   const { userData: account } = await userUtil.getAccount(userName);
   return {
     account,
