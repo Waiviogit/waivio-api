@@ -2,19 +2,20 @@ const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const { CACHE_KEY } = require('constants/common');
 const commentContract = require('./commentContract');
+const tokensContract = require('./tokensContract');
 const marketPools = require('./marketPools');
 
 exports.calculateHiveEngineVote = async ({
   symbol, account, poolId, weight, dieselPoolId,
 }) => {
-  const { rewardPool, pendingClaims } = await redisGetter
+  const { rewardPool, pendingClaims, price: hivePrice } = await redisGetter
     .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${symbol}`);
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
 
   const requests = await Promise.all([
     commentContract.getVotingPower({ query: { rewardPoolId: poolId, account } }),
     marketPools.getMarketPools({ query: { _id: dieselPoolId } }),
-    commentContract.getRewardPools({ query: { _id: poolId } }),
+    tokensContract.getTokenBalances({ query: { symbol, account } }),
     redisGetter.importUserClientHGetAll(CACHE_KEY.CURRENT_PRICE_INFO),
   ]);
 
@@ -23,7 +24,7 @@ exports.calculateHiveEngineVote = async ({
       return { engineVotePrice: 0, rshares: 0, rewards };
     }
   }
-  const [balances, votingPowers, dieselPools, hiveCurrency] = requests;
+  const [votingPowers, dieselPools, balances, hiveCurrency] = requests;
   const { stake, delegationsIn } = balances[0];
   const { votingPower } = votingPowers[0];
   const { quotePrice } = dieselPools[0];
@@ -33,7 +34,7 @@ exports.calculateHiveEngineVote = async ({
 
   const rshares = (power * finalRshares) / 10000;
   // we calculate price in hbd cent for usd multiply quotePrice hiveCurrency.usdCurrency
-  const price = parseFloat(quotePrice) * hiveCurrency.price;
+  const price = parseFloat(quotePrice) * parseFloat(hiveCurrency.price);
 
   const engineVotePrice = rshares * price * rewards;
   return { engineVotePrice, rshares, rewards };
