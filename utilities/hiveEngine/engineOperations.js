@@ -8,7 +8,7 @@ const marketPools = require('./marketPools');
 exports.calculateHiveEngineVote = async ({
   symbol, account, poolId, weight, dieselPoolId,
 }) => {
-  const { rewardPool, pendingClaims, price: hivePrice } = await redisGetter
+  const { rewardPool, pendingClaims } = await redisGetter
     .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${symbol}`);
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
 
