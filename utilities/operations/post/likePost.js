@@ -50,6 +50,12 @@ const formUpdateData = ({
   post, hive, waiv, weight, voter,
 }) => {
   const voteInPost = _.find(post.active_votes, (v) => v.voter === voter);
+  const createdOverAWeek = moment().diff(moment(_.get(post, 'createdAt')), 'day') > 7;
+  if (createdOverAWeek) {
+    return processOverWeekLike({
+      voteInPost, post, weight, voter,
+    });
+  }
 
   let { net_rshares } = post;
   let net_rshares_WAIV = post.net_rshares_WAIV || 0;
@@ -77,6 +83,14 @@ const formUpdateData = ({
     }),
   };
 };
+
+const processOverWeekLike = ({
+  post, voteInPost, weight, voter,
+}) => ({
+  active_votes: getActiveVotes({
+    post, voteInPost, weight, voter, waiv: { rshares: 0 }, hive: { rShares: 0 },
+  }),
+});
 
 const getActiveVotes = ({
   weight, post, voter, waiv, hive, voteInPost,
