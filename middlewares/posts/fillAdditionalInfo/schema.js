@@ -9,6 +9,7 @@ exports.schema = [
     path: '/wobjects/map/last-post',
     method: 'POST',
     case: 4,
+    pathToPost: 'post',
   },
   {
     path: '/wobjectsFeed',
