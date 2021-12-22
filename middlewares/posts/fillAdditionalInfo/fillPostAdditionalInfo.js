@@ -51,11 +51,11 @@ exports.fill = async (req, res, next) => {
       res.result.json.posts = await postHelper.additionalSponsorObligations(res.result.json.posts);
       break;
     case 4:
-      const iteratedArray = res.result.json;
+      const iteratedArray = res.result.json.wobjects;
       for (let i = 0; i < iteratedArray.length; i++) {
         const posts = await postHelper.additionalSponsorObligations(iteratedArray[i][currentSchema.pathToPost]);
         if (_.isEmpty(posts)) continue;
-        res.result.json.wobjects[i].post = posts[0];
+        res.result.json.wobjects[i][currentSchema.pathToPost] = posts[0];
       }
       break;
   }
