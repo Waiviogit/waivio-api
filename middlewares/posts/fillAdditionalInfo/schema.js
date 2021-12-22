@@ -10,6 +10,7 @@ exports.schema = [
     method: 'POST',
     case: 4,
     pathToPost: 'post',
+    pathToArray: 'wobjects',
   },
   {
     path: '/wobjectsFeed',
