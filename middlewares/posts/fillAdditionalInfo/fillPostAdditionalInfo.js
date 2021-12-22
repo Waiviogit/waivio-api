@@ -50,6 +50,14 @@ exports.fill = async (req, res, next) => {
       // if review  add additional sponsor obligations to calculations
       res.result.json.posts = await postHelper.additionalSponsorObligations(res.result.json.posts);
       break;
+    case 4:
+      const { wobjects } = res.result.json;
+      for (let i = 0; i < wobjects.length; i++) {
+        const posts = await postHelper.additionalSponsorObligations([wobjects[i].post]);
+        if (_.isEmpty(posts)) continue;
+        res.result.json.wobjects[i].post = posts[0];
+      }
+      break;
   }
   next();
 };
