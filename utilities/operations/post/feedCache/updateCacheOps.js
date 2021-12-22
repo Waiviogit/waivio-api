@@ -44,7 +44,7 @@ async function getDbPostsIds(type, appName) {
       }));
       break;
   }
-  return idsByWithLocales.filter((arr) => arr.ids.length > 0);
+  return idsByWithLocales.filter((arr) => _.get(arr, 'ids.length', 0) > 0);
 }
 
 const getFilteredDBPosts = async (trendingIds) => {
