@@ -54,6 +54,8 @@ const mergePostData = async (postSteem, postDb) => {
   diffKeys.forEach((key) => {
     postSteem[key] = postDb[key];
   });
+  // strange behavior net_rshares on hive
+  if (postSteem.net_rshares === 0) postSteem.net_rshares = postDb.net_rshares;
   // fill active_votes in case votes from guest users
   postDb.active_votes.forEach((dbVote) => {
     if (!postSteem.active_votes.find((v) => v.voter === dbVote.voter)) {
