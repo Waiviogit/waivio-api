@@ -19,9 +19,4 @@ exports.depositWithdrawSchema = Joi.object().keys({
     then: Joi.number().required(),
     otherwise: Joi.forbidden(),
   }),
-  trx_id: Joi.when('type', {
-    is: TRANSACTION_TYPES.WITHDRAW,
-    then: Joi.number().required(),
-    otherwise: Joi.forbidden(),
-  }),
 }).xor('address', 'account').options(options);

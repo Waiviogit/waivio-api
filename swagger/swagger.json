@@ -69,7 +69,7 @@
           {
             "name" : "params",
             "in" : "body",
-            "description" : "available types withdraw and deposit\n body is params and response from convert request\n if type withdraw - add key withdrawalAmount and trx_id\n can be either address or account key",
+            "description" : "available types withdraw and deposit\n body is params and response from convert request\n if type withdraw - add key withdrawalAmount\n can be either address or account key",
             "required": true,
             "schema": {
               "type": "object",
@@ -100,9 +100,6 @@
                   "type": "string"
                 },
                 "memo" : {
-                  "type": "string"
-                },
-                "trx_id" : {
                   "type": "string"
                 },
                 "ex_rate" : {
