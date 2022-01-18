@@ -5,4 +5,9 @@ exports.TOKEN_WAIV = {
   TAGS: ['waivio', 'neoxian', 'palnet', 'waiv', 'food'],
 };
 
+exports.TRANSACTION_TYPES = {
+  DEPOSIT: 'deposit',
+  WITHDRAW: 'withdraw',
+};
+
 exports.REDIS_ENGINE_CURATORS = 'engineCurators';

@@ -10,6 +10,7 @@ const {
   sitesController,
   vipTicketsController,
   hiveController,
+  hiveEngineController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -21,6 +22,7 @@ const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
+const hiveEngineRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -30,6 +32,7 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
+apiRoutes.use('/api/hive-engine', hiveEngineRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -216,13 +219,17 @@ ticketsRoutes.route('/vip-tickets')
   .get(vipTicketsController.getVipTickets)
   .patch(vipTicketsController.addTicketNote);
 // endregion
-// region hive Routes
+// region Hive Routes
 hiveRoutes.route('/reward-fund')
   .get(hiveController.getRewardFund);
 hiveRoutes.route('/current-median-history')
   .get(hiveController.getCurrentMedianHistory);
 hiveRoutes.route('/block-num')
   .get(hiveController.getBlockNum);
+// endregion
+// region Hive Engine Routes
+hiveEngineRoutes.route('/deposit-withdraw')
+  .post(hiveEngineController.createDepositWithdraw);
 // endregion
 
 module.exports = apiRoutes;
