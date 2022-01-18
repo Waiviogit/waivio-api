@@ -13,7 +13,7 @@ exports.depositWithdrawSchema = Joi.object().keys({
   ex_rate: Joi.number().required(),
   address: Joi.string(),
   account: Joi.string(),
-  memo: Joi.string().allow('').required(),
+  memo: Joi.string(),
   withdrawalAmount: Joi.when('type', {
     is: TRANSACTION_TYPES.WITHDRAW,
     then: Joi.number().required(),
