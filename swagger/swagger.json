@@ -2048,7 +2048,7 @@
         }
       }
     },
-    "/api/user/{username}/getDelegation" : {
+    "/api/user/{username}/delegation" : {
       "get": {
         "tags": [
           "user"
@@ -2071,21 +2071,24 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "example":
-                [
-                    {
-                      "delegator": "sor31",
-                      "vesting_shares": 11219.24848,
-                      "delegation_date": "2021-08-20T10:41:57.000Z",
-                      "delegatee": "flowmaster"
-                    },
-                    {
-                      "delegator": "xcv47",
-                      "vesting_shares": 74794.989864,
-                      "delegation_date": "2021-08-20T10:42:48.000Z",
-                      "delegatee": "flowmaster"
-                    }
+              "example":{
+                "delegator": [
+                  {
+                    "delegator": "wiv01",
+                    "vesting_shares": 0,
+                    "delegation_date": "2021-09-30T12:07:21.000Z",
+                    "delegatee": "flowmaster"
+                  }
+                ],
+                "receiver": [
+                  {
+                    "delegator": "flowmaster",
+                    "delegatee": "dia-monds",
+                    "vesting_shares": 1845808026,
+                    "delegation_date": "2022-01-27T08:15:30"
+                  }
                 ]
+              }
               }
             }
           }

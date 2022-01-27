@@ -63,3 +63,16 @@ exports.searchUserByName = async ({ name, limit = 20 }) => {
     return { error };
   }
 };
+exports.getDelegations = async (account) => {
+  try {
+    const result = await client.call(
+      'database_api',
+      'find_vesting_delegations',
+      { account },
+    );
+    if (!result) return { error: { status: 404, message: 'Not Found' } };
+    return { delegationsResult: result };
+  } catch (error) {
+    return { delegationsError: error };
+  }
+};
