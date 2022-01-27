@@ -121,6 +121,8 @@ userRoutes.route('/users')
   .get(UserController.index);
 userRoutes.route('/user/:userName')
   .get(UserController.show);
+userRoutes.route('/user/:userName/getDelegation')
+  .get(UserController.showDelegation);
 userRoutes.route('/user/getUsersData')
   .post(UserController.usersData);
 userRoutes.route('/user/:userName/setState')

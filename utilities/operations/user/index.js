@@ -2,6 +2,7 @@ const moduleExports = {};
 
 moduleExports.importSteemUserBalancer = require('./importSteemUserBalancer');
 moduleExports.getUserCreationDate = require('./getUserCreationDate');
+moduleExports.getUserDelegation = require('./getUserDelegation');
 moduleExports.getFollowingUpdates = require('./getFollowingUpdates');
 moduleExports.importSteemUserOps = require('./importSteemUserOps');
 moduleExports.getFollowingsUser = require('./getFollowingsUser');

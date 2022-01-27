@@ -2048,6 +2048,49 @@
         }
       }
     },
+    "/api/user/{username}/getDelegation" : {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get Delegation history",
+        "description": "get Delegation history of account",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "example":
+                [
+                    {
+                      "delegator": "sor31",
+                      "vesting_shares": 11219.24848,
+                      "delegation_date": "2021-08-20T10:41:57.000Z",
+                      "delegatee": "flowmaster"
+                    },
+                    {
+                      "delegator": "xcv47",
+                      "vesting_shares": 74794.989864,
+                      "delegation_date": "2021-08-20T10:42:48.000Z",
+                      "delegatee": "flowmaster"
+                    }
+                ]
+              }
+            }
+          }
+        }
+      },
     "/api/user/{username}/getFollowingsState" : {
       "get" : {
         "deprecated": true,
