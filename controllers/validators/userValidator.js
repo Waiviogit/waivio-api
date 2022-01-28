@@ -78,6 +78,10 @@ exports.searchSchema = Joi.object().keys({
   notGuest: Joi.boolean().default(false),
 });
 
+exports.getDelegationSchema = Joi.object().keys({
+  account: Joi.string().required(),
+});
+
 exports.updateMetadataSchema = Joi.object().keys({
   user_name: Joi.string().required(),
   user_metadata: Joi.object().keys({

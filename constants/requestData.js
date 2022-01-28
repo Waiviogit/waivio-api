@@ -112,12 +112,18 @@ const NODE_URLS = process.env.NODE_ENV === 'production'
   ? PRODUCTION_REQUEST_NODES
   : STAGING_REQUEST_NODES;
 
+const KEY_CHAIN_URL = {
+  DELEGATORS: 'https://api.hive-keychain.com/hive/delegators/',
+};
+
 module.exports = {
   NODE_URLS,
   GEO_IP_API,
   telegramApi,
   HIVE_ON_BOARD,
+  KEY_CHAIN_URL,
   OBJECT_BOT: OBJECT_BOT[process.env.NODE_ENV || 'development'],
   NOTIFICATIONS_API: NOTIFICATIONS_API[process.env.NODE_ENV || 'development'],
   CURRENCIES_API: CURRENCIES_API[process.env.NODE_ENV || 'development'],
+
 };

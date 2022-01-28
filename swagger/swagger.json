@@ -2140,6 +2140,35 @@
         }
       }
     },
+    "/api/user/{username}/delegation" : {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get Delegation history",
+        "description": "get Delegation history of account",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "username",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref" : "#/definitions/delegation_response_200"
+              }
+            }
+          }
+        }
+      },
     "/api/user/{username}/getFollowingsState" : {
       "get" : {
         "deprecated": true,
@@ -4874,6 +4903,37 @@
     }
   },
   "definitions" : {
+    "delegation_response_200":{
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "received": {
+            "$ref": "#/definitions/delegationData"
+          },
+          "delegated": {
+            "$ref": "#/definitions/delegationData"
+          }
+        }
+      }
+    },
+    "delegationData": {
+      "type": "object",
+      "properties": {
+        "delegator": {
+          "type": "string"
+        },
+        "delegatee": {
+          "type": "string"
+        },
+        "vesting_shares": {
+          "type": "number"
+        },
+        "delegation_date": {
+          "type": "string"
+        }
+      }
+    },
     "vipTicket": {
       "type": "object",
       "properties": {

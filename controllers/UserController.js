@@ -3,7 +3,7 @@ const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
-  setMarkers, getObjectsFollow, geoData, getUserCreationDate,
+  setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -41,6 +41,20 @@ const show = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: userData };
+  next();
+};
+const showDelegation = async (req, res, next) => {
+  const value = validators.validate({
+    account: req.params.userName,
+  }, validators.user.getDelegationSchema, next);
+
+  if (!value) return;
+
+  const { result, error } = await getUserDelegation(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
   next();
 };
 
@@ -426,4 +440,5 @@ module.exports = {
   putUserGeo,
   getCreationDate,
   getEstimatedVote,
+  showDelegation,
 };
