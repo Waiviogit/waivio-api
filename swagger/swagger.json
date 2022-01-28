@@ -2071,24 +2071,7 @@
           "200": {
             "description": "successful operation",
             "schema": {
-              "example":{
-                "delegator": [
-                  {
-                    "delegator": "wiv01",
-                    "vesting_shares": 0,
-                    "delegation_date": "2021-09-30T12:07:21.000Z",
-                    "delegatee": "flowmaster"
-                  }
-                ],
-                "receiver": [
-                  {
-                    "delegator": "flowmaster",
-                    "delegatee": "dia-monds",
-                    "vesting_shares": 1845808026,
-                    "delegation_date": "2022-01-27T08:15:30"
-                  }
-                ]
-              }
+              "$ref" : "#/definitions/delegation_response_200"
               }
             }
           }
@@ -4828,6 +4811,37 @@
     }
   },
   "definitions" : {
+    "delegation_response_200":{
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "received": {
+            "$ref": "#/definitions/delegationData"
+          },
+          "delegated": {
+            "$ref": "#/definitions/delegationData"
+          }
+        }
+      }
+    },
+    "delegationData": {
+      "type": "object",
+      "properties": {
+        "delegator": {
+          "type": "string"
+        },
+        "delegatee": {
+          "type": "string"
+        },
+        "vesting_shares": {
+          "type": "number"
+        },
+        "delegation_date": {
+          "type": "string"
+        }
+      }
+    },
     "vipTicket": {
       "type": "object",
       "properties": {

@@ -63,6 +63,7 @@ exports.searchUserByName = async ({ name, limit = 20 }) => {
     return { error };
   }
 };
+
 exports.getDelegations = async (account) => {
   try {
     const result = await client.call(
@@ -71,8 +72,8 @@ exports.getDelegations = async (account) => {
       { account },
     );
     if (!result) return { error: { status: 404, message: 'Not Found' } };
-    return { delegationsResult: result };
+    return { result };
   } catch (error) {
-    return { delegationsError: error };
+    return { error };
   }
 };

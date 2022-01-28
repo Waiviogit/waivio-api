@@ -3,26 +3,18 @@ const { getDelegations } = require('utilities/hiveApi/userUtil');
 const _ = require('lodash');
 
 module.exports = async ({ account }) => {
-  const { delegatorsResult, delegatorsError } = await getDelegators(account);
+  const { result: delegatorsResult, error: delegatorsError } = await getDelegators(account);
 
-  const { delegationsResult, delegationsError } = await getDelegations(account);
+  const { result: delegationsResult, error: delegationsError } = await getDelegations(account);
   if (delegatorsError && delegationsError) return ({ error: new Error('not Found') });
 
-  const delegator = _.map(delegatorsResult, (el) => {
-    el.delegatee = account;
-    return el;
-  });
+  const received = _.map(delegatorsResult, (el) => ({ delegatee: account, ...el }));
 
-  const receiver = _.map(delegationsResult.delegations, (el) => {
-    el.vesting_shares = +el.vesting_shares.amount;
-    el.delegation_date = el.min_delegation_time;
-    delete el.id;
-    delete el.min_delegation_time;
-    return el;
-  });
-  const delegationsData = {
-    delegator,
-    receiver,
-  };
-  return { result: delegationsData };
+  const delegated = _.map(delegationsResult.delegations, (el) => ({
+    ..._.omit(el, ['id', 'min_delegation_time']),
+    vesting_shares: +el.vesting_shares.amount,
+    delegation_date: el.min_delegation_time,
+  }));
+
+  return { result: { received, delegated } };
 };
