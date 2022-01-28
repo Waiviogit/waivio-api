@@ -122,7 +122,6 @@ module.exports = {
   telegramApi,
   HIVE_ON_BOARD,
   KEY_CHAIN_URL,
-  PRODUCTION_REQUEST_NODES,
   OBJECT_BOT: OBJECT_BOT[process.env.NODE_ENV || 'development'],
   NOTIFICATIONS_API: NOTIFICATIONS_API[process.env.NODE_ENV || 'development'],
   CURRENCIES_API: CURRENCIES_API[process.env.NODE_ENV || 'development'],
