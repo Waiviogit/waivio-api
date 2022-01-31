@@ -1,4 +1,5 @@
 const { userClient: client } = require('utilities/hiveApi/hiveClient');
+const _ = require('lodash');
 
 exports.getAccount = async (name) => {
   try {
@@ -64,7 +65,7 @@ exports.searchUserByName = async ({ name, limit = 20 }) => {
   }
 };
 
-exports.getDelegations = async (account) => {
+exports.getDelegations = async (account, cb = (el) => _.get(el, 'delegations', [])) => {
   try {
     const result = await client.call(
       'database_api',
@@ -72,7 +73,21 @@ exports.getDelegations = async (account) => {
       { account },
     );
     if (!result) return { error: { status: 404, message: 'Not Found' } };
-    return { result };
+    return cb(result);
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getDelegationExpirations = async (account, cb = (el) => _.get(el, 'delegations', [])) => {
+  try {
+    const result = await client.call(
+      'database_api',
+      'find_vesting_delegation_expirations',
+      { account },
+    );
+    if (!result) return { error: { status: 404, message: 'Not Found' } };
+    return cb(result);
   } catch (error) {
     return { error };
   }
