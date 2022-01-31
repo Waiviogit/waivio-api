@@ -4909,10 +4909,22 @@
         "type": "object",
         "properties": {
           "received": {
-            "$ref": "#/definitions/delegationData"
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/delegationData"
+            }
           },
           "delegated": {
-            "$ref": "#/definitions/delegationData"
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/delegationData"
+            }
+          },
+          "expirations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/expirationsData"
+            }
           }
         }
       }
@@ -4920,6 +4932,9 @@
     "delegationData": {
       "type": "object",
       "properties": {
+        "id": {
+          "type": "number"
+        },
         "delegator": {
           "type": "string"
         },
@@ -4930,6 +4945,23 @@
           "type": "number"
         },
         "delegation_date": {
+          "type": "string"
+        }
+      }
+    },
+    "expirationsData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "number"
+        },
+        "delegator": {
+          "type": "string"
+        },
+        "vesting_shares": {
+          "type": "number"
+        },
+        "expiration": {
           "type": "string"
         }
       }
