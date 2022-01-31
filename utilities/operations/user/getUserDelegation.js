@@ -10,7 +10,7 @@ module.exports = async ({ account }) => {
 
   const received = _.map(delegatorsResult, (el) => ({ delegatee: account, ...el }));
 
-  const delegated = _.map(delegationsResult.delegations, (el) => ({
+  const delegated = _.map(_.get(delegationsResult, 'delegations', []), (el) => ({
     ..._.omit(el, ['id', 'min_delegation_time']),
     vesting_shares: +el.vesting_shares.amount,
     delegation_date: el.min_delegation_time,
