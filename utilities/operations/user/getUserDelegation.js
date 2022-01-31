@@ -10,7 +10,7 @@ module.exports = async ({ account }) => {
 
   const received = _.filter(_.map(delegatorsResult, (el) => ({ delegatee: account, ...el })), (e) => e.vesting_shares > 0);
 
-  const delegated = _.filter(_.map(delegationsResult.delegations, (el) => ({
+  const delegated = _.filter(_.map(_.get(delegationsResult, 'delegations', []), (el) => ({
     ..._.omit(el, ['id', 'min_delegation_time']),
     vesting_shares: +el.vesting_shares.amount,
     delegation_date: el.min_delegation_time,
