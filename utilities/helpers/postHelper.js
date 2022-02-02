@@ -205,6 +205,7 @@ const checkUserStatus = async ({
  */
 const additionalSponsorObligations = async (posts) => {
   for (const post of posts) {
+    if (!post) continue;
     const metadata = post.json_metadata ? jsonParse(post) : null;
     const _id = _.get(metadata, 'campaignId');
     // if post metadata doesn't have campaignId it's not review
