@@ -4,10 +4,10 @@ const { redisGetter } = require('utilities/redis');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
 
-exports.getTagCategory = async (tagCategory = [], filter) => {
+exports.getTagCategory = async (tagCategory = [], filter, type) => {
   const resultArray = [];
   for (const category of tagCategory) {
-    const { tags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${category}`, start: 0, end: 3 });
+    const { tags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.TAG_CATEGORY}:${type}:${category}`, start: 0, end: 3 });
     if (error || !tags.length) continue;
     resultArray.push({ tagCategory: category, tags: tags.slice(0, 3), hasMore: tags.length > 3 });
   }

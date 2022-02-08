@@ -43,6 +43,7 @@ exports.expertsSchema = Joi.object().keys({
 });
 
 exports.showMoreTagsSchema = Joi.object().keys({
+  objectType: Joi.string().required(),
   tagCategory: Joi.string().required(),
   limit: Joi.number().integer().min(0).default(10),
   skip: Joi.number().integer().min(0).default(0),
