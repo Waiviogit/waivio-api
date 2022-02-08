@@ -4592,7 +4592,13 @@
           "description" : "name of tagCategory",
           "required" : true,
           "type" : "string"
-        } ],
+        }, {
+            "name" : "objectType",
+            "in" : "query",
+            "description" : "type of object",
+            "required" : true,
+            "type" : "string"
+          } ],
         "responses" : {
           "200" : {
             "description" : "succesfull operation",
