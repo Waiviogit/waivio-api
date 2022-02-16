@@ -75,6 +75,7 @@ const getWobjWithFilters = async ({
             name: FIELDS_NAMES.CATEGORY_ITEM,
             body: { $in: category.tags },
             tagCategory: category.categoryName,
+            weight: { $gte: 0 },
           },
         },
       });
