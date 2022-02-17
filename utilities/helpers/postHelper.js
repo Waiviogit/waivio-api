@@ -260,6 +260,7 @@ const additionalSponsorObligations = async (posts) => {
           voter: campaign.guideName,
           rshares: Math.round(sponsorPayout / ratio),
           sponsor: true,
+          fake: true,
           percent: 10000,
         });
       }
@@ -279,6 +280,7 @@ const additionalSponsorObligations = async (posts) => {
           voter: campaign.guideName,
           rshares: campaign.reward,
           sponsor: true,
+          fake: true,
           percent: 10000,
         });
       }
