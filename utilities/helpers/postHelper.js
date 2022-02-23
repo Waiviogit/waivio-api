@@ -253,6 +253,10 @@ const additionalSponsorObligations = async (posts) => {
 
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
       if (hasSponsor) {
+        if (hasSponsor.percent === 0) {
+          hasSponsor.percent = 100;
+          hasSponsor.fake = true;
+        }
         hasSponsor.rshares = parseInt(hasSponsor.rshares, 10) + Math.round(sponsorPayout / ratio);
         hasSponsor.sponsor = true;
       } else {
@@ -273,6 +277,10 @@ const additionalSponsorObligations = async (posts) => {
       });
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
       if (hasSponsor) {
+        if (hasSponsor.percent === 0) {
+          hasSponsor.percent = 100;
+          hasSponsor.fake = true;
+        }
         hasSponsor.rshares = campaign.reward;
         hasSponsor.sponsor = true;
       } else {
