@@ -8,22 +8,34 @@ const getFeed = async ({
   // eslint-disable-next-line camelcase
   name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName,
 }) => {
-  const { user, error: userError } = await User.getOne(name);
-  const { users, error: subsError } = await Subscriptions
-    .getFollowings({ follower: name, limit: 0 });
-  const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: name });
+  const requestsMongo = await Promise.all([
+    User.getOne(name),
+    Subscriptions.getFollowings({ follower: name, limit: 0 }),
+    wobjectSubscriptions.getFollowings({ follower: name }),
+    hiddenPostModel.getHiddenPosts(userName),
+    mutedUserModel.find({ condition: { mutedBy: userName } }),
+  ]);
 
-  if (userError || subsError || !user) {
-    return { error: userError || subsError || { status: 404, message: 'User not found!' } };
+  for (const request of requestsMongo) {
+    if (_.has(request, 'error')) {
+      return { error: { status: 404, message: 'User not found!' } };
+    }
+  }
+  const [userDb, SubscriptionsDb, wobjectSubscriptionsDb, hiddenPostDb, mutedUserDb] = requestsMongo;
+  const { user } = userDb;
+  const { users } = SubscriptionsDb;
+  const { wobjects } = wobjectSubscriptionsDb;
+  const { hiddenPosts = [] } = hiddenPostDb;
+  const { result: muted = [] } = mutedUserDb;
+
+  if (!user) {
+    return { error: { status: 404, message: 'User not found!' } };
   }
   const { data: filtersData, error: filterError } = await getFiltersData({
     ...filter, forApp, lastId,
   });
 
   if (filterError) return { error: filterError };
-
-  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
 
   const { posts, error: postsError } = await Post.getByFollowLists({
     skip,
