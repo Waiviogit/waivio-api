@@ -22,7 +22,6 @@ const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
-const hiveEngineRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -32,7 +31,6 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
-apiRoutes.use('/api/hive-engine', hiveEngineRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -228,10 +226,6 @@ hiveRoutes.route('/current-median-history')
   .get(hiveController.getCurrentMedianHistory);
 hiveRoutes.route('/block-num')
   .get(hiveController.getBlockNum);
-// endregion
-// region Hive Engine Routes
-hiveEngineRoutes.route('/deposit-withdraw')
-  .post(hiveEngineController.createDepositWithdraw);
 // endregion
 
 module.exports = apiRoutes;
