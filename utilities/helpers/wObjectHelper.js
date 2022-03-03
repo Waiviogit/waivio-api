@@ -9,6 +9,7 @@ const UserWobjects = require('models/UserWobjects');
 const { DEVICE } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
+const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
 
@@ -24,6 +25,12 @@ const getBlacklist = async (admins) => {
     followList = _.union(followList, el.followLists);
     resultBlacklist = _.union(resultBlacklist, el.blackList);
   });
+  const { result: muted } = await mutedModel.find({
+    condition: { mutedBy: { $in: admins } },
+    select: { userName: 1 },
+  });
+  const mutedUsers = _.map(muted, (m) => m.userName);
+  resultBlacklist.push(...mutedUsers);
   if (_.isEmpty(followList)) return resultBlacklist;
 
   const { blackLists: fromFollows } = await blacklistModel
