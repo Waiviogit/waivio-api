@@ -29,8 +29,8 @@ const getBlacklist = async (admins) => {
     condition: { mutedBy: { $in: admins } },
     select: { userName: 1 },
   });
-  const mutedUsers = _.map(muted, (m) => m.userName);
-  resultBlacklist.push(...mutedUsers);
+
+  resultBlacklist.push(..._.map(muted, (m) => m.userName));
   if (_.isEmpty(followList)) return resultBlacklist;
 
   const { blackLists: fromFollows } = await blacklistModel
