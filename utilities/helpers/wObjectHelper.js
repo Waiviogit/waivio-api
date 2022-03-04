@@ -93,7 +93,7 @@ const addDataToFields = ({
     // recount field weight and filter votes if black list not empty
     if (!_.isEmpty(blacklist) && !_.isEmpty(field.active_votes)) {
       field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
-      field.weight = _.sumBy(field.active_votes, (vote) => vote.weight || 1);
+      field.weight = 1 + _.sumBy(field.active_votes, (vote) => vote.weight);
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
@@ -367,12 +367,14 @@ const getTopTags = (obj, limit = 2) => {
   for (const tagCategory of tagCategories) {
     tags = _.concat(tags, tagCategory.items);
   }
-  return _
+
+  const yo = _
     .chain(tags)
     .orderBy('weight', 'desc')
     .slice(0, limit)
     .map('body')
     .value();
+  console.log();
 };
 
 const createMockPost = (field) => ({
