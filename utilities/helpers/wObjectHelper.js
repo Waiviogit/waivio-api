@@ -368,13 +368,12 @@ const getTopTags = (obj, limit = 2) => {
     tags = _.concat(tags, tagCategory.items);
   }
 
-  const yo = _
+  return _
     .chain(tags)
     .orderBy('weight', 'desc')
     .slice(0, limit)
     .map('body')
     .value();
-  console.log();
 };
 
 const createMockPost = (field) => ({
