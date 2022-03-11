@@ -116,6 +116,8 @@ wobjRoutes.route('/wobjects/map/last-post')
   .post(WobjController.getMapObjectLastPost);
 wobjRoutes.route('/wobjects/campaign/required-object')
   .post(WobjController.getWobjectsByRequiredObject);
+wobjRoutes.route('/wobject/:authorPermlink/exist')
+  .get(WobjController.checkIfObjectExists);
 // endregion
 // region User
 userRoutes.route('/users')

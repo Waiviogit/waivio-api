@@ -192,3 +192,7 @@ exports.byRequiredWobjectScheme = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   requiredObject: Joi.string().required(),
 });
+
+exports.objectExistsScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+});
