@@ -4064,13 +4064,13 @@
         "produces": [
           "application/json"
         ],
-        "parameter": {
+        "parameters": [{
             "name" : "authorPermlink",
             "in" : "path",
             "description" : "author_permlink of specified wobject",
             "required" : true,
             "type" : "string"
-          },
+          }],
         "responses": {
           "200": {
             "description": "successful operation",
