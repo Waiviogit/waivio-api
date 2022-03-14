@@ -580,4 +580,25 @@ describe('On wobjController', async () => {
       ]);
     });
   });
+
+  describe('On checkIfObjectExists', async () => {
+    let wobj;
+
+    beforeEach(async () => {
+      await dropDatabase();
+      wobj = await ObjectFactory.Create({});
+    });
+
+    it('should return true if wobject is found by provided authorPermlink', async () => {
+      result = await chai.request(app)
+        .get(`/api/wobject/${wobj.author_permlink}/exist`);
+      expect(result.body).to.be.deep.eq({ exist: true });
+    });
+
+    it('should return false if wobject is not found by provided authorPermlink', async () => {
+      result = await chai.request(app)
+        .get(`/api/wobject/${faker.random.string()}/exist`);
+      expect(result.body).to.be.deep.eq({ exist: false });
+    });
+  });
 });
