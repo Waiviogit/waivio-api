@@ -12,6 +12,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -403,6 +404,13 @@ const processWobjects = async ({
     let exposedFields = [];
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
+
+    /** Get waivio admins approved by app owner(creator) */
+    // здесь будет проверка по редису и монге
+    console.log('before getWaivioAdminsAndOwner');
+    //const { waivioOwner, waivioAdmins } = await getWaivioAdminsAndOwner();
+    //  нужно будет проверить не совпадает ли далее оунер и админы с вейвио оунером и админом
+
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const owner = _.get(app, 'owner');
     const admins = _.get(app, 'admins', []);
@@ -464,6 +472,7 @@ const getCurrentNames = async (names) => {
   const { result: wobjects } = await Wobj.find(
     { author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 },
   );
+  console.log('before promise.all with processWobjects inside')
   const result = await Promise.all(wobjects.map(async (wobject) => {
     const { name } = await processWobjects({
       wobjects: [wobject], fields: [FIELDS_NAMES.NAME], returnArray: false,

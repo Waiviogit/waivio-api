@@ -100,3 +100,6 @@ exports.getAsync = async ({ key, client = importUserClient }) => {
     return { error };
   }
 };
+
+/** Get actual list of Waivio admins by owner */
+exports.getAdminsByOwner = async (owner) => tagCategoriesClient.smembersAsync(owner);
