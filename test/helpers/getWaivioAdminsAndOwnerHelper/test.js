@@ -4,6 +4,8 @@ const {
 const { AppFactory } = require('test/factories');
 const { redisGetter } = require('utilities/redis');
 const config = require('../../../config');
+const { tagCategoriesClient } = require('../../../utilities/redis/redis');
+const { WAIVIO_ADMINS } = require('../../../constants/common');
 
 describe('On getWaivioAdminsAndOwnerHelper', () => {
   let owner, admin, admin2;
@@ -17,7 +19,7 @@ describe('On getWaivioAdminsAndOwnerHelper', () => {
     admin2 = faker.name.firstName();
 
     await AppFactory.Create({
-      host: config.waivio_auth.host,
+      host: config.appHost,
       owner,
       admins: [admin, admin2],
     });
@@ -32,14 +34,14 @@ describe('On getWaivioAdminsAndOwnerHelper', () => {
 
     it('should return owner and admins and set data in redis', async () => {
       result = await getWaivioAdminsAndOwnerHelper.getWaivioAdminsAndOwner();
-      redisData = await redisGetter.getAdminsByOwner(owner);
+      redisData = await redisGetter.smembersAsync(WAIVIO_ADMINS, tagCategoriesClient);
 
-      expect(result.waivioOwner).to.be.eq(owner);
-      expect(result.waivioAdmins).to.be.deep.eq([admin, admin2]);
-      expect(result.waivioAdmins.length).to.be.eq(2);
-      expect(redisData[0]).to.be.eq(result.waivioAdmins.find((el) => el === redisData[0]));
-      expect(redisData[1]).to.be.eq(result.waivioAdmins.find((el) => el === redisData[1]));
-      expect(redisData.length).to.be.eq(result.waivioAdmins.length);
+      expect(result).to.be.deep.eq([admin, admin2, owner]);
+      expect(result.length).to.be.eq(3);
+      expect(redisData[0]).to.be.eq(result.find((el) => el === redisData[0]));
+      expect(redisData[1]).to.be.eq(result.find((el) => el === redisData[1]));
+      expect(redisData[2]).to.be.eq(result.find((el) => el === redisData[2]));
+      expect(redisData.length).to.be.deep.eq(result.length);
     });
   });
 });

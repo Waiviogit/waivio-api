@@ -8,7 +8,7 @@ const { tagCategoriesClient } = require('../redis/redis');
 exports.getWaivioAdminsAndOwner = async (update = false) => {
   let waivioAdmins = await smembersAsync(WAIVIO_ADMINS, tagCategoriesClient);
   if (!waivioAdmins.length || update) {
-    const { result, error } = await App.findOne({ host: config.waivio_auth.host },
+    const { result, error } = await App.findOne({ host: config.appHost },
       { admins: 1, owner: 1 });
     if (error) return [];
 
