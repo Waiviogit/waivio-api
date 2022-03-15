@@ -85,7 +85,7 @@ const getFieldVoteRole = (vote) => {
 };
 
 const addDataToFields = ({
-  fields, filter, admins, ownership, administrative, isOwnershipObj, owners, blacklist = [],
+  fields, filter, admins, ownership, administrative, isOwnershipObj, owner, blacklist = [],
 }) => {
   /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
@@ -99,7 +99,7 @@ const addDataToFields = ({
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
       vote.timestamp = vote._id.getTimestamp().valueOf();
-      if (owners.includes(vote.voter)) {
+      if (vote.voter === owner) {
         vote.owner = true;
         ownerVote = vote;
       } else if (_.includes(admins, vote.voter)) {
@@ -405,21 +405,19 @@ const processWobjects = async ({
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
 
-    /** Get waivio admins approved by app owner(creator) */
-    // здесь будет проверка по редису и монге
-    console.log('before getWaivioAdminsAndOwner');
-    const { waivioOwner, waivioAdmins } = await getWaivioAdminsAndOwner();
+    /** Get waivio admins approved and owner */
+    const waivioAdmins = await getWaivioAdminsAndOwner();
 
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
-    const owners = _.uniq([_.get(app, 'owner'), waivioOwner]);
-    const admins = _.uniq([..._.get(app, 'admins', []), ...waivioAdmins]);
+    const owner = _.get(app, 'owner');
+    const admins = _.get(app, 'admins', []);
     const ownership = _.intersection(
       _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
     );
     const administrative = _.intersection(
       _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
-    const blacklist = await getBlacklist([...owners, ...admins]);
+    const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
@@ -434,8 +432,7 @@ const processWobjects = async ({
       admins,
       ownership,
       administrative,
-      // тут должен быть массив оунеров
-      owners,
+      owner,
       blacklist,
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */

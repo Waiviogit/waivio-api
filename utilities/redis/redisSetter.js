@@ -139,5 +139,4 @@ exports.zadd = async ({
   key, now, keyValue, client = processedPostClient,
 }) => client.zaddAsync(key, now, keyValue);
 
-/** Add admins to set */
-exports.addAdminsByOwner = async (owner, admins) => tagCategoriesClient.saddAsync(owner, ...admins);
+exports.saddAsync = async ({ key, values, client }) => client.saddAsync(key, ...values);

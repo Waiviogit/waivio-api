@@ -1,21 +1,22 @@
 const App = require('../../models/AppModel');
 const config = require('../../config');
-const { getAdminsByOwner } = require('../redis/redisGetter');
-const { addAdminsByOwner } = require('../redis/redisSetter');
+const { smembersAsync } = require('../redis/redisGetter');
+const { saddAsync } = require('../redis/redisSetter');
+const { WAIVIO_ADMINS } = require('../../constants/common');
+const { tagCategoriesClient } = require('../redis/redis');
 
 exports.getWaivioAdminsAndOwner = async (update = false) => {
-  const { result } = await App.findOne({ host: config.waivio_auth.host }, { owner: 1 });
-  if (!result) return { waivioOwner: '', waivioAdmins: [] };
-
-  let waivioAdmins = await getAdminsByOwner(result.owner);
+  let waivioAdmins = await smembersAsync(WAIVIO_ADMINS, tagCategoriesClient);
   if (!waivioAdmins.length || update) {
-    const adminsResult = await App.findOne({ owner: result.owner }, { admins: 1 });
-    waivioAdmins = adminsResult.result.admins;
+    const { result, error } = await App.findOne({ host: config.waivio_auth.host },
+      { admins: 1, owner: 1 });
+    if (error) return [];
+
+    waivioAdmins = [...result.admins, result.owner];
+    await saddAsync({ key: WAIVIO_ADMINS, client: tagCategoriesClient, values: waivioAdmins });
+
+    return waivioAdmins;
   }
 
-  if (!waivioAdmins.length) return { waivioOwner: result.owner, waivioAdmins: [] };
-
-  await addAdminsByOwner(result.owner, waivioAdmins);
-
-  return { waivioOwner: result.owner, waivioAdmins };
+  return waivioAdmins;
 };
