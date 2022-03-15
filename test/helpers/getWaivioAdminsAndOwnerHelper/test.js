@@ -1,5 +1,5 @@
 const {
-  dropDatabase, faker, sinon, expect, getWaivioAdminsAndOwnerHelper, dropRedisDb,
+  dropDatabase, faker, expect, getWaivioAdminsAndOwnerHelper, dropRedisDb,
 } = require('test/testHelper');
 const { AppFactory } = require('test/factories');
 const { redisGetter } = require('utilities/redis');
@@ -23,10 +23,6 @@ describe('On getWaivioAdminsAndOwnerHelper', () => {
       owner,
       admins: [admin, admin2],
     });
-  });
-
-  afterEach(() => {
-    sinon.restore();
   });
 
   describe('On getWaivioAdminsAndOwner', () => {
