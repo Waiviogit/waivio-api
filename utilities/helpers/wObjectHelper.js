@@ -405,7 +405,7 @@ const processWobjects = async ({
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
 
-    /** Get waivio admins approved and owner */
+    /** Get waivio admins and owner */
     const waivioAdmins = await getWaivioAdminsAndOwner();
 
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
