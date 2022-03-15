@@ -4,20 +4,18 @@ const { getAdminsByOwner } = require('../redis/redisGetter');
 const { addAdminsByOwner } = require('../redis/redisSetter');
 
 exports.getWaivioAdminsAndOwner = async () => {
-  const waivioOwner = await App.findOne({ host: config.waivio_auth.host }, { owner: 1 });
-  if (!waivioOwner) return { waivioOwner, waivioAdmins: [] };
+  const { result } = await App.findOne({ host: config.waivio_auth.host }, { owner: 1 });
+  if (!result) return { waivioOwner: '', waivioAdmins: [] };
 
-  let waivioAdmins = await getAdminsByOwner(waivioOwner);
+  let waivioAdmins = await getAdminsByOwner(result.owner);
   if (!waivioAdmins.length) {
-
-    waivioAdmins = await App.findOne({ owner: waivioOwner }, { admins: [] });
-    console.log('waivioAdmins', waivioAdmins);
-    // проверить точно ли мы получаем админов? и как?
+    const adminsResult = await App.findOne({ owner: result.owner }, { admins: 1 });
+    waivioAdmins = adminsResult.result.admins;
   }
 
-  if (!waivioAdmins.length) return { waivioOwner, waivioAdmins: [] };
+  if (!waivioAdmins.length) return { waivioOwner: result.owner, waivioAdmins: [] };
 
-  await addAdminsByOwner(waivioOwner, waivioAdmins);
+  await addAdminsByOwner(result.owner, waivioAdmins);
 
-  return { waivioOwner, waivioAdmins };
+  return { waivioOwner: result.owner, waivioAdmins };
 };
