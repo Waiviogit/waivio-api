@@ -12,6 +12,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -403,6 +404,10 @@ const processWobjects = async ({
     let exposedFields = [];
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
+
+    /** Get waivio admins and owner */
+    const waivioAdmins = await getWaivioAdminsAndOwner();
+
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const owner = _.get(app, 'owner');
     const admins = _.get(app, 'admins', []);
@@ -412,7 +417,7 @@ const processWobjects = async ({
     const administrative = _.intersection(
       _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
     );
-    const blacklist = await getBlacklist([owner, ...admins]);
+    const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
