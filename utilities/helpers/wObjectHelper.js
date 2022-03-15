@@ -472,7 +472,6 @@ const getCurrentNames = async (names) => {
   const { result: wobjects } = await Wobj.find(
     { author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 },
   );
-  console.log('before promise.all with processWobjects inside')
   const result = await Promise.all(wobjects.map(async (wobject) => {
     const { name } = await processWobjects({
       wobjects: [wobject], fields: [FIELDS_NAMES.NAME], returnArray: false,

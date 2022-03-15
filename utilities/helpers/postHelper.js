@@ -312,7 +312,6 @@ const getTagsByUser = async ({ author }) => {
         : tags.push({ counter: 1, author_permlink: wobject.author_permlink });
     }
   }
-  console.log('before getCurrentNames');
   const { result: wobjects } = await getCurrentNames(_.map(tags, 'author_permlink'));
   const result = _.map(wobjects, (wobject) => {
     for (const tag of tags) {
