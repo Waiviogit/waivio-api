@@ -9,6 +9,7 @@ const { sendDailyWebsiteDebt } = require('./setDailyWebsiteDebt');
 const { sendBalanceNotification } = require('./websiteBalanceNotifications');
 const { updateSiteWobjects } = require('./updateSiteWobjects');
 const { cacheHivePrice } = require('./cacheHivePrice');
+const { updateWaivioAdmins } = require('./updateWaivioAdmins');
 
 objTypeExpertsJob.start();
 collectExpertsJob.start();
@@ -22,3 +23,4 @@ sendDailyWebsiteDebt.start();
 sendBalanceNotification.start();
 updateSiteWobjects.start();
 cacheHivePrice.start();
+updateWaivioAdmins.start();

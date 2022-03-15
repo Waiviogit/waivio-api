@@ -15,7 +15,6 @@ const _ = require('lodash');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 
 const getBlacklist = async (admins) => {
-  console.log('admins in getBlackList', admins);
   let followList = [];
   let resultBlacklist = [];
   if (_.isEmpty(admins)) return resultBlacklist;
@@ -410,7 +409,6 @@ const processWobjects = async ({
     // здесь будет проверка по редису и монге
     console.log('before getWaivioAdminsAndOwner');
     const { waivioOwner, waivioAdmins } = await getWaivioAdminsAndOwner();
-    //  нужно будет проверить не совпадает ли далее оунер и админы с вейвио оунером и админом
 
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const owners = _.uniq([_.get(app, 'owner'), waivioOwner]);
