@@ -58,8 +58,12 @@ const mergePostData = async (postSteem, postDb) => {
   if (postSteem.net_rshares === 0) postSteem.net_rshares = postDb.net_rshares;
   // fill active_votes in case votes from guest users
   postDb.active_votes.forEach((dbVote) => {
-    if (!postSteem.active_votes.find((v) => v.voter === dbVote.voter)) {
+    const hiveVote = _.find(postSteem.active_votes, (v) => v.voter === dbVote.voter);
+    if (!hiveVote) {
       postSteem.active_votes.push(dbVote);
+    }
+    if (_.has(dbVote, 'rsharesWAIV') && hiveVote) {
+      hiveVote.rsharesWAIV = dbVote.rsharesWAIV;
     }
   });
 
