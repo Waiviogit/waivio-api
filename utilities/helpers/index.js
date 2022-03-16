@@ -15,5 +15,6 @@ moduleExports.notificationsHelper = require('./notificationsHelper');
 moduleExports.geoHelper = require('./geoHelper');
 moduleExports.searchHelper = require('./searchHelper');
 moduleExports.prefetchHelper = require('./prefetchHelper');
+moduleExports.getWaivioAdminsAndOwnerHelper = require('./getWaivioAdminsAndOwnerHelper');
 
 module.exports = moduleExports;

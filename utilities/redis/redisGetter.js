@@ -100,3 +100,5 @@ exports.getAsync = async ({ key, client = importUserClient }) => {
     return { error };
   }
 };
+
+exports.smembersAsync = async (key, client) => client.smembersAsync(key);

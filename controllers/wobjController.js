@@ -6,6 +6,7 @@ const {
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
+const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -288,6 +289,19 @@ const getWobjectsByRequiredObject = async (req, res, next) => {
   next();
 };
 
+const checkIfObjectExists = async (req, res, next) => {
+  const value = validators.validate({
+    authorPermlink: req.params.authorPermlink,
+  }, validators.wobject.objectExistsScheme, next);
+  if (!value) return;
+
+  const { exist, error } = await checkIfWobjectExists(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { exist } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -306,4 +320,5 @@ module.exports = {
   getMapObjectExperts,
   getMapObjectLastPost,
   getWobjectsByRequiredObject,
+  checkIfObjectExists,
 };

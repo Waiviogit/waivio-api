@@ -144,3 +144,5 @@ exports.MAX_IMPORTING_USERS = 20;
 exports.PROXY_HIVE_IMAGES = 'https://images.hive.blog/0x0/';
 
 exports.NOT_FOUND_IMAGE_URL = 'https://waivio.nyc3.digitaloceanspaces.com/ImageNotFound';
+
+exports.WAIVIO_ADMINS = 'waivio_admins';

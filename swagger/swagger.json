@@ -4055,6 +4055,37 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/exist": {
+      "get" : {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return true or false to show if object exists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name" : "authorPermlink",
+            "in" : "path",
+            "description" : "author_permlink of specified wobject",
+            "required" : true,
+            "type" : "string"
+          }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "exist": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/post/{author}/{permlink}" : {
       "get" : {
         "tags" : [ "post" ],
