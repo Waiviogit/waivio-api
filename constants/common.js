@@ -83,7 +83,8 @@ exports.BLOCK_NUM_KEYS = {
 };
 
 exports.REDIS_KEYS = {
-  PROCESSED_LIKES: 'processed_likes',
+  PROCESSED_LIKES_HIVE: 'processed_likes:hive',
+  PROCESSED_LIKES_ENGINE: 'processed_likes:engine',
 };
 
 exports.LANGUAGES = ['en-US',
