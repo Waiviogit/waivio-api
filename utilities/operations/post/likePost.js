@@ -37,7 +37,8 @@ module.exports = async (value) => {
 
   const keyValue = `${value.voter}:${value.author}:${value.permlink}`;
   const now = moment().valueOf();
-  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES, now, keyValue });
+  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES_HIVE, now, keyValue });
+  await redisSetter.zadd({ key: REDIS_KEYS.PROCESSED_LIKES_ENGINE, now, keyValue });
   const wobjects = await getPostObjects(_.get(result, 'wobjects', []));
 
   result.wobjects = _.get(wobjects, 'wobjectPercents', []);
