@@ -18,6 +18,13 @@ module.exports = async ({
     comments, userName, author, app,
   });
 
+  /** Clearing accounts from muted */
+  Object.keys(postState.accounts).forEach((key) => {
+    if (!filteredComments.find((comment) => comment.author === key)) {
+      _.unset(postState.accounts, key);
+    }
+  });
+
   postState.content = _.keyBy(filteredComments, (c) => `${c.author}/${c.permlink}`);
   postState.content[`${author}/${permlink}`] = await mergePostData(postState.content[`${author}/${permlink}`]);
   return { result: postState };
@@ -42,7 +49,6 @@ const filterMutedUsers = async ({
       ],
     },
   });
-
   const { mainMuted, subMuted } = _.reduce(mutedUsers, (acc, el) => {
     _.includes([userName, author], el.mutedBy)
       ? acc.mainMuted.push(el)
