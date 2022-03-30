@@ -50,7 +50,7 @@ const filterMutedUsers = async ({
     },
   });
   const { mainMuted, subMuted } = _.reduce(mutedUsers, (acc, el) => {
-    _.includes([userName, author], el.mutedBy)
+    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps, app.host))
       ? acc.mainMuted.push(el)
       : acc.subMuted.push(el);
     return acc;
