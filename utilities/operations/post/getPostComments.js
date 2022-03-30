@@ -61,8 +61,7 @@ const filterMutedUsers = async ({
     .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
     .reject((comment) => {
       const condition = _.includes(_.map(mainMuted, 'userName'), comment.author);
-      const condition2 = _.find(subMuted,
-        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
+      const condition2 = _.find(subMuted, (sb) => sb.userName === comment.author);
       const conditionGuest = _.includes(_.map(mainMuted, 'userName'), _.get(comment, 'guestInfo.userId'));
       if (condition || condition2 || conditionGuest) {
         removeRepliesFromComment({ comments, comment });
