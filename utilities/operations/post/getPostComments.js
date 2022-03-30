@@ -7,6 +7,7 @@ const _ = require('lodash');
 module.exports = async ({
   author, permlink, category, userName, app,
 }) => {
+  console.log('userName - кто смотрет пост, всем должно быть не видно если заблочено оуенром или админом', userName);
   const { result: postState, error } = await postsUtil.getPostState(
     { author, permlink, category },
   );
@@ -50,7 +51,7 @@ const filterMutedUsers = async ({
     },
   });
   const { mainMuted, subMuted } = _.reduce(mutedUsers, (acc, el) => {
-    _.includes([userName, author], el.mutedBy)
+    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps, app.host))
       ? acc.mainMuted.push(el)
       : acc.subMuted.push(el);
     return acc;
@@ -61,8 +62,13 @@ const filterMutedUsers = async ({
     .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
     .reject((comment) => {
       const condition = _.includes(_.map(mainMuted, 'userName'), comment.author);
-      const condition2 = _.find(subMuted, (sb) => sb.userName === comment.author);
+      const condition2 = _.find(subMuted,
+        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
       const conditionGuest = _.includes(_.map(mainMuted, 'userName'), _.get(comment, 'guestInfo.userId'));
+      console.log('comment', comment);
+      console.log('condition', condition);
+      console.log('condition2', condition2);
+      console.log('conditionGuest', conditionGuest);
       if (condition || condition2 || conditionGuest) {
         removeRepliesFromComment({ comments, comment });
       }
