@@ -7,7 +7,6 @@ const _ = require('lodash');
 module.exports = async ({
   author, permlink, category, userName, app,
 }) => {
-  console.log('userName - кто смотрет пост, всем должно быть не видно если заблочено оуенром или админом', userName);
   const { result: postState, error } = await postsUtil.getPostState(
     { author, permlink, category },
   );
@@ -65,10 +64,6 @@ const filterMutedUsers = async ({
       const condition2 = _.find(subMuted,
         (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
       const conditionGuest = _.includes(_.map(mainMuted, 'userName'), _.get(comment, 'guestInfo.userId'));
-      console.log('comment', comment);
-      console.log('condition', condition);
-      console.log('condition2', condition2);
-      console.log('conditionGuest', conditionGuest);
       if (condition || condition2 || conditionGuest) {
         removeRepliesFromComment({ comments, comment });
       }
