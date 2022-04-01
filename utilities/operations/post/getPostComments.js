@@ -40,19 +40,20 @@ const mergeComments = async (postState) => {
 const filterMutedUsers = async ({
   comments, userName, author, app,
 }) => {
+  const appHost = _.get(app, 'host', config.appHost);
+
   const { hiddenComments } = await hiddenCommentModel
     .getHiddenComments(userName, ..._.get(app, 'moderators', []));
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: {
       $or: [
         { mutedBy: { $in: [userName, author, ..._.map(comments, 'author')] } },
-        { mutedForApps: _.get(app, 'host', config.appHost) },
+        { mutedForApps: appHost },
       ],
     },
   });
   const { mainMuted, subMuted } = _.reduce(mutedUsers, (acc, el) => {
-    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps,
-      app.host || config.appHost))
+    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps, appHost))
       ? acc.mainMuted.push(el)
       : acc.subMuted.push(el);
     return acc;
