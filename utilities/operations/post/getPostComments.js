@@ -3,6 +3,7 @@ const { mergePostData } = require('utilities/helpers/postHelper');
 const { hiddenCommentModel, mutedUserModel } = require('models');
 const { postsUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
+const config = require('config');
 
 module.exports = async ({
   author, permlink, category, userName, app,
@@ -45,12 +46,13 @@ const filterMutedUsers = async ({
     condition: {
       $or: [
         { mutedBy: { $in: [userName, author, ..._.map(comments, 'author')] } },
-        { mutedForApps: _.get(app, 'host') },
+        { mutedForApps: _.get(app, 'host', config.appHost) },
       ],
     },
   });
   const { mainMuted, subMuted } = _.reduce(mutedUsers, (acc, el) => {
-    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps, app.host))
+    (_.includes([userName, author], el.mutedBy) || _.includes(el.mutedForApps,
+      app.host || config.appHost))
       ? acc.mainMuted.push(el)
       : acc.subMuted.push(el);
     return acc;
