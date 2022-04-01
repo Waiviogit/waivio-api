@@ -10,7 +10,6 @@ const {
   sitesController,
   vipTicketsController,
   hiveController,
-  hiveEngineController,
 } = require('controllers');
 
 const apiRoutes = new Router();
