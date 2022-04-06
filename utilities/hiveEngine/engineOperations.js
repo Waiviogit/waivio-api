@@ -4,6 +4,31 @@ const { CACHE_KEY } = require('constants/common');
 const commentContract = require('./commentContract');
 const tokensContract = require('./tokensContract');
 const marketPools = require('./marketPools');
+const {
+  VOTE_REGENERATION_DAYS,
+  MAX_VOTING_POWER,
+  DOWNVOTE_REGENERATION_DAYS,
+} = require('../../constants/hiveEngine');
+
+exports.calculateMana = (votingPower) => {
+  const timestamp = new Date().getTime();
+  const result = {
+    votingPower: votingPower.votingPower,
+    downvotingPower: votingPower.downvotingPower,
+    lastVoteTimestamp: votingPower.lastVoteTimestamp,
+  };
+
+  result.votingPower += ((timestamp - result.lastVoteTimestamp) * MAX_VOTING_POWER)
+    / (VOTE_REGENERATION_DAYS * 24 * 3600 * 1000);
+  result.votingPower = Math.floor(result.votingPower);
+  result.votingPower = Math.min(result.votingPower, MAX_VOTING_POWER);
+
+  result.downvotingPower += ((timestamp - result.lastVoteTimestamp) * MAX_VOTING_POWER)
+    / (DOWNVOTE_REGENERATION_DAYS * 24 * 3600 * 1000);
+  result.downvotingPower = Math.floor(result.downvotingPower);
+  result.downvotingPower = Math.min(result.downvotingPower, MAX_VOTING_POWER);
+  return result;
+};
 
 exports.calculateHiveEngineVote = async ({
   symbol, account, poolId, weight, dieselPoolId,
@@ -26,7 +51,7 @@ exports.calculateHiveEngineVote = async ({
   }
   const [votingPowers, dieselPools, balances, hiveCurrency] = requests;
   const { stake, delegationsIn } = balances[0];
-  const { votingPower } = votingPowers[0];
+  const { votingPower } = this.calculateMana(votingPowers[0]);
   const { quotePrice } = dieselPools[0];
 
   const finalRshares = parseFloat(stake) + parseFloat(delegationsIn);
