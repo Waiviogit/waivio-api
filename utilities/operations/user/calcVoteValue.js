@@ -1,6 +1,9 @@
 const engineOperations = require('utilities/hiveEngine/engineOperations');
 const hiveOperations = require('utilities/hiveApi/hiveOperations');
+const postUtil = require('utilities/hiveApi/postsUtil');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
+const jsonHelper = require('utilities/helpers/jsonHelper');
+const _ = require('lodash');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -16,10 +19,24 @@ exports.sliderCalc = async ({
       dieselPoolId: TOKEN_WAIV.DIESEL_POOL_ID,
       weight: weight * 100,
     }),
+    postUtil.getPost({ author, permlink }),
   ]);
-  const [hive, waiv] = requests;
 
-  return hive.hiveVotePrice + waiv.engineVotePrice;
+  const [hive, waiv, post] = requests;
+
+  const hasRewards = checkPostForRewards(post);
+
+  return hasRewards
+    ? hive.hiveVotePrice + waiv.engineVotePrice
+    : hive.hiveVotePrice;
+};
+
+const checkPostForRewards = (data) => {
+  if (_.has(data, 'error')) return false;
+  const jsonMetadata = jsonHelper.parseJson(_.get(data, 'post.json_metadata', ''));
+  if (_.isEmpty(jsonMetadata)) return false;
+  return _.some(TOKEN_WAIV.TAGS,
+    (tag) => _.includes(_.get(jsonMetadata, 'tags', []), tag));
 };
 
 exports.userInfoCalc = async ({ userName }) => {
