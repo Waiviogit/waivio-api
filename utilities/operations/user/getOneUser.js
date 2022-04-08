@@ -43,7 +43,7 @@ const getOne = async ({
     }),
   };
 
-  return getUserWithLastActivity(userForResponse);
+  return _.isEmpty(userData) ? userForResponse : getUserWithLastActivity(userForResponse);
 };
 
 const getUserWithLastActivity = (userForResponse) => {
