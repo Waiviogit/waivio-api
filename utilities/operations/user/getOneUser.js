@@ -12,6 +12,7 @@ const getOne = async ({
   let { user, error: dbError } = await User.getOne(name); // get user data from db
 
   if (dbError) return { error: dbError };
+
   if (!user) {
     // If user not exist in DB and STEEM -> return error,
     // else if user exist in steem but not in DB -> invoke import user operation
