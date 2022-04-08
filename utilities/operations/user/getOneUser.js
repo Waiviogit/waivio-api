@@ -36,6 +36,7 @@ const getOne = async ({
       { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: name }] },
   });
 
+  const userDataExist = !_.isEmpty(userData);
   const userForResponse = {
     userData: Object.assign(userData, user, {
       muted: !_.isEmpty(mutedUsers),
@@ -43,20 +44,20 @@ const getOne = async ({
     }),
   };
 
-  return _.isEmpty(userData) ? userForResponse : getUserWithLastActivity(userForResponse);
+  return userDataExist ? getUserWithLastActivity(userForResponse) : userForResponse;
 };
 
 const getUserWithLastActivity = (userForResponse) => {
-  const activityFilds = [userForResponse.userData.last_owner_update,
+  const activityFields = [userForResponse.userData.last_owner_update,
     userForResponse.userData.last_account_update, userForResponse.userData.created,
     userForResponse.userData.last_account_recovery, userForResponse.userData.last_post,
     userForResponse.userData.last_root_post, userForResponse.userData.last_vote_time];
 
   if (userForResponse.userData.delayed_votes.length) {
-    activityFilds.push(...userForResponse.userData.delayed_votes.map((el) => el.time));
+    activityFields.push(...userForResponse.userData.delayed_votes.map((el) => el.time));
   }
 
-  userForResponse.userData.last_activity = activityFilds.reduce((acc, current) =>
+  userForResponse.userData.last_activity = activityFields.reduce((acc, current) =>
     (moment.unix(acc.time) > moment.unix(current.time) ? acc : current));
 
   return userForResponse;
