@@ -57,8 +57,8 @@ const getUserWithLastActivity = (userForResponse) => {
     activityFields.push(...userForResponse.userData.delayed_votes.map((el) => el.time));
   }
 
-  userForResponse.userData.last_activity = activityFields.reduce((acc, current) =>
-    (moment.unix(acc.time) > moment.unix(current.time) ? acc : current));
+  userForResponse.userData.last_activity = activityFields.filter((field) => field !== undefined && field !== null)
+    .reduce((acc, current) => (moment(acc).unix() > moment(current).unix() ? acc : current));
 
   return userForResponse;
 };
