@@ -1,7 +1,10 @@
-const { ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE } = require('constants/common');
+const {
+  ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE,
+} = require('constants/common');
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const zlib = require('zlib');
+const _ = require('lodash');
 
 class Image {
   constructor() {
@@ -48,7 +51,11 @@ class Image {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
     if (buffer.byteLength > 1500000) {
-      return sharp(buffer).resize(1980).withMetadata().toFormat('webp')
+      const image = sharp(buffer);
+      const metadata = await image.metadata();
+
+      const format = _.get(metadata, 'format', 'webp');
+      return sharp(buffer).resize(1980).withMetadata().toFormat(format)
         .toBuffer();
     }
     return buffer;

@@ -5454,6 +5454,9 @@
         },
         "muted": {
           "type": "boolean"
+        },
+        "last_activity": {
+          "type": "string"
         }
       }
     },
