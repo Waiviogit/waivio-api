@@ -58,7 +58,7 @@ const getUserWithLastActivity = (userForResponse) => {
   }
 
   userForResponse.userData.last_activity = activityFields.filter((field) => field !== undefined && field !== null)
-    .reduce((acc, current) => (moment.unix(acc.time) > moment.unix(current.time) ? acc : current));
+    .reduce((acc, current) => (moment(acc).unix() > moment(current).unix() ? acc : current));
 
   return userForResponse;
 };
