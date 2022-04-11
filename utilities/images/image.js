@@ -4,6 +4,7 @@ const {
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const zlib = require('zlib');
+const _ = require('lodash');
 
 class Image {
   constructor() {
@@ -53,7 +54,7 @@ class Image {
       const image = sharp(buffer);
       const metadata = await image.metadata();
 
-      const format = metadata.format || 'webp';
+      const format = _.get(metadata, 'format', 'webp');
       return sharp(buffer).resize(1980).withMetadata().toFormat(format)
         .toBuffer();
     }
