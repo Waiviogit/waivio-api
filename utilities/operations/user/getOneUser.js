@@ -47,7 +47,7 @@ const getOne = async ({
   return userDataExist ? getUserWithLastActivity(userForResponse) : userForResponse;
 };
 
-const getUserWithLastActivity = (userForResponse) => {
+const getUserWithLastActivity = async (userForResponse) => {
   const activityFields = [userForResponse.userData.last_owner_update,
     userForResponse.userData.last_account_update, userForResponse.userData.created,
     userForResponse.userData.last_account_recovery, userForResponse.userData.last_post,
@@ -57,8 +57,18 @@ const getUserWithLastActivity = (userForResponse) => {
     activityFields.push(...userForResponse.userData.delayed_votes.map((el) => el.time));
   }
 
-  userForResponse.userData.last_activity = activityFields.filter((field) => field !== undefined && field !== null)
+  const errorCaseDate = activityFields.filter((field) => field !== undefined && field !== null)
     .reduce((acc, current) => (moment(acc).unix() > moment(current).unix() ? acc : current));
+
+  const { result, error } = await userUtil.getAccountHistory(
+    userForResponse.userData.name,
+    -1,
+    1,
+  );
+
+  userForResponse.userData.last_activity = error
+    ? errorCaseDate
+    : _.get(result, '[0][1].timestamp');
 
   return userForResponse;
 };
