@@ -92,3 +92,17 @@ exports.getDelegationExpirations = async (account, cb = (el) => _.get(el, 'deleg
     return { error };
   }
 };
+
+exports.getAccountHistory = async (name, id, limit) => {
+  try {
+    const result = await client.database.getAccountHistory(
+      name,
+      id,
+      limit,
+    );
+
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
