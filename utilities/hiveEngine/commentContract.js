@@ -1,4 +1,4 @@
-const engineQuery = require('utilities/hiveEngine/engineQuery');
+const { engineProxy } = require('utilities/hiveEngine/engineQuery');
 
 /**
  * fields
@@ -16,7 +16,7 @@ const engineQuery = require('utilities/hiveEngine/engineQuery');
  * active: whether the reward pool is active.
  */
 
-exports.getRewardPools = async ({ query }) => engineQuery({
+exports.getRewardPools = async ({ query }) => engineProxy({
   params: {
     contract: 'comments',
     table: 'rewardPools',
@@ -34,7 +34,7 @@ exports.getRewardPools = async ({ query }) => engineQuery({
  * downvotingPower: downvoting power at last vote timestamp
  */
 
-exports.getVotingPower = async ({ query }) => engineQuery({
+exports.getVotingPower = async ({ query }) => engineProxy({
   params: {
     contract: 'comments',
     table: 'votingPower',
