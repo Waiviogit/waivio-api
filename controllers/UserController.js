@@ -8,6 +8,7 @@ const {
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
+const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 
 const index = async (req, res, next) => {
   const value = validators.validate(
@@ -413,6 +414,14 @@ const getCreationDate = async (req, res, next) => {
   next();
 };
 
+const getLastActivity = async (req, res, next) => {
+  const { lastActivity, error } = await getUserLastActivity(req.params.userName);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { lastActivity } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -441,4 +450,5 @@ module.exports = {
   getCreationDate,
   getEstimatedVote,
   showDelegation,
+  getLastActivity,
 };
