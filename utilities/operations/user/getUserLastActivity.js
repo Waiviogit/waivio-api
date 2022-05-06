@@ -8,8 +8,8 @@ exports.getUserLastActivity = async (name) => {
   const { result, error } = await getAccountHistory(name, -1, 1000);
   if (error) return { error };
 
-  if (!result || _.isEmpty(result)) {
-    return { status: 404, message: `Activity of user ${name} not found!` };
+  if (!result || !result.length) {
+    return { error: { status: 404, message: `Activity of user ${name} not found!` } };
   }
 
   result.reverse();
