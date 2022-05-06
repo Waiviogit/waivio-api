@@ -2,7 +2,6 @@ const { startImportUser } = require('utilities/operations/user/importSteemUserBa
 const { Subscriptions, mutedUserModel, User } = require('models');
 const { userUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
-const moment = require('moment');
 
 const getOne = async ({
   name, with_followings: withFollowings, app, userName,
@@ -36,39 +35,12 @@ const getOne = async ({
       { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: name }] },
   });
 
-  const userDataExist = !_.isEmpty(userData);
   const userForResponse = {
     userData: Object.assign(userData, user, {
       muted: !_.isEmpty(mutedUsers),
       mutedBy: _.reduce(mutedUsers, (acc, el) => (_.includes(el.mutedForApps, _.get(app, 'host')) ? [...acc, el.mutedBy] : acc), []),
     }),
   };
-
-  return userDataExist ? getUserWithLastActivity(userForResponse) : userForResponse;
-};
-
-const getUserWithLastActivity = async (userForResponse) => {
-  const activityFields = [userForResponse.userData.last_owner_update,
-    userForResponse.userData.last_account_update, userForResponse.userData.created,
-    userForResponse.userData.last_account_recovery, userForResponse.userData.last_post,
-    userForResponse.userData.last_root_post, userForResponse.userData.last_vote_time];
-
-  if (userForResponse.userData.delayed_votes.length) {
-    activityFields.push(...userForResponse.userData.delayed_votes.map((el) => el.time));
-  }
-
-  const errorCaseDate = activityFields.filter((field) => field !== undefined && field !== null)
-    .reduce((acc, current) => (moment(acc).unix() > moment(current).unix() ? acc : current));
-
-  const { result, error } = await userUtil.getAccountHistory(
-    userForResponse.userData.name,
-    -1,
-    1,
-  );
-
-  userForResponse.userData.last_activity = error
-    ? errorCaseDate
-    : _.get(result, '[0][1].timestamp');
 
   return userForResponse;
 };
