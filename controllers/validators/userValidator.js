@@ -2,6 +2,7 @@ const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
 const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
 const { customValidationHelper } = require('utilities/helpers');
 const Joi = require('@hapi/joi');
+const moment = require("moment");
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
@@ -218,4 +219,20 @@ exports.putGeo = Joi.object().keys({
   ip: Joi.string().required(),
   longitude: Joi.number().min(-180).max(180).required(),
   latitude: Joi.number().min(-90).max(90).required(),
+});
+
+exports.advancedWalletSchema = Joi.object().keys({
+  accounts: Joi.array().items(Joi.object().keys({
+    name: Joi.string().required(),
+    skip: Joi.number().default(0),
+    operationNum: Joi.number().default(-1),
+  })).single().min(1)
+    .required(),
+  endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
+  startDate: Joi.date().timestamp('unix').default(moment.utc().subtract(10, 'year').toDate()).less(Joi.ref('endDate')),
+  filterAccounts: Joi.array().items(Joi.string()).min(1).required(),
+  limit: Joi.number().default(10),
+  user: Joi.string().default(''),
+  currency: Joi.string()
+    .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
 });
