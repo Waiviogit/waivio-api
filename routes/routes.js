@@ -169,6 +169,7 @@ userRoutes.route('/geo-ip')
   .put(UserController.putUserGeo);
 userRoutes.route('/user/:userName/creation-date')
   .get(UserController.getCreationDate);
+userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActivity);
 // Deprecated. Used for subscribe button for users who liked the post
 // userRoutes.route('/user/:userName/getFollowingsState')
 //   .get(UserController.followingsState);

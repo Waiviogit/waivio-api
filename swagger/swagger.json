@@ -3040,6 +3040,50 @@
         }
       }
     },
+    "/api/user/{userName}/last-activity" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "returns user's last activity date",
+        "description" : "returns timestamp of user's last activity date",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "Origin",
+          "in" : "header",
+          "description" : "Domain of website",
+          "required" : true,
+          "type" : "string"
+        },{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "user name",
+          "required" : true,
+          "type" : "string"
+        }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "lastActivity": {
+                  "type": "string",
+                  "example": "2022-05-05T19:55:33"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "schema": {
+              "example": {
+                "message": "Not Found"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/geo-ip" : {
       "get" : {
         "tags" : [ "user" ],
