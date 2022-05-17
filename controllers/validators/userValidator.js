@@ -219,3 +219,15 @@ exports.putGeo = Joi.object().keys({
   longitude: Joi.number().min(-180).max(180).required(),
   latitude: Joi.number().min(-90).max(90).required(),
 });
+
+exports.guestWallet = Joi.object().keys({
+  account: Joi.string().required(),
+  symbol: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).default(30),
+});
+
+exports.guestBalance = Joi.object().keys({
+  account: Joi.string().required(),
+  symbol: Joi.string().required(),
+});

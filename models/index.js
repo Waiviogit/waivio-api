@@ -23,5 +23,6 @@ moduleExports.blacklistModel = require('./blacklistModel');
 moduleExports.geoIpModel = require('./geoIpModel');
 moduleExports.vipTicketsModel = require('./vipTicketsModel');
 moduleExports.PrefetchModel = require('./prefetchModel');
+moduleExports.GuestWalletModel = require('./GuestWalletModel');
 
 module.exports = moduleExports;

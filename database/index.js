@@ -39,6 +39,7 @@ models.Blacklist = require('./schemas/BlacklistSchema');
 models.GeoIp = require('./schemas/GeoIpSchema');
 models.VipTicket = require('./schemas/VipTicketSchema');
 models.Prefetch = require('./schemas/PrefetchSchema');
+models.GuestWallet = require('./schemas/GuestWalletSchema');
 
 module.exports = {
   Mongoose: mongoose,
