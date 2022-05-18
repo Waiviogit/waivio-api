@@ -3084,6 +3084,117 @@
         }
       }
     },
+    "/user/advanced-report" : {
+      "post": {
+        "tags":  [ "user" ],
+        "summary": "Get all wallet info for user or multiple users",
+        "description": "Return wallet, accounts skip limit properties,deposits, withdrawals and hasMore flag",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accounts": {
+                  "type": "array",
+                  "items": {
+                    "name": {
+                      "type": "string",
+                      "example": "blauser"
+                    },
+                    "skip": {
+                      "type": "number",
+                      "example": "7"
+                    },
+                    "lastId": {
+                      "type": "string",
+                      "example": "rjdehtkj78347623jgnkj"
+                    }
+                  }
+                },
+                "filterAccounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "startDate": {
+                  "type": "number",
+                  "example": 1619816400
+                },
+                "endDate": {
+                  "type": "number",
+                  "example": 1621857636
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "blauser"
+                },
+                "currency": {
+                  "type": "string",
+                  "example": "UAH"
+                },
+                "symbol": {
+                  "type": "string",
+                  "example": "WAIV"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "wallet" : "object",
+                "accounts": {
+                  "type": "array",
+                  "items": {
+                    "name": {
+                      "type": "string",
+                      "example": "blauser"
+                    },
+                    "skip": {
+                      "type": "number",
+                      "example": "7"
+                    },
+                    "lastId": {
+                      "type": "string",
+                      "example": "rjdehtkj78347623jgnkj"
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                },
+                "deposits": {
+                  "type": "number"
+                },
+                "withdrawals": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "message": "symbol must be [WAIV]"
+            }
+          }
+        }
+      }
+    },
     "/api/geo-ip" : {
       "get" : {
         "tags" : [ "user" ],
