@@ -1,176 +1,348 @@
+const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 const moment = require('moment');
-const { ADVANCED_WALLET_TYPES, SAVINGS_TRANSFERS } = require('../../../constants/walletData');
+const {
+  EngineAccountHistory, CurrenciesRate, WalletExemptions, HiveEngineRate,
+} = require('models');
+const BigNumber = require('bignumber.js');
+const { SUPPORTED_CURRENCIES } = require('../../../constants/common');
+const { ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, SWAP_TOKENS } = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
+const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
+const { add } = require('../../helpers/calcHelper');
 
 exports.getWalletAdvancedReport = async ({
-  accounts, startDate, endDate, limit, filterAccounts, user, currency,
+  accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
 }) => {
-  // как-то сделать отфутболивание от аккаунта гость
-  // наверное они мне не нужны
-  // const dynamicProperties = await redisGetter.getHashAll('dynamic_global_properties');
-  // console.log('dynamicProperties', dynamicProperties);
   accounts = await addWalletDataToAccounts({
-    filterAccounts, startDate, accounts, endDate, limit,
+    filterAccounts, startDate, accounts, endDate, limit, symbol,
   });
-  console.log('accounts', accounts);
-  // const usersJointArr = _
-  //   .chain(accounts)
-  //   .reduce((acc, el) => _.concat(acc, el.wallet), [])
-  //   .orderBy(['timestamp'], ['desc'])
-  //   .value();
-  //
-  // const limitedWallet = _.take(usersJointArr, limit);
-  // const { rates } = await getCurrencyRates({
-  //   wallet: limitedWallet, currency, pathTimestamp: 'timestamp', momentCallback: moment.unix,
-  // });
-  //
-  // await getExemptions({ user, wallet: limitedWallet });
-  //
-  // const walletWithHivePrice = await addHivePrice({ wallet: limitedWallet, rates, currency });
-  // const resultWallet = await addCurrencyToOperations({
-  //   walletWithHivePrice, dynamicProperties, rates, currency,
-  // });
-  //
-  // const resAccounts = _.reduce(accounts,
-  //   (acc, el) => (!el.guest
-  //     ? accumulateHiveAcc(limitedWallet, el, acc)
-  //     : accumulateGuestAcc(limitedWallet, el, acc)), []);
-  //
-  // const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
-  //
-  // const hasMore = usersJointArr.length > resultWallet.length
-  //       || _.some(accounts, (acc) => !!acc.hasMore);
-  //
-  // return {
-  //   wallet: resultWallet,
-  //   accounts: resAccounts,
-  //   hasMore,
-  //   ...depositWithdrawals,
-  // };
+
+  const usersJointArr = _
+    .chain(accounts)
+    .reduce((acc, el) => _.concat(acc, el.wallet), [])
+    .orderBy(['timestamp'], ['desc'])
+    .value();
+  const limitedWallet = _.take(usersJointArr, limit);
+
+  const { rates } = await getCurrencyRates({
+    wallet: limitedWallet, currency, pathTimestamp: 'timestamp', momentCallback: moment.unix,
+  });
+
+  await getExemptions({ user, wallet: limitedWallet });
+
+  const walletWithTokenPrice = await addTokenPrice({
+    wallet: limitedWallet, rates, currency, symbol,
+  });
+  const resultWallet = await addCurrencyToOperations({
+    walletWithTokenPrice, rates, currency, symbol,
+  });
+
+  const resAccounts = _.reduce(accounts, (acc, el) => (accumulateAcc({
+    resultArray: limitedWallet,
+    account: el,
+    acc,
+  })), []);
+
+  const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
+  const hasMore = usersJointArr.length > resultWallet.length
+        || _.some(accounts, (acc) => !!acc.hasMore);
+
+  return {
+    wallet: resultWallet,
+    accounts: resAccounts,
+    hasMore,
+    ...depositWithdrawals,
+  };
 };
 
 const addWalletDataToAccounts = async ({
-  accounts, startDate, endDate, limit, filterAccounts,
+  accounts, startDate, endDate, limit, filterAccounts, symbol,
 }) => Promise.all(accounts.map(async (account) => {
-  // if (account.guest) {
-  //   const { histories, hasMore } = await getDemoDebtHistory({
-  //     userName: account.name,
-  //     skip: account.skip,
-  //     tableView: true,
-  //     startDate,
-  //     endDate,
-  //     limit,
-  //   });
-  //
-  //   _.forEach(histories, (el) => {
-  //     el.withdrawDeposit = withdrawDeposit({
-  //       type: el.type, record: el, userName: account.name, filterAccounts,
-  //     });
-  //     el.timestamp = moment(el.createdAt).unix();
-  //     el.guest = true;
-  //   });
-  //
-  //   account.wallet = histories;
-  //   account.hasMore = hasMore;
-  //   return account;
-  // }
   account.wallet = await getWalletData({
-    operationNum: account.operationNum,
     types: ADVANCED_WALLET_TYPES,
     userName: account.name,
     limit: limit + 1,
     tableView: true,
     startDate,
     endDate,
+    symbol,
   });
+  const { result, error } = await EngineAccountHistory.find({
+    condition: constructDbQuery({
+      account: account.name,
+      timestampEnd: moment.utc(endDate).valueOf(),
+      timestampStart: moment.utc(startDate).valueOf(),
+      symbol,
+    }),
+    limit: limit + 1,
+    sort: { timestamp: -1 },
+  });
+  if (error) return { error };
+
+  account.wallet.push(...result);
+  account.wallet.sort((a, b) => b.timestamp - a.timestamp);
+  if (account.lastId) {
+    const updateSkip = account.wallet.indexOf(_.find(account.wallet,
+      (obj) => obj._id.toString() === account.lastId)) + 1;
+    account.wallet = account.wallet.slice(updateSkip, updateSkip + limit);
+  }
+
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
-      type: el.type, record: el, userName: account.name, filterAccounts,
+      type: el.operation, record: el, userName: account.name, filterAccounts,
     });
   });
   account.hasMore = account.wallet.length > limit;
+
   return account;
 }));
 
 const getWalletData = async ({
-  userName, limit, operationNum, types, endDate, startDate, tableView,
+  userName, limit, types, endDate, startDate, tableView, symbol,
 }) => {
-  console.log('userName', userName);
-  console.log('startDate', startDate);
-  console.log('endDate', endDate);
-  console.log('types', types);
-  let result;
-  const batchSize = 1000;
-  let lastId = operationNum || -1;
+  let records = [];
+  const batchSize = 500;
   const walletOperations = [];
   const startDateTimestamp = moment.utc(startDate).valueOf();
   const endDateTimestamp = moment.utc(endDate).valueOf();
-  do {
-    const response = await accountHistory({
-      timestampEnd: endDateTimestamp,
-      timestampStart: startDateTimestamp,
-      symbol: 'WAIV',
-      account: userName,
-      ops: types.toString(),
-      limit,
-    });
-    let breakFlag = false;
-    if (response instanceof Error) return [];
+  const response = await accountHistory({
+    timestampEnd: endDateTimestamp,
+    timestampStart: startDateTimestamp,
+    symbol,
+    account: userName,
+    ops: types.toString(),
+    limit: limit > batchSize ? batchSize : limit,
+  });
+  if (response instanceof Error) return [];
 
-    if (!_.isArray(response.data) || !response.data.length) continue;
+  records = response.data;
+  for (const record of records) {
+    const recordTimestamp = moment.utc(_.get(record, 'timestamp')).valueOf();
+    const condition = tableView
+      ? startDateTimestamp >= recordTimestamp || walletOperations.length === limit
+      : walletOperations.length === limit;
+    if (condition) break;
 
-    result = response.data;
-    console.log('result', result);
-    lastId = _.get(result, '[0][0]');
-    result = _.reverse(result);
-    console.log('result aster reverse', result);
-    for (const record of result) {
-      // if (_.includes(types, _.get(record, '[1].op[0]'))) {
-      const recordTimestamp = moment.utc(_.get(record, 'timestamp')).valueOf();
-      const condition = tableView
-        ? startDateTimestamp >= recordTimestamp || walletOperations.length === limit
-        : walletOperations.length === limit;
-      if (condition) {
-        breakFlag = true;
-        break;
-      }
+    if (tableView && endDateTimestamp < recordTimestamp) continue;
 
-      if (tableView && endDateTimestamp < recordTimestamp) continue;
+    walletOperations.push(record);
+  }
 
-      walletOperations.push(record);
-    }
-    if (lastId === 1 || lastId === 0) breakFlag = true;
-    if (breakFlag) break;
-  } while (walletOperations.length <= limit || batchSize === result.length - 1);
-  console.log('walletOperations', walletOperations);
-  return formatWaivHistory({ walletOperations, tableView, userName });
+  return walletOperations;
 };
 
-const formatWaivHistory = ({ walletOperations, tableView, userName }) => (
-  _.map(walletOperations, (history) => {
-    const omitFromOperation = [
-      'op', 'block', 'op_in_trx', 'trx_in_block', 'virtual_op', 'trx_id', 'deposited', 'from_account', 'to_account',
-    ];
-    const operation = {
-      userName,
-      type: history[1].op[0],
-      timestamp: moment(history[1].timestamp).unix(),
-      operationNum: history[0],
-      ...history[1].op[1],
-    };
-    // if (_.includes(WITHDRAW_FORMAT_TYPES, operation.type)) {
-    //   Object.assign(operation,
-    //     {
-    //       from: operation.from_account,
-    //       to: operation.to_account,
-    //       ...(
-    //         operation.type === HIVE_OPERATIONS_TYPES.FILL_VESTING_WITHDRAW
-    //               && { amount: operation.deposited }
-    //       ),
-    //     });
-    // }
-    if (tableView && _.includes(SAVINGS_TRANSFERS, operation.type)) omitFromOperation.push('amount');
+const withdrawDeposit = ({
+  type, record, filterAccounts, userName,
+}) => {
+  const isMutual = multiAccountFilter({ record, filterAccounts, userName });
+  if (isMutual) return '';
 
-    return _.omit(operation, omitFromOperation);
+  const result = {
+    [WAIV_OPERATIONS_TYPES.MARKET_BUY]: 'd',
+    [WAIV_OPERATIONS_TYPES.MARKET_SELL]: 'w',
+    [WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER]: _.get(record, 'to') === userName ? 'd' : 'w',
+    [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') === userName ? '' : 'd',
+    [WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
+    [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
+    [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
+    [SWAP_TOKENS]: 'w',
+    [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
+    [WAIV_OPERATIONS_TYPES.AIRDROP]: 'd',
+  };
+
+  return result[type] || '';
+};
+
+const constructDbQuery = (params) => ({
+  account: params.account,
+  timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
+  operation: SWAP_TOKENS,
+  symbolIn: params.symbol,
+});
+
+const multiAccountFilter = ({ record, filterAccounts, userName }) => {
+  filterAccounts = _.filter(filterAccounts, (el) => el !== userName);
+
+  if (record.type === WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER || record.type === WAIV_OPERATIONS_TYPES.TOKENS_STAKE) {
+    return record.to === record.from ? true
+      : _.some(filterAccounts, (el) => _.includes([record.to, record.from], el));
+  }
+
+  return false;
+};
+
+const getCurrencyRates = async ({
+  wallet, currency, pathTimestamp, momentCallback,
+}) => {
+  let includeToday = false;
+  const dates = _.uniq(_.map(wallet, (record) => {
+    if (momentCallback(_.get(record, `${pathTimestamp}`)).isSame(Date.now(), 'day')) includeToday = true;
+    return momentCallback(_.get(record, `${pathTimestamp}`)).format('YYYY-MM-DD');
   }));
+
+  const { result = [] } = await CurrenciesRate.find(
+    { dateString: { $in: dates }, base: SUPPORTED_CURRENCIES.USD },
+    { [`rates.${currency}`]: 1, dateString: 1 },
+  );
+
+  if (includeToday) {
+    const { result: latest } = await CurrenciesRate.findOne({
+      condition: { base: SUPPORTED_CURRENCIES.USD },
+      select: { [`rates.${currency}`]: 1 },
+      sort: { dateString: -1 },
+    });
+    if (latest) {
+      latest.dateString = moment().format('YYYY-MM-DD');
+      result.push(latest);
+    }
+  }
+
+  return { rates: result };
+};
+
+const getExemptions = async ({ user, wallet }) => {
+  let exemptions = [];
+  if (user) {
+    const condition = _.reduce(wallet, (acc, record) => {
+      const filter = { userName: user, userWithExemptions: record.account, _id: ObjectId(record._id) };
+      acc.push({ ...filter });
+      return acc;
+    }, []);
+
+    ({ result: exemptions = [] } = await WalletExemptions.find({ $or: condition }));
+  }
+  for (const exemption of exemptions) {
+    const record = _.find(wallet, (rec) => rec._id.toString() === exemption._id.toString());
+    if (record) {
+      record.checked = true;
+    }
+  }
+};
+
+const addTokenPrice = async ({
+  wallet, rates, currency, symbol,
+}) => {
+  if (_.isEmpty(wallet)) return wallet;
+
+  const tokenPriceArr = await getSymbolCurrencyHistory({ walletOperations: wallet, path: 'timestamp', symbol });
+  return _.map(wallet, (record) => {
+    const price = _.find(tokenPriceArr, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
+    record[`${symbol}.USD`] = _.get(price, 'rates.USD', '0');
+    if (!_.isEmpty(rates) && currency !== SUPPORTED_CURRENCIES.USD) {
+      const rate = _.find(rates, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
+      record[`${symbol}.${currency}`] = new BigNumber(record[`${symbol}.USD`]).times(_.get(rate, `rates.${currency}`)).toNumber();
+    }
+
+    return record;
+  });
+};
+
+const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', symbol }) => {
+  let includeToday = false;
+  const orCondition = _
+    .chain(walletOperations)
+    .map((el) => _.get(el, path, null))
+    .uniq()
+    .reduce((acc, el) => {
+      if (moment.unix(el).isSame(Date.now(), 'day')) includeToday = true;
+      acc.push({ dateString: moment.unix(el).format('YYYY-MM-DD') });
+
+      return acc;
+    }, [])
+    .value();
+
+  const { result = [], error } = await HiveEngineRate.find({
+    condition: {
+      type: STATISTIC_RECORD_TYPES.DAILY,
+      base: symbol,
+      $or: orCondition,
+    },
+    projection: { [`rates.${SUPPORTED_CURRENCIES.USD}`]: 1, dateString: 1 },
+  });
+  if (error) return { error };
+
+  if (includeToday) await calculateTodaysRate(result, symbol);
+
+  return result;
+};
+
+const calculateTodaysRate = async (result, symbol) => {
+  const { result: rates, error: dbError } = await HiveEngineRate.find({
+    condition: {
+      type: STATISTIC_RECORD_TYPES.ORDINARY,
+      base: symbol,
+      dateString: moment().format('YYYY-MM-DD'),
+    },
+    projection: { [`rates.${SUPPORTED_CURRENCIES.USD}`]: 1, dateString: 1 },
+  });
+  if (dbError) return { error: dbError };
+
+  if (rates.length) {
+    const rateSum = _.reduce(rates, (acc, curr) => BigNumber(acc).plus(curr.rates.USD)
+      .toFixed(), 0);
+    result.push({
+      dateString: rates[0].dateString,
+      rates: { USD: BigNumber(rateSum).dividedBy(rates.length).toFixed(USD_PRECISION, BigNumber.ROUND_UP) },
+    });
+  }
+};
+
+const addCurrencyToOperations = async ({
+  walletWithTokenPrice, currency, rates, symbol,
+}) => _.map(walletWithTokenPrice, (record) => {
+  const USD = getPriceInUSD(record, symbol);
+  record[currency] = calcWalletRecordRate({
+    USD, rates, timestamp: record.timestamp, currency,
+  });
+
+  return record;
+});
+
+const getPriceInUSD = (record, symbol) => {
+  if (!record.quantity && !record.symbolInQuantity) return 0;
+
+  const quantity = record.quantity ? record.quantity : record.symbolInQuantity;
+
+  return new BigNumber(quantity).times(record[`${symbol}.USD`]).toNumber();
+};
+
+const calcWalletRecordRate = ({
+  USD, timestamp, rates, currency,
+}) => {
+  if (currency === SUPPORTED_CURRENCIES.USD) return USD;
+
+  const dayRateRecord = _.find(rates, (el) => moment.unix(timestamp).isSame(moment(el.dateString), 'day'));
+  const rate = _.get(dayRateRecord, `rates.${currency}`, 0);
+
+  return new BigNumber(USD).times(rate).toNumber();
+};
+
+const accumulateAcc = ({ resultArray, account, acc }) => {
+  const lastId = _.get(_.last(account.wallet), 'lastId', '');
+  const filterWallet = _.filter(account.wallet,
+    (record) => !_.some(resultArray, (result) => _.isEqual(result, record)));
+  if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
+
+  account.lastId = _.isEmpty(filterWallet)
+    ? lastId
+    : _.get(filterWallet, '[0]._id');
+  acc.push(_.omit(account, ['wallet', 'hasMore']));
+
+  return acc;
+};
+
+const calcDepositWithdrawals = ({ operations, field }) => _
+  .reduce(operations, (acc, el) => {
+    if (_.get(el, 'checked')) return acc;
+
+    switch (_.get(el, 'withdrawDeposit')) {
+      case 'w':
+        acc.withdrawals = add(acc.withdrawals, el[field]);
+        break;
+      case 'd':
+        acc.deposits = add(acc.deposits, el[field]);
+        break;
+    }
+    return acc;
+  }, { deposits: 0, withdrawals: 0 });

@@ -424,11 +424,8 @@ const getLastActivity = async (req, res, next) => {
 };
 
 const getAdvancedReport = async (req, res, next) => {
-  console.log('here');
   const value = validators.validate({ ...req.body },
     validators.user.advancedWalletSchema, next);
-  // почему парамс андефайнд?!
-  console.log('value', value);
   if (!value) return;
 
   const result = await getWalletAdvancedReport(value);

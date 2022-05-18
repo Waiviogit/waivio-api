@@ -2,7 +2,8 @@ const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
 const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
 const { customValidationHelper } = require('utilities/helpers');
 const Joi = require('@hapi/joi');
-const moment = require("moment");
+const moment = require('moment');
+const { SUPPORTED_CRYPTO_CURRENCIES } = require('../../constants/currencyData');
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
@@ -225,7 +226,7 @@ exports.advancedWalletSchema = Joi.object().keys({
   accounts: Joi.array().items(Joi.object().keys({
     name: Joi.string().required(),
     skip: Joi.number().default(0),
-    operationNum: Joi.number().default(-1),
+    lastId: Joi.string().default(''),
   })).single().min(1)
     .required(),
   endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
@@ -235,4 +236,5 @@ exports.advancedWalletSchema = Joi.object().keys({
   user: Joi.string().default(''),
   currency: Joi.string()
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
+  symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
 });
