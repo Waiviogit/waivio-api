@@ -225,7 +225,6 @@ exports.putGeo = Joi.object().keys({
 exports.advancedWalletSchema = Joi.object().keys({
   accounts: Joi.array().items(Joi.object().keys({
     name: Joi.string().required(),
-    skip: Joi.number().default(0),
     lastId: Joi.string().default(''),
   })).single().min(1)
     .required(),

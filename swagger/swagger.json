@@ -3107,10 +3107,6 @@
                       "type": "string",
                       "example": "blauser"
                     },
-                    "skip": {
-                      "type": "number",
-                      "example": "7"
-                    },
                     "lastId": {
                       "type": "string",
                       "example": "rjdehtkj78347623jgnkj"
@@ -3163,10 +3159,6 @@
                     "name": {
                       "type": "string",
                       "example": "blauser"
-                    },
-                    "skip": {
-                      "type": "number",
-                      "example": "7"
                     },
                     "lastId": {
                       "type": "string",

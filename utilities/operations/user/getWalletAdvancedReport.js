@@ -17,11 +17,12 @@ exports.getWalletAdvancedReport = async ({
   accounts = await addWalletDataToAccounts({
     filterAccounts, startDate, accounts, endDate, limit, symbol,
   });
+  if (accounts[0] instanceof Error) return { error: accounts[0] };
 
   const usersJointArr = _
     .chain(accounts)
     .reduce((acc, el) => _.concat(acc, el.wallet), [])
-    .orderBy(['timestamp'], ['desc'])
+    .orderBy(['timestamp', '_id'], ['desc', 'desc'])
     .value();
   const limitedWallet = _.take(usersJointArr, limit);
 
@@ -34,6 +35,8 @@ exports.getWalletAdvancedReport = async ({
   const walletWithTokenPrice = await addTokenPrice({
     wallet: limitedWallet, rates, currency, symbol,
   });
+  if (walletWithTokenPrice instanceof Error) return { error: walletWithTokenPrice };
+
   const resultWallet = await addCurrencyToOperations({
     walletWithTokenPrice, rates, currency, symbol,
   });
@@ -49,25 +52,28 @@ exports.getWalletAdvancedReport = async ({
         || _.some(accounts, (acc) => !!acc.hasMore);
 
   return {
-    wallet: resultWallet,
-    accounts: resAccounts,
-    hasMore,
-    ...depositWithdrawals,
+    result: {
+      wallet: resultWallet,
+      accounts: resAccounts,
+      hasMore,
+      ...depositWithdrawals,
+    },
   };
 };
 
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol,
 }) => Promise.all(accounts.map(async (account) => {
-  account.wallet = await getWalletData({
+  const wallet = await getWalletData({
     types: ADVANCED_WALLET_TYPES,
     userName: account.name,
     limit: limit + 1,
-    tableView: true,
     startDate,
     endDate,
     symbol,
   });
+  if (wallet instanceof Error) return account.wallet;
+
   const { result, error } = await EngineAccountHistory.find({
     condition: constructDbQuery({
       account: account.name,
@@ -78,10 +84,9 @@ const addWalletDataToAccounts = async ({
     limit: limit + 1,
     sort: { timestamp: -1 },
   });
-  if (error) return { error };
+  if (error) return error;
 
-  account.wallet.push(...result);
-  account.wallet.sort((a, b) => b.timestamp - a.timestamp);
+  account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
   if (account.lastId) {
     const updateSkip = account.wallet.indexOf(_.find(account.wallet,
       (obj) => obj._id.toString() === account.lastId)) + 1;
@@ -90,7 +95,7 @@ const addWalletDataToAccounts = async ({
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
-      type: el.operation, record: el, userName: account.name, filterAccounts,
+      type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
     });
   });
   account.hasMore = account.wallet.length > limit;
@@ -99,7 +104,7 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, limit, types, endDate, startDate, tableView, symbol,
+  userName, limit, types, endDate, startDate, symbol,
 }) => {
   let records = [];
   const batchSize = 500;
@@ -114,17 +119,15 @@ const getWalletData = async ({
     ops: types.toString(),
     limit: limit > batchSize ? batchSize : limit,
   });
-  if (response instanceof Error) return [];
+  if (response instanceof Error) return response;
 
   records = response.data;
   for (const record of records) {
     const recordTimestamp = moment.utc(_.get(record, 'timestamp')).valueOf();
-    const condition = tableView
-      ? startDateTimestamp >= recordTimestamp || walletOperations.length === limit
-      : walletOperations.length === limit;
+    const condition = startDateTimestamp >= recordTimestamp || walletOperations.length === limit;
     if (condition) break;
 
-    if (tableView && endDateTimestamp < recordTimestamp) continue;
+    if (endDateTimestamp < recordTimestamp) continue;
 
     walletOperations.push(record);
   }
@@ -133,7 +136,7 @@ const getWalletData = async ({
 };
 
 const withdrawDeposit = ({
-  type, record, filterAccounts, userName,
+  type, record, filterAccounts, userName, symbol,
 }) => {
   const isMutual = multiAccountFilter({ record, filterAccounts, userName });
   if (isMutual) return '';
@@ -146,7 +149,7 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
-    [SWAP_TOKENS]: 'w',
+    [SWAP_TOKENS]: _.get(record, 'symbolIn') === symbol ? 'w' : '',
     [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
     [WAIV_OPERATIONS_TYPES.AIRDROP]: 'd',
   };
@@ -158,7 +161,7 @@ const constructDbQuery = (params) => ({
   account: params.account,
   timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
   operation: SWAP_TOKENS,
-  symbolIn: params.symbol,
+  $or: [{ symbolIn: params.symbol }, { symbolOut: params.symbol }],
 });
 
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
@@ -226,6 +229,8 @@ const addTokenPrice = async ({
   if (_.isEmpty(wallet)) return wallet;
 
   const tokenPriceArr = await getSymbolCurrencyHistory({ walletOperations: wallet, path: 'timestamp', symbol });
+  if (tokenPriceArr instanceof Error) return tokenPriceArr;
+
   return _.map(wallet, (record) => {
     const price = _.find(tokenPriceArr, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
     record[`${symbol}.USD`] = _.get(price, 'rates.USD', '0');
@@ -260,15 +265,20 @@ const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', 
     },
     projection: { [`rates.${SUPPORTED_CURRENCIES.USD}`]: 1, dateString: 1 },
   });
-  if (error) return { error };
+  if (error) return error;
 
-  if (includeToday) await calculateTodaysRate(result, symbol);
+  if (includeToday) {
+    const object = await calculateTodaysRate(result, symbol);
+    if (object instanceof Error) return object;
+
+    result.push(object);
+  }
 
   return result;
 };
 
 const calculateTodaysRate = async (result, symbol) => {
-  const { result: rates, error: dbError } = await HiveEngineRate.find({
+  const { result: rates, error } = await HiveEngineRate.find({
     condition: {
       type: STATISTIC_RECORD_TYPES.ORDINARY,
       base: symbol,
@@ -276,15 +286,15 @@ const calculateTodaysRate = async (result, symbol) => {
     },
     projection: { [`rates.${SUPPORTED_CURRENCIES.USD}`]: 1, dateString: 1 },
   });
-  if (dbError) return { error: dbError };
+  if (error) return error;
 
   if (rates.length) {
-    const rateSum = _.reduce(rates, (acc, curr) => BigNumber(acc).plus(curr.rates.USD)
-      .toFixed(), 0);
-    result.push({
+    const rateSum = _.reduce(rates, (acc, curr) => (acc).plus(curr.rates.USD), new BigNumber(0));
+
+    return {
       dateString: rates[0].dateString,
-      rates: { USD: BigNumber(rateSum).dividedBy(rates.length).toFixed(USD_PRECISION, BigNumber.ROUND_UP) },
-    });
+      rates: { USD: Number((rateSum).dividedBy(rates.length).toFixed(USD_PRECISION, BigNumber.ROUND_UP)) },
+    };
   }
 };
 
@@ -302,7 +312,12 @@ const addCurrencyToOperations = async ({
 const getPriceInUSD = (record, symbol) => {
   if (!record.quantity && !record.symbolInQuantity) return 0;
 
-  const quantity = record.quantity ? record.quantity : record.symbolInQuantity;
+  let quantity;
+  if (record.quantity) {
+    quantity = record.quantity;
+  } else if (record.symbolInQuantity) {
+    quantity = record.symbolIn === symbol ? record.symbolInQuantity : record.symbolOutQuantity;
+  }
 
   return new BigNumber(quantity).times(record[`${symbol}.USD`]).toNumber();
 };
