@@ -237,3 +237,15 @@ exports.advancedWalletSchema = Joi.object().keys({
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
 });
+
+exports.guestWallet = Joi.object().keys({
+  account: Joi.string().required(),
+  symbol: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).default(30),
+});
+
+exports.guestBalance = Joi.object().keys({
+  account: Joi.string().required(),
+  symbol: Joi.string().required(),
+});

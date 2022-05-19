@@ -4,6 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
+  guestWalletOperations,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -435,6 +436,29 @@ const getAdvancedReport = async (req, res, next) => {
   next();
 };
 
+const getGuestWallet = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query, ...req.params }, validators.user.guestWallet, next,
+  );
+  if (!value) return;
+  const { result, error } = await guestWalletOperations.getWallet(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getGuestBalance = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.query, ...req.params }, validators.user.guestBalance, next,
+  );
+  if (!value) return;
+  const { result, error } = await guestWalletOperations.getBalance(value);
+
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -465,4 +489,6 @@ module.exports = {
   showDelegation,
   getLastActivity,
   getAdvancedReport,
+  getGuestWallet,
+  getGuestBalance,
 };

@@ -27,5 +27,6 @@ moduleExports.EngineAccountHistory = require('./EngineAccountHistoryModel');
 moduleExports.CurrenciesRate = require('./CurrenciesRateModel');
 moduleExports.WalletExemptions = require('./WalletExemptionsModel');
 moduleExports.HiveEngineRate = require('./HiveEngineRateModel');
+moduleExports.GuestWalletModel = require('./GuestWalletModel');
 
 module.exports = moduleExports;
