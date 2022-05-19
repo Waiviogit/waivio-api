@@ -292,7 +292,7 @@ const getWobjectsByRequiredObject = async (req, res, next) => {
 const checkIfObjectExists = async (req, res, next) => {
   const value = validators.validate({
     authorPermlink: req.params.authorPermlink,
-  }, validators.wobject.objectExistsScheme, next);
+  }, validators.wobject.authorPermlinkScheme, next);
   if (!value) return;
 
   const { exist, error } = await checkIfWobjectExists(value);
@@ -300,6 +300,14 @@ const checkIfObjectExists = async (req, res, next) => {
 
   res.result = { status: 200, json: { exist } };
   next();
+};
+
+const getFields = async (req, res, next) => {
+  const value = validators.validate({ authorPermlink: req.params.authorPermlink },
+    validators.wobject.authorPermlinkScheme, next);
+  if (!value) return;
+
+
 };
 
 module.exports = {
@@ -321,4 +329,5 @@ module.exports = {
   getMapObjectLastPost,
   getWobjectsByRequiredObject,
   checkIfObjectExists,
+  getFields,
 };

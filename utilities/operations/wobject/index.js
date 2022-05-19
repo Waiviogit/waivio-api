@@ -13,5 +13,6 @@ moduleExports.getRelated = require('./getRelated');
 moduleExports.getChildren = require('./getChildren');
 moduleExports.objectsOnMap = require('./objectsOnMap');
 moduleExports.campaignOps = require('./campaignOps');
+moduleExports.getFields = require('./getFields');
 
 module.exports = moduleExports;
