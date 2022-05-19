@@ -2110,6 +2110,89 @@
         }
       }
     },
+    "/api/user/{userName}/guest-wallet" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get guest user wallet",
+        "description" : "Return wallet history",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "symbol",
+          "in" : "query",
+          "description" : "wallet symbol example WAIV",
+          "required" : true,
+          "type" : "string"
+        }, {
+            "name" : "skip",
+            "in" : "query",
+            "required" : false,
+            "type" : "number"
+          },
+          {
+            "name" : "limit",
+            "in" : "query",
+            "required" : false,
+            "type" : "number"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "history" : {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/guest_wallet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/guest-balance" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get guest user wallet",
+        "description" : "Return wallet history",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "symbol",
+          "in" : "query",
+          "description" : "wallet symbol example WAIV",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "symbol" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{username}/setState" : {
       "get" : {
         "tags" : [ "user" ],
@@ -5566,6 +5649,44 @@
           "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
           "approvePercent": 100,
           "createdAt": 1557088930000
+        }
+      }
+    },
+    "guest_wallet": {
+      "type": "object",
+      "properties": {
+        "refHiveBlockNumber": {
+          "type": "number"
+        },
+        "blockNumber": {
+          "type": "number"
+        },
+        "account": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "authorperm": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
         }
       }
     },

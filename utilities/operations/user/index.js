@@ -20,5 +20,6 @@ moduleExports.setMarkers = require('./setMarkers');
 moduleExports.getOneUser = require('./getOneUser');
 moduleExports.geoData = require('./geoData');
 moduleExports.getBlog = require('./getBlog');
+moduleExports.guestWalletOperations = require('./guestWalletOperations');
 
 module.exports = moduleExports;

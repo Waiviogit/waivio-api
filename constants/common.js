@@ -147,3 +147,8 @@ exports.PROXY_HIVE_IMAGES = 'https://images.hive.blog/0x0/';
 exports.NOT_FOUND_IMAGE_URL = 'https://waivio.nyc3.digitaloceanspaces.com/ImageNotFound';
 
 exports.WAIVIO_ADMINS = 'waivio_admins';
+
+exports.GUEST_WALLET_TYPE = Object.freeze({
+  AUTHOR_REWARD: 'comments_authorReward',
+  TRANSFER: 'tokens_transfer',
+});

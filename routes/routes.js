@@ -171,6 +171,9 @@ userRoutes.route('/user/:userName/creation-date')
   .get(UserController.getCreationDate);
 userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActivity);
 userRoutes.route('/user/advanced-report').post(UserController.getAdvancedReport);
+userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWallet);
+userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
+
 // Deprecated. Used for subscribe button for users who liked the post
 // userRoutes.route('/user/:userName/getFollowingsState')
 //   .get(UserController.followingsState);
