@@ -4217,7 +4217,7 @@
           }
         }
       }
-    },,
+    },
     "/api/post/{author}/{permlink}" : {
       "get" : {
         "tags" : [ "post" ],
