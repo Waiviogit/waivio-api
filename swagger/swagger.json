@@ -3672,31 +3672,16 @@
       }
     },
     "/api/wobject/{authorPermlink}/fields" : {
-      "post" : {
-        "deprecated": true,
+      "get" : {
         "tags" : [ "wobject" ],
-        "summary" : "Return all fields for spicified wobject",
+        "summary" : "Returns all fields for spicified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "app",
-          "in" : "header",
-          "description" : "Specify app to enable waivio-wobject moderation",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "params",
-          "description" : "**fields_names** - **array** of fields names to return,\n**custom_fields** - custom keys in fields to search and return\n",
-          "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/params_9"
-          }
         } ],
         "responses" : {
           "200" : {
@@ -3704,7 +3689,7 @@
             "schema" : {
               "type" : "array",
               "items" : {
-                "$ref" : "#/definitions/inline_response_200_14"
+                "$ref" : "#/definitions/wobjField"
               }
             }
           }
@@ -4232,7 +4217,7 @@
           }
         }
       }
-    },
+    },,
     "/api/post/{author}/{permlink}" : {
       "get" : {
         "tags" : [ "post" ],

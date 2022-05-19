@@ -118,7 +118,7 @@ wobjRoutes.route('/wobjects/campaign/required-object')
 wobjRoutes.route('/wobject/:authorPermlink/exist')
   .get(WobjController.checkIfObjectExists);
 wobjRoutes.route('/wobject/:authorPermlink/fields')
-  .get(WobjController.getFields);
+  .get(WobjController.getWobjectUpdates);
 // endregion
 // region User
 userRoutes.route('/users')
