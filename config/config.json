@@ -18,6 +18,11 @@
       "tagCategories": 9,
       "processedPost": 8
     },
+    "currenciesDB": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "Currencies"
+    },
     "swaggerHost": "www.waivio.com",
     "appHost": "waivio.com"
   },
@@ -40,6 +45,11 @@
       "appDayUsers": 11,
       "tagCategories": 9,
       "processedPost": 8
+    },
+    "currenciesDB": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "Currencies"
     },
     "swaggerHost": "waiviodev.com",
     "appHost": "waiviodev.com"
@@ -64,6 +74,11 @@
       "tagCategories": 9,
       "processedPost": 8
     },
+    "currenciesDB": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "Currencies"
+    },
     "swaggerHost": "localhost:3000",
     "appHost": "waiviodev.com"
   },
@@ -85,6 +100,11 @@
       "appDayUsers": 7,
       "tagCategories": 7,
       "processedPost": 7
+    },
+    "currenciesDB": {
+      "host": "localhost",
+      "port": 27017,
+      "database": "waiviotest"
     },
     "swaggerHost": "localhost:3000",
     "appHost": "localhost:3000"
