@@ -17,7 +17,8 @@ exports.getWalletAdvancedReport = async ({
   accounts = await addWalletDataToAccounts({
     filterAccounts, startDate, accounts, endDate, limit, symbol,
   });
-  if (accounts[0] instanceof Error) return { error: accounts[0] };
+  const error = _.find(accounts, (account) => account.error);
+  if (error) return { error };
 
   const usersJointArr = _
     .chain(accounts)
@@ -32,10 +33,10 @@ exports.getWalletAdvancedReport = async ({
 
   await getExemptions({ user, wallet: limitedWallet });
 
-  const walletWithTokenPrice = await addTokenPrice({
+  const { walletWithTokenPrice, error: dbError } = await addTokenPrice({
     wallet: limitedWallet, rates, currency, symbol,
   });
-  if (walletWithTokenPrice instanceof Error) return { error: walletWithTokenPrice };
+  if (error) return { error: dbError };
 
   const resultWallet = await addCurrencyToOperations({
     walletWithTokenPrice, rates, currency, symbol,
@@ -64,17 +65,16 @@ exports.getWalletAdvancedReport = async ({
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol,
 }) => Promise.all(accounts.map(async (account) => {
-  const wallet = await getWalletData({
+  const { wallet, error } = await getWalletData({
     types: ADVANCED_WALLET_TYPES,
     userName: account.name,
-    limit: limit + 1,
     startDate,
     endDate,
     symbol,
   });
-  if (wallet instanceof Error) return account.wallet;
+  if (error) return { error };
 
-  const { result, error } = await EngineAccountHistory.find({
+  const { result, error: dbError } = await EngineAccountHistory.find({
     condition: constructDbQuery({
       account: account.name,
       timestampEnd: moment.utc(endDate).valueOf(),
@@ -84,7 +84,7 @@ const addWalletDataToAccounts = async ({
     limit: limit + 1,
     sort: { timestamp: -1 },
   });
-  if (error) return error;
+  if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
   if (account.lastId) {
@@ -104,35 +104,25 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, limit, types, endDate, startDate, symbol,
+  userName, types, endDate, startDate, symbol,
 }) => {
-  let records = [];
-  const batchSize = 500;
+  const batchSize = 1000;
   const walletOperations = [];
   const startDateTimestamp = moment.utc(startDate).valueOf();
   const endDateTimestamp = moment.utc(endDate).valueOf();
-  const response = await accountHistory({
+  const { response, error } = await accountHistory({
     timestampEnd: endDateTimestamp,
     timestampStart: startDateTimestamp,
     symbol,
     account: userName,
     ops: types.toString(),
-    limit: limit > batchSize ? batchSize : limit,
+    limit: batchSize,
   });
-  if (response instanceof Error) return response;
+  if (error) return { error };
 
-  records = response.data;
-  for (const record of records) {
-    const recordTimestamp = moment.utc(_.get(record, 'timestamp')).valueOf();
-    const condition = startDateTimestamp >= recordTimestamp || walletOperations.length === limit;
-    if (condition) break;
+  walletOperations.push(...response.data);
 
-    if (endDateTimestamp < recordTimestamp) continue;
-
-    walletOperations.push(record);
-  }
-
-  return walletOperations;
+  return { wallet: walletOperations };
 };
 
 const withdrawDeposit = ({
@@ -228,19 +218,21 @@ const addTokenPrice = async ({
 }) => {
   if (_.isEmpty(wallet)) return wallet;
 
-  const tokenPriceArr = await getSymbolCurrencyHistory({ walletOperations: wallet, path: 'timestamp', symbol });
-  if (tokenPriceArr instanceof Error) return tokenPriceArr;
+  const { tokenPriceArr, error } = await getSymbolCurrencyHistory({ walletOperations: wallet, path: 'timestamp', symbol });
+  if (error) return { error };
 
-  return _.map(wallet, (record) => {
-    const price = _.find(tokenPriceArr, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
-    record[`${symbol}.USD`] = _.get(price, 'rates.USD', '0');
-    if (!_.isEmpty(rates) && currency !== SUPPORTED_CURRENCIES.USD) {
-      const rate = _.find(rates, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
-      record[`${symbol}.${currency}`] = new BigNumber(record[`${symbol}.USD`]).times(_.get(rate, `rates.${currency}`)).toNumber();
-    }
+  return {
+    walletWithTokenPrice: _.map(wallet, (record) => {
+      const price = _.find(tokenPriceArr, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
+      record[`${symbol}.USD`] = _.get(price, 'rates.USD', '0');
+      if (!_.isEmpty(rates) && currency !== SUPPORTED_CURRENCIES.USD) {
+        const rate = _.find(rates, (el) => moment(el.dateString).isSame(moment.unix(record.timestamp).format('YYYY-MM-DD')));
+        record[`${symbol}.${currency}`] = new BigNumber(record[`${symbol}.USD`]).times(_.get(rate, `rates.${currency}`)).toNumber();
+      }
 
-    return record;
-  });
+      return record;
+    }),
+  };
 };
 
 const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', symbol }) => {
@@ -265,7 +257,7 @@ const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', 
     },
     projection: { [`rates.${SUPPORTED_CURRENCIES.USD}`]: 1, dateString: 1 },
   });
-  if (error) return error;
+  if (error) return { error };
 
   if (includeToday) {
     const object = await calculateTodaysRate(result, symbol);
@@ -274,7 +266,7 @@ const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', 
     result.push(object);
   }
 
-  return result;
+  return { tokenPriceArr: result };
 };
 
 const calculateTodaysRate = async (result, symbol) => {
@@ -312,14 +304,11 @@ const addCurrencyToOperations = async ({
 const getPriceInUSD = (record, symbol) => {
   if (!record.quantity && !record.symbolInQuantity) return 0;
 
-  let quantity;
-  if (record.quantity) {
-    quantity = record.quantity;
-  } else if (record.symbolInQuantity) {
-    quantity = record.symbolIn === symbol ? record.symbolInQuantity : record.symbolOutQuantity;
+  if (!record.quantity) {
+    record.quantity = record.symbolIn === symbol ? record.symbolInQuantity : record.symbolOutQuantity;
   }
 
-  return new BigNumber(quantity).times(record[`${symbol}.USD`]).toNumber();
+  return new BigNumber(record.quantity).times(record[`${symbol}.USD`]).toNumber();
 };
 
 const calcWalletRecordRate = ({

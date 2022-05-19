@@ -431,7 +431,7 @@ const getAdvancedReport = async (req, res, next) => {
   const { result, error } = await getWalletAdvancedReport(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
+  res.result = { status: 200, json: result };
   next();
 };
 
