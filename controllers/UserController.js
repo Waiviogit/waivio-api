@@ -10,6 +10,7 @@ const { users: { searchUsers: searchByUsers } } = require('utilities/operations/
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
+const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 
 const index = async (req, res, next) => {
   const value = validators.validate(
@@ -423,6 +424,18 @@ const getLastActivity = async (req, res, next) => {
   next();
 };
 
+const getAdvancedReport = async (req, res, next) => {
+  const value = validators.validate({ ...req.body },
+    validators.user.advancedWalletSchema, next);
+  if (!value) return;
+
+  const { result, error } = await getWalletAdvancedReport(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getGuestWallet = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query, ...req.params }, validators.user.guestWallet, next,
@@ -475,6 +488,7 @@ module.exports = {
   getEstimatedVote,
   showDelegation,
   getLastActivity,
+  getAdvancedReport,
   getGuestWallet,
   getGuestBalance,
 };
