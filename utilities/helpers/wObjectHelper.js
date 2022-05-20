@@ -278,7 +278,7 @@ const getParentInfo = async ({
   return parent;
 };
 
-const fillObjectByHiveData = async (obj, exposedFields) => {
+const fillObjectByExposedFields = async (obj, exposedFields) => {
   const { result } = await postsUtil.getPostState(
     { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
   );
@@ -422,7 +422,6 @@ const processWobjects = async ({
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-      obj = await fillObjectByHiveData(obj, exposedFields);
     }
 
     obj.fields = addDataToFields({
@@ -485,4 +484,5 @@ module.exports = {
   getCurrentNames,
   processWobjects,
   getParentInfo,
+  fillObjectByExposedFields,
 };

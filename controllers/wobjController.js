@@ -7,6 +7,7 @@ const {
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
+const { getFields } = require('../utilities/operations/wobject/getFields');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -292,13 +293,25 @@ const getWobjectsByRequiredObject = async (req, res, next) => {
 const checkIfObjectExists = async (req, res, next) => {
   const value = validators.validate({
     authorPermlink: req.params.authorPermlink,
-  }, validators.wobject.objectExistsScheme, next);
+  }, validators.wobject.authorPermlinkScheme, next);
   if (!value) return;
 
   const { exist, error } = await checkIfWobjectExists(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: { exist } };
+  next();
+};
+
+const getWobjectUpdates = async (req, res, next) => {
+  const value = validators.validate({ authorPermlink: req.params.authorPermlink },
+    validators.wobject.authorPermlinkScheme, next);
+  if (!value) return;
+
+  const { fields, error } = await getFields(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: fields };
   next();
 };
 
@@ -321,4 +334,5 @@ module.exports = {
   getMapObjectLastPost,
   getWobjectsByRequiredObject,
   checkIfObjectExists,
+  getWobjectUpdates,
 };
