@@ -193,6 +193,6 @@ exports.byRequiredWobjectScheme = Joi.object().keys({
   requiredObject: Joi.string().required(),
 });
 
-exports.objectExistsScheme = Joi.object().keys({
+exports.authorPermlinkScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
