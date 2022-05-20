@@ -3101,15 +3101,18 @@
               "type": "object",
               "properties": {
                 "accounts": {
-                  "type": "array",
+                  "type" : "array",
                   "items": {
-                    "name": {
-                      "type": "string",
-                      "example": "blauser"
-                    },
-                    "lastId": {
-                      "type": "string",
-                      "example": "rjdehtkj78347623jgnkj"
+                    "type":"object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "blauser"
+                      },
+                      "lastId": {
+                        "type": "string",
+                        "example": "627d9aa9a72924295ebcff0e"
+                      }
                     }
                   }
                 },
@@ -3152,17 +3155,25 @@
             "schema": {
               "type": "object",
               "properties": {
-                "wallet" : "object",
+                "wallet" : {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
                 "accounts": {
                   "type": "array",
                   "items": {
-                    "name": {
-                      "type": "string",
-                      "example": "blauser"
-                    },
-                    "lastId": {
-                      "type": "string",
-                      "example": "rjdehtkj78347623jgnkj"
+                    "type":"object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "blauser"
+                      },
+                      "lastId": {
+                        "type": "string",
+                        "example": "627d9aa9a72924295ebcff0e"
+                      }
                     }
                   }
                 },
