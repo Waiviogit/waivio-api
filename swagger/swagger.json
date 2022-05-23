@@ -3167,7 +3167,7 @@
         }
       }
     },
-    "/user/advanced-report" : {
+    "/api/user/advanced-report" : {
       "post": {
         "tags":  [ "user" ],
         "summary": "Get all wallet info for user or multiple users",
@@ -3202,7 +3202,8 @@
                 "filterAccounts": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "type": "string",
+                    "example": "blauser"
                   }
                 },
                 "startDate": {
