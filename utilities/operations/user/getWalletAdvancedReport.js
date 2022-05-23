@@ -108,11 +108,9 @@ const getWalletData = async ({
 }) => {
   const batchSize = 1000;
   const walletOperations = [];
-  const startDateTimestamp = moment.utc(startDate).valueOf();
-  const endDateTimestamp = moment.utc(endDate).valueOf();
   const { response, error } = await accountHistory({
-    timestampEnd: endDateTimestamp,
-    timestampStart: startDateTimestamp,
+    timestampEnd: moment(endDate).unix(),
+    timestampStart: moment(startDate).unix(),
     symbol,
     account: userName,
     ops: types.toString(),
