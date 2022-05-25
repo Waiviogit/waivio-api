@@ -3786,23 +3786,57 @@
               "items" : {
                 "type" : "object",
                 "properties" : {
-                  "weight": { "type":  "number" },
-                  "locale": { "type":  "string" },
-                  "_id": { "type":  "string" },
-                  "creator": { "type":  "string" },
-                  "author": { "type":  "string" },
-                  "permlink": { "type":  "string" },
-                  "name": { "type":  "string" },
-                  "body": { "type":  "number" },
-                  "active_votes": { "type":  "array" },
-                  "children": { "type":  "number" },
-                  "total_payout_value": { "type":  "string" },
-                  "pending_payout_value": { "type":  "string" },
-                  "curator_payout_value": { "type":  "string" },
-                  "cashout_time": { "type":  "string" },
-                  "fullBody": { "type":  "string" },
-                  "approvePercent": { "type":  "number" },
-                  "createdAt": { "type":  "number" }
+                  "weight": {
+                    "type":  "number"
+                  },
+                  "locale": {
+                    "type":  "string"
+                  },
+                  "_id": {
+                    "type":  "string"
+                  },
+                  "creator": {
+                    "type":  "string"
+                  },
+                  "author": {
+                    "type":  "string"
+                  },
+                  "permlink": {
+                    "type":  "string"
+                  },
+                  "name": {
+                    "type":  "string"
+                  },
+                  "body": {
+                    "type":  "number"
+                  },
+                  "active_votes": {
+                    "type":  "array"
+                  },
+                  "children": {
+                    "type":  "number"
+                  },
+                  "total_payout_value": {
+                    "type":  "string"
+                  },
+                  "pending_payout_value": {
+                    "type":  "string"
+                  },
+                  "curator_payout_value": {
+                    "type":  "string"
+                  },
+                  "cashout_time": {
+                    "type":  "string"
+                  },
+                  "fullBody": {
+                    "type":  "string"
+                  },
+                  "approvePercent": {
+                    "type":  "number"
+                  },
+                  "createdAt": {
+                    "type":  "number"
+                  }
                 }
               }
             }
@@ -5632,6 +5666,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "updatesCount": {
+          "type": "number",
+          "example":  21
         }
       }
     },
