@@ -188,6 +188,7 @@ const getCurrencyRates = async ({
       result.push(latest);
     }
   }
+  console.log('result of currencies rate', result);
 
   return { rates: result };
 };
@@ -263,6 +264,7 @@ const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', 
 
     if (object) result.push(object);
   }
+  console.log('result of hive engine rates', result);
 
   return { tokenPriceArr: result };
 };
