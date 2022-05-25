@@ -104,7 +104,7 @@
     "currenciesDB": {
       "host": "localhost",
       "port": 27017,
-      "database": "waiviotest"
+      "database": "CurrenciesTest"
     },
     "swaggerHost": "localhost:3000",
     "appHost": "localhost:3000"

@@ -485,4 +485,5 @@ module.exports = {
   processWobjects,
   getParentInfo,
   fillObjectByExposedFields,
+  calculateApprovePercent,
 };
