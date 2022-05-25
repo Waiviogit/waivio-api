@@ -261,7 +261,7 @@ const getSymbolCurrencyHistory = async ({ walletOperations, path = 'timestamp', 
     const object = await calculateTodaysRate(result, symbol);
     if (object instanceof Error) return object;
 
-    result.push(object);
+    if (object) result.push(object);
   }
 
   return { tokenPriceArr: result };
