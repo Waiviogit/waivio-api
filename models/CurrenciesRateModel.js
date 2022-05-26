@@ -8,10 +8,10 @@ exports.find = async (condition = {}) => {
   }
 };
 
-exports.findOne = async ({ condition, select, sort }) => {
+exports.findOne = async ({ condition, sort }) => {
   try {
     return {
-      result: await CurrenciesRate.findOne(condition, select).sort(sort).lean(),
+      result: await CurrenciesRate.findOne(condition).sort(sort).lean(),
     };
   } catch (error) {
     return { error };
