@@ -12,7 +12,7 @@ exports.getFields = async ({ authorPermlink }) => {
   const objectWithFields = await fillObjectByExposedFields(wobject, exposedFields);
   for (const field of objectWithFields.fields) {
     if (_.has(field, '_id')) field.createdAt = field._id.getTimestamp().valueOf();
-    field.approvePercent = calculateApprovePercent(field);
+    if (field.active_votes) field.approvePercent = calculateApprovePercent(field);
   }
 
   return { fields: objectWithFields.fields };
