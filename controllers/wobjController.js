@@ -304,14 +304,14 @@ const checkIfObjectExists = async (req, res, next) => {
 };
 
 const getWobjectUpdates = async (req, res, next) => {
-  const value = validators.validate({ authorPermlink: req.params.authorPermlink },
-    validators.wobject.authorPermlinkScheme, next);
+  const value = validators.validate({ ...req.params, ...req.query },
+    validators.wobject.fetFieldsScheme, next);
   if (!value) return;
 
-  const { fields, error } = await getFields(value);
+  const { fields, hasMore, error } = await getFields(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: fields };
+  res.result = { status: 200, json: { fields, hasMore } };
   next();
 };
 

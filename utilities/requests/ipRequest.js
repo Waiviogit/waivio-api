@@ -4,7 +4,7 @@ const _ = require('lodash');
 
 exports.getIp = async (ip) => {
   try {
-    const result = await axios.get(`${GEO_IP_API}${ip}`);
+    const result = await axios.get(`${GEO_IP_API}${ip}`, { timeout: 2000 });
     return { geoData: _.get(result, 'data') };
   } catch (error) {
     return { error };

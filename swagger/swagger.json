@@ -3777,66 +3777,35 @@
           "description" : "author_permlink of specified wobject",
           "required" : true,
           "type" : "string"
-        } ],
+        },{
+          "name" : "skip",
+          "in" : "query",
+          "description" : "skip",
+          "required" : false,
+          "type" : "number"
+        }
+        ,{
+            "name" : "limit",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "number"
+          }
+        ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : {
-                  "weight": {
-                    "type":  "number"
-                  },
-                  "locale": {
-                    "type":  "string"
-                  },
-                  "_id": {
-                    "type":  "string"
-                  },
-                  "creator": {
-                    "type":  "string"
-                  },
-                  "author": {
-                    "type":  "string"
-                  },
-                  "permlink": {
-                    "type":  "string"
-                  },
-                  "name": {
-                    "type":  "string"
-                  },
-                  "body": {
-                    "type":  "number"
-                  },
-                  "active_votes": {
-                    "type":  "array"
-                  },
-                  "children": {
-                    "type":  "number"
-                  },
-                  "total_payout_value": {
-                    "type":  "string"
-                  },
-                  "pending_payout_value": {
-                    "type":  "string"
-                  },
-                  "curator_payout_value": {
-                    "type":  "string"
-                  },
-                  "cashout_time": {
-                    "type":  "string"
-                  },
-                  "fullBody": {
-                    "type":  "string"
-                  },
-                  "approvePercent": {
-                    "type":  "number"
-                  },
-                  "createdAt": {
-                    "type":  "number"
+              "type" : "object",
+              "properties": {
+                "fields": {
+                  "type": "array",
+                  "items" : {
+                    "$ref": "#/definitions/inline_response_200_get_wobj_fields"
                   }
+                },
+                "hasMore": {
+                  "type": "boolean"
                 }
               }
             }
@@ -6676,6 +6645,62 @@
         },
         "followsYou": {
           "type": "boolean"
+        }
+      }
+    },
+    "inline_response_200_get_wobj_fields": {
+      "type" : "object",
+      "properties" : {
+        "weight": {
+          "type":  "number"
+        },
+        "locale": {
+          "type":  "string"
+        },
+        "_id": {
+          "type":  "string"
+        },
+        "creator": {
+          "type":  "string"
+        },
+        "author": {
+          "type":  "string"
+        },
+        "permlink": {
+          "type":  "string"
+        },
+        "name": {
+          "type":  "string"
+        },
+        "body": {
+          "type":  "number"
+        },
+        "active_votes": {
+          "type":  "array"
+        },
+        "children": {
+          "type":  "number"
+        },
+        "total_payout_value": {
+          "type":  "string"
+        },
+        "pending_payout_value": {
+          "type":  "string"
+        },
+        "curator_payout_value": {
+          "type":  "string"
+        },
+        "cashout_time": {
+          "type":  "string"
+        },
+        "fullBody": {
+          "type":  "string"
+        },
+        "approvePercent": {
+          "type":  "number"
+        },
+        "createdAt": {
+          "type":  "number"
         }
       }
     },
