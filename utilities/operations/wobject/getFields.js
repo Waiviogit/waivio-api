@@ -10,10 +10,11 @@ exports.getFields = async ({ authorPermlink }) => {
   const { objectType } = await ObjectTypeModel.getOne({ name: wobject.object_type });
   const exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
   const objectWithFields = await fillObjectByExposedFields(wobject, exposedFields);
-  for (const field of objectWithFields.fields) {
+  const fields = _.filter(objectWithFields.fields, (field) => field !== undefined);
+  for (const field of fields) {
     if (_.has(field, '_id')) field.createdAt = field._id.getTimestamp().valueOf();
     field.approvePercent = calculateApprovePercent(field);
   }
 
-  return { fields: objectWithFields.fields };
+  return { fields };
 };
