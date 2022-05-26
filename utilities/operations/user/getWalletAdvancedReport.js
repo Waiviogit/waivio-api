@@ -28,7 +28,7 @@ exports.getWalletAdvancedReport = async ({
   const limitedWallet = _.take(usersJointArr, limit);
 
   const { rates } = await getCurrencyRates({
-    wallet: limitedWallet, currency, pathTimestamp: 'timestamp', momentCallback: moment.unix,
+    wallet: limitedWallet, pathTimestamp: 'timestamp', momentCallback: moment.unix,
   });
 
   await getExemptions({ user, wallet: limitedWallet });
@@ -164,7 +164,7 @@ const multiAccountFilter = ({ record, filterAccounts, userName }) => {
 };
 
 const getCurrencyRates = async ({
-  wallet, currency, pathTimestamp, momentCallback,
+  wallet, pathTimestamp, momentCallback,
 }) => {
   let includeToday = false;
   const dates = _.uniq(_.map(wallet, (record) => {
@@ -174,13 +174,11 @@ const getCurrencyRates = async ({
 
   const { result = [] } = await CurrenciesRate.find(
     { dateString: { $in: dates }, base: SUPPORTED_CURRENCIES.USD },
-    { [`rates.${currency}`]: 1, dateString: 1 },
   );
 
   if (includeToday) {
     const { result: latest } = await CurrenciesRate.findOne({
       condition: { base: SUPPORTED_CURRENCIES.USD },
-      select: { [`rates.${currency}`]: 1 },
       sort: { dateString: -1 },
     });
     if (latest) {
