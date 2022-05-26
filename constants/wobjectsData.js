@@ -32,6 +32,7 @@ exports.FIELDS_NAMES = {
   SORT_CUSTOM: 'sortCustom',
   BLOG: 'blog',
   FORM: 'form',
+  COMPANY_ID: 'companyId',
 };
 
 exports.OBJECT_TYPES = {
@@ -55,6 +56,10 @@ exports.OBJECT_TYPES = {
   COMMODITY: 'commodity',
   CAR: 'car',
   TEST: 'test',
+  ORGANIZATION: 'organization',
+  MOTEL: 'motel',
+  RESORT: 'resort',
+  BnB: 'b&b',
 };
 
 exports.ADMIN_ROLES = {
