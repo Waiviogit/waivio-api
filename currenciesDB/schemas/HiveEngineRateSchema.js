@@ -28,6 +28,6 @@ const rates = () => _.reduce(
 );
 const HiveEngineRateSchema = new mongoose.Schema(rates(), { versionKey: false });
 
-const HiveEngineRateModel = db.model('HiveEngineRateSchema', HiveEngineRateSchema, 'hive-engine-rate');
+const HiveEngineRateModel = db.model('HiveEngineRateSchema', HiveEngineRateSchema, 'hive-engine-rates');
 
 module.exports = HiveEngineRateModel;
