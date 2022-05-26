@@ -298,11 +298,12 @@ const addCurrencyToOperations = async ({
 });
 
 const getPriceInUSD = (record, symbol) => {
-  if (!record.quantity && !record.symbolInQuantity) return 0;
+  if (!record.quantity && !record.symbolInQuantity && !record.quantityTokens) return 0;
 
-  if (!record.quantity) {
+  if (!record.quantity && record.symbolInQuantity) {
     record.quantity = record.symbolIn === symbol ? record.symbolInQuantity : record.symbolOutQuantity;
-  }
+  } else if (!record.quantity && record.quantityTokens) record.quantity = record.quantityTokens;
+  record.quantity = Number(record.quantity);
 
   return new BigNumber(record.quantity).times(record[`${symbol}.USD`]).toNumber();
 };
