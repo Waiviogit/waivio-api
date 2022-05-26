@@ -73,6 +73,20 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
   }
 };
 
+exports.getCommentsArr = async (permlinks) => {
+  try {
+    const comments = await client.call(
+      'database_api',
+      'find_comments',
+      { comments: permlinks },
+    );
+
+    return comments;
+  } catch (error) {
+    return { error };
+  }
+};
+
 /**
  * Get state of post(comment). State include a lot info, e.x. replies, users etc.
  * @returns {Promise<{error: Object}|{result: Object}>}
