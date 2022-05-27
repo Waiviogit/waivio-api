@@ -393,13 +393,13 @@ const getExposedFields = (objectType, fields) => {
   _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
     .forEach((el) => { exposedMap.set(el, 0); });
 
-  for (const field of fields) {
-    const counter = exposedMap.get(field.name);
-    exposedMap.set(field.name, counter + 1);
-  }
-  const exposedWithCounters = Array.from(exposedMap, ([name, counter]) => ({ name, counter }));
+  fields.forEach((field) => {
+    exposedMap.set(field.name, exposedMap.get(field.name) + 1);
+  });
+
+  const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
   exposedMap.clear();
-  return exposedWithCounters;
+  return exposedFieldsWithCounters;
 };
 
 /** Parse wobjects to get its winning */
