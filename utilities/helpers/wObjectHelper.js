@@ -12,6 +12,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const { log } = require('debug');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 
 const getBlacklist = async (admins) => {
@@ -387,6 +388,21 @@ const createMockPost = (field) => ({
   body: `@${field.creator} added ${field.name} (${field.locale})`,
 });
 
+const getExposedFields = (objectType, fields) => {
+  const exposedMap = new Map();
+
+  _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
+    .forEach((el) => { exposedMap.set(el, 0); });
+
+  for (const field of fields) {
+    const counter = exposedMap.get(field.name);
+    exposedMap.set(field.name, counter + 1);
+  }
+  const exposedWithCounters = Array.from(exposedMap, ([name, counter]) => ({ name, counter }));
+  exposedMap.clear();
+  return exposedWithCounters;
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
@@ -421,7 +437,7 @@ const processWobjects = async ({
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
-      exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
+      exposedFields = getExposedFields(objectType, obj.fields);
     }
 
     obj.fields = addDataToFields({
