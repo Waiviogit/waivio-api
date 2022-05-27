@@ -79,8 +79,8 @@ const addWalletDataToAccounts = async ({
   const { result, error: dbError } = await EngineAccountHistory.find({
     condition: constructDbQuery({
       account: account.name,
-      timestampEnd: moment.utc(endDate).valueOf(),
-      timestampStart: moment.utc(startDate).valueOf(),
+      timestampEnd: moment(endDate).unix(),
+      timestampStart: moment(startDate).unix(),
       symbol,
     }),
     limit: limit + 1,
@@ -149,16 +149,16 @@ const withdrawDeposit = ({
 
 const constructDbQuery = (params) => ({
   account: params.account,
+  timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
   $or: [{
     symbolIn: params.symbol,
     operation: SWAP_TOKENS,
-    timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
   }, {
     symbolOut: params.symbol,
     operation: SWAP_TOKENS,
-    timestamp:
-        { $lte: params.timestampEnd, $gte: params.timestampStart },
-  }, { operation: AIRDROP }],
+  }, {
+    operation: AIRDROP,
+  }],
 });
 
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
