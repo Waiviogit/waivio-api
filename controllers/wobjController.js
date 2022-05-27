@@ -45,6 +45,7 @@ const show = async (req, res, next) => {
 
   if (!value) return;
 
+  // проверить в мидлваре как обрабатываются филды!!!
   const { wobjectData, error } = await wobjectInfo.getOne(value);
 
   if (error) return next(error);
