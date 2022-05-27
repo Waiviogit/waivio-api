@@ -388,13 +388,14 @@ const createMockPost = (field) => ({
 });
 
 const getExposedFields = (objectType, fields) => {
-  const exposedMap = new Map();
-
-  _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
-    .forEach((el) => { exposedMap.set(el, 0); });
+  const exposedMap = new Map(
+    _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
+      .map((el) => [el, 0]),
+  );
 
   fields.forEach((field) => {
-    exposedMap.set(field.name, exposedMap.get(field.name) + 1);
+    const value = exposedMap.get(field.name);
+    if (value !== undefined) exposedMap.set(field.name, value + 1);
   });
 
   const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
