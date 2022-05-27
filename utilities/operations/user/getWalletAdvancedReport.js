@@ -6,7 +6,9 @@ const {
 } = require('models');
 const BigNumber = require('bignumber.js');
 const { SUPPORTED_CURRENCIES } = require('../../../constants/common');
-const { ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, SWAP_TOKENS } = require('../../../constants/walletData');
+const {
+  ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, SWAP_TOKENS, AIRDROP,
+} = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
@@ -139,7 +141,7 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [SWAP_TOKENS]: _.get(record, 'symbolIn') === symbol ? 'w' : '',
     [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
-    [WAIV_OPERATIONS_TYPES.AIRDROP]: 'd',
+    [AIRDROP]: 'd',
   };
 
   return result[type] || '';
@@ -147,9 +149,16 @@ const withdrawDeposit = ({
 
 const constructDbQuery = (params) => ({
   account: params.account,
-  timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
-  operation: SWAP_TOKENS,
-  $or: [{ symbolIn: params.symbol }, { symbolOut: params.symbol }],
+  $or: [{
+    symbolIn: params.symbol,
+    operation: SWAP_TOKENS,
+    timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
+  }, {
+    symbolOut: params.symbol,
+    operation: SWAP_TOKENS,
+    timestamp:
+        { $lte: params.timestampEnd, $gte: params.timestampStart },
+  }, { operation: AIRDROP }],
 });
 
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {

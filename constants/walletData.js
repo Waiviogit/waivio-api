@@ -7,7 +7,6 @@ exports.WAIV_OPERATIONS_TYPES = {
   AUTHOR_REWARDS: 'comments_authorReward',
   BENEFICIARY_REWARD: 'comments_beneficiaryReward',
   MINING_LOTTERY: 'mining_lottery',
-  AIRDROP: 'airdrops_newAirdrop',
 };
 
 exports.ADVANCED_WALLET_TYPES = [
@@ -19,7 +18,7 @@ exports.ADVANCED_WALLET_TYPES = [
   this.WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD,
   this.WAIV_OPERATIONS_TYPES.CURATION_REWARDS,
   this.WAIV_OPERATIONS_TYPES.MINING_LOTTERY,
-  this.WAIV_OPERATIONS_TYPES.AIRDROP,
 ];
 
 exports.SWAP_TOKENS = 'marketpools_swapTokens';
+exports.AIRDROP = 'airdrops_newAirdrop';
