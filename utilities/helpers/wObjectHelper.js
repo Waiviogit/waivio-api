@@ -12,7 +12,6 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
-const { log } = require('debug');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 
 const getBlacklist = async (admins) => {
