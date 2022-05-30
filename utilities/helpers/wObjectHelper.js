@@ -388,6 +388,22 @@ const createMockPost = (field) => ({
   body: `@${field.creator} added ${field.name} (${field.locale})`,
 });
 
+const getExposedFields = (objectType, fields) => {
+  const exposedMap = new Map(
+    _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
+      .map((el) => [el, 0]),
+  );
+
+  fields.forEach((field) => {
+    const value = exposedMap.get(field.name);
+    if (value !== undefined) exposedMap.set(field.name, value + 1);
+  });
+
+  const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
+  exposedMap.clear();
+  return exposedFieldsWithCounters;
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
@@ -422,7 +438,7 @@ const processWobjects = async ({
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
-      exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
+      exposedFields = getExposedFields(objectType, obj.fields);
     }
 
     obj.fields = addDataToFields({

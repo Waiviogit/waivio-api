@@ -4,13 +4,20 @@ const ObjectTypeModel = require('../../../models/ObjectTypeModel');
 const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const { postsUtil } = require('../../hiveApi');
 
-exports.getFields = async ({ authorPermlink, skip, limit }) => {
+exports.getFields = async ({
+  authorPermlink, skip, limit, type, locale,
+}) => {
   const { wobject, error } = await getWobjectFields(authorPermlink);
   if (error) return { error };
 
   const { objectType } = await ObjectTypeModel.getOne({ name: wobject.object_type });
   const exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-  const updates = filterExposedFields({ fields: wobject.fields, exposedFields });
+  const updates = filterExposedFields({
+    fields: wobject.fields,
+    exposedFields,
+    type,
+    locale,
+  });
   const limitedUpdates = _.slice(updates, skip, skip + limit);
 
   const fields = await fillUpdates(limitedUpdates);
@@ -19,11 +26,14 @@ exports.getFields = async ({ authorPermlink, skip, limit }) => {
 };
 
 const filterExposedFields = ({
-  fields, exposedFields,
+  fields, exposedFields, type, locale,
 }) => _.reduce(fields, (acc, el) => {
   if (!_.includes(exposedFields, el.name)) {
     return acc;
   }
+  if (type && el.name !== type) return acc;
+  if (locale && el.locale !== locale) return acc;
+
   acc.push(el);
   return acc;
 }, []);
