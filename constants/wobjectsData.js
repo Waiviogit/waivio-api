@@ -74,7 +74,6 @@ exports.VOTE_STATUSES = {
   REJECTED: 'rejected',
 };
 
-// запихнуть сюда companyId как-то!
 exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.CATEGORY_ITEM,
   this.FIELDS_NAMES.LIST_ITEM,

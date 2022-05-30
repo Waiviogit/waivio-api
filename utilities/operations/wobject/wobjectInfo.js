@@ -110,6 +110,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
     const { wobjects } = await getListItems(wObject, data, app);
     if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
+
   return { wobjectData: wObject };
 };
 
