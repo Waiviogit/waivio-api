@@ -5,7 +5,7 @@ const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const { postsUtil } = require('../../hiveApi');
 
 exports.getFields = async ({
-  authorPermlink, skip, limit, type, locale,
+  authorPermlink, skip, limit, type, locale, sort,
 }) => {
   const { wobject, error } = await getWobjectFields(authorPermlink);
   if (error) return { error };
@@ -18,7 +18,11 @@ exports.getFields = async ({
     type,
     locale,
   });
-  const limitedUpdates = _.slice(updates, skip, skip + limit);
+
+  const limitedUpdates = _.chain(updates)
+    .orderBy([sort], ['desc'])
+    .slice(skip, skip + limit)
+    .value();
 
   const fields = await fillUpdates(limitedUpdates);
 
@@ -33,6 +37,8 @@ const filterExposedFields = ({
   }
   if (type && el.name !== type) return acc;
   if (locale && el.locale !== locale) return acc;
+  el.approvePercent = calculateApprovePercent(el);
+  if (_.has(el, '_id')) el.createdAt = el._id.getTimestamp().valueOf();
 
   acc.push(el);
   return acc;
@@ -49,8 +55,6 @@ const fillUpdates = async (limitedUpdates) => {
       _.pick(comment, ['children', 'total_pending_payout_value',
         'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
     update.fullBody = _.get(comment, 'body', '');
-    if (_.has(update, '_id')) update.createdAt = update._id.getTimestamp().valueOf();
-    update.approvePercent = calculateApprovePercent(update);
   }
   return limitedUpdates;
 };

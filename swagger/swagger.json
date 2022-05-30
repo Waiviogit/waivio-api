@@ -3783,28 +3783,33 @@
           "description" : "skip",
           "required" : false,
           "type" : "number"
-        }
-        ,{
+        },{
             "name" : "limit",
             "in" : "query",
             "description" : "limit",
             "required" : false,
             "type" : "number"
-          }
-        ,{
+          },{
             "name" : "type",
             "in" : "query",
             "description" : "limit",
             "required" : false,
             "type" : "string"
-          }
-        ,{
+          },{
             "name" : "locale",
             "in" : "query",
             "description" : "limit",
             "required" : false,
             "type" : "string"
-          }
+          },{
+          "name" : "sort",
+          "in" : "query",
+          "description" : "sort",
+          "required" : false,
+          "type": "string",
+          "enum": ["approvePercent", "createdAt"],
+          "default": "createdAt"
+        }
         ],
         "responses" : {
           "200" : {
