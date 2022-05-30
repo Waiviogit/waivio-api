@@ -3791,6 +3791,20 @@
             "required" : false,
             "type" : "number"
           }
+        ,{
+            "name" : "type",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "string"
+          }
+        ,{
+            "name" : "locale",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "string"
+          }
         ],
         "responses" : {
           "200" : {
