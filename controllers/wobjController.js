@@ -305,7 +305,7 @@ const checkIfObjectExists = async (req, res, next) => {
 
 const getWobjectUpdates = async (req, res, next) => {
   const value = validators.validate({ ...req.params, ...req.query },
-    validators.wobject.fetFieldsScheme, next);
+    validators.wobject.getFieldsScheme, next);
   if (!value) return;
 
   const { fields, hasMore, error } = await getFields(value);
