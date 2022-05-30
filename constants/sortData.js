@@ -43,3 +43,8 @@ exports.SORT_CONDITION = {
   [this.FOLLOWERS_SORT.FOLLOWERS]: { sort: ['followers_count'], order: ['desc'] },
   [this.FOLLOWERS_SORT.FOLLOWING_UPDATES]: { sort: ['last_posts_count', 'wobjects_weight'], order: ['desc', 'desc'] },
 };
+
+exports.FIELDS_SORT = {
+  APPROVED_PERCENT: 'approvePercent',
+  CREATED: 'createdAt',
+};
