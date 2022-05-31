@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const { getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
 const ObjectTypeModel = require('../../../models/ObjectTypeModel');
-const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const { FIELDS_NAMES, LIST_TYPES } = require('../../../constants/wobjectsData');
 const { postsUtil } = require('../../hiveApi');
 
 exports.getFields = async ({
@@ -35,7 +35,11 @@ const filterExposedFields = ({
   if (!_.includes(exposedFields, el.name)) {
     return acc;
   }
-  if (type && el.name !== type) return acc;
+  if (type && el.name !== type) {
+    if (!_.includes(Object.values(LIST_TYPES), type)) return acc;
+    if (type !== el.type) return acc;
+  }
+
   if (locale && el.locale !== locale) return acc;
   el.approvePercent = calculateApprovePercent(el);
   if (_.has(el, '_id')) el.createdAt = el._id.getTimestamp().valueOf();

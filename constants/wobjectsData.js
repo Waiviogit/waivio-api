@@ -34,6 +34,11 @@ exports.FIELDS_NAMES = {
   FORM: 'form',
 };
 
+exports.LIST_TYPES = {
+  MENU_PAGE: 'menuPage',
+  MENU_LIST: 'menuList',
+};
+
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
