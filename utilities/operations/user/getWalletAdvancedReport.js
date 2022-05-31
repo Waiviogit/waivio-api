@@ -89,6 +89,7 @@ const addWalletDataToAccounts = async ({
   if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
+  account.hasMore = account.wallet.length > limit;
   if (account.lastId) {
     const updateSkip = account.wallet.indexOf(_.find(account.wallet,
       (obj) => obj._id.toString() === account.lastId)) + 1;
@@ -100,7 +101,6 @@ const addWalletDataToAccounts = async ({
       type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
     });
   });
-  account.hasMore = account.wallet.length > limit;
 
   return account;
 }));
@@ -329,7 +329,7 @@ const calcWalletRecordRate = ({
 };
 
 const accumulateAcc = ({ resultArray, account, acc }) => {
-  const lastId = _.get(_.last(account.wallet), 'lastId', '');
+  const lastId = _.get(_.last(account.wallet), '_id', '');
   const filterWallet = _.filter(account.wallet,
     (record) => !_.some(resultArray, (result) => _.isEqual(result, record)));
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
