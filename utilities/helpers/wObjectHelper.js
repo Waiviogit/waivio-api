@@ -1,6 +1,6 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
-  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
+  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -394,10 +394,15 @@ const getExposedFields = (objectType, fields) => {
       .map((el) => [el, 0]),
   );
 
-  fields.forEach((field) => {
+  for (const field of fields) {
     const value = exposedMap.get(field.name);
+
+    if (field.name === FIELDS_NAMES.LIST_ITEM && field.type === LIST_TYPES.MENU_PAGE) {
+      exposedMap.set(field.type, (value || 0) + 1);
+      continue;
+    }
     if (value !== undefined) exposedMap.set(field.name, value + 1);
-  });
+  }
 
   const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
   exposedMap.clear();

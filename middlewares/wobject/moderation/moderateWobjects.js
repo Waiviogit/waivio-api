@@ -36,7 +36,7 @@ exports.moderate = async (req, res, next) => {
         returnArray: false,
         locale: req.headers.locale,
       });
-      wobject.updatesCount = wobject.fields.length;
+      wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
       res.result.json = _.omit(wobject, ['fields']);
       break;
     case 2:
