@@ -96,7 +96,7 @@ const addWalletDataToAccounts = async ({
       ? account.wallet.slice(updateSkip, updateSkip + limit)
       : account.wallet.slice(updateSkip - 1);
   }
-  account.hasMore = account.wallet.length >= limit;
+  account.hasMore = account.wallet.length > limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
