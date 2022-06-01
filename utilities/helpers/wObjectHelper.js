@@ -398,7 +398,8 @@ const getExposedFields = (objectType, fields) => {
     const value = exposedMap.get(field.name);
 
     if (field.name === FIELDS_NAMES.LIST_ITEM && field.type === LIST_TYPES.MENU_PAGE) {
-      exposedMap.set(field.type, (value || 0) + 1);
+      const listValue = exposedMap.get(field.type);
+      exposedMap.set(field.type, (listValue || 0) + 1);
       continue;
     }
     if (value !== undefined) exposedMap.set(field.name, value + 1);
