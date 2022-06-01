@@ -35,6 +35,11 @@ exports.FIELDS_NAMES = {
   COMPANY_ID: 'companyId',
 };
 
+exports.LIST_TYPES = {
+  MENU_PAGE: 'menuPage',
+  MENU_LIST: 'menuList',
+};
+
 exports.OBJECT_TYPES = {
   HASHTAG: 'hashtag',
   LIST: 'list',
