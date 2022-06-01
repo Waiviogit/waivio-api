@@ -89,12 +89,14 @@ const addWalletDataToAccounts = async ({
   if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  account.hasMore = account.wallet.length > limit;
   if (account.lastId) {
     const updateSkip = account.wallet.indexOf(_.find(account.wallet,
       (obj) => obj._id.toString() === account.lastId)) + 1;
-    account.wallet = account.wallet.slice(updateSkip, updateSkip + limit);
+    account.wallet = updateSkip >= account.wallet.length
+      ? account.wallet.slice(updateSkip, updateSkip + limit)
+      : account.wallet.slice(updateSkip - 1);
   }
+  account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
