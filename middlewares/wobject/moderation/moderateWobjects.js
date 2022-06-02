@@ -29,13 +29,15 @@ exports.moderate = async (req, res, next) => {
   switch (currentSchema.case) {
     case 1:
       // root result is single wobject
-      res.result.json = await wobjectHelper.processWobjects({
+      const wobject = await wobjectHelper.processWobjects({
         wobjects: [res.result.json],
         app,
         hiveData: true,
         returnArray: false,
         locale: req.headers.locale,
       });
+      wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
+      res.result.json = _.omit(wobject, ['fields']);
       break;
     case 2:
       res.result.json = await newValidation(res.result.json, app, req.headers.locale);

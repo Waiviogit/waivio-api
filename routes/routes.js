@@ -117,6 +117,8 @@ wobjRoutes.route('/wobjects/campaign/required-object')
   .post(WobjController.getWobjectsByRequiredObject);
 wobjRoutes.route('/wobject/:authorPermlink/exist')
   .get(WobjController.checkIfObjectExists);
+wobjRoutes.route('/wobject/:authorPermlink/fields')
+  .get(WobjController.getWobjectUpdates);
 // endregion
 // region User
 userRoutes.route('/users')
@@ -170,6 +172,10 @@ userRoutes.route('/geo-ip')
 userRoutes.route('/user/:userName/creation-date')
   .get(UserController.getCreationDate);
 userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActivity);
+userRoutes.route('/user/advanced-report').post(UserController.getAdvancedReport);
+userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWallet);
+userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
+
 // Deprecated. Used for subscribe button for users who liked the post
 // userRoutes.route('/user/:userName/getFollowingsState')
 //   .get(UserController.followingsState);

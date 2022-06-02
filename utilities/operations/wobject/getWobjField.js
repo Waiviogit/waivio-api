@@ -1,9 +1,10 @@
 const _ = require('lodash');
 const { wObjectHelper, appHelper, jsonHelper } = require('utilities/helpers');
 const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('constants/wobjectsData');
+const { getPost } = require('../../hiveApi/postsUtil');
 
 module.exports = async ({
-  authorPermlink, author, fieldName, locale, app, permlink,
+  authorPermlink, author, fieldName, locale, permlink,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink);
   const { error: appError, result: appData } = await appHelper.getApp();
@@ -26,9 +27,17 @@ module.exports = async ({
       ? FIELDS_NAMES.TAG_CATEGORY
       : fieldName
   ];
+  const field = _.find(filteredObject.fields, (el) => el.author === author && el.permlink === permlink);
+  const { post, error: dbError } = await getPost({ author, permlink });
+  if (dbError) return { error: dbError };
+
+  Object.assign(field,
+    _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value',
+      'curator_payout_value', 'cashout_time']));
+  field.fullBody = post.body;
 
   return {
     toDisplay: _.includes(FIELDS_TO_PARSE, fieldName) ? jsonHelper.parseJson(toDisplay) : toDisplay,
-    field: _.find(filteredObject.fields, (field) => field.author === author && field.permlink === permlink),
+    field,
   };
 };

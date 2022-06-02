@@ -6,7 +6,7 @@ const {
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
-const { RESERVATION_STATUSES } = require('constants/campaignsData');
+const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
 const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
 
 /**
@@ -196,7 +196,13 @@ const jsonParse = (post) => {
 const checkUserStatus = async ({
   sponsor, userName, campaign, reviewPermlink,
 }) => {
-  const { result } = await paymentHistory.findByCondition({ sponsor, userName, 'details.review_permlink': reviewPermlink });
+  const { result } = await paymentHistory.findByCondition({
+    sponsor,
+    userName,
+    'details.review_permlink': reviewPermlink,
+    type: PAYMENT_HISTORIES_TYPES.REVIEW,
+  });
+
   if (_.isEmpty(result)) return true;
   const permlink = _.get(result, '[0].details.reservation_permlink');
   const user = _.find(campaign.users, (u) => u.permlink === permlink);

@@ -1,5 +1,5 @@
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
-const { EXPERTS_SORT, VALID_EXPERTS_SORT } = require('constants/sortData');
+const { EXPERTS_SORT, VALID_EXPERTS_SORT, FIELDS_SORT } = require('constants/sortData');
 const { customValidationHelper } = require('utilities/helpers');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
@@ -193,6 +193,15 @@ exports.byRequiredWobjectScheme = Joi.object().keys({
   requiredObject: Joi.string().required(),
 });
 
-exports.objectExistsScheme = Joi.object().keys({
+exports.authorPermlinkScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
+});
+
+exports.getFieldsScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  type: Joi.string(),
+  locale: Joi.string(),
+  sort: Joi.string().valid(...Object.values(FIELDS_SORT)).default(FIELDS_SORT.CREATED),
 });

@@ -2110,6 +2110,89 @@
         }
       }
     },
+    "/api/user/{userName}/guest-wallet" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get guest user wallet",
+        "description" : "Return wallet history",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "symbol",
+          "in" : "query",
+          "description" : "wallet symbol example WAIV",
+          "required" : true,
+          "type" : "string"
+        }, {
+            "name" : "skip",
+            "in" : "query",
+            "required" : false,
+            "type" : "number"
+          },
+          {
+            "name" : "limit",
+            "in" : "query",
+            "required" : false,
+            "type" : "number"
+          }
+        ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "history" : {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/guest_wallet"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/guest-balance" : {
+      "get" : {
+        "tags" : [ "user" ],
+        "summary" : "Get guest user wallet",
+        "description" : "Return wallet history",
+        "produces" : [ "application/json" ],
+        "parameters" : [{
+          "name" : "userName",
+          "in" : "path",
+          "description" : "Name of user to return",
+          "required" : true,
+          "type" : "string"
+        }, {
+          "name" : "symbol",
+          "in" : "query",
+          "description" : "wallet symbol example WAIV",
+          "required" : true,
+          "type" : "string"
+        }],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "symbol" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{username}/setState" : {
       "get" : {
         "tags" : [ "user" ],
@@ -3084,6 +3167,121 @@
         }
       }
     },
+    "/api/user/advanced-report" : {
+      "post": {
+        "tags":  [ "user" ],
+        "summary": "Get all wallet info for user or multiple users",
+        "description": "Return wallet, accounts skip limit properties,deposits, withdrawals and hasMore flag",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "accounts": {
+                  "type": "array",
+                  "items": {
+                    "type":"object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "blauser"
+                      },
+                      "lastId": {
+                        "type": "string",
+                        "example": "627d9aa9a72924295ebcff0e"
+                      }
+                    }
+                  }
+                },
+                "filterAccounts": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "example": "blauser"
+                  }
+                },
+                "startDate": {
+                  "type": "number",
+                  "example": 1619816400
+                },
+                "endDate": {
+                  "type": "number",
+                  "example": 1621857636
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "user": {
+                  "type": "string",
+                  "example": "blauser"
+                },
+                "currency": {
+                  "type": "string",
+                  "example": "UAH"
+                },
+                "symbol": {
+                  "type": "string",
+                  "example": "WAIV"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "wallet" : {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                },
+                "accounts": {
+                  "type": "array",
+                  "items": {
+                    "type":"object",
+                    "properties": {
+                      "name": {
+                        "type": "string",
+                        "example": "blauser"
+                      },
+                      "lastId": {
+                        "type": "string",
+                        "example": "627d9aa9a72924295ebcff0e"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                },
+                "deposits": {
+                  "type": "number"
+                },
+                "withdrawals": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "message": "symbol must be [WAIV]"
+            }
+          }
+        }
+      }
+    },
     "/api/geo-ip" : {
       "get" : {
         "tags" : [ "user" ],
@@ -3569,39 +3767,65 @@
       }
     },
     "/api/wobject/{authorPermlink}/fields" : {
-      "post" : {
-        "deprecated": true,
+      "get" : {
         "tags" : [ "wobject" ],
-        "summary" : "Return all fields for spicified wobject",
+        "summary" : "Returns all fields for spicified wobject",
         "produces" : [ "application/json" ],
         "parameters" : [ {
-          "name" : "app",
-          "in" : "header",
-          "description" : "Specify app to enable waivio-wobject moderation",
-          "required" : false,
-          "type" : "string"
-        }, {
           "name" : "authorPermlink",
           "in" : "path",
           "description" : "author_permlink of specified wobject",
           "required" : true,
           "type" : "string"
-        }, {
-          "in" : "body",
-          "name" : "params",
-          "description" : "**fields_names** - **array** of fields names to return,\n**custom_fields** - custom keys in fields to search and return\n",
+        },{
+          "name" : "skip",
+          "in" : "query",
+          "description" : "skip",
           "required" : false,
-          "schema" : {
-            "$ref" : "#/definitions/params_9"
-          }
-        } ],
+          "type" : "number"
+        },{
+            "name" : "limit",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "number"
+          },{
+            "name" : "type",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "string"
+          },{
+            "name" : "locale",
+            "in" : "query",
+            "description" : "limit",
+            "required" : false,
+            "type" : "string"
+          },{
+          "name" : "sort",
+          "in" : "query",
+          "description" : "sort",
+          "required" : false,
+          "type": "string",
+          "enum": ["approvePercent", "createdAt"],
+          "default": "createdAt"
+        }
+        ],
         "responses" : {
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type" : "array",
-              "items" : {
-                "$ref" : "#/definitions/inline_response_200_14"
+              "type" : "object",
+              "properties": {
+                "fields": {
+                  "type": "array",
+                  "items" : {
+                    "$ref": "#/definitions/inline_response_200_get_wobj_fields"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -5430,6 +5654,10 @@
           "items": {
             "type": "string"
           }
+        },
+        "updatesCount": {
+          "type": "number",
+          "example":  21
         }
       }
     },
@@ -5463,6 +5691,44 @@
           "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
           "approvePercent": 100,
           "createdAt": 1557088930000
+        }
+      }
+    },
+    "guest_wallet": {
+      "type": "object",
+      "properties": {
+        "refHiveBlockNumber": {
+          "type": "number"
+        },
+        "blockNumber": {
+          "type": "number"
+        },
+        "account": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "operation": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        },
+        "authorperm": {
+          "type": "string"
+        },
+        "from": {
+          "type": "string"
+        },
+        "to": {
+          "type": "string"
         }
       }
     },
@@ -6398,6 +6664,62 @@
         },
         "followsYou": {
           "type": "boolean"
+        }
+      }
+    },
+    "inline_response_200_get_wobj_fields": {
+      "type" : "object",
+      "properties" : {
+        "weight": {
+          "type":  "number"
+        },
+        "locale": {
+          "type":  "string"
+        },
+        "_id": {
+          "type":  "string"
+        },
+        "creator": {
+          "type":  "string"
+        },
+        "author": {
+          "type":  "string"
+        },
+        "permlink": {
+          "type":  "string"
+        },
+        "name": {
+          "type":  "string"
+        },
+        "body": {
+          "type":  "number"
+        },
+        "active_votes": {
+          "type":  "array"
+        },
+        "children": {
+          "type":  "number"
+        },
+        "total_payout_value": {
+          "type":  "string"
+        },
+        "pending_payout_value": {
+          "type":  "string"
+        },
+        "curator_payout_value": {
+          "type":  "string"
+        },
+        "cashout_time": {
+          "type":  "string"
+        },
+        "fullBody": {
+          "type":  "string"
+        },
+        "approvePercent": {
+          "type":  "number"
+        },
+        "createdAt": {
+          "type":  "number"
         }
       }
     },

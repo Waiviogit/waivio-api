@@ -1,6 +1,6 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
-  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS,
+  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -161,6 +161,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.GALLERY_ITEM:
       case FIELDS_NAMES.LIST_ITEM:
       case FIELDS_NAMES.NEWS_FILTER:
+      case FIELDS_NAMES.COMPANY_ID:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -278,7 +279,7 @@ const getParentInfo = async ({
   return parent;
 };
 
-const fillObjectByHiveData = async (obj, exposedFields) => {
+const fillObjectByExposedFields = async (obj, exposedFields) => {
   const { result } = await postsUtil.getPostState(
     { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
   );
@@ -387,6 +388,28 @@ const createMockPost = (field) => ({
   body: `@${field.creator} added ${field.name} (${field.locale})`,
 });
 
+const getExposedFields = (objectType, fields) => {
+  const exposedMap = new Map(
+    _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
+      .map((el) => [el, 0]),
+  );
+
+  for (const field of fields) {
+    const value = exposedMap.get(field.name);
+
+    if (field.name === FIELDS_NAMES.LIST_ITEM && field.type === LIST_TYPES.MENU_PAGE) {
+      const listValue = exposedMap.get(field.type);
+      exposedMap.set(field.type, (listValue || 0) + 1);
+      continue;
+    }
+    if (value !== undefined) exposedMap.set(field.name, value + 1);
+  }
+
+  const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
+  exposedMap.clear();
+  return exposedFieldsWithCounters;
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
@@ -421,8 +444,7 @@ const processWobjects = async ({
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
-      exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-      obj = await fillObjectByHiveData(obj, exposedFields);
+      exposedFields = getExposedFields(objectType, obj.fields);
     }
 
     obj.fields = addDataToFields({
@@ -485,4 +507,6 @@ module.exports = {
   getCurrentNames,
   processWobjects,
   getParentInfo,
+  fillObjectByExposedFields,
+  calculateApprovePercent,
 };
