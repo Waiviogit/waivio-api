@@ -30,6 +30,8 @@ module.exports = async (data) => {
   return { posts };
 };
 
+
+
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   author_permlink, skip, limit, user_languages,

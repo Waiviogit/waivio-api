@@ -6,6 +6,10 @@ const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
