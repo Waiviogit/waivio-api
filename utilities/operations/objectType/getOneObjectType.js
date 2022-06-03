@@ -38,7 +38,6 @@ const getWobjWithFilters = async ({
         distanceField: 'proximity',
         maxDistance: filter.map.radius,
         spherical: true,
-        limit: 100000,
       },
     });
     aggregationPipeline.push({ $match: { 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } } });
