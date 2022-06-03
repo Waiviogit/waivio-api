@@ -33,7 +33,6 @@ const makeNearbyPipe = ({
       near: { type: 'Point', coordinates },
       distanceField: 'proximity',
       maxDistance: radius,
-      num: 100000,
       spherical: true,
     },
   });
