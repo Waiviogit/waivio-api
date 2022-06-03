@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const mongoose = require('mongoose');
-const Float = require('mongoose-float').loadType(mongoose, 4);
 const { RESERVATION_STATUSES, CAMPAIGN_STATUSES, CAMPAIGN_TYPES } = require('constants/campaignsData');
 
 const userSchema = new mongoose.Schema({
@@ -40,10 +39,10 @@ const campaignSchema = new mongoose.Schema({
   note: { type: String, maxlength: 256 },
   compensationAccount: { type: String },
   budget: {
-    type: Float, required: true, min: 0.001, max: 10000,
+    type: Number, required: true, min: 0.001, max: 10000,
   },
   reward: {
-    type: Float, required: true, min: 0.001, max: 500,
+    type: Number, required: true, min: 0.001, max: 500,
   },
   count_reservation_days: { type: Number, default: 1 },
   agreementObjects: { type: [String] },

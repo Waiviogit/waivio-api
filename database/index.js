@@ -3,11 +3,9 @@ const config = require('config');
 
 const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
-mongoose.connect(URI, {
+mongoose.createConnection(URI, {
   useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false,
-})
-  .then(() => console.log('connection successful!'))
-  .catch((error) => console.log(error));
+}, () => console.log('connection successful!'));
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 

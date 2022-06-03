@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const Float = require('mongoose-float').loadType(mongoose, 4);
 
 const paymentHistorySchema = new mongoose.Schema({
   userName: { type: String, required: true, index: true },
@@ -11,7 +10,7 @@ const paymentHistorySchema = new mongoose.Schema({
     required: true,
   },
   app: { type: String },
-  amount: { type: Float, required: true },
+  amount: { type: Number, required: true },
   is_demo_account: { type: Boolean, default: false },
   recounted: { type: Boolean, default: false },
   details: { type: Object },

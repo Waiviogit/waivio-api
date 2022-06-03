@@ -1,6 +1,5 @@
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const WObjectModel = require('database').models.WObject;
-const createError = require('http-errors');
 const _ = require('lodash');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
@@ -11,7 +10,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
     const wObject = await WObjectModel.findOne(matchStage).lean();
 
     if (!wObject) {
-      return { error: createError(404, 'wobject not found') };
+      return { error: { status: 404, message: 'wobject not found' } };
     }
     return { wObject };
   } catch (error) {
