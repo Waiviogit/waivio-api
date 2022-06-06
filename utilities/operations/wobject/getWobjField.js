@@ -28,6 +28,8 @@ module.exports = async ({
       : fieldName
   ];
   const field = _.find(filteredObject.fields, (el) => el.author === author && el.permlink === permlink);
+  if (!field) return { error: { status: 404, message: 'Field not found' } };
+
   const { post, error: dbError } = await getPost({ author, permlink });
   if (dbError) return { error: dbError };
 
