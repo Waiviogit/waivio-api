@@ -205,7 +205,7 @@ const getExemptions = async ({ user, wallet }) => {
   let exemptions = [];
   if (user) {
     const condition = _.reduce(wallet, (acc, record) => {
-      const filter = { userName: user, userWithExemptions: record.account, _id: ObjectId(record._id) };
+      const filter = { userName: user, userWithExemptions: record.account, recordId: ObjectId(record._id) };
       acc.push({ ...filter });
       return acc;
     }, []);
@@ -213,7 +213,7 @@ const getExemptions = async ({ user, wallet }) => {
     ({ result: exemptions = [] } = await WalletExemptions.find({ $or: condition }));
   }
   for (const exemption of exemptions) {
-    const record = _.find(wallet, (rec) => rec._id.toString() === exemption._id.toString());
+    const record = _.find(wallet, (rec) => rec._id.toString() === exemption.recordId.toString());
     if (record) {
       record.checked = true;
     }
