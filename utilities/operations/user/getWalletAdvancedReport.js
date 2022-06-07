@@ -83,7 +83,6 @@ const addWalletDataToAccounts = async ({
       timestampStart: moment(startDate).unix(),
       symbol,
     }),
-    limit: limit + 1,
     sort: { timestamp: -1 },
   });
   if (dbError) return { error: dbError };
@@ -166,7 +165,7 @@ const constructDbQuery = (params) => ({
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
   filterAccounts = _.filter(filterAccounts, (el) => el !== userName);
 
-  if (record.type === WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER || record.type === WAIV_OPERATIONS_TYPES.TOKENS_STAKE) {
+  if (record.operation === WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER || record.operation === WAIV_OPERATIONS_TYPES.TOKENS_STAKE) {
     return record.to === record.from ? true
       : _.some(filterAccounts, (el) => _.includes([record.to, record.from], el));
   }
