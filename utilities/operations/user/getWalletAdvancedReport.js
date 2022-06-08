@@ -136,7 +136,8 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.MARKET_BUY]: 'd',
     [WAIV_OPERATIONS_TYPES.MARKET_SELL]: 'w',
     [WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER]: _.get(record, 'to') === userName ? 'd' : 'w',
-    [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') === userName ? '' : 'd',
+    [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') !== userName
+      ? 'd' : _.get(record, 'to') === userName ? '' : 'w',
     [WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
