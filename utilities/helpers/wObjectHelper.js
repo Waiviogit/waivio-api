@@ -393,6 +393,7 @@ const getExposedFields = (objectType, fields) => {
     _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES))
       .map((el) => [el, 0]),
   );
+  if (exposedMap.has(FIELDS_NAMES.LIST_ITEM)) exposedMap.set(LIST_TYPES.MENU_PAGE, 0);
 
   for (const field of fields) {
     const value = exposedMap.get(field.name);
