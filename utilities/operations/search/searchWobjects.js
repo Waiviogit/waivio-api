@@ -197,7 +197,6 @@ const matchSitesPipe = ({
         distanceField: 'proximity',
         maxDistance: map.radius,
         spherical: true,
-        limit: 100000,
       },
     });
   }

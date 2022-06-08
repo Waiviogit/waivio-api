@@ -83,7 +83,6 @@ const addWalletDataToAccounts = async ({
       timestampStart: moment(startDate).unix(),
       symbol,
     }),
-    limit: limit + 1,
     sort: { timestamp: -1 },
   });
   if (dbError) return { error: dbError };
@@ -137,7 +136,8 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.MARKET_BUY]: 'd',
     [WAIV_OPERATIONS_TYPES.MARKET_SELL]: 'w',
     [WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER]: _.get(record, 'to') === userName ? 'd' : 'w',
-    [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') === userName ? '' : 'd',
+    [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') !== userName
+      ? 'd' : _.get(record, 'to') === userName ? '' : 'w',
     [WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
@@ -166,7 +166,7 @@ const constructDbQuery = (params) => ({
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
   filterAccounts = _.filter(filterAccounts, (el) => el !== userName);
 
-  if (record.type === WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER || record.type === WAIV_OPERATIONS_TYPES.TOKENS_STAKE) {
+  if (record.operation === WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER || record.operation === WAIV_OPERATIONS_TYPES.TOKENS_STAKE) {
     return record.to === record.from ? true
       : _.some(filterAccounts, (el) => _.includes([record.to, record.from], el));
   }
@@ -205,7 +205,7 @@ const getExemptions = async ({ user, wallet }) => {
   let exemptions = [];
   if (user) {
     const condition = _.reduce(wallet, (acc, record) => {
-      const filter = { userName: user, userWithExemptions: record.account, _id: ObjectId(record._id) };
+      const filter = { userName: user, userWithExemptions: record.account, recordId: ObjectId(record._id) };
       acc.push({ ...filter });
       return acc;
     }, []);
@@ -213,7 +213,7 @@ const getExemptions = async ({ user, wallet }) => {
     ({ result: exemptions = [] } = await WalletExemptions.find({ $or: condition }));
   }
   for (const exemption of exemptions) {
-    const record = _.find(wallet, (rec) => rec._id.toString() === exemption._id.toString());
+    const record = _.find(wallet, (rec) => rec._id.toString() === exemption.recordId.toString());
     if (record) {
       record.checked = true;
     }
