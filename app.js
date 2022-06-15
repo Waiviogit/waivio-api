@@ -6,6 +6,8 @@ const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const { createNamespace } = require('cls-hooked');
+const monitor = require('express-status-monitor');
+
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
@@ -21,6 +23,8 @@ require('jobs');
 const session = createNamespace('request-session');
 const app = express();
 
+
+app.use(monitor({ path: '/api/status' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {

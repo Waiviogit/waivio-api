@@ -64,4 +64,6 @@ typings/
 # next.js build output
 .next
 
+*.heapsnapshot
+
 package-lock.json
