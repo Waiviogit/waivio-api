@@ -95,9 +95,9 @@ const HIVE_ON_BOARD = {
 };
 
 const PRODUCTION_REQUEST_NODES = [
-  'https://rpc.ecency.com',
-  'https://api.hive.blog',
   'https://anyx.io',
+  'https://hive-api.arcange.eu',
+  'https://api.hive.blog',
   'https://api.openhive.network',
 ];
 
