@@ -213,8 +213,7 @@ const getExemptions = async ({ user, wallet }) => {
     ({ result: exemptions = [] } = await WalletExemptions.find({ $or: condition }));
   }
   for (const rec of wallet) {
-    const exemption = _.find(exemptions, (ex) => rec._id.toString() === ex.recordId.toString());
-    rec.checked = !!exemption;
+    rec.checked = !!_.find(exemptions, (ex) => rec._id.toString() === ex.recordId.toString());
   }
 };
 
