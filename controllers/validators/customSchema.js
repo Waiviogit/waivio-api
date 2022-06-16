@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.customJoi = Joi.extend((joi) => ({
   base: joi.array(),
