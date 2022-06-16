@@ -11,7 +11,6 @@ mongoose.connect(URI, {
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
-mongoose.Promise = global.Promise;
 mongoose.set('debug', process.env.NODE_ENV === 'development');
 
 const models = {};
