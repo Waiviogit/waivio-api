@@ -15,12 +15,12 @@ const processedPostClient = redis
   .createClient({ database: config.redis.processedPost });
 
 (async () => {
-  // await importUserClient.connect();
-  // await wobjRefsClient.connect();
-  // await mainFeedsCacheClient.connect();
+  await importUserClient.connect();
+  await wobjRefsClient.connect();
+  await mainFeedsCacheClient.connect();
   await tagCategoriesClient.connect();
-  // await appUsersStatistics.connect();
-  // await processedPostClient.connect();
+  await appUsersStatistics.connect();
+  await processedPostClient.connect();
 })();
 
 module.exports = {
