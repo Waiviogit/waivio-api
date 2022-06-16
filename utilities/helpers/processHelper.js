@@ -17,7 +17,7 @@ exports.responseOnClose = ({ session }) => {
   if (_.isEmpty(reqInfo)) return;
   const requestTime = this.getDurationInMilliseconds(reqInfo.timeStart);
   if (requestTime > WARNING_REQ_TIME) {
-    sendSentryNotification();
+    //sendSentryNotification();
     Sentry.captureException({ ...reqInfo, requestTime });
   }
 };
