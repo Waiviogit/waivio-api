@@ -1,22 +1,27 @@
 const redis = require('redis');
-const bluebird = require('bluebird');
 const config = require('config');
 
-bluebird.promisifyAll(redis.RedisClient.prototype);
-bluebird.promisifyAll(redis.Multi.prototype);
-const wobjRefsClient = redis.createClient(process.env.REDISCLOUD_URL);
-const importUserClient = redis.createClient(process.env.REDISCLOUD_URL);
-const mainFeedsCacheClient = redis.createClient(process.env.REDISCLOUD_URL);
-const tagCategoriesClient = redis.createClient(process.env.REDISCLOUD_URL);
-const appUsersStatistics = redis.createClient(process.env.REDISCLOUD_URL);
-const processedPostClient = redis.createClient(process.env.REDISCLOUD_URL);
+const wobjRefsClient = redis
+  .createClient({ database: config.redis.wobjRefs });
+const importUserClient = redis
+  .createClient({ database: config.redis.importUser });
+const mainFeedsCacheClient = redis
+  .createClient({ database: config.redis.mainFeedsCache });
+const tagCategoriesClient = redis
+  .createClient({ database: config.redis.tagCategories });
+const appUsersStatistics = redis
+  .createClient({ database: config.redis.appDayUsers });
+const processedPostClient = redis
+  .createClient({ database: config.redis.processedPost });
 
-wobjRefsClient.select(config.redis.wobjRefs);
-importUserClient.select(config.redis.importUser);
-mainFeedsCacheClient.select(config.redis.mainFeedsCache);
-tagCategoriesClient.select(config.redis.tagCategories);
-appUsersStatistics.select(config.redis.appDayUsers);
-processedPostClient.select(config.redis.processedPost);
+(async () => {
+  // await importUserClient.connect();
+  // await wobjRefsClient.connect();
+  // await mainFeedsCacheClient.connect();
+  await tagCategoriesClient.connect();
+  // await appUsersStatistics.connect();
+  // await processedPostClient.connect();
+})();
 
 module.exports = {
   wobjRefsClient,
