@@ -64,37 +64,32 @@ exports.getByFollowLists = async ({
   skip,
   limit,
 }) => {
-  const cond = {
-    $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-    ...getBlockedAppCond(),
-  };
-  // for filter by App wobjects
-  if (_.get(filtersData, 'require_wobjects')) {
-    cond['wobjects.author_permlink'] = { $in: [...filtersData.require_wobjects] };
-  }
-
-  if (!_.isEmpty(authorPermlinks)) cond.language = { $in: userLanguages };
-  if (!_.isEmpty(hiddenPosts)) cond._id = { $nin: hiddenPosts };
-  if (!_.isEmpty(muted)) {
-    cond.author = { $nin: muted };
-    cond['reblog_to.author'] = { $nin: muted };
-  }
-
-  const postsQuery = PostModel.find(cond)
-    .sort({ _id: -1 })
-    // .skip(skip)
-    .limit(limit)
-    .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
-    .lean();
-
-  if (_.get(filtersData, 'lastId')) {
-    postsQuery.where('_id').lt(ObjectId(filtersData.lastId));
-  } else {
-    postsQuery.skip(skip);
-  }
+  const pipe = [
+    { $match: { $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }] } },
+    {
+      $match: {
+        ...getBlockedAppCond(),
+        ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
+        ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
+        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+        ...(_.get(filtersData, 'lastId') && { _id: { $lt: ObjectId(filtersData.lastId) } }),
+      },
+    },
+    { $sort: { _id: -1 } },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'wobjects.author_permlink',
+        foreignField: 'author_permlink',
+        as: 'fullObjects',
+      },
+    },
+  ];
 
   try {
-    const posts = await postsQuery.exec();
+    const posts = await PostModel.aggregate(pipe);
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }

@@ -17,7 +17,6 @@ const processHelper = require('utilities/helpers/processHelper');
 
 const swaggerDocument = require('./swagger');
 require('jobs');
-require('./utilities/redis/redis');
 
 const session = createNamespace('request-session');
 const app = express();
