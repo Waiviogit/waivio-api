@@ -1,12 +1,11 @@
-FROM node:16.14.2-alpine3.15
-RUN apk --no-cache add --virtual .builds-deps build-base python3
+FROM node:14.17.6-alpine3.12
 
 RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY ./package.json ./
 
-RUN npm install && npm rebuild bcrypt --build-from-source && npm cache clean --force
+RUN npm install
 COPY . .
 
 CMD ["npm", "run", "start"]

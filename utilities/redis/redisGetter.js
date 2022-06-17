@@ -6,31 +6,31 @@ const {
 } = require('constants/postsData');
 const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
 
-exports.removeTopWobjUsers = async (key) => mainFeedsCacheClient.DEL(`${TOP_WOBJ_USERS_KEY}:${key}`);
-exports.getTopWobjUsers = async (key) => mainFeedsCacheClient.SMEMBERS(`${TOP_WOBJ_USERS_KEY}:${key}`);
+exports.removeTopWobjUsers = async (key) => mainFeedsCacheClient.delAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
+exports.getTopWobjUsers = async (key) => mainFeedsCacheClient.smembersAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
 
 /**
  * Get assigned wobjects to post by post path("author" + "_" + "permlink")
  * @param path {String}
  * @returns {Promise<*>} Return array of wobjects(author_permlink with percent)
  */
-exports.getWobjRefs = async (authorPermlink) => wobjRefsClient.HGETALL(authorPermlink);
+exports.getWobjRefs = async (authorPermlink) => wobjRefsClient.hgetallAsync(authorPermlink);
 
 /**
  * Get list of users which currently importing
  * @returns {Promise<*>} array of strings
  */
-exports.getAllImportedUsers = async () => importUserClient.KEYS('import_user:*');
+exports.getAllImportedUsers = async () => importUserClient.keysAsync('import_user:*');
 
 /**
  * Get list of errored users
  * @returns {Promise<*>}
  */
-exports.getAllErroredUsers = async () => importUserClient.KEYS('import_user_error:*');
+exports.getAllErroredUsers = async () => importUserClient.keysAsync('import_user_error:*');
 
-exports.getErroredUser = async (userName) => importUserClient.GET(`import_user_error:${userName}`);
+exports.getErroredUser = async (userName) => importUserClient.getAsync(`import_user_error:${userName}`);
 
-exports.getImportedUser = async (userName) => importUserClient.GET(`import_user:${userName}`);
+exports.getImportedUser = async (userName) => importUserClient.getAsync(`import_user:${userName}`);
 
 /**
  * Get list of ids post to HOT feed from cache
@@ -44,7 +44,7 @@ exports.getHotFeedCache = async ({ limit = 10, locale, app }) => {
   if (limit > HOT_NEWS_CACHE_SIZE) return { error: `skip param should be less than ${HOT_NEWS_CACHE_SIZE}` };
   const appPrefix = app ? `${app}:` : '';
   return {
-    ids: await mainFeedsCacheClient.LRANGE(`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, 0, -1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, 0, -1),
   };
 };
 
@@ -63,13 +63,14 @@ exports.getTrendFeedCache = async ({
   if (limit > TREND_NEWS_CACHE_SIZE) return { error: `skip param should be less than ${TREND_NEWS_CACHE_SIZE}` };
   const appPrefix = app ? `${app}:` : '';
   return {
-    ids: await mainFeedsCacheClient.LRANGE(`${appPrefix}${prefix}:${locale}`, 0, -1),
+    // ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, 0, limit - 1),
+    ids: await mainFeedsCacheClient.lrangeAsync(`${appPrefix}${prefix}:${locale}`, 0, -1),
   };
 };
 
 exports.getTagCategories = async ({ key, start, end }) => {
   try {
-    return { tags: await tagCategoriesClient.ZRANGE(key, start, end, { REV: true }) };
+    return { tags: await tagCategoriesClient.zrevrangeAsync(key, start, end) };
   } catch (error) {
     return { error };
   }
@@ -78,15 +79,15 @@ exports.getTagCategories = async ({ key, start, end }) => {
 /**
  * Get active users from redis for collect statistics and invoicing
  */
-exports.getSiteActiveUser = async (key) => appUsersStatistics.SMEMBERS(key);
+exports.getSiteActiveUser = async (key) => appUsersStatistics.smembersAsync(key);
 
-exports.deleteSiteActiveUser = async (key) => appUsersStatistics.DEL(key);
+exports.deleteSiteActiveUser = async (key) => appUsersStatistics.delAsync(key);
 
-exports.importUserClientHGetAll = async (key) => importUserClient.HGETALL(key);
+exports.importUserClientHGetAll = async (key) => importUserClient.hgetallAsync(key);
 
 exports.getHashAll = async ({ key, client = importUserClient }) => {
   try {
-    return { result: await client.HGETALL(key) };
+    return { result: await client.hgetallAsync(key) };
   } catch (error) {
     return { error };
   }
@@ -94,10 +95,10 @@ exports.getHashAll = async ({ key, client = importUserClient }) => {
 
 exports.getAsync = async ({ key, client = importUserClient }) => {
   try {
-    return { result: await client.GET(key) };
+    return { result: await client.getAsync(key) };
   } catch (error) {
     return { error };
   }
 };
 
-exports.smembersAsync = async (key, client) => client.SMEMBERS(key);
+exports.smembersAsync = async (key, client) => client.smembersAsync(key);
