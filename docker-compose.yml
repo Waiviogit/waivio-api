@@ -7,8 +7,6 @@ services:
     command: npm run start
     restart: always
     network_mode: host
-    mem_limit: 450m
-    mem_reservation: 200M
     logging:
       driver: 'json-file'
       options:
