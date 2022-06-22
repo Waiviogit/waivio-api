@@ -67,6 +67,7 @@ exports.SUPPORTED_CURRENCIES = {
   UAH: 'UAH',
 };
 
+exports.CURSOR_TIMEOUT = 30000;
 exports.WARNING_REQ_TIME = 30000;
 
 exports.CACHE_KEY = {

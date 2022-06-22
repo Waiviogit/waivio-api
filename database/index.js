@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('config');
+const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
 const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
@@ -10,6 +11,8 @@ mongoose.connect(URI, {
   .catch((error) => console.log(error));
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+
+mongoose.plugin(cursorTimeout);
 
 mongoose.set('debug', process.env.NODE_ENV === 'development');
 
