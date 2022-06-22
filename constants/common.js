@@ -67,7 +67,7 @@ exports.SUPPORTED_CURRENCIES = {
   UAH: 'UAH',
 };
 
-exports.WARNING_REQ_TIME = 15000;
+exports.WARNING_REQ_TIME = 30000;
 
 exports.CACHE_KEY = {
   REWARD_FUND: 'reward_fund',
