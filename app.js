@@ -21,6 +21,7 @@ require('jobs');
 const session = createNamespace('request-session');
 const app = express();
 
+app.set('etag', false);
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
