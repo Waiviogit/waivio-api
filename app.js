@@ -5,7 +5,7 @@ const cors = require('cors');
 const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
-const { createNamespace } = require('cls-hooked');
+const { createNamespace, destroyNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
@@ -99,6 +99,7 @@ app.use(Sentry.Handlers.errorHandler({
 app.use((req, res, next) => {
   res.on('close', () => {
     processHelper.responseOnClose({ session });
+    destroyNamespace(session);
   });
   res.status(res.result.status || 200).json(res.result.json);
 });
@@ -107,6 +108,7 @@ app.use((req, res, next) => {
 // eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   // set locals, only providing error in development
+  destroyNamespace(session);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
