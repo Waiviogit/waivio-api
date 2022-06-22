@@ -1,7 +1,5 @@
 exports.WAIV_OPERATIONS_TYPES = {
   TOKENS_TRANSFER: 'tokens_transfer',
-  MARKET_BUY: 'market_buy',
-  MARKET_SELL: 'market_sell',
   TOKENS_STAKE: 'tokens_stake',
   CURATION_REWARDS: 'comments_curationReward',
   AUTHOR_REWARDS: 'comments_authorReward',
@@ -11,8 +9,6 @@ exports.WAIV_OPERATIONS_TYPES = {
 
 exports.ADVANCED_WALLET_TYPES = [
   this.WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER,
-  this.WAIV_OPERATIONS_TYPES.MARKET_BUY,
-  this.WAIV_OPERATIONS_TYPES.MARKET_SELL,
   this.WAIV_OPERATIONS_TYPES.TOKENS_STAKE,
   this.WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS,
   this.WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD,
@@ -20,5 +16,4 @@ exports.ADVANCED_WALLET_TYPES = [
   this.WAIV_OPERATIONS_TYPES.MINING_LOTTERY,
 ];
 
-exports.SWAP_TOKENS = 'marketpools_swapTokens';
 exports.AIRDROP = 'airdrops_newAirdrop';

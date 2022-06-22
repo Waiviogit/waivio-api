@@ -6,9 +6,7 @@ const {
 } = require('models');
 const BigNumber = require('bignumber.js');
 const { SUPPORTED_CURRENCIES } = require('../../../constants/common');
-const {
-  ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, SWAP_TOKENS, AIRDROP,
-} = require('../../../constants/walletData');
+const { ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP } = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
@@ -99,7 +97,7 @@ const addWalletDataToAccounts = async ({
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
-      type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
+      type: el.operation, record: el, userName: account.name, filterAccounts,
     });
   });
 
@@ -127,21 +125,18 @@ const getWalletData = async ({
 };
 
 const withdrawDeposit = ({
-  type, record, filterAccounts, userName, symbol,
+  type, record, filterAccounts, userName,
 }) => {
   const isMutual = multiAccountFilter({ record, filterAccounts, userName });
   if (isMutual) return '';
 
   const result = {
-    [WAIV_OPERATIONS_TYPES.MARKET_BUY]: 'd',
-    [WAIV_OPERATIONS_TYPES.MARKET_SELL]: 'w',
     [WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.TOKENS_STAKE]: _.get(record, 'from') !== userName
       ? 'd' : _.get(record, 'to') === userName ? '' : 'w',
     [WAIV_OPERATIONS_TYPES.AUTHOR_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
-    [SWAP_TOKENS]: _.get(record, 'symbolIn') === symbol ? 'w' : '',
     [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
     [AIRDROP]: 'd',
   };
@@ -152,15 +147,7 @@ const withdrawDeposit = ({
 const constructDbQuery = (params) => ({
   account: params.account,
   timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
-  $or: [{
-    symbolIn: params.symbol,
-    operation: SWAP_TOKENS,
-  }, {
-    symbolOut: params.symbol,
-    operation: SWAP_TOKENS,
-  }, {
-    operation: AIRDROP,
-  }],
+  operation: AIRDROP,
 });
 
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
