@@ -107,19 +107,25 @@ const addWalletDataToAccounts = async ({
 const getWalletData = async ({
   userName, types, endDate, startDate, symbol,
 }) => {
-  const batchSize = 1000;
+  const batchSize = 500;
   const walletOperations = [];
-  const { response, error } = await accountHistory({
-    timestampEnd: moment(endDate).unix(),
-    timestampStart: moment(startDate).unix(),
-    symbol,
-    account: userName,
-    ops: types.toString(),
-    limit: batchSize,
-  });
-  if (error) return { error };
+  let operationsAmount = 0;
+  let timestampEnd = moment(endDate).unix();
+  do {
+    if (walletOperations.length) timestampEnd = walletOperations[walletOperations.length - 1].timestamp;
+    const { response, error } = await accountHistory({
+      timestampEnd,
+      timestampStart: moment(startDate).unix(),
+      symbol,
+      account: userName,
+      ops: types.toString(),
+      limit: batchSize,
+    });
+    if (error) return { error };
 
-  walletOperations.push(...response.data);
+    operationsAmount = response.data.length;
+    walletOperations.push(...response.data);
+  } while (operationsAmount >= batchSize);
 
   return { wallet: walletOperations };
 };
