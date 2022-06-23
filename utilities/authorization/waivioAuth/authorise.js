@@ -4,10 +4,18 @@ const axios = require('axios');
 
 const VALIDATE_TOKEN_URL = `https://${waivio_auth.host}/${waivio_auth.baseUrl}/${waivio_auth.validateTokenPath}`;
 const _ = require('lodash');
+const { REQUEST_TIMEOUT } = require('../../../constants/common');
 
 const validateTokenRequest = async (token) => {
   try {
-    const { data: response } = await axios.post(VALIDATE_TOKEN_URL, {}, { headers: { 'access-token': token } });
+    const { data: response } = await axios.post(
+      VALIDATE_TOKEN_URL,
+      {},
+      {
+        headers: { 'access-token': token },
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
 
     if (response) return { response };
     return { error: { message: 'Not enough response data!' } };

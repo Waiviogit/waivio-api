@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const axios = require('axios');
+const { REQUEST_TIMEOUT } = require('../../../constants/common');
 
 /**
  * Task for import user to our data base from anyx
@@ -47,6 +48,9 @@ const anyxRequest = async ({ start, limit }) => {
         order: 'by_name',
       },
       id: 1,
+    },
+    {
+      timeout: REQUEST_TIMEOUT,
     });
     return { users: result.data.result.accounts };
   } catch (error) {
@@ -56,7 +60,12 @@ const anyxRequest = async ({ start, limit }) => {
 
 const request = async (url, name) => {
   try {
-    const result = await axios.get(`https://${url}/api/import_steem_user?userName=${name}`);
+    const result = await axios.get(
+      `https://${url}/api/import_steem_user?userName=${name}`,
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { result: result.data };
   } catch (e) {
     if (e.response.status === 400 && e.response.data.message === `User ${name} is already imported!`) return { result: { ok: true } };
@@ -65,6 +74,5 @@ const request = async (url, name) => {
     return { error: e };
   }
 };
-
 
 module.exports = { addUsersToImport };
