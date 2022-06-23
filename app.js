@@ -6,7 +6,7 @@ const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const nocache = require('nocache');
-const { createNamespace, destroyNamespace } = require('cls-hooked');
+const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
