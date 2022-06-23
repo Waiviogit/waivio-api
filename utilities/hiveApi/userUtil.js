@@ -31,7 +31,7 @@ exports.getFollowingsList = async ({ name, startAccount, limit }) => {
 exports.getFollowersList = async ({ name, startAccount, limit }) => {
   try {
     const followers = await client.call(
-      'follow_api',
+      'condenser_api',
       'get_followers',
       [name, startAccount, 'blog', limit],
     );
