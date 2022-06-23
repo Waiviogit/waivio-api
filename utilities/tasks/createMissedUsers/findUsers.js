@@ -18,12 +18,11 @@ const addUsersToImport = async ({ url, startAcc = '' }) => {
     });
 
     if (error) {
-      console.error(error);
+      console.error('addUsersToImport anyxRequest Error');
       return { error };
     }
     currBatchSize = users.length;
     startAccount = _.get(users, `[${batchSize - 1}].name`, '');
-    console.log(startAccount);
     for (const user of users) {
       let res, counter = 0;
       do {

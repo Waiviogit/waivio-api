@@ -121,7 +121,7 @@ const addAuthorWobjectsWeight = async (posts = []) => {
     { $match: { name: { $in: names } } }, { $project: { name: 1, wobjects_weight: 1 } }]);
 
   if (error || !users) {
-    console.error(error || 'Get Users wobjects_weight no result!');
+    console.error('Get Users wobjects_weight no result!');
     return;
   }
   posts.forEach((post) => {
@@ -146,7 +146,7 @@ const fillReblogs = async (posts = [], userName) => {
           .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
           .lean();
       } catch (error) {
-        console.error(error);
+        console.error('fillReblogs Error');
       }
       let subscription;
       if (userName) {

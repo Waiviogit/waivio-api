@@ -20,7 +20,6 @@ const validateTokenRequest = async (token) => {
     if (response) return { response };
     return { error: { message: 'Not enough response data!' } };
   } catch (error) {
-    console.error(error);
     return { error };
   }
 };

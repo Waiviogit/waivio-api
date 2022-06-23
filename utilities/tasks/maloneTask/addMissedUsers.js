@@ -20,16 +20,13 @@ exports.add = async () => {
       console.log(`All followers/followings at user ${usr} OK`);
       continue;
     }
-    console.log('data', data);
-    console.log('followers', DBFollowersCount.length);
-    console.log('followings', DBFollowingsCount.length);
     if (DBFollowersCount.length !== data.follower_count) {
       do {
         const { followers, error } = await anyxRequest({
           start: startAccount, limit: batchSize, name: usr,
         });
         if (error || !followers) {
-          console.error(error || 'Followers not found');
+          console.error('Followers not found');
           return { error };
         }
         userFollowers = _.uniq(_.concat(userFollowers, _.map(followers, 'follower')));
@@ -45,7 +42,7 @@ exports.add = async () => {
           start: startAccount, limit: batchSize, name: usr,
         });
         if (err || !followings) {
-          console.error(err || 'Followings not found');
+          console.error('Followings not found');
           return { err };
         }
         userFollowings = _.uniq(_.concat(userFollowings, _.map(followings, 'following')));
