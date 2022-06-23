@@ -3,7 +3,6 @@ const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 
 exports.getAppInfo = async ({ app, addHashtag }) => {
-  console.log('app', app);
   if (!app) ({ result: app } = await getSessionApp());
   const supportedTypes = _.get(app, 'supported_object_types', []);
   if (addHashtag) supportedTypes.push(OBJECT_TYPES.HASHTAG);

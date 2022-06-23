@@ -8,6 +8,7 @@ const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
+
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
   if (_.isUndefined(data.limit)) data.limit = 10;
