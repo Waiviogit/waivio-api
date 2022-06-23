@@ -8,11 +8,11 @@ const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
-
+  console.log('appInfo', appInfo);
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
   if (_.isUndefined(data.limit)) data.limit = 10;
-
+// TODO КАК-ТО СДЕЛАТЬ САЙТЫ ЧТОБ РАБОТАЛИ!
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
     : defaultWobjectSearch({ ...data, ...appInfo });
@@ -37,6 +37,7 @@ const defaultWobjectSearch = async (data) => {
 };
 
 const sitesWobjectSearch = async (data) => {
+  console.log('in sitesWobjectSearch data', data);
   let user, result;
   const { wobjects, error } = await getWobjectsFromAggregation({
     pipeline: makeSitePipeline(data),
@@ -150,9 +151,9 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, object_type, limit, skip, crucialWobjects, forParent,
+  string, limit, skip, crucialWobjects, forParent,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type })];
+  const pipeline = [matchSimplePipe({ string })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
@@ -189,6 +190,9 @@ const makeCountPipeline = ({
 const matchSitesPipe = ({
   crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
+  console.log('string', string);
+  console.log('map', map);
+  console.log('box', box);
   const pipeline = [];
   if (map) {
     pipeline.push({
@@ -213,9 +217,17 @@ const matchSitesPipe = ({
   }
   const matchCond = {
     $match: {
-      object_type: { $in: supportedTypes },
+      $and: [
+        { $text: { $search: `\"${string}\"` } },
+        { object_type: { $in: supportedTypes } },
+      ],
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
+
+    // $match: {
+    //   object_type: { $in: supportedTypes },
+    //   'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    // },
   };
   if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
   pipeline.push(matchCond);
@@ -226,6 +238,7 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
+  // что-то
   pipeline.push({
     $match: {
       $and: [
@@ -237,11 +250,10 @@ const matchSitesPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type }) => ({
+const matchSimplePipe = ({ string }) => ({
   $match: {
     $and: [
-      { search: { $regex: string, $options: 'i' } },
-      { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+      { $text: { $search: `\"${string}\"` } },
     ],
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
   },
