@@ -8,11 +8,10 @@ const _ = require('lodash');
 
 exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
-  console.log('appInfo', appInfo);
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.?+*|{}[\]()"\\@]/g, '\\$&');
   if (_.isUndefined(data.limit)) data.limit = 10;
-// TODO КАК-ТО СДЕЛАТЬ САЙТЫ ЧТОБ РАБОТАЛИ!
+
   return appInfo.forExtended || appInfo.forSites
     ? sitesWobjectSearch({ ...data, ...appInfo })
     : defaultWobjectSearch({ ...data, ...appInfo });
@@ -37,7 +36,6 @@ const defaultWobjectSearch = async (data) => {
 };
 
 const sitesWobjectSearch = async (data) => {
-  console.log('in sitesWobjectSearch data', data);
   let user, result;
   const { wobjects, error } = await getWobjectsFromAggregation({
     pipeline: makeSitePipeline(data),
@@ -113,7 +111,6 @@ const makeSitePipeline = ({
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
     supportedTypes,
-    object_type,
     tagCategory,
     addHashtag,
     forSites,
@@ -188,12 +185,20 @@ const makeCountPipeline = ({
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, object_type, supportedTypes, forSites, tagCategory, map, box, addHashtag,
+  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag,
 }) => {
-  console.log('string', string);
-  console.log('map', map);
-  console.log('box', box);
   const pipeline = [];
+  const matchCond = {
+    $match: {
+      object_type: { $in: supportedTypes },
+      $and: [
+        { $text: { $search: `\"${string}\"` } },
+      ],
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+  };
+  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  pipeline.push(matchCond);
   if (map) {
     pipeline.push({
       $geoNear: {
@@ -215,22 +220,6 @@ const matchSitesPipe = ({
       },
     });
   }
-  const matchCond = {
-    $match: {
-      $and: [
-        { $text: { $search: `\"${string}\"` } },
-        { object_type: { $in: supportedTypes } },
-      ],
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    },
-
-    // $match: {
-    //   object_type: { $in: supportedTypes },
-    //   'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    // },
-  };
-  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
-  pipeline.push(matchCond);
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
       _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
@@ -238,15 +227,7 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
-  // что-то
-  pipeline.push({
-    $match: {
-      $and: [
-        { search: { $regex: string, $options: 'i' } },
-        { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-      ],
-    },
-  });
+
   return pipeline;
 };
 
