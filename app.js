@@ -6,7 +6,7 @@ const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const nocache = require('nocache');
-const { createNamespace } = require('cls-hooked');
+const { createNamespace, destroyNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
@@ -102,6 +102,7 @@ app.use((req, res, next) => {
   res.on('close', () => {
     processHelper.responseOnClose({ session });
   });
+  destroyNamespace('request-session');
   res.status(res.result.status || 200).json(res.result.json);
 });
 
