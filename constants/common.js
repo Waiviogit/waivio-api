@@ -87,6 +87,11 @@ exports.BLOCK_NUM_KEYS = {
 exports.REDIS_KEYS = {
   PROCESSED_LIKES_HIVE: 'processed_likes:hive',
   PROCESSED_LIKES_ENGINE: 'processed_likes:engine',
+  TEST_LOAD: {
+    BLOCK: 'test:blocks:hive',
+    POST: 'test:post:hive',
+    HISTORY: 'test:history:hive',
+  },
 };
 
 exports.LANGUAGES = ['en-US',
