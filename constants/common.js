@@ -68,7 +68,7 @@ exports.SUPPORTED_CURRENCIES = {
 };
 
 exports.CURSOR_TIMEOUT = 30000;
-exports.WARNING_REQ_TIME = 30000;
+exports.WARNING_REQ_TIME = 50000;
 exports.REQUEST_TIMEOUT = 15000;
 
 exports.CACHE_KEY = {
