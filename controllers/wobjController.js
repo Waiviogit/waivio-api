@@ -114,7 +114,6 @@ const search = async (req, res, next) => {
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;
-
   const { wobjects, hasMore, error } = await searchWobjects(value);
 
   if (error) return next(error);

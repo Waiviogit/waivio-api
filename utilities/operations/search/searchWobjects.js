@@ -118,6 +118,7 @@ const makeSitePipeline = ({
     string,
     map,
     box,
+    object_type,
   })];
   if (forParent) {
     pipeline.push({
@@ -186,41 +187,72 @@ const makeCountPipeline = ({
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag,
+  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
 }) => {
+  console.log('crucialWobjects', crucialWobjects);
+  console.log('supportedTypes', supportedTypes);
+  console.log('forSites', forSites);
+  console.log('tagCategory', tagCategory);
+  console.log('map', map);
+  console.log('box', box);
+  console.log('addHashtag', addHashtag);
   const pipeline = [];
-  const matchCond = {
+  pipeline.push({
     $match: {
-      object_type: { $in: supportedTypes },
-      $and: [
-        { $text: { $search: `\"${string}\"` } },
-      ],
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    },
-  };
-  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
-  pipeline.push(matchCond);
-  if (map) {
-    pipeline.push({
-      $geoNear: {
-        near: { type: 'Point', coordinates: map.coordinates },
-        distanceField: 'proximity',
-        maxDistance: map.radius,
-        spherical: true,
+      ...map && {
+        $geoNear: {
+          near: { type: 'Point', coordinates: map.coordinates },
+          distanceField: 'proximity',
+          maxDistance: map.radius,
+          spherical: true,
+        },
       },
-    });
-  }
-  if (box) {
-    pipeline.push({
-      $match: {
+      ...string && {
+        $and: [
+          { $text: { $search: `\"${string}\"`} },
+          { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
+        ],
+      },
+      ...box && {
         map: {
           $geoWithin: {
             $box: [box.bottomPoint, box.topPoint],
           },
         },
       },
-    });
-  }
+      object_type: { $in: supportedTypes },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
+    },
+  });
+  // if (map) {
+  //   pipeline.push({
+  //     $geoNear: {
+  //       near: { type: 'Point', coordinates: map.coordinates },
+  //       distanceField: 'proximity',
+  //       maxDistance: map.radius,
+  //       spherical: true,
+  //     },
+  //   });
+  // }
+  // if (box) {
+  //   pipeline.push({
+  //     $match: {
+  //       map: {
+  //         $geoWithin: {
+  //           $box: [box.bottomPoint, box.topPoint],
+  //         },
+  //       },
+  //     },
+  //   });
+  // }
+  // pipeline.push({
+  //   $match: {
+  //     object_type: { $in: supportedTypes },
+  //     'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  //     ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
+  //   },
+  // });
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
       _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
@@ -234,9 +266,6 @@ const matchSitesPipe = ({
 
 const matchSimplePipe = ({ string }) => ({
   $match: {
-    $and: [
-      { $text: { $search: `\"${string}\"` } },
-    ],
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  },
+    $text: { $search: `\"${string}\"` }},
 });
