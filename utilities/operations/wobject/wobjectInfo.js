@@ -51,7 +51,7 @@ const getListItems = async (wobject, data, app) => {
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
-    wobjects: [_.cloneDeep(wobject)],
+    wobjects: [JSON.parse(JSON.stringify(wobject))],
     returnArray: false,
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
