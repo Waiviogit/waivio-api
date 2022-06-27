@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { User, Subscriptions } = require('database').models;
 const { importUser } = require('utilities/operations/user/importSteemUserOps');
 const axios = require('axios');
+const { REQUEST_TIMEOUT } = require('../../../constants/common');
 
 exports.add = async () => {
   const usersDB = await User.find({ followers_count: { $gt: 5000, $lt: 10000 } }, { name: 1 }).lean();
@@ -19,16 +20,13 @@ exports.add = async () => {
       console.log(`All followers/followings at user ${usr} OK`);
       continue;
     }
-    console.log('data', data);
-    console.log('followers', DBFollowersCount.length);
-    console.log('followings', DBFollowingsCount.length);
     if (DBFollowersCount.length !== data.follower_count) {
       do {
         const { followers, error } = await anyxRequest({
           start: startAccount, limit: batchSize, name: usr,
         });
         if (error || !followers) {
-          console.error(error || 'Followers not found');
+          console.error('Followers not found');
           return { error };
         }
         userFollowers = _.uniq(_.concat(userFollowers, _.map(followers, 'follower')));
@@ -44,7 +42,7 @@ exports.add = async () => {
           start: startAccount, limit: batchSize, name: usr,
         });
         if (err || !followings) {
-          console.error(err || 'Followings not found');
+          console.error('Followings not found');
           return { err };
         }
         userFollowings = _.uniq(_.concat(userFollowings, _.map(followings, 'following')));
@@ -76,15 +74,21 @@ exports.add = async () => {
 
 const anyxRequest = async ({ name, start, limit }) => {
   try {
-    const result = await axios.post('https://anyx.io', {
-      jsonrpc: '2.0',
-      method: 'call',
-      params: [
-        'follow_api',
-        'get_followers',
-        [name, start, 'blog', limit],
-      ],
-    });
+    const result = await axios.post(
+      'https://anyx.io',
+      {
+        jsonrpc: '2.0',
+        method: 'call',
+        params: [
+          'follow_api',
+          'get_followers',
+          [name, start, 'blog', limit],
+        ],
+      },
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { followers: result.data.result };
   } catch (error) {
     return { error };
@@ -115,6 +119,9 @@ const anyxRequestFollowings = async ({ name, start, limit }) => {
         'get_following',
         [name, start, 'blog', limit],
       ],
+    },
+    {
+      timeout: REQUEST_TIMEOUT,
     });
     return { followings: result.data.result };
   } catch (error) {
@@ -124,15 +131,21 @@ const anyxRequestFollowings = async ({ name, start, limit }) => {
 
 const followCount = async (name) => {
   try {
-    const result = await axios.post('https://anyx.io', {
-      jsonrpc: '2.0',
-      method: 'call',
-      params: [
-        'follow_api',
-        'get_follow_count',
-        [name],
-      ],
-    });
+    const result = await axios.post(
+      'https://anyx.io',
+      {
+        jsonrpc: '2.0',
+        method: 'call',
+        params: [
+          'follow_api',
+          'get_follow_count',
+          [name],
+        ],
+      },
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { data: result.data.result };
   } catch (error) {
     return { error };

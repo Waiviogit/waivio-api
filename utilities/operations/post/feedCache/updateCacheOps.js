@@ -22,7 +22,7 @@ async function getDbPostsIds(type, appName) {
           forApp: appName,
         });
         if (error) {
-          return console.error(error);
+          return console.error('getDbPostsIds Error');
         }
         return { locale, ids: posts.map((post) => `${post.children}_${post._id}`) };
       }));
@@ -38,7 +38,7 @@ async function getDbPostsIds(type, appName) {
           forApp: appName,
         });
         if (error) {
-          return console.error(error);
+          return console.error('getDbPostsIds Error');
         }
         return { locale, ids: posts.map((post) => `${post.net_rshares}_${post._id}`) };
       }));
@@ -90,7 +90,7 @@ exports.updateFeedsCache = async () => {
   let trendFilteredCryptoCache;
   const { result: apps = [], error } = await find({ host: { $in: APPS_FOR_FEED_CACHE } });
   if (error) {
-    console.error(error);
+    console.error('updateFeedsCache error');
     return;
   }
   for (const app of apps) {

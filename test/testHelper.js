@@ -2,9 +2,9 @@ const { wobjRefsClient } = require('utilities/redis/redis');
 const chaiAsPromised = require('chai-as-promised');
 const sinonChai = require('sinon-chai');
 const chaiHttp = require('chai-http');
-const { ObjectID } = require('bson');
 const faker = require('faker');
 const chai = require('chai');
+const { ObjectId: ObjectID } = require('mongoose').Types;
 
 chai.use(chaiAsPromised);
 chai.use(chaiHttp);

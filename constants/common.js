@@ -67,7 +67,9 @@ exports.SUPPORTED_CURRENCIES = {
   UAH: 'UAH',
 };
 
-exports.WARNING_REQ_TIME = 15000;
+exports.CURSOR_TIMEOUT = 30000;
+exports.WARNING_REQ_TIME = 30000;
+exports.REQUEST_TIMEOUT = 15000;
 
 exports.CACHE_KEY = {
   REWARD_FUND: 'reward_fund',
@@ -85,6 +87,11 @@ exports.BLOCK_NUM_KEYS = {
 exports.REDIS_KEYS = {
   PROCESSED_LIKES_HIVE: 'processed_likes:hive',
   PROCESSED_LIKES_ENGINE: 'processed_likes:engine',
+  TEST_LOAD: {
+    BLOCK: 'test:blocks:hive',
+    POST: 'test:post:hive',
+    HISTORY: 'test:history:hive',
+  },
 };
 
 exports.LANGUAGES = ['en-US',

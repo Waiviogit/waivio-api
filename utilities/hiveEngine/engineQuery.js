@@ -1,6 +1,7 @@
 const axios = require('axios');
 const _ = require('lodash');
 const { HIVE_ENGINE_NODES } = require('constants/hiveEngine');
+const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.engineQuery = async ({
   hostUrl = 'https://api.hive-engine.com/rpc',
@@ -18,6 +19,9 @@ exports.engineQuery = async ({
         method,
         params,
         id,
+      },
+      {
+        timeout: REQUEST_TIMEOUT,
       },
     );
     return _.get(resp, 'data.result');
