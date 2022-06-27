@@ -39,18 +39,32 @@ const defaultWobjectSearch = async (data) => {
 const sitesWobjectSearch = async (data) => {
   let user, result;
   const { wobjects, error } = await getWobjectsFromAggregation({
-    pipeline: makeSitePipeline(data),
+    pipeline: (data.object_type && data.object_type === 'restaurant') ? makeSitePipelineForRestaurants(data)
+      : makePipelineForDrinksAndDishes(data),
     string: data.string,
     object_type: data.object_type,
   });
 
+  let wobjectsToPass = wobjects;
+  let errorToPass = error;
+  if (data.object_type !== 'restaurant') {
+    const { result: dbResult, error: dbError } = await Wobj.find({
+      author_permlink: {
+        $in:
+            wobjects.map((obj) => obj.author_permlink),
+      },
+    }, {}, { weight: -1 }, data.skip || 0, data.mapMarkers ? 250 : data.limit + 1);
+    wobjectsToPass = dbResult;
+    errorToPass = dbError;
+  }
+
   if (data.needCounters && !error) {
-    return searchWithCounters({ ...data, wobjects });
+    return searchWithCounters({ ...data, wobjects: wobjectsToPass });
   }
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
-  result = await addCampaignsToWobjectsSites({ wobjects: _.cloneDeep(wobjects), user, ...data });
+  result = await addCampaignsToWobjectsSites({ wobjects: _.cloneDeep(wobjectsToPass), user, ...data });
   result = geoHelper.setFilterByDistance({
     mapMarkers: data.mapMarkers, wobjects: result, box: data.box,
   });
@@ -58,7 +72,7 @@ const sitesWobjectSearch = async (data) => {
   return {
     wobjects: _.take(result, data.limit),
     hasMore: result.length > data.limit,
-    error,
+    error: errorToPass,
   };
 };
 
@@ -105,7 +119,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
-const makeSitePipeline = ({
+const makeSitePipelineForRestaurants = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
@@ -127,22 +141,6 @@ const makeSitePipeline = ({
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
-  if (object_type && object_type !== 'restaurant') {
-    pipeline.push(
-      { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
-      { $sort: { 'children.weight': -1 } },
-    );
-    mapMarkers || (!string && !tagCategory)
-      ? pipeline.push(
-        { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
-        { $replaceRoot: { newRoot: '$biggestWeight' } },
-      )
-      : pipeline.push(
-        { $project: { firstThree: { $slice: ['$children', 3] } } },
-        { $unwind: { path: '$firstThree' } },
-        { $replaceRoot: { newRoot: '$firstThree' } },
-      );
-  }
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
@@ -202,8 +200,8 @@ const matchSitesPipe = ({
       },
       ...string && {
         $and: [
+          { object_type },
           { $text: { $search: `\"${string}\"` } },
-          { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
         ],
       },
       ...box && {
@@ -237,3 +235,50 @@ const matchSimplePipe = ({ string, object_type }) => ({
     $text: { $search: `\"${string}\"` },
   },
 });
+
+const makePipelineForDrinksAndDishes = ({
+  crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers, supportedTypes, forSites, tagCategory,
+  map, sort,
+}) => {
+  const pipeline = [...matchSitesPipe({
+    crucialWobjects,
+    supportedTypes,
+    tagCategory,
+    addHashtag,
+    forSites,
+    string,
+    map,
+    box,
+    object_type,
+  })];
+  if (forParent) {
+    pipeline.push({
+      $addFields: {
+        priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+      },
+    }, { $sort: { priority: -1, [sort]: -1 } });
+  } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
+  pipeline.push({
+    $group: {
+      _id: '$parent',
+      children: {
+        $push: {
+          weight: '$weight',
+          author_permlink: '$author_permlink',
+        },
+      },
+    },
+  });
+  mapMarkers || (!string && !tagCategory)
+    ? pipeline.push(
+      { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
+      { $replaceRoot: { newRoot: '$biggestWeight' } },
+    )
+    : pipeline.push(
+      { $project: { firstThree: { $slice: ['$children', 3] } } },
+      { $unwind: { path: '$firstThree' } },
+      { $replaceRoot: { newRoot: '$firstThree' } },
+    );
+
+  return pipeline;
+};
