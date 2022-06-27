@@ -11,7 +11,6 @@ const _ = require('lodash');
 exports.importUser = async (userName) => {
   const { user: existUser, error: dbError } = await User.getOne(userName);
 
-  if (dbError) console.error(dbError);
   if (_.get(existUser, 'stage_version') === 1) return { user: existUser };
 
   const {
@@ -83,7 +82,7 @@ const updateUserFollowings = async (name) => {
     );
 
     if (error || followings.error) {
-      console.error(error || followings.error);
+      console.error('getFollowingsList Error');
       return { error: error || followings.error };
     }
     hiveArray = _.concat(hiveArray, _.map(followings, (el) => el.following));
@@ -114,7 +113,7 @@ const updateUserFollowers = async (name) => {
     );
 
     if (error || followers.error) {
-      console.error(error || followers.error);
+      console.error('getFollowersList error');
       return { error: error || followers.error };
     }
     hiveArray = _.concat(hiveArray, _.map(followers, (el) => el.follower));

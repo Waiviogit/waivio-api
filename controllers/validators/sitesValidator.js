@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
 const { customJoi } = require('controllers/validators/customSchema');
 const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');

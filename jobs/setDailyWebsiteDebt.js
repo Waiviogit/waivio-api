@@ -1,7 +1,7 @@
 const { collectSiteDebts } = require('utilities/operations/sites');
-const cron = require('cron');
+const { CronJob } = require('cron');
 
-exports.sendDailyWebsiteDebt = cron.job('0 0 */1 * *', async () => {
+exports.sendDailyWebsiteDebt = new CronJob('0 0 */1 * *', async () => {
   console.log('Start send website payments');
   await collectSiteDebts.dailySuspendedDebt();
   await collectSiteDebts.dailyDebt();

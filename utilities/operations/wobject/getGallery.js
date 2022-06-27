@@ -13,7 +13,7 @@ module.exports = async (data) => {
     fields: ['galleryAlbum', 'galleryItem'],
     app,
     locale: data.locale,
-    wobjects: [_.cloneDeep(wObject)],
+    wobjects: [wObject],
     returnArray: false,
   });
   return { result: galleryAlbum || [] };

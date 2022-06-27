@@ -5,6 +5,7 @@ const cors = require('cors');
 const Sentry = require('@sentry/node');
 const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
+const nocache = require('nocache');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
 const {
@@ -21,13 +22,14 @@ require('jobs');
 const session = createNamespace('request-session');
 const app = express();
 
+app.use(nocache());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use((req, res, next) => {
   session.run(() => next());
 });
 app.use(cors());
-app.use(morgan('dev'));
+app.use(morgan(':date[iso] :method :url :status :response-time ms - :res[content-length]'));
 
 Sentry.init({
   environment: process.env.NODE_ENV,
