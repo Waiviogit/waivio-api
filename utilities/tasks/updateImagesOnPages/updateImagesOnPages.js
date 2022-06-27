@@ -35,7 +35,7 @@ const updateImageLinks = async (pageContent) => {
     return updatePageContent(updatedWobj);
   }
   const { imageUrl, error } = await image.uploadInS3(base64, link[0].match(IMAGE_NAME));
-  if (error) return console.log(`Error download ${link[0].match(IMAGE_NAME)} to S3`, error);
+  if (error) return console.log(`Error download ${link[0].match(IMAGE_NAME)} to S3`);
 
   const updatedWobj = await WObject.findOneAndUpdate(
     { 'fields.permlink': pageContent.permlink },

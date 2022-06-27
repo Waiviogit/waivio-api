@@ -22,7 +22,7 @@ class Image {
     if (base64) {
       try {
         // eslint-disable-next-line no-buffer-constructor
-        const buffer = new Buffer(base64, 'base64');
+        const buffer = Buffer.from(base64, 'base64');
         const body = await this.resizeImage({ buffer, size });
         const gzip = await gzipPromised(body);
 

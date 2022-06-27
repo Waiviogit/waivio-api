@@ -1,8 +1,10 @@
-const { postClient: client } = require('utilities/hiveApi/hiveClient');
+const { getClient } = require('utilities/hiveApi/clientOptions');
+const { REDIS_KEYS } = require('constants/common');
 const _ = require('lodash');
 
 exports.getPostsByCategory = async (data) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
       return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
     }
@@ -28,6 +30,7 @@ exports.getPostsByCategory = async (data) => {
  */
 exports.getPost = async ({ author, permlink }) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const post = await client.database.call('get_content', [author, permlink]);
 
     if (post.author) {
@@ -62,6 +65,7 @@ exports.getManyPosts = async (links = []) => {
 // eslint-disable-next-line camelcase
 exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const comments = await client.database.call(
       'get_discussions_by_comments',
       [{ start_author, start_permlink, limit }],
@@ -75,6 +79,7 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
 
 exports.getCommentsArr = async (permlinks) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const comments = await client.call(
       'database_api',
       'find_comments',
@@ -93,6 +98,7 @@ exports.getCommentsArr = async (permlinks) => {
  */
 exports.getPostState = async ({ author, permlink, category }) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const result = await client.database.call(
       'get_state',
       [`${category}/@${author}/${permlink}`],
@@ -107,6 +113,7 @@ exports.getPostState = async ({ author, permlink, category }) => {
 
 exports.getContent = async ({ author, permlink }) => {
   try {
+    const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const result = await client.database.call(
       'get_content',
       [author, permlink],

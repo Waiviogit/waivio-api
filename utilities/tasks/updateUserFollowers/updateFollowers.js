@@ -2,6 +2,7 @@
 const _ = require('lodash');
 const { User } = require('database').models;
 const axios = require('axios');
+const { REQUEST_TIMEOUT } = require('../../../constants/common');
 
 exports.findFollowersCountAndUpdate = async () => {
   const users = await User.find({ stage_version: 0 });
@@ -34,19 +35,24 @@ exports.findFollowersCountAndUpdate = async () => {
   }
 };
 
-
 const getFollowers = async (name, start) => {
   try {
-    const result = await axios.post('https://anyx.io/', {
-      id: 0,
-      jsonrpc: '2.0',
-      method: 'call',
-      params: [
-        'condenser_api',
-        'get_followers',
-        [name, start, 'blog', 1000],
-      ],
-    });
+    const result = await axios.post(
+      'https://anyx.io/',
+      {
+        id: 0,
+        jsonrpc: '2.0',
+        method: 'call',
+        params: [
+          'condenser_api',
+          'get_followers',
+          [name, start, 'blog', 1000],
+        ],
+      },
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { result: result.data };
   } catch (error) {
     return { error };

@@ -1,4 +1,4 @@
-exports.APPS_FOR_FEED_CACHE = ['waiviodev.com', 'waivio.com', 'crypto.investarena.com', 'investarena.waiviodev.com', 'investarena.com'];
+exports.APPS_FOR_FEED_CACHE = ['waiviodev.com', 'waivio.com'];
 exports.IGNORED_AUTHORS = ['hbd.funder'];
 
 exports.DAYS_FOR_HOT_FEED = 3;

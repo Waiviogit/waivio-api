@@ -12,7 +12,7 @@ const writeToCollection = async ({ array, doc }) => {
         const { result, error: dbError } = await Subscriptions
           .followUser({ follower: doc.name, following: el });
         result && console.log(`success, ${doc.name} follows ${el}`);
-        dbError && console.error(dbError);
+        dbError && console.error('create follow records dbError');
       }
     });
   }

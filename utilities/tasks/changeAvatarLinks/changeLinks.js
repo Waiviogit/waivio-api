@@ -37,7 +37,7 @@ const uploadImage = async (url) => {
     });
     return _.get(result, 'data.image', url);
   } catch (error) {
-    console.error(error.message);
+    console.error('uploadImage Error');
     return url;
   }
 };

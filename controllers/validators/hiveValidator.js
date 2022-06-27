@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const { BLOCK_NUM_KEYS } = require('constants/common');
 
 const options = { allowUnknown: true, stripUnknown: true };
