@@ -150,9 +150,9 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent,
+  string, limit, skip, crucialWobjects, forParent, object_type,
 }) => {
-  const pipeline = [matchSimplePipe({ string })];
+  const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
@@ -230,8 +230,9 @@ const matchSitesPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string }) => ({
+const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
+    ...object_type && { object_type },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
     $text: { $search: `\"${string}\"` },
   },
