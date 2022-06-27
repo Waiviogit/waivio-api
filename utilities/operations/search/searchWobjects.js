@@ -189,13 +189,6 @@ const makeCountPipeline = ({
 const matchSitesPipe = ({
   crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
 }) => {
-  console.log('crucialWobjects', crucialWobjects);
-  console.log('supportedTypes', supportedTypes);
-  console.log('forSites', forSites);
-  console.log('tagCategory', tagCategory);
-  console.log('map', map);
-  console.log('box', box);
-  console.log('addHashtag', addHashtag);
   const pipeline = [];
   pipeline.push({
     $match: {
@@ -209,7 +202,7 @@ const matchSitesPipe = ({
       },
       ...string && {
         $and: [
-          { $text: { $search: `\"${string}\"`} },
+          { $text: { $search: `\"${string}\"` } },
           { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
         ],
       },
@@ -225,34 +218,7 @@ const matchSitesPipe = ({
       ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
     },
   });
-  // if (map) {
-  //   pipeline.push({
-  //     $geoNear: {
-  //       near: { type: 'Point', coordinates: map.coordinates },
-  //       distanceField: 'proximity',
-  //       maxDistance: map.radius,
-  //       spherical: true,
-  //     },
-  //   });
-  // }
-  // if (box) {
-  //   pipeline.push({
-  //     $match: {
-  //       map: {
-  //         $geoWithin: {
-  //           $box: [box.bottomPoint, box.topPoint],
-  //         },
-  //       },
-  //     },
-  //   });
-  // }
-  // pipeline.push({
-  //   $match: {
-  //     object_type: { $in: supportedTypes },
-  //     'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  //     ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
-  //   },
-  // });
+
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
       _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
@@ -267,5 +233,6 @@ const matchSitesPipe = ({
 const matchSimplePipe = ({ string }) => ({
   $match: {
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    $text: { $search: `\"${string}\"` }},
+    $text: { $search: `\"${string}\"` },
+  },
 });
