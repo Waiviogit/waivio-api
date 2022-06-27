@@ -1,7 +1,7 @@
 const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
 const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
 const { customValidationHelper } = require('utilities/helpers');
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 const moment = require('moment');
 const { SUPPORTED_CRYPTO_CURRENCIES } = require('../../constants/currencyData');
 

@@ -26,7 +26,7 @@ exports.getHot = async ({
       app: forApp,
     });
     if (error) {
-      console.error(error);
+      console.error('getHot Error');
     } else {
       return ids;
     }
@@ -73,7 +73,7 @@ exports.getTrend = async ({
       prefix,
     });
     if (error) {
-      console.error(error);
+      console.error('getTrend Error');
     } else {
       return ids;
     }

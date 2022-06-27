@@ -1,4 +1,4 @@
-const Joi = require('@hapi/joi');
+const Joi = require('joi');
 
 exports.generalSearchSchema = Joi.object().keys({
   searchString: Joi.string().lowercase(),

@@ -62,7 +62,6 @@ const runImport = async (userName) => {
   const { user, error } = await importUser(userName);
 
   if (error) {
-    console.error(error);
     await redisSetter.setImportedUserError(userName, JSON.stringify(error));
   } else if (user) {
     console.log(`User ${userName} successfully imported with STEEM info!`);

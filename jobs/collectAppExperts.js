@@ -1,8 +1,8 @@
 const experts = require('utilities/operations/app/experts');
-const cron = require('cron');
+const { CronJob } = require('cron');
 
-exports.collectExpertsJob = cron.job('0 9 */1 * *', async () => {
+exports.collectExpertsJob = new CronJob('0 9 */1 * *', async () => {
   console.log('Collecting app experts info');
-  const result = await experts.collect({ limit: 50 });
-  console.log('Updating task finished with apps status: ', result);
+  await experts.collect({ limit: 50 });
+  console.log('Updating task finished');
 }, null, false, null, null, false);

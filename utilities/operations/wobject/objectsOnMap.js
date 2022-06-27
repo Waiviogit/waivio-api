@@ -28,7 +28,7 @@ exports.getLastPostOnObjectFromArea = async ({
   const { wobjects, error } = await Wobj.fromAggregation(pipe);
   if (error) return { error };
   const wobjectsWithCampaigns = await addCampaignsToWobjectsSites(
-    { wobjects: _.cloneDeep(wobjects), app },
+    { wobjects, app },
   );
 
   return {
