@@ -38,33 +38,15 @@ const defaultWobjectSearch = async (data) => {
 
 const sitesWobjectSearch = async (data) => {
   let user, result;
-  const { wobjects, error } = await getWobjectsFromAggregation({
-    pipeline: (data.object_type && data.object_type === 'restaurant') ? makeSitePipelineForRestaurants(data)
-      : makePipelineForDrinksAndDishes(data),
-    string: data.string,
-    object_type: data.object_type,
-  });
-
-  let wobjectsToPass = wobjects;
-  let errorToPass = error;
-  if (data.object_type !== 'restaurant') {
-    const { result: dbResult, error: dbError } = await Wobj.find({
-      author_permlink: {
-        $in:
-            wobjects.map((obj) => obj.author_permlink),
-      },
-    }, {}, { weight: -1 }, 0, data.mapMarkers ? 250 : data.limit + 1);
-    wobjectsToPass = dbResult;
-    errorToPass = dbError;
-  }
+  const { wobjects, error } = await getSiteWobjects(data);
 
   if (data.needCounters && !error) {
-    return searchWithCounters({ ...data, wobjects: wobjectsToPass });
+    return searchWithCounters({ ...data, wobjects });
   }
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
-  result = await addCampaignsToWobjectsSites({ wobjects: wobjectsToPass, user, ...data });
+  result = await addCampaignsToWobjectsSites({ wobjects, user, ...data });
   result = geoHelper.setFilterByDistance({
     mapMarkers: data.mapMarkers, wobjects: result, box: data.box,
   });
@@ -72,8 +54,32 @@ const sitesWobjectSearch = async (data) => {
   return {
     wobjects: _.take(result, data.limit),
     hasMore: result.length > data.limit,
-    error: errorToPass,
+    error,
   };
+};
+
+const getSiteWobjects = async (data) => {
+  if (data.object_type && data.object_type !== 'restaurant') {
+    const { wobjects, error: aggregateError } = await getWobjectsFromAggregation({
+      pipeline: makePipelineForDrinksAndDishes(data),
+      string: data.string,
+      object_type: data.object_type,
+    });
+    const { result, error: findError } = await Wobj.find({
+      author_permlink: {
+        $in:
+          wobjects.map((obj) => obj.author_permlink),
+      },
+    }, {}, { weight: -1 }, 0, data.mapMarkers ? 250 : data.limit + 1);
+
+    return { wobjects: result, error: aggregateError || findError };
+  }
+
+  return getWobjectsFromAggregation({
+    pipeline: makeSitePipelineForRestaurants(data),
+    string: data.string,
+    object_type: data.object_type,
+  });
 };
 
 const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => {
