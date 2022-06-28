@@ -65,7 +65,7 @@ const sitesWobjectSearch = async (data) => {
 
   if (data.userName) ({ user } = await User.getOne(data.userName));
 
-  result = await addCampaignsToWobjectsSites({ wobjects: _.cloneDeep(wobjectsToPass), user, ...data });
+  result = await addCampaignsToWobjectsSites({ wobjects: wobjectsToPass, user, ...data });
   result = geoHelper.setFilterByDistance({
     mapMarkers: data.mapMarkers, wobjects: result, box: data.box,
   });
