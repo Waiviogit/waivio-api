@@ -49,12 +49,11 @@ const sitesWobjectSearch = async (data) => {
   let errorToPass = error;
   if (data.object_type !== 'restaurant') {
     const { result: dbResult, error: dbError } = await Wobj.find({
-      object_type: data.object_type,
       author_permlink: {
         $in:
             wobjects.map((obj) => obj.author_permlink),
       },
-    }, {}, { weight: -1 }, data.skip || 0, data.mapMarkers ? 250 : data.limit + 1);
+    }, {}, { weight: -1 }, 0, data.mapMarkers ? 250 : data.limit + 1);
     wobjectsToPass = dbResult;
     errorToPass = dbError;
   }
@@ -189,35 +188,38 @@ const matchSitesPipe = ({
   crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
 }) => {
   const pipeline = [];
-  pipeline.push({
-    $match: {
-      ...map && {
-        $geoNear: {
-          near: { type: 'Point', coordinates: map.coordinates },
-          distanceField: 'proximity',
-          maxDistance: map.radius,
-          spherical: true,
-        },
+  if (string) {
+    pipeline.push({ $match: { $text: { $search: `\"${string}\"` } } });
+  }
+  if (map) {
+    pipeline.push({
+      $geoNear: {
+        near: { type: 'Point', coordinates: map.coordinates },
+        distanceField: 'proximity',
+        maxDistance: map.radius,
+        spherical: true,
       },
-      ...string && {
-        $and: [
-          { object_type },
-          { $text: { $search: `\"${string}\"` } },
-        ],
-      },
-      ...box && {
+    });
+  }
+  if (box) {
+    pipeline.push({
+      $match: {
         map: {
           $geoWithin: {
             $box: [box.bottomPoint, box.topPoint],
           },
         },
       },
+    });
+  }
+  const matchCond = {
+    $match: {
       object_type: { $in: supportedTypes },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
     },
-  });
-
+  };
+  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  pipeline.push(matchCond);
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
       _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
@@ -225,7 +227,9 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
-
+  object_type && pipeline.push({
+    $match: { object_type },
+  });
   return pipeline;
 };
 
