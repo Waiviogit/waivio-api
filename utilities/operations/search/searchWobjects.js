@@ -38,11 +38,7 @@ const defaultWobjectSearch = async (data) => {
 
 const sitesWobjectSearch = async (data) => {
   let user, result;
-  const { wobjects, error } = await getWobjectsFromAggregation({
-    pipeline: makeSitePipeline(data),
-    string: data.string,
-    object_type: data.object_type,
-  });
+  const { wobjects, error } = await getSiteWobjects(data);
 
   if (data.needCounters && !error) {
     return searchWithCounters({ ...data, wobjects });
@@ -60,6 +56,30 @@ const sitesWobjectSearch = async (data) => {
     hasMore: result.length > data.limit,
     error,
   };
+};
+
+const getSiteWobjects = async (data) => {
+  if (data.object_type && data.object_type !== 'restaurant') {
+    const { wobjects, error: aggregateError } = await getWobjectsFromAggregation({
+      pipeline: makePipelineForDrinksAndDishes(data),
+      string: data.string,
+      object_type: data.object_type,
+    });
+    const { result, error: findError } = await Wobj.find({
+      author_permlink: {
+        $in:
+          wobjects.map((obj) => obj.author_permlink),
+      },
+    }, {}, { weight: -1 }, 0, data.mapMarkers ? 250 : data.limit + 1);
+
+    return { wobjects: result, error: aggregateError || findError };
+  }
+
+  return getWobjectsFromAggregation({
+    pipeline: makeSitePipelineForRestaurants(data),
+    string: data.string,
+    object_type: data.object_type,
+  });
 };
 
 const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => {
@@ -105,7 +125,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 };
 
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
-const makeSitePipeline = ({
+const makeSitePipelineForRestaurants = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
   skip, limit, supportedTypes, forSites, tagCategory, map, sort,
 }) => {
@@ -127,22 +147,6 @@ const makeSitePipeline = ({
       },
     }, { $sort: { priority: -1, [sort]: -1 } });
   } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
-  if (object_type && object_type !== 'restaurant') {
-    pipeline.push(
-      { $group: { _id: '$parent', children: { $push: '$$ROOT' } } },
-      { $sort: { 'children.weight': -1 } },
-    );
-    mapMarkers || (!string && !tagCategory)
-      ? pipeline.push(
-        { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
-        { $replaceRoot: { newRoot: '$biggestWeight' } },
-      )
-      : pipeline.push(
-        { $project: { firstThree: { $slice: ['$children', 3] } } },
-        { $unwind: { path: '$firstThree' } },
-        { $replaceRoot: { newRoot: '$firstThree' } },
-      );
-  }
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
@@ -150,9 +154,9 @@ const makeSitePipeline = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent,
+  string, limit, skip, crucialWobjects, forParent, object_type,
 }) => {
-  const pipeline = [matchSimplePipe({ string })];
+  const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push({
       $addFields: {
@@ -190,35 +194,38 @@ const matchSitesPipe = ({
   crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
 }) => {
   const pipeline = [];
-  pipeline.push({
-    $match: {
-      ...map && {
-        $geoNear: {
-          near: { type: 'Point', coordinates: map.coordinates },
-          distanceField: 'proximity',
-          maxDistance: map.radius,
-          spherical: true,
-        },
+  if (string) {
+    pipeline.push({ $match: { $text: { $search: `\"${string}\"` } } });
+  }
+  if (map) {
+    pipeline.push({
+      $geoNear: {
+        near: { type: 'Point', coordinates: map.coordinates },
+        distanceField: 'proximity',
+        maxDistance: map.radius,
+        spherical: true,
       },
-      ...string && {
-        $and: [
-          { $text: { $search: `\"${string}\"` } },
-          { object_type: { $regex: `^${object_type || '.*'}$`, $options: 'i' } },
-        ],
-      },
-      ...box && {
+    });
+  }
+  if (box) {
+    pipeline.push({
+      $match: {
         map: {
           $geoWithin: {
             $box: [box.bottomPoint, box.topPoint],
           },
         },
       },
+    });
+  }
+  const matchCond = {
+    $match: {
       object_type: { $in: supportedTypes },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...(forSites && !addHashtag) && { author_permlink: { $in: crucialWobjects } },
     },
-  });
-
+  };
+  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  pipeline.push(matchCond);
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
       _.map(category.tags, (tag) => acc.push({ search: { $regex: tag, $options: 'i' } }));
@@ -226,13 +233,64 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
-
+  object_type && pipeline.push({
+    $match: { object_type },
+  });
   return pipeline;
 };
 
-const matchSimplePipe = ({ string }) => ({
+const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
+    ...object_type && { object_type },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
     $text: { $search: `\"${string}\"` },
   },
 });
+
+const makePipelineForDrinksAndDishes = ({
+  crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers, supportedTypes, forSites, tagCategory,
+  map, sort, skip, limit,
+}) => {
+  const pipeline = [...matchSitesPipe({
+    crucialWobjects,
+    supportedTypes,
+    tagCategory,
+    addHashtag,
+    forSites,
+    string,
+    map,
+    box,
+    object_type,
+  })];
+  if (forParent) {
+    pipeline.push({
+      $addFields: {
+        priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+      },
+    }, { $sort: { priority: -1, [sort]: -1 } });
+  } else pipeline.push({ $sort: { activeCampaignsCount: -1, weight: -1 } });
+  pipeline.push({
+    $group: {
+      _id: '$parent',
+      children: {
+        $push: {
+          weight: '$weight',
+          author_permlink: '$author_permlink',
+        },
+      },
+    },
+  });
+  mapMarkers || (!string && !tagCategory)
+    ? pipeline.push(
+      { $project: { biggestWeight: { $arrayElemAt: ['$children', 0] } } },
+      { $replaceRoot: { newRoot: '$biggestWeight' } },
+    )
+    : pipeline.push(
+      { $project: { firstThree: { $slice: ['$children', 3] } } },
+      { $unwind: { path: '$firstThree' } },
+      { $replaceRoot: { newRoot: '$firstThree' } },
+    );
+
+  pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
+  return pipeline;
+};
