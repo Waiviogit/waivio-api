@@ -49,6 +49,7 @@ const sitesWobjectSearch = async (data) => {
   let errorToPass = error;
   if (data.object_type !== 'restaurant') {
     const { result: dbResult, error: dbError } = await Wobj.find({
+      object_type: data.object_type,
       author_permlink: {
         $in:
             wobjects.map((obj) => obj.author_permlink),
