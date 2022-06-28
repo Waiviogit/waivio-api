@@ -88,9 +88,11 @@ exports.REDIS_KEYS = {
   PROCESSED_LIKES_HIVE: 'processed_likes:hive',
   PROCESSED_LIKES_ENGINE: 'processed_likes:engine',
   TEST_LOAD: {
-    BLOCK: 'test:blocks:hive',
-    POST: 'test:post:hive',
-    HISTORY: 'test:history:hive',
+    BLOCK: 'test:hive:blocks',
+    POST: 'test:hive:post',
+    HISTORY: 'test:hive:history',
+    ENGINE_BLOCKCHAIN: 'test:engine:blockchain',
+    ENGINE_CONTRACTS: 'test:engine:contracts',
   },
 };
 
