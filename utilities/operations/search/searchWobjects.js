@@ -239,7 +239,7 @@ const matchSimplePipe = ({ string, object_type }) => ({
 
 const makePipelineForDrinksAndDishes = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers, supportedTypes, forSites, tagCategory,
-  map, sort,
+  map, sort, skip, limit,
 }) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
@@ -281,5 +281,6 @@ const makePipelineForDrinksAndDishes = ({
       { $replaceRoot: { newRoot: '$firstThree' } },
     );
 
+  pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
 };
