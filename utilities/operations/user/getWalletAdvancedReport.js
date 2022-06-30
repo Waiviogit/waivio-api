@@ -89,9 +89,7 @@ const addWalletDataToAccounts = async ({
   if (account.lastId) {
     const updateSkip = account.wallet.indexOf(_.find(account.wallet,
       (obj) => obj._id.toString() === account.lastId)) + 1;
-    account.wallet = updateSkip >= account.wallet.length
-      ? account.wallet.slice(updateSkip, updateSkip + limit)
-      : account.wallet.slice(updateSkip - 1);
+    account.wallet = account.wallet.slice(updateSkip - 1);
   }
   account.hasMore = account.wallet.length > limit;
 
