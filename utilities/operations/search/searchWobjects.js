@@ -18,7 +18,6 @@ exports.searchWobjects = async (data) => {
 };
 
 const defaultWobjectSearch = async (data) => {
-  console.log('string', data.string);
   const { wobjects, error } = await getWobjectsFromAggregation({
     pipeline: makePipeline(data),
     string: data.string,
