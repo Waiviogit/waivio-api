@@ -10,6 +10,7 @@ exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
 
   if (_.isUndefined(data.string)) data.string = '';
+  data.string = data.string.trim().replace(/[.%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '');
   if (_.isUndefined(data.limit)) data.limit = 10;
 
   return appInfo.forExtended || appInfo.forSites
