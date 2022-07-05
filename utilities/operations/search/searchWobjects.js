@@ -66,12 +66,12 @@ const getSiteWobjects = async (data) => {
       string: data.string,
       object_type: data.object_type,
     });
-    const { result, error: findError } = await Wobj.find({
-      author_permlink: {
-        $in:
-          wobjects.map((obj) => obj.author_permlink),
-      },
-    }, {}, { weight: -1 }, 0, data.mapMarkers ? 250 : data.limit + 1);
+    const authorPermlinks = wobjects.map((obj) => obj.author_permlink);
+    const { wobjects: result, error: findError } = await Wobj.fromAggregation([
+      { $match: { author_permlink: { $in: authorPermlinks } } },
+      { $addFields: { __order: { $indexOfArray: [authorPermlinks, '$author_permlink'] } } },
+      { $sort: { __order: 1 } },
+    ]);
 
     return { wobjects: result, error: aggregateError || findError };
   }
