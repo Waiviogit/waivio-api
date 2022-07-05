@@ -12,7 +12,6 @@ exports.searchWobjects = async (data) => {
   if (_.isUndefined(data.string)) data.string = '';
   data.string = data.string.trim().replace(/[.%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '');
   data.string = data.string.replace(/  +/g, ' ');
-  console.log('data.string', data.string);
   if (_.isUndefined(data.limit)) data.limit = 10;
 
   return appInfo.forExtended || appInfo.forSites
