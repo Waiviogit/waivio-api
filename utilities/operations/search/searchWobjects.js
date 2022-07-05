@@ -10,8 +10,11 @@ exports.searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
 
   if (_.isUndefined(data.string)) data.string = '';
-  data.string = data.string.trim().replace(/[.%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '');
+  if (!_.includes(data.string, '@') && !_.includes(data.string, '.')) {
+    data.string = data.string.trim().replace(/[.%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '');
+  }
   data.string = data.string.replace(/  +/g, ' ');
+  console.log('data.string', data.string);
   if (_.isUndefined(data.limit)) data.limit = 10;
 
   return appInfo.forExtended || appInfo.forSites
