@@ -137,7 +137,6 @@ exports.addCampaignsToWobjects = async ({
   const { result: campaigns } = await Campaign.findByCondition(
     { $or: [{ objects: { $in: permlinks } }, { requiredObject: { $in: permlinks } }], status: 'active' },
   );
-  if (!wobjects.length) return;
 
   await Promise.all(wobjects.map(async (wobj, index) => {
     if (_.includes(REMOVE_OBJ_STATUSES, _.get(wobjects[index], 'status.title'))) return;

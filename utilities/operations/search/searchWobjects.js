@@ -67,7 +67,7 @@ const getSiteWobjects = async (data) => {
       object_type: data.object_type,
     });
     const authorPermlinks = wobjects.map((obj) => obj.author_permlink);
-    const { wobjects: result, error: findError } = await Wobj.fromAggregation([
+    const { wobjects: result = [], error: findError } = await Wobj.fromAggregation([
       { $match: { author_permlink: { $in: authorPermlinks } } },
       { $addFields: { __order: { $indexOfArray: [authorPermlinks, '$author_permlink'] } } },
       { $sort: { __order: 1 } },
