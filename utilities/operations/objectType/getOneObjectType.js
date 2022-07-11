@@ -43,19 +43,12 @@ const getWobjWithFilters = async ({
     aggregationPipeline.push({ $match: { 'status.title': { $nin: LOW_PRIORITY_STATUS_FLAGS } } });
     delete filter.map;
   }
-  aggregationPipeline.push({
-    $match: {
-      object_type: objectType,
-      'status.title': { $nin: nsfw ? ['nsfw', ...LOW_PRIORITY_STATUS_FLAGS] : LOW_PRIORITY_STATUS_FLAGS },
-    },
-  });
-
   // special filter searchString
   if (_.get(filter, 'searchString')) {
     aggregationPipeline.push({
       $match: {
         $or: [
-          { fields: { $elemMatch: { name: 'name', body: { $regex: `\\b${filter.searchString}.*\\b`, $options: 'i' } } } },
+          { $text: { $search: `\"${filter.searchString}\"` } },
           { // if 4-th symbol is "-" - search by "author_permlink" too
             author_permlink: { $regex: `${_.get(filter.searchString, '[3]') === '-' ? `^${filter.searchString}` : '_'}`, $options: 'i' },
           },
@@ -64,6 +57,12 @@ const getWobjWithFilters = async ({
     });
     delete filter.searchString;
   }
+  aggregationPipeline.push({
+    $match: {
+      object_type: objectType,
+      'status.title': { $nin: nsfw ? ['nsfw', ...LOW_PRIORITY_STATUS_FLAGS] : LOW_PRIORITY_STATUS_FLAGS },
+    },
+  });
   // special filter TAG_CATEGORY
   if (_.get(filter, FIELDS_NAMES.TAG_CATEGORY)) {
     const condition = [];
