@@ -98,6 +98,7 @@ const addWalletDataToAccounts = async ({
       type: el.operation, record: el, userName: account.name, filterAccounts,
     });
   });
+  account.wallet = account.wallet.filter((el) => el.withdrawDeposit);
 
   return account;
 }));
