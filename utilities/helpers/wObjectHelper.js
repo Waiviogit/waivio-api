@@ -145,7 +145,6 @@ const specialFieldFilter = (idField, allFields, id) => {
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
 }) => {
-  console.log('in arrayFieldFilter');
   const validFields = [];
   for (const field of idFields) {
     if (_.get(field, 'adminVote.status') === VOTE_STATUSES.REJECTED) continue;
@@ -164,7 +163,6 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.NEWS_FILTER:
       case FIELDS_NAMES.COMPANY_ID:
       case FIELDS_NAMES.PRODUCT_ID:
-        console.log('in array filter');
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -231,7 +229,6 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
 };
 
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
-  console.log('in getFieldsToDisplay');
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
   const filteredFields = getFilteredFields(fields, locale, filter, ownership);
