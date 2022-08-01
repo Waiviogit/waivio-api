@@ -162,6 +162,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.LIST_ITEM:
       case FIELDS_NAMES.NEWS_FILTER:
       case FIELDS_NAMES.COMPANY_ID:
+      case FIELDS_NAMES.PRODUCT_ID:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
