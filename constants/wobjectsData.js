@@ -33,6 +33,7 @@ exports.FIELDS_NAMES = {
   BLOG: 'blog',
   FORM: 'form',
   COMPANY_ID: 'companyId',
+  PRODUCT_ID: 'productId',
 };
 
 exports.LIST_TYPES = {
@@ -92,6 +93,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.FORM,
   this.FIELDS_NAMES.NEWS_FILTER,
   this.FIELDS_NAMES.COMPANY_ID,
+  this.FIELDS_NAMES.PRODUCT_ID,
 ];
 
 exports.REQUIREDFIELDS = [
