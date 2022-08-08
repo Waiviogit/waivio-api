@@ -34,6 +34,7 @@ exports.FIELDS_NAMES = {
   FORM: 'form',
   COMPANY_ID: 'companyId',
   PRODUCT_ID: 'productId',
+  GROUP_ID: 'groupId',
 };
 
 exports.LIST_TYPES = {
