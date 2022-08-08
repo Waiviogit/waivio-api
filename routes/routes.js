@@ -10,6 +10,7 @@ const {
   sitesController,
   vipTicketsController,
   hiveController,
+  draftController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -21,6 +22,7 @@ const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
+const draftRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -30,6 +32,7 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
+apiRoutes.use('/api/draft', draftRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -234,6 +237,10 @@ hiveRoutes.route('/current-median-history')
   .get(hiveController.getCurrentMedianHistory);
 hiveRoutes.route('/block-num')
   .get(hiveController.getBlockNum);
+// endregion
+// region Draft
+draftRoutes.route('').post(draftController.createOrUpdate);
+draftRoutes.route('').get(draftController.getOne);
 // endregion
 
 module.exports = apiRoutes;

@@ -10,5 +10,6 @@ moduleExports.globalSearchController = require('./globalSearchController');
 moduleExports.sitesController = require('./sitesController');
 moduleExports.vipTicketsController = require('./vipTicketsController');
 moduleExports.hiveController = require('./hiveController');
+moduleExports.draftController = require('./draftController');
 
 module.exports = moduleExports;

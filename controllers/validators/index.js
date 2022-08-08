@@ -8,6 +8,7 @@ exports.app = require('./appValidator');
 exports.apiKeyValidator = require('./apiKeyValidator');
 exports.vipTickets = require('./vipTicketsValidator');
 exports.hive = require('./hiveValidator');
+exports.draft = require('./draftValidator');
 
 exports.validate = (data, schema, next) => {
   const result = schema.validate(data, { abortEarly: false });
