@@ -6066,10 +6066,10 @@
         }
       }
     },
-    "api/draft": {
+    "/user/{userName}/draft": {
       "post": {
         "tags": [
-          "draft"
+          "user"
         ],
         "summary": "Creates or updates draft on wobject of type page",
         "description": "Authorized user may have one draft on wobject of type page",
@@ -6083,16 +6083,20 @@
             "type": "string"
           },
           {
+            "name": "user",
+            "in": "path",
+            "description": "Name of authorized user",
+            "required": true,
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "required": true,
             "schema": {
               "type": "object",
               "properties": {
-                "author": {
-                  "type": "string"
-                },
-                "permlink": {
+                "authorPermlink": {
                   "type": "string"
                 },
                 "body": {
@@ -6108,10 +6112,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "author": {
+                "user": {
                   "type": "string"
                 },
-                "permlink": {
+                "author_permlink": {
                   "type": "string"
                 },
                 "body": {
@@ -6132,10 +6136,10 @@
         }
       }
     },
-    "api/draft/?{author}&{permlink}": {
+    "/user/{userName}/draft/?{authorPermlink}": {
       "get": {
         "tags": [
-          "draft"
+          "user"
         ],
         "summary": "Gets draft by authorized author on wobject of type page",
         "description": "Returns draft of wobject of type page",
@@ -6149,14 +6153,14 @@
             "type": "string"
           },
           {
-            "name": "author",
-            "in": "query",
+            "name": "user",
+            "in": "path",
             "description": "Name of authorized user",
             "required": true,
             "type": "string"
           },
           {
-            "name": "permlink",
+            "name": "authorPermlink",
             "in": "query",
             "description": "author_permlink of wobject of type page",
             "required": true,
@@ -6169,10 +6173,10 @@
             "schema": {
               "type": "object",
               "properties": {
-                "author": {
+                "user": {
                   "type": "string"
                 },
-                "permlink": {
+                "author_permlink": {
                   "type": "string"
                 },
                 "body": {

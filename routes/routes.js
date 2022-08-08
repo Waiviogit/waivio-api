@@ -10,7 +10,6 @@ const {
   sitesController,
   vipTicketsController,
   hiveController,
-  draftController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -22,7 +21,6 @@ const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
-const draftRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -32,7 +30,6 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
-apiRoutes.use('/api/draft', draftRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -178,6 +175,9 @@ userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActi
 userRoutes.route('/user/advanced-report').post(UserController.getAdvancedReport);
 userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
+userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
+userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+// region Draft
 
 // Deprecated. Used for subscribe button for users who liked the post
 // userRoutes.route('/user/:userName/getFollowingsState')
@@ -237,10 +237,6 @@ hiveRoutes.route('/current-median-history')
   .get(hiveController.getCurrentMedianHistory);
 hiveRoutes.route('/block-num')
   .get(hiveController.getBlockNum);
-// endregion
-// region Draft
-draftRoutes.route('').post(draftController.createOrUpdate);
-draftRoutes.route('').get(draftController.getOne);
 // endregion
 
 module.exports = apiRoutes;
