@@ -59,14 +59,17 @@ exports.importUsersTask = async (getUsersKeysFromRedis, getUserDataFromRedis) =>
 };
 
 const runImport = async (userName) => {
-  const { user, error } = await importUser(userName);
+  const { error } = await importUser(userName);
+  await redisSetter.deleteKey({ key: `import_user:${userName}` });
+  if (!error) return;
 
-  if (error) {
-    await redisSetter.setImportedUserError(userName, JSON.stringify(error));
-  } else if (user) {
-    console.log(`User ${userName} successfully imported with STEEM info!`);
+  const alreadyErrored = await redisGetter.getErroredUser(userName);
+  if (alreadyErrored) {
+    await redisSetter.deleteKey({ key: `import_user_error:${userName}` });
+    return;
   }
-  redisSetter.deleteImportedUser(userName);
+
+  await redisSetter.setImportedUserError(userName, JSON.stringify(error));
 };
 
 /**
