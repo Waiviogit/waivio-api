@@ -249,3 +249,14 @@ exports.guestBalance = Joi.object().keys({
   account: Joi.string().required(),
   symbol: Joi.string().required(),
 });
+
+exports.createOrUpdatePageDraftSchema = Joi.object().keys({
+  user: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  body: Joi.string().required(),
+});
+
+exports.getOnePageDraftSchema = Joi.object().keys({
+  user: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+});

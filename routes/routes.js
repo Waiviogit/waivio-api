@@ -175,6 +175,9 @@ userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActi
 userRoutes.route('/user/advanced-report').post(UserController.getAdvancedReport);
 userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
+userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
+userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+// region Draft
 
 // Deprecated. Used for subscribe button for users who liked the post
 // userRoutes.route('/user/:userName/getFollowingsState')
