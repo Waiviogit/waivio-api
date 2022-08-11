@@ -28,5 +28,6 @@ moduleExports.CurrenciesRate = require('./CurrenciesRateModel');
 moduleExports.WalletExemptions = require('./WalletExemptionsModel');
 moduleExports.HiveEngineRate = require('./HiveEngineRateModel');
 moduleExports.GuestWalletModel = require('./GuestWalletModel');
+moduleExports.PageDraft = require('./PageDraftModel');
 
 module.exports = moduleExports;

@@ -44,6 +44,7 @@ models.Prefetch = require('./schemas/PrefetchSchema');
 models.EngineAccountHistory = require('./schemas/EngineAccountHistorySchema');
 models.WalletExemptions = require('./schemas/WalletExemptionsSchema');
 models.GuestWallet = require('./schemas/GuestWalletSchema');
+models.PageDraft = require('./schemas/PageDraftSchema');
 
 module.exports = {
   Mongoose: mongoose,

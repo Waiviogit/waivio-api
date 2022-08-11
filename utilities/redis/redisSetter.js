@@ -35,10 +35,10 @@ exports.addImportedUser = async (userName) => importUserClient.setAsync(`import_
 exports.setImportedUserError = async (userName, errorMessage) => importUserClient.setAsync(`import_user_error:${userName}`, errorMessage);
 
 /**
- * Delete user name from list currently imported users
- * @param userName {String}
+ * @param key {String}
+ * @param client {}
  */
-exports.deleteImportedUser = (userName) => importUserClient.del(`import_user:${userName}`);
+exports.deleteKey = async ({ key, client = importUserClient }) => client.delAsync(key);
 
 /**
  * Update list of TRENDING feed cache for specified locale
