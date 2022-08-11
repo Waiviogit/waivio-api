@@ -253,7 +253,7 @@ exports.guestBalance = Joi.object().keys({
 exports.createOrUpdatePageDraftSchema = Joi.object().keys({
   user: Joi.string().required(),
   authorPermlink: Joi.string().required(),
-  body: Joi.string().required(),
+  body: Joi.string().default(''),
 });
 
 exports.getOnePageDraftSchema = Joi.object().keys({
