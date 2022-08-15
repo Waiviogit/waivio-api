@@ -49,9 +49,6 @@ describe('On wobjectHelper', async () => {
     it('should return field name if object type exposedFields include it', async () => {
       expect(result[FIELDS_NAMES.NAME]).to.be.exist;
     });
-    it('should not return field if object type exposedFields not include it', async () => {
-      expect(result[FIELDS_NAMES.PRICE]).to.be.undefined;
-    });
     it('should filter fields by exposed (avatar include)', async () => {
       const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.AVATAR);
       expect(field).to.be.exist;
@@ -948,6 +945,74 @@ describe('On wobjectHelper', async () => {
       expectedLink = `/object/${obj.author_permlink}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
       expect(link).to.be.eq(expectedLink);
+    });
+  });
+
+  describe('On options field', async () => {
+    const groupId = faker.random.string();
+    let obj1, obj2, result, optionsPermlinks;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.OPTIONS,
+        body: JSON.stringify({
+          category: 'format',
+          value: 'paperback',
+          position: 2,
+          image: '',
+        }),
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.GROUP_ID,
+        body: groupId,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      ({ wobject: obj2 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.OPTIONS,
+        body: JSON.stringify({
+          category: 'format',
+          value: 'cd',
+          position: 1,
+          image: '',
+        }),
+      }));
+      await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.GROUP_ID,
+        body: groupId,
+        rootWobj: obj2.author_permlink,
+      });
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.OPTIONS, FIELDS_NAMES.GROUP_ID],
+      });
+      optionsPermlinks = _.map(result.options, 'author_permlink');
+    });
+    it('should options have length 2', async () => {
+      expect(result.options.length).to.be.eq(2);
+    });
+
+    it('should groupId to be eq obj groupId', async () => {
+      expect(groupId).to.be.eq(result.groupId);
+    });
+
+    it('should include options obj1 author_permlink', async () => {
+      expect(optionsPermlinks.indexOf(obj1.author_permlink)).to.not.be.eq(-1);
+    });
+
+    it('should include options obj2 author_permlink', async () => {
+      expect(optionsPermlinks.indexOf(obj2.author_permlink)).to.not.be.eq(-1);
     });
   });
 });

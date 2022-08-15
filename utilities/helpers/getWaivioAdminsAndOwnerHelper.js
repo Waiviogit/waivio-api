@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const App = require('../../models/AppModel');
 const config = require('../../config');
 const { smembersAsync } = require('../redis/redisGetter');
@@ -12,7 +13,7 @@ exports.getWaivioAdminsAndOwner = async (update = false) => {
       { admins: 1, owner: 1 });
     if (error) return [];
 
-    waivioAdmins = [...result.admins, result.owner];
+    waivioAdmins = [..._.get(result, 'admins', []), _.get(result, 'owner')];
     await saddAsync({ key: WAIVIO_ADMINS, client: tagCategoriesClient, values: waivioAdmins });
 
     return waivioAdmins;
