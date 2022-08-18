@@ -36,6 +36,9 @@ exports.FIELDS_NAMES = {
   PRODUCT_ID: 'productId',
   GROUP_ID: 'groupId',
   OPTIONS: 'options',
+  AGE_RANGE: 'ageRange',
+  PUBLICATION_DATE: 'publicationDate',
+  LANGUAGE: 'language',
 };
 
 exports.LIST_TYPES = {
