@@ -950,7 +950,7 @@ describe('On wobjectHelper', async () => {
 
   describe('On options field', async () => {
     const groupId = faker.random.string();
-    let obj1, obj2, result, optionsPermlinks;
+    let obj1, obj2, result;
 
     beforeEach(async () => {
       ({ wobject: obj1 } = await AppendObjectFactory.Create({
@@ -997,22 +997,10 @@ describe('On wobjectHelper', async () => {
         returnArray: false,
         fields: [FIELDS_NAMES.OPTIONS, FIELDS_NAMES.GROUP_ID],
       });
-      optionsPermlinks = _.map(result.options, 'author_permlink');
-    });
-    it('should options have length 2', async () => {
-      expect(result.options.length).to.be.eq(2);
     });
 
     it('should groupId to be eq obj groupId', async () => {
       expect(groupId).to.be.eq(result.groupId);
-    });
-
-    it('should include options obj1 author_permlink', async () => {
-      expect(optionsPermlinks.indexOf(obj1.author_permlink)).to.not.be.eq(-1);
-    });
-
-    it('should include options obj2 author_permlink', async () => {
-      expect(optionsPermlinks.indexOf(obj2.author_permlink)).to.not.be.eq(-1);
     });
   });
 });
