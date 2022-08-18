@@ -39,6 +39,8 @@ exports.FIELDS_NAMES = {
   AGE_RANGE: 'ageRange',
   PUBLICATION_DATE: 'publicationDate',
   LANGUAGE: 'language',
+  WEIGHT: 'weight',
+  DIMENSIONS: 'dimensions',
 };
 
 exports.LIST_TYPES = {
