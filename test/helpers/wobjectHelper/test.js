@@ -1003,4 +1003,54 @@ describe('On wobjectHelper', async () => {
       expect(groupId).to.be.eq(result.groupId);
     });
   });
+
+  describe('On ageRange, publicationDate, language, field', async () => {
+    const ageRange = faker.random.string();
+    const publicationDate = faker.random.string();
+    const language = faker.random.string();
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.AGE_RANGE,
+        body: ageRange,
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PUBLICATION_DATE,
+        body: publicationDate,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.LANGUAGE,
+        body: language,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.LANGUAGE, FIELDS_NAMES.PUBLICATION_DATE , FIELDS_NAMES.AGE_RANGE],
+      });
+    });
+
+    it('should ageRange to be eq obj groupId', async () => {
+      expect(ageRange).to.be.eq(result.ageRange);
+    });
+
+    it('should publicationDate to be eq obj publicationDate', async () => {
+      expect(publicationDate).to.be.eq(result.publicationDate);
+    });
+
+    it('should language to be eq obj language', async () => {
+      expect(language).to.be.eq(result.language);
+    });
+  });
 });
