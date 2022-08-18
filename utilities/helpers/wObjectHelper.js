@@ -13,6 +13,7 @@ const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
+const jsonHelper = require('./jsonHelper');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -413,6 +414,14 @@ const getExposedFields = (objectType, fields) => {
   return exposedFieldsWithCounters;
 };
 
+const groupOptions = (options) => _.chain(options)
+  .map((option) => ({
+    ...option,
+    body: jsonHelper.parseJson(option.body),
+  })).groupBy(
+    (option) => _.get(option, 'body.category'),
+  ).value();
+
 const addOptions = async ({
   object, ownership, admins, administrative, owner, blacklist, locale,
 }) => {
@@ -421,7 +430,7 @@ const addOptions = async ({
     { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
   );
 
-  return _.reduce(wobjects, (acc, el) => {
+  const options = _.reduce(wobjects, (acc, el) => {
     el.fields = addDataToFields({
       isOwnershipObj: !!ownership.length,
       fields: _.compact(el.fields),
@@ -439,6 +448,8 @@ const addOptions = async ({
     }
     return acc;
   }, []);
+
+  return groupOptions(options);
 };
 
 /** Parse wobjects to get its winning */
@@ -500,10 +511,12 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
     }
-    if (obj.groupId) {
-      obj.options = await addOptions({
-        object: obj, ownership, admins, administrative, owner, blacklist, locale,
-      });
+    if (obj.options) {
+      obj.options = obj.groupId
+        ? await addOptions({
+          object: obj, ownership, admins, administrative, owner, blacklist, locale,
+        })
+        : groupOptions(obj.options);
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
