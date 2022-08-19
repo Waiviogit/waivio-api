@@ -1037,7 +1037,7 @@ describe('On wobjectHelper', async () => {
         wobjects: [_.cloneDeep(obj1)],
         app,
         returnArray: false,
-        fields: [FIELDS_NAMES.LANGUAGE, FIELDS_NAMES.PUBLICATION_DATE , FIELDS_NAMES.AGE_RANGE],
+        fields: [FIELDS_NAMES.LANGUAGE, FIELDS_NAMES.PUBLICATION_DATE, FIELDS_NAMES.AGE_RANGE],
       });
     });
 
@@ -1051,6 +1051,52 @@ describe('On wobjectHelper', async () => {
 
     it('should language to be eq obj language', async () => {
       expect(language).to.be.eq(result.language);
+    });
+  });
+
+  describe('On weight, dimensions', async () => {
+    const weight = JSON.stringify({
+      value: _.random(1, 100),
+      unit: faker.random.string(),
+    });
+
+    const dimensions = JSON.stringify({
+      length: _.random(1, 100),
+      width: _.random(1, 100),
+      depth: _.random(1, 100),
+      unit: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.WEIGHT,
+        body: weight,
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.DIMENSIONS,
+        body: dimensions,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.DIMENSIONS, FIELDS_NAMES.WEIGHT],
+      });
+    });
+
+    it('should weight to be eq obj weight', async () => {
+      expect(weight).to.be.eq(result.weight);
+    });
+
+    it('should dimensions to be eq obj dimensions', async () => {
+      expect(dimensions).to.be.eq(result.dimensions);
     });
   });
 });
