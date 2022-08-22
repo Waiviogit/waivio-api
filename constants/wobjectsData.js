@@ -36,6 +36,13 @@ exports.FIELDS_NAMES = {
   PRODUCT_ID: 'productId',
   GROUP_ID: 'groupId',
   OPTIONS: 'options',
+  AGE_RANGE: 'ageRange',
+  PUBLICATION_DATE: 'publicationDate',
+  LANGUAGE: 'language',
+  WEIGHT: 'weight',
+  DIMENSIONS: 'dimensions',
+  AUTHORS: 'authors',
+  PUBLISHER: 'publisher',
 };
 
 exports.LIST_TYPES = {
