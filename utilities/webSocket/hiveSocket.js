@@ -46,7 +46,7 @@ class SocketClient {
   }
 
   async sendMessage(message = {}) {
-    if (process.env.SOCKET_HIVE !== 'true') return { error: new Error(HIVE_SOCKET_ERR.DISABLED) };
+    if (process.env.NODE_ENV !== 'production') return { error: new Error(HIVE_SOCKET_ERR.DISABLED) };
     if (_.get(this, 'ws.readyState') !== 1) {
       await this.init();
     }
