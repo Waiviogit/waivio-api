@@ -34,6 +34,15 @@ exports.FIELDS_NAMES = {
   FORM: 'form',
   COMPANY_ID: 'companyId',
   PRODUCT_ID: 'productId',
+  GROUP_ID: 'groupId',
+  OPTIONS: 'options',
+  AGE_RANGE: 'ageRange',
+  PUBLICATION_DATE: 'publicationDate',
+  LANGUAGE: 'language',
+  WEIGHT: 'weight',
+  DIMENSIONS: 'dimensions',
+  AUTHORS: 'authors',
+  PUBLISHER: 'publisher',
 };
 
 exports.LIST_TYPES = {
@@ -66,6 +75,7 @@ exports.OBJECT_TYPES = {
   MOTEL: 'motel',
   RESORT: 'resort',
   BnB: 'b&b',
+  BOOK: 'book',
 };
 
 exports.ADMIN_ROLES = {
@@ -94,6 +104,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.NEWS_FILTER,
   this.FIELDS_NAMES.COMPANY_ID,
   this.FIELDS_NAMES.PRODUCT_ID,
+  this.FIELDS_NAMES.OPTIONS,
 ];
 
 exports.REQUIREDFIELDS = [

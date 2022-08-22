@@ -1,10 +1,22 @@
 const moment = require('moment');
 const _ = require('lodash');
 const {
-  faker, dropDatabase, expect, wObjectHelper, sinon, postsUtil,
+  faker,
+  dropDatabase,
+  expect,
+  wObjectHelper,
+  sinon,
+  postsUtil,
 } = require('test/testHelper');
-const { AppFactory, AppendObjectFactory, ObjectTypeFactory } = require('test/factories');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const {
+  AppFactory,
+  AppendObjectFactory,
+  ObjectTypeFactory,
+} = require('test/factories');
+const {
+  FIELDS_NAMES,
+  OBJECT_TYPES,
+} = require('constants/wobjectsData');
 const { getNamespace } = require('cls-hooked');
 const { DEVICE } = require('constants/common');
 
@@ -20,7 +32,8 @@ describe('On wobjectHelper', async () => {
     administrative = faker.name.firstName();
     ownershipObject = faker.random.string();
     ownership = faker.name.firstName();
-    sinon.stub(postsUtil, 'getPostState').returns(Promise.resolve({ result: { content: {} } }));
+    sinon.stub(postsUtil, 'getPostState')
+      .returns(Promise.resolve({ result: { content: {} } }));
     app = await AppFactory.Create({
       admins: [admin, admin2],
       authority: [ownership, administrative],
@@ -36,11 +49,17 @@ describe('On wobjectHelper', async () => {
       const fields = [FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME, FIELDS_NAMES.PRICE];
       for (const name of fields) {
         ({ wobject: object } = await AppendObjectFactory.Create({
-          weight: 1, name, objectType: objectType.name, rootWobj: _.get(object, 'author_permlink', faker.random.string()),
+          weight: 1,
+          name,
+          objectType: objectType.name,
+          rootWobj: _.get(object, 'author_permlink', faker.random.string()),
         }));
       }
       result = await wObjectHelper.processWobjects({
-        wobjects: [object], app, returnArray: false, hiveData: true,
+        wobjects: [object],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return field avatar if object type exposedFields include it', async () => {
@@ -48,9 +67,6 @@ describe('On wobjectHelper', async () => {
     });
     it('should return field name if object type exposedFields include it', async () => {
       expect(result[FIELDS_NAMES.NAME]).to.be.exist;
-    });
-    it('should not return field if object type exposedFields not include it', async () => {
-      expect(result[FIELDS_NAMES.PRICE]).to.be.undefined;
     });
     it('should filter fields by exposed (avatar include)', async () => {
       const field = _.find(result.fields, (rec) => rec.name === FIELDS_NAMES.AVATAR);
@@ -71,17 +87,29 @@ describe('On wobjectHelper', async () => {
     beforeEach(async () => {
       body = faker.image.imageUrl();
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name: FIELDS_NAMES.AVATAR, body, objectType: objectType.name,
+        weight: 1,
+        name: FIELDS_NAMES.AVATAR,
+        body,
+        objectType: objectType.name,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [object], app, returnArray: false, hiveData: true,
+        wobjects: [object],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return correct field if weight > 0 and no downvotes', async () => {
-      expect(result[FIELDS_NAMES.AVATAR]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.AVATAR])
+        .to
+        .be
+        .eq(body);
     });
     it('should return correct length of fields', async () => {
-      expect(result.fields.length).to.be.eq(object.fields.length);
+      expect(result.fields.length)
+        .to
+        .be
+        .eq(object.fields.length);
     });
   });
 
@@ -90,10 +118,18 @@ describe('On wobjectHelper', async () => {
     beforeEach(async () => {
       body = faker.image.imageUrl();
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.AVATAR, body },
+        {
+          weight: 1,
+          name: FIELDS_NAMES.AVATAR,
+          body,
+        },
       ));
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.ADDRESS, rootWobj: object.author_permlink },
+        {
+          weight: 1,
+          name: FIELDS_NAMES.ADDRESS,
+          rootWobj: object.author_permlink,
+        },
       ));
       result = await wObjectHelper.processWobjects({
         wobjects: [_.cloneDeep(object)],
@@ -107,7 +143,11 @@ describe('On wobjectHelper', async () => {
       expect(result[FIELDS_NAMES.ADDRESS]).to.be.exist;
     });
     it('should return correct length of fields', async () => {
-      expect(result.fields.length).to.be.not.eq(object.fields.length);
+      expect(result.fields.length)
+        .to
+        .be
+        .not
+        .eq(object.fields.length);
     });
     it('should not return another object field', async () => {
       expect(result[FIELDS_NAMES.AVATAR]).to.not.exist;
@@ -120,20 +160,38 @@ describe('On wobjectHelper', async () => {
       body = faker.random.string();
       id = faker.random.string();
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.TAG_CATEGORY, id },
+        {
+          weight: 1,
+          name: FIELDS_NAMES.TAG_CATEGORY,
+          id,
+        },
       ));
       await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.TAG_CATEGORY, id: faker.random.string() },
+        {
+          weight: 1,
+          name: FIELDS_NAMES.TAG_CATEGORY,
+          id: faker.random.string(),
+        },
       );
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name: FIELDS_NAMES.CATEGORY_ITEM, rootWobj: object.author_permlink, id, body,
+        weight: 1,
+        name: FIELDS_NAMES.CATEGORY_ITEM,
+        rootWobj: object.author_permlink,
+        id,
+        body,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return correct fields length without filters', async () => {
-      expect(result.fields.length).to.be.eq(object.fields.length);
+      expect(result.fields.length)
+        .to
+        .be
+        .eq(object.fields.length);
     });
     it('should not return category item field', async () => {
       expect(result[FIELDS_NAMES.CATEGORY_ITEM]).to.not.exist;
@@ -145,7 +203,10 @@ describe('On wobjectHelper', async () => {
     });
     it('should not return tag category without elements', async () => {
       const tagCategory = result[FIELDS_NAMES.TAG_CATEGORY];
-      expect(tagCategory.length).to.be.eq(1);
+      expect(tagCategory.length)
+        .to
+        .be
+        .eq(1);
     });
   });
 
@@ -157,27 +218,48 @@ describe('On wobjectHelper', async () => {
       body = faker.random.string();
       id = faker.random.string();
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name, id: permlink, rootWobj: permlink,
+        weight: 1,
+        name,
+        id: permlink,
+        rootWobj: permlink,
       }));
       await AppendObjectFactory.Create({
-        weight: _.random(10, 100), name, id: permlink, rootWobj: permlink,
+        weight: _.random(10, 100),
+        name,
+        id: permlink,
+        rootWobj: permlink,
       });
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: _.random(-1, -100), name, rootWobj: object.author_permlink, id, body,
+        weight: _.random(-1, -100),
+        name,
+        rootWobj: object.author_permlink,
+        id,
+        body,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should not return item with negative weight', async () => {
-      expect(result[FIELDS_NAMES.GALLERY_ITEM].length).to.be.eq(object.fields.length - 1);
+      expect(result[FIELDS_NAMES.GALLERY_ITEM].length)
+        .to
+        .be
+        .eq(object.fields.length - 1);
     });
     it('should return correct photos count length', async () => {
-      expect(result.photos_count).to.be.eq(object.fields.length - 1);
+      expect(result.photos_count)
+        .to
+        .be
+        .eq(object.fields.length - 1);
     });
     it('should correctly sort fields for preview gallery', async () => {
       expect(result.preview_gallery[0].weight)
-        .to.be.greaterThan(result.preview_gallery[1].weight);
+        .to
+        .be
+        .greaterThan(result.preview_gallery[1].weight);
     });
     it('should not return gallery album if it not exist', async () => {
       expect(result[FIELDS_NAMES.GALLERY_ALBUM]).to.be.undefined;
@@ -191,13 +273,22 @@ describe('On wobjectHelper', async () => {
       id = faker.random.string();
       const name = FIELDS_NAMES.GALLERY_ALBUM;
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name, id,
+        weight: 1,
+        name,
+        id,
       }));
       await AppendObjectFactory.Create({
-        weight: 1, name, id: faker.random.string(), rootWobj: object.author_permlink,
+        weight: 1,
+        name,
+        id: faker.random.string(),
+        rootWobj: object.author_permlink,
       });
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name: FIELDS_NAMES.GALLERY_ITEM, rootWobj: object.author_permlink, id, body,
+        weight: 1,
+        name: FIELDS_NAMES.GALLERY_ITEM,
+        rootWobj: object.author_permlink,
+        id,
+        body,
       }));
       result = await wObjectHelper.processWobjects({
         fields: [name, FIELDS_NAMES.GALLERY_ITEM],
@@ -217,7 +308,10 @@ describe('On wobjectHelper', async () => {
     });
     it('should return gallery album without elements', async () => {
       const albums = result[FIELDS_NAMES.GALLERY_ALBUM];
-      expect(albums.length).to.be.eq(2);
+      expect(albums.length)
+        .to
+        .be
+        .eq(2);
     });
   });
 
@@ -226,9 +320,14 @@ describe('On wobjectHelper', async () => {
     beforeEach(async () => {
       body = faker.random.string();
       const name = FIELDS_NAMES.BUTTON;
-      ({ wobject: object } = await AppendObjectFactory.Create({ weight: 1, name }));
+      ({ wobject: object } = await AppendObjectFactory.Create({
+        weight: 1,
+        name,
+      }));
       await AppendObjectFactory.Create({
-        weight: _.random(-1, -100), name, rootWobj: object.author_permlink,
+        weight: _.random(-1, -100),
+        name,
+        rootWobj: object.author_permlink,
       });
       await AppendObjectFactory.Create({
         weight: 1,
@@ -236,23 +335,42 @@ describe('On wobjectHelper', async () => {
         name,
         rootWobj: object.author_permlink,
         activeVotes: [
-          { voter: faker.random.string(), percent: -100, weight: -1 },
-          { voter: faker.random.string(), percent: 100, weight: 1 },
+          {
+            voter: faker.random.string(),
+            percent: -100,
+            weight: -1,
+          },
+          {
+            voter: faker.random.string(),
+            percent: 100,
+            weight: 1,
+          },
         ],
       });
       ({ wobject: object } = await AppendObjectFactory.Create({
-        weight: 1, name, rootWobj: object.author_permlink,
+        weight: 1,
+        name,
+        rootWobj: object.author_permlink,
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], returnArray: false, app, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        returnArray: false,
+        app,
+        hiveData: true,
       });
     });
     it('should not return field with small approve percent', async () => {
       const button = _.find(result.fields, { body });
-      expect(button.approvePercent).to.be.eq(50);
+      expect(button.approvePercent)
+        .to
+        .be
+        .eq(50);
     });
     it('should return correct length of elements', async () => {
-      expect(result[FIELDS_NAMES.BUTTON].length).to.be.eq(2);
+      expect(result[FIELDS_NAMES.BUTTON].length)
+        .to
+        .be
+        .eq(2);
     });
   });
 
@@ -265,10 +383,17 @@ describe('On wobjectHelper', async () => {
         weight: -1,
         name,
         body,
-        activeVotes: [{ voter: faker.random.string(), percent: -100, weight: -1 }],
+        activeVotes: [{
+          voter: faker.random.string(),
+          percent: -100,
+          weight: -1,
+        }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should not return field to show with downvotes', async () => {
@@ -276,7 +401,10 @@ describe('On wobjectHelper', async () => {
     });
     it('should return correct approve percent in fields', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.approvePercent).to.be.eq(0);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(0);
     });
   });
 
@@ -289,26 +417,50 @@ describe('On wobjectHelper', async () => {
         weight: -99,
         name,
         body,
-        activeVotes: [{ voter: faker.random.string(), percent: -100, weight: -100 },
-          { voter: admin, percent: 100, weight: 1 }],
+        activeVotes: [{
+          voter: faker.random.string(),
+          percent: -100,
+          weight: -100,
+        },
+        {
+          voter: admin,
+          percent: 100,
+          weight: 1,
+        }],
       }));
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name, rootWobj: object.author_permlink },
+        {
+          weight: 1,
+          name,
+          rootWobj: object.author_permlink,
+        },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return approve percent 100 on field', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.approvePercent).to.be.eq(100);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should add field to wobject', async () => {
-      expect(result[FIELDS_NAMES.ADDRESS]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.ADDRESS])
+        .to
+        .be
+        .eq(body);
     });
     it('should add correct admin role to field', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.adminVote.role).to.be.eq('admin');
+      expect(field.adminVote.role)
+        .to
+        .be
+        .eq('admin');
     });
   });
 
@@ -322,26 +474,50 @@ describe('On wobjectHelper', async () => {
         name,
         body,
         administrative: [administrative],
-        activeVotes: [{ voter: faker.random.string(), percent: -100, weight: -501 },
-          { voter: administrative, percent: 100, weight: 1 }],
+        activeVotes: [{
+          voter: faker.random.string(),
+          percent: -100,
+          weight: -501,
+        },
+        {
+          voter: administrative,
+          percent: 100,
+          weight: 1,
+        }],
       }));
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name, rootWobj: object.author_permlink },
+        {
+          weight: 1,
+          name,
+          rootWobj: object.author_permlink,
+        },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return approve percent 100 on field with administrative vote', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.approvePercent).to.be.eq(100);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should add field to wobject', async () => {
-      expect(result[FIELDS_NAMES.ADDRESS]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.ADDRESS])
+        .to
+        .be
+        .eq(body);
     });
     it('should add correct admin role to field', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.adminVote.role).to.be.eq('administrative');
+      expect(field.adminVote.role)
+        .to
+        .be
+        .eq('administrative');
     });
   });
 
@@ -356,11 +532,23 @@ describe('On wobjectHelper', async () => {
         name,
         body,
         ownership: [ownership],
-        activeVotes: [{ voter: faker.random.string(), percent: -100, weight: -301 },
-          { voter: ownership, percent: 100, weight: 1 }],
+        activeVotes: [{
+          voter: faker.random.string(),
+          percent: -100,
+          weight: -301,
+        },
+        {
+          voter: ownership,
+          percent: 100,
+          weight: 1,
+        }],
       }));
       ({ wobject: object } = await AppendObjectFactory.Create(
-        { weight: 1, name: FIELDS_NAMES.AVATAR, rootWobj: object.author_permlink },
+        {
+          weight: 1,
+          name: FIELDS_NAMES.AVATAR,
+          rootWobj: object.author_permlink,
+        },
       ));
       ({ wobject: object } = await AppendObjectFactory.Create(
         {
@@ -368,23 +556,39 @@ describe('On wobjectHelper', async () => {
           name: FIELDS_NAMES.DESCRIPTION,
           rootWobj: object.author_permlink,
           activeVotes: [
-            { voter: admin, percent: 100, weight: 1 }],
+            {
+              voter: admin,
+              percent: 100,
+              weight: 1,
+            }],
         },
       ));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return approve percent 100 on field with ownership vote', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.approvePercent).to.be.eq(100);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should add field to wobject', async () => {
-      expect(result[FIELDS_NAMES.ADDRESS]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.ADDRESS])
+        .to
+        .be
+        .eq(body);
     });
     it('should add correct admin role to field', async () => {
       const field = _.find(result.fields, { body });
-      expect(field.adminVote.role).to.be.eq('ownership');
+      expect(field.adminVote.role)
+        .to
+        .be
+        .eq('ownership');
     });
     it('should not add to wobject field without ownership and admin vote', async () => {
       expect(result[FIELDS_NAMES.AVATAR]).to.be.undefined;
@@ -408,24 +612,36 @@ describe('On wobjectHelper', async () => {
             voter: admin2,
             percent: -100,
             weight: -301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(1, 'day')
+              .valueOf()),
           }, {
             voter: admin,
             percent: 100,
             weight: 1,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should add approvePercent 100', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.approvePercent).to.be.eq(100);
+        expect(field.approvePercent)
+          .to
+          .be
+          .eq(100);
       });
       it('should return need field in object', async () => {
-        expect(result[FIELDS_NAMES.TITLE]).to.be.eq(body);
+        expect(result[FIELDS_NAMES.TITLE])
+          .to
+          .be
+          .eq(body);
       });
     });
     describe('vote earlier downvote', async () => {
@@ -440,21 +656,30 @@ describe('On wobjectHelper', async () => {
             voter: admin2,
             percent: -100,
             weight: -301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }, {
             voter: admin,
             percent: 100,
             weight: 1,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(1, 'day')
+              .valueOf()),
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should add approvePercent 0', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.approvePercent).to.be.eq(0);
+        expect(field.approvePercent)
+          .to
+          .be
+          .eq(0);
       });
       it('should not return need field in object', async () => {
         expect(result[FIELDS_NAMES.TITLE]).to.be.undefined;
@@ -475,7 +700,8 @@ describe('On wobjectHelper', async () => {
           voter: admin,
           percent: 100,
           weight: 301,
-          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+            .valueOf()),
         }],
       }));
       ({ wobject: object } = await AppendObjectFactory.Create({
@@ -486,23 +712,37 @@ describe('On wobjectHelper', async () => {
           voter: admin2,
           percent: 100,
           weight: 301,
-          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+            .subtract(1, 'day')
+            .valueOf()),
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should return 100 approval to first field', async () => {
       const field = _.find(result.fields, { body: body1 });
-      expect(field.approvePercent).to.be.eq(100);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should return 100 approval to second field', async () => {
       const field = _.find(result.fields, { body: body2 });
-      expect(field.approvePercent).to.be.eq(100);
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should win field with latest admin vote', async () => {
-      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body1);
+      expect(result[FIELDS_NAMES.NAME])
+        .to
+        .be
+        .eq(body1);
     });
   });
 
@@ -520,25 +760,37 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: 100,
             weight: 301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(1, 'day')
+              .valueOf()),
           }, {
             voter: administrative,
             percent: 100,
             weight: 500,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return field which was upvoted by admin', async () => {
-        expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
+        expect(result[FIELDS_NAMES.NAME])
+          .to
+          .be
+          .eq(body);
       });
       it('should return correct admin role', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.adminVote.role).to.be.eq('admin');
+        expect(field.adminVote.role)
+          .to
+          .be
+          .eq('admin');
       });
     });
     describe('On admin downvote and administrative vote', async () => {
@@ -554,17 +806,23 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: -100,
             weight: -1000,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(10, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(10, 'day')
+              .valueOf()),
           }, {
             voter: administrative,
             percent: 100,
             weight: 500,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return field which was downvoted by admin', async () => {
@@ -572,7 +830,10 @@ describe('On wobjectHelper', async () => {
       });
       it('should return correct approvePercent', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.approvePercent).to.be.eq(0);
+        expect(field.approvePercent)
+          .to
+          .be
+          .eq(0);
       });
     });
   });
@@ -590,7 +851,8 @@ describe('On wobjectHelper', async () => {
             voter: ownership,
             weight: 1,
             percent: 100,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
         ({ wobject: object } = await AppendObjectFactory.Create({
@@ -599,7 +861,10 @@ describe('On wobjectHelper', async () => {
           body,
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return description field in response which has ownership upvote', async () => {
@@ -624,12 +889,15 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: 100,
             weight: 1,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(1, 'day')
+              .valueOf()),
           }, {
             voter: ownership,
             weight: 1,
             percent: 100,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
         ({ wobject: object } = await AppendObjectFactory.Create({
@@ -638,15 +906,24 @@ describe('On wobjectHelper', async () => {
           body,
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return field which was upvoted by admin', async () => {
-        expect(result[FIELDS_NAMES.DESCRIPTION]).to.be.eq(body);
+        expect(result[FIELDS_NAMES.DESCRIPTION])
+          .to
+          .be
+          .eq(body);
       });
       it('should return correct admin role', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.adminVote.role).to.be.eq('admin');
+        expect(field.adminVote.role)
+          .to
+          .be
+          .eq('admin');
       });
       it('should not return avatar field if there no admin vote', async () => {
         expect(result[FIELDS_NAMES.AVATAR]).to.be.undefined;
@@ -666,17 +943,23 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: -50,
             weight: -100,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(1, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(1, 'day')
+              .valueOf()),
           }, {
             voter: ownership,
             percent: 100,
             weight: 500,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
 
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return field which was downvoted by admin', async () => {
@@ -684,7 +967,10 @@ describe('On wobjectHelper', async () => {
       });
       it('should return correct approvePercent', async () => {
         const field = _.find(result.fields, { body });
-        expect(field.approvePercent).to.be.eq(0);
+        expect(field.approvePercent)
+          .to
+          .be
+          .eq(0);
       });
     });
   });
@@ -704,7 +990,8 @@ describe('On wobjectHelper', async () => {
           voter: ownership,
           percent: 100,
           weight: 500,
-          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+            .valueOf()),
         }],
       }));
       ({ wobject: object } = await AppendObjectFactory.Create({
@@ -715,26 +1002,45 @@ describe('On wobjectHelper', async () => {
           voter: administrative,
           percent: 100,
           weight: 500,
-          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+            .valueOf()),
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        hiveData: true,
       });
     });
     it('should not add field which was not approved by ownership', async () => {
       expect(result[FIELDS_NAMES.TITLE]).to.be.undefined;
     });
     it('should return correct approval percent for administrative field', async () => {
-      const field = _.find(result.fields, { body, name: FIELDS_NAMES.TITLE });
-      expect(field.approvePercent).to.be.eq(100);
+      const field = _.find(result.fields, {
+        body,
+        name: FIELDS_NAMES.TITLE,
+      });
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
     it('should add field which was approved by ownership', async () => {
-      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.NAME])
+        .to
+        .be
+        .eq(body);
     });
     it('should return correct approval percent for ownership field', async () => {
-      const field = _.find(result.fields, { body, name: FIELDS_NAMES.NAME });
-      expect(field.approvePercent).to.be.eq(100);
+      const field = _.find(result.fields, {
+        body,
+        name: FIELDS_NAMES.NAME,
+      });
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
   });
 
@@ -750,24 +1056,41 @@ describe('On wobjectHelper', async () => {
           voter: faker.random.string(),
           percent: 100,
           weight: 500,
-          _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+          _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+            .valueOf()),
         }],
       }));
       result = await wObjectHelper.processWobjects({
-        wobjects: [_.cloneDeep(object)], app, returnArray: false, locale: 'ms-MY', hiveData: true,
+        wobjects: [_.cloneDeep(object)],
+        app,
+        returnArray: false,
+        locale: 'ms-MY',
+        hiveData: true,
       });
     });
     it('should get name from field with en-US locale if can\'t find user locale', async () => {
-      expect(result[FIELDS_NAMES.NAME]).to.be.eq(body);
+      expect(result[FIELDS_NAMES.NAME])
+        .to
+        .be
+        .eq(body);
     });
 
     it('should field locale be eq en-US ', async () => {
-      expect(result.fields[0].locale).to.be.eq('en-US');
+      expect(result.fields[0].locale)
+        .to
+        .be
+        .eq('en-US');
     });
 
     it('should return field in all fields with approve percent', async () => {
-      const field = _.find(result.fields, { body, name: FIELDS_NAMES.NAME });
-      expect(field.approvePercent).to.be.eq(100);
+      const field = _.find(result.fields, {
+        body,
+        name: FIELDS_NAMES.NAME,
+      });
+      expect(field.approvePercent)
+        .to
+        .be
+        .eq(100);
     });
   });
 
@@ -785,7 +1108,8 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: 100,
             weight: 301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }],
         }));
         ({ wobject: object } = await AppendObjectFactory.Create({
@@ -796,15 +1120,23 @@ describe('On wobjectHelper', async () => {
             voter: app.owner,
             percent: 100,
             weight: 301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(5, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(5, 'day')
+              .valueOf()),
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return name which was upvoted by owner', async () => {
-        expect(result[FIELDS_NAMES.NAME]).to.be.eq(body2);
+        expect(result[FIELDS_NAMES.NAME])
+          .to
+          .be
+          .eq(body2);
       });
     });
     describe('On owner downvote& admin upvote', async () => {
@@ -820,16 +1152,22 @@ describe('On wobjectHelper', async () => {
             voter: admin,
             percent: 100,
             weight: 301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .valueOf()),
           }, {
             voter: app.owner,
             percent: -100,
             weight: -301,
-            _id: AppendObjectFactory.objectIdFromDateString(moment.utc().subtract(5, 'day').valueOf()),
+            _id: AppendObjectFactory.objectIdFromDateString(moment.utc()
+              .subtract(5, 'day')
+              .valueOf()),
           }],
         }));
         result = await wObjectHelper.processWobjects({
-          wobjects: [_.cloneDeep(object)], app, returnArray: false, hiveData: true,
+          wobjects: [_.cloneDeep(object)],
+          app,
+          returnArray: false,
+          hiveData: true,
         });
       });
       it('should return name which was upvoted by owner', async () => {
@@ -842,23 +1180,46 @@ describe('On wobjectHelper', async () => {
     let obj, link, expectedLink, menuList, menuList2, menuPage;
 
     beforeEach(() => {
-      menuList = { type: 'menuList', body: faker.random.string(), weight: _.random(100, 200) };
-      menuList2 = { type: 'menuList', body: faker.random.string(), weight: _.random(0, 99) };
-      menuPage = { type: 'menuPage', body: faker.random.string() };
+      menuList = {
+        type: 'menuList',
+        body: faker.random.string(),
+        weight: _.random(100, 200),
+      };
+      menuList2 = {
+        type: 'menuList',
+        body: faker.random.string(),
+        weight: _.random(0, 99),
+      };
+      menuPage = {
+        type: 'menuPage',
+        body: faker.random.string(),
+      };
     });
 
     it('should return proper link on obj type page', async () => {
-      obj = { object_type: OBJECT_TYPES.PAGE, author_permlink: faker.random.string() };
+      obj = {
+        object_type: OBJECT_TYPES.PAGE,
+        author_permlink: faker.random.string(),
+      };
       expectedLink = `/object/${obj.author_permlink}/page`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return proper link on obj type list', async () => {
-      obj = { object_type: OBJECT_TYPES.LIST, author_permlink: faker.random.string() };
+      obj = {
+        object_type: OBJECT_TYPES.LIST,
+        author_permlink: faker.random.string(),
+      };
       expectedLink = `/object/${obj.author_permlink}/list`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return  /object/author_permlink on some obj types', async () => {
@@ -868,29 +1229,40 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return /object/author_permlink on hashtag obj type', async () => {
-      sinon.stub(getNamespace('request-session'), 'get').returns(DEVICE.MOBILE);
+      sinon.stub(getNamespace('request-session'), 'get')
+        .returns(DEVICE.MOBILE);
       obj = {
         object_type: OBJECT_TYPES.HASHTAG,
         author_permlink: faker.random.string(),
       };
       expectedLink = `/object/${obj.author_permlink}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return /object/author_permlink on any obj type except hashtag type', async () => {
-      sinon.stub(getNamespace('request-session'), 'get').returns(DEVICE.MOBILE);
+      sinon.stub(getNamespace('request-session'), 'get')
+        .returns(DEVICE.MOBILE);
       obj = {
         object_type: _.sample(Object.values(_.omit(OBJECT_TYPES, ['HASHTAG']))),
         author_permlink: faker.random.string(),
       };
       expectedLink = `/object/${obj.author_permlink}/about`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return menuList with greater weight if wobject does not have sort custom and have both menuList menuPage', async () => {
@@ -901,7 +1273,10 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}/menu#${menuList.body}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return menuList with admin vote if wobject does not have sort custom and have both menuList menuPage', async () => {
@@ -913,7 +1288,10 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}/menu#${menuList2.body}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return menuPage if wobject does not have neither sort custom nor menuList', async () => {
@@ -924,7 +1302,10 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}/page#${menuPage.body}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return first element of array sortCustom in obj', async () => {
@@ -936,7 +1317,10 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}/page#${menuPage.body}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
     });
 
     it('should return /object/author_permlink if can not find sortCustom in listItem', async () => {
@@ -947,7 +1331,240 @@ describe('On wobjectHelper', async () => {
       };
       expectedLink = `/object/${obj.author_permlink}`;
       link = wObjectHelper.getLinkToPageLoad(obj);
-      expect(link).to.be.eq(expectedLink);
+      expect(link)
+        .to
+        .be
+        .eq(expectedLink);
+    });
+  });
+
+  describe('On options field', async () => {
+    const groupId = faker.random.string();
+    let obj1, obj2, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.OPTIONS,
+        body: JSON.stringify({
+          category: 'format',
+          value: 'paperback',
+          position: 2,
+          image: '',
+        }),
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.GROUP_ID,
+        body: groupId,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      ({ wobject: obj2 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.OPTIONS,
+        body: JSON.stringify({
+          category: 'format',
+          value: 'cd',
+          position: 1,
+          image: '',
+        }),
+      }));
+      await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.GROUP_ID,
+        body: groupId,
+        rootWobj: obj2.author_permlink,
+      });
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.OPTIONS, FIELDS_NAMES.GROUP_ID],
+      });
+    });
+
+    it('should groupId to be eq obj groupId', async () => {
+      expect(groupId)
+        .to
+        .be
+        .eq(result.groupId);
+    });
+  });
+
+  describe('On ageRange, publicationDate, language, field', async () => {
+    const ageRange = faker.random.string();
+    const publicationDate = faker.random.string();
+    const language = faker.random.string();
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.AGE_RANGE,
+        body: ageRange,
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PUBLICATION_DATE,
+        body: publicationDate,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.LANGUAGE,
+        body: language,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.LANGUAGE, FIELDS_NAMES.PUBLICATION_DATE, FIELDS_NAMES.AGE_RANGE],
+      });
+    });
+
+    it('should ageRange to be eq obj groupId', async () => {
+      expect(ageRange)
+        .to
+        .be
+        .eq(result.ageRange);
+    });
+
+    it('should publicationDate to be eq obj publicationDate', async () => {
+      expect(publicationDate)
+        .to
+        .be
+        .eq(result.publicationDate);
+    });
+
+    it('should language to be eq obj language', async () => {
+      expect(language)
+        .to
+        .be
+        .eq(result.language);
+    });
+  });
+
+  describe('On weight, dimensions', async () => {
+    const weight = JSON.stringify({
+      value: _.random(1, 100),
+      unit: faker.random.string(),
+    });
+
+    const dimensions = JSON.stringify({
+      length: _.random(1, 100),
+      width: _.random(1, 100),
+      depth: _.random(1, 100),
+      unit: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.WEIGHT,
+        body: weight,
+      }));
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.DIMENSIONS,
+        body: dimensions,
+        rootWobj: obj1.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.DIMENSIONS, FIELDS_NAMES.WEIGHT],
+      });
+    });
+
+    it('should weight to be eq obj weight', async () => {
+      expect(weight)
+        .to
+        .be
+        .eq(result.weight);
+    });
+
+    it('should dimensions to be eq obj dimensions', async () => {
+      expect(dimensions)
+        .to
+        .be
+        .eq(result.dimensions);
+    });
+  });
+
+  describe('On authors field', async () => {
+    const authors = JSON.stringify([{
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    }, {
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    }]);
+
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.AUTHORS,
+        body: authors,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.AUTHORS],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(authors).to.be.eq(result.authors);
+    });
+  });
+
+  describe('On publisher field', async () => {
+    const publisher = JSON.stringify({
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PUBLISHER,
+        body: publisher,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.PUBLISHER],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(publisher).to.be.eq(result.publisher);
     });
   });
 });

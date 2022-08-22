@@ -13,6 +13,7 @@ const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
+const jsonHelper = require('./jsonHelper');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -163,6 +164,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.NEWS_FILTER:
       case FIELDS_NAMES.COMPANY_ID:
       case FIELDS_NAMES.PRODUCT_ID:
+      case FIELDS_NAMES.OPTIONS:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -412,6 +414,44 @@ const getExposedFields = (objectType, fields) => {
   return exposedFieldsWithCounters;
 };
 
+const groupOptions = (options) => _.chain(options)
+  .map((option) => ({
+    ...option,
+    body: jsonHelper.parseJson(option.body),
+  })).groupBy(
+    (option) => _.get(option, 'body.category'),
+  ).value();
+
+const addOptions = async ({
+  object, ownership, admins, administrative, owner, blacklist, locale,
+}) => {
+  const filter = [FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.OPTIONS];
+  const { wobjects } = await Wobj.getByField(
+    { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
+  );
+
+  const options = _.reduce(wobjects, (acc, el) => {
+    el.fields = addDataToFields({
+      isOwnershipObj: !!ownership.length,
+      fields: _.compact(el.fields),
+      filter,
+      admins,
+      ownership,
+      administrative,
+      owner,
+      blacklist,
+    });
+    Object.assign(el,
+      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
+    if (el.groupId === object.groupId && !_.isEmpty(el.options)) {
+      acc.push(..._.map(el.options, (opt) => ({ ...opt, author_permlink: el.author_permlink })));
+    }
+    return acc;
+  }, []);
+
+  return groupOptions(options);
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
@@ -470,6 +510,13 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
+    }
+    if (obj.options) {
+      obj.options = obj.groupId
+        ? await addOptions({
+          object: obj, ownership, admins, administrative, owner, blacklist, locale,
+        })
+        : groupOptions(obj.options);
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
