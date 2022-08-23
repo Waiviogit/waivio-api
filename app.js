@@ -8,6 +8,7 @@ const bodyParser = require('body-parser');
 const nocache = require('nocache');
 const { createNamespace } = require('cls-hooked');
 const { routes } = require('routes');
+const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
@@ -55,7 +56,7 @@ app.use((req, res, next) => {
     ? appHost = origin.replace(REPLACE_ORIGIN, '')
     : appHost = referer && referer.replace(REPLACE_REFERER, '');
 
-  session.set('host', appHost);
+  session.set('host', appHost || config.appHost);
   session.set('access-token', req.headers['access-token']);
   session.set('waivio-auth', req.headers['waivio-auth'] === 'true');
   session.set('device', device);

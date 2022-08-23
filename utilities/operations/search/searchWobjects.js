@@ -246,7 +246,7 @@ const matchSimplePipe = ({ string, object_type }) => ({
   $match: {
     ...object_type && { object_type },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    $text: { $search: `\"${string}\"` },
+    ...(string && { $text: { $search: `\"${string}\"` } }),
   },
 });
 
