@@ -10,6 +10,7 @@ const { sendBalanceNotification } = require('./websiteBalanceNotifications');
 const { updateSiteWobjects } = require('./updateSiteWobjects');
 const { cacheHivePrice } = require('./cacheHivePrice');
 const { updateWaivioAdmins } = require('./updateWaivioAdmins');
+const { cacheHiveServiceBotsJob } = require('./cacheServiceBots');
 
 objTypeExpertsJob.start();
 collectExpertsJob.start();
@@ -24,3 +25,4 @@ sendBalanceNotification.start();
 updateSiteWobjects.start();
 cacheHivePrice.start();
 updateWaivioAdmins.start();
+cacheHiveServiceBotsJob.start();
