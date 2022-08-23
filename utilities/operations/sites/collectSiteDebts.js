@@ -13,6 +13,13 @@ exports.dailyDebt = async (timeout = 200) => {
   const { result: apps, error } = await App.find({
     inherited: true,
     status: { $in: [STATUSES.INACTIVE, STATUSES.PENDING, STATUSES.ACTIVE] },
+  },
+  {},
+  {
+    host: 1,
+    parent: 1,
+    owner: 1,
+    status: 1,
   });
   if (error) return sendError(error);
   for (const app of apps) {
@@ -49,7 +56,7 @@ const sendError = async (error) => {
 };
 
 exports.checkForTestSites = async (parent) => {
-  const { result, error } = await App.findOne({ _id: parent });
+  const { result, error } = await App.findOne({ _id: parent }, {}, { host: 1 });
   if (error) {
     await sendError(error);
     return false;
@@ -61,6 +68,13 @@ exports.checkForTestSites = async (parent) => {
 exports.dailySuspendedDebt = async (timeout = 200) => {
   const { result: apps, error } = await App.find({
     inherited: true, status: STATUSES.SUSPENDED,
+  },
+  {},
+  {
+    host: 1,
+    parent: 1,
+    owner: 1,
+    status: 1,
   });
   if (error) return sendError(error);
   for (const app of apps) {
