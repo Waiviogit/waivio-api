@@ -43,6 +43,7 @@ exports.FIELDS_NAMES = {
   DIMENSIONS: 'dimensions',
   AUTHORS: 'authors',
   PUBLISHER: 'publisher',
+  PRINT_LENGTH: 'printLength',
 };
 
 exports.LIST_TYPES = {
