@@ -7,10 +7,14 @@ const emitter = new EventEmitterHIVE();
 
 const HIVE_SOCKET = 'wss://blocks.waivio.com:8084';
 
+const REQUESTS_TO_DISABLE = 15;
+const REQUESTS_TO_RENEW = 3000;
+
 const HIVE_SOCKET_ERR = {
   ERROR: 'error socket closed',
   DISABLED: 'socket disabled',
   CLOSED: 'connection close',
+  TIMEOUT: 'Timeout exceed',
 };
 
 /**
@@ -19,6 +23,7 @@ const HIVE_SOCKET_ERR = {
 class SocketClient {
   constructor(url) {
     this.url = url;
+    this.timeoutCount = 0;
   }
 
   async init() {
@@ -47,6 +52,13 @@ class SocketClient {
 
   async sendMessage(message = {}) {
     if (process.env.NODE_ENV !== 'production') return { error: new Error(HIVE_SOCKET_ERR.DISABLED) };
+    if (this.timeoutCount >= REQUESTS_TO_DISABLE) {
+      this.timeoutCount++;
+      if (this.timeoutCount > REQUESTS_TO_RENEW) {
+        this.timeoutCount = 0;
+      }
+      return { error: new Error(HIVE_SOCKET_ERR.TIMEOUT) };
+    }
     if (_.get(this, 'ws.readyState') !== 1) {
       await this.init();
     }
@@ -64,8 +76,11 @@ class SocketClient {
       });
 
       setTimeout(() => {
-        resolve({ error: new Error('Timeout exceed') });
-        emitter.off(id, resolve);
+        if (emitter.eventNames().includes(id)) {
+          this.timeoutCount++;
+          emitter.off(id, () => {});
+          resolve({ error: new Error(HIVE_SOCKET_ERR.TIMEOUT) });
+        }
       }, 2 * 1000);
     });
   }
