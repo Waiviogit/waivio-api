@@ -1567,4 +1567,29 @@ describe('On wobjectHelper', async () => {
       expect(publisher).to.be.eq(result.publisher);
     });
   });
+
+  describe('On printLength field', async () => {
+    const length = String(_.random(1, 100));
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PRINT_LENGTH,
+        body: length,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.PRINT_LENGTH],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(length).to.be.eq(result.printLength);
+    });
+  });
 });
