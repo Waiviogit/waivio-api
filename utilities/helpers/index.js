@@ -6,6 +6,7 @@ moduleExports.postHelper = require('./postHelper');
 moduleExports.imagesHelper = require('./imagesHelper');
 moduleExports.userFollowingsUpdates = require('./userFollowingsUpdatesHelper');
 moduleExports.campaignsHelper = require('./campaignsHelper');
+moduleExports.campaignsV2Helper = require('./campaignsV2Helper');
 moduleExports.customValidationHelper = require('./customValidationHelper');
 moduleExports.appHelper = require('./appHelper');
 moduleExports.jsonHelper = require('./jsonHelper');
