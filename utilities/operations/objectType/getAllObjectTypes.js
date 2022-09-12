@@ -3,10 +3,10 @@ const { ObjectType, Wobj } = require('models');
 // eslint-disable-next-line camelcase
 const objectTypePipeline = ({ limit, skip, wobjects_count }) => {
   const pipeline = [
+    { $sort: { priority: -1 } },
     { $skip: skip },
     // eslint-disable-next-line camelcase
     { $addFields: { top_wobjects: { $slice: ['$top_wobjects', wobjects_count] } } },
-    { $sort: { priority: -1 } },
   ];
 
   if (limit) pipeline.splice(1, 0, { $limit: limit });
