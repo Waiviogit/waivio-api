@@ -39,7 +39,7 @@ exports.FIELDS_NAMES = {
   AGE_RANGE: 'ageRange',
   PUBLICATION_DATE: 'publicationDate',
   LANGUAGE: 'language',
-  WEIGHT: 'weight',
+  WEIGHT: 'productWeight',
   DIMENSIONS: 'dimensions',
   AUTHORS: 'authors',
   PUBLISHER: 'publisher',

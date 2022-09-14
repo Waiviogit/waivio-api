@@ -8,6 +8,7 @@ const moment = require('moment');
 const _ = require('lodash');
 
 const wobjectHelper = require('./wObjectHelper');
+const campaignsV2Helper = require('./campaignsV2Helper');
 
 exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
     && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users,
@@ -168,6 +169,7 @@ exports.addCampaignsToWobjects = async ({
     }
     wobjects[index] = wobj;
   }));
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
   return wobjects;
 };
 
