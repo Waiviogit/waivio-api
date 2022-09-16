@@ -308,7 +308,7 @@ const getWobjectUpdates = async (req, res, next) => {
     validators.wobject.getFieldsScheme, next);
   if (!value) return;
 
-  const { fields, hasMore, error } = await getFields(value);
+  const { fields, hasMore, error } = await getFields({ ...value, app: req.appData });
   if (error) return next(error);
 
   res.result = { status: 200, json: { fields, hasMore } };
