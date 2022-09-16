@@ -1,11 +1,14 @@
 const _ = require('lodash');
+const { addDataToFields } = require('utilities/helpers/wObjectHelper');
 const { getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
 const ObjectTypeModel = require('../../../models/ObjectTypeModel');
-const { FIELDS_NAMES, LIST_TYPES } = require('../../../constants/wobjectsData');
+const {
+  FIELDS_NAMES, LIST_TYPES,
+} = require('../../../constants/wobjectsData');
 const { postsUtil } = require('../../hiveApi');
 
 exports.getFields = async ({
-  authorPermlink, skip, limit, type, locale, sort,
+  authorPermlink, skip, limit, type, locale, sort, app,
 }) => {
   const { wobject, error } = await getWobjectFields(authorPermlink);
   if (error) return { error };
@@ -24,7 +27,11 @@ exports.getFields = async ({
     .slice(skip, skip + limit)
     .value();
 
-  const fields = await fillUpdates(limitedUpdates);
+  const fields = await fillUpdates({
+    limitedUpdates,
+    wobject,
+    app,
+  });
 
   return { fields, hasMore: updates.length > skip + limit };
 };
@@ -48,9 +55,31 @@ const filterExposedFields = ({
   return acc;
 }, []);
 
-const fillUpdates = async (limitedUpdates) => {
+const fillUpdates = async ({
+  limitedUpdates,
+  wobject,
+  app,
+}) => {
+  const owner = _.get(app, 'owner');
+  const admins = _.get(app, 'admins', []);
+  const ownership = _.intersection(
+    _.get(wobject, 'authority.ownership', []), _.get(app, 'authority', []),
+  );
+  const administrative = _.intersection(
+    _.get(wobject, 'authority.administrative', []), _.get(app, 'authority', []),
+  );
+
+  const filtered = addDataToFields({
+    fields: limitedUpdates,
+    admins,
+    isOwnershipObj: !!ownership.length,
+    ownership,
+    administrative,
+    owner,
+  });
+
   const { comments } = await postsUtil.getCommentsArr(formatUpdatesForRequest(limitedUpdates));
-  for (const update of limitedUpdates) {
+  for (const update of filtered) {
     const comment = _.find(
       comments,
       (el) => el.author === update.author && el.permlink === update.permlink,
@@ -60,7 +89,7 @@ const fillUpdates = async (limitedUpdates) => {
         'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
     update.fullBody = _.get(comment, 'body', '');
   }
-  return limitedUpdates;
+  return filtered;
 };
 
 const formatUpdatesForRequest = (updates) => (

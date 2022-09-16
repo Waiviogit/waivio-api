@@ -558,4 +558,5 @@ module.exports = {
   getParentInfo,
   fillObjectByExposedFields,
   calculateApprovePercent,
+  addDataToFields,
 };
