@@ -1509,13 +1509,15 @@ describe('On wobjectHelper', async () => {
   });
 
   describe('On authors field', async () => {
-    const authors = JSON.stringify([{
+    const author1 = JSON.stringify({
       name: faker.random.string(),
       authorPermlink: faker.random.string(),
-    }, {
+    });
+
+    const author2 = JSON.stringify({
       name: faker.random.string(),
       authorPermlink: faker.random.string(),
-    }]);
+    });
 
     let obj1, result;
 
@@ -1524,7 +1526,15 @@ describe('On wobjectHelper', async () => {
         weight: 1,
         objectType: OBJECT_TYPES.BOOK,
         name: FIELDS_NAMES.AUTHORS,
-        body: authors,
+        body: author1,
+      }));
+
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.AUTHORS,
+        body: author2,
+        rootWobj: obj1.author_permlink,
       }));
 
       result = await wObjectHelper.processWobjects({
@@ -1535,8 +1545,14 @@ describe('On wobjectHelper', async () => {
       });
     });
 
-    it('should authors  be the same', async () => {
-      expect(authors).to.be.eq(result.authors);
+    it('should authors  includes author 1', async () => {
+      const fieldBodies = _.map(result.authors, 'body');
+      expect(fieldBodies.includes(author1)).to.be.true;
+    });
+
+    it('should authors  includes author 2', async () => {
+      const fieldBodies = _.map(result.authors, 'body');
+      expect(fieldBodies.includes(author2)).to.be.true;
     });
   });
 
