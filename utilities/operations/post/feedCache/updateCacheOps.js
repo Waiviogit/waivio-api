@@ -22,7 +22,8 @@ async function getDbPostsIds(type, appName) {
           forApp: appName,
         });
         if (error) {
-          return console.error('getDbPostsIds Error');
+          console.error(error.message);
+          return console.error(`getDbPostsIds Error, type: ${type} appName: ${appName}, locale: ${locale}`);
         }
         return { locale, ids: posts.map((post) => `${post.children}_${post._id}`) };
       }));
@@ -38,7 +39,8 @@ async function getDbPostsIds(type, appName) {
           forApp: appName,
         });
         if (error) {
-          return console.error('getDbPostsIds Error');
+          console.error(error.message);
+          return console.error(`getDbPostsIds Error, type: ${type} appName: ${appName}, locale: ${locale}`);
         }
         return { locale, ids: posts.map((post) => `${post.net_rshares}_${post._id}`) };
       }));
