@@ -89,10 +89,14 @@ const getUserMetadata = async (req, res, next) => {
   } = await getMetadata(req.params.userName);
 
   if (error) return next(error);
-
-  if (req.query.onlyEmail) res.result = { status: 200, json: { privateEmail } };
-  else res.result = { status: 200, json: { user_metadata: userMetadata, privateEmail } };
-  next();
+  if (req.query.onlyEmail) {
+    return res.status(200).json({
+      privateEmail,
+    });
+  }
+  return res.status(200).json({
+    user_metadata: userMetadata, privateEmail,
+  });
 };
 
 const objectsFollow = async (req, res, next) => {
