@@ -6,11 +6,11 @@ exports.getWallet = async ({
   account, symbol, skip, limit,
 }) => {
   const { result: history, error } = await GuestWalletModel.find(
-    { filter: { account, symbol }, skip, limit },
+    { filter: { account, symbol }, skip, limit: limit + 1 },
   );
   if (error) return { error };
 
-  return { result: { history } };
+  return { result: { history: _.take(history, limit), hasMore: history.length > limit } };
 };
 
 exports.getBalance = async ({ account, symbol }) => {
