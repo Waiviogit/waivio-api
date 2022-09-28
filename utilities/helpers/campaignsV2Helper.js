@@ -136,10 +136,26 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
             unit: 'day',
           },
         },
+        assignedUser: {
+          $filter: {
+            input: '$users',
+            as: 'user',
+            cond: {
+              $and: [
+                { $eq: ['$$user.status', RESERVATION_STATUSES.ASSIGNED] },
+                { $eq: ['$$user.name', userName] },
+                {
+                  $eq: ['$$user.objectPermlink', '$objects'],
+                },
+              ],
+            },
+          },
+        },
       },
     },
     {
       $addFields: {
+        reserved: { $gt: ['$assignedUser', []] },
         canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
         canAssignByCurrentDay: {
           $eq: [`$reservationTimetable.${currentDay}`, true],
