@@ -32,12 +32,13 @@ exports.getByCategory = async (req, res, next) => {
     lastId: req.body.lastId,
     onlyCrypto: req.body.onlyCrypto,
     userName: req.headers.follower,
+    locale: req.headers.locale,
   }, validators.post.getPostsByCategorySchema, next);
 
   if (!value) {
     return;
   }
-  const { posts, error } = await getPostsByCategory(value);
+  const { posts, error } = await getPostsByCategory({ ...value, app: req.appData });
 
   if (error) {
     return next(error);

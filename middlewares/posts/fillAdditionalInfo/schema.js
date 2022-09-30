@@ -29,11 +29,11 @@ exports.schema = [
     case: 3,
   },
   // post controller
-  {
-    path: '/posts',
-    method: 'POST',
-    case: 1,
-  },
+  // {
+  //   path: '/posts',
+  //   method: 'POST',
+  //   case: 1,
+  // },
   {
     path: '/post/:author/:permlink',
     method: 'GET',
