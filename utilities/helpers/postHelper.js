@@ -8,6 +8,8 @@ const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
 const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
+const { redis, redisGetter, redisSetter } = require('utilities/redis');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 /**
  * Get wobjects data for particular post
@@ -338,6 +340,21 @@ const getTagsByUser = async ({ author }) => {
   return { tags: result.sort((a, b) => b.counter - a.counter) };
 };
 
+const getCachedPosts = async (key) => {
+  const { result: resp } = await redisGetter.getAsync({
+    key: `post_cache:${key}`, client: redis.mainFeedsCacheClient,
+  });
+  if (!resp) return;
+  const parsedCache = jsonHelper.parseJson(resp, null);
+  if (!parsedCache) return;
+  return parsedCache;
+};
+
+const setCachedPosts = async ({ key, posts, ttl }) => {
+  await redisSetter.set({ key: `post_cache:${key}`, value: JSON.stringify(posts) });
+  await redisSetter.expire({ key: `post_cache:${key}`, ttl });
+};
+
 module.exports = {
   additionalSponsorObligations,
   addAuthorWobjectsWeight,
@@ -349,4 +366,6 @@ module.exports = {
   fillReblogs,
   fillObjects,
   getTagsByUser,
+  getCachedPosts,
+  setCachedPosts,
 };
