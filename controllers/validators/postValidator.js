@@ -18,6 +18,7 @@ exports.getPostsByCategorySchema = Joi.object().keys({
   lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
   onlyCrypto: Joi.boolean().default(false),
   userName: Joi.string().default(''),
+  locale: Joi.string().default('en-US'),
 });
 
 exports.getPostComments = Joi.object().keys({
