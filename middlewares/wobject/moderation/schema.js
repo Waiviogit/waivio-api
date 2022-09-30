@@ -104,12 +104,12 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
-  {
-    path: '/posts',
-    method: 'POST',
-    case: 4,
-    wobjects_path: 'wobjects',
-  },
+  // {
+  //   path: '/posts',
+  //   method: 'POST',
+  //   case: 4,
+  //   wobjects_path: 'wobjects',
+  // },
   {
     path: '/posts/getMany',
     method: 'POST',
