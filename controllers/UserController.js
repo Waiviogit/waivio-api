@@ -141,11 +141,14 @@ const feed = async (req, res, next) => {
     forApp: req.headers.app,
     user_languages: req.body.user_languages,
     userName: req.headers.follower,
+    locale: req.headers.locale,
   }, validators.user.feedSchema, next);
 
   if (!value) return;
 
-  const { posts, error } = await getUserFeed(value);
+  const { posts, error } = await getUserFeed({
+    ...value, app: req.appData,
+  });
 
   if (error) return next(error);
 

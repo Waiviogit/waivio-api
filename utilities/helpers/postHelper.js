@@ -10,6 +10,7 @@ const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/cam
 const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
 const { redis, redisGetter, redisSetter } = require('utilities/redis');
 const jsonHelper = require('utilities/helpers/jsonHelper');
+const crypto = require('crypto');
 
 /**
  * Get wobjects data for particular post
@@ -355,6 +356,20 @@ const setCachedPosts = async ({ key, posts, ttl }) => {
   await redisSetter.expire({ key: `post_cache:${key}`, ttl });
 };
 
+const getPostCacheKey = (data = {}) => crypto
+  .createHash('md5')
+  .update(`${JSON.stringify(data)}`, 'utf8')
+  .digest('hex');
+
+// from middelware
+const fillAdditionalInfo = async ({ posts = [], userName }) => {
+  await fillReblogs(posts, userName);
+  posts = await fillObjects(posts, userName);
+  await addAuthorWobjectsWeight(posts);
+  posts = await additionalSponsorObligations(posts);
+  return posts;
+};
+
 module.exports = {
   additionalSponsorObligations,
   addAuthorWobjectsWeight,
@@ -368,4 +383,6 @@ module.exports = {
   getTagsByUser,
   getCachedPosts,
   setCachedPosts,
+  getPostCacheKey,
+  fillAdditionalInfo,
 };
