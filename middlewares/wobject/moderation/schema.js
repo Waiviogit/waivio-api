@@ -58,12 +58,12 @@ exports.schema = [
     method: 'POST',
     case: 2,
   },
-  {
-    path: '/user/:userName/feed',
-    method: 'POST',
-    case: 4,
-    wobjects_path: 'wobjects',
-  },
+  // {
+  //   path: '/user/:userName/feed',
+  //   method: 'POST',
+  //   case: 4,
+  //   wobjects_path: 'wobjects',
+  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',

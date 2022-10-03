@@ -68,8 +68,9 @@ exports.feedSchema = Joi.object().keys({
     byApp: Joi.string().allow(''),
   }),
   forApp: Joi.string(),
-  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['ru-RU']),
+  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['en-US']),
   userName: Joi.string().default(''),
+  locale: Joi.string().default('en-US'),
 });
 
 exports.searchSchema = Joi.object().keys({

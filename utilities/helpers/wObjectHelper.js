@@ -1,8 +1,7 @@
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES,
+  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES,
 } = require('constants/wobjectsData');
-const { ObjectId } = require('mongoose').Types;
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const blacklistModel = require('models/blacklistModel');
@@ -551,6 +550,21 @@ const getCurrentNames = async (names) => {
   return { result };
 };
 
+const moderatePosts = async ({ posts, app, locale }) => {
+  await Promise.all(posts.map(async (post) => {
+    if (post.wobjects) {
+      post.wobjects = await processWobjects({
+        wobjects: post.wobjects,
+        app,
+        hiveData: false,
+        returnArray: true,
+        locale,
+        fields: REQUIREDFILDS_WOBJ_LIST,
+      });
+    }
+  }));
+};
+
 module.exports = {
   getUserSharesInWobj,
   getLinkToPageLoad,
@@ -561,4 +575,5 @@ module.exports = {
   fillObjectByExposedFields,
   calculateApprovePercent,
   addDataToFields,
+  moderatePosts,
 };
