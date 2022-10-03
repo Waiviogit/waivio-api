@@ -1,23 +1,18 @@
 /* eslint-disable camelcase */
 const {
-  IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, HOT_NEWS_CACHE_SIZE,
-  TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED,
   MEDIAN_USER_WAIVIO_RATE,
 } = require('constants/postsData');
-const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
 const { hiddenPostModel, mutedUserModel } = require('models');
 const { ObjectId } = require('mongoose').Types;
 const { getNamespace } = require('cls-hooked');
 const { Post } = require('database').models;
 const config = require('config');
-const crypto = require('crypto');
 const _ = require('lodash');
-const { getCachedPosts, setCachedPosts } = require('utilities/helpers/postHelper');
+const { getCachedPosts, setCachedPosts, getPostCacheKey } = require('utilities/helpers/postHelper');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST } = require('../../../constants/wobjectsData');
-const { Subscriptions } = require('../../../models');
-const { getFollowingsUser } = require('../user');
+const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();
@@ -32,7 +27,6 @@ const objectIdFromDaysBefore = (daysCount) => {
   return new ObjectId(str);
 };
 
-// eslint-disable-next-line camelcase
 const makeConditions = ({
   category, user_languages: languages, host, hiddenPosts, muted,
 }) => {
@@ -77,12 +71,6 @@ const makeConditions = ({
   return { cond, sort };
 };
 
-const getKey = ({
-  category, skip, limit, user_languages, host, userName,
-}) => crypto
-  .createHash('md5')
-  .update(`${category}${skip}${limit}${user_languages.toString()}${host}${userName}`, 'utf8')
-  .digest('hex');
 // to helpers
 
 module.exports = async ({
@@ -91,8 +79,9 @@ module.exports = async ({
   const session = getNamespace('request-session');
   let host = session.get('host');
   if (!host) host = config.appHost;
-  const cacheKey = getKey({
-    category, skip, limit, user_languages, host, userName,
+
+  const cacheKey = getPostCacheKey({
+    category, skip, limit, user_languages, host, userName, method: 'getPostsByCategory',
   });
 
   if (category !== 'created') {
@@ -102,7 +91,6 @@ module.exports = async ({
 
   // get user blocked posts id
   // get user muted list
-
   const hide = await Promise.all([
     await hiddenPostModel.getHiddenPosts(userName, { postId: -1 }),
     await mutedUserModel.find({ condition: { mutedBy: userName } }),
@@ -128,83 +116,14 @@ module.exports = async ({
   } catch (error) {
     return { error };
   }
+  // refactor from middlewares
 
-  await postHelper.fillReblogs(posts, userName);
-  posts = await postHelper.fillObjects(posts, userName);
-  await postHelper.addAuthorWobjectsWeight(posts);
-  posts = await postHelper.additionalSponsorObligations(posts);
-  await Promise.all(posts.map(async (post) => {
-    if (post.wobjects) {
-      post.wobjects = await wobjectHelper.processWobjects({
-        wobjects: post.wobjects,
-        app,
-        hiveData: false,
-        returnArray: true,
-        locale,
-        fields: REQUIREDFILDS_WOBJ_LIST,
-      });
-    }
-  }));
-  const names = _.map(posts, (follower) => follower.author);
-
-  const { subscriptionData } = await Subscriptions
-    .find({ condition: { follower: { $in: names }, following: userName } });
-
-  _.forEach(posts, (follower) => {
-    follower.followsYou = !!_.find(subscriptionData, (el) => el.follower === follower.name);
-  });
-  const names2 = _.map(posts, (following) => following.author);
-  const { users, error } = await getFollowingsUser.getFollowingsArray(
-    { name: userName, users: names2 },
-  );
-  if (error) return { error };
-
-  _.forEach(posts, (following) => {
-    const result = _.find(users, (user) => Object.keys(user)[0] === following.author);
-    following.youFollows = result[following.author];
-  });
+  posts = await postHelper.fillAdditionalInfo({ posts, userName });
+  await wobjectHelper.moderatePosts({ posts, locale, app });
+  await fillPostsSubscriptions({ posts, userName });
 
   if (category !== 'created') {
     await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   }
   return { posts };
-};
-
-const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts, muted,
-}) => {
-  if (onlyCrypto) category = 'beaxyWObjCache';
-  let res;
-  switch (category) {
-    case 'hot':
-      if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getHot({
-          skip, limit, locales, forApp, hiddenPosts, muted,
-        });
-      }
-      break;
-    case 'beaxyWObjCache':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({
-          skip,
-          limit,
-          muted,
-          forApp,
-          locales,
-          hiddenPosts,
-          prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
-        });
-      }
-      break;
-    case 'trending':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX, hiddenPosts, muted,
-        });
-      }
-      break;
-  }
-  if (_.get(res, 'posts.length')) {
-    return res.posts;
-  }
 };

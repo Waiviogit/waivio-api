@@ -18,11 +18,11 @@ exports.schema = [
     case: 1,
   },
   // user controller
-  {
-    path: '/user/:userName/feed',
-    method: 'POST',
-    case: 1,
-  },
+  // {
+  //   path: '/user/:userName/feed',
+  //   method: 'POST',
+  //   case: 1,
+  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',

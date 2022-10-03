@@ -65,18 +65,18 @@ exports.getByFollowLists = async ({
   limit,
 }) => {
   const pipe = [
-    { $match: { $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }] } },
     {
       $match: {
+        $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
         ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
         ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
-        ...(_.get(filtersData, 'lastId') && { _id: { $lt: ObjectId(filtersData.lastId) } }),
       },
     },
     { $sort: { _id: -1 } },
+    { $skip: skip },
     { $limit: limit },
     {
       $lookup: {
