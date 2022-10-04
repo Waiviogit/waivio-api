@@ -1,6 +1,5 @@
 const { CampaignV2 } = require('models');
 const _ = require('lodash');
-const moment = require('moment');
 const redisGetter = require('utilities/redis/redisGetter');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CACHE_KEY } = require('../../constants/common');
@@ -24,22 +23,7 @@ const getExpertiseVariables = async () => {
   };
 };
 
-const findAssignedMainObjects = async (userName) => {
-  if (!userName) return [];
-  const { result } = await CampaignV2.find({
-    filter: {
-      users: {
-        $elemMatch: { name: userName, status: RESERVATION_STATUSES.ASSIGNED },
-      },
-    },
-    projection: { requiredObject: 1 },
-  });
-  return _.uniq(_.map(result, 'requiredObject'));
-};
-
 const getAggregatedCampaigns = async ({ user, permlinks }) => {
-  const currentDay = moment().format('dddd').toLowerCase();
-  const assignedObjects = await findAssignedMainObjects(_.get(user, 'name'));
   const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
   const userName = _.get(user, 'name');
 
@@ -66,76 +50,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         blacklist: {
           $setDifference: ['$blacklistUsers', '$whitelistUsers'],
         },
-        completedUser: {
-          $filter: {
-            input: '$users',
-            as: 'user',
-            cond: {
-              $and: [
-                { $eq: ['$$user.name', userName] },
-                { $eq: ['$$user.status', 'completed'] },
-              ],
-            },
-          },
-        },
-        thisMonthCompleted: {
-          $filter: {
-            input: '$users',
-            as: 'user',
-            cond: {
-              $and: [
-                { $eq: ['$$user.status', 'completed'] },
-                {
-                  $gte: [
-                    '$$user.updatedAt',
-                    moment.utc().startOf('month').toDate(),
-                  ],
-                },
-              ],
-            },
-          },
-        },
-        assigned: {
-          $filter: {
-            input: '$users',
-            as: 'user',
-            cond: { $eq: ['$$user.status', 'assigned'] },
-          },
-        },
-      },
-    },
-    {
-      $addFields: {
-        thisMonthCompleted: { $size: '$thisMonthCompleted' },
-        assigned: { $size: '$assigned' },
-        completedUser: {
-          $arrayElemAt: [
-            '$completedUser',
-            {
-              $indexOfArray: [
-                '$completedUser.updatedAt',
-                { $max: '$array.updatedAt' },
-              ],
-            },
-          ],
-        },
-      },
-    },
-    {
-      $addFields: {
-        monthBudget: {
-          $multiply: [
-            '$reward',
-            { $sum: ['$thisMonthCompleted', '$assigned'] },
-          ],
-        },
-        daysPassed: {
-          $dateDiff: {
-            startDate: '$completedUser.updatedAt',
-            endDate: moment.utc().toDate(),
-            unit: 'day',
-          },
-        },
         assignedUser: {
           $filter: {
             input: '$users',
@@ -156,9 +70,15 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     {
       $addFields: {
         reserved: { $gt: ['$assignedUser', []] },
-        canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
-        canAssignByCurrentDay: {
-          $eq: [`$reservationTimetable.${currentDay}`, true],
+        reservationCreatedAt: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.createdAt',
+          },
         },
         posts: { $gte: [_.get(user, 'count_posts', 0), '$userRequirements.minPosts'] },
         followers: {
@@ -167,26 +87,13 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         expertise: {
           $gte: [_.get(user, 'wobjects_weight', 0), '$requiredExpertise'],
         },
-        notAssigned: {
-          $cond: [{ $in: ['$requiredObject', assignedObjects] }, false, true],
-        },
-        frequency: {
-          $or: [
-            { $gt: ['$daysPassed', '$frequencyAssign'] },
-            { $eq: ['$daysPassed', null] },
-          ],
-        },
       },
     },
     {
       $match: {
-        canAssignByBudget: true,
-        canAssignByCurrentDay: true,
         posts: true,
         followers: true,
         expertise: true,
-        notAssigned: true,
-        frequency: true,
         blacklist: { $ne: userName },
       },
     },
