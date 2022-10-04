@@ -58,9 +58,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
               $and: [
                 { $eq: ['$$user.status', RESERVATION_STATUSES.ASSIGNED] },
                 { $eq: ['$$user.name', userName] },
-                {
-                  $eq: ['$$user.objectPermlink', '$objects'],
-                },
               ],
             },
           },
