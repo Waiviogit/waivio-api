@@ -63,8 +63,8 @@ const getListItems = async (wobject, data, app) => {
   });
 
   let user;
-  if (data.userName) {
-    ({ user } = await User.getOne(data.userName));
+  if (data.user) {
+    ({ user } = await User.getOne(data.user));
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
