@@ -32,7 +32,7 @@ exports.fill = async (req, res, next) => {
       // replace reblog post blank to source post
       await postHelper.fillReblogs([res.result.json], userName);
       // fill wobjects on post by full info about wobjects(with fields and others);
-      [res.result.json] = await postHelper.fillObjects([res.result.json]);
+      [res.result.json] = await postHelper.fillObjects([res.result.json], userName);
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight(
         [res.result.json], _.get(req, 'headers.app'), userName,
