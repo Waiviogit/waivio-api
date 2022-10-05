@@ -110,12 +110,16 @@ const addPrimaryCampaign = ({ object, primaryCampaigns }) => {
 };
 
 const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
-  const propositions = _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true }));
+  const proposition = _.maxBy(
+    _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true })),
+    'rewardInUSD',
+  );
+
   if (object.propositions) {
-    object.propositions.push(...propositions);
+    object.propositions.push(proposition);
     return;
   }
-  object.propositions = propositions;
+  object.propositions = [proposition];
 };
 
 const addNewCampaignsToObjects = async ({
