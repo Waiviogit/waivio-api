@@ -118,16 +118,23 @@ const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
   object.propositions = propositions;
 };
 
-exports.addNewCampaignsToObjects = async ({
-  user, wobjects,
+const addNewCampaignsToObjects = async ({
+  user, wobjects, onlySecondary = false,
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
   if (_.isEmpty(campaigns)) return;
   for (const object of wobjects) {
     const primaryCampaigns = _.filter(campaigns, { requiredObject: object.author_permlink });
-    if (!_.isEmpty(primaryCampaigns)) addPrimaryCampaign({ object, primaryCampaigns });
+    if (!_.isEmpty(primaryCampaigns) && !onlySecondary) {
+      addPrimaryCampaign({ object, primaryCampaigns });
+    }
+
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, object.author_permlink));
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
+};
+
+module.exports = {
+  addNewCampaignsToObjects,
 };
