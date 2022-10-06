@@ -1,8 +1,9 @@
-const { CampaignV2 } = require('models');
+const { CampaignV2, CampaignPayments } = require('models');
 const _ = require('lodash');
 const redisGetter = require('utilities/redis/redisGetter');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CACHE_KEY } = require('../../constants/common');
+const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
 
 const getExpertiseVariables = async () => {
   const { result: rewardFund } = await redisGetter.getHashAll({
@@ -95,7 +96,66 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
       },
     },
   ]);
+
   return result;
+};
+
+const getGuidesPayables = async ({ guideNames, payoutToken }) => {
+  const { result = [] } = await CampaignPayments.aggregate(
+    [
+      {
+        $match: { guideName: { $in: guideNames }, payoutToken },
+      },
+      {
+        $group: {
+          _id: '$guideName',
+          transfers: {
+            $push: {
+              $cond: [
+                { $in: ['$type', CP_TRANSFER_TYPES] },
+                '$$ROOT',
+                '$$REMOVE',
+              ],
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          payed: { $sum: '$transfers.amount' },
+        },
+      },
+      {
+        $project: {
+          payed: { $convert: { input: '$payed', to: 'double' } },
+          guideName: '$_id',
+        },
+      },
+    ],
+  );
+
+  return result;
+};
+
+const addTotalPayedToCampaigns = async (campaigns) => {
+  const campaignsWithPayed = [];
+  const payoutTokens = _.map(campaigns, 'payoutToken');
+  const guideNames = _.map(campaigns, 'guideName');
+  for (const payoutToken of payoutTokens) {
+    const guidesPayables = await getGuidesPayables({ guideNames, payoutToken });
+    if (_.isEmpty(guidesPayables)) continue;
+    const matchedCampaigns = _.filter(campaigns, (c) => c.payoutToken === payoutToken);
+    for (const matchedCampaign of matchedCampaigns) {
+      const payedRecord = _.find(
+        guidesPayables, (gp) => gp.guideName === matchedCampaign.guideName,
+      );
+      campaignsWithPayed.push({
+        ...matchedCampaign,
+        totalPayed: payedRecord.payed,
+      });
+    }
+  }
+  return campaignsWithPayed;
 };
 
 const addPrimaryCampaign = ({ object, primaryCampaigns }) => {
@@ -126,14 +186,17 @@ const addNewCampaignsToObjects = async ({
   user, wobjects, onlySecondary = false,
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
-  if (_.isEmpty(campaigns)) return;
+  const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
+  if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
-    const primaryCampaigns = _.filter(campaigns, { requiredObject: object.author_permlink });
+    const primaryCampaigns = _.filter(
+      campaignsWithPayed, { requiredObject: object.author_permlink },
+    );
     if (!_.isEmpty(primaryCampaigns) && !onlySecondary) {
       addPrimaryCampaign({ object, primaryCampaigns });
     }
 
-    const secondaryCampaigns = _.filter(campaigns,
+    const secondaryCampaigns = _.filter(campaignsWithPayed,
       (campaign) => _.includes(campaign.objects, object.author_permlink));
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
