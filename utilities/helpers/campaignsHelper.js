@@ -162,10 +162,8 @@ exports.addCampaignsToWobjects = async ({
     const secondaryCampaigns = _.filter(campaigns,
       (campaign) => _.includes(campaign.objects, wobj.author_permlink));
     if (secondaryCampaigns.length) {
-      wobj.propositions = await this.campaignFilter(secondaryCampaigns, user, app);
-      if (!_.isEmpty(wobj.propositions) && search) {
-        wobj.propositions = [_.maxBy(wobj.propositions, 'reward')];
-      }
+      const propositions = await this.campaignFilter(secondaryCampaigns, user, app);
+      wobj.propositions = [_.maxBy(propositions, 'reward')];
     }
     wobjects[index] = wobj;
   }));

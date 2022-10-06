@@ -68,12 +68,12 @@ exports.schema = [
     case: 3,
     field_name: 'name',
   },
-  {
-    path: '/user/:userName/feed',
-    method: 'POST',
-    case: 1,
-    field_name: 'author',
-  },
+  // {
+  //   path: '/user/:userName/feed',
+  //   method: 'POST',
+  //   case: 1,
+  //   field_name: 'author',
+  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',
@@ -89,12 +89,12 @@ exports.schema = [
     field_name: 'name',
   },
   // post controller
-  {
-    path: '/posts',
-    method: 'POST',
-    case: 1,
-    field_name: 'author',
-  },
+  // {
+  //   path: '/posts',
+  //   method: 'POST',
+  //   case: 1,
+  //   field_name: 'author',
+  // },
   {
     path: '/post/:author/:permlink',
     method: 'GET',

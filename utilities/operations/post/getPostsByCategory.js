@@ -1,15 +1,18 @@
+/* eslint-disable camelcase */
 const {
-  IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED, HOT_NEWS_CACHE_SIZE,
-  TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX, TREND_FILTERED_NEWS_CACHE_PREFIX,
+  IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED,
   MEDIAN_USER_WAIVIO_RATE,
 } = require('constants/postsData');
-const hotTrandGetter = require('utilities/operations/post/feedCache/hotTrandGetter');
 const { hiddenPostModel, mutedUserModel } = require('models');
 const { ObjectId } = require('mongoose').Types;
 const { getNamespace } = require('cls-hooked');
 const { Post } = require('database').models;
 const config = require('config');
 const _ = require('lodash');
+const { getCachedPosts, setCachedPosts, getPostCacheKey } = require('utilities/helpers/postHelper');
+const { postHelper } = require('../../helpers');
+const wobjectHelper = require('../../helpers/wObjectHelper');
+const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();
@@ -24,23 +27,15 @@ const objectIdFromDaysBefore = (daysCount) => {
   return new ObjectId(str);
 };
 
-// eslint-disable-next-line camelcase
 const makeConditions = ({
-  category, user_languages: languages, forApp, lastId, hiddenPosts, muted,
+  category, user_languages: languages, host, hiddenPosts, muted,
 }) => {
   let cond = {};
   let sort = {};
 
-  const session = getNamespace('request-session');
-  let host = session.get('host');
-  if (!host) host = config.appHost;
   switch (category) {
     case 'created':
       cond = { reblog_to: null };
-      // alternative infinity scroll key(don't use skip if lastId exist)
-      if (lastId) {
-        cond._id = { $lt: new ObjectId(lastId) };
-      }
       sort = { _id: -1 };
       break;
     case 'hot':
@@ -62,7 +57,6 @@ const makeConditions = ({
       break;
   }
   if (!_.isEmpty(languages)) cond.language = { $in: languages };
-  if (forApp) cond.blocked_for_apps = { $ne: forApp };
   if (!_.isEmpty(hiddenPosts)) {
     _.get(cond, '_id')
       ? Object.assign(cond._id, { $nin: hiddenPosts })
@@ -77,33 +71,43 @@ const makeConditions = ({
   return { cond, sort };
 };
 
+// to helpers
+
 module.exports = async ({
-  // eslint-disable-next-line camelcase
-  category, skip, limit, user_languages, keys, forApp, lastId, onlyCrypto, userName,
+  category, skip, limit, user_languages, userName, locale, app,
 }) => {
-  // get user blocked posts id
-  const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName, { postId: -1 });
-  // get user muted list
-  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
-  // try to get posts from cache
-  const cachedPosts = await getFromCache({
-    skip, limit, user_languages, category, forApp, onlyCrypto, hiddenPosts, muted: _.map(muted, 'userName'),
+  const session = getNamespace('request-session');
+  let host = session.get('host');
+  if (!host) host = config.appHost;
+
+  const cacheKey = getPostCacheKey({
+    category, skip, limit, user_languages, host, userName, method: 'getPostsByCategory',
   });
-  if (cachedPosts) return { posts: cachedPosts };
-  if (!cachedPosts && onlyCrypto) return { posts: [] };
+
+  if (category !== 'created') {
+    const cache = await getCachedPosts(cacheKey);
+    if (cache) return { posts: cache };
+  }
+
+  // get user blocked posts id
+  // get user muted list
+  const hide = await Promise.all([
+    await hiddenPostModel.getHiddenPosts(userName, { postId: -1 }),
+    await mutedUserModel.find({ condition: { mutedBy: userName } }),
+  ]);
+  const [{ hiddenPosts }, { result: muted }] = hide;
+
   const { cond, sort } = makeConditions({
-    category, user_languages, forApp, lastId, hiddenPosts, muted: _.map(muted, 'userName'),
+    category, user_languages, host, hiddenPosts, muted: _.map(muted, 'userName'),
   });
 
   const postsQuery = Post
     .find(cond)
     .sort(sort)
-  // .skip(skip)
+    .skip(skip)
     .limit(limit)
     .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
-    .select(keys || {})
     .lean();
-  if (!lastId) postsQuery.skip(skip);
 
   let posts = [];
 
@@ -112,44 +116,14 @@ module.exports = async ({
   } catch (error) {
     return { error };
   }
-  return { posts };
-};
+  // refactor from middlewares
 
-const getFromCache = async ({
-  skip, limit, user_languages: locales, category, forApp, onlyCrypto, hiddenPosts, muted,
-}) => {
-  if (onlyCrypto) category = 'beaxyWObjCache';
-  let res;
-  switch (category) {
-    case 'hot':
-      if ((skip + limit) < HOT_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getHot({
-          skip, limit, locales, forApp, hiddenPosts, muted,
-        });
-      }
-      break;
-    case 'beaxyWObjCache':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({
-          skip,
-          limit,
-          muted,
-          forApp,
-          locales,
-          hiddenPosts,
-          prefix: TREND_FILTERED_NEWS_CACHE_PREFIX,
-        });
-      }
-      break;
-    case 'trending':
-      if ((skip + limit) < TREND_NEWS_CACHE_SIZE) {
-        res = await hotTrandGetter.getTrend({
-          skip, limit, locales, forApp, prefix: TREND_NEWS_CACHE_PREFIX, hiddenPosts, muted,
-        });
-      }
-      break;
+  posts = await postHelper.fillAdditionalInfo({ posts, userName });
+  await wobjectHelper.moderatePosts({ posts, locale, app });
+  await fillPostsSubscriptions({ posts, userName });
+
+  if (category !== 'created') {
+    await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   }
-  if (_.get(res, 'posts.length')) {
-    return res.posts;
-  }
+  return { posts };
 };

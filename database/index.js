@@ -28,6 +28,7 @@ models.Post = require('./schemas/PostSchema');
 models.App = require('./schemas/AppSchema');
 models.Campaign = require('./schemas/CampaignSchema');
 models.CampaignV2 = require('./schemas/CampaignV2Schema');
+models.CampaignPayments= require('./schemas/CampaignPaymentsSchema');
 models.PaymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');

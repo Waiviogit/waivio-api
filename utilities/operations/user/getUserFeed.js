@@ -3,11 +3,27 @@ const {
 } = require('models');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
+const { postHelper } = require('../../helpers');
+const wobjectHelper = require('../../helpers/wObjectHelper');
+const {
+  getPostCacheKey,
+  getCachedPosts,
+  setCachedPosts,
+} = require('../../helpers/postHelper');
+const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
 
 const getFeed = async ({
   // eslint-disable-next-line camelcase
-  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName,
+  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName, locale, app,
 }) => {
+  const cacheKey = getPostCacheKey({
+    skip, limit, user_languages, userName, method: 'getFeed',
+  });
+
+  const cache = await getCachedPosts(cacheKey);
+  if (cache) return { posts: cache };
+
+  let posts = [];
   const requestsMongo = await Promise.all([
     User.getOne(name),
     Subscriptions.getFollowings({ follower: name, limit: 0 }),
@@ -37,7 +53,7 @@ const getFeed = async ({
 
   if (filterError) return { error: filterError };
 
-  const { posts, error: postsError } = await Post.getByFollowLists({
+  ({ posts } = await Post.getByFollowLists({
     skip,
     users,
     limit,
@@ -46,10 +62,13 @@ const getFeed = async ({
     user_languages,
     author_permlinks: wobjects,
     muted: _.map(muted, 'userName'),
-  });
+  }));
 
-  if (postsError) return { error: postsError };
+  posts = await postHelper.fillAdditionalInfo({ posts, userName });
+  await wobjectHelper.moderatePosts({ posts, locale, app });
+  await fillPostsSubscriptions({ posts, userName });
 
+  await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };
 

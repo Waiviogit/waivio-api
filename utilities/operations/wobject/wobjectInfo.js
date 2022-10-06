@@ -7,6 +7,7 @@ const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
+const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -62,8 +63,8 @@ const getListItems = async (wobject, data, app) => {
   });
 
   let user;
-  if (data.userName) {
-    ({ user } = await User.getOne(data.userName));
+  if (data.user) {
+    ({ user } = await User.getOne(data.user));
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
@@ -86,6 +87,7 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
+  await addNewCampaignsToObjects({ user, wobjects, onlySecondary: true });
 
   return { wobjects };
 };

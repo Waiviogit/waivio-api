@@ -1,9 +1,9 @@
-const { CampaignV2 } = require('models');
+const { CampaignV2, CampaignPayments } = require('models');
 const _ = require('lodash');
-const moment = require('moment');
 const redisGetter = require('utilities/redis/redisGetter');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CACHE_KEY } = require('../../constants/common');
+const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
 
 const getExpertiseVariables = async () => {
   const { result: rewardFund } = await redisGetter.getHashAll({
@@ -24,22 +24,7 @@ const getExpertiseVariables = async () => {
   };
 };
 
-const findAssignedMainObjects = async (userName) => {
-  if (!userName) return [];
-  const { result } = await CampaignV2.find({
-    filter: {
-      users: {
-        $elemMatch: { name: userName, status: RESERVATION_STATUSES.ASSIGNED },
-      },
-    },
-    projection: { requiredObject: 1 },
-  });
-  return _.uniq(_.map(result, 'requiredObject'));
-};
-
 const getAggregatedCampaigns = async ({ user, permlinks }) => {
-  const currentDay = moment().format('dddd').toLowerCase();
-  const assignedObjects = await findAssignedMainObjects(_.get(user, 'name'));
   const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
   const userName = _.get(user, 'name');
 
@@ -66,83 +51,32 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         blacklist: {
           $setDifference: ['$blacklistUsers', '$whitelistUsers'],
         },
-        completedUser: {
+        assignedUser: {
           $filter: {
             input: '$users',
             as: 'user',
             cond: {
               $and: [
+                { $eq: ['$$user.status', RESERVATION_STATUSES.ASSIGNED] },
                 { $eq: ['$$user.name', userName] },
-                { $eq: ['$$user.status', 'completed'] },
               ],
             },
-          },
-        },
-        thisMonthCompleted: {
-          $filter: {
-            input: '$users',
-            as: 'user',
-            cond: {
-              $and: [
-                { $eq: ['$$user.status', 'completed'] },
-                {
-                  $gte: [
-                    '$$user.updatedAt',
-                    moment.utc().startOf('month').toDate(),
-                  ],
-                },
-              ],
-            },
-          },
-        },
-        assigned: {
-          $filter: {
-            input: '$users',
-            as: 'user',
-            cond: { $eq: ['$$user.status', 'assigned'] },
           },
         },
       },
     },
     {
       $addFields: {
-        thisMonthCompleted: { $size: '$thisMonthCompleted' },
-        assigned: { $size: '$assigned' },
-        completedUser: {
-          $arrayElemAt: [
-            '$completedUser',
-            {
-              $indexOfArray: [
-                '$completedUser.updatedAt',
-                { $max: '$array.updatedAt' },
-              ],
+        reserved: { $gt: ['$assignedUser', []] },
+        reservationCreatedAt: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
             },
-          ],
-        },
-      },
-    },
-    {
-      $addFields: {
-        monthBudget: {
-          $multiply: [
-            '$reward',
-            { $sum: ['$thisMonthCompleted', '$assigned'] },
-          ],
-        },
-        daysPassed: {
-          $dateDiff: {
-            startDate: '$completedUser.updatedAt',
-            endDate: moment.utc().toDate(),
-            unit: 'day',
+            in: '$$firstMember.createdAt',
           },
-        },
-      },
-    },
-    {
-      $addFields: {
-        canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
-        canAssignByCurrentDay: {
-          $eq: [`$reservationTimetable.${currentDay}`, true],
         },
         posts: { $gte: [_.get(user, 'count_posts', 0), '$userRequirements.minPosts'] },
         followers: {
@@ -151,31 +85,77 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         expertise: {
           $gte: [_.get(user, 'wobjects_weight', 0), '$requiredExpertise'],
         },
-        notAssigned: {
-          $cond: [{ $in: ['$requiredObject', assignedObjects] }, false, true],
-        },
-        frequency: {
-          $or: [
-            { $gt: ['$daysPassed', '$frequencyAssign'] },
-            { $eq: ['$daysPassed', null] },
-          ],
-        },
       },
     },
     {
       $match: {
-        canAssignByBudget: true,
-        canAssignByCurrentDay: true,
         posts: true,
         followers: true,
         expertise: true,
-        notAssigned: true,
-        frequency: true,
         blacklist: { $ne: userName },
       },
     },
   ]);
+
   return result;
+};
+
+const getGuidesPayables = async ({ guideNames, payoutToken }) => {
+  const { result = [] } = await CampaignPayments.aggregate(
+    [
+      {
+        $match: { guideName: { $in: guideNames }, payoutToken },
+      },
+      {
+        $group: {
+          _id: '$guideName',
+          transfers: {
+            $push: {
+              $cond: [
+                { $in: ['$type', CP_TRANSFER_TYPES] },
+                '$$ROOT',
+                '$$REMOVE',
+              ],
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          payed: { $sum: '$transfers.amount' },
+        },
+      },
+      {
+        $project: {
+          payed: { $convert: { input: '$payed', to: 'double' } },
+          guideName: '$_id',
+        },
+      },
+    ],
+  );
+
+  return result;
+};
+
+const addTotalPayedToCampaigns = async (campaigns) => {
+  const campaignsWithPayed = [];
+  const payoutTokens = _.map(campaigns, 'payoutToken');
+  const guideNames = _.map(campaigns, 'guideName');
+  for (const payoutToken of payoutTokens) {
+    const guidesPayables = await getGuidesPayables({ guideNames, payoutToken });
+    if (_.isEmpty(guidesPayables)) continue;
+    const matchedCampaigns = _.filter(campaigns, (c) => c.payoutToken === payoutToken);
+    for (const matchedCampaign of matchedCampaigns) {
+      const payedRecord = _.find(
+        guidesPayables, (gp) => gp.guideName === matchedCampaign.guideName,
+      );
+      campaignsWithPayed.push({
+        ...matchedCampaign,
+        totalPayed: payedRecord.payed,
+      });
+    }
+  }
+  return campaignsWithPayed;
 };
 
 const addPrimaryCampaign = ({ object, primaryCampaigns }) => {
@@ -190,24 +170,38 @@ const addPrimaryCampaign = ({ object, primaryCampaigns }) => {
 };
 
 const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
-  const propositions = _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true }));
+  const proposition = _.maxBy(
+    _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true })),
+    'rewardInUSD',
+  );
+
   if (object.propositions) {
-    object.propositions.push(...propositions);
+    object.propositions.push(proposition);
     return;
   }
-  object.propositions = propositions;
+  object.propositions = [proposition];
 };
 
-exports.addNewCampaignsToObjects = async ({
-  user, wobjects,
+const addNewCampaignsToObjects = async ({
+  user, wobjects, onlySecondary = false,
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
-  if (_.isEmpty(campaigns)) return;
+  const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
+  if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
-    const primaryCampaigns = _.filter(campaigns, { requiredObject: object.author_permlink });
-    if (!_.isEmpty(primaryCampaigns)) addPrimaryCampaign({ object, primaryCampaigns });
-    const secondaryCampaigns = _.filter(campaigns,
+    const primaryCampaigns = _.filter(
+      campaignsWithPayed, { requiredObject: object.author_permlink },
+    );
+    if (!_.isEmpty(primaryCampaigns) && !onlySecondary) {
+      addPrimaryCampaign({ object, primaryCampaigns });
+    }
+
+    const secondaryCampaigns = _.filter(campaignsWithPayed,
       (campaign) => _.includes(campaign.objects, object.author_permlink));
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
+};
+
+module.exports = {
+  addNewCampaignsToObjects,
 };

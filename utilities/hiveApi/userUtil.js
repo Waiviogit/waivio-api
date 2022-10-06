@@ -5,13 +5,13 @@ const { socketHiveClient } = require('../webSocket/hiveSocket');
 
 exports.getAccount = async (name) => {
   try {
-    const result = await socketHiveClient.getAccounts([name]);
-    if (!_.get(result, 'error')) {
-      if (!result[0]) {
-        return { error: { status: 404, message: 'User not found!' } };
-      }
-      return { userData: result[0] };
-    }
+    // const result = await socketHiveClient.getAccounts([name]);
+    // if (!_.get(result, 'error')) {
+    //   if (!result[0]) {
+    //     return { error: { status: 404, message: 'User not found!' } };
+    //   }
+    //   return { userData: result[0] };
+    // }
     const client = await getClient(REDIS_KEYS.TEST_LOAD.POST);
     const [account] = await client.database.getAccounts([name]);
 
@@ -111,10 +111,10 @@ exports.getDelegationExpirations = async (account, cb = (el) => _.get(el, 'deleg
 
 exports.getAccountHistory = async (name, id, limit) => {
   try {
-    const result = await socketHiveClient.getAccountHistory({ name, id, limit });
-    if (!_.get(result, 'error')) {
-      return { result };
-    }
+    // const result = await socketHiveClient.getAccountHistory({ name, id, limit });
+    // if (!_.get(result, 'error')) {
+    //   return { result };
+    // }
     const client = await getClient(REDIS_KEYS.TEST_LOAD.HISTORY);
     const hiveResp = await client.database.getAccountHistory(
       name,
