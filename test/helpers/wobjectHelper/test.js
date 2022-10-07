@@ -1608,4 +1608,65 @@ describe('On wobjectHelper', async () => {
       expect(length).to.be.eq(result.printLength);
     });
   });
+
+  describe('On widget field', async () => {
+    const body = String(JSON.stringify({
+      column: faker.random.string(),
+      type: faker.random.string(),
+      content: faker.random.string(),
+    }));
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.WIDGET,
+        name: FIELDS_NAMES.WIDGET,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.WIDGET],
+      });
+    });
+
+    it('should body be the same', async () => {
+      console.log();
+      expect(body).to.be.eq(result.widget);
+    });
+  });
+
+  describe('On newsFeed field', async () => {
+    const body = String(JSON.stringify({
+      allowList: [[faker.random.string(), faker.random.string()]],
+      ignoreList: [faker.random.string(), faker.random.string()],
+      typeList: [faker.random.string()],
+      authors: [faker.random.string()],
+    }));
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.NEWS_FEED,
+        name: FIELDS_NAMES.NEWS_FEED,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.NEWS_FEED],
+      });
+    });
+
+    it('should body be the same', async () => {
+      console.log();
+      expect(body).to.be.eq(result.newsFeed.body);
+    });
+  });
 });

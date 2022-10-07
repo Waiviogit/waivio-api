@@ -112,6 +112,10 @@ const getNewsFilterCondition = ({
   if (_.some(newsFilter.allowList, (rule) => _.isEmpty(rule)) && _.isEmpty(_.get(newsFilter, 'typeList'))) {
     firstCond = { 'wobjects.author_permlink': author_permlink };
   }
+  if (!_.isEmpty(newsFilter.authors)) {
+    // posts only includes and objects
+    condition.author = { $in: newsFilter.authors };
+  }
 
   condition.$and = [firstCond, secondCond];
 
