@@ -3,30 +3,56 @@ const { geoIpModel } = require('models');
 const _ = require('lodash');
 
 exports.getLocation = async (ip) => {
-  if (!ip) return { longitude: 0, latitude: 0 };
-
-  const { result } = await geoIpModel.findOne(ip);
-
-  if (!result) {
-    const { geoData } = await ipRequest.getIp(ip);
-    if (_.get(geoData, 'lat') && _.get(geoData, 'lon')) {
-      await geoIpModel.findOneAndUpdate({
-        ip, longitude: parseFloat(geoData.lon), latitude: parseFloat(geoData.lat),
-      });
-    }
+  if (!ip) {
     return {
-      longitude: parseFloat(_.get(geoData, 'lon', '0')),
-      latitude: parseFloat(_.get(geoData, 'lat', '0')),
+      longitude: 0,
+      latitude: 0,
     };
   }
+
+  const { result } = await geoIpModel.findOne(ip);
+  if (result) {
+    return {
+      longitude: result.longitude,
+      latitude: result.latitude,
+    };
+  }
+
+  const {
+    geoData,
+    error,
+  } = await ipRequest.getIp(ip);
+  if (error) {
+    return {
+      longitude: 0,
+      latitude: 0,
+    };
+  }
+  const longitude = parseFloat(_.get(geoData, 'lon') || '0');
+  const latitude = parseFloat(_.get(geoData, 'lat') || '0');
+
+  if (longitude && latitude) {
+    await geoIpModel.findOneAndUpdate({
+      ip,
+      longitude,
+      latitude,
+    });
+  }
   return {
-    longitude: result.longitude,
-    latitude: result.latitude,
+    longitude,
+    latitude,
   };
 };
 
-exports.putLocation = async ({ ip, longitude, latitude }) => {
-  const { result, error } = await geoIpModel.findOneAndUpdate({
+exports.putLocation = async ({
+  ip,
+  longitude,
+  latitude,
+}) => {
+  const {
+    result,
+    error,
+  } = await geoIpModel.findOneAndUpdate({
     ip,
     longitude,
     latitude,
