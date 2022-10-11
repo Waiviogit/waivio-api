@@ -5,7 +5,7 @@ const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.getIp = async (ip) => {
   try {
-    const result = await axios.get(`${GEO_IP_API}${ip}`, { timeout: REQUEST_TIMEOUT });
+    const result = await axios.get(`${GEO_IP_API}${ip}?key=${process.env.GEO_IP_KEY}`, { timeout: REQUEST_TIMEOUT });
     return { geoData: _.get(result, 'data') };
   } catch (error) {
     return { error };
