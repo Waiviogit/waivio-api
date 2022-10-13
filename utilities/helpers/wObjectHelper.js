@@ -1,6 +1,6 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
-  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES,
+  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -231,6 +231,11 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
   }, []);
 };
 
+const getSingleFieldsDisplay = (field) => {
+  if (FULL_SINGLE_FIELDS.includes(field.name)) return field;
+  return field.body;
+};
+
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
@@ -256,16 +261,16 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
         (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
-      if (ownerVotes.length) winningFields[id] = _.maxBy(ownerVotes, 'adminVote.timestamp').body;
-      else if (adminVotes.length) winningFields[id] = _.maxBy(adminVotes, 'adminVote.timestamp').body;
-      else winningFields[id] = _.maxBy(approvedFields, 'adminVote.timestamp').body;
+      if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
           && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
     });
-    if (heaviestField) winningFields[id] = heaviestField.body;
+    if (heaviestField) winningFields[id] = getSingleFieldsDisplay(heaviestField);
   }
   return winningFields;
 };
