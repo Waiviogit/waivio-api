@@ -1381,6 +1381,22 @@ describe('On wobjectHelper', async () => {
         rootWobj: obj2.author_permlink,
       });
 
+      await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PRICE,
+        body: '5',
+        rootWobj: obj2.author_permlink,
+      });
+
+      await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.PRICE,
+        body: '10',
+        rootWobj: obj1.author_permlink,
+      });
+
       result = await wObjectHelper.processWobjects({
         wobjects: [_.cloneDeep(obj1)],
         app,

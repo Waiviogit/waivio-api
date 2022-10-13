@@ -420,10 +420,11 @@ const getExposedFields = (objectType, fields) => {
   return exposedFieldsWithCounters;
 };
 
-const groupOptions = (options) => _.chain(options)
+const groupOptions = (options, obj) => _.chain(options)
   .map((option) => ({
     ...option,
     body: jsonHelper.parseJson(option.body),
+    ...(obj && { author_permlink: obj.author_permlink, price: obj.price }),
   })).groupBy(
     (option) => _.get(option, 'body.category'),
   ).value();
@@ -431,7 +432,11 @@ const groupOptions = (options) => _.chain(options)
 const addOptions = async ({
   object, ownership, admins, administrative, owner, blacklist, locale,
 }) => {
-  const filter = [FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.OPTIONS];
+  const filter = [
+    FIELDS_NAMES.GROUP_ID,
+    FIELDS_NAMES.OPTIONS,
+    FIELDS_NAMES.PRICE,
+  ];
   const { wobjects } = await Wobj.getByField(
     { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
   );
@@ -450,7 +455,11 @@ const addOptions = async ({
     Object.assign(el,
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
     if (el.groupId === object.groupId && !_.isEmpty(el.options)) {
-      acc.push(..._.map(el.options, (opt) => ({ ...opt, author_permlink: el.author_permlink })));
+      acc.push(..._.map(el.options, (opt) => ({
+        ...opt,
+        author_permlink: el.author_permlink,
+        price: el.price,
+      })));
     }
     return acc;
   }, []);
@@ -522,7 +531,7 @@ const processWobjects = async ({
         ? await addOptions({
           object: obj, ownership, admins, administrative, owner, blacklist, locale,
         })
-        : groupOptions(obj.options);
+        : groupOptions(obj.options, obj);
     }
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
