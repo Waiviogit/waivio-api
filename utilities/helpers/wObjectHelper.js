@@ -232,6 +232,7 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
 };
 
 const getSingleFieldsDisplay = (field) => {
+  if (!field) return;
   if (FULL_SINGLE_FIELDS.includes(field.name)) return field;
   return field.body;
 };
