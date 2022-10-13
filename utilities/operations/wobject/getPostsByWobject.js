@@ -78,7 +78,7 @@ const getNewsFilterCondition = ({
   let firstCond;
   const secondCond = { 'wobjects.author_permlink': { $nin: _.get(newsFilter, 'ignoreList', []) } };
 
-  if (!newsFilter.allowList && !newsFilter.ignoreList) {
+  if (!newsFilter.allowList && !newsFilter.ignoreList && !newsFilter.authors) {
     return { error: { message: 'Format not include all required fields' } };
   }
 
@@ -117,7 +117,7 @@ const getNewsFilterCondition = ({
     condition.author = { $in: newsFilter.authors };
   }
 
-  condition.$and = [firstCond, secondCond];
+  condition.$and = _.compact([firstCond, secondCond]);
 
   return { condition };
 };
