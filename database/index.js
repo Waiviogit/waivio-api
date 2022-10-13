@@ -47,6 +47,7 @@ models.EngineAccountHistory = require('./schemas/EngineAccountHistorySchema');
 models.WalletExemptions = require('./schemas/WalletExemptionsSchema');
 models.GuestWallet = require('./schemas/GuestWalletSchema');
 models.PageDraft = require('./schemas/PageDraftSchema');
+models.Department = require('./schemas/DepartmentSchema');
 
 module.exports = {
   Mongoose: mongoose,
