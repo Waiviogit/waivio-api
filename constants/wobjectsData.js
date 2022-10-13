@@ -44,6 +44,8 @@ exports.FIELDS_NAMES = {
   AUTHORS: 'authors',
   PUBLISHER: 'publisher',
   PRINT_LENGTH: 'printLength',
+  WIDGET: 'widget',
+  NEWS_FEED: 'newsFeed',
 };
 
 exports.LIST_TYPES = {
@@ -77,6 +79,8 @@ exports.OBJECT_TYPES = {
   RESORT: 'resort',
   BnB: 'b&b',
   BOOK: 'book',
+  WIDGET: 'widget',
+  NEWS_FEED: 'news feed',
 };
 
 exports.ADMIN_ROLES = {
@@ -90,6 +94,10 @@ exports.VOTE_STATUSES = {
   APPROVED: 'approved',
   REJECTED: 'rejected',
 };
+
+exports.FULL_SINGLE_FIELDS = [
+  this.FIELDS_NAMES.NEWS_FEED,
+];
 
 exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.CATEGORY_ITEM,
