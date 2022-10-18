@@ -264,8 +264,8 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
       if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
-      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
-      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
+      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
