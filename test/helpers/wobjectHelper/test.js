@@ -1685,4 +1685,41 @@ describe('On wobjectHelper', async () => {
       expect(body).to.be.eq(result.newsFeed.body);
     });
   });
+
+  describe('On departments field', async () => {
+    const department1 = faker.random.string();
+    const department2 = faker.random.string();
+    let obj, result, departments;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BOOK,
+        name: FIELDS_NAMES.DEPARTMENTS,
+        body: department1,
+      }));
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        name: FIELDS_NAMES.DEPARTMENTS,
+        body: department2,
+        rootWobj: obj.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.DEPARTMENTS],
+      });
+      departments = _.map(result.departments, 'body');
+    });
+
+    it('should includes 1 department', async () => {
+      expect(departments.includes(department1)).to.be.true;
+    });
+
+    it('should includes 2 department', async () => {
+      expect(departments.includes(department2)).to.be.true;
+    });
+  });
 });

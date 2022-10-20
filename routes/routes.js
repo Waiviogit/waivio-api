@@ -10,6 +10,7 @@ const {
   sitesController,
   vipTicketsController,
   hiveController,
+  departmentController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -78,6 +79,11 @@ sitesRoutes.route('/sites/prefetch')
   .put(sitesController.updatePrefetchesList);
 sitesRoutes.route('/sites/all-prefetches')
   .get(sitesController.showAllPrefetches);
+// endregion
+
+// region Department
+wobjRoutes.route('/departments')
+  .post(departmentController.getDepartments);
 // endregion
 
 // region Wobject

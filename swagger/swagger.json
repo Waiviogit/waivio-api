@@ -54,6 +54,10 @@
     {
       "name": "hiveEngine",
       "description": "hiveEngine ops"
+    },
+    {
+      "name": "departments",
+      "description": "departments"
     }
   ],
   "schemes": [
@@ -61,6 +65,78 @@
     "http"
   ],
   "paths": {
+    "/api/departments": {
+      "post": {
+        "tags": [
+          "departments"
+        ],
+        "description": "Create record deposit/withdraw",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params- top level departments name from top to bottom, names - for objects, exclude - names in path ",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "names": {
+                  "type": "array",
+                  "items": {
+                   "type": "string"
+                  }
+                },
+                "excluded": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name" : {
+                    "type": "string"
+                  },
+                  "subdirectory" : {
+                    "type": "boolean"
+                  },
+                  "related" : {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/hive-engine/deposit-withdraw": {
       "post": {
         "tags": [

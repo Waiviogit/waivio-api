@@ -43,9 +43,16 @@ exports.getBalance = async ({ account, symbol }) => {
             $sum: {
               $cond: [
                 {
-                  $and: [
-                    { $eq: ['$from', account] },
-                    { $eq: ['$operation', GUEST_WALLET_TYPE.TRANSFER] },
+                  $or: [
+                    {
+                      $and: [
+                        { $eq: ['$from', account] },
+                        { $eq: ['$operation', GUEST_WALLET_TYPE.TRANSFER] },
+                      ],
+                    },
+                    {
+                      $eq: ['$operation', GUEST_WALLET_TYPE.WITHDRAW],
+                    },
                   ],
                 },
                 '$$ROOT.quantity',
