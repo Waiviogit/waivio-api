@@ -426,7 +426,7 @@ const groupOptions = (options, obj) => _.chain(options)
   .map((option) => ({
     ...option,
     body: jsonHelper.parseJson(option.body),
-    ...(obj && { author_permlink: obj.author_permlink, price: obj.price }),
+    ...(obj && { author_permlink: obj.author_permlink, price: obj.price, avatar: obj.avatar }),
   })).groupBy(
     (option) => _.get(option, 'body.category'),
   ).value();
@@ -438,6 +438,7 @@ const addOptions = async ({
     FIELDS_NAMES.GROUP_ID,
     FIELDS_NAMES.OPTIONS,
     FIELDS_NAMES.PRICE,
+    FIELDS_NAMES.AVATAR,
   ];
   const { wobjects } = await Wobj.getByField(
     { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
@@ -461,6 +462,7 @@ const addOptions = async ({
         ...opt,
         author_permlink: el.author_permlink,
         price: el.price,
+        avatar: el.avatar,
       })));
     }
     return acc;
