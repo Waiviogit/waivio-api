@@ -166,6 +166,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.PRODUCT_ID:
       case FIELDS_NAMES.OPTIONS:
       case FIELDS_NAMES.AUTHORS:
+      case FIELDS_NAMES.DEPARTMENTS:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -263,8 +264,8 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       const adminVotes = _.filter(approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
       if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
-      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
-      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
+      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {

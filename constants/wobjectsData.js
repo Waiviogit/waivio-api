@@ -46,6 +46,7 @@ exports.FIELDS_NAMES = {
   PRINT_LENGTH: 'printLength',
   WIDGET: 'widget',
   NEWS_FEED: 'newsFeed',
+  DEPARTMENTS: 'departments',
 };
 
 exports.LIST_TYPES = {
@@ -115,6 +116,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.PRODUCT_ID,
   this.FIELDS_NAMES.OPTIONS,
   this.FIELDS_NAMES.AUTHORS,
+  this.FIELDS_NAMES.DEPARTMENTS,
 ];
 
 exports.REQUIREDFIELDS = [

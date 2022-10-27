@@ -161,4 +161,5 @@ exports.WAIVIO_ADMINS = 'waivio_admins';
 exports.GUEST_WALLET_TYPE = Object.freeze({
   AUTHOR_REWARD: 'comments_authorReward',
   TRANSFER: 'tokens_transfer',
+  WITHDRAW: 'guest_withdraw',
 });

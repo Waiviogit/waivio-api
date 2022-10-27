@@ -43,9 +43,16 @@ exports.getBalance = async ({ account, symbol }) => {
             $sum: {
               $cond: [
                 {
-                  $and: [
-                    { $eq: ['$from', account] },
-                    { $eq: ['$operation', GUEST_WALLET_TYPE.TRANSFER] },
+                  $or: [
+                    {
+                      $and: [
+                        { $eq: ['$from', account] },
+                        { $eq: ['$operation', GUEST_WALLET_TYPE.TRANSFER] },
+                      ],
+                    },
+                    {
+                      $eq: ['$operation', GUEST_WALLET_TYPE.WITHDRAW],
+                    },
                   ],
                 },
                 '$$ROOT.quantity',
@@ -79,6 +86,6 @@ exports.getBalance = async ({ account, symbol }) => {
     ],
   );
   if (error) return { error };
-
-  return { result: { [symbol]: _.get(result, '[0].balance', '0') } };
+  const balance = _.get(result, '[0].balance', '0');
+  return { result: { [symbol]: balance === '0E-8' ? '0' : balance } };
 };
