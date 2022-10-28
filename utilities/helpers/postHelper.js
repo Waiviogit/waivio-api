@@ -1,14 +1,27 @@
 const _ = require('lodash');
 const {
-  Wobj, User, Post: PostRepository, Subscriptions,
-  Campaign, botUpvoteModel, paymentHistory,
+  Wobj,
+  User,
+  Post: PostRepository,
+  Subscriptions,
+  Campaign,
+  botUpvoteModel,
+  paymentHistory,
+  CampaignPosts,
 } = require('models');
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
 const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
-const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
+const {
+  RESERVATION_STATUSES,
+  PAYMENT_HISTORIES_TYPES,
+} = require('constants/campaignsData');
 const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
-const { redis, redisGetter, redisSetter } = require('utilities/redis');
+const {
+  redis,
+  redisGetter,
+  redisSetter,
+} = require('utilities/redis');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const crypto = require('crypto');
 
@@ -23,17 +36,30 @@ const getPostObjects = async (wobjects) => {
   if (Array.isArray(wobjects) && !_.isEmpty(wobjects)) {
     const { result: wObjectsData } = await Wobj.find(
       { author_permlink: { $in: _.map(wobjects, 'author_permlink') } }, {
-        fields: 1, author_permlink: 1, weight: 1, object_type: 1, default_name: 1, parent: 1, 'status.title': 1,
+        fields: 1,
+        author_permlink: 1,
+        weight: 1,
+        object_type: 1,
+        default_name: 1,
+        parent: 1,
+        'status.title': 1,
       },
     );
     wObjectsData.forEach((wobj) => {
       wobj.fields = wobj.fields.filter((field) => _.includes(REQUIREDFIELDS_POST, field.name));
     });
-    return { wObjectsData, wobjectPercents: wobjects };
+    return {
+      wObjectsData,
+      wobjectPercents: wobjects,
+    };
   }
 };
 
-const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.name, skip: data.skip, limit: data.limit });
+const getPostsByCategory = async (data) => PostRepository.getBlog({
+  name: data.name,
+  skip: data.skip,
+  limit: data.limit,
+});
 
 /**
  * Get post from DB and merge fields which doesn't exists in source post(from steem)
@@ -44,7 +70,10 @@ const getPostsByCategory = async (data) => PostRepository.getBlog({ name: data.n
 const mergePostData = async (postSteem, postDb) => {
   if (!postDb) {
     if (!postSteem) return;
-    const { post: dbPost, error } = await PostRepository.getOne({
+    const {
+      post: dbPost,
+      error,
+    } = await PostRepository.getOne({
       root_author: _.get(postSteem, 'root_author', postSteem.author),
       permlink: postSteem.permlink,
     });
@@ -75,11 +104,15 @@ const mergePostData = async (postSteem, postDb) => {
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async (authorPermlink) => {
-  const { wObject, error } = await Wobj.getOne(authorPermlink);
+  const {
+    wObject,
+    error,
+  } = await Wobj.getOne(authorPermlink);
 
   if (error) {
     return { error };
-  } if (!wObject.newsFilter) {
+  }
+  if (!wObject.newsFilter) {
     return { condition: { $match: { 'wobjects.author_permlink': authorPermlink } } };
   }
   const { newsFilter } = wObject;
@@ -90,8 +123,8 @@ const getWobjFeedCondition = async (authorPermlink) => {
   let firstCond;
 
   if (Array.isArray(newsFilter.allowList)
-      && !_.isEmpty(newsFilter.allowList)
-      && _.some(newsFilter.allowList, (rule) => Array.isArray(rule) && rule.length)) {
+    && !_.isEmpty(newsFilter.allowList)
+    && _.some(newsFilter.allowList, (rule) => Array.isArray(rule) && rule.length)) {
     const orCondArr = [{ 'wobjects.author_permlink': authorPermlink }];
 
     newsFilter.allowList.forEach((allowRule) => {
@@ -120,8 +153,16 @@ const getWobjFeedCondition = async (authorPermlink) => {
 
 const addAuthorWobjectsWeight = async (posts = []) => {
   const names = posts.map((p) => p.author);
-  const { result: users, error } = await User.aggregate([
-    { $match: { name: { $in: names } } }, { $project: { name: 1, wobjects_weight: 1 } }]);
+  const {
+    result: users,
+    error,
+  } = await User.aggregate([
+    { $match: { name: { $in: names } } }, {
+      $project: {
+        name: 1,
+        wobjects_weight: 1,
+      },
+    }]);
 
   if (error || !users) {
     console.error('Get Users wobjects_weight no result!');
@@ -144,9 +185,18 @@ const fillReblogs = async (posts = [], userName) => {
         const permlink = _.get(posts, `[${postIdx}].reblog_to.permlink`);
         sourcePost = await Post
           .findOne({
-            $or: [{ author, permlink }, { root_author: author, permlink }],
+            $or: [{
+              author,
+              permlink,
+            }, {
+              root_author: author,
+              permlink,
+            }],
           })
-          .populate({ path: 'fullObjects', select: '-latest_posts -last_posts_counts_by_hours' })
+          .populate({
+            path: 'fullObjects',
+            select: '-latest_posts -last_posts_counts_by_hours',
+          })
           .lean();
       } catch (error) {
         console.error('fillReblogs Error');
@@ -154,7 +204,10 @@ const fillReblogs = async (posts = [], userName) => {
       let subscription;
       if (userName) {
         ({ subscription } = await Subscriptions
-          .findOne({ follower: userName, following: posts[postIdx].author }));
+          .findOne({
+            follower: userName,
+            following: posts[postIdx].author,
+          }));
       }
       if (sourcePost) {
         posts[postIdx] = {
@@ -177,11 +230,15 @@ const fillObjects = async (posts, userName, wobjectsPath = 'fullObjects') => {
   }
   for (const post of posts) {
     for (let wObject of _.get(post, 'wobjects') || []) {
-      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, []).find((i) => i.author_permlink === wObject.author_permlink));
+      wObject = Object.assign(wObject, _.get(post, `[${wobjectsPath}]`, [])
+        .find((i) => i.author_permlink === wObject.author_permlink));
     }
     post.wobjects = _.filter(post.wobjects || [], (obj) => _.isString(obj.object_type));
     post.wobjects = await addCampaignsToWobjects(
-      { wobjects: post.wobjects, user },
+      {
+        wobjects: post.wobjects,
+        user,
+      },
     );
     delete post[wobjectsPath];
   }
@@ -197,7 +254,10 @@ const jsonParse = (post) => {
 };
 
 const checkUserStatus = async ({
-  sponsor, userName, campaign, reviewPermlink,
+  sponsor,
+  userName,
+  campaign,
+  reviewPermlink,
 }) => {
   const { result } = await paymentHistory.findByCondition({
     sponsor,
@@ -212,6 +272,89 @@ const checkUserStatus = async ({
   return !user || _.get(user, 'status') === RESERVATION_STATUSES.REJECTED;
 };
 
+const sponsorObligationsNewReview = ({
+  post,
+  newReview,
+}) => {
+  const totalPayout = _.get(post, `total_payout_${newReview.symbol}`);
+  const voteRshares = _.get(post, `net_rshares_${newReview.symbol}`);
+
+  const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
+  const beforeCashOut = new Date(post.cashout_time) > new Date();
+
+  if (ratio) {
+    let likedSum = 0;
+    const registeredVotes = _.filter(
+      post.active_votes,
+      (v) => _.includes([newReview.guideName], v.voter),
+    );
+    for (const el of registeredVotes) {
+      likedSum += (ratio * _.get(el, `rshares${newReview.symbol}`, 0));
+    }
+    const sponsorPayout = newReview.rewardInToken - (likedSum / 2);
+    if (sponsorPayout <= 0) return;
+
+    // eslint-disable-next-line no-nested-ternary
+    beforeCashOut
+      ? post[`total_payout_${newReview.symbol}`] = (totalPayout + sponsorPayout)
+      : !totalPayout
+        ? post[`total_rewards_${newReview.symbol}`] = newReview.rewardInToken
+        : post[`total_rewards_${newReview.symbol}`] = (totalPayout + sponsorPayout);
+
+    const hasSponsor = _.find(post.active_votes, (el) => el.voter === newReview.guideName);
+
+    if (hasSponsor) {
+      if (hasSponsor.percent === 0) {
+        hasSponsor.percent = 100;
+        hasSponsor.fake = true;
+      }
+      hasSponsor[`rshares${newReview.symbol}`] = _.get(hasSponsor, `rshares${newReview.symbol}`, 0)
+        + Math.round(sponsorPayout / ratio);
+      hasSponsor.sponsor = true;
+    } else {
+      post.active_votes.push({
+        voter: newReview.guideName,
+        [`rshares${newReview.symbol}`]: Math.round(sponsorPayout / ratio),
+        rshares: 1,
+        sponsor: true,
+        fake: true,
+        percent: 10000,
+      });
+    }
+  } else {
+    beforeCashOut
+      ? post[`total_payout_${newReview.symbol}`] = newReview.rewardInToken
+      : post[`total_rewards_${newReview.symbol}`] = newReview.rewardInToken;
+    _.forEach(post.active_votes, (el) => {
+      el[`rshares${newReview.symbol}`] = 0;
+    });
+    const hasSponsor = _.find(
+      post.active_votes,
+      (el) => el.voter === newReview.guideName,
+    );
+    if (hasSponsor) {
+      if (hasSponsor.percent === 0) {
+        hasSponsor.percent = 100;
+        hasSponsor.fake = true;
+      }
+      hasSponsor[`rshares${newReview.symbol}`] = newReview.rewardInToken;
+      hasSponsor.sponsor = true;
+    } else {
+      post.active_votes.push({
+        voter: newReview.guideName,
+        [`rshares${newReview.symbol}`]: newReview.rewardInToken,
+        rshares: 1,
+        sponsor: true,
+        fake: true,
+        percent: 10000,
+      });
+    }
+  }
+  post[`net_rshares_${newReview.symbol}`] = _.reduce(
+    post.active_votes,
+    (acc, el) => acc + _.get(el, `rshares${newReview.symbol}`, 0), 0,
+  );
+};
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
@@ -222,6 +365,20 @@ const additionalSponsorObligations = async (posts) => {
     const metadata = post.json_metadata ? jsonParse(post) : null;
     const _id = _.get(metadata, 'campaignId');
     // if post metadata doesn't have campaignId it's not review
+    const { result: newReview } = await CampaignPosts
+      .findOne({
+        filter: {
+          author: post.author,
+          permlink: post.permlink,
+        },
+      });
+    if (newReview) {
+      sponsorObligationsNewReview({
+        post,
+        newReview,
+      });
+      continue;
+    }
     if (!_id) continue;
 
     const { result: campaign } = await Campaign.findOne({ _id });
@@ -237,7 +394,10 @@ const additionalSponsorObligations = async (posts) => {
 
     const beforeCashOut = new Date(post.cashout_time) > new Date();
     const { result: bots } = await botUpvoteModel
-      .find({ author: post.root_author, permlink: post.permlink }, { botName: 1 });
+      .find({
+        author: post.root_author,
+        permlink: post.permlink,
+      }, { botName: 1 });
     const postPendingPayout = parseFloat(_.get(post, 'pending_payout_value', 0));
     const postTotalPayout = parseFloat(_.get(post, 'total_payout_value', 0));
     const postCuratorPayout = parseFloat(_.get(post, 'curator_payout_value', 0));
@@ -322,7 +482,10 @@ const getTagsByUser = async ({ author }) => {
       const existsInTags = tags.find((el) => el.author_permlink === wobject.author_permlink);
       existsInTags
         ? existsInTags.counter++
-        : tags.push({ counter: 1, author_permlink: wobject.author_permlink });
+        : tags.push({
+          counter: 1,
+          author_permlink: wobject.author_permlink,
+        });
     }
   }
   const { result: wobjects } = await getCurrentNames(_.map(tags, 'author_permlink'));
@@ -343,7 +506,8 @@ const getTagsByUser = async ({ author }) => {
 
 const getCachedPosts = async (key) => {
   const { result: resp } = await redisGetter.getAsync({
-    key: `post_cache:${key}`, client: redis.mainFeedsCacheClient,
+    key: `post_cache:${key}`,
+    client: redis.mainFeedsCacheClient,
   });
   if (!resp) return;
   const parsedCache = jsonHelper.parseJson(resp, null);
@@ -351,9 +515,19 @@ const getCachedPosts = async (key) => {
   return parsedCache;
 };
 
-const setCachedPosts = async ({ key, posts, ttl }) => {
-  await redisSetter.set({ key: `post_cache:${key}`, value: JSON.stringify(posts) });
-  await redisSetter.expire({ key: `post_cache:${key}`, ttl });
+const setCachedPosts = async ({
+  key,
+  posts,
+  ttl,
+}) => {
+  await redisSetter.set({
+    key: `post_cache:${key}`,
+    value: JSON.stringify(posts),
+  });
+  await redisSetter.expire({
+    key: `post_cache:${key}`,
+    ttl,
+  });
 };
 
 const getPostCacheKey = (data = {}) => crypto
@@ -362,7 +536,10 @@ const getPostCacheKey = (data = {}) => crypto
   .digest('hex');
 
 // from middelware
-const fillAdditionalInfo = async ({ posts = [], userName }) => {
+const fillAdditionalInfo = async ({
+  posts = [],
+  userName,
+}) => {
   await fillReblogs(posts, userName);
   posts = await fillObjects(posts, userName);
   await addAuthorWobjectsWeight(posts);

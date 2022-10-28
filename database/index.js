@@ -48,6 +48,7 @@ models.WalletExemptions = require('./schemas/WalletExemptionsSchema');
 models.GuestWallet = require('./schemas/GuestWalletSchema');
 models.PageDraft = require('./schemas/PageDraftSchema');
 models.Department = require('./schemas/DepartmentSchema');
+models.CampaignPosts = require('./schemas/CampaignPostsSchema');
 
 module.exports = {
   Mongoose: mongoose,
