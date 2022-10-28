@@ -32,5 +32,6 @@ moduleExports.HiveEngineRate = require('./HiveEngineRateModel');
 moduleExports.GuestWalletModel = require('./GuestWalletModel');
 moduleExports.PageDraft = require('./PageDraftModel');
 moduleExports.Department = require('./DepartmentModel');
+moduleExports.CampaignPosts = require('./CampaignPostsModel');
 
 module.exports = moduleExports;
