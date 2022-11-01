@@ -530,7 +530,7 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
     }
-    if (obj.options) {
+    if (obj.options || obj.groupId) {
       obj.options = obj.groupId
         ? await addOptions({
           object: obj, ownership, admins, administrative, owner, blacklist, locale,
