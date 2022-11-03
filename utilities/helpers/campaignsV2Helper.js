@@ -68,6 +68,12 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     {
       $addFields: {
         reserved: { $gt: ['$assignedUser', []] },
+        commentsCount: {
+          $arrayElemAt: ['$assignedUser.commentsCount', 0],
+        },
+        reservationPermlink: {
+          $arrayElemAt: ['$assignedUser.reservationPermlink', 0],
+        },
         reservationCreatedAt: {
           $let: {
             vars: {

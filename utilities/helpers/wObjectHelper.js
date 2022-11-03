@@ -184,7 +184,7 @@ const arrayFieldFilter = ({
   if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
     const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
       (item) => item.id === permlink && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
-    if (noAlbumItems.length)validFields.push({ items: noAlbumItems, body: 'Photos', id: permlink });
+    if (noAlbumItems.length) validFields.push({ items: noAlbumItems, body: 'Photos', id: permlink });
     id = FIELDS_NAMES.GALLERY_ALBUM;
   }
   return { result: _.compact(validFields), id };
@@ -530,7 +530,7 @@ const processWobjects = async ({
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
     }
-    if (obj.options) {
+    if (obj.options || obj.groupId) {
       obj.options = obj.groupId
         ? await addOptions({
           object: obj, ownership, admins, administrative, owner, blacklist, locale,
