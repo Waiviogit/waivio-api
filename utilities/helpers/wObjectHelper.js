@@ -529,6 +529,13 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(
         _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
       );
+      if (obj.avatar) {
+        obj.preview_gallery.unshift({
+          body: obj.avatar,
+          name: FIELDS_NAMES.GALLERY_ITEM,
+          id: obj.author_permlink,
+        });
+      }
     }
     if (obj.options || obj.groupId) {
       obj.options = obj.groupId
