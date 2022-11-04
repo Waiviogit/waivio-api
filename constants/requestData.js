@@ -96,15 +96,17 @@ const HIVE_ON_BOARD = {
 
 const PRODUCTION_REQUEST_NODES = [
   'https://anyx.io',
-  'https://hive-api.arcange.eu',
   'https://api.hive.blog',
   'https://api.openhive.network',
+  'https://api.deathwing.me',
+  'https://rpc.ecency.com',
+  'https://rpc.ausbit.dev',
 ];
 
 const STAGING_REQUEST_NODES = [
   'https://api.openhive.network',
-  'https://rpc.esteem.app',
-  'https://hive-api.arcange.eu',
+  'https://api.deathwing.me',
+  'https://rpc.ecency.com',
   'https://rpc.ausbit.dev',
 ];
 
