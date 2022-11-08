@@ -38,6 +38,15 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         ],
       },
     },
+    { $unwind: { path: '$objects' } },
+    {
+      $match: {
+        $or: [
+          { objects: { $in: permlinks } },
+          { requiredObject: { $in: permlinks } },
+        ],
+      },
+    },
     {
       $addFields: {
         requiredExpertise: {
@@ -59,6 +68,9 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
               $and: [
                 { $eq: ['$$user.status', RESERVATION_STATUSES.ASSIGNED] },
                 { $eq: ['$$user.name', userName] },
+                {
+                  $eq: ['$$user.objectPermlink', '$objects'],
+                },
               ],
             },
           },
@@ -102,6 +114,10 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
       },
     },
   ]);
+  const reserved = _.find(result, (r) => r.reserved);
+  if (reserved) {
+    _.forEach(result, (r) => { r.notEligible = !r.reserved; });
+  }
 
   return result;
 };

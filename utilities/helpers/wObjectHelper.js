@@ -532,7 +532,7 @@ const processWobjects = async ({
       if (obj.avatar) {
         obj.preview_gallery.unshift({
           body: obj.avatar,
-          name: FIELDS_NAMES.GALLERY_ITEM,
+          name: FIELDS_NAMES.AVATAR,
           id: obj.author_permlink,
         });
       }
