@@ -161,8 +161,8 @@ const getGuidesPayables = async ({ guideNames, payoutToken }) => {
 
 const addTotalPayedToCampaigns = async (campaigns) => {
   const campaignsWithPayed = [];
-  const payoutTokens = _.map(campaigns, 'payoutToken');
-  const guideNames = _.map(campaigns, 'guideName');
+  const payoutTokens = _.uniq(_.map(campaigns, 'payoutToken'));
+  const guideNames = _.uniq(_.map(campaigns, 'guideName'));
   for (const payoutToken of payoutTokens) {
     const guidesPayables = await getGuidesPayables({ guideNames, payoutToken });
     if (_.isEmpty(guidesPayables)) continue;
@@ -208,7 +208,9 @@ const addNewCampaignsToObjects = async ({
   user, wobjects, onlySecondary = false,
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
+  console.log('campaigns');
   const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
+  console.log('campaignsWithPayed');
   if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
     const primaryCampaigns = _.filter(
