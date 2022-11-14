@@ -118,7 +118,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
   if (reserved) {
     _.forEach(result, (r) => { r.notEligible = !r.reserved; });
   }
-
   return result;
 };
 
@@ -155,7 +154,6 @@ const getGuidesPayables = async ({ guideNames, payoutToken }) => {
       },
     ],
   );
-
   return result;
 };
 
@@ -219,7 +217,7 @@ const addNewCampaignsToObjects = async ({
     }
 
     const secondaryCampaigns = _.filter(campaignsWithPayed,
-      (campaign) => _.includes(campaign.objects, object.author_permlink));
+      (campaign) => campaign.objects === object.author_permlink);
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
 };
