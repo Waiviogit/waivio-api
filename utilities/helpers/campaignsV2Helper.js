@@ -208,9 +208,7 @@ const addNewCampaignsToObjects = async ({
   user, wobjects, onlySecondary = false,
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
-  console.log('campaigns');
   const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
-  console.log('campaignsWithPayed');
   if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
     const primaryCampaigns = _.filter(
