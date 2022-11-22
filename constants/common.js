@@ -141,6 +141,20 @@ exports.LANGUAGES = ['en-US',
   'auto',
 ];
 
+exports.LANGUAGES_POPULARITY = [
+  { lang: 'en-US', score: 1 },
+  { lang: 'zh-CN', score: 2 },
+  { lang: 'es-ES', score: 3 },
+  { lang: 'ar-SA', score: 4 },
+  { lang: 'pt-BR', score: 5 },
+  { lang: 'ms-MY', score: 6 },
+  { lang: 'fr-FR', score: 7 },
+  { lang: 'ja-JP', score: 8 },
+  { lang: 'ru-RU', score: 9 },
+  { lang: 'de-DE', score: 10 },
+  { lang: 'uk-UA', score: 11 },
+];
+
 exports.APP_LANGUAGES = _.filter(this.LANGUAGES, (el) => el !== 'auto');
 
 exports.COMMENT_REF_TYPES = {

@@ -6,7 +6,7 @@ const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const blacklistModel = require('models/blacklistModel');
 const UserWobjects = require('models/UserWobjects');
-const { DEVICE } = require('constants/common');
+const { DEVICE, LANGUAGES_POPULARITY } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
@@ -202,6 +202,16 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   return result;
 };
 
+const getLangByPopularity = (existedLanguages) => {
+  const filtered = _.filter(
+    LANGUAGES_POPULARITY,
+    (l) => _.includes(existedLanguages, l.lang),
+  );
+  const found = _.minBy(filtered, 'score');
+  if (!found) return 'en-US';
+  return found.lang;
+};
+
 /**
  * the method sorts the fields by name, then for each individual type checks if there are fields
  * with the requested locale, if there are - processes them if not, requests the English locale
@@ -212,21 +222,50 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
  * @returns {[Object]}
  */
 const getFilteredFields = (fields, locale, filter, ownership) => {
+  const fieldsLanguages = [];
+
   const fieldTypes = _.reduce(fields, (acc, el) => {
+    const conditionLocale = _.get(el, 'adminVote.status') === VOTE_STATUSES.APPROVED
+      || el.weight > 0;
+
     if (_.has(acc, `${el.name}`)) {
+      const locales = _.find(fieldsLanguages, (l) => l.type === el.name);
+      if (!locales && conditionLocale) {
+        fieldsLanguages.push({ type: el.name, languages: [el.locale] });
+      }
+      if (locales && !_.includes(locales.languages, el.locale) && conditionLocale) {
+        locales.languages.push(el.locale);
+      }
+
       acc[el.name].push(el);
       return acc;
+    }
+    if (conditionLocale) {
+      fieldsLanguages.push({ type: el.name, languages: [el.locale] });
     }
     acc[el.name] = [el];
     return acc;
   }, {});
 
-  return _.reduce(fieldTypes, (acc, el) => {
-    const nativeLang = _
-      .filter(el, (field) => filterFieldValidation(filter, field, locale, ownership));
+  return _.reduce(fieldTypes, (acc, el, index) => {
+    const fieldLanguage = _.find(fieldsLanguages, (l) => l.type === index);
+    const existedLanguages = _.get(fieldLanguage, 'languages', []);
 
-    _.isEmpty(nativeLang) && locale !== 'en-US'
-      ? acc = [...acc, ..._.filter(el, (field) => filterFieldValidation(filter, field, 'en-US', ownership))]
+    const nativeLang = _.filter(
+      el,
+      (field) => filterFieldValidation(filter, field, locale, ownership)
+        && _.includes(existedLanguages, field.locale),
+    );
+
+    _.isEmpty(nativeLang)
+      ? acc = [
+        ...acc,
+        ..._.filter(el, (field) => filterFieldValidation(
+          filter,
+          field,
+          getLangByPopularity(existedLanguages),
+          ownership,
+        ))]
       : acc = [...acc, ...nativeLang];
     return acc;
   }, []);
