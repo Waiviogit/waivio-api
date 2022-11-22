@@ -165,6 +165,16 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     },
     {
       $addFields: {
+        reservationCreatedAt: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.createdAt',
+          },
+        },
         reserved: { $gt: ['$assignedUser', []] },
         canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
         canAssignByCurrentDay: {
