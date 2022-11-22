@@ -54,15 +54,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         ],
       },
     },
-    { $unwind: { path: '$objects' } },
-    {
-      $match: {
-        $or: [
-          { objects: { $in: permlinks } },
-          { requiredObject: { $in: permlinks } },
-        ],
-      },
-    },
     {
       $addFields: {
         requiredExpertise: {
@@ -84,9 +75,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
               $and: [
                 { $eq: ['$$user.status', RESERVATION_STATUSES.ASSIGNED] },
                 { $eq: ['$$user.name', userName] },
-                {
-                  $eq: ['$$user.objectPermlink', '$objects'],
-                },
               ],
             },
           },
@@ -175,7 +163,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
             in: '$$firstMember.createdAt',
           },
         },
-        reserved: { $gt: ['$assignedUser', []] },
+        // reserved: { $gt: ['$assignedUser', []] },
         canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
         canAssignByCurrentDay: {
           $eq: [`$reservationTimetable.${currentDay}`, true],
@@ -209,6 +197,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
   ]);
 
   _.forEach(result, (r) => {
+    r.stringId = r._id.toString();
     r.notEligible = !r.canAssignByBudget
       || !r.canAssignByCurrentDay
       || !r.notAssigned
@@ -268,7 +257,7 @@ const addTotalPayedToCampaigns = async (campaigns) => {
       );
       campaignsWithPayed.push({
         ...matchedCampaign,
-        totalPayed: payedRecord.payed,
+        totalPayed: _.get(payedRecord, 'payed', 0),
       });
     }
   }
@@ -291,6 +280,10 @@ const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
     _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true })),
     'rewardInUSD',
   );
+  proposition.reserved = false;
+  if (!_.isEmpty(proposition.assignedUser)) {
+    proposition.reserved = _.get(proposition, 'assignedUser[0].objectPermlink') === object.author_permlink;
+  }
 
   if (object.propositions) {
     object.propositions.push(proposition);
@@ -304,6 +297,7 @@ const addNewCampaignsToObjects = async ({
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
   const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
+
   if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
     const primaryCampaigns = _.filter(
@@ -314,7 +308,7 @@ const addNewCampaignsToObjects = async ({
     }
 
     const secondaryCampaigns = _.filter(campaignsWithPayed,
-      (campaign) => campaign.objects === object.author_permlink);
+      (campaign) => _.includes(campaign.objects, object.author_permlink));
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
 };
