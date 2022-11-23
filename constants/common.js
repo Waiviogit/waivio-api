@@ -65,6 +65,7 @@ exports.SUPPORTED_CURRENCIES = {
   CNY: 'CNY',
   RUB: 'RUB',
   UAH: 'UAH',
+  CHF: 'CHF',
 };
 
 exports.CURSOR_TIMEOUT = 60000;
