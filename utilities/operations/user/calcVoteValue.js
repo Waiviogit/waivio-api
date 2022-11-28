@@ -1,9 +1,9 @@
 const engineOperations = require('utilities/hiveEngine/engineOperations');
 const hiveOperations = require('utilities/hiveApi/hiveOperations');
-const postUtil = require('utilities/hiveApi/postsUtil');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const { Post } = require('../../../models');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -19,12 +19,12 @@ exports.sliderCalc = async ({
       dieselPoolId: TOKEN_WAIV.DIESEL_POOL_ID,
       weight: weight * 100,
     }),
-    postUtil.getPost({ author, permlink }),
+    await Post.findOneByBothAuthors({ author, permlink }),
   ]);
 
-  const [hive, waiv, post] = requests;
+  const [hive, waiv, postDb] = requests;
 
-  const hasRewards = checkPostForRewards(post);
+  const hasRewards = checkPostForRewards(postDb);
 
   return hasRewards
     ? hive.hiveVotePrice + waiv.engineVotePrice
