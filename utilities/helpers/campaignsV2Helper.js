@@ -1,6 +1,7 @@
 const { CampaignV2, CampaignPayments } = require('models');
 const _ = require('lodash');
 const redisGetter = require('utilities/redis/redisGetter');
+const moment = require('moment');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CACHE_KEY } = require('../../constants/common');
 const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
@@ -24,7 +25,22 @@ const getExpertiseVariables = async () => {
   };
 };
 
+const findAssignedMainObjects = async (userName) => {
+  if (!userName) return [];
+  const { result } = await CampaignV2.find({
+    filter: {
+      users: {
+        $elemMatch: { name: userName, status: RESERVATION_STATUSES.ASSIGNED },
+      },
+    },
+    projection: { requiredObject: 1 },
+  });
+  return _.uniq(_.map(result, 'requiredObject'));
+};
+
 const getAggregatedCampaigns = async ({ user, permlinks }) => {
+  const currentDay = moment().format('dddd').toLowerCase();
+  const assignedObjects = await findAssignedMainObjects(_.get(user, 'name'));
   const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
   const userName = _.get(user, 'name');
 
@@ -63,17 +79,80 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
             },
           },
         },
+        completedUser: {
+          $filter: {
+            input: '$users',
+            as: 'user',
+            cond: {
+              $and: [
+                { $eq: ['$$user.name', userName] },
+                { $eq: ['$$user.status', 'completed'] },
+              ],
+            },
+          },
+        },
+        thisMonthCompleted: {
+          $filter: {
+            input: '$users',
+            as: 'user',
+            cond: {
+              $and: [
+                { $eq: ['$$user.status', 'completed'] },
+                {
+                  $gte: [
+                    '$$user.updatedAt',
+                    moment.utc().startOf('month').toDate(),
+                  ],
+                },
+              ],
+            },
+          },
+        },
+        assigned: {
+          $filter: {
+            input: '$users',
+            as: 'user',
+            cond: { $eq: ['$$user.status', 'assigned'] },
+          },
+        },
       },
     },
     {
       $addFields: {
-        reserved: { $gt: ['$assignedUser', []] },
-        commentsCount: {
-          $arrayElemAt: ['$assignedUser.commentsCount', 0],
+        thisMonthCompleted: { $size: '$thisMonthCompleted' },
+        assigned: { $size: '$assigned' },
+        completedUser: {
+          $arrayElemAt: [
+            '$completedUser',
+            {
+              $indexOfArray: [
+                '$completedUser.updatedAt',
+                { $max: '$array.updatedAt' },
+              ],
+            },
+          ],
         },
-        reservationPermlink: {
-          $arrayElemAt: ['$assignedUser.reservationPermlink', 0],
+      },
+    },
+    {
+      $addFields: {
+        monthBudget: {
+          $multiply: [
+            '$reward',
+            { $sum: ['$thisMonthCompleted', '$assigned'] },
+          ],
         },
+        daysPassed: {
+          $dateDiff: {
+            startDate: '$completedUser.updatedAt',
+            endDate: moment.utc().toDate(),
+            unit: 'day',
+          },
+        },
+      },
+    },
+    {
+      $addFields: {
         reservationCreatedAt: {
           $let: {
             vars: {
@@ -84,12 +163,26 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
             in: '$$firstMember.createdAt',
           },
         },
+        // reserved: { $gt: ['$assignedUser', []] },
+        canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
+        canAssignByCurrentDay: {
+          $eq: [`$reservationTimetable.${currentDay}`, true],
+        },
         posts: { $gte: [_.get(user, 'count_posts', 0), '$userRequirements.minPosts'] },
         followers: {
           $gte: [_.get(user, 'followers_count', 0), '$userRequirements.minFollowers'],
         },
         expertise: {
           $gte: [_.get(user, 'wobjects_weight', 0), '$requiredExpertise'],
+        },
+        notAssigned: {
+          $cond: [{ $in: ['$requiredObject', assignedObjects] }, false, true],
+        },
+        frequency: {
+          $or: [
+            { $gt: ['$daysPassed', '$frequencyAssign'] },
+            { $eq: ['$daysPassed', null] },
+          ],
         },
       },
     },
@@ -102,6 +195,14 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
       },
     },
   ]);
+
+  _.forEach(result, (r) => {
+    r.stringId = r._id.toString();
+    r.notEligible = !r.canAssignByBudget
+      || !r.canAssignByCurrentDay
+      || !r.notAssigned
+      || !r.frequency;
+  });
 
   return result;
 };
@@ -139,14 +240,13 @@ const getGuidesPayables = async ({ guideNames, payoutToken }) => {
       },
     ],
   );
-
   return result;
 };
 
 const addTotalPayedToCampaigns = async (campaigns) => {
   const campaignsWithPayed = [];
-  const payoutTokens = _.map(campaigns, 'payoutToken');
-  const guideNames = _.map(campaigns, 'guideName');
+  const payoutTokens = _.uniq(_.map(campaigns, 'payoutToken'));
+  const guideNames = _.uniq(_.map(campaigns, 'guideName'));
   for (const payoutToken of payoutTokens) {
     const guidesPayables = await getGuidesPayables({ guideNames, payoutToken });
     if (_.isEmpty(guidesPayables)) continue;
@@ -157,7 +257,7 @@ const addTotalPayedToCampaigns = async (campaigns) => {
       );
       campaignsWithPayed.push({
         ...matchedCampaign,
-        totalPayed: payedRecord.payed,
+        totalPayed: _.get(payedRecord, 'payed', 0),
       });
     }
   }
@@ -180,6 +280,10 @@ const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
     _.map(secondaryCampaigns, (c) => ({ ...c, newCampaigns: true })),
     'rewardInUSD',
   );
+  proposition.reserved = false;
+  if (!_.isEmpty(proposition.assignedUser)) {
+    proposition.reserved = _.get(proposition, 'assignedUser[0].objectPermlink') === object.author_permlink;
+  }
 
   if (object.propositions) {
     object.propositions.push(proposition);
@@ -193,6 +297,7 @@ const addNewCampaignsToObjects = async ({
 }) => {
   const campaigns = await getAggregatedCampaigns({ user, permlinks: _.map(wobjects, 'author_permlink') });
   const campaignsWithPayed = await addTotalPayedToCampaigns(campaigns);
+
   if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
     const primaryCampaigns = _.filter(
