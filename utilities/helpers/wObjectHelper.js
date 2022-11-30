@@ -375,6 +375,8 @@ const getLinkToPageLoad = (obj) => {
     case OBJECT_TYPES.HOTEL:
     case OBJECT_TYPES.RESTAURANT:
       return getDefaultLink(obj);
+    case OBJECT_TYPES.WIDGET:
+      return `/object/${obj.author_permlink}/widget`;
     default:
       return `/object/${obj.author_permlink}`;
   }
