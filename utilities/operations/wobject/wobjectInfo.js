@@ -87,7 +87,7 @@ const getListItems = async (wobject, data, app) => {
     wobj.propositions = await campaignsHelper.campaignFilter(result, user, app);
     return wobj;
   }));
-  await addNewCampaignsToObjects({ user, wobjects, onlySecondary: true });
+  await addNewCampaignsToObjects({ user, wobjects });
 
   return { wobjects };
 };
