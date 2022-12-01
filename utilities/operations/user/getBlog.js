@@ -1,5 +1,4 @@
 const { Post, hiddenPostModel, mutedUserModel } = require('models');
-const { getTagsByUser } = require('utilities/helpers/postHelper');
 const _ = require('lodash');
 
 module.exports = async ({
@@ -35,7 +34,6 @@ module.exports = async ({
   posts.forEach((post) => {
     if (post.author !== name) post.reblogged_by = [name];
   });
-  const { tags } = await getTagsByUser({ author: name });
 
-  return { tags, posts: posts.slice(0, limit), hasMore: posts.length === limit + 1 };
+  return { posts: posts.slice(0, limit), hasMore: posts.length === limit + 1 };
 };
