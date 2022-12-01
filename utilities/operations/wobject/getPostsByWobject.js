@@ -109,7 +109,11 @@ const getNewsFilterCondition = ({
       : firstCond = typeCondition;
   }
 
-  if (_.some(newsFilter.allowList, (rule) => _.isEmpty(rule)) && _.isEmpty(_.get(newsFilter, 'typeList'))) {
+  if (
+    _.some(newsFilter.allowList, (rule) => _.isEmpty(rule))
+    && _.isEmpty(_.get(newsFilter, 'typeList'))
+    && _.isEmpty(_.get(newsFilter, 'authors'))
+  ) {
     firstCond = { 'wobjects.author_permlink': author_permlink };
   }
   if (!_.isEmpty(newsFilter.authors)) {
