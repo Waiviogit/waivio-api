@@ -23,8 +23,9 @@ exports.INACTIVE_STATUSES = [
 
 exports.TEST_DOMAINS = [
   'dinings.pp.ua',
+  'dinings.club',
+  'dining.pp.ua',
 ];
-
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
