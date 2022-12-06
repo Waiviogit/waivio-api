@@ -137,6 +137,71 @@
         }
       }
     },
+    "/api/departments/wobjects": {
+      "post": {
+        "tags": [
+          "departments"
+        ],
+        "description": "Create record deposit/withdraw",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "get wobjects by departments",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "departments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number",
+                  "default": 0
+                },
+                "limit": {
+                  "type": "number",
+                  "default": 10
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "wobjects": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/wobject"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/hive-engine/deposit-withdraw": {
       "post": {
         "tags": [
@@ -6261,17 +6326,18 @@
               }
             }
           },
-          "401":  {
+          "401": {
             "description": "Token not valid!"
           },
-          "404":  {
+          "404": {
             "description": "Not found"
           },
-          "422":  {
+          "422": {
             "description": "Validation error"
           }
         }
       }
+    }
   },
     "definitions": {
       "delegation_response_200": {
@@ -8701,6 +8767,5 @@
           }
         }
       }
-    }
   }
 }
