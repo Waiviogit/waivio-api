@@ -1,6 +1,7 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
+  COUNTRY_CODES, AFFILIATE_TYPES, AMAZON_LINKS_BY_COUNTRY,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -10,8 +11,10 @@ const { DEVICE, LANGUAGES_POPULARITY } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
+const AppAffiliateModel = require('models/AppAffiliateModel');
 const moment = require('moment');
 const _ = require('lodash');
+const config = require('config');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 
@@ -512,10 +515,41 @@ const addOptions = async ({
   return groupOptions(options);
 };
 
+/**
+ * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
+ */
+const getAppAffiliateCodes = async ({ app, countryCode }) => {
+  if (!app) return [];
+  const { result } = await AppAffiliateModel.find(
+    { filter: { host: app.host, countryCode } },
+  );
+  if (!_.isEmpty(result)) return result;
+  if (app.host === config.appHost) return [];
+  const { result: waivioAffiliate } = await AppAffiliateModel.find(
+    { filter: { host: config.appHost, countryCode } },
+  );
+  return waivioAffiliate;
+};
+
+const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
+  if (_.isEmpty(affiliateCodes)) return [];
+  return _.reduce(productIds, (acc, el) => {
+    const body = jsonHelper.parseJson(el.body, {});
+    if (!_.includes(AFFILIATE_TYPES, body.productIdType.toLocaleLowerCase())) return acc;
+    const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+    if (!code) return acc;
+    const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
+    const asin = body.productId;
+    const link = `https://www.${host}/dp/${asin}/ref=nosim?tag=${code.affiliateCode}`;
+    acc.push({ type: 'amazon', link });
+    return acc;
+  }, []);
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit,
+  app, returnArray = true, topTagsLimit, countryCode,
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -525,6 +559,8 @@ const processWobjects = async ({
   if (parentPermlinks.length) {
     ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   }
+  const affiliateCodes = await getAppAffiliateCodes({ app, countryCode });
+
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
@@ -592,6 +628,10 @@ const processWobjects = async ({
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });
+    }
+    if (obj.productId) {
+      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
+      if (!_.isEmpty(affiliateLinks)) obj.affiliateLinks = affiliateLinks;
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;

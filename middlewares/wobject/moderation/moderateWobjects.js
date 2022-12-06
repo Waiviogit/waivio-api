@@ -5,6 +5,7 @@ const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
 const config = require('config');
+const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -14,18 +15,23 @@ exports.moderate = async (req, res, next) => {
     data locate on "res.result" => {status, json}
     app locate on "res.headers.app"
     */
-  const { result: app, error: getAppErr } = await getApp();
 
-  if (getAppErr || !app) {
-    next();
-    return;
-  }
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
   if (!currentSchema) {
     next();
     return;
   }
+
+  const { result: app, error: getAppErr } = await getApp();
+
+  if (getAppErr || !app) {
+    next();
+    return;
+  }
+
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
   switch (currentSchema.case) {
     case 1:
       // root result is single wobject
@@ -35,25 +41,44 @@ exports.moderate = async (req, res, next) => {
         hiveData: true,
         returnArray: false,
         locale: req.headers.locale,
+        countryCode,
       });
       wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
       res.result.json = _.omit(wobject, ['fields']);
       break;
     case 2:
-      res.result.json = await newValidation(res.result.json, app, req.headers.locale);
+      res.result.json = await newValidation({
+        wobjects: res.result.json,
+        app,
+        locale: req.headers.locale,
+        countryCode,
+      });
       break;
     case 4:
-      res.result.json = await newValidationArray(res.result.json, app, req.headers.locale, currentSchema.wobjects_path);
+      res.result.json = await newValidationArray({
+        posts: res.result.json,
+        app,
+        locale: req.headers.locale,
+        path: currentSchema.wobjects_path,
+        countryCode,
+      });
       break;
     case 6:
-      res.result.json[currentSchema.wobjects_path] = await newValidation(
-        res.result.json[currentSchema.wobjects_path], app, req.headers.locale,
-      );
+      res.result.json[currentSchema.wobjects_path] = await newValidation({
+        wobjects: res.result.json[currentSchema.wobjects_path],
+        app,
+        locale: req.headers.locale,
+        countryCode,
+      });
       break;
     case 7:
-      res.result.json[currentSchema.array_path] = await newValidationArray(
-        res.result.json[currentSchema.array_path], app, req.headers.locale, currentSchema.wobjects_path,
-      );
+      res.result.json[currentSchema.array_path] = await newValidationArray({
+        posts: res.result.json[currentSchema.array_path],
+        app,
+        locale: req.headers.locale,
+        path: currentSchema.wobjects_path,
+        countryCode,
+      });
       break;
   }
   next();
@@ -73,7 +98,9 @@ const getApp = async () => {
   return App.findOne({ host });
 };
 
-const newValidationArray = async (posts, app, locale, path) => {
+const newValidationArray = async ({
+  posts, app, locale, path, countryCode,
+}) => {
   await Promise.all(posts.map(async (post) => {
     if (post[path]) {
       post[path] = await wobjectHelper.processWobjects({
@@ -83,12 +110,15 @@ const newValidationArray = async (posts, app, locale, path) => {
         returnArray: true,
         locale,
         fields: REQUIREDFILDS_WOBJ_LIST,
+        countryCode,
       });
     }
   }));
   return posts;
 };
 
-const newValidation = async (wobjects, app, locale) => wobjectHelper.processWobjects({
-  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST,
+const newValidation = async ({
+  wobjects, app, locale, countryCode,
+}) => wobjectHelper.processWobjects({
+  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode,
 });

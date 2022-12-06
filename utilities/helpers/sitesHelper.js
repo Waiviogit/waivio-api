@@ -3,7 +3,7 @@ const {
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
 } = require('constants/sitesConstants');
 const {
-  App, websitePayments, User, Wobj,
+  App, websitePayments, User, Wobj, geoIpModel,
 } = require('models');
 const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
@@ -14,6 +14,7 @@ const BigNumber = require('bignumber.js');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const _ = require('lodash');
+const ipRequest = require('utilities/requests/ipRequest');
 
 /** Check for available domain for user site */
 exports.availableCheck = async (params) => {
@@ -267,6 +268,28 @@ exports.aboutObjectFormat = async (app) => {
 exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
   ? req.headers['x-forwarded-for'] || req.headers['x-real-ip']
   : req.headers['x-real-ip']);
+
+exports.getCountryCodeFromIp = async (ip) => {
+  const defaultCode = 'US';
+  if (!ip) return defaultCode;
+  const { result } = await geoIpModel.findOne(ip);
+  if (_.get(result, 'countryCode')) return result.countryCode;
+
+  const {
+    geoData,
+    error,
+  } = await ipRequest.getIp(ip);
+  if (error) return defaultCode;
+  if (!geoData.countryCode) return defaultCode;
+
+  await geoIpModel.findOneAndUpdate({
+    ip,
+    latitude: parseFloat(_.get(geoData, 'lat') || '0'),
+    longitude: parseFloat(_.get(geoData, 'lon') || '0'),
+    countryCode: geoData.countryCode,
+  });
+  return geoData.countryCode;
+};
 
 exports.updateSupportedObjectsTask = async () => {
   const { result: apps } = await App.find(
