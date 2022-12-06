@@ -182,7 +182,8 @@ const arrayFieldFilter = ({
   }
   const condition = id === FIELDS_NAMES.GALLERY_ITEM
       && _.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)
-      && idFields.length && !allFields[FIELDS_NAMES.GALLERY_ALBUM];
+      && idFields.length
+      && !allFields[FIELDS_NAMES.GALLERY_ALBUM]; // condition single wobject get
 
   if (id === FIELDS_NAMES.GALLERY_ALBUM || condition) {
     const noAlbumItems = _.filter(allFields[categorySwitcher[id]],
