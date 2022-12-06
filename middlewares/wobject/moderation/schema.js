@@ -142,4 +142,10 @@ exports.schema = [
     case: 2,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/departments/wobjects',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
 ];

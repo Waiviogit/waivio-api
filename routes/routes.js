@@ -84,6 +84,8 @@ sitesRoutes.route('/sites/all-prefetches')
 // region Department
 wobjRoutes.route('/departments')
   .post(departmentController.getDepartments);
+wobjRoutes.route('/departments/wobjects')
+  .post(departmentController.getWobjectsByDepartments);
 // endregion
 
 // region Wobject
