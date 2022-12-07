@@ -65,24 +65,28 @@ const CURRENCIES_API = {
     BASE_URL: '/currencies-api',
     RATE: '/rate',
     LATEST: '/latest',
+    ENGINE_CURRENT: '/engine-current',
   },
   staging: {
     HOST: 'https://waiviodev.com',
     BASE_URL: '/currencies-api',
     RATE: '/rate',
     LATEST: '/latest',
+    ENGINE_CURRENT: '/engine-current',
   },
   development: {
     HOST: 'http://localhost:8001',
     BASE_URL: '/currencies-api',
     RATE: '/rate',
     LATEST: '/latest',
+    ENGINE_CURRENT: '/engine-current',
   },
   test: {
     HOST: 'http://localhost:8001',
     BASE_URL: '/currencies-api',
     RATE: '/rate',
     LATEST: '/latest',
+    ENGINE_CURRENT: '/engine-current',
   },
 };
 
