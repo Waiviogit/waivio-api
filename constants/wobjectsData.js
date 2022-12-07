@@ -81,7 +81,7 @@ exports.OBJECT_TYPES = {
   BnB: 'b&b',
   BOOK: 'book',
   WIDGET: 'widget',
-  NEWS_FEED: 'news feed',
+  NEWS_FEED: 'newsfeed',
 };
 
 exports.ADMIN_ROLES = {
