@@ -25,6 +25,7 @@ const {
   redisSetter,
 } = require('utilities/redis');
 const jsonHelper = require('utilities/helpers/jsonHelper');
+const currenciesRequests = require('utilities/requests/currenciesRequests');
 const crypto = require('crypto');
 const BigNumber = require('bignumber.js');
 
@@ -304,8 +305,10 @@ const sponsorObligationsNewReview = async ({
 
     });
 
+  const { result: tokenRate } = await currenciesRequests.getEngineRate({ token: newReview.symbol });
+
   const rewardInToken = new BigNumber(campaign.rewardInUSD)
-    .dividedBy(newReview.payoutTokenRateUSD).toNumber();
+    .dividedBy(_.get(tokenRate, 'USD', newReview.payoutTokenRateUSD)).toNumber();
 
   if (ratio) {
     let likedSum = 0;
