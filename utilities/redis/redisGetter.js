@@ -5,6 +5,7 @@ const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
 } = require('constants/postsData');
 const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 exports.removeTopWobjUsers = async (key) => mainFeedsCacheClient.delAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
 exports.getTopWobjUsers = async (key) => mainFeedsCacheClient.smembersAsync(`${TOP_WOBJ_USERS_KEY}:${key}`);
@@ -102,3 +103,11 @@ exports.getAsync = async ({ key, client = importUserClient }) => {
 };
 
 exports.smembersAsync = async (key, client) => client.smembersAsync(key);
+
+exports.getFromCache = async ({ key, client = mainFeedsCacheClient }) => {
+  const { result } = await this.getAsync({ key, client });
+  if (!result) return;
+  const parsedData = jsonHelper.parseJson(result, null);
+  if (!parsedData) return;
+  return parsedData;
+};

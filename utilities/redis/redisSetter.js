@@ -143,3 +143,10 @@ exports.saddAsync = async ({ key, values, client }) => client.saddAsync(key, ...
 
 exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.setAsync(key, value);
 exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.expireAsync(key, ttl);
+
+exports.addToCache = async ({
+  key, ttl = 60, data, client = mainFeedsCacheClient,
+}) => {
+  await this.set({ key, value: JSON.stringify(data), client });
+  await this.expire({ key, ttl, client });
+};
