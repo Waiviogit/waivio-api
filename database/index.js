@@ -49,6 +49,8 @@ models.GuestWallet = require('./schemas/GuestWalletSchema');
 models.PageDraft = require('./schemas/PageDraftSchema');
 models.Department = require('./schemas/DepartmentSchema');
 models.CampaignPosts = require('./schemas/CampaignPostsSchema');
+models.AppAffiliate = require('./schemas/AppAffiliateSchema');
+models.SponsorsUpvote = require('./schemas/SponsorsUpvoteSchema');
 
 module.exports = {
   Mongoose: mongoose,

@@ -163,6 +163,46 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
             in: '$$firstMember.createdAt',
           },
         },
+        reservationPermlink: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.reservationPermlink',
+          },
+        },
+        commentsCount: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.commentsCount',
+          },
+        },
+        payoutTokenRateUSD: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.payoutTokenRateUSD',
+          },
+        },
+        rootName: {
+          $let: {
+            vars: {
+              firstMember: {
+                $arrayElemAt: ['$assignedUser', 0],
+              },
+            },
+            in: '$$firstMember.rootName',
+          },
+        },
         // reserved: { $gt: ['$assignedUser', []] },
         canAssignByBudget: { $gt: ['$budget', '$monthBudget'] },
         canAssignByCurrentDay: {

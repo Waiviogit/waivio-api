@@ -7,6 +7,7 @@ const CampaignPostsSchema = new Schema({
   permlink: { type: String },
   guideName: { type: String },
   rewardInToken: { type: Number },
+  payoutTokenRateUSD: { type: Number },
   symbol: { type: String },
 });
 

@@ -106,6 +106,14 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
   }
 };
 
+const findObjects = async ({ filter, projection = {}, options = {} }) => {
+  try {
+    return { result: await WObjectModel.find(filter, projection, options).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const countWobjectsByArea = async ({
   objectType, cities, crucialWobjects,
 }) => {
@@ -141,4 +149,5 @@ module.exports = {
   findOne,
   getOne,
   find,
+  findObjects,
 };
