@@ -380,6 +380,8 @@ const getLinkToPageLoad = (obj) => {
       return getDefaultLink(obj);
     case OBJECT_TYPES.WIDGET:
       return `/object/${obj.author_permlink}/widget`;
+    case OBJECT_TYPES.NEWS_FEED:
+      return `/object/${obj.author_permlink}/newsfeed`;
     default:
       return `/object/${obj.author_permlink}`;
   }
