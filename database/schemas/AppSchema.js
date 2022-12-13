@@ -49,6 +49,12 @@ const MapPoints = new Schema({
   zoom: { type: Number, required: true },
 }, { _id: false });
 
+const AppHeader = new Schema({
+  name: { type: String },
+  message: { type: String },
+  startup: { type: String },
+}, { _id: false });
+
 const Colors = new Schema({
   [SUPPORTED_COLORS.BACKGROUND]: { type: String },
   [SUPPORTED_COLORS.FONT]: { type: String, default: '' },
@@ -76,6 +82,7 @@ const Configuration = new Schema({
   mobileMap: { type: MapPoints },
   availableCities: { type: [CitySchema], default: [] },
   colors: { type: Colors, default: () => ({}) },
+  header: { type: AppHeader },
 }, { _id: false });
 
 const AppSchema = new Schema({
