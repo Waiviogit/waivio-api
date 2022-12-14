@@ -4,7 +4,7 @@ const postsUtil = require('utilities/hiveApi/postsUtil');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
-const { Post } = require('../../../models');
+const { Post, Comment } = require('../../../models');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -43,8 +43,11 @@ const checkPostForRewards = async ({ postDb, author, permlink }) => {
   if (_.has(postDb, 'error')) return false;
   const post = _.get(postDb, 'post');
   if (!post) {
-    const { post: comment } = await postsUtil.getPost({ author, permlink });
-    if (!comment) return false;
+    let { post: comment } = await postsUtil.getPost({ author, permlink });
+    if (!comment) {
+      ({ comment } = Comment.getOne({ author, permlink }));
+      if (!comment) return false;
+    }
     const { post: rootPost } = await Post.findOneByBothAuthors({
       author: comment.root_author,
       permlink: comment.root_permlink,
