@@ -1806,4 +1806,50 @@ describe('On wobjectHelper', async () => {
       expect(departments.includes(department2)).to.be.true;
     });
   });
+
+  describe('On features field', async () => {
+    const feature1 = JSON.stringify({
+      key: faker.random.string(),
+      value: faker.random.string(),
+    });
+    const feature2 = JSON.stringify({
+      key: faker.random.string(),
+      value: faker.random.string(),
+    });
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: FIELDS_NAMES.FEATURES,
+        body: feature1,
+      }));
+
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: FIELDS_NAMES.FEATURES,
+        body: feature2,
+        rootWobj: obj.author_permlink,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.FEATURES],
+      });
+    });
+
+    it('should includes 1 feature', async () => {
+      const feature = result.features.find((f) => f.body === feature1);
+      expect(feature).not.to.be.undefined;
+    });
+
+    it('should includes 2 feature', async () => {
+      const feature = result.features.find((f) => f.body === feature2);
+      expect(feature).not.to.be.undefined;
+    });
+  });
 });
