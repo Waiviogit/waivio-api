@@ -1600,6 +1600,90 @@ describe('On wobjectHelper', async () => {
     });
   });
 
+  describe('On merchant field', async () => {
+    const merchant = JSON.stringify({
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: FIELDS_NAMES.MERCHANT,
+        body: merchant,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.MERCHANT],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(merchant).to.be.eq(result.merchant);
+    });
+  });
+
+  describe('On manufacturer field', async () => {
+    const manufacturer = JSON.stringify({
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: FIELDS_NAMES.MANUFACTURER,
+        body: manufacturer,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.MANUFACTURER],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(manufacturer).to.be.eq(result.manufacturer);
+    });
+  });
+
+  describe('On brand field', async () => {
+    const brand = JSON.stringify({
+      name: faker.random.string(),
+      authorPermlink: faker.random.string(),
+    });
+    let obj1, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj1 } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: FIELDS_NAMES.BRAND,
+        body: brand,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj1)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.BRAND],
+      });
+    });
+
+    it('should authors  be the same', async () => {
+      expect(brand).to.be.eq(result.brand);
+    });
+  });
+
   describe('On printLength field', async () => {
     const length = String(_.random(1, 100));
     let obj1, result;

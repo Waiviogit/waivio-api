@@ -47,6 +47,9 @@ exports.FIELDS_NAMES = {
   WIDGET: 'widget',
   NEWS_FEED: 'newsFeed',
   DEPARTMENTS: 'departments',
+  MERCHANT: 'merchant',
+  MANUFACTURER: 'manufacturer',
+  BRAND: 'brand',
 };
 
 exports.LIST_TYPES = {
