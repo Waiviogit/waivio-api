@@ -241,6 +241,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     r.notEligible = !r.canAssignByBudget
       || !r.canAssignByCurrentDay
       || !r.notAssigned
+      || r.guideName === userName
       || !r.frequency;
   });
 
