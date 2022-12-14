@@ -1,6 +1,6 @@
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const { Wobj } = require('models');
+const { Wobj, User } = require('models');
 
 module.exports = async ({
   skip, limit, authorPermlink, excludeTypes = [], searchString, userName,
@@ -24,7 +24,9 @@ module.exports = async ({
 
   if (error) return { error };
   if (userName) {
-    return { wobjects: await addCampaignsToWobjects({ wobjects: result, user: userName }) };
+    const { user } = await User.getOne(userName);
+
+    return { wobjects: await addCampaignsToWobjects({ wobjects: result, user }) };
   }
   return { wobjects: result };
 };
