@@ -41,3 +41,11 @@ exports.getVotingPower = async ({ query }) => engineProxy({
     query,
   },
 });
+
+exports.getPosts = async ({ query }) => engineProxy({
+  params: {
+    contract: 'comments',
+    table: 'posts',
+    query,
+  },
+});

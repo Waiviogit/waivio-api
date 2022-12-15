@@ -241,6 +241,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     r.notEligible = !r.canAssignByBudget
       || !r.canAssignByCurrentDay
       || !r.notAssigned
+      || r.guideName === userName
       || !r.frequency;
   });
 
@@ -304,14 +305,18 @@ const addTotalPayedToCampaigns = async (campaigns) => {
   return campaignsWithPayed;
 };
 
-const addPrimaryCampaign = ({ object, primaryCampaigns }) => {
+const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
   const minReward = (_.minBy(primaryCampaigns, 'rewardInUSD')).rewardInUSD;
   const maxReward = (_.maxBy(primaryCampaigns, 'rewardInUSD')).rewardInUSD;
+
+  const notEligibleCampaigns = _.filter(primaryCampaigns, (c) => c.notEligible);
+  const notEligible = notEligibleCampaigns.length === primaryCampaigns.length;
 
   object.campaigns = {
     min_reward: _.min([minReward, _.get(object, 'campaigns.min_reward', 0)]),
     max_reward: _.max([maxReward, _.get(object, 'campaigns.max_reward', 0)]),
     newCampaigns: true,
+    notEligible,
   };
 };
 

@@ -2,6 +2,7 @@ const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('utilitie
 const { postsUtil } = require('utilities/hiveApi');
 const { Comment, User, mutedUserModel } = require('models');
 const _ = require('lodash');
+const engineOperations = require('utilities/hiveEngine/engineOperations');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase
@@ -24,6 +25,8 @@ const getGuestComments = async ({ name, skip, limit }) => {
   if (dbError) return { error: dbError };
   const mergedComments = await mergeDbCommentsWithSteem({ dbComments });
 
+  await engineOperations.addWAIVToCommentsArray(mergedComments);
+
   return { comments: mergedComments };
 };
 
@@ -41,6 +44,7 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
     // eslint-disable-next-line camelcase
     steemComments: steemComments.slice(start_permlink ? 1 : 0),
   });
+  await engineOperations.addWAIVToCommentsArray(mergedComments);
 
   return { comments: mergedComments };
 };

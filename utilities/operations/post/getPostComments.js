@@ -1,5 +1,6 @@
 const { mergeSteemCommentsWithDB } = require('utilities/helpers/commentHelper');
 const { mergePostData } = require('utilities/helpers/postHelper');
+const engineOperations = require('utilities/hiveEngine/engineOperations');
 const { hiddenCommentModel, mutedUserModel } = require('models');
 const { postsUtil } = require('utilities/hiveApi');
 const _ = require('lodash');
@@ -27,6 +28,8 @@ module.exports = async ({
   });
 
   postState.content = _.keyBy(filteredComments, (c) => `${c.author}/${c.permlink}`);
+  await engineOperations.addWAIVToCommentsObject(postState.content);
+
   postState.content[`${author}/${permlink}`] = await mergePostData(postState.content[`${author}/${permlink}`]);
   return { result: postState };
 };
