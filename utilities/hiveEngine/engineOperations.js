@@ -8,6 +8,7 @@ const {
   VOTE_REGENERATION_DAYS,
   MAX_VOTING_POWER,
   DOWNVOTE_REGENERATION_DAYS,
+  TOKEN_WAIV,
 } = require('../../constants/hiveEngine');
 
 exports.calculateMana = (votingPower) => {
@@ -63,4 +64,50 @@ exports.calculateHiveEngineVote = async ({
 
   const engineVotePrice = rshares * price * rewards;
   return { engineVotePrice, rshares, rewards };
+};
+
+exports.addWAIVToCommentsArray = async (content) => {
+  const reqData = _.map(content, (c) => `@${c.author}/${c.permlink}`);
+  const commentsWithWaiv = await commentContract
+    .getPosts({ query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+  const { rewardPool, pendingClaims } = await redisGetter
+    .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${TOKEN_WAIV.SYMBOL}`);
+  const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
+
+  for (const comment of commentsWithWaiv) {
+    const waivReward = rewards * comment.voteRshareSum;
+    const key = comment.authorperm.substring(1);
+    const [author, permlink] = key.split('/');
+    const commentReward = _.find(content, (c) => c.author === author && c.permlink === permlink);
+    if (!commentReward) continue;
+    commentReward.total_payout_WAIV = waivReward;
+  }
+};
+
+exports.addWAIVToCommentsObject = async (content) => {
+  const reqData = _.map(Object.keys(content), (c) => `@${c}`);
+  const commentsWithWaiv = await commentContract.getPosts({ query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+  const { rewardPool, pendingClaims } = await redisGetter
+    .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${TOKEN_WAIV.SYMBOL}`);
+  const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
+
+  for (const comment of commentsWithWaiv) {
+    const waivReward = rewards * comment.voteRshareSum;
+    const key = comment.authorperm.substring(1);
+    content[key].total_payout_WAIV = waivReward;
+  }
+};
+
+exports.addWAIVToSingleComment = async (content) => {
+  if (!content && !content.author && !content.permlink) return;
+
+  const commentsWithWaiv = await commentContract
+    .getPosts({ query: { authorperm: `@${content.author}/${content.permlink}`, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+
+  if (_.isEmpty(commentsWithWaiv)) return;
+  const { rewardPool, pendingClaims } = await redisGetter
+    .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${TOKEN_WAIV.SYMBOL}`);
+  const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
+
+  content.total_payout_WAIV = rewards * commentsWithWaiv[0].voteRshareSum;
 };
