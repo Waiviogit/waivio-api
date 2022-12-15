@@ -3,6 +3,7 @@ const {
 } = require('models');
 const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
 const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
+const engineOperations = require('utilities/hiveEngine/engineOperations');
 const { postsUtil } = require('utilities/hiveApi');
 const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
@@ -38,6 +39,7 @@ module.exports = async ({ author, permlink, userName }) => {
   } = await getComment({ author, permlink, app });
 
   if (commentError) return { error: commentError };
+  await engineOperations.addWAIVToSingleComment(commentResult);
   return { post: commentResult };
 };
 
