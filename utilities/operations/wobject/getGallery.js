@@ -16,15 +16,23 @@ module.exports = async (data) => {
   const host = session.get('host');
   const { result: app } = await App.findOne({ host });
   const processedObject = await wObjectHelper.processWobjects({
-    fields: ['galleryAlbum', 'galleryItem', 'avatar'],
     app,
     locale: data.locale,
     wobjects: [wObject],
     returnArray: false,
   });
   const defaultPhotosAlbum = _.find(processedObject.galleryAlbum, (a) => a.body === 'Photos');
+  const albumsId = _.map(processedObject.galleryAlbum, (a) => a.id);
   if (defaultPhotosAlbum && processedObject.avatar) {
-    defaultPhotosAlbum.items.push({ weight: 1, body: processedObject.avatar });
+    const photoWithoutAlbum = _.filter(
+      _.get(processedObject, 'galleryItem', []),
+      (g) => !_.includes(albumsId, g.id),
+    );
+
+    defaultPhotosAlbum.items.push(
+      { weight: 1, body: processedObject.avatar },
+      ...photoWithoutAlbum,
+    );
   }
   if (!defaultPhotosAlbum) {
     const album = { items: [], body: 'Photos', id: data.authorPermlink };
