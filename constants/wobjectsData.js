@@ -81,7 +81,7 @@ exports.OBJECT_TYPES = {
   BnB: 'b&b',
   BOOK: 'book',
   WIDGET: 'widget',
-  NEWS_FEED: 'news feed',
+  NEWS_FEED: 'newsfeed',
 };
 
 exports.ADMIN_ROLES = {
@@ -274,3 +274,51 @@ exports.MAIN_OBJECT_TYPES = [
   this.OBJECT_TYPES.DISH,
   this.OBJECT_TYPES.DRINK,
 ];
+
+exports.COUNTRY_CODES = {
+  US: 'United States',
+  CA: 'Canada',
+  MX: 'Mexico',
+  BR: 'Brazil',
+  GB: 'United Kingdom',
+  FR: 'France',
+  IT: 'Italy',
+  ES: 'Spain',
+  DE: 'Germany',
+  NL: 'Netherlands',
+  SE: 'Sweden',
+  PL: 'Poland',
+  IN: 'India',
+  AE: 'United Arab Emirates',
+  SA: 'Saudi Arabia',
+  SG: 'Singapore',
+  JP: 'Japan',
+  AU: 'Australia',
+  UA: 'Ukraine', /// test todo remove
+  NONE: 'NONE',
+};
+
+exports.AMAZON_LINKS_BY_COUNTRY = {
+  US: 'amazon.com',
+  CA: 'amazon.ca',
+  MX: 'amazon.com.mx',
+  BR: 'amazon.com.br',
+  GB: 'amazon.co.uk',
+  FR: 'amazon.fr',
+  IT: 'amazon.it',
+  ES: 'amazon.es',
+  DE: 'amazon.de',
+  NL: 'amazon.nl',
+  SE: 'amazon.se',
+  PL: 'amazon.pl',
+  IN: 'amazon.in',
+  AE: 'amazon.ae',
+  SA: 'amazon.sa',
+  SG: 'amazon.sg',
+  JP: 'amazon.co.jp',
+  AU: 'amazon.com.au',
+  UA: 'amazon.co.jp', /// test todo remove
+  NONE: 'NONE',
+};
+
+exports.AFFILIATE_TYPES = ['asin', 'isbn-10'];

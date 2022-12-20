@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const { addDataToFields } = require('utilities/helpers/wObjectHelper');
+const engineOperations = require('utilities/hiveEngine/engineOperations');
 const { getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
 const ObjectTypeModel = require('../../../models/ObjectTypeModel');
 const {
@@ -79,13 +80,14 @@ const fillUpdates = async ({
   });
 
   const { comments } = await postsUtil.getCommentsArr(formatUpdatesForRequest(limitedUpdates));
+  await engineOperations.addWAIVToCommentsArray(comments);
   for (const update of filtered) {
     const comment = _.find(
       comments,
       (el) => el.author === update.author && el.permlink === update.permlink,
     );
     Object.assign(update,
-      _.pick(comment, ['children', 'total_pending_payout_value',
+      _.pick(comment, ['children', 'total_pending_payout_value', 'total_payout_WAIV',
         'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
     update.fullBody = _.get(comment, 'body', '');
   }

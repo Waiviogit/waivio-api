@@ -8,6 +8,8 @@ const {
   botUpvoteModel,
   paymentHistory,
   CampaignPosts,
+  CampaignV2,
+  SponsorsUpvote,
 } = require('models');
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
@@ -23,7 +25,9 @@ const {
   redisSetter,
 } = require('utilities/redis');
 const jsonHelper = require('utilities/helpers/jsonHelper');
+const currenciesRequests = require('utilities/requests/currenciesRequests');
 const crypto = require('crypto');
+const BigNumber = require('bignumber.js');
 
 /**
  * Get wobjects data for particular post
@@ -272,7 +276,7 @@ const checkUserStatus = async ({
   return !user || _.get(user, 'status') === RESERVATION_STATUSES.REJECTED;
 };
 
-const sponsorObligationsNewReview = ({
+const sponsorObligationsNewReview = async ({
   post,
   newReview,
 }) => {
@@ -281,24 +285,45 @@ const sponsorObligationsNewReview = ({
 
   const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
   const beforeCashOut = new Date(post.cashout_time) > new Date();
+  const { result: campaign } = await CampaignV2.findOne({
+    filter: {
+      users: {
+        $elemMatch: {
+          name: newReview.author, reviewPermlink: newReview.permlink,
+        },
+      },
+    },
+    projection: { rewardInUSD: 1 },
+  });
+  const { result: bots } = await SponsorsUpvote
+    .find({
+      filter: {
+        author: post.root_author,
+        permlink: post.permlink,
+      },
+      projection: { botName: 1 },
+
+    });
+
+  const { result: tokenRate } = await currenciesRequests.getEngineRate({ token: newReview.symbol });
+
+  const rewardInToken = new BigNumber(campaign.rewardInUSD)
+    .dividedBy(_.get(tokenRate, 'USD', newReview.payoutTokenRateUSD)).toNumber();
 
   if (ratio) {
     let likedSum = 0;
-    const registeredVotes = _.filter(
-      post.active_votes,
-      (v) => _.includes([newReview.guideName], v.voter),
-    );
+    const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), newReview.guideName], v.voter));
     for (const el of registeredVotes) {
       likedSum += (ratio * _.get(el, `rshares${newReview.symbol}`, 0));
     }
-    const sponsorPayout = newReview.rewardInToken - (likedSum / 2);
+    const sponsorPayout = rewardInToken - (likedSum / 2);
     if (sponsorPayout <= 0) return;
 
     // eslint-disable-next-line no-nested-ternary
     beforeCashOut
       ? post[`total_payout_${newReview.symbol}`] = (totalPayout + sponsorPayout)
-      : !totalPayout
-        ? post[`total_rewards_${newReview.symbol}`] = newReview.rewardInToken
+      : !totalPayout && !_.isEmpty(bots)
+        ? post[`total_rewards_${newReview.symbol}`] = rewardInToken
         : post[`total_rewards_${newReview.symbol}`] = (totalPayout + sponsorPayout);
 
     const hasSponsor = _.find(post.active_votes, (el) => el.voter === newReview.guideName);
@@ -323,8 +348,8 @@ const sponsorObligationsNewReview = ({
     }
   } else {
     beforeCashOut
-      ? post[`total_payout_${newReview.symbol}`] = newReview.rewardInToken
-      : post[`total_rewards_${newReview.symbol}`] = newReview.rewardInToken;
+      ? post[`total_payout_${newReview.symbol}`] = rewardInToken
+      : post[`total_rewards_${newReview.symbol}`] = rewardInToken;
     _.forEach(post.active_votes, (el) => {
       el[`rshares${newReview.symbol}`] = 0;
     });
@@ -337,12 +362,12 @@ const sponsorObligationsNewReview = ({
         hasSponsor.percent = 100;
         hasSponsor.fake = true;
       }
-      hasSponsor[`rshares${newReview.symbol}`] = newReview.rewardInToken;
+      hasSponsor[`rshares${newReview.symbol}`] = rewardInToken;
       hasSponsor.sponsor = true;
     } else {
       post.active_votes.push({
         voter: newReview.guideName,
-        [`rshares${newReview.symbol}`]: newReview.rewardInToken,
+        [`rshares${newReview.symbol}`]: rewardInToken,
         rshares: 1,
         sponsor: true,
         fake: true,
@@ -373,7 +398,7 @@ const additionalSponsorObligations = async (posts) => {
         },
       });
     if (newReview) {
-      sponsorObligationsNewReview({
+      await sponsorObligationsNewReview({
         post,
         newReview,
       });

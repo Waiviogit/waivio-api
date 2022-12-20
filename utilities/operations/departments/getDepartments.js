@@ -22,9 +22,11 @@ const mapDepartments = (departments, excluded = []) => departments.map((departme
 
   const subdirectory = department.objectsCount > MIN_SUB_OBJECTS
     && !_.isEmpty(_.filter(department.related, filterCondition));
+
   const related = subdirectory
     ? _.filter(department.related, filterCondition)
     : [department.name];
+
   return {
     name: department.name,
     subdirectory,

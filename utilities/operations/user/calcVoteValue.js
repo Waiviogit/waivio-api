@@ -1,9 +1,10 @@
 const engineOperations = require('utilities/hiveEngine/engineOperations');
 const hiveOperations = require('utilities/hiveApi/hiveOperations');
+const postsUtil = require('utilities/hiveApi/postsUtil');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
-const { Post } = require('../../../models');
+const { Post, Comment } = require('../../../models');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -24,19 +25,37 @@ exports.sliderCalc = async ({
 
   const [hive, waiv, postDb] = requests;
 
-  const hasRewards = checkPostForRewards(postDb);
+  const hasRewards = await checkPostForRewards({ postDb, author, permlink });
 
   return hasRewards
     ? hive.hiveVotePrice + waiv.engineVotePrice
     : hive.hiveVotePrice;
 };
 
-const checkPostForRewards = (data) => {
-  if (_.has(data, 'error')) return false;
-  const jsonMetadata = jsonHelper.parseJson(_.get(data, 'post.json_metadata', ''));
+const includesPostRewards = (post) => {
+  const jsonMetadata = jsonHelper.parseJson(_.get(post, 'json_metadata', ''));
   if (_.isEmpty(jsonMetadata)) return false;
   return _.some(TOKEN_WAIV.TAGS,
     (tag) => _.includes(_.get(jsonMetadata, 'tags', []), tag));
+};
+
+const checkPostForRewards = async ({ postDb, author, permlink }) => {
+  if (_.has(postDb, 'error')) return false;
+  const post = _.get(postDb, 'post');
+  if (!post) {
+    let { post: comment } = await postsUtil.getPost({ author, permlink });
+    if (!comment) {
+      ({ comment } = Comment.getOne({ author, permlink }));
+      if (!comment) return false;
+    }
+    const { post: rootPost } = await Post.findOneByBothAuthors({
+      author: comment.root_author,
+      permlink: comment.root_permlink,
+    });
+    if (!rootPost) return false;
+    return includesPostRewards(rootPost);
+  }
+  return includesPostRewards(post);
 };
 
 exports.userInfoCalc = async ({ userName }) => {
