@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations,
+  guestWalletOperations, getBlogTags,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -172,6 +172,21 @@ const blog = async (req, res, next) => {
 
   res.result = { status: 200, json: { tags, posts, hasMore } };
   res.params = req.params;
+  next();
+};
+
+const blogTags = async (req, res, next) => {
+  const value = validators.validate({
+    name: req.params.userName, ...req.body,
+  }, validators.user.blogTagsSchema, next);
+
+  if (!value) return;
+
+  const {
+    tags, hasMore,
+  } = await getBlogTags(value);
+
+  res.result = { status: 200, json: { tags, hasMore } };
   next();
 };
 
@@ -533,4 +548,5 @@ module.exports = {
   getGuestBalance,
   createOrUpdatePageDraft,
   getOnePageDraft,
+  blogTags,
 };

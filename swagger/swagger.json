@@ -3218,6 +3218,58 @@
                     "$ref": "#/definitions/post"
                   }
                 },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/blog-tags": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Return user blog tags",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "user name which tags needs to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "description": "**limit** - count of posts to return(for infinite scroll)*(by default - 20)*,\n**skip** - count of posts to skip(need for infinite scroll)*(by default - 0)*",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "skip": {
+                  "type": "number",
+                  "default": 0
+                },
+                "limit": {
+                  "type": "number",
+                  "default": 20
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
                 "tags": {
                   "type": "array",
                   "items": {
@@ -6339,7 +6391,7 @@
       }
     }
   },
-    "definitions": {
+  "definitions": {
       "delegation_response_200": {
         "type": "array",
         "items": {
