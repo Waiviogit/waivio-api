@@ -149,6 +149,8 @@ userRoutes.route('/user/:userName/feed')
   .post(UserController.feed);
 userRoutes.route('/user/:userName/blog')
   .post(UserController.blog);
+userRoutes.route('/user/:userName/blog-tags')
+  .post(UserController.blogTags);
 userRoutes.route('/user/:userName/comments')
   .get(UserController.getUserComments);
 userRoutes.route('/user/:userName/objects_shares')

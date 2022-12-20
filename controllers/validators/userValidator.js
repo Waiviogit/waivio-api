@@ -157,6 +157,12 @@ exports.blogSchema = Joi.object().keys({
   tagsArray: Joi.array().items(Joi.string()).default([]),
 });
 
+exports.blogTagsSchema = Joi.object().keys({
+  name: Joi.string().required(),
+  limit: Joi.number().integer().min(0).default(20),
+  skip: Joi.number().integer().min(0).default(0),
+});
+
 exports.followingUpdates = Joi.object().keys({
   name: Joi.string().required(),
   users_count: Joi.number().integer().min(0).max(100)
