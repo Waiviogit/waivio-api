@@ -49,18 +49,33 @@ const getItemsCount = async ({
 };
 
 const getListItems = async (wobject, data, app) => {
+  const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
+
+  const { result: available } = await Wobj.find({
+    author_permlink: { $in: _.map(filteredUnavailable, 'body') },
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+
+  const availableObjects = _.map(available, 'author_permlink');
+
+  const fieldsToProcess = _.filter(wobject.fields, (f) => _.includes(availableObjects, f.body));
+  const newObject = _.cloneDeep(wobject);
+  newObject.fields = fieldsToProcess;
+
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
-    wobjects: [_.cloneDeep(wobject)],
+    wobjects: [newObject],
     returnArray: false,
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
-  if (!fields) return { wobjects: [] };
+
   let { result: wobjects } = await Wobj.find({
     author_permlink: { $in: _.map(fields, 'body') },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
   });
+
+  if (!fields) return { wobjects: [] };
 
   let user;
   if (data.user) {
