@@ -47,6 +47,10 @@ exports.FIELDS_NAMES = {
   WIDGET: 'widget',
   NEWS_FEED: 'newsFeed',
   DEPARTMENTS: 'departments',
+  MERCHANT: 'merchant',
+  MANUFACTURER: 'manufacturer',
+  BRAND: 'brand',
+  FEATURES: 'features',
 };
 
 exports.LIST_TYPES = {
@@ -117,6 +121,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.OPTIONS,
   this.FIELDS_NAMES.AUTHORS,
   this.FIELDS_NAMES.DEPARTMENTS,
+  this.FIELDS_NAMES.FEATURES,
 ];
 
 exports.REQUIREDFIELDS = [

@@ -170,6 +170,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.OPTIONS:
       case FIELDS_NAMES.AUTHORS:
       case FIELDS_NAMES.DEPARTMENTS:
+      case FIELDS_NAMES.FEATURES:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
