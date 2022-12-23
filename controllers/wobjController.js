@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
-  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps,
+  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -315,6 +315,20 @@ const getWobjectUpdates = async (req, res, next) => {
   next();
 };
 
+const getWobjectNames = async (req, res, next) => {
+  const value = validators.validate(req.body,
+    validators.wobject.wobjectsNamesScheme, next);
+  if (!value) return;
+
+  const { wobjects, error } = await getWobjectsNames({
+    ...value, app: req.appData, locale: req.headers.locale,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -335,4 +349,5 @@ module.exports = {
   getWobjectsByRequiredObject,
   checkIfObjectExists,
   getWobjectUpdates,
+  getWobjectNames,
 };
