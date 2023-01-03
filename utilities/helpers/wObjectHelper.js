@@ -625,7 +625,10 @@ const processWobjects = async ({
     }
     if (obj.productId) {
       const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
-      if (!_.isEmpty(affiliateLinks)) obj.affiliateLinks = affiliateLinks;
+      if (!_.isEmpty(affiliateLinks)) {
+        obj.affiliateLinks = affiliateLinks;
+        obj.website = null;
+      }
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
