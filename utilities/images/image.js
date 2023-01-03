@@ -50,6 +50,9 @@ class Image {
     } if (size === IMAGE_SIZE.MEDIUM) {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
+    if (size === IMAGE_SIZE.LARGE) {
+      return sharp(buffer).rotate(0).resize(512, 512, { fit: 'cover' }).toBuffer();
+    }
     if (buffer.byteLength > 1500000) {
       const image = sharp(buffer);
       const metadata = await image.metadata();
