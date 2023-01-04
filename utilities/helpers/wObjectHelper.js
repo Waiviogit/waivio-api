@@ -528,6 +528,7 @@ const getAppAffiliateCodes = async ({ app, countryCode }) => {
 const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
   if (_.isEmpty(affiliateCodes)) return [];
   return _.reduce(productIds, (acc, el) => {
+    if (!_.isEmpty(acc)) return acc;
     const body = jsonHelper.parseJson(el.body, {});
     if (!_.includes(AFFILIATE_TYPES, body.productIdType.toLocaleLowerCase())) return acc;
     const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
