@@ -3,8 +3,8 @@ const { prepareImage } = require('utilities/helpers/imagesHelper');
 const { ERROR_MESSAGE, IMAGE_SIZE } = require('constants/common');
 
 const saveImage = async (req, res) => {
-  const { base64, fileName } = await prepareImage(req);
-  const { imageUrl, error } = await image.uploadInS3(base64, fileName);
+  const { base64, fileName, size } = await prepareImage(req);
+  const { imageUrl, error } = await image.uploadInS3(base64, fileName, size);
 
   if (error) {
     if (error === ERROR_MESSAGE.UNAVAILABLE) {
