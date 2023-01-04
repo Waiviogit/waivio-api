@@ -8,6 +8,7 @@ const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields } = require('../utilities/operations/wobject/getFields');
+const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -45,7 +46,9 @@ const show = async (req, res, next) => {
 
   if (!value) return;
 
-  const { wobjectData, error } = await wobjectInfo.getOne(value);
+  const ip = await getIpFromHeaders(req);
+
+  const { wobjectData, error } = await wobjectInfo.getOne({ ...value, ip });
 
   if (error) return next(error);
 
