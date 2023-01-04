@@ -205,3 +205,7 @@ exports.getFieldsScheme = Joi.object().keys({
   locale: Joi.string(),
   sort: Joi.string().valid(...Object.values(FIELDS_SORT)).default(FIELDS_SORT.CREATED),
 });
+
+exports.wobjectsNamesScheme = Joi.object().keys({
+  links: Joi.array().items(Joi.string()).required(),
+});

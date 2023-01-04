@@ -117,16 +117,20 @@ wobjRoutes.route('/wobject/:authorPermlink/nearby')
   .get(WobjController.getWobjectsNearby);
 wobjRoutes.route('/wobject/count/by-area')
   .get(WobjController.countWobjectsByArea);
+wobjRoutes.route('/wobject/:authorPermlink/exist')
+  .get(WobjController.checkIfObjectExists);
+wobjRoutes.route('/wobject/:authorPermlink/fields')
+  .get(WobjController.getWobjectUpdates);
+
 wobjRoutes.route('/wobjects/map/experts')
   .post(WobjController.getMapObjectExperts);
 wobjRoutes.route('/wobjects/map/last-post')
   .post(WobjController.getMapObjectLastPost);
 wobjRoutes.route('/wobjects/campaign/required-object')
   .post(WobjController.getWobjectsByRequiredObject);
-wobjRoutes.route('/wobject/:authorPermlink/exist')
-  .get(WobjController.checkIfObjectExists);
-wobjRoutes.route('/wobject/:authorPermlink/fields')
-  .get(WobjController.getWobjectUpdates);
+
+wobjRoutes.route('/wobjects/names')
+  .post(WobjController.getWobjectNames);
 // endregion
 // region User
 userRoutes.route('/users')
