@@ -41,6 +41,7 @@ exports.AWSS3_IMAGE_PARAMS = {
 exports.IMAGE_SIZE = {
   SMALL: '_small',
   MEDIUM: '_medium',
+  CONTAIN: '_contain',
 };
 
 exports.TOKEN = {

@@ -7,7 +7,7 @@ const jo = require('jpeg-autorotate');
 const prepareImage = async (req) => {
   const form = new formidable.IncomingForm();
   const {
-    blobImage, imageUrl, type, userName,
+    blobImage, imageUrl, type, userName, size,
   } = await new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
@@ -19,6 +19,7 @@ const prepareImage = async (req) => {
         imageUrl: fields.imageUrl,
         type: fields.type,
         userName: fields.userName,
+        size: fields.size || '',
       });
     });
   });
@@ -38,7 +39,7 @@ const prepareImage = async (req) => {
   }
   const fileName = await generateFileName({ type, userName });
 
-  return { base64, fileName };
+  return { base64, fileName, size };
 };
 
 const generateFileName = async ({ type, userName }) => {
