@@ -327,4 +327,4 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   NONE: 'NONE',
 };
 
-exports.AFFILIATE_TYPES = ['asin', 'isbn-10'];
+exports.AFFILIATE_TYPES = ['asin', 'isbn-10', 'asins'];
