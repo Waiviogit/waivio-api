@@ -50,8 +50,19 @@ class Image {
     } if (size === IMAGE_SIZE.MEDIUM) {
       return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
     }
-    if (size === IMAGE_SIZE.LARGE) {
-      return sharp(buffer).rotate(0).resize(512, 512, { fit: 'cover' }).toBuffer();
+    if (size === IMAGE_SIZE.CONTAIN) {
+      const image = await sharp(buffer);
+      const metadata = await image.metadata();
+      const defaultScale = 512;
+      const width = _.get(metadata, 'width', defaultScale);
+      const height = _.get(metadata, 'height', defaultScale);
+
+      const resizePx = width > height ? width : height;
+
+      return sharp(buffer).rotate(0).resize(resizePx, resizePx, {
+        fit: 'contain',
+        background: { r: 255, g: 255, b: 255 },
+      }).toBuffer();
     }
     if (buffer.byteLength > 1500000) {
       const image = sharp(buffer);
