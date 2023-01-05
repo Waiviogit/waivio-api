@@ -260,7 +260,7 @@ exports.SHARING_SOCIAL_FIELDS = [
 ];
 
 exports.PICK_FIELDS_ABOUT_OBJ = [
-  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title',
+  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title', 'object_type',
 ];
 
 exports.STATUSES = {
