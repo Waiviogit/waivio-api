@@ -290,7 +290,7 @@ const addTotalPayedToCampaigns = async (campaigns) => {
   const guideNames = _.uniq(_.map(campaigns, 'guideName'));
   for (const payoutToken of payoutTokens) {
     const guidesPayables = await getGuidesPayables({ guideNames, payoutToken });
-    if (_.isEmpty(guidesPayables)) continue;
+
     const matchedCampaigns = _.filter(campaigns, (c) => c.payoutToken === payoutToken);
     for (const matchedCampaign of matchedCampaigns) {
       const payedRecord = _.find(
