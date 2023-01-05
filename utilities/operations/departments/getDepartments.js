@@ -47,7 +47,9 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
     related: [d.name],
   };
   const { result: subDepartments = [] } = await Department.find(
-    { filter: makeConditions({ name: d.name }) },
+    {
+      filter: makeConditions({ name: d.name }),
+    },
   );
   if (_.isEmpty(subDepartments)) return emptyDirectory;
   const filtered = filterDepartments(subDepartments);
@@ -62,7 +64,10 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
 // we can add host in future for sites
 module.exports = async ({ name, names = [], excluded = [] }) => {
   const { result: departments, error } = await Department.find(
-    { filter: makeConditions({ name, names }) },
+    {
+      filter: makeConditions({ name, names }),
+      ...(names && { options: { sort: { objectsCount: -1 }, limit: 7 } }),
+    },
   );
 
   if (error) return { error };
