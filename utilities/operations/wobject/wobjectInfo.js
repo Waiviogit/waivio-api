@@ -7,6 +7,7 @@ const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
+const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 
 /**
@@ -62,6 +63,8 @@ const getListItems = async (wobject, data, app) => {
   const newObject = _.cloneDeep(wobject);
   newObject.fields = fieldsToProcess;
 
+  const countryCode = await getCountryCodeFromIp(data.ip);
+
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
@@ -88,7 +91,7 @@ const getListItems = async (wobject, data, app) => {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
-      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app,
+      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app, countryCode,
     });
     wobj.type = _.get(fieldInList, 'type');
     wobj.listItemsCount = await getItemsCount({

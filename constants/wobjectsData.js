@@ -151,6 +151,7 @@ exports.REQUIREDFIELDS = [
   this.FIELDS_NAMES.CATEGORY_ITEM,
   this.FIELDS_NAMES.BLOG,
   this.FIELDS_NAMES.FORM,
+  this.FIELDS_NAMES.PRODUCT_ID,
 ];
 
 exports.REQUIREDFIELDS_PARENT = [
@@ -259,7 +260,7 @@ exports.SHARING_SOCIAL_FIELDS = [
 ];
 
 exports.PICK_FIELDS_ABOUT_OBJ = [
-  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title',
+  'name', 'default_name', 'avatar', 'author_permlink', 'defaultShowLink', 'description', 'title', 'object_type',
 ];
 
 exports.STATUSES = {
@@ -327,4 +328,4 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   NONE: 'NONE',
 };
 
-exports.AFFILIATE_TYPES = ['asin', 'isbn-10'];
+exports.AFFILIATE_TYPES = ['asin', 'isbn-10', 'asins'];
