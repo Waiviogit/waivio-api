@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
-const BOTTOM_LINE_PERCENT = 0.01;
+const BOTTOM_LINE_PERCENT = 0.05;
 
 const filterDepartments = (departments, excluded = []) => {
   const objectsTotal = _.sumBy(departments, 'objectsCount');
@@ -17,22 +17,32 @@ const filterDepartments = (departments, excluded = []) => {
   return departments.filter(filterCondition);
 };
 
-const mapDepartments = (departments, excluded = []) => departments.map((department) => {
-  const filterCondition = (el) => el !== department.name && !excluded.includes(el);
+const mapDepartments = async (departments, excluded = []) => {
+  const result = [];
+  for (const department of departments) {
+    const filterCondition = (el) => el !== department.name && !excluded.includes(el);
 
-  const subdirectory = department.objectsCount > MIN_SUB_OBJECTS
-    && !_.isEmpty(_.filter(department.related, filterCondition));
+    const { result: subDepartments = [] } = await Department.find(
+      {
+        filter: makeConditions({ name: department.name, excluded }),
+      },
+    );
+    const filtered = filterDepartments(subDepartments, [department.name, ...excluded]);
 
-  const related = subdirectory
-    ? _.filter(department.related, filterCondition)
-    : [department.name];
+    const subdirectory = !_.isEmpty(filtered) && department.objectsCount > MIN_SUB_OBJECTS;
 
-  return {
-    name: department.name,
-    subdirectory,
-    related,
-  };
-});
+    const related = subdirectory
+      ? _.filter(department.related, filterCondition)
+      : [department.name];
+
+    result.push({
+      name: department.name,
+      subdirectory,
+      related,
+    });
+  }
+  return result;
+};
 
 const makeConditions = ({ name, names, excluded = [] }) => {
   if (name) return { name: { $nin: [name, ...excluded] }, related: name };
@@ -74,12 +84,12 @@ module.exports = async ({ name, names = [], excluded = [] }) => {
   if (_.isEmpty(departments)) return { result: [] };
 
   const topLevel = !name && _.isEmpty(names);
-  if (topLevel) return { result: mapDepartments(departments) };
+  if (topLevel) return { result: await mapDepartments(departments) };
   if (name) {
     return {
-      result: mapDepartments(
-        filterDepartments(departments, excluded),
-        excluded,
+      result: await mapDepartments(
+        filterDepartments(departments, [...excluded, name]),
+        [...excluded, name],
       ),
     };
   }
