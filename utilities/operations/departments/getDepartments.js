@@ -34,7 +34,7 @@ const mapDepartments = (departments, excluded = []) => departments.map((departme
   };
 });
 
-const makeConditions = ({ name, names, excluded }) => {
+const makeConditions = ({ name, names, excluded = [] }) => {
   if (name) return { name: { $nin: [name, ...excluded] }, related: name };
   if (names) return { name: { $in: names } };
   return { level: 1 };
