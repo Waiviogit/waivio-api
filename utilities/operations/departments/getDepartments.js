@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
-const BOTTOM_LINE_PERCENT = 0.05;
+const BOTTOM_LINE_PERCENT = 0.01;
 
 const filterDepartments = (departments, excluded = []) => {
   const objectsTotal = _.sumBy(departments, 'objectsCount');
@@ -34,8 +34,8 @@ const mapDepartments = (departments, excluded = []) => departments.map((departme
   };
 });
 
-const makeConditions = ({ name, names }) => {
-  if (name) return { name: { $ne: name }, related: name };
+const makeConditions = ({ name, names, excluded }) => {
+  if (name) return { name: { $nin: [name, ...excluded] }, related: name };
   if (names) return { name: { $in: names } };
   return { level: 1 };
 };
@@ -65,8 +65,8 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
 module.exports = async ({ name, names = [], excluded = [] }) => {
   const { result: departments, error } = await Department.find(
     {
-      filter: makeConditions({ name, names }),
-      ...(names && { options: { sort: { objectsCount: -1 }, limit: 7 } }),
+      filter: makeConditions({ name, names, excluded }),
+      ...(!_.isEmpty(names) && { options: { sort: { objectsCount: -1 }, limit: 7 } }),
     },
   );
 
