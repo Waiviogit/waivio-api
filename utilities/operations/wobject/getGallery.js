@@ -35,7 +35,12 @@ module.exports = async (data) => {
     );
   }
   if (!defaultPhotosAlbum) {
-    const album = { items: [], body: 'Photos', id: data.authorPermlink };
+    const photoWithoutAlbum = _.filter(
+      _.get(processedObject, 'galleryItem', []),
+      (g) => !_.includes(albumsId, g.id),
+    );
+
+    const album = { items: photoWithoutAlbum, body: 'Photos', id: data.authorPermlink };
     processedObject.avatar && album.items.push({ weight: 1, body: processedObject.avatar });
     processedObject.galleryAlbum
       ? processedObject.galleryAlbum.push(album)
