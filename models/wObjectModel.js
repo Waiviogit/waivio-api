@@ -45,7 +45,11 @@ const isFieldExist = async ({ author_permlink, fieldName }) => {
 
 const getByField = async ({ fieldName, fieldBody }) => {
   try {
-    const wobjects = await WObjectModel.find({ 'fields.name': fieldName, 'fields.body': fieldBody }).lean();
+    const wobjects = await WObjectModel.find({
+      'fields.name': fieldName,
+      'fields.body': fieldBody,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    }).lean();
 
     if (_.isEmpty(wobjects)) return { error: { status: 404, message: 'Wobjects not found!' } };
     return { wobjects };
