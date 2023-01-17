@@ -1,8 +1,10 @@
 const {
-  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel,
+  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel, Wobj,
 } = require('models');
 const { getNamespace } = require('cls-hooked');
+const { OBJECT_TYPES, REMOVE_OBJ_STATUSES, FIELDS_NAMES } = require('constants/wobjectsData');
 const _ = require('lodash');
+const queryHelper = require('utilities/helpers/queryHelper');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const {
@@ -12,16 +14,51 @@ const {
 } = require('../../helpers/postHelper');
 const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
 
+const getFeedObjectsConditions = async ({ links, app, locale }) => {
+  if (_.isEmpty(links)) return;
+  const { result } = await Wobj.find({
+    author_permlink: { $in: links },
+    object_type: OBJECT_TYPES.NEWS_FEED,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+  if (_.isEmpty(result)) return;
+
+  const processedObjects = await wobjectHelper.processWobjects({
+    wobjects: result,
+    fields: [FIELDS_NAMES.NEWS_FEED],
+    app,
+    locale,
+    returnArray: true,
+  });
+  const conditions = [];
+
+  for (const processedObject of processedObjects) {
+    const newsPermlink = _.get(processedObject, 'newsFeed.permlink');
+    if (!newsPermlink) continue;
+    const wObject = _.find(result, (r) => r.author_permlink === processedObject.author_permlink);
+    if (!wObject) continue;
+    const { condition, error } = queryHelper.getNewsFilterCondition({
+      wObject,
+      app,
+      condition: {},
+      newsPermlink,
+    });
+    if (error) continue;
+    if (!_.isEmpty(condition)) conditions.push(condition);
+  }
+  return conditions;
+};
+
 const getFeed = async ({
   // eslint-disable-next-line camelcase
   name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName, locale, app,
 }) => {
-  const cacheKey = getPostCacheKey({
-    skip, limit, user_languages, userName, method: 'getFeed',
-  });
-
-  const cache = await getCachedPosts(cacheKey);
-  if (cache) return { posts: cache };
+  // const cacheKey = getPostCacheKey({
+  //   skip, limit, user_languages, userName, method: 'getFeed',
+  // });
+  //
+  // const cache = await getCachedPosts(cacheKey);
+  // if (cache) return { posts: cache };
 
   let posts = [];
   const requestsMongo = await Promise.all([
@@ -40,7 +77,7 @@ const getFeed = async ({
   const [userDb, SubscriptionsDb, wobjectSubscriptionsDb, hiddenPostDb, mutedUserDb] = requestsMongo;
   const { user } = userDb;
   const { users } = SubscriptionsDb;
-  const { wobjects } = wobjectSubscriptionsDb;
+  const { wobjectsSubscribed } = wobjectSubscriptionsDb;
   const { hiddenPosts = [] } = hiddenPostDb;
   const { result: muted = [] } = mutedUserDb;
 
@@ -53,6 +90,10 @@ const getFeed = async ({
 
   if (filterError) return { error: filterError };
 
+  const feedObjectsConditions = await getFeedObjectsConditions(
+    { links: wobjectsSubscribed, app, locale },
+  );
+
   ({ posts } = await Post.getByFollowLists({
     skip,
     users,
@@ -60,15 +101,16 @@ const getFeed = async ({
     filtersData,
     hiddenPosts,
     user_languages,
-    author_permlinks: wobjects,
+    author_permlinks: wobjectsSubscribed,
     muted: _.map(muted, 'userName'),
+    feedObjectsConditions,
   }));
 
   posts = await postHelper.fillAdditionalInfo({ posts, userName });
   await wobjectHelper.moderatePosts({ posts, locale, app });
   await fillPostsSubscriptions({ posts, userName });
 
-  await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
+  // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };
 
