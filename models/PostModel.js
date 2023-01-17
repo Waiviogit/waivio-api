@@ -71,7 +71,6 @@ exports.getByFollowLists = async ({
         $or: [
           { author: { $in: users } },
           { 'wobjects.author_permlink': { $in: authorPermlinks } },
-          ...(!_.isEmpty(feedObjectsConditions) && feedObjectsConditions),
         ],
         ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
@@ -92,6 +91,10 @@ exports.getByFollowLists = async ({
       },
     },
   ];
+
+  if (!_.isEmpty(feedObjectsConditions)) {
+    pipe[0].$match.$or.push(...feedObjectsConditions);
+  }
 
   try {
     const posts = await PostModel.aggregate(pipe);
