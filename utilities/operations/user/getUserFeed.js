@@ -77,7 +77,7 @@ const getFeed = async ({
   const [userDb, SubscriptionsDb, wobjectSubscriptionsDb, hiddenPostDb, mutedUserDb] = requestsMongo;
   const { user } = userDb;
   const { users } = SubscriptionsDb;
-  const { wobjectsSubscribed } = wobjectSubscriptionsDb;
+  const { wobjects: wobjectsSubscribed } = wobjectSubscriptionsDb;
   const { hiddenPosts = [] } = hiddenPostDb;
   const { result: muted = [] } = mutedUserDb;
 
