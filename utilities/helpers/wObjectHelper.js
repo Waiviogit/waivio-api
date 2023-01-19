@@ -289,7 +289,6 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
         idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
       });
       if (result.length) winningFields[newId] = result;
-      if (!result.length) winningFields[newId] = null;
       continue;
     }
 
@@ -631,6 +630,9 @@ const processWobjects = async ({
         obj.affiliateLinks = affiliateLinks;
         obj.website = null;
       }
+    }
+    if (obj.departments && typeof obj.departments[0] === 'string') {
+      obj.departments = null;
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
