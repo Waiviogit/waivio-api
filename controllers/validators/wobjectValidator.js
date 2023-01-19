@@ -206,6 +206,16 @@ exports.getFieldsScheme = Joi.object().keys({
   sort: Joi.string().valid(...Object.values(FIELDS_SORT)).default(FIELDS_SORT.CREATED),
 });
 
+exports.getNewsfeed = Joi.object().keys({
+  author_permlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  locale: Joi.string(),
+  user_languages: Joi.array().items(Joi.string().valid(...LANGUAGES)).default(['en-US']),
+  userName: Joi.string(),
+  lastId: Joi.string().custom(customValidationHelper.validateObjectId, 'Validate Mongoose ObjectId'),
+});
+
 exports.wobjectsNamesScheme = Joi.object().keys({
   links: Joi.array().items(Joi.string()).required(),
 });
