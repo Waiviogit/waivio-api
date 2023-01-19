@@ -2,7 +2,8 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { WOBJECT_LATEST_POSTS_COUNT } = require('constants/wobjectsData');
+const { WOBJECT_LATEST_POSTS_COUNT, OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
+const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
@@ -13,6 +14,21 @@ module.exports = async (data) => {
 
   const { wObject, error: wobjError } = await Wobj.getOne(data.author_permlink);
   if (wobjError) return { error: wobjError };
+
+  if (data.newsFeed) {
+    if (wObject.object_type !== OBJECT_TYPES.NEWS_FEED) return { posts: [] };
+    const processedObj = await wObjectHelper.processWobjects({
+      wobjects: [wObject],
+      locale: data.locale,
+      fields: [FIELDS_NAMES.NEWS_FEED],
+      returnArray: false,
+      app: data.app,
+    });
+
+    const newsPermlink = _.get(processedObj, 'newsFeed.permlink');
+    if (!newsPermlink) return { posts: [] };
+    data.newsPermlink = newsPermlink;
+  }
 
   const { condition, error: conditionError } = await getWobjFeedCondition({
     ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject,

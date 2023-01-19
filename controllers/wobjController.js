@@ -318,6 +318,29 @@ const getWobjectUpdates = async (req, res, next) => {
   next();
 };
 
+const newsfeed = async (req, res, next) => {
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    limit: req.body.limit,
+    skip: req.body.skip,
+    user_languages: req.body.user_languages,
+    lastId: req.body.lastId,
+    userName: req.headers.follower,
+    locale: req.headers.locale,
+  },
+  validators.wobject.getNewsfeed, next);
+  if (!value) return;
+
+  const { posts: wobjectPosts, error } = await getPostsByWobject({
+    ...value, app: req.appData, newsFeed: true,
+  });
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: wobjectPosts };
+  next();
+};
+
 const getWobjectNames = async (req, res, next) => {
   const value = validators.validate(req.body,
     validators.wobject.wobjectsNamesScheme, next);
@@ -353,4 +376,5 @@ module.exports = {
   checkIfObjectExists,
   getWobjectUpdates,
   getWobjectNames,
+  newsfeed,
 };
