@@ -288,7 +288,8 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       const { result, id: newId } = arrayFieldFilter({
         idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
       });
-      if (result.length)winningFields[newId] = result;
+      if (result.length) winningFields[newId] = result;
+      if (!result.length) winningFields[newId] = null;
       continue;
     }
 
