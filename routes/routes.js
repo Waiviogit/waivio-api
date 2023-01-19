@@ -121,6 +121,8 @@ wobjRoutes.route('/wobject/:authorPermlink/exist')
   .get(WobjController.checkIfObjectExists);
 wobjRoutes.route('/wobject/:authorPermlink/fields')
   .get(WobjController.getWobjectUpdates);
+wobjRoutes.route('/wobject/:authorPermlink/newsfeed')
+  .post(WobjController.newsfeed);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(WobjController.getMapObjectExperts);

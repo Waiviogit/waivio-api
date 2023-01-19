@@ -101,14 +101,13 @@ const HIVE_ON_BOARD = {
 const PRODUCTION_REQUEST_NODES = [
   'https://anyx.io',
   'https://api.hive.blog',
-  'https://api.openhive.network',
   'https://api.deathwing.me',
   'https://rpc.ecency.com',
   'https://rpc.ausbit.dev',
 ];
 
 const STAGING_REQUEST_NODES = [
-  'https://api.openhive.network',
+  'https://anyx.io',
   'https://api.deathwing.me',
   'https://rpc.ecency.com',
   'https://rpc.ausbit.dev',
