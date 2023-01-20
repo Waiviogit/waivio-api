@@ -530,6 +530,7 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
   return _.reduce(productIds, (acc, el) => {
     if (!_.isEmpty(acc)) return acc;
     const body = jsonHelper.parseJson(el.body, {});
+    if (!_.get(body, 'productIdType')) return;
     if (!_.includes(AFFILIATE_TYPES, body.productIdType.toLocaleLowerCase())) return acc;
     const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
     if (!code) return acc;
