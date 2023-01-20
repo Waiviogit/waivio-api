@@ -53,7 +53,7 @@ exports.DEVICE = {
   MOBILE: 'mobile',
 };
 
-exports.VIP_TICKET_PRICE = 5;
+exports.VIP_TICKET_PRICE = 3;
 
 exports.SUPPORTED_CURRENCIES = {
   USD: 'USD',
