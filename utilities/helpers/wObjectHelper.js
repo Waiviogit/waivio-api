@@ -171,6 +171,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.AUTHORS:
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
+      case FIELDS_NAMES.AUTHORITY:
         if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
         if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
         else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -545,7 +546,7 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit, countryCode,
+  app, returnArray = true, topTagsLimit, countryCode, reqUserName,
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -637,6 +638,7 @@ const processWobjects = async ({
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
+    obj.authority = _.find(obj.authority, (a) => a.creator === reqUserName);
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);
