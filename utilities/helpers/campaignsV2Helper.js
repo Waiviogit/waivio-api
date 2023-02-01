@@ -313,8 +313,8 @@ const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
   const notEligible = notEligibleCampaigns.length === primaryCampaigns.length;
 
   object.campaigns = {
-    min_reward: _.min([minReward, _.get(object, 'campaigns.min_reward', 0)]),
-    max_reward: _.max([maxReward, _.get(object, 'campaigns.max_reward', 0)]),
+    min_reward: minReward,
+    max_reward: maxReward,
     newCampaigns: true,
     notEligible,
   };
