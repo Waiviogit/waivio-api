@@ -14,5 +14,6 @@ moduleExports.getChildren = require('./getChildren');
 moduleExports.objectsOnMap = require('./objectsOnMap');
 moduleExports.campaignOps = require('./campaignOps');
 moduleExports.getWobjectsNames = require('./getWobjectsNames');
+moduleExports.getByOptionsCategory = require('./getByOptionsCategory');
 
 module.exports = moduleExports;

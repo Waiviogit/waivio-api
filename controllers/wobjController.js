@@ -2,7 +2,7 @@ const { Wobj, Post } = require('models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
-  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames,
+  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -355,6 +355,20 @@ const getWobjectNames = async (req, res, next) => {
   next();
 };
 
+const getWobjectOptions = async (req, res, next) => {
+  const value = validators.validate(req.body,
+    validators.wobject.wobjectsOptionsScheme, next);
+  if (!value) return;
+
+  const { wobjects, hasMore, error } = await getByOptionsCategory({
+    ...value, app: req.appData, locale: req.headers.locale,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -377,4 +391,5 @@ module.exports = {
   getWobjectUpdates,
   getWobjectNames,
   newsfeed,
+  getWobjectOptions,
 };

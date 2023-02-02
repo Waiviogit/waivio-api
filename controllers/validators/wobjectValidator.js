@@ -219,3 +219,10 @@ exports.getNewsfeed = Joi.object().keys({
 exports.wobjectsNamesScheme = Joi.object().keys({
   links: Joi.array().items(Joi.string()).required(),
 });
+
+exports.wobjectsOptionsScheme = Joi.object().keys({
+  groupId: Joi.string().required(),
+  category: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});
