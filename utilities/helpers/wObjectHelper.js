@@ -625,7 +625,7 @@ const processWobjects = async ({
       const parent = _.find(parents, { author_permlink: obj.parent });
       obj.parent = await getParentInfo({ locale, app, parent });
     }
-    if (obj.productId) {
+    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
       const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
       if (!_.isEmpty(affiliateLinks)) {
         obj.affiliateLinks = affiliateLinks;
