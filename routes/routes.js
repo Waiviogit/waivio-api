@@ -133,6 +133,8 @@ wobjRoutes.route('/wobjects/campaign/required-object')
 
 wobjRoutes.route('/wobjects/names')
   .post(WobjController.getWobjectNames);
+wobjRoutes.route('/wobjects/options')
+  .post(WobjController.getWobjectOptions);
 // endregion
 // region User
 userRoutes.route('/users')
