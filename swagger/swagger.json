@@ -137,6 +137,71 @@
         }
       }
     },
+    "/api/departments/search": {
+      "post": {
+        "tags": [
+          "departments"
+        ],
+        "description": "Create record deposit/withdraw",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params- top level departments name from top to bottom, names - for objects, exclude - names in path ",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "searchString": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/departments/wobjects": {
       "post": {
         "tags": [

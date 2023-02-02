@@ -86,6 +86,8 @@ wobjRoutes.route('/departments')
   .post(departmentController.getDepartments);
 wobjRoutes.route('/departments/wobjects')
   .post(departmentController.getWobjectsByDepartments);
+wobjRoutes.route('/departments/search')
+  .post(departmentController.getDepartmentsSearch);
 // endregion
 
 // region Wobject
