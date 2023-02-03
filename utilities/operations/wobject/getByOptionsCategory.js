@@ -21,7 +21,11 @@ module.exports = async ({
 
   const optionsCategory = _.get(processed, `options.${category}`);
   if (_.isEmpty(optionsCategory)) return emptyResp;
-  const uniqLinks = _.chain(optionsCategory).uniqBy('author_permlink').map('author_permlink').value();
+  const uniqLinks = _.chain(optionsCategory)
+    .uniqBy('author_permlink')
+    .uniqBy('body.value')
+    .map('author_permlink')
+    .value();
 
   const { result: wobjects, error: wobjError } = await Wobj.find(
     { author_permlink: { $in: uniqLinks } },
@@ -30,7 +34,7 @@ module.exports = async ({
     skip,
     limit + 1,
   );
-  if (wobjError) return {error: wobjError};
+  if (wobjError) return { error: wobjError };
   return {
     wobjects: _.take(wobjects, limit),
     hasMore: wobjects.length > limit,
