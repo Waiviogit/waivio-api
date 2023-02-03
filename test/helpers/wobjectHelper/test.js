@@ -1852,4 +1852,31 @@ describe('On wobjectHelper', async () => {
       expect(feature).not.to.be.undefined;
     });
   });
+
+  describe('On related, similar, add-on field', async () => {
+    const fieldName = _.sample([FIELDS_NAMES.ADD_ON, FIELDS_NAMES.RELATED, FIELDS_NAMES.SIMILAR]);
+    const body = faker.random.string();
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.PRODUCT,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should includes  feature', async () => {
+      const feature = result[fieldName].find((f) => f.body === body);
+      expect(feature).not.to.be.undefined;
+    });
+  });
 });

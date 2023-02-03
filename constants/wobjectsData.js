@@ -51,6 +51,9 @@ exports.FIELDS_NAMES = {
   MANUFACTURER: 'manufacturer',
   BRAND: 'brand',
   FEATURES: 'features',
+  RELATED: 'related',
+  ADD_ON: 'add-on',
+  SIMILAR: 'similar',
 };
 
 exports.LIST_TYPES = {
@@ -122,6 +125,9 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.AUTHORS,
   this.FIELDS_NAMES.DEPARTMENTS,
   this.FIELDS_NAMES.FEATURES,
+  this.FIELDS_NAMES.RELATED,
+  this.FIELDS_NAMES.ADD_ON,
+  this.FIELDS_NAMES.SIMILAR,
 ];
 
 exports.REQUIREDFIELDS = [
