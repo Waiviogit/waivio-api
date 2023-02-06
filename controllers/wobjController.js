@@ -3,7 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getWobjectAuthorities,
+  getWobjectAuthorities,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -401,5 +401,5 @@ module.exports = {
   getWobjectNames,
   newsfeed,
   getWobjectOptions,
-  getAuthorities
+  getAuthorities,
 };
