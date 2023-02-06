@@ -3,6 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
+  getWobjectAuthorities,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -369,6 +370,14 @@ const getWobjectOptions = async (req, res, next) => {
   next();
 };
 
+const getAuthorities = async (req, res, next) => {
+  const { result, error } = await getWobjectAuthorities(req.params.authorPermlink);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -392,4 +401,5 @@ module.exports = {
   getWobjectNames,
   newsfeed,
   getWobjectOptions,
+  getAuthorities,
 };
