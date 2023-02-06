@@ -31,6 +31,7 @@ exports.moderate = async (req, res, next) => {
   }
 
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+  const reqUserName = _.get(req, 'headers.follower');
 
   switch (currentSchema.case) {
     case 1:
@@ -42,6 +43,7 @@ exports.moderate = async (req, res, next) => {
         returnArray: false,
         locale: req.headers.locale,
         countryCode,
+        reqUserName,
       });
       wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
       res.result.json = _.omit(wobject, ['fields']);
@@ -52,6 +54,7 @@ exports.moderate = async (req, res, next) => {
         app,
         locale: req.headers.locale,
         countryCode,
+        reqUserName,
       });
       break;
     case 4:
@@ -61,6 +64,7 @@ exports.moderate = async (req, res, next) => {
         locale: req.headers.locale,
         path: currentSchema.wobjects_path,
         countryCode,
+        reqUserName,
       });
       break;
     case 6:
@@ -69,6 +73,7 @@ exports.moderate = async (req, res, next) => {
         app,
         locale: req.headers.locale,
         countryCode,
+        reqUserName,
       });
       break;
     case 7:
@@ -78,6 +83,7 @@ exports.moderate = async (req, res, next) => {
         locale: req.headers.locale,
         path: currentSchema.wobjects_path,
         countryCode,
+        reqUserName,
       });
       break;
   }
@@ -99,7 +105,7 @@ const getApp = async () => {
 };
 
 const newValidationArray = async ({
-  posts, app, locale, path, countryCode,
+  posts, app, locale, path, countryCode, reqUserName,
 }) => {
   await Promise.all(posts.map(async (post) => {
     if (post[path]) {
@@ -111,6 +117,7 @@ const newValidationArray = async ({
         locale,
         fields: REQUIREDFILDS_WOBJ_LIST,
         countryCode,
+        reqUserName,
       });
     }
   }));
@@ -118,7 +125,7 @@ const newValidationArray = async ({
 };
 
 const newValidation = async ({
-  wobjects, app, locale, countryCode,
+  wobjects, app, locale, countryCode, reqUserName,
 }) => wobjectHelper.processWobjects({
-  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode,
+  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode, reqUserName,
 });
