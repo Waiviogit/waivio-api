@@ -4286,6 +4286,49 @@
         }
       }
     },
+    "/api/wobjects/options": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return list of wobjects on area with last post",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "groupId": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+                "$ref": "#/definitions/inline_response_200_12"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject": {
       "post": {
         "tags": [
