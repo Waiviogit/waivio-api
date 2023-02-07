@@ -4,11 +4,11 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
 
 module.exports = async ({
-  groupId, category, skip, limit, locale, app,
+  authorPermlink, category, skip, limit, locale, app,
 }) => {
   const emptyResp = { wobjects: [], hasMore: false };
   const { result, error } = await Wobj.findOne(
-    { fields: { $elemMatch: { name: FIELDS_NAMES.GROUP_ID, body: groupId } } },
+    { author_permlink: authorPermlink },
   );
   if (error) return { error };
   const processed = await wObjectHelper.processWobjects({

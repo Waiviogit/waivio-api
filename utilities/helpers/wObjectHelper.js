@@ -17,6 +17,7 @@ const _ = require('lodash');
 const config = require('config');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -146,6 +147,15 @@ const specialFieldFilter = (idField, allFields, id) => {
   return idField;
 };
 
+const arrayFieldPush = ({ filter, field }) => {
+  if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
+  if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
+  if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+    return true;
+  }
+  return false;
+};
+
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
 }) => {
@@ -172,11 +182,10 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
       case FIELDS_NAMES.AUTHORITY:
-        if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
-        if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
-        else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
-          validFields.push(field);
-        }
+        if (arrayFieldPush({ filter, field })) validFields.push(field);
+        break;
+      case FIELDS_NAMES.GROUP_ID:
+        if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:
         break;
@@ -479,9 +488,19 @@ const addOptions = async ({
     FIELDS_NAMES.PRICE,
     FIELDS_NAMES.AVATAR,
   ];
-  const { wobjects } = await Wobj.getByField(
-    { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
-  );
+
+  const { result: wobjects } = await Wobj.findObjects({
+    filter: {
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.GROUP_ID,
+          body: { $in: object.groupId },
+        },
+      },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+  });
+
 
   const options = _.reduce(wobjects, (acc, el) => {
     el.fields = addDataToFields({
@@ -496,7 +515,8 @@ const addOptions = async ({
     });
     Object.assign(el,
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
-    if (el.groupId === object.groupId && !_.isEmpty(el.options)) {
+
+    if (_.some(object.groupId, (gId) => _.includes(el.groupId, gId)) && !_.isEmpty(el.options)) {
       acc.push(..._.map(el.options, (opt) => ({
         ...opt,
         author_permlink: el.author_permlink,
