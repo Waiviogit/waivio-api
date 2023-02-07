@@ -501,7 +501,6 @@ const addOptions = async ({
     },
   });
 
-
   const options = _.reduce(wobjects, (acc, el) => {
     el.fields = addDataToFields({
       isOwnershipObj: !!ownership.length,
@@ -516,7 +515,7 @@ const addOptions = async ({
     Object.assign(el,
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
 
-    if (_.some(object.groupId, (gId) => _.includes(el.groupId, gId)) && !_.isEmpty(el.options)) {
+    if (_.every(el.groupId, (gId) => _.includes(object.groupId, gId)) && !_.isEmpty(el.options)) {
       acc.push(..._.map(el.options, (opt) => ({
         ...opt,
         author_permlink: el.author_permlink,
