@@ -13,3 +13,9 @@ exports.departmentsWobjectsSchema = Joi.object().keys({
   skip: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(10),
 }).options(options);
+
+exports.departmentsSearchSchema = Joi.object().keys({
+  searchString: Joi.string().required(),
+  skip: Joi.number().min(0).default(0),
+  limit: Joi.number().min(1).default(10),
+}).options(options);
