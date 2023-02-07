@@ -4303,7 +4303,7 @@
             "schema": {
               "type": "object",
               "properties": {
-                "groupId": {
+                "authorPermlink": {
                   "type": "string"
                 },
                 "category": {
