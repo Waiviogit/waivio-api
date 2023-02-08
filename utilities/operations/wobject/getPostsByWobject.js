@@ -15,16 +15,16 @@ module.exports = async (data) => {
   const { wObject, error: wobjError } = await Wobj.getOne(data.author_permlink);
   if (wobjError) return { error: wobjError };
 
-  if (data.newsFeed) {
-    if (wObject.object_type !== OBJECT_TYPES.NEWS_FEED) return { posts: [] };
-    const processedObj = await wObjectHelper.processWobjects({
-      wobjects: [wObject],
-      locale: data.locale,
-      fields: [FIELDS_NAMES.NEWS_FEED],
-      returnArray: false,
-      app: data.app,
-    });
+  const processedObj = await wObjectHelper.processWobjects({
+    wobjects: [wObject],
+    locale: data.locale,
+    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES],
+    returnArray: false,
+    app: data.app,
+  });
 
+
+  if (data.newsFeed) {
     const newsPermlink = _.get(processedObj, 'newsFeed.permlink');
     if (!newsPermlink) return { posts: [] };
     data.newsPermlink = newsPermlink;
@@ -33,6 +33,7 @@ module.exports = async (data) => {
   const { condition, error: conditionError } = await getWobjFeedCondition({
     ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject,
   });
+
   if (conditionError) return { error: conditionError };
 
   const { posts, error } = await Post.getWobjectPosts({
