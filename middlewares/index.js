@@ -5,6 +5,7 @@ moduleExports.checkUserFollowings = require('./users/checkFollowings').checkUser
 moduleExports.checkBellNotifications = require('./users/checkBellNotifications').checkBellNotifications;
 moduleExports.fillPostAdditionalInfo = require('./posts/fillAdditionalInfo').fillPostAdditionalInfo;
 moduleExports.moderateWobjects = require('./wobject/moderation').moderateWobjects;
+moduleExports.filterUniqGroupId = require('./wobject/uniqueGroupId/filterUniqueGroupId').filterUniqGroupId;
 moduleExports.checkObjectsFollowings = require('./wobject/checkFollowings').checkObjectsFollowings;
 moduleExports.siteUserStatistics = require('./statistics/siteUserStatistics');
 
