@@ -152,9 +152,9 @@ const getPermlinksByGroupId = async (groupId) => {
           body: { $in: groupId },
         },
       },
-      projection: {
-        author_permlink: 1,
-      },
+    },
+    projection: {
+      author_permlink: 1,
     },
   });
   if (!result) return [];
