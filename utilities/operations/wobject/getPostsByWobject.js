@@ -8,6 +8,7 @@ const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 module.exports = async (data) => {
+  const groupIdPermlinks = [];
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
   const { result: muted = [] } = await mutedUserModel
     .find({ condition: { mutedBy: data.userName } });
@@ -18,11 +19,10 @@ module.exports = async (data) => {
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [wObject],
     locale: data.locale,
-    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES],
+    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID],
     returnArray: false,
     app: data.app,
   });
-
 
   if (data.newsFeed) {
     const newsPermlink = _.get(processedObj, 'newsFeed.permlink');
@@ -30,8 +30,12 @@ module.exports = async (data) => {
     data.newsPermlink = newsPermlink;
   }
 
+  if (processedObj.groupId) {
+    groupIdPermlinks.push(...await Wobj.getPermlinksByGroupId(processedObj.groupId));
+  }
+
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject,
+    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks,
   });
 
   if (conditionError) return { error: conditionError };
@@ -50,7 +54,7 @@ module.exports = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   author_permlink, skip, limit, user_languages,
-  lastId, hiddenPosts, muted, newsPermlink, app, wObject,
+  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
@@ -79,8 +83,7 @@ const getWobjFeedCondition = async ({
     condition._id = { $in: [...wObject.latest_posts || []] };
     return { condition };
   }
-
-  condition['wobjects.author_permlink'] = author_permlink;
+  condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks]) };
   return { condition };
 };
 
