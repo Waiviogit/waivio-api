@@ -143,6 +143,24 @@ const countWobjectsByArea = async ({
   }
 };
 
+const getPermlinksByGroupId = async (groupId) => {
+  const { result } = await findObjects({
+    filter: {
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.GROUP_ID,
+          body: { $in: groupId },
+        },
+      },
+      projection: {
+        author_permlink: 1,
+      },
+    },
+  });
+  if (!result) return [];
+  return _.map(result, 'author_permlink');
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -154,4 +172,5 @@ module.exports = {
   getOne,
   find,
   findObjects,
+  getPermlinksByGroupId,
 };
