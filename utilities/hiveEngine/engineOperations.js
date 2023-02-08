@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const { CACHE_KEY } = require('constants/common');
+const { captureException } = require('utilities/helpers/sentryHelper');
 const commentContract = require('./commentContract');
 const tokensContract = require('./tokensContract');
 const marketPools = require('./marketPools');
@@ -47,6 +48,9 @@ exports.calculateHiveEngineVote = async ({
 
   for (const req of requests) {
     if (_.has(req, 'error') || _.isEmpty(req)) {
+      await captureException(
+        new Error(_.get(req, 'error.message', 'calculateHiveEngineVote error')),
+      );
       return { engineVotePrice: 0, rshares: 0, rewards };
     }
   }
