@@ -48,8 +48,9 @@ exports.calculateHiveEngineVote = async ({
 
   for (const req of requests) {
     if (_.has(req, 'error') || _.isEmpty(req)) {
+      const emptyReq = _.isEmpty(req);
       await captureException(
-        new Error(_.get(req, 'error.message', 'calculateHiveEngineVote error')),
+        new Error(_.get(req, 'error.message', `calculateHiveEngineVote error ${account} emptyReq ${emptyReq}`)),
       );
       return { engineVotePrice: 0, rshares: 0, rewards };
     }
