@@ -17,6 +17,7 @@ const _ = require('lodash');
 const config = require('config');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -146,6 +147,15 @@ const specialFieldFilter = (idField, allFields, id) => {
   return idField;
 };
 
+const arrayFieldPush = ({ filter, field }) => {
+  if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
+  if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
+  if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+    return true;
+  }
+  return false;
+};
+
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
 }) => {
@@ -171,11 +181,11 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.AUTHORS:
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
-        if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
-        if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
-        else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
-          validFields.push(field);
-        }
+      case FIELDS_NAMES.AUTHORITY:
+        if (arrayFieldPush({ filter, field })) validFields.push(field);
+        break;
+      case FIELDS_NAMES.GROUP_ID:
+        if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:
         break;
@@ -478,9 +488,18 @@ const addOptions = async ({
     FIELDS_NAMES.PRICE,
     FIELDS_NAMES.AVATAR,
   ];
-  const { wobjects } = await Wobj.getByField(
-    { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
-  );
+
+  const { result: wobjects } = await Wobj.findObjects({
+    filter: {
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.GROUP_ID,
+          body: { $in: object.groupId },
+        },
+      },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+  });
 
   const options = _.reduce(wobjects, (acc, el) => {
     el.fields = addDataToFields({
@@ -495,7 +514,12 @@ const addOptions = async ({
     });
     Object.assign(el,
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
-    if (el.groupId === object.groupId && !_.isEmpty(el.options)) {
+
+    const conditionToAdd = el.groupId
+      && _.every(el.groupId, (gId) => _.includes(object.groupId, gId))
+      && !_.isEmpty(el.options);
+
+    if (conditionToAdd) {
       acc.push(..._.map(el.options, (opt) => ({
         ...opt,
         author_permlink: el.author_permlink,
@@ -545,7 +569,7 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit, countryCode,
+  app, returnArray = true, topTagsLimit, countryCode, reqUserName,
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -609,14 +633,15 @@ const processWobjects = async ({
           id: obj.author_permlink,
         });
       }
+      if (obj.options || obj.groupId) {
+        obj.options = obj.groupId
+          ? await addOptions({
+            object: obj, ownership, admins, administrative, owner, blacklist, locale,
+          })
+          : groupOptions(obj.options, obj);
+      }
     }
-    if (obj.options || obj.groupId) {
-      obj.options = obj.groupId
-        ? await addOptions({
-          object: obj, ownership, admins, administrative, owner, blacklist, locale,
-        })
-        : groupOptions(obj.options, obj);
-    }
+
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
       obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
@@ -637,6 +662,7 @@ const processWobjects = async ({
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
+    obj.authority = _.find(obj.authority, (a) => a.creator === reqUserName);
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);

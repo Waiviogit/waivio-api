@@ -86,6 +86,8 @@ wobjRoutes.route('/departments')
   .post(departmentController.getDepartments);
 wobjRoutes.route('/departments/wobjects')
   .post(departmentController.getWobjectsByDepartments);
+wobjRoutes.route('/departments/search')
+  .post(departmentController.getDepartmentsSearch);
 // endregion
 
 // region Wobject
@@ -123,6 +125,8 @@ wobjRoutes.route('/wobject/:authorPermlink/fields')
   .get(WobjController.getWobjectUpdates);
 wobjRoutes.route('/wobject/:authorPermlink/newsfeed')
   .post(WobjController.newsfeed);
+wobjRoutes.route('/wobject/:authorPermlink/authority-fields')
+  .get(WobjController.getAuthorities);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(WobjController.getMapObjectExperts);
@@ -133,6 +137,8 @@ wobjRoutes.route('/wobjects/campaign/required-object')
 
 wobjRoutes.route('/wobjects/names')
   .post(WobjController.getWobjectNames);
+wobjRoutes.route('/wobjects/options')
+  .post(WobjController.getWobjectOptions);
 // endregion
 // region User
 userRoutes.route('/users')

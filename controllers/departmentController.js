@@ -28,7 +28,24 @@ const getWobjectsByDepartments = async (req, res, next) => {
   next();
 };
 
+const getDepartmentsSearch = async (req, res, next) => {
+  const value = validators
+    .validate(req.body, validators.departments.departmentsSearchSchema, next);
+  if (!value) return;
+  const {
+    result,
+    hasMore,
+    error,
+  } = await departments.searchDepartments(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result, hasMore } };
+  next();
+};
+
 module.exports = {
   getDepartments,
   getWobjectsByDepartments,
+  getDepartmentsSearch,
 };

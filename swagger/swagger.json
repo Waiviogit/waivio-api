@@ -137,6 +137,71 @@
         }
       }
     },
+    "/api/departments/search": {
+      "post": {
+        "tags": [
+          "departments"
+        ],
+        "description": "Create record deposit/withdraw",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params- top level departments name from top to bottom, names - for objects, exclude - names in path ",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "searchString": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/departments/wobjects": {
       "post": {
         "tags": [
@@ -4286,6 +4351,49 @@
         }
       }
     },
+    "/api/wobjects/options": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return list of wobjects on area with last post",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "category": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+                "$ref": "#/definitions/inline_response_200_12"
+            }
+          }
+        }
+      }
+    },
     "/api/wobject": {
       "post": {
         "tags": [
@@ -4391,6 +4499,38 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/wobjField"
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/authority-fields": {
+      "get": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return wobj fields with authority",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "wobject which field need to return",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "$ref": "#/definitions/wobjField"
+              }
             }
           }
         }

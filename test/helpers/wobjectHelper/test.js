@@ -1406,9 +1406,9 @@ describe('On wobjectHelper', async () => {
     });
 
     it('should groupId to be eq obj groupId', async () => {
-      expect(groupId)
+      expect([groupId])
         .to
-        .be
+        .be.deep
         .eq(result.groupId);
     });
   });
