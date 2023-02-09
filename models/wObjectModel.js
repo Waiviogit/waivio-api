@@ -143,7 +143,7 @@ const countWobjectsByArea = async ({
   }
 };
 
-const getPermlinksByGroupId = async (groupId) => {
+const getWobjectsByGroupId = async (groupId) => {
   const { result } = await findObjects({
     filter: {
       fields: {
@@ -154,11 +154,11 @@ const getPermlinksByGroupId = async (groupId) => {
       },
     },
     projection: {
-      author_permlink: 1,
+      search: 0,
     },
   });
   if (!result) return [];
-  return _.map(result, 'author_permlink');
+  return result;
 };
 
 module.exports = {
@@ -172,5 +172,5 @@ module.exports = {
   getOne,
   find,
   findObjects,
-  getPermlinksByGroupId,
+  getWobjectsByGroupId,
 };

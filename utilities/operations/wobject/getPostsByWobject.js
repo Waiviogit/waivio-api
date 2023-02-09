@@ -31,7 +31,18 @@ module.exports = async (data) => {
   }
 
   if (processedObj.groupId) {
-    groupIdPermlinks.push(...await Wobj.getPermlinksByGroupId(processedObj.groupId));
+    const groupIdObjects = await Wobj.getWobjectsByGroupId(processedObj.groupId);
+    const processedObjects = await wObjectHelper.processWobjects({
+      wobjects: groupIdObjects,
+      locale: data.locale,
+      fields: [FIELDS_NAMES.GROUP_ID],
+      returnArray: true,
+      app: data.app,
+    });
+    const links = _.chain(processedObjects)
+      .filter((o) => _.some(processedObj.groupId, (id) => _.includes(_.get(o, 'groupId', []), id)))
+      .map('author_permlink').value();
+    groupIdPermlinks.push(...links);
   }
 
   const { condition, error: conditionError } = await getWobjFeedCondition({
