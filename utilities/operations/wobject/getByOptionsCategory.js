@@ -1,5 +1,4 @@
 const { Wobj } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
 
@@ -13,7 +12,6 @@ module.exports = async ({
   if (error) return { error };
   const processed = await wObjectHelper.processWobjects({
     wobjects: [result],
-    fields: [FIELDS_NAMES.OPTIONS, FIELDS_NAMES.GROUP_ID],
     app,
     locale,
     returnArray: false,
