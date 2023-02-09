@@ -515,7 +515,11 @@ const addOptions = async ({
     Object.assign(el,
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
 
-    if (_.every(el.groupId, (gId) => _.includes(object.groupId, gId)) && !_.isEmpty(el.options)) {
+    const conditionToAdd = el.groupId
+      && _.every(el.groupId, (gId) => _.includes(object.groupId, gId))
+      && !_.isEmpty(el.options);
+
+    if (conditionToAdd) {
       acc.push(..._.map(el.options, (opt) => ({
         ...opt,
         author_permlink: el.author_permlink,
