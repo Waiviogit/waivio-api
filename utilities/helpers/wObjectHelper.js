@@ -629,14 +629,15 @@ const processWobjects = async ({
           id: obj.author_permlink,
         });
       }
+      if (obj.options || obj.groupId) {
+        obj.options = obj.groupId
+          ? await addOptions({
+            object: obj, ownership, admins, administrative, owner, blacklist, locale,
+          })
+          : groupOptions(obj.options, obj);
+      }
     }
-    if (obj.options || obj.groupId) {
-      obj.options = obj.groupId
-        ? await addOptions({
-          object: obj, ownership, admins, administrative, owner, blacklist, locale,
-        })
-        : groupOptions(obj.options, obj);
-    }
+
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
       obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
