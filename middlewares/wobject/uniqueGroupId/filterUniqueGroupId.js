@@ -19,10 +19,11 @@ const filterUniqGroupId = async (req, res, next) => {
   }
   switch (currentSchema.case) {
     case 1:
-      res.result.json[currentSchema.wobjects_path] = _.uniqBy(
+      res.result.json[currentSchema.wobjects_path] = _.chain(
         unwindByGroupId(res.result.json[currentSchema.wobjects_path], FIELDS_NAMES.GROUP_ID),
+      ).uniqBy(
         FIELDS_NAMES.GROUP_ID,
-      );
+      ).uniqBy('author_permlink').value();
       break;
     default:
       break;
