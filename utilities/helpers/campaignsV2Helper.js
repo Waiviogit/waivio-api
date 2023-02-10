@@ -220,7 +220,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
         },
         frequency: {
           $or: [
-            { $gt: ['$daysPassed', '$frequencyAssign'] },
+            { $gte: ['$daysPassed', '$frequencyAssign'] },
             { $eq: ['$daysPassed', null] },
           ],
         },
