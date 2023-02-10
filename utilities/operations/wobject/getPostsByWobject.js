@@ -17,7 +17,7 @@ module.exports = async (data) => {
   if (wobjError) return { error: wobjError };
 
   const processedObj = await wObjectHelper.processWobjects({
-    wobjects: [wObject],
+    wobjects: [_.cloneDeep(wObject)],
     locale: data.locale,
     fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID],
     returnArray: false,
