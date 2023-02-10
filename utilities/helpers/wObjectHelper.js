@@ -532,7 +532,6 @@ const addOptions = async ({
 
   return groupOptions(options);
 };
-
 /**
  * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
  */
@@ -640,6 +639,14 @@ const processWobjects = async ({
           })
           : groupOptions(obj.options, obj);
       }
+    }
+
+    if ((obj.options || obj.groupId) && _.includes(fields, FIELDS_NAMES.OPTIONS)) {
+      obj.options = obj.groupId
+        ? await addOptions({
+          object: obj, ownership, admins, administrative, owner, blacklist, locale,
+        })
+        : groupOptions(obj.options, obj);
     }
 
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
