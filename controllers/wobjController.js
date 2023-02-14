@@ -194,6 +194,7 @@ const getWobjectField = async (req, res, next) => {
     locale: req.headers.locale,
     app: req.headers.app,
     authorPermlink: req.params.authorPermlink,
+    reqUserName: req.headers.follower,
   }),
   validators.wobject.getWobjectField, next);
   if (!value) return;
