@@ -45,8 +45,10 @@ module.exports = async (data) => {
     groupIdPermlinks.push(...links);
   }
 
+  const removeFilter = getRemoveFilter(processedObj);
+
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks,
+    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter,
   });
 
   if (conditionError) return { error: conditionError };
@@ -59,12 +61,19 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
+  if (data.skip === 0) {
+    const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));
+    if (!_.isEmpty(pinPosts)) {
+      posts.unshift(..._.map(pinPosts, (el) => ({ ...el, pin: true })));
+    }
+  }
+
   return { posts };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
-  author_permlink, skip, limit, user_languages,
+  author_permlink, user_languages, removeFilter,
   lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks,
 }) => {
   const condition = {
@@ -83,23 +92,17 @@ const getWobjFeedCondition = async ({
 
   if (newsPermlink) {
     return getNewsFilterCondition({
-      condition, wObject, newsPermlink, app, author_permlink,
+      condition, wObject, newsPermlink, app, author_permlink, removeFilter,
     });
   }
 
-  // we will never use this condition
-  if (!skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty(user_languages)) {
-    // if wobject have no newsFilter and count of
-    // posts less than cashed count => get posts from cashed array
-    condition._id = { $in: [...wObject.latest_posts || []] };
-    return { condition };
-  }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks]) };
+  if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
   return { condition };
 };
 
 const getNewsFilterCondition = ({
-  condition, wObject, newsPermlink, app, author_permlink,
+  condition, wObject, newsPermlink, app, author_permlink, removeFilter,
 }) => {
   const newsFilter = JSON.parse(_.get(
     _.find(wObject.fields, (f) => f.permlink === newsPermlink),
@@ -158,6 +161,30 @@ const getNewsFilterCondition = ({
   }
 
   condition.$and = _.compact([firstCond, secondCond]);
+  if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
 
   return { condition };
+};
+
+const getRemoveFilter = (processedObj) => _.chain([...processedObj.remove, ..._.map(processedObj.pin, 'body')])
+  .compact()
+  .uniq()
+  .map((el) => {
+    const [author, permlink] = el.split('/');
+    return { author, permlink };
+  })
+  .value();
+
+const getPinFilter = (processedObj) => {
+  const filteredPinBody = _.difference(_.map(processedObj.pin, 'body'), processedObj.remove);
+
+  return _.chain(processedObj.pin)
+    .filter((el) => _.includes(filteredPinBody, el.body))
+    .sort(wObjectHelper.arrayFieldsSpecialSort)
+    .take(3)
+    .map((el) => {
+      const [author, permlink] = el.body.split('/');
+      return { author, permlink };
+    })
+    .value();
 };

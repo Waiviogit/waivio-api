@@ -1,7 +1,7 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  COUNTRY_CODES, AFFILIATE_TYPES, AMAZON_LINKS_BY_COUNTRY,
+  AFFILIATE_TYPES, AMAZON_LINKS_BY_COUNTRY,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -156,11 +156,11 @@ const arrayFieldPush = ({ filter, field }) => {
   return false;
 };
 
-const arrayFieldsSpecialSort = (arr) => arr.sort((a, b) => {
+const arrayFieldsSpecialSort = (a, b) => {
   if (!!a.adminVote && !!b.adminVote) return b._id - a._id;
   if (!!a.adminVote || !!b.adminVote) return !!b.adminVote - !!a.adminVote;
   return b.weight - a.weight;
-});
+};
 
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
@@ -198,12 +198,6 @@ const arrayFieldFilter = ({
       default:
         break;
     }
-  }
-
-  if (id === FIELDS_NAMES.PIN) {
-    const sorted = arrayFieldsSpecialSort(validFields);
-    const result = _.chain(sorted).take(3).map('body').value();
-    return { result, id };
   }
 
   return { result: _.compact(validFields), id };
@@ -731,4 +725,5 @@ module.exports = {
   calculateApprovePercent,
   addDataToFields,
   moderatePosts,
+  arrayFieldsSpecialSort,
 };
