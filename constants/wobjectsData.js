@@ -350,4 +350,4 @@ exports.AFFILIATE_TYPE = {
 
 exports.AMAZON_PRODUCT_IDS = ['asin', 'isbn-10', 'asins'];
 exports.WALMART_PRODUCT_IDS = ['walmartNum', 'walmart'];
-exports.TARGET_PRODUCT_IDS = ['walmartNum', 'walmart'];
+exports.TARGET_PRODUCT_IDS = ['target'];
