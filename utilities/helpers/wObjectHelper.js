@@ -557,41 +557,42 @@ const formAmazonLink = ({ affiliateCodes, productId }) => {
   return { type: AFFILIATE_TYPE.AMAZON, link };
 };
 
-const formWalmartLink = ({ productID }) => {
-  const link = `https://www.walmart.com/ip/${productID}`;
+const formWalmartLink = ({ productId }) => {
+  const link = `https://www.walmart.com/ip/${productId}`;
   return { type: AFFILIATE_TYPE.WALMART, link };
 };
 
-const formTargetLink = ({ productID }) => {
-  const link = `https://www.target.com/p/${productID}`;
+const formTargetLink = ({ productId }) => {
+  const link = `https://www.target.com/p/${productId}`;
   return { type: AFFILIATE_TYPE.TARGET, link };
 };
 
 const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
   if (_.isEmpty(affiliateCodes)) return [];
-  return _.reduce(productIds, (acc, el) => {
-    if (!_.isEmpty(acc)) return acc;
-    const body = jsonHelper.parseJson(el.body, {});
-    if (!_.get(body, 'productIdType')) return;
-    const { productId, productIdType } = body;
-    if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-      const link = formAmazonLink({ affiliateCodes, productId });
-      if (link) acc.push(link);
-      return acc;
-    }
-    if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-      const link = formWalmartLink({ productId });
-      if (link) acc.push(link);
-      return acc;
-    }
-    if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-      const link = formTargetLink({ productId });
-      if (link) acc.push(link);
-      return acc;
-    }
+  return _.chain(productIds)
+    .reduce((acc, el) => {
+      const body = jsonHelper.parseJson(el.body, {});
+      if (!_.get(body, 'productIdType')) return;
+      const { productId, productIdType } = body;
+      if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+        const link = formAmazonLink({ affiliateCodes, productId });
+        if (link) acc.push(link);
+        return acc;
+      }
+      if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+        const link = formWalmartLink({ productId });
+        if (link) acc.push(link);
+        return acc;
+      }
+      if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+        const link = formTargetLink({ productId });
+        if (link) acc.push(link);
+        return acc;
+      }
 
-    return acc;
-  }, []);
+      return acc;
+    }, []).uniqBy('type')
+    .value();
 };
 
 /** Parse wobjects to get its winning */
