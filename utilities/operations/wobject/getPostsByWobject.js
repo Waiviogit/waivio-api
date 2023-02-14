@@ -2,7 +2,7 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { WOBJECT_LATEST_POSTS_COUNT, OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
+const { WOBJECT_LATEST_POSTS_COUNT, FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -19,7 +19,7 @@ module.exports = async (data) => {
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
     locale: data.locale,
-    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID],
+    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.PIN, FIELDS_NAMES.REMOVE],
     returnArray: false,
     app: data.app,
   });

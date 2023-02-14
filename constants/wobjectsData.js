@@ -51,6 +51,8 @@ exports.FIELDS_NAMES = {
   MANUFACTURER: 'manufacturer',
   BRAND: 'brand',
   FEATURES: 'features',
+  PIN: 'pin',
+  REMOVE: 'remove',
 };
 
 exports.LIST_TYPES = {
@@ -124,6 +126,8 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.FEATURES,
   this.FIELDS_NAMES.AUTHORITY,
   this.FIELDS_NAMES.GROUP_ID,
+  this.FIELDS_NAMES.PIN,
+  this.FIELDS_NAMES.REMOVE,
 ];
 
 exports.REQUIREDFIELDS = [

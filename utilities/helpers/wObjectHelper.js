@@ -156,6 +156,12 @@ const arrayFieldPush = ({ filter, field }) => {
   return false;
 };
 
+const arrayFieldsSpecialSort = (arr) => arr.sort((a, b) => {
+  if (!!a.adminVote && !!b.adminVote) return b._id - a._id;
+  if (!!a.adminVote || !!b.adminVote) return !!b.adminVote - !!a.adminVote;
+  return b.weight - a.weight;
+});
+
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
 }) => {
@@ -182,14 +188,22 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
       case FIELDS_NAMES.AUTHORITY:
+      case FIELDS_NAMES.PIN:
         if (arrayFieldPush({ filter, field })) validFields.push(field);
         break;
       case FIELDS_NAMES.GROUP_ID:
+      case FIELDS_NAMES.REMOVE:
         if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:
         break;
     }
+  }
+
+  if (id === FIELDS_NAMES.PIN) {
+    const sorted = arrayFieldsSpecialSort(validFields);
+    const result = _.chain(sorted).take(3).map('body').value();
+    return { result, id };
   }
 
   return { result: _.compact(validFields), id };
