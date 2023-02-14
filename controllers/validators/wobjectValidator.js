@@ -150,6 +150,7 @@ exports.getWobjectField = Joi.object().keys({
   fieldName: Joi.string().required(),
   locale: Joi.string().default('en-US'),
   app: Joi.string().required(),
+  reqUserName: Joi.string(),
 });
 
 exports.getWobjectsNearby = Joi.object().keys({
