@@ -1,7 +1,7 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  COUNTRY_CODES, AFFILIATE_TYPES, AMAZON_LINKS_BY_COUNTRY,
+  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -548,19 +548,48 @@ const getAppAffiliateCodes = async ({ app, countryCode }) => {
   return waivioAffiliate;
 };
 
+const formAmazonLink = ({ affiliateCodes, productId }) => {
+  if (_.isEmpty(affiliateCodes)) return;
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+  if (!code) return;
+  const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
+  const link = `https://www.${host}/dp/${productId}/ref=nosim?tag=${code.affiliateCode}`;
+  return { type: AFFILIATE_TYPE.AMAZON, link };
+};
+
+const formWalmartLink = ({ productID }) => {
+  const link = `https://www.walmart.com/ip/${productID}`;
+  return { type: AFFILIATE_TYPE.WALMART, link };
+};
+
+const formTargetLink = ({ productID }) => {
+  const link = `https://www.target.com/p/${productID}`;
+  return { type: AFFILIATE_TYPE.TARGET, link };
+};
+
 const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
   if (_.isEmpty(affiliateCodes)) return [];
   return _.reduce(productIds, (acc, el) => {
     if (!_.isEmpty(acc)) return acc;
     const body = jsonHelper.parseJson(el.body, {});
     if (!_.get(body, 'productIdType')) return;
-    if (!_.includes(AFFILIATE_TYPES, body.productIdType.toLocaleLowerCase())) return acc;
-    const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
-    if (!code) return acc;
-    const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
-    const asin = body.productId;
-    const link = `https://www.${host}/dp/${asin}/ref=nosim?tag=${code.affiliateCode}`;
-    acc.push({ type: 'amazon', link });
+    const { productId, productIdType } = body;
+    if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+      const link = formAmazonLink({ affiliateCodes, productId });
+      if (link) acc.push(link);
+      return acc;
+    }
+    if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+      const link = formWalmartLink({ productId });
+      if (link) acc.push(link);
+      return acc;
+    }
+    if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
+      const link = formTargetLink({ productId });
+      if (link) acc.push(link);
+      return acc;
+    }
+
     return acc;
   }, []);
 };
