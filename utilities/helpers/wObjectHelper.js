@@ -568,31 +568,42 @@ const formTargetLink = ({ productId }) => {
 };
 
 const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
-  if (_.isEmpty(affiliateCodes)) return [];
-  return _.chain(productIds)
-    .reduce((acc, el) => {
-      const body = jsonHelper.parseJson(el.body, {});
-      if (!_.get(body, 'productIdType')) return;
-      const { productId, productIdType } = body;
-      if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-        const link = formAmazonLink({ affiliateCodes, productId });
-        if (link) acc.push(link);
-        return acc;
-      }
-      if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-        const link = formWalmartLink({ productId });
-        if (link) acc.push(link);
-        return acc;
-      }
-      if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())) {
-        const link = formTargetLink({ productId });
-        if (link) acc.push(link);
-        return acc;
-      }
+  const links = new Map();
+  const mappedProductIds = _.map(productIds, (el) => {
+    const body = jsonHelper.parseJson(el.body, {});
+    if (!_.get(body, 'productIdType')) return;
+    return {
+      productId: body.productId,
+      productIdType: body.productIdType,
+    };
+  });
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+  const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
+  const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
+  if (productIdObj) {
+    const link = formAmazonLink({ affiliateCodes, productId: productIdObj.productId });
+    if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
+  }
+  for (const mappedProductId of mappedProductIds) {
+    const { productId, productIdType } = mappedProductId;
+    if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.AMAZON)) {
+      const link = formAmazonLink({ affiliateCodes, productId });
+      if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
+    }
+    if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.WALMART)) {
+      const link = formWalmartLink({ productId });
+      if (link) links.set(AFFILIATE_TYPE.WALMART, link);
+    }
+    if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.TARGET)) {
+      const link = formTargetLink({ productId });
+      if (link) links.set(AFFILIATE_TYPE.TARGET, link);
+    }
+  }
 
-      return acc;
-    }, []).uniqBy('type')
-    .value();
+  return Array.from(links, ([, value]) => ({ ...value }));
 };
 
 /** Parse wobjects to get its winning */
