@@ -578,7 +578,7 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
     };
   });
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
-  const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
+  const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
   if (productIdObj) {
     const link = formAmazonLink({ affiliateCodes, productId: productIdObj.productId });
