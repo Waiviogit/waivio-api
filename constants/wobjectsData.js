@@ -342,4 +342,12 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   NONE: 'NONE',
 };
 
-exports.AFFILIATE_TYPES = ['asin', 'isbn-10', 'asins'];
+exports.AFFILIATE_TYPE = {
+  WALMART: 'walmart',
+  AMAZON: 'amazon',
+  TARGET: 'target',
+};
+
+exports.AMAZON_PRODUCT_IDS = ['asin', 'isbn-10', 'asins'];
+exports.WALMART_PRODUCT_IDS = ['walmartNum', 'walmart'];
+exports.TARGET_PRODUCT_IDS = ['target'];
