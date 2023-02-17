@@ -99,22 +99,8 @@
             "description" : "successful operation",
             "schema" : {
               "type" : "array",
-              "items" : {
-                "type" : "object",
-                "properties" : {
-                  "name" : {
-                    "type" : "string"
-                  },
-                  "subdirectory" : {
-                    "type" : "boolean"
-                  },
-                  "related" : {
-                    "type" : "array",
-                    "items" : {
-                      "type" : "string"
-                    }
-                  }
-                }
+              "items": {
+                "$ref": "#/definitions/departments_response"
               }
             }
           },
@@ -258,6 +244,176 @@
             "description": "successful operation",
             "schema": {
               "$ref": "#/definitions/shop_filter_resp"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/user/departements" : {
+      "post" : {
+        "tags" : [ "shop" ],
+        "description" : "Get all departments",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "params",
+          "in" : "body",
+          "description" : "no params",
+          "required" : true,
+          "schema" : {
+            "type" : "object",
+            "properties" : {
+              "userName" : {
+                "type" : "string"
+              },
+              "skip" : {
+                "type" : "number"
+              },
+              "limit" : {
+                "type" : "number"
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "$ref": "#/definitions/departments_response"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/user/department-feed": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "Get department feed",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "department": {
+                  "type": "string"
+                },
+                "userName": {
+                  "type": "string"
+                },
+                "filter": {
+                  "$ref": "#/definitions/shop_filter"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/shop_object_feed"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/user/main-feed": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "Get main feed",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "filter": {
+                  "$ref": "#/definitions/shop_filter"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items" : {
+                "$ref": "#/definitions/shop_object_feed"
+              }
             }
           },
           "422": {
@@ -9346,6 +9502,23 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "departments_response" : {
+      "type" : "object",
+      "properties" : {
+        "name" : {
+          "type" : "string"
+        },
+        "subdirectory" : {
+          "type" : "boolean"
+        },
+        "related" : {
+          "type" : "array",
+          "items" : {
+            "type" : "string"
           }
         }
       }

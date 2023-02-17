@@ -61,9 +61,57 @@ const getFilters = async (req, res, next) => {
   res.json(result);
 };
 
+const getUserDepartments = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.userDepartmentsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getUserDepartments.getTopDepartments(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getUserFeed = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, ...req.headers }, validators.shop.userFeedSchema, next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { result, error } = await shop.getUserFeed({
+    ...value,
+    app: req.appData,
+    countryCode,
+  });
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getUserFeedByDepartment = async (req, res, next) => {
+  const value = validators.validate({
+    ...req.body,
+    ...req.headers,
+  }, validators.shop.departmentFeedSchema, next);
+  if (!value) return;
+
+  const { user } = await User.getOne(value.follower);
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { result, error } = await shop.getUserDepartmentFeed({
+    ...value,
+    app: req.appData,
+    countryCode,
+    user,
+  });
+
+  if (error) return next(error);
+  res.json(result);
+};
+
 module.exports = {
   getDepartments,
   getFeed,
   getFilters,
   getFeedByDepartment,
+  getUserDepartments,
+  getUserFeed,
+  getUserFeedByDepartment,
 };

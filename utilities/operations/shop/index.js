@@ -3,4 +3,7 @@ module.exports = {
   getShopFeed: require('./getShopFeed'),
   getDepartmentFeed: require('./getDepartmentFeed'),
   getShopFilters: require('./getShopFilters'),
+  getUserDepartments: require('./getUserDepartments'),
+  getUserFeed: require('./getUserFeed'),
+  getUserDepartmentFeed: require('./getUserDepartmentFeed'),
 };

@@ -1,12 +1,12 @@
 const _ = require('lodash');
+const { Wobj, Post } = require('models');
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
 } = require('constants/wobjectsData');
+const shopHelper = require('utilities/helpers/shopHelper');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj } = require('models');
 
 module.exports = async ({
   countryCode,
@@ -18,8 +18,22 @@ module.exports = async ({
   skip = 0,
   user,
   app,
+  wobjectsFromPosts,
+  follower,
 }) => {
   const emptyResp = { department, wobjects: [], hasMore: false };
+
+  if (!wobjectsFromPosts) {
+    wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
+  }
+
+  const orFilter = [
+    { 'authority.ownership': userName },
+    { 'authority.administrative': userName },
+  ];
+  if (!_.isEmpty(wobjectsFromPosts)) {
+    orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
+  }
 
   const {
     result,
@@ -29,6 +43,7 @@ module.exports = async ({
       departments: department,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
       ...shopHelper.makeFilterCondition(filter),
+      $or: orFilter,
     },
     options: {
       skip,
@@ -42,7 +57,7 @@ module.exports = async ({
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(result, limit),
     fields: REQUIREDFILDS_WOBJ_LIST,
-    reqUserName: userName,
+    reqUserName: follower,
     app,
     locale,
     countryCode,
