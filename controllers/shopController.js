@@ -56,7 +56,9 @@ const getFeedByDepartment = async (req, res, next) => {
 };
 
 const getFilters = async (req, res, next) => {
-
+  const { result, error } = await shop.getShopFilters();
+  if (error) return next(error);
+  res.json(result);
 };
 
 module.exports = {

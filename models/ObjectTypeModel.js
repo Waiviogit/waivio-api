@@ -101,6 +101,15 @@ const aggregate = async (pipeline = []) => {
   }
 };
 
+const find = async ({ filter, projection, options }) => {
+  try {
+    const result = await ObjectType.find(filter, projection, options).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
-  getAll, search, getOne, aggregate,
+  getAll, search, getOne, aggregate, find,
 };
