@@ -554,7 +554,7 @@ const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!_.isEmpty(defaultCountryCode)) return defaultCountryCode;
   if (app.host === config.appHost) return [];
 
-  return getAppAffiliateCodes({ app: config.appHost, countryCode });
+  return getAppAffiliateCodes({ app: { host: config.appHost }, countryCode });
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {
