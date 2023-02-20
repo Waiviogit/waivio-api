@@ -53,6 +53,7 @@ exports.FIELDS_NAMES = {
   FEATURES: 'features',
   PIN: 'pin',
   REMOVE: 'remove',
+  SHOP_FILTER: 'shopFilter',
 };
 
 exports.LIST_TYPES = {
@@ -88,6 +89,7 @@ exports.OBJECT_TYPES = {
   BOOK: 'book',
   WIDGET: 'widget',
   NEWS_FEED: 'newsfeed',
+  SHOP: 'shop',
 };
 
 exports.ADMIN_ROLES = {
