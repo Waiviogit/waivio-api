@@ -23,7 +23,7 @@ exports.saveUserIp = async (req, res, next) => {
       return next();
     }
     const path = host.replace(REPLACE_HOST_WITH_PARENT, '');
-    req.pathToRedirect = `${URL.HTTPS}${path}/rewards/all`;
+    req.pathToRedirect = `${URL.HTTPS}${path}/rewards/global`;
     return next();
   }
   req.appData = result;

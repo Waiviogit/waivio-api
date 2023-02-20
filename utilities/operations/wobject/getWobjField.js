@@ -4,7 +4,7 @@ const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('con
 const { getPost } = require('../../hiveApi/postsUtil');
 
 module.exports = async ({
-  authorPermlink, author, fieldName, locale, permlink,
+  authorPermlink, author, fieldName, locale, permlink, reqUserName,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink);
   const { error: appError, result: appData } = await appHelper.getApp();
@@ -17,6 +17,7 @@ module.exports = async ({
     app: appData,
     returnArray: false,
     hiveData: true,
+    reqUserName,
   });
 
   if (fieldName === 'avatar' && !filteredObject.avatar) {
