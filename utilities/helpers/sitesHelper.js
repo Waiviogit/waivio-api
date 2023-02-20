@@ -5,7 +5,9 @@ const {
 const {
   App, websitePayments, User, Wobj, geoIpModel,
 } = require('models');
-const { FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ } = require('constants/wobjectsData');
+const {
+  FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ, DEFAULT_COUNTRY_CODE,
+} = require('constants/wobjectsData');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
 const { redisGetter } = require('utilities/redis');
@@ -270,7 +272,7 @@ exports.getIpFromHeaders = (req) => (process.env.NODE_ENV === 'production'
   : req.headers['x-real-ip']);
 
 exports.getCountryCodeFromIp = async (ip) => {
-  const defaultCode = 'US';
+  const defaultCode = DEFAULT_COUNTRY_CODE;
   if (!ip) return defaultCode;
   const { result } = await geoIpModel.findOne(ip);
   if (_.get(result, 'countryCode')) return result.countryCode;
