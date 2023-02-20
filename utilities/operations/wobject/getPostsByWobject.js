@@ -166,7 +166,7 @@ const getNewsFilterCondition = ({
   return { condition };
 };
 
-const getRemoveFilter = (processedObj) => _.chain([...processedObj.remove, ..._.map(processedObj.pin, 'body')])
+const getRemoveFilter = (processedObj) => _.chain([...(processedObj.remove || []), ..._.map(processedObj.pin, 'body')])
   .compact()
   .uniq()
   .map((el) => {
