@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Wobj, Post } = require('models');
+const { Wobj, Post, User } = require('models');
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
@@ -26,12 +26,15 @@ module.exports = async ({
   if (!wobjectsFromPosts) {
     wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
   }
+  if (!user) ({ user } = await User.getOne(userName));
+  const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
 
   const orFilter = [
     { 'authority.ownership': userName },
     { 'authority.administrative': userName },
   ];
-  if (!_.isEmpty(wobjectsFromPosts)) {
+
+  if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
     orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
   }
 
