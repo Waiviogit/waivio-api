@@ -1,7 +1,7 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS,
+  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -546,14 +546,15 @@ const addOptions = async ({
 const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!app) return [];
   const { result } = await AppAffiliateModel.find(
-    { filter: { host: app.host, countryCode } },
+    { filter: { host: app.host, countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] } } },
   );
-  if (!_.isEmpty(result)) return result;
+  const requestCountryCode = _.filter(result, (aff) => aff.countryCode === countryCode);
+  if (!_.isEmpty(requestCountryCode)) return requestCountryCode;
+  const defaultCountryCode = _.filter(result, (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE);
+  if (!_.isEmpty(defaultCountryCode)) return defaultCountryCode;
   if (app.host === config.appHost) return [];
-  const { result: waivioAffiliate } = await AppAffiliateModel.find(
-    { filter: { host: config.appHost, countryCode } },
-  );
-  return waivioAffiliate;
+
+  return getAppAffiliateCodes({ app: config.appHost, countryCode });
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {

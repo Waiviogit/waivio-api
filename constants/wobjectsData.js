@@ -319,7 +319,6 @@ exports.COUNTRY_CODES = {
   SG: 'Singapore',
   JP: 'Japan',
   AU: 'Australia',
-  UA: 'Ukraine', /// test todo remove
   NONE: 'NONE',
 };
 
@@ -342,7 +341,6 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   SG: 'amazon.sg',
   JP: 'amazon.co.jp',
   AU: 'amazon.com.au',
-  UA: 'amazon.co.jp', /// test todo remove
   NONE: 'NONE',
 };
 
@@ -351,6 +349,8 @@ exports.AFFILIATE_TYPE = {
   AMAZON: 'amazon',
   TARGET: 'target',
 };
+
+exports.DEFAULT_COUNTRY_CODE = 'US';
 
 exports.AMAZON_PRODUCT_IDS = ['asin', 'isbn-10', 'asins'];
 exports.WALMART_PRODUCT_IDS = ['walmartNum', 'walmart'];
