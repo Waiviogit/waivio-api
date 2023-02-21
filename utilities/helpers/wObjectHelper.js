@@ -719,7 +719,10 @@ const processWobjects = async ({
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
-    obj.authority = _.find(obj.authority, (a) => a.creator === reqUserName);
+    obj.authority = _.find(
+      obj.authority,
+      (a) => a.creator === reqUserName && a.body === 'administrative',
+    );
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);
