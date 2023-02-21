@@ -44,7 +44,9 @@ const getFeedByDepartment = async (req, res, next) => {
 
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getDepartmentFeed({
+  const {
+    department, wobjects, hasMore, error,
+  } = await shop.getDepartmentFeed({
     ...value,
     app: req.appData,
     countryCode,
@@ -52,7 +54,7 @@ const getFeedByDepartment = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json(result);
+  res.json({ department, wobjects, hasMore });
 };
 
 const getFilters = async (req, res, next) => {
@@ -95,7 +97,9 @@ const getUserFeedByDepartment = async (req, res, next) => {
   const { user } = await User.getOne(value.follower);
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getUserDepartmentFeed({
+  const {
+    department, wobjects, hasMore, error,
+  } = await shop.getUserDepartmentFeed({
     ...value,
     app: req.appData,
     countryCode,
@@ -103,7 +107,7 @@ const getUserFeedByDepartment = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json(result);
+  res.json({ department, wobjects, hasMore });
 };
 
 module.exports = {

@@ -26,7 +26,7 @@ exports.getTopDepartments = async ({
   });
 
   const names = _.uniq(
-    _.flatten(result.map((item) => item.departments.map((department) => department))),
+    _.flatten(_.map(result, (item) => _.map(item.departments, (department) => department))),
   );
   const { result: departments } = await Department.find({
     filter: { name: { $in: names } },

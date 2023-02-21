@@ -12,7 +12,7 @@ module.exports = async ({
 }) => {
   const { user } = await User.getOne(userName);
   const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
-  const departments = await getUserDepartments
+  const { result: departments } = await getUserDepartments
     .getTopDepartments({ userName, wobjectsFromPosts });
 
   const result = await Promise.all(departments.map(async (department) => getUserDepartmentFeed({
