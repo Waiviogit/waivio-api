@@ -16,7 +16,9 @@ module.exports = async () => {
   }
 
   return {
-    rating: [6, 8, 10],
-    tagCategoryFilters,
+    result: {
+      rating: [6, 8, 10],
+      tagCategoryFilters,
+    },
   };
 };
