@@ -1,23 +1,27 @@
 const { Department } = require('models');
 const _ = require('lodash');
 const {
-  filterDepartments, mapDepartments, getDepartmentsOnWobject, makeConditions,
+  filterDepartments, mapDepartments, getDepartmentsOnWobject,
 } = require('utilities/operations/departments/departmentsMapper');
 
+const makeConditions = ({ name, excluded = [] }) => {
+  if (name) return { name: { $nin: [name, ...excluded] }, related: name };
+  return { level: 1 };
+};
+
 // we can add host in future for sites
-module.exports = async ({ name, names = [], excluded = [] }) => {
+module.exports = async ({ name, excluded = [] } = {}) => {
   const { result: departments, error } = await Department.find(
     {
-      filter: makeConditions({ name, names, excluded }),
-      ...(!_.isEmpty(names) && { options: { sort: { objectsCount: -1 }, limit: 7 } }),
+      filter: makeConditions({ name, excluded }),
+      options: { sort: { sortScore: 1, objectsCount: -1 } },
     },
   );
 
   if (error) return { error };
   if (_.isEmpty(departments)) return { result: [] };
 
-  const topLevel = !name && _.isEmpty(names);
-  if (topLevel) return { result: await mapDepartments(departments) };
+  if (!name) return { result: await mapDepartments(departments) };
   if (name) {
     return {
       result: await mapDepartments(
