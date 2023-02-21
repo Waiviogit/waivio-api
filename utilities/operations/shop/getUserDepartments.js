@@ -22,7 +22,6 @@ exports.getTopDepartments = async ({
       object_type: { $in: [OBJECT_TYPES.BOOK, OBJECT_TYPES.PRODUCT] },
     },
     projection: { departments: 1 },
-    options: { skip, limit },
   });
 
   const names = _.uniq(
@@ -30,8 +29,11 @@ exports.getTopDepartments = async ({
   );
   const { result: departments } = await Department.find({
     filter: { name: { $in: names } },
-    options: { sort: { sortScore: 1, objectsCount: -1 } },
+    options: {
+      sort: { sortScore: 1, objectsCount: -1 },
+      options: { skip, limit: limit + 1 },
+    },
   });
 
-  return { result: departments };
+  return { result: _.take(departments, limit), hasMore: departments.length > limit };
 };
