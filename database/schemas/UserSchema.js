@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const ShopSchema = new Schema({
+  hideLinkedObjects: { type: Boolean },
+}, { _id: false });
+
 const ReferralsSchema = new Schema({
   agent: { type: String, index: true },
   startedAt: { type: Date },
@@ -78,6 +82,9 @@ const UserMetadataSchema = new Schema({
       reward: { type: String },
     }],
     default: [],
+  },
+  shop: {
+    type: ShopSchema,
   },
   new_user: { type: Boolean, default: true },
 });
