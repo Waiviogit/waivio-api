@@ -53,7 +53,7 @@ exports.userFeedSchema = Joi.object().keys({
   }),
 }).options(options);
 
-exports.userDepartmentsSchema = Joi.object().keys({
+exports.userFeedDepartmentsSchema = Joi.object().keys({
   department: Joi.string().required(),
   userName: Joi.string().required(),
   follower: Joi.string(),

@@ -89,7 +89,7 @@ const getUserFeedByDepartment = async (req, res, next) => {
   const value = validators.validate({
     ...req.body,
     ...req.headers,
-  }, validators.shop.departmentFeedSchema, next);
+  }, validators.shop.userFeedDepartmentsSchema, next);
   if (!value) return;
 
   const { user } = await User.getOne(value.follower);
