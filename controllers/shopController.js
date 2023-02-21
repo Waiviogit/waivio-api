@@ -66,9 +66,9 @@ const getFilters = async (req, res, next) => {
 const getUserDepartments = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userDepartmentsSchema, next);
   if (!value) return;
-  const { result, error } = await shop.getUserDepartments.getTopDepartments(value);
+  const { result, hasMore, error } = await shop.getUserDepartments.getTopDepartments(value);
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 const getUserFeed = async (req, res, next) => {
