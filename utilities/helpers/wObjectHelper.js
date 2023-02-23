@@ -524,7 +524,7 @@ const addOptions = async ({
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
 
     const conditionToAdd = el.groupId
-      && _.every(el.groupId, (gId) => _.includes(object.groupId, gId))
+      && _.some(el.groupId, (gId) => _.includes(object.groupId, gId))
       && !_.isEmpty(el.options);
 
     if (conditionToAdd) {

@@ -4,6 +4,7 @@ const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
 } = require('constants/wobjectsData');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
@@ -26,7 +27,7 @@ module.exports = async ({
   if (!wobjectsFromPosts) {
     wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
   }
-  if (!user) ({ user } = await User.getOne(userName));
+  if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
   const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
 
   const orFilter = [
@@ -45,8 +46,10 @@ module.exports = async ({
     filter: {
       departments: department,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...shopHelper.makeFilterCondition(filter),
-      $or: orFilter,
+      $and: [
+        { $or: orFilter },
+        shopHelper.makeFilterCondition(filter, orFilter),
+      ],
     },
     options: {
       skip,

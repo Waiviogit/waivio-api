@@ -40,9 +40,9 @@ const findAssignedMainObjects = async (userName) => {
 
 const getAggregatedCampaigns = async ({ user, permlinks }) => {
   const currentDay = moment().format('dddd').toLowerCase();
-  const assignedObjects = await findAssignedMainObjects(_.get(user, 'name'));
-  const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
   const userName = _.get(user, 'name');
+  const assignedObjects = await findAssignedMainObjects(userName);
+  const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
 
   const { result = [] } = await CampaignV2.aggregate([
     {
