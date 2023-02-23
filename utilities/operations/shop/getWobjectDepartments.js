@@ -28,6 +28,8 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
 }, {});
 
 const getWobjectFilter = async ({ authorPermlink, app }) => {
+  return { filter: getMongoFilterForShop({type: 'product'}) };
+
   const { result } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (!result) return { error: { status: 404, message: 'Not Found' } };
   const processedObject = await wObjectHelper.processWobjects({
@@ -43,8 +45,11 @@ const getWobjectFilter = async ({ authorPermlink, app }) => {
 
   return { filter: getMongoFilterForShop(field) };
 };
-
+// name excluded
 module.exports = async ({ authorPermlink, app }) => {
   const { filter, error } = await getWobjectFilter({ app, authorPermlink });
   if (error) return { error };
+
+  const { result } = await Wobj.findObjects({ filter, projection: { departments: 1 } });
+  //const departmentNames
 };
