@@ -46,8 +46,10 @@ module.exports = async ({
     filter: {
       departments: department,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...shopHelper.makeFilterCondition(filter),
-      $or: orFilter,
+      $and: [
+        { $or: orFilter },
+        shopHelper.makeFilterCondition(filter, orFilter),
+      ],
     },
     options: {
       skip,
