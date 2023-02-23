@@ -45,7 +45,8 @@ const getBlacklist = async (admins) => {
   _.forEach(fromFollows, (el) => {
     resultBlacklist = _.union(resultBlacklist, el.blackList);
   });
-  return resultBlacklist;
+
+  return _.difference(resultBlacklist, admins);
 };
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
