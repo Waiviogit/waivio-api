@@ -1,8 +1,8 @@
 const PostModel = require('database').models.Post;
 const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
-const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
+const { OBJECT_TYPES } = require('constants/wobjectsData');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -228,6 +228,36 @@ exports.getWobjectPosts = async ({
   } catch (error) {
     return { error };
   }
+};
+
+exports.find = async ({ filter, projection, options }) => {
+  try {
+    return { result: await PostModel.find(filter, projection, options).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getProductLinksFromPosts = async ({ userName }) => {
+  const { result } = await this.find({
+    filter: { author: userName, 'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] } },
+    projection: { wobjects: 1 },
+  });
+
+  const linksArray = [];
+  for (const resultElement of result) {
+    linksArray.push(
+      ...resultElement.wobjects
+        .filter(
+          (wobject) => _.includes(
+            [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK],
+            wobject.object_type,
+          ),
+        )
+        .map((wobject) => wobject.author_permlink),
+    );
+  }
+  return linksArray;
 };
 
 const getBlockedAppCond = () => {

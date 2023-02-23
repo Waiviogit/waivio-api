@@ -1,7 +1,7 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS,
+  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -156,6 +156,12 @@ const arrayFieldPush = ({ filter, field }) => {
   return false;
 };
 
+const arrayFieldsSpecialSort = (a, b) => {
+  if (!!a.adminVote && !!b.adminVote) return b._id - a._id;
+  if (!!a.adminVote || !!b.adminVote) return !!b.adminVote - !!a.adminVote;
+  return b.weight - a.weight;
+};
+
 const arrayFieldFilter = ({
   idFields, allFields, filter, id, permlink,
 }) => {
@@ -182,9 +188,11 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
       case FIELDS_NAMES.AUTHORITY:
+      case FIELDS_NAMES.PIN:
         if (arrayFieldPush({ filter, field })) validFields.push(field);
         break;
       case FIELDS_NAMES.GROUP_ID:
+      case FIELDS_NAMES.REMOVE:
         if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:
@@ -516,7 +524,7 @@ const addOptions = async ({
       getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
 
     const conditionToAdd = el.groupId
-      && _.every(el.groupId, (gId) => _.includes(object.groupId, gId))
+      && _.some(el.groupId, (gId) => _.includes(object.groupId, gId))
       && !_.isEmpty(el.options);
 
     if (conditionToAdd) {
@@ -538,14 +546,15 @@ const addOptions = async ({
 const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!app) return [];
   const { result } = await AppAffiliateModel.find(
-    { filter: { host: app.host, countryCode } },
+    { filter: { host: app.host, countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] } } },
   );
-  if (!_.isEmpty(result)) return result;
+  const requestCountryCode = _.filter(result, (aff) => aff.countryCode === countryCode);
+  if (!_.isEmpty(requestCountryCode)) return requestCountryCode;
+  const defaultCountryCode = _.filter(result, (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE);
+  if (!_.isEmpty(defaultCountryCode)) return defaultCountryCode;
   if (app.host === config.appHost) return [];
-  const { result: waivioAffiliate } = await AppAffiliateModel.find(
-    { filter: { host: config.appHost, countryCode } },
-  );
-  return waivioAffiliate;
+
+  return getAppAffiliateCodes({ app: { host: config.appHost }, countryCode });
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {
@@ -710,7 +719,10 @@ const processWobjects = async ({
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
-    obj.authority = _.find(obj.authority, (a) => a.creator === reqUserName);
+    obj.authority = _.find(
+      obj.authority,
+      (a) => a.creator === reqUserName && a.body === 'administrative',
+    );
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);
@@ -758,4 +770,5 @@ module.exports = {
   calculateApprovePercent,
   addDataToFields,
   moderatePosts,
+  arrayFieldsSpecialSort,
 };

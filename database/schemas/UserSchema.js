@@ -6,6 +6,10 @@ const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
+const ShopSchema = new Schema({
+  hideLinkedObjects: { type: Boolean },
+}, { _id: false });
+
 const ReferralsSchema = new Schema({
   agent: { type: String, index: true },
   startedAt: { type: Date },
@@ -58,6 +62,7 @@ const UserMetadataSchema = new Schema({
       enum: Object.values(SUPPORTED_CURRENCIES),
       default: SUPPORTED_CURRENCIES.USD,
     },
+    shop: { type: ShopSchema },
   },
   bookmarks: { type: [String], default: [] },
   drafts: {
