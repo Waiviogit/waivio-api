@@ -92,6 +92,9 @@ exports.updateMetadataSchema = Joi.object().keys({
     bookmarks: Joi.array().items(Joi.string()).default([]),
     new_user: Joi.boolean().default(false),
     settings: Joi.object().keys({
+      shop: Joi.object().keys({
+        hideLinkedObjects: Joi.boolean().default(false),
+      }),
       exitPageSetting: Joi.boolean().default(false),
       locale: Joi.string().valid(...LANGUAGES).default('auto'),
       postLocales: Joi.array().items(Joi.string().valid(...LANGUAGES)).default([]),
