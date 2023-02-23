@@ -1,8 +1,12 @@
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
-const { Wobj } = require('models');
+const { Wobj, Department } = require('models');
 const _ = require('lodash');
+
+const MIN_SUB_OBJECTS = 10;
+const TOP_LINE_PERCENT = 0.3;
+const BOTTOM_LINE_PERCENT = 0.05;
 
 const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
   if (index === 'type') {
@@ -28,8 +32,6 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
 }, {});
 
 const getWobjectFilter = async ({ authorPermlink, app }) => {
-  return { filter: getMongoFilterForShop({type: 'product'}) };
-
   const { result } = await Wobj.findOne({ author_permlink: authorPermlink });
   if (!result) return { error: { status: 404, message: 'Not Found' } };
   const processedObject = await wObjectHelper.processWobjects({
@@ -45,11 +47,67 @@ const getWobjectFilter = async ({ authorPermlink, app }) => {
 
   return { filter: getMongoFilterForShop(field) };
 };
-// name excluded
-module.exports = async ({ authorPermlink, app }) => {
+
+const mainFilterDepartment = (departments) => {
+  if (_.isEmpty(departments)) return [];
+  const totalObjects = _.sumBy(departments, 'objectsCount');
+  const middleCount = totalObjects / departments.length;
+
+  return _.filter(departments, (department) => department.objectsCount > middleCount);
+};
+
+const secondaryFilterDepartment = ({ allDepartments, name, excluded }) => {
+  const preFilter = _.filter(allDepartments,
+    (department) => department.name !== name
+    && !_.includes(excluded, department.name));
+
+  const objectsTotal = _.sumBy(preFilter, 'objectsCount');
+  const topCounter = objectsTotal * TOP_LINE_PERCENT;
+  const bottomCounter = objectsTotal * BOTTOM_LINE_PERCENT;
+
+  const filterCondition = (d) => d.objectsCount < topCounter
+    && d.objectsCount > bottomCounter
+    && d.objectsCount > MIN_SUB_OBJECTS;
+
+  return _.filter(preFilter, filterCondition);
+};
+
+const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
+  .map(filteredDepartments, (department) => {
+    const subdirectories = _.filter(
+      allDepartments,
+      (d) => _.includes(d.related, department.name)
+        && d.objectsCount < department.objectsCount
+        && d.objectsCount > 10,
+    );
+    return {
+      name: department.name,
+      subdirectories: !_.isEmpty(subdirectories),
+    };
+  });
+
+const getWobjectDepartments = async ({
+  authorPermlink, app, name, excluded,
+}) => {
   const { filter, error } = await getWobjectFilter({ app, authorPermlink });
   if (error) return { error };
-
+  // or we can group in aggregation
   const { result } = await Wobj.findObjects({ filter, projection: { departments: 1 } });
-  //const departmentNames
+  const departmentNames = _.uniq(_.flatten(_.map(result, 'departments')));
+
+  const { result: allDepartments } = await Department.find({
+    filter: {
+      name: { $in: departmentNames },
+    },
+    projection: { search: 0 },
+  });
+  const filteredDepartments = name
+    ? secondaryFilterDepartment({ allDepartments, name, excluded })
+    : mainFilterDepartment(allDepartments);
+
+  const mappedDepartments = subdirectoryMap({ filteredDepartments, allDepartments });
+
+  return { result: mappedDepartments };
 };
+
+module.exports = getWobjectDepartments;
