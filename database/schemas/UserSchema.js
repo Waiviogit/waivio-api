@@ -62,6 +62,7 @@ const UserMetadataSchema = new Schema({
       enum: Object.values(SUPPORTED_CURRENCIES),
       default: SUPPORTED_CURRENCIES.USD,
     },
+    shop: { type: ShopSchema },
   },
   bookmarks: { type: [String], default: [] },
   drafts: {
@@ -82,9 +83,6 @@ const UserMetadataSchema = new Schema({
       reward: { type: String },
     }],
     default: [],
-  },
-  shop: {
-    type: ShopSchema,
   },
   new_user: { type: Boolean, default: true },
 });
