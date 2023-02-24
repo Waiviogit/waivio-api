@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const { Wobj } = require('models');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
@@ -57,7 +57,10 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
 }, {});
 
 const getWobjectFilter = async ({ authorPermlink, app }) => {
-  const { result } = await Wobj.findOne({ author_permlink: authorPermlink });
+  const { result } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    object_type: OBJECT_TYPES.SHOP,
+  });
   if (!result) return { error: { status: 404, message: 'Not Found' } };
   const processedObject = await wObjectHelper.processWobjects({
     wobjects: [result],
