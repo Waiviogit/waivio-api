@@ -13,6 +13,12 @@ exports.userDepartmentsSchema = Joi.object().keys({
   limit: Joi.number().default(10),
 }).options(options);
 
+exports.wobjectDepartmentsSchema = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  name: Joi.string(),
+  excluded: Joi.array().items(Joi.string()),
+}).options(options);
+
 exports.mainFeedSchema = Joi.object().keys({
   userName: Joi.string(),
   locale: Joi.string().default('en-US'),
@@ -65,6 +71,21 @@ exports.userFeedDepartmentsSchema = Joi.object().keys({
       tags: Joi.array().items(Joi.string()),
     })),
   }),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(10),
+}).options(options);
+
+exports.wobjectFeedSchema = Joi.object().keys({
+  authorPermlink: Joi.required(),
+  locale: Joi.string().default('en-US'),
+  follower: Joi.string(),
+}).options(options);
+
+exports.wobjectFeedDepartmentsSchema = Joi.object().keys({
+  department: Joi.string().required(),
+  authorPermlink: Joi.required(),
+  follower: Joi.string(),
+  locale: Joi.string().default('en-US'),
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
 }).options(options);

@@ -110,6 +110,57 @@ const getUserFeedByDepartment = async (req, res, next) => {
   res.json({ department, wobjects, hasMore });
 };
 
+const getWobjectDepartments = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.wobjectDepartmentsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getWobjectDepartments({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getWobjectDepartmentFeed = async (req, res, next) => {
+  const value = validators.validate({
+    ...req.body,
+    ...req.headers,
+  }, validators.shop.wobjectFeedDepartmentsSchema, next);
+  if (!value) return;
+
+  const { user } = await User.getOne(value.follower);
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const {
+    department, wobjects, hasMore, error,
+  } = await shop.getWobjectDepartmentFeed({
+    ...value,
+    app: req.appData,
+    countryCode,
+    user,
+  });
+
+  if (error) return next(error);
+  res.json({ department, wobjects, hasMore });
+};
+
+const getWobjectMainFeed = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, ...req.headers }, validators.shop.wobjectFeedSchema, next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { result, error } = await shop.getWobjectMainFeed({
+    ...value,
+    app: req.appData,
+    countryCode,
+  });
+
+  if (error) return next(error);
+  res.json(result);
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -118,4 +169,7 @@ module.exports = {
   getUserDepartments,
   getUserFeed,
   getUserFeedByDepartment,
+  getWobjectDepartments,
+  getWobjectDepartmentFeed,
+  getWobjectMainFeed,
 };
