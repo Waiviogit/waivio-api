@@ -579,14 +579,14 @@ const formTargetLink = ({ productId }) => {
 
 const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
   const links = new Map();
-  const mappedProductIds = _.map(productIds, (el) => {
+  const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
     if (!_.get(body, 'productIdType')) return;
     return {
       productId: body.productId,
       productIdType: body.productIdType,
     };
-  });
+  }));
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
   const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
