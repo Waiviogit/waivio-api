@@ -3,7 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities,
+  getWobjectAuthorities, getByGroupId,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -379,6 +379,18 @@ const getAuthorities = async (req, res, next) => {
   next();
 };
 
+const getWobjectsByGroupId = async (req, res, next) => {
+  const value = validators.validate(req.body,
+    validators.wobject.wobjectsGroupIdScheme, next);
+  if (!value) return;
+
+  const { wobjects, hasMore, error } = await getByGroupId(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -403,4 +415,5 @@ module.exports = {
   newsfeed,
   getWobjectOptions,
   getAuthorities,
+  getWobjectsByGroupId,
 };

@@ -16,5 +16,6 @@ moduleExports.campaignOps = require('./campaignOps');
 moduleExports.getWobjectsNames = require('./getWobjectsNames');
 moduleExports.getWobjectAuthorities = require('./getWobjectAuthorities');
 moduleExports.getByOptionsCategory = require('./getByOptionsCategory');
+moduleExports.getByGroupId = require('./getByGroupId');
 
 module.exports = moduleExports;
