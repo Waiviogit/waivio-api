@@ -1,6 +1,5 @@
 const { Wobj } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const _ = require('lodash');
 
 const getByGroupId = async ({
@@ -16,6 +15,7 @@ const getByGroupId = async ({
           weight: { $gt: 0 },
         },
       },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
     {
       search: 0,
