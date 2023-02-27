@@ -1,8 +1,10 @@
-const { Wobj, Post, Department } = require('models');
+const {
+  Wobj, Post, Department, User,
+} = require('models');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const _ = require('lodash');
-const { User } = require('../../../models');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const shopHelper = require('utilities/helpers/shopHelper');
 
 exports.getTopDepartments = async ({
   userName,
@@ -10,6 +12,8 @@ exports.getTopDepartments = async ({
   skip = 0,
   limit = 10,
   user,
+  name,
+  excluded,
 }) => {
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
   const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
@@ -36,7 +40,7 @@ exports.getTopDepartments = async ({
   const names = _.uniq(
     _.flatten(_.map(result, (item) => _.map(item.departments, (department) => department))),
   );
-  const { result: departments } = await Department.find({
+  const { result: allDepartments } = await Department.find({
     filter: { name: { $in: names } },
     options: {
       sort: { sortScore: 1, objectsCount: -1 },
@@ -44,5 +48,11 @@ exports.getTopDepartments = async ({
     },
   });
 
-  return { result: _.take(departments, limit), hasMore: departments.length > limit };
+  const filteredDepartments = name
+    ? shopHelper.secondaryFilterDepartment({ allDepartments, name, excluded })
+    : shopHelper.mainFilterDepartment(allDepartments);
+
+  const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
+
+  return { result: mappedDepartments };
 };

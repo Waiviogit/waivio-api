@@ -273,11 +273,14 @@
               "userName" : {
                 "type" : "string"
               },
-              "skip" : {
-                "type" : "number"
+              "name" : {
+                "type" : "string"
               },
-              "limit" : {
-                "type" : "number"
+              "excluded" : {
+                "type" : "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }

@@ -108,9 +108,13 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
         && d.objectsCount < department.objectsCount
         && d.objectsCount > 10,
     );
+
+    const subdirectoriesCondition = subdirectories.length
+      && subdirectories.length > 1;
+
     return {
       name: department.name,
-      subdirectories: !_.isEmpty(subdirectories),
+      subdirectories: subdirectoriesCondition,
     };
   });
 

@@ -9,8 +9,8 @@ exports.departmentsSchema = Joi.object().keys({
 
 exports.userDepartmentsSchema = Joi.object().keys({
   userName: Joi.string().required(),
-  skip: Joi.number().default(0),
-  limit: Joi.number().default(10),
+  name: Joi.string(),
+  excluded: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.wobjectDepartmentsSchema = Joi.object().keys({
