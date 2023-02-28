@@ -81,7 +81,20 @@ const mainFilterDepartment = (departments) => {
   const totalObjects = _.sumBy(departments, 'objectsCount');
   const middleCount = totalObjects / departments.length;
 
-  return _.filter(departments, (department) => department.objectsCount > middleCount);
+  return _.chain(departments)
+    .filter((department) => department.objectsCount > middleCount)
+    .orderBy('objectsCount', ['desc'])
+    .reduce((acc, el, index) => {
+      if (!index) {
+        acc.push(el);
+        return acc;
+      }
+      const inRelated = _.find(acc, (accEl) => _.includes(accEl.related, el.name));
+      if (inRelated) return acc;
+      acc.push(el);
+      return acc;
+    }, [])
+    .value();
 };
 
 const secondaryFilterDepartment = ({ allDepartments, name, excluded }) => {
