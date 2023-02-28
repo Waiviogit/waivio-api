@@ -2,7 +2,7 @@ const shopHelper = require('utilities/helpers/shopHelper');
 const { Wobj, User } = require('models');
 const _ = require('lodash');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
+const { REQUIREDFILDS_WOBJ_LIST, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 
@@ -13,17 +13,19 @@ const getWobjectDepartmentFeed = async ({
   const emptyResp = { department, wobjects: [], hasMore: false };
   // inside departments in and condition so we can add direct filter
   if (!filter)({ filter } = await shopHelper.getWobjectFilter({ app, authorPermlink }));
-  const { result, error } = await Wobj.findObjects({
-    filter: {
-      ...filter,
-      departments: department,
+
+  const { wobjects: result, error } = await Wobj.fromAggregation([
+    {
+      $match: {
+        ...filter,
+        departments: department,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      },
     },
-    options: {
-      skip,
-      limit: limit + 1,
-      sort: { weight: -1 },
-    },
-  });
+    ...shopHelper.getDefaultGroupStage(),
+    { $skip: skip },
+    { $limit: limit + 1 },
+  ]);
 
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;

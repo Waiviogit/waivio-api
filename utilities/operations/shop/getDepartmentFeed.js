@@ -21,21 +21,18 @@ module.exports = async ({
 }) => {
   const emptyResp = { department, wobjects: [], hasMore: false };
 
-  const {
-    result,
-    error,
-  } = await Wobj.findObjects({
-    filter: {
-      departments: department,
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...shopHelper.makeFilterCondition(filter),
+  const { wobjects: result, error } = await Wobj.fromAggregation([
+    {
+      $match: {
+        departments: department,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...shopHelper.makeFilterCondition(filter),
+      },
     },
-    options: {
-      skip,
-      limit: limit + 1,
-      sort: { weight: -1 },
-    },
-  });
+    ...shopHelper.getDefaultGroupStage(),
+    { $skip: skip },
+    { $limit: limit + 1 },
+  ]);
 
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;

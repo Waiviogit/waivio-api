@@ -130,10 +130,26 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
     };
   });
 
+const getDefaultGroupStage = () => [
+  { $sort: { weight: -1 } },
+  {
+    $group: {
+      _id: '$metaGroupId',
+      doc: { $first: '$$ROOT' },
+    },
+  },
+  {
+    $replaceRoot: {
+      newRoot: '$doc',
+    },
+  },
+];
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
   secondaryFilterDepartment,
   mainFilterDepartment,
   getWobjectFilter,
+  getDefaultGroupStage,
 };

@@ -357,3 +357,9 @@ exports.DEFAULT_COUNTRY_CODE = 'US';
 exports.AMAZON_PRODUCT_IDS = ['asin', 'isbn-10', 'asins'];
 exports.WALMART_PRODUCT_IDS = ['walmartNum', 'walmart'];
 exports.TARGET_PRODUCT_IDS = ['target'];
+
+exports.OBJECT_TYPES_FOR_GROUP_ID = [
+  this.OBJECT_TYPES.PRODUCT,
+  this.OBJECT_TYPES.SERVICE,
+  this.OBJECT_TYPES.BOOK,
+];
