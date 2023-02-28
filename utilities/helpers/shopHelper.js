@@ -122,8 +122,7 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
         && d.objectsCount > 10,
     );
 
-    const subdirectoriesCondition = subdirectories.length
-      && subdirectories.length > 1;
+    const subdirectoriesCondition = subdirectories.length > 1;
 
     return {
       name: department.name,
