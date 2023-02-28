@@ -69,7 +69,7 @@
     "http"
   ],
   "paths": {
-    "/api/shop/departements" : {
+    "/api/shop/departments" : {
       "post" : {
         "tags" : [ "shop" ],
         "description" : "Get all departments",
@@ -257,7 +257,7 @@
         }
       }
     },
-    "/api/shop/user/departements" : {
+    "/api/shop/user/departments" : {
       "post" : {
         "tags" : [ "shop" ],
         "description" : "Get all departments",
@@ -273,11 +273,14 @@
               "userName" : {
                 "type" : "string"
               },
-              "skip" : {
-                "type" : "number"
+              "name" : {
+                "type" : "string"
               },
-              "limit" : {
-                "type" : "number"
+              "excluded" : {
+                "type" : "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -401,6 +404,173 @@
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items" : {
+                "$ref": "#/definitions/shop_object_feed"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/wobject/departments" : {
+      "post" : {
+        "tags" : [ "shop" ],
+        "description" : "Get all departments",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name" : "params",
+          "in" : "body",
+          "description" : "no params",
+          "required" : true,
+          "schema" : {
+            "type" : "object",
+            "properties" : {
+              "authorPermlink" : {
+                "type" : "string"
+              },
+              "name": {
+                "type" : "string"
+              },
+              "excluded": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "$ref": "#/definitions/departments_response"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/wobject/department-feed": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "Get department feed",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "department": {
+                  "type": "string"
+                },
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/shop_object_feed"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/wobject/main-feed": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "Get main feed",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
                 }
               }
             }

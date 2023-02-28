@@ -1852,4 +1852,35 @@ describe('On wobjectHelper', async () => {
       expect(feature).not.to.be.undefined;
     });
   });
+
+  describe('On shopFilter field', async () => {
+    const body = JSON.stringify({
+      type: faker.random.string(),
+      departments: [faker.random.string()],
+      tags: [faker.random.string()],
+      authorities: [faker.random.string()],
+    });
+
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.SHOP,
+        name: FIELDS_NAMES.SHOP_FILTER,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.SHOP_FILTER],
+      });
+    });
+
+    it('should shopFilter eq', async () => {
+      expect(result.shopFilter).to.be.eq(body);
+    });
+  });
 });

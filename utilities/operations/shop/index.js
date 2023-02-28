@@ -6,4 +6,7 @@ module.exports = {
   getUserDepartments: require('./getUserDepartments'),
   getUserFeed: require('./getUserFeed'),
   getUserDepartmentFeed: require('./getUserDepartmentFeed'),
+  getWobjectDepartments: require('./getWobjectDepartments'),
+  getWobjectDepartmentFeed: require('./getWobjectDepartmentFeed'),
+  getWobjectMainFeed: require('./getWobjectMainFeed'),
 };
