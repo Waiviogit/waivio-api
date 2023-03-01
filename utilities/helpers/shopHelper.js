@@ -78,11 +78,8 @@ const getWobjectFilter = async ({ authorPermlink, app }) => {
 
 const mainFilterDepartment = (departments) => {
   if (_.isEmpty(departments)) return [];
-  const totalObjects = _.sumBy(departments, 'objectsCount');
-  const middleCount = totalObjects / departments.length;
 
   return _.chain(departments)
-    .filter((department) => department.objectsCount > middleCount)
     .orderBy('objectsCount', ['desc'])
     .reduce((acc, el, index) => {
       if (!index) {
