@@ -96,8 +96,11 @@ const mainFilterDepartment = (departments) => {
 
 const secondaryFilterDepartment = ({ allDepartments, name, excluded }) => {
   const preFilter = _.filter(allDepartments,
-    (department) => department.name !== name
-      && !_.includes(excluded, department.name));
+    (department) => {
+      const mainCondition = department.name !== name
+      && !_.includes(excluded, department.name);
+      return !name ? mainCondition : mainCondition && _.includes(department.related, name);
+    });
 
   const objectsTotal = _.sumBy(preFilter, 'objectsCount');
   const topCounter = objectsTotal * TOP_LINE_PERCENT;
