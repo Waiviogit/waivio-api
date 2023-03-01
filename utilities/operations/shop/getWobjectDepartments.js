@@ -25,7 +25,7 @@ const getWobjectDepartments = async ({
 
   const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
 
-  return { result: mappedDepartments };
+  return { result: shopHelper.orderBySubdirectory(mappedDepartments) };
 };
 
 module.exports = getWobjectDepartments;
