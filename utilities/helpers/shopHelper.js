@@ -115,11 +115,17 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
     const subdirectories = _.filter(
       allDepartments,
       (d) => _.includes(d.related, department.name)
-        && d.objectsCount < department.objectsCount
-        && d.objectsCount > 10,
+          && d.objectsCount < department.objectsCount
+          && d.objectsCount > 10,
     );
+    // second filter
+    const subFilter = secondaryFilterDepartment({
+      allDepartments: subdirectories,
+      excluded: _.map(filteredDepartments, 'name'),
+      name: department.name,
+    });
 
-    const subdirectoriesCondition = subdirectories.length > 1;
+    const subdirectoriesCondition = subFilter.length > 1;
 
     return {
       name: department.name,
