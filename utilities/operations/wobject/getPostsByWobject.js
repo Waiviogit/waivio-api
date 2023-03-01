@@ -22,6 +22,12 @@ module.exports = async (data) => {
     .map((el) => el.body)
     .value();
 
+  const removeLinks = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.REMOVE)
+    .map((el) => el.body)
+    .value();
+
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
     locale: data.locale,
@@ -67,10 +73,13 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
-  if (!_.isEmpty(pinnedLinks)) {
+  if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
     _.forEach(posts, (p) => {
       if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
         p.hasPinUpdate = true;
+      }
+      if (_.includes(removeLinks, `${p.author}/${p.permlink}`)) {
+        p.hasRemoveUpdate = true;
       }
     });
   }
