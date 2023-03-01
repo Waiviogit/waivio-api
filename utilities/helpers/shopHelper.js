@@ -126,7 +126,7 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
 
     return {
       name: department.name,
-      subdirectories: subdirectoriesCondition,
+      subdirectory: subdirectoriesCondition,
     };
   });
 

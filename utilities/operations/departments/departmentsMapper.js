@@ -14,7 +14,7 @@ const filterDepartments = (departments, excluded = []) => {
     ? (d) => d.objectsCount < topCounter
     : (d) => d.objectsCount < topCounter && d.objectsCount > bottomCounter;
 
-  return departments.filter(filterCondition);
+  return _.filter(departments, filterCondition);
 };
 
 const mapDepartments = async (departments, excluded = []) => {
@@ -29,7 +29,8 @@ const mapDepartments = async (departments, excluded = []) => {
     );
     const filtered = filterDepartments(subDepartments, [department.name, ...excluded]);
 
-    const subdirectory = !_.isEmpty(filtered) && department.objectsCount > MIN_SUB_OBJECTS;
+    const subdirectory = department.objectsCount > MIN_SUB_OBJECTS
+      && filtered.length > 1;
 
     const related = subdirectory
       ? _.filter(department.related, filterCondition)
