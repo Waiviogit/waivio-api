@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const { Wobj } = require('models');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
@@ -54,7 +54,7 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
     return acc;
   }
   return acc;
-}, {});
+}, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
 
 const getWobjectFilter = async ({ authorPermlink, app }) => {
   const { result } = await Wobj.findOne({
@@ -78,11 +78,8 @@ const getWobjectFilter = async ({ authorPermlink, app }) => {
 
 const mainFilterDepartment = (departments) => {
   if (_.isEmpty(departments)) return [];
-  const totalObjects = _.sumBy(departments, 'objectsCount');
-  const middleCount = totalObjects / departments.length;
 
   return _.chain(departments)
-    .filter((department) => department.objectsCount > middleCount)
     .orderBy('objectsCount', ['desc'])
     .reduce((acc, el, index) => {
       if (!index) {
