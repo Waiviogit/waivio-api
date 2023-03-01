@@ -64,6 +64,7 @@ const WObjectSchema = new Schema({
   activeCampaigns: { type: [mongoose.Types.ObjectId], default: [] },
   activeCampaignsCount: { type: Number, default: 0 },
   search: { type: [String], default: [] },
+  metaGroupId: { type: String, index: true },
 },
 {
   toObject: { virtuals: true }, timestamps: true, strict: false,

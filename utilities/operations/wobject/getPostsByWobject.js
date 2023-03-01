@@ -2,7 +2,7 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { WOBJECT_LATEST_POSTS_COUNT, FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -15,6 +15,18 @@ module.exports = async (data) => {
 
   const { wObject, error: wobjError } = await Wobj.getOne(data.author_permlink);
   if (wobjError) return { error: wobjError };
+
+  const pinnedLinks = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.PIN)
+    .map((el) => el.body)
+    .value();
+
+  const removeLinks = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.REMOVE)
+    .map((el) => el.body)
+    .value();
 
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
@@ -60,6 +72,17 @@ module.exports = async (data) => {
     skip: data.skip,
   });
   if (error) return { error };
+
+  if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
+    _.forEach(posts, (p) => {
+      if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
+        p.hasPinUpdate = true;
+      }
+      if (_.includes(removeLinks, `${p.author}/${p.permlink}`)) {
+        p.hasRemoveUpdate = true;
+      }
+    });
+  }
 
   if (data.skip === 0) {
     const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));

@@ -1,4 +1,5 @@
 const { Department } = require('models');
+const shopHelper = require('utilities/helpers/shopHelper');
 const _ = require('lodash');
 const {
   filterDepartments, mapDepartments, getDepartmentsOnWobject,
@@ -31,5 +32,7 @@ module.exports = async ({ name, excluded = [] } = {}) => {
     };
   }
 
-  return { result: await getDepartmentsOnWobject(departments) };
+  const result = await getDepartmentsOnWobject(departments);
+
+  return { result: shopHelper.orderBySubdirectory(result) };
 };

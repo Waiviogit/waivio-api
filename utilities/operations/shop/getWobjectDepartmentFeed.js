@@ -1,32 +1,25 @@
-const _ = require('lodash');
-const {
-  REMOVE_OBJ_STATUSES,
-  REQUIREDFILDS_WOBJ_LIST,
-} = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj } = require('models');
+const { Wobj, User } = require('models');
+const _ = require('lodash');
+const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const { REQUIREDFILDS_WOBJ_LIST, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 
-module.exports = async ({
-  countryCode,
-  department = '',
-  userName,
-  locale,
-  filter,
-  limit = 3,
-  skip = 0,
-  user,
-  app,
+const getWobjectDepartmentFeed = async ({
+  department, filter, app, authorPermlink, skip = 0, limit = 3, follower, locale, countryCode, user,
 }) => {
+  if (!user) ({ user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP));
   const emptyResp = { department, wobjects: [], hasMore: false };
+  // inside departments in and condition so we can add direct filter
+  if (!filter)({ filter } = await shopHelper.getWobjectFilter({ app, authorPermlink }));
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
+        ...filter,
         departments: department,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        ...shopHelper.makeFilterCondition(filter),
       },
     },
     ...shopHelper.getDefaultGroupStage(),
@@ -39,7 +32,7 @@ module.exports = async ({
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(result, limit),
     fields: REQUIREDFILDS_WOBJ_LIST,
-    reqUserName: userName,
+    reqUserName: follower,
     app,
     locale,
     countryCode,
@@ -53,3 +46,5 @@ module.exports = async ({
     hasMore: result.length > limit,
   };
 };
+
+module.exports = getWobjectDepartmentFeed;

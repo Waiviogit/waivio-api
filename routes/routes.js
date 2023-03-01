@@ -102,6 +102,10 @@ shopRoutes.route('/filters').post(shopController.getFilters);
 shopRoutes.route('/user/departments').post(shopController.getUserDepartments);
 shopRoutes.route('/user/department-feed').post(shopController.getUserFeedByDepartment);
 shopRoutes.route('/user/main-feed').post(shopController.getUserFeed);
+
+shopRoutes.route('/wobject/departments').post(shopController.getWobjectDepartments);
+shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepartmentFeed);
+shopRoutes.route('/wobject/main-feed').post(shopController.getWobjectMainFeed);
 // endregion
 
 // region Wobject
