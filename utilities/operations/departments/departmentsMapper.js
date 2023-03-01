@@ -55,7 +55,7 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
   const emptyDirectory = {
     name: d.name,
     subdirectory: false,
-    related: [d.name],
+    objectsCount: 0,
   };
   const { result: subDepartments = [] } = await Department.find(
     {
@@ -68,7 +68,7 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
   return {
     name: d.name,
     subdirectory: true,
-    related: _.map(filtered, 'name'),
+    objectsCount: d.objectsCount,
   };
 }));
 

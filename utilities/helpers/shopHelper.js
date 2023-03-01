@@ -124,6 +124,7 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
     return {
       name: department.name,
       subdirectory: subdirectoriesCondition,
+      objectsCount: department.objectsCount,
     };
   });
 
@@ -142,6 +143,9 @@ const getDefaultGroupStage = () => [
   },
 ];
 
+const orderBySubdirectory = (departments) => _
+  .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -149,4 +153,5 @@ module.exports = {
   mainFilterDepartment,
   getWobjectFilter,
   getDefaultGroupStage,
+  orderBySubdirectory,
 };
