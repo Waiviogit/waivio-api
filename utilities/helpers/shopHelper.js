@@ -114,11 +114,16 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
   .map(filteredDepartments, (department) => {
     const subdirectories = _.filter(
       allDepartments,
-      (d) => _.includes(d.related, department.name)
-        && d.objectsCount < department.objectsCount
-        && d.objectsCount > 10,
-    );
+      (d) => {
+        const mainCondition = _.includes(d.related, department.name)
+          && d.objectsCount < department.objectsCount
+          && d.objectsCount > 1;
 
+        return _.isEmpty(filteredDepartments)
+          ? mainCondition
+          : mainCondition && !_.includes(_.map(filteredDepartments, 'name'), d.name);
+      },
+    );
     const subdirectoriesCondition = subdirectories.length > 1;
 
     return {
