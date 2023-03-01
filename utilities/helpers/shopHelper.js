@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const { Wobj } = require('models');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
@@ -54,7 +54,7 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
     return acc;
   }
   return acc;
-}, {});
+}, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
 
 const getWobjectFilter = async ({ authorPermlink, app }) => {
   const { result } = await Wobj.findOne({

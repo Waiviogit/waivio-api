@@ -1,7 +1,7 @@
 const {
   Wobj, Post, Department, User,
 } = require('models');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const _ = require('lodash');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
@@ -33,6 +33,7 @@ exports.getTopDepartments = async ({
     filter: {
       $or: orFilter,
       object_type: { $in: [OBJECT_TYPES.BOOK, OBJECT_TYPES.PRODUCT] },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
     projection: { departments: 1 },
   });
