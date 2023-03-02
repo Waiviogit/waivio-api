@@ -1,9 +1,10 @@
 const {
   Wobj, Post, Department, User,
 } = require('models');
-const { OBJECT_TYPES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsData');
 const _ = require('lodash');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 const shopHelper = require('utilities/helpers/shopHelper');
 
 exports.getTopDepartments = async ({
@@ -32,11 +33,13 @@ exports.getTopDepartments = async ({
   const { result } = await Wobj.findObjects({
     filter: {
       $or: orFilter,
-      object_type: { $in: [OBJECT_TYPES.BOOK, OBJECT_TYPES.PRODUCT] },
+      object_type: { $in: SHOP_OBJECT_TYPES },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
     projection: { departments: 1 },
   });
+
+  const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
 
   const names = _.uniq(
     _.flatten(_.map(result, (item) => _.map(item.departments, (department) => department))),
@@ -54,6 +57,14 @@ exports.getTopDepartments = async ({
     : shopHelper.mainFilterDepartment(allDepartments);
 
   const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
+  const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 
-  return { result: shopHelper.orderBySubdirectory(mappedDepartments) };
+  if (!name && uncategorized.length) {
+    orderedDepartments.push({
+      name: UNCATEGORIZED_DEPARTMENT,
+      subdirectory: false,
+    });
+  }
+
+  return { result: orderedDepartments };
 };

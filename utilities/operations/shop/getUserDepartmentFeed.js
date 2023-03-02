@@ -3,11 +3,13 @@ const { Wobj, Post, User } = require('models');
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
+  SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 
 module.exports = async ({
   countryCode,
@@ -39,11 +41,15 @@ module.exports = async ({
     orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
   }
 
+  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
+    ? { $or: [{ departments: [] }, { departments: null }] }
+    : { departments: department };
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
-        departments: department,
+        ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        object_type: { $in: SHOP_OBJECT_TYPES },
         $and: [
           { $or: orFilter },
           shopHelper.makeFilterCondition(filter, orFilter),
