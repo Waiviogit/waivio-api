@@ -10,7 +10,11 @@ const getWobjectDepartments = async ({
 
   if (_.isEmpty(filter)) return emptyResult;
   // or we can group in aggregation
-  const { result } = await Wobj.findObjects({ filter, projection: { departments: 1 } });
+  const { result } = await Wobj.findObjects({
+    filter,
+    projection: { departments: 1 },
+  });
+
   const departmentNames = _.uniq(_.flatten(_.map(result, 'departments')));
 
   const { result: allDepartments } = await Department.find({
