@@ -12,7 +12,7 @@ const filterDepartments = (departments, excluded = []) => {
 
   const filterCondition = _.isEmpty(excluded)
     ? (d) => d.objectsCount < topCounter
-    : (d) => d.objectsCount < topCounter && d.objectsCount > bottomCounter;
+    : (d) => d.objectsCount < topCounter;
 
   return _.filter(departments, filterCondition);
 };
@@ -21,13 +21,12 @@ const mapDepartments = async (departments, excluded = []) => {
   const result = [];
   for (const department of departments) {
     const filterCondition = (el) => el !== department.name && !excluded.includes(el);
-
     const { result: subDepartments = [] } = await Department.find(
       {
         filter: makeConditions({ name: department.name, excluded }),
       },
     );
-    const filtered = filterDepartments(subDepartments, [department.name, ...excluded]);
+    const filtered = filterDepartments(subDepartments, [...excluded]);
 
     const subdirectory = department.objectsCount > MIN_SUB_OBJECTS
       && filtered.length > 1;
