@@ -1,5 +1,7 @@
 const _ = require('lodash');
-const { Wobj, Post, User } = require('models');
+const {
+  Wobj, Post, User, userShopDeselectModel,
+} = require('models');
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
@@ -36,6 +38,7 @@ module.exports = async ({
     { 'authority.ownership': userName },
     { 'authority.administrative': userName },
   ];
+  const deselectLinks = await userShopDeselectModel.findUsersLinks({ userName });
 
   if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
     orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
@@ -50,6 +53,7 @@ module.exports = async ({
         ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         object_type: { $in: SHOP_OBJECT_TYPES },
+        ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
         $and: [
           { $or: orFilter },
           shopHelper.makeFilterCondition(filter, orFilter),
