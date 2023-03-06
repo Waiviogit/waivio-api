@@ -93,15 +93,29 @@ const mainFilterDepartment = (departments) => {
   if (_.isEmpty(departments)) return [];
 
   return _.chain(departments)
-    .orderBy('objectsCount', ['desc'])
-    .reduce((acc, el, index) => {
-      if (!index) {
+    .orderBy('objectsCount', ['asc'])
+    .reduce((acc, el) => {
+      if (acc.length < 20) {
         acc.push(el);
         return acc;
       }
       const inRelated = _.find(acc, (accEl) => _.includes(accEl.related, el.name));
-      if (inRelated) return acc;
-      acc.push(el);
+      if (inRelated) {
+        const myInd = _.indexOf(acc, inRelated);
+        acc.splice(myInd, 1);
+        acc.push(el);
+      } else {
+        let revIndex = 1;
+        for (const revel of _.reverse(acc)) {
+          const revRelated = _.find(acc, (accEl) => _.includes(accEl.related, revel.name));
+          if (revRelated) {
+            revIndex = _.indexOf(acc, revRelated);
+          }
+        }
+        acc.splice(revIndex, 1);
+        acc.push(el);
+      }
+
       return acc;
     }, [])
     .value();
