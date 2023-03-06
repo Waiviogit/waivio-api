@@ -1,5 +1,5 @@
 const {
-  Wobj, Post, Department, User,
+  Wobj, Post, Department, User, userShopDeselectModel,
 } = require('models');
 const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsData');
 const _ = require('lodash');
@@ -30,11 +30,14 @@ exports.getTopDepartments = async ({
     orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
   }
 
+  const deselectLinks = await userShopDeselectModel.findUsersLinks({ userName });
+
   const { result } = await Wobj.findObjects({
     filter: {
       $or: orFilter,
       object_type: { $in: SHOP_OBJECT_TYPES },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
     },
     projection: { departments: 1 },
   });
