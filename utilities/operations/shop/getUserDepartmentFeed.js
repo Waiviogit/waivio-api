@@ -47,6 +47,7 @@ module.exports = async ({
   const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
     ? { $or: [{ departments: [] }, { departments: null }] }
     : { departments: department };
+
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {

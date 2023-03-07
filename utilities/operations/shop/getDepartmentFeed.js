@@ -7,6 +7,7 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const shopHelper = require('utilities/helpers/shopHelper');
 const { Wobj } = require('models');
+const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 
 module.exports = async ({
   countryCode,
@@ -21,10 +22,14 @@ module.exports = async ({
 }) => {
   const emptyResp = { department, wobjects: [], hasMore: false };
 
+  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
+    ? { $or: [{ departments: [] }, { departments: null }] }
+    : { departments: department };
+
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
-        departments: department,
+        ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         ...shopHelper.makeFilterCondition(filter),
       },
