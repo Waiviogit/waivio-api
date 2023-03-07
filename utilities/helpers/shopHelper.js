@@ -35,7 +35,9 @@ const makeFilterCondition = (filter = {}) => {
 
 const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
   if (index === 'type') {
-    acc.object_type = field[index];
+    if (!_.isEmpty(field[index])) {
+      acc.object_type = field[index];
+    }
     return acc;
   }
   if (index === 'departments') {
@@ -51,11 +53,15 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
       }
       return innerAcc;
     }, []);
-    acc.$or ? acc.$or.push(...departmentsOr) : acc.$or = departmentsOr;
+    if (!_.isEmpty(departmentsOr)) {
+      acc.$or ? acc.$or.push(...departmentsOr) : acc.$or = departmentsOr;
+    }
     return acc;
   }
   if (index === 'tags') {
-    acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
+    if (!_.isEmpty(field[index])) {
+      acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
+    }
     return acc;
   }
   if (index === 'authorities') {
@@ -63,7 +69,9 @@ const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
       { 'authority.ownership': user },
       { 'authority.administrative': user },
     ]));
-    acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
+    if (!_.isEmpty(authoritiesOr)) {
+      acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
+    }
     return acc;
   }
   return acc;
