@@ -1,6 +1,6 @@
-const updateCampaignsCommission = require('./updateCampaignsCommission');
+const selfPayments = require('./selfPayments');
 
 (async () => {
-  await updateCampaignsCommission();
+  await selfPayments();
   process.exit();
 })();
