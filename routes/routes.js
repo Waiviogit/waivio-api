@@ -102,6 +102,8 @@ shopRoutes.route('/filters').post(shopController.getFilters);
 shopRoutes.route('/user/departments').post(shopController.getUserDepartments);
 shopRoutes.route('/user/department-feed').post(shopController.getUserFeedByDepartment);
 shopRoutes.route('/user/main-feed').post(shopController.getUserFeed);
+shopRoutes.route('/user/filters').post(shopController.getUserFilters);
+shopRoutes.route('/user/filters/tags').post(shopController.getUserTags);
 
 shopRoutes.route('/wobject/departments').post(shopController.getWobjectDepartments);
 shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepartmentFeed);

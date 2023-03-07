@@ -13,6 +13,17 @@ exports.userDepartmentsSchema = Joi.object().keys({
   excluded: Joi.array().items(Joi.string()),
 }).options(options);
 
+exports.userFiltersSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+}).options(options);
+
+exports.userTagsSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  tagCategory: Joi.string().required(),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(10),
+}).options(options);
+
 exports.wobjectDepartmentsSchema = Joi.object().keys({
   authorPermlink: Joi.string().required(),
   name: Joi.string(),

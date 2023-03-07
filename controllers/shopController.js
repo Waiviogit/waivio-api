@@ -110,6 +110,22 @@ const getUserFeedByDepartment = async (req, res, next) => {
   res.json({ department, wobjects, hasMore });
 };
 
+const getUserFilters = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.userFiltersSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.userFilters.getUserFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getUserTags = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.userTagsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.userFilters.getMoreTagFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
 const getWobjectDepartments = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.wobjectDepartmentsSchema, next);
   if (!value) return;
@@ -172,4 +188,6 @@ module.exports = {
   getWobjectDepartments,
   getWobjectDepartmentFeed,
   getWobjectMainFeed,
+  getUserFilters,
+  getUserTags,
 };
