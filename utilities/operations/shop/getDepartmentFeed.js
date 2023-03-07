@@ -2,6 +2,7 @@ const _ = require('lodash');
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
+  SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
@@ -32,6 +33,7 @@ module.exports = async ({
         ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         ...shopHelper.makeFilterCondition(filter),
+        object_type: { $in: SHOP_OBJECT_TYPES },
       },
     },
     ...shopHelper.getDefaultGroupStage(),
