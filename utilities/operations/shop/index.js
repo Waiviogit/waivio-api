@@ -9,4 +9,5 @@ module.exports = {
   getWobjectDepartments: require('./getWobjectDepartments'),
   getWobjectDepartmentFeed: require('./getWobjectDepartmentFeed'),
   getWobjectMainFeed: require('./getWobjectMainFeed'),
+  userFilters: require('./getUserFilters'),
 };
