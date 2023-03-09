@@ -35,22 +35,43 @@ const makeFilterCondition = (filter = {}) => {
 
 const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
   if (index === 'type') {
-    acc.object_type = field[index];
+    if (!_.isEmpty(field[index])) {
+      acc.object_type = field[index];
+    }
     return acc;
   }
   if (index === 'departments') {
-    acc.$and = _.map(field[index], (department) => ({ departments: department }));
+    const departmentsOr = _.reduce(field[index], (innerAcc, innerEl) => {
+      if (Array.isArray(innerEl) && innerEl.length) {
+        innerAcc.push(
+          {
+            departments: {
+              $all: innerEl,
+            },
+          },
+        );
+      }
+      return innerAcc;
+    }, []);
+    if (!_.isEmpty(departmentsOr)) {
+      acc.$or ? acc.$or.push(...departmentsOr) : acc.$or = departmentsOr;
+    }
     return acc;
   }
   if (index === 'tags') {
-    acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
+    if (!_.isEmpty(field[index])) {
+      acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
+    }
     return acc;
   }
   if (index === 'authorities') {
-    acc.$or = _.flatten(_.map(field[index], (user) => [
+    const authoritiesOr = _.flatten(_.map(field[index], (user) => [
       { 'authority.ownership': user },
       { 'authority.administrative': user },
     ]));
+    if (!_.isEmpty(authoritiesOr)) {
+      acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
+    }
     return acc;
   }
   return acc;

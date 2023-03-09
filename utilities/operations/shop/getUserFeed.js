@@ -10,14 +10,18 @@ module.exports = async ({
   countryCode,
   filter,
   follower,
+  department,
+  excludedDepartments,
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
   const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
   const { result: departments } = await getUserDepartments
-    .getTopDepartments({ userName, wobjectsFromPosts, user });
+    .getTopDepartments({
+      userName, wobjectsFromPosts, user, name: department, excluded: excludedDepartments,
+    });
 
-  const result = await Promise.all(departments.map(async (department) => getUserDepartmentFeed({
-    department: department.name,
+  const result = await Promise.all(departments.map(async (d) => getUserDepartmentFeed({
+    department: d.name,
     app,
     locale,
     countryCode,
