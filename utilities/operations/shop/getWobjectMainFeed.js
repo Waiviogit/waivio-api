@@ -11,19 +11,21 @@ const getWobjectMainFeed = async ({
   authorPermlink,
   countryCode,
   locale,
+  department,
+  excludedDepartments,
 }) => {
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
   const { filter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
 
   if (error) return { error };
   const { result: departments } = await getWobjectDepartments({
-    app, authorPermlink, filter,
+    app, authorPermlink, filter, name: department, excluded: excludedDepartments,
   });
 
   if (_.isEmpty(departments)) return { result: [] };
 
-  const result = await Promise.all(departments.map(async (department) => getWobjectDepartmentFeed({
-    department: department.name,
+  const result = await Promise.all(departments.map(async (d) => getWobjectDepartmentFeed({
+    department: d.name,
     app,
     locale,
     countryCode,

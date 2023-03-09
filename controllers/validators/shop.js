@@ -33,6 +33,8 @@ exports.wobjectDepartmentsSchema = Joi.object().keys({
 exports.mainFeedSchema = Joi.object().keys({
   userName: Joi.string(),
   locale: Joi.string().default('en-US'),
+  department: Joi.string(),
+  excludedDepartments: Joi.array().items(Joi.string()),
   filter: Joi.object().keys({
     rating: Joi.number().min(0).max(10),
     tagCategory: Joi.array().items(Joi.object().keys({
@@ -59,6 +61,8 @@ exports.departmentFeedSchema = Joi.object().keys({
 
 exports.userFeedSchema = Joi.object().keys({
   userName: Joi.required(),
+  department: Joi.string(),
+  excludedDepartments: Joi.array().items(Joi.string()),
   locale: Joi.string().default('en-US'),
   follower: Joi.string(),
   filter: Joi.object().keys({
@@ -88,6 +92,8 @@ exports.userFeedDepartmentsSchema = Joi.object().keys({
 
 exports.wobjectFeedSchema = Joi.object().keys({
   authorPermlink: Joi.required(),
+  department: Joi.string(),
+  excludedDepartments: Joi.array().items(Joi.string()),
   locale: Joi.string().default('en-US'),
   follower: Joi.string(),
 }).options(options);

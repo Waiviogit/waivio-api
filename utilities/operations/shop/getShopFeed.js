@@ -8,6 +8,8 @@ module.exports = async ({
   locale,
   countryCode,
   filter,
+  department,
+  excludedDepartments,
 } = {}) => {
   let user;
   if (userName) {
@@ -16,11 +18,14 @@ module.exports = async ({
   const {
     result: departments,
     error,
-  } = await getShopDepartments();
+  } = await getShopDepartments({
+    name: department,
+    excluded: excludedDepartments,
+  });
   if (error) return { error };
 
-  const result = await Promise.all(departments.map(async (department) => getDepartmentFeed({
-    department: department.name,
+  const result = await Promise.all(departments.map(async (d) => getDepartmentFeed({
+    department: d.name,
     app,
     userName,
     user,
