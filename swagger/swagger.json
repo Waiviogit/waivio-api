@@ -201,6 +201,15 @@
                 "userName": {
                   "type": "string"
                 },
+                "department": {
+                  "type": "string"
+                },
+                "excludedDepartments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
                 }
@@ -401,6 +410,15 @@
               "properties": {
                 "userName": {
                   "type": "string"
+                },
+                "department": {
+                  "type": "string"
+                },
+                "excludedDepartments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
@@ -661,6 +679,15 @@
               "properties": {
                 "authorPermlink": {
                   "type": "string"
+                },
+                "department": {
+                  "type": "string"
+                },
+                "excludedDepartments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
