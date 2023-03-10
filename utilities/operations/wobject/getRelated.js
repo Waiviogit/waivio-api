@@ -2,17 +2,52 @@ const _ = require('lodash');
 const uuid = require('uuid/v4');
 const { relatedAlbum } = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
+const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const {
+  Wobj,
+} = require('models');
 
-module.exports = async (data) => {
+const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
+  .compact()
+  .uniq()
+  .map((el) => {
+    const [author, permlink] = el.split('/');
+    return `${author}_${permlink}`;
+  })
+  .value();
+
+module.exports = async ({
+  authorPermlink, skip, limit, locale, app,
+}) => {
+  const { wObject } = await Wobj.getOne(authorPermlink);
+  const processedObj = await wObjectHelper.processWobjects({
+    wobjects: [wObject],
+    locale,
+    fields: [FIELDS_NAMES.REMOVE],
+    returnArray: false,
+    app,
+  });
+  const removeFilter = getRemoveFilter(processedObj);
+
   const pipeline = [
-    { $match: { wobjAuthorPermlink: data.authorPermlink } },
+    {
+      $match: {
+        wobjAuthorPermlink: authorPermlink,
+        ...(!_.isEmpty(removeFilter) && { postAuthorPermlink: { $nin: removeFilter } }),
+      },
+    },
     { $unwind: '$images' },
-    { $skip: data.skip },
-    { $limit: data.limit + 1 },
+    { $skip: skip },
+    { $limit: limit + 1 },
     { $project: { body: '$images', id: '$wobjAuthorPermlink', _id: 0 } },
   ];
   const countPipeline = [
-    { $match: { wobjAuthorPermlink: data.authorPermlink } },
+    {
+      $match: {
+        wobjAuthorPermlink: authorPermlink,
+        ...(!_.isEmpty(removeFilter) && { postAuthorPermlink: { $nin: removeFilter } }),
+      },
+    },
     { $unwind: '$images' },
     { $count: 'imagesCount' },
   ];
@@ -23,18 +58,18 @@ module.exports = async (data) => {
   return {
     json: {
       body: 'Related',
-      id: `${data.authorPermlink}-related`,
+      id: `${authorPermlink}-related`,
       count: _.get(count, 'imagesCount', 0),
       name: FIELDS_NAMES.GALLERY_ALBUM,
       items: _
         .chain(result)
-        .slice(0, data.limit)
+        .slice(0, limit)
         .forEach((el) => {
           el.permlink = uuid();
           el.id = `${el.id}-related`;
         })
         .value(),
-      hasMore: result.length === data.limit + 1,
+      hasMore: result.length === limit + 1,
     },
   };
 };

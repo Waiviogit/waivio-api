@@ -232,13 +232,20 @@ const countWobjectsByArea = async (req, res, next) => {
 
 const related = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.params, ...req.query },
+    {
+      ...req.params,
+      ...req.query,
+      ...req.headers,
+    },
     validators.wobject.getRelatedAlbum,
     next,
   );
   if (!value) return;
 
-  const { json, error } = await getRelated(value);
+  const { json, error } = await getRelated({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.result = { status: 200, json };
   next();
