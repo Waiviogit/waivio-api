@@ -14,15 +14,8 @@ const getWobjectDepartments = async ({
     filter,
     projection: { departments: 1 },
   });
+  const allDepartments = shopHelper.getDepartmentsFromObjects(result);
 
-  const departmentNames = _.uniq(_.flatten(_.map(result, 'departments')));
-
-  const { result: allDepartments } = await Department.find({
-    filter: {
-      name: { $in: departmentNames },
-    },
-    projection: { search: 0 },
-  });
   const filteredDepartments = name
     ? shopHelper.secondaryFilterDepartment({ allDepartments, name, excluded })
     : shopHelper.mainFilterDepartment(allDepartments);

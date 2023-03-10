@@ -176,6 +176,23 @@ const getDefaultGroupStage = () => [
 const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
 
+const getDepartmentsFromObjects = (objects) => {
+  const departments = new Map();
+
+  for (const object of objects) {
+    for (const department of object.departments) {
+      const record = departments.get(department);
+
+      departments.set(department, {
+        name: department,
+        related: record ? _.uniq([...record.related, object.departments]) : object.departments,
+        objectsCount: record ? record.objectsCount + 1 : 1,
+      });
+    }
+  }
+  return Array.from(departments.values());
+};
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -184,4 +201,5 @@ module.exports = {
   getWobjectFilter,
   getDefaultGroupStage,
   orderBySubdirectory,
+  getDepartmentsFromObjects,
 };
