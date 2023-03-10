@@ -180,12 +180,13 @@ const getDepartmentsFromObjects = (objects) => {
   const departments = new Map();
 
   for (const object of objects) {
+    if (!object.departments) continue;
     for (const department of object.departments) {
       const record = departments.get(department);
 
       departments.set(department, {
         name: department,
-        related: record ? _.uniq([...record.related, object.departments]) : object.departments,
+        related: record ? _.uniq([...record.related, ...object.departments]) : object.departments,
         objectsCount: record ? record.objectsCount + 1 : 1,
       });
     }
