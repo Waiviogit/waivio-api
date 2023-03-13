@@ -10,5 +10,6 @@ module.exports = {
   getWobjectDepartmentFeed: require('./objectShop/getWobjectDepartmentFeed'),
   getWobjectMainFeed: require('./objectShop/getWobjectMainFeed'),
   userFilters: require('./userShop/getUserFilters'),
+  objectFilters: require('./objectShop/getWobjectFilters'),
   restoreShopState: require('./restoreShopState'),
 };

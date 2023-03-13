@@ -16,6 +16,7 @@ exports.userDepartmentsSchema = Joi.object().keys({
 
 exports.userFiltersSchema = Joi.object().keys({
   userName: Joi.string().required(),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.userTagsSchema = Joi.object().keys({
@@ -23,6 +24,7 @@ exports.userTagsSchema = Joi.object().keys({
   tagCategory: Joi.string().required(),
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.wobjectDepartmentsSchema = Joi.object().keys({
@@ -118,6 +120,19 @@ exports.wobjectFeedDepartmentsSchema = Joi.object().keys({
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
   path: Joi.array().items(Joi.string()).required(),
+}).options(options);
+
+exports.wobjectFiltersSchema = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  path: Joi.array().items(Joi.string()),
+}).options(options);
+
+exports.wobjectTagsSchema = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  tagCategory: Joi.string().required(),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(10),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.restoreShopSchema = Joi.object().keys({

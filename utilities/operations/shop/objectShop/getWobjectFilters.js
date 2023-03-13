@@ -1,0 +1,66 @@
+const {
+  Wobj,
+} = require('models');
+
+const shopHelper = require('utilities/helpers/shopHelper');
+const _ = require('lodash');
+
+const getObjects = async ({
+  authorPermlink, tagCategory, app, path,
+}) => {
+  const { filter } = await shopHelper.getWobjectFilter({ app, authorPermlink });
+
+  const { result } = await Wobj.findObjects({
+    filter: {
+      ...filter,
+      ...(tagCategory && { 'fields.tagCategory': tagCategory }),
+      ...(!_.isEmpty(path) && { departments: { $all: path } }),
+    },
+    projection: { fields: 1 },
+  });
+
+  return result;
+};
+
+const getMoreTagFilters = async ({
+  authorPermlink, tagCategory, skip, limit, app, path,
+}) => {
+  const objects = await getObjects({
+    authorPermlink, tagCategory, app, path,
+  });
+  const { tags, hasMore } = shopHelper.getMoreTagsForCategory({
+    objects, tagCategory, skip, limit,
+  });
+
+  return {
+    result: {
+      tagCategory,
+      tags,
+      hasMore,
+    },
+  };
+};
+
+const getObjectFilters = async ({
+  authorPermlink, app, path,
+}) => {
+  const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
+  if (error) return { error };
+
+  const objects = await getObjects({ authorPermlink, app, path });
+
+  const tagCategoryFilters = shopHelper
+    .getFilteredTagCategories({ objects, tagCategories });
+
+  return {
+    result: {
+      rating: [10, 8, 6],
+      tagCategoryFilters,
+    },
+  };
+};
+
+module.exports = {
+  getObjectFilters,
+  getMoreTagFilters,
+};
