@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { SHOP_DEPARTMENTS_TYPE } = require('constants/shop');
 
 const options = { stripUnknown: true, convert: true };
 
@@ -99,7 +100,7 @@ exports.userFeedDepartmentsSchema = Joi.object().keys({
 }).options(options);
 
 exports.wobjectFeedSchema = Joi.object().keys({
-  authorPermlink: Joi.required(),
+  authorPermlink: Joi.string().required(),
   department: Joi.string(),
   excludedDepartments: Joi.array().items(Joi.string()),
   locale: Joi.string().default('en-US'),
@@ -111,10 +112,18 @@ exports.wobjectFeedSchema = Joi.object().keys({
 
 exports.wobjectFeedDepartmentsSchema = Joi.object().keys({
   department: Joi.string().required(),
-  authorPermlink: Joi.required(),
+  authorPermlink: Joi.string().required(),
   follower: Joi.string(),
   locale: Joi.string().default('en-US'),
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
   path: Joi.array().items(Joi.string()).required(),
+}).options(options);
+
+exports.restoreShopSchema = Joi.object().keys({
+  authorPermlink: Joi.string(),
+  userName: Joi.string(),
+  path: Joi.array().items(Joi.string()).required(),
+  type: Joi.string().valid(...Object.values(SHOP_DEPARTMENTS_TYPE))
+    .default(SHOP_DEPARTMENTS_TYPE.MAIN),
 }).options(options);
