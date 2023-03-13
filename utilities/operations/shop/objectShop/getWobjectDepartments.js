@@ -1,6 +1,7 @@
 const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj, Department } = require('models');
+const { Wobj } = require('models');
 const _ = require('lodash');
+const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
 
 const getWobjectDepartments = async ({
   authorPermlink, app, name, excluded, filter,
@@ -14,6 +15,9 @@ const getWobjectDepartments = async ({
     filter,
     projection: { departments: 1 },
   });
+
+  const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
+
   const allDepartments = shopHelper.getDepartmentsFromObjects(result);
 
   const filteredDepartments = name
@@ -22,7 +26,16 @@ const getWobjectDepartments = async ({
 
   const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
 
-  return { result: shopHelper.orderBySubdirectory(mappedDepartments) };
+  const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
+
+  if (!name && uncategorized.length) {
+    orderedDepartments.push({
+      name: UNCATEGORIZED_DEPARTMENT,
+      subdirectory: false,
+    });
+  }
+
+  return { result: orderedDepartments };
 };
 
 module.exports = getWobjectDepartments;
