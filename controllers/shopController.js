@@ -22,13 +22,13 @@ const getFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getShopFeed({
+  const { result, hasMore, error } = await shop.getShopFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 const getFeedByDepartment = async (req, res, next) => {
@@ -78,13 +78,13 @@ const getUserFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getUserFeed({
+  const { result, hasMore, error } = await shop.getUserFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 const getUserFeedByDepartment = async (req, res, next) => {
@@ -167,14 +167,14 @@ const getWobjectMainFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getWobjectMainFeed({
+  const { result, hasMore, error } = await shop.getWobjectMainFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
 
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 module.exports = {

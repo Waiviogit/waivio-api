@@ -25,6 +25,7 @@ module.exports = async ({
   app,
   wobjectsFromPosts,
   follower,
+  path,
 }) => {
   const emptyResp = { department, wobjects: [], hasMore: false };
 
@@ -46,7 +47,7 @@ module.exports = async ({
 
   const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
     ? { $or: [{ departments: [] }, { departments: null }] }
-    : { departments: department };
+    : { departments: { $all: path } };
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {

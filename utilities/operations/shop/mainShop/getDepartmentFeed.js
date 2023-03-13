@@ -20,12 +20,13 @@ module.exports = async ({
   skip = 0,
   user,
   app,
+  path,
 }) => {
   const emptyResp = { department, wobjects: [], hasMore: false };
 
   const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
     ? { $or: [{ departments: [] }, { departments: null }] }
-    : { departments: department };
+    : { departments: { $all: path } };
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
