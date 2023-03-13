@@ -98,6 +98,7 @@ shopRoutes.route('/department-feed').post(shopController.getFeedByDepartment);
 shopRoutes.route('/main-feed').post(shopController.getFeed);
 shopRoutes.route('/departments').post(shopController.getDepartments);
 shopRoutes.route('/filters').post(shopController.getFilters);
+shopRoutes.route('/state').post(shopController.restoreShopState);
 
 shopRoutes.route('/user/departments').post(shopController.getUserDepartments);
 shopRoutes.route('/user/department-feed').post(shopController.getUserFeedByDepartment);

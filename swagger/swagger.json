@@ -768,6 +768,73 @@
         }
       }
     },
+    "/api/shop/state": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "get shop state",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "userName": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type" : {
+                  "type": "string",
+                  "enum": ["main", "user", "object"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subdirectory": {
+                  "type": "boolean"
+                },
+                "excludedDepartments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/departments": {
       "post": {
         "tags": [

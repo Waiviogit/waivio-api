@@ -177,6 +177,20 @@ const getWobjectMainFeed = async (req, res, next) => {
   res.json({ result, hasMore });
 };
 
+const restoreShopState = async (req, res, next) => {
+  const value = validators.validate(
+    req.body, validators.shop.restoreShopSchema, next,
+  );
+  if (!value) return;
+
+  const { result } = await shop.restoreShopState({
+    ...value,
+    app: req.appData,
+  });
+
+  res.json(result);
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -190,4 +204,5 @@ module.exports = {
   getWobjectMainFeed,
   getUserFilters,
   getUserTags,
+  restoreShopState,
 };
