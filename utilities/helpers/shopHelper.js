@@ -1,6 +1,8 @@
 const _ = require('lodash');
-const { FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const { Wobj } = require('models');
+const {
+  FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
+} = require('constants/wobjectsData');
+const { Wobj, ObjectType } = require('models');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 
@@ -194,6 +196,86 @@ const getDepartmentsFromObjects = (objects) => {
   return Array.from(departments.values());
 };
 
+const getUniqArrayWithScore = (arr) => {
+  const count = {};
+  for (const str of arr) {
+    count[str] = (count[str] || 0) + 1;
+  }
+
+  const unique = [];
+  for (const str of arr) {
+    if (!unique.some((obj) => obj.value === str)) {
+      unique.push({ value: str, score: count[str] });
+    }
+  }
+  return unique;
+};
+
+const getTagCategoriesForFilter = async () => {
+  const { result: objectTypes, error } = await ObjectType
+    .find({ filter: { name: { $in: SHOP_OBJECT_TYPES } } });
+
+  if (_.isEmpty(objectTypes) || error) {
+    return { error: new Error('Categories not found') };
+  }
+
+  const tagCategories = _.reduce(objectTypes, (acc, el) => {
+    const tagCategory = _.find(el.supposed_updates, (u) => u.name === 'tagCategory');
+    if (!tagCategory) return acc;
+    return [...acc, ...tagCategory.values];
+  }, []);
+
+  return { result: tagCategories };
+};
+
+const getFilteredTagCategories = ({ objects, tagCategories }) => {
+  const tagCategoryFilters = [];
+
+  const fields = _.chain(objects)
+    .map('fields')
+    .flatten()
+    .filter((f) => _.includes(tagCategories, f.tagCategory))
+    .value();
+
+  for (const category of tagCategories) {
+    const categoryFields = getUniqArrayWithScore(
+      _.map(_.filter(fields, (f) => category === f.tagCategory), 'body'),
+    );
+    if (_.isEmpty(categoryFields)) continue;
+    const tags = _.chain(categoryFields).orderBy(['score'], ['desc']).map('value').take(3)
+      .value();
+
+    tagCategoryFilters.push({
+      tagCategory: category,
+      tags,
+      hasMore: categoryFields.length > tags.length,
+    });
+  }
+
+  return tagCategoryFilters;
+};
+
+const getMoreTagsForCategory = ({
+  objects, tagCategory, skip, limit,
+}) => {
+  const fields = _.chain(objects)
+    .map('fields')
+    .flatten()
+    .filter((f) => f.tagCategory === tagCategory)
+    .value();
+
+  const categoryFields = getUniqArrayWithScore(
+    _.map(fields, 'body'),
+  );
+  const tags = _.chain(categoryFields).orderBy(['score'], ['desc']).map('value').slice(skip, skip + limit)
+    .value();
+
+  return {
+    tags,
+    hasMore: categoryFields.length > tags.length + skip,
+  };
+};
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -203,4 +285,8 @@ module.exports = {
   getDefaultGroupStage,
   orderBySubdirectory,
   getDepartmentsFromObjects,
+  getUniqArrayWithScore,
+  getTagCategoriesForFilter,
+  getFilteredTagCategories,
+  getMoreTagsForCategory
 };
