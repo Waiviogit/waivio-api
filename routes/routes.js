@@ -109,6 +109,8 @@ shopRoutes.route('/user/filters/tags').post(shopController.getUserTags);
 shopRoutes.route('/wobject/departments').post(shopController.getWobjectDepartments);
 shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepartmentFeed);
 shopRoutes.route('/wobject/main-feed').post(shopController.getWobjectMainFeed);
+shopRoutes.route('/wobject/filters').post(shopController.getWobjectFilters);
+shopRoutes.route('/wobject/filters/tags').post(shopController.getWobjectTags);
 // endregion
 
 // region Wobject

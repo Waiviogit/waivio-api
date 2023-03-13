@@ -191,6 +191,22 @@ const restoreShopState = async (req, res, next) => {
   res.json(result);
 };
 
+const getWobjectFilters = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.wobjectFiltersSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.objectFilters.getObjectFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getWobjectTags = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.wobjectTagsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.objectFilters.getMoreTagFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -205,4 +221,6 @@ module.exports = {
   getUserFilters,
   getUserTags,
   restoreShopState,
+  getWobjectFilters,
+  getWobjectTags,
 };
