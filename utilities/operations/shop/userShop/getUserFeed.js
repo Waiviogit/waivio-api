@@ -12,13 +12,18 @@ module.exports = async ({
   follower,
   department,
   excludedDepartments,
+  path = [],
+  skip,
+  limit,
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
   const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
-  const { result: departments } = await getUserDepartments
+  const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
       userName, wobjectsFromPosts, user, name: department, excluded: excludedDepartments,
     });
+
+  const departments = userDepartments.slice(skip, skip + limit);
 
   const result = await Promise.all(departments.map(async (d) => getUserDepartmentFeed({
     department: d.name,
@@ -30,6 +35,11 @@ module.exports = async ({
     user,
     userName,
     follower,
+    path: [...path, d.name],
   })));
-  return { result };
+
+  return {
+    result,
+    hasMore: userDepartments.length > departments.length + skip,
+  };
 };

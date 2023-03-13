@@ -13,14 +13,19 @@ const getWobjectMainFeed = async ({
   locale,
   department,
   excludedDepartments,
+  path = [],
+  skip,
+  limit,
 }) => {
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
   const { filter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
 
   if (error) return { error };
-  const { result: departments } = await getWobjectDepartments({
+  const { result: objectDepartments } = await getWobjectDepartments({
     app, authorPermlink, filter, name: department, excluded: excludedDepartments,
   });
+
+  const departments = objectDepartments.slice(skip, skip + limit);
 
   if (_.isEmpty(departments)) return { result: [] };
 
@@ -32,9 +37,14 @@ const getWobjectMainFeed = async ({
     filter,
     user,
     follower,
+    path: [...path, d.name],
   })));
 
-  return { result };
+
+  return {
+    result,
+    hasMore: objectDepartments.length > departments.length + skip,
+  };
 };
 
 module.exports = getWobjectMainFeed;

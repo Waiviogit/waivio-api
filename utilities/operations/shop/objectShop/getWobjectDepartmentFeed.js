@@ -1,24 +1,57 @@
 const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj, User } = require('models');
+const {
+  Wobj,
+  User,
+} = require('models');
 const _ = require('lodash');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const {
+  REQUIREDFILDS_WOBJ_LIST,
+  REMOVE_OBJ_STATUSES,
+} = require('constants/wobjectsData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
 
 const getWobjectDepartmentFeed = async ({
-  department, filter, app, authorPermlink, skip = 0, limit = 3, follower, locale, countryCode, user,
+  department,
+  filter,
+  app,
+  authorPermlink,
+  skip = 0,
+  limit = 3,
+  follower,
+  locale,
+  countryCode,
+  user,
+  path,
 }) => {
   if (!user) ({ user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP));
-  const emptyResp = { department, wobjects: [], hasMore: false };
+  const emptyResp = {
+    department,
+    wobjects: [],
+    hasMore: false,
+  };
   // inside departments in and condition so we can add direct filter
-  if (!filter)({ filter } = await shopHelper.getWobjectFilter({ app, authorPermlink }));
+  if (!filter) {
+    ({ filter } = await shopHelper.getWobjectFilter({
+      app,
+      authorPermlink,
+    }));
+  }
 
-  const { wobjects: result, error } = await Wobj.fromAggregation([
+  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
+    ? { $or: [{ departments: [] }, { departments: null }] }
+    : { departments: { $all: path } };
+
+  const {
+    wobjects: result,
+    error,
+  } = await Wobj.fromAggregation([
     {
       $match: {
         ...filter,
-        departments: department,
+        ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
     },
@@ -38,7 +71,10 @@ const getWobjectDepartmentFeed = async ({
     countryCode,
   });
 
-  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });
+  await campaignsV2Helper.addNewCampaignsToObjects({
+    user,
+    wobjects: processed,
+  });
 
   return {
     department,

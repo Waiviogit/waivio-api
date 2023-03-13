@@ -152,6 +152,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -212,6 +218,18 @@
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
                 }
               }
             }
@@ -357,6 +375,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -422,6 +446,18 @@
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
                 }
               }
             }
@@ -626,6 +662,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -688,6 +730,18 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
                 }
               }
             }
