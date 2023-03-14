@@ -15,7 +15,7 @@ const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments'
 
 const getWobjectDepartmentFeed = async ({
   department,
-  filter,
+  wobjectFilter,
   app,
   authorPermlink,
   skip = 0,
@@ -25,6 +25,7 @@ const getWobjectDepartmentFeed = async ({
   countryCode,
   user,
   path,
+  filter,
 }) => {
   if (!user) ({ user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP));
   const emptyResp = {
@@ -33,10 +34,11 @@ const getWobjectDepartmentFeed = async ({
     hasMore: false,
   };
   // inside departments in and condition so we can add direct filter
-  if (!filter) {
-    ({ filter } = await shopHelper.getWobjectFilter({
+  if (!wobjectFilter) {
+    ({ wobjectFilter } = await shopHelper.getWobjectFilter({
       app,
       authorPermlink,
+      tagFilter: shopHelper.makeFilterCondition(filter),
     }));
   }
 
@@ -50,7 +52,7 @@ const getWobjectDepartmentFeed = async ({
   } = await Wobj.fromAggregation([
     {
       $match: {
-        ...filter,
+        ...wobjectFilter,
         ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
