@@ -12,6 +12,13 @@ exports.mainFiltersSchema = Joi.object().keys({
   path: Joi.array().items(Joi.string()),
 });
 
+exports.tagsSchema = Joi.object().keys({
+  tagCategory: Joi.string().required(),
+  skip: Joi.number().default(0),
+  limit: Joi.number().default(10),
+  path: Joi.array().items(Joi.string()),
+}).options(options);
+
 exports.userDepartmentsSchema = Joi.object().keys({
   userName: Joi.string().required(),
   name: Joi.string(),

@@ -1,15 +1,13 @@
 const { ObjectType } = require('models');
 const _ = require('lodash');
 const { objectTypeHelper } = require('utilities/helpers');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
+const { SHOP_ITEM_RATINGS } = require('constants/shop');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { redisGetter } = require('utilities/redis');
+const showTags = require('utilities/operations/objectType/showTags');
 
-const getFilters = async ({ path = [] } = {}) => {
-  // cash просчитывать
-  /// писаться будут не через сash
-
-  const { result: tagCategories } = await shopHelper.getTagCategoriesForFilter();
-  console.log();
+const getMainFilter = async () => {
   const tagCategoryFilters = [];
   const { result, error } = await ObjectType
     .find({ filter: { name: { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] } } });
@@ -23,35 +21,70 @@ const getFilters = async ({ path = [] } = {}) => {
 
   return {
     result: {
-      // todo const
-      rating: [10, 8, 6],
+      rating: SHOP_ITEM_RATINGS,
       tagCategoryFilters,
     },
   };
 };
 
-(async () => {
-  // await getFilters({ path: ['Books', 'fiction', 'baby fiction'] });
-  // console.log();
-
-  const path = ['Books', 'cooking', 'oldFiction'];
-
-  const mock = {
-    Books: ['tag1', 'tag2', 'tag3'], // 1 lvl
-    cooking: ['tag1', 'tag2'], // 2 lvl
-    fiction: ['tag2', 'tag3'], // 2 lvl
-    'baby fiction': ['tag3', 'tag6'], // 3 lvl
-    oldFiction: ['tag2'], // 3 lvl
-
-  };
-
+const getCategoryTags = async ({
+  path, tagCategory, skip = 0, limit = 3,
+}) => {
   let tags = [];
-  for (const item of path) {
-    tags = _.difference(mock[item], tags);
+  for (const department of path) {
+    const { tags: categoryTags, error } = await redisGetter.getTagCategories({ key: `${FIELDS_NAMES.DEPARTMENTS}:${department}:${tagCategory}`, start: 0, end: -1 });
+    if (error) continue;
+    tags = _.difference(categoryTags, tags);
   }
-  console.log();
-})();
+  const result = _.slice(tags, skip, skip + limit);
+  return {
+    tagCategory,
+    tags: result,
+    hasMore: tags.length > result + skip,
+  };
+};
+
+const getFilters = async ({ path = [] } = {}) => {
+  if (_.isEmpty(path)) return getMainFilter();
+  const { result: tagCategories } = await shopHelper.getTagCategoriesForFilter();
+
+  const tagCategoryFilters = [];
+  for (const tagCategory of tagCategories) {
+    const { tags, hasMore } = await getCategoryTags({ path, tagCategory });
+    if (_.isEmpty(tags)) continue;
+    tagCategoryFilters.push({ tagCategory, tags, hasMore });
+  }
+
+  return {
+    result: {
+      rating: SHOP_ITEM_RATINGS,
+      tagCategoryFilters,
+    },
+  };
+};
+
+const getMoreTagFilters = async ({
+  tagCategory, skip, limit, path,
+}) => {
+  if (_.isEmpty(path)) {
+    const result = await showTags({
+      skip, limit, tagCategory, objectType: tagCategory === 'Tags' ? OBJECT_TYPES.BOOK : OBJECT_TYPES.PRODUCT,
+    });
+    return {
+      result: {
+        ...result,
+        tagCategory,
+      },
+    };
+  }
+  return {
+    result: await getCategoryTags({
+      path, tagCategory, skip, limit,
+    }),
+  };
+};
 
 module.exports = {
   getFilters,
+  getMoreTagFilters,
 };

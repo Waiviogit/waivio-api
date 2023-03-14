@@ -11,6 +11,7 @@ const {
   REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { SHOP_ITEM_RATINGS } = require('constants/shop');
 
 const getUserObjects = async ({ userName, tagCategory, path }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
@@ -73,7 +74,7 @@ const getUserFilters = async ({
 
   return {
     result: {
-      rating: [10, 8, 6],
+      rating: SHOP_ITEM_RATINGS,
       tagCategoryFilters,
     },
   };

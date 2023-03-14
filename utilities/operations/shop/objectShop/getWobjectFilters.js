@@ -1,7 +1,7 @@
 const {
   Wobj,
 } = require('models');
-
+const { SHOP_ITEM_RATINGS } = require('constants/shop');
 const shopHelper = require('utilities/helpers/shopHelper');
 const _ = require('lodash');
 
@@ -54,7 +54,7 @@ const getObjectFilters = async ({
 
   return {
     result: {
-      rating: [10, 8, 6],
+      rating: SHOP_ITEM_RATINGS,
       tagCategoryFilters,
     },
   };
