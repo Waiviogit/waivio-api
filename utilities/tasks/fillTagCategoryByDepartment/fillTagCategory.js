@@ -35,7 +35,7 @@ const fillTagCategory = async (params) => {
 
   const objectTypeDocs = await getObjectTypes({ objectTypes });
   if (_.isEmpty(objectTypeDocs)) return;
-  const tagCategories = _.reduce(objectTypeDocs, (acc, el, index) => {
+  const tagCategories = _.reduce(objectTypeDocs, (acc, el) => {
     const tagCategory = _.find(el.supposed_updates, (u) => u.name === 'tagCategory');
     if (!tagCategory) return acc;
     acc[el.name] = tagCategory.values;
