@@ -553,15 +553,15 @@ const addOptions = async ({
 const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!app) return [];
   const { result } = await AppAffiliateModel.find(
-    { filter: { host: app.host, countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] } } },
+    {
+      filter: {
+        host: app.host || config.appHost,
+        countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] },
+      },
+    },
   );
-  const requestCountryCode = _.filter(result, (aff) => aff.countryCode === countryCode);
-  if (!_.isEmpty(requestCountryCode)) return requestCountryCode;
-  const defaultCountryCode = _.filter(result, (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE);
-  if (!_.isEmpty(defaultCountryCode)) return defaultCountryCode;
-  if (app.host === config.appHost) return [];
 
-  return getAppAffiliateCodes({ app: { host: config.appHost }, countryCode });
+  return result;
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {
@@ -583,7 +583,7 @@ const formTargetLink = ({ productId }) => {
   return { type: AFFILIATE_TYPE.TARGET, link };
 };
 
-const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
+const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) => {
   const links = new Map();
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
@@ -593,33 +593,49 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
       productIdType: body.productIdType,
     };
   }));
+  const requestCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === countryCode,
+  );
+  const defaultCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE,
+  );
+
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
   const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
   if (productIdObj) {
-    const link = formAmazonLink({ affiliateCodes, productId: productIdObj.productId });
+    const codes = productIdObj.productId === 'none'
+      ? defaultCountryCode
+      : requestCountryCode.length > 0
+        ? requestCountryCode
+        : defaultCountryCode;
+
+    const link = formAmazonLink({
+      affiliateCodes: codes,
+      productId: productIdObj.productId,
+    });
     if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
   }
   for (const mappedProductId of mappedProductIds) {
     const { productId, productIdType } = mappedProductId;
-    if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (AMAZON_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.AMAZON)) {
       const link = formAmazonLink({ affiliateCodes, productId });
       if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
     }
-    if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (WALMART_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.WALMART)) {
       const link = formWalmartLink({ productId });
       if (link) links.set(AFFILIATE_TYPE.WALMART, link);
     }
-    if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (TARGET_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.TARGET)) {
       const link = formTargetLink({ productId });
       if (link) links.set(AFFILIATE_TYPE.TARGET, link);
     }
   }
 
-  return Array.from(links, ([, value]) => ({ ...value }));
+  return [...links.values()];
 };
 
 /** Parse wobjects to get its winning */
@@ -715,7 +731,7 @@ const processWobjects = async ({
       obj.parent = await getParentInfo({ locale, app, parent });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
+      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId, countryCode });
       if (!_.isEmpty(affiliateLinks)) {
         obj.affiliateLinks = affiliateLinks;
         obj.website = null;
