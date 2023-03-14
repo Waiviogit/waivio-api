@@ -8,6 +8,10 @@ exports.departmentsSchema = Joi.object().keys({
   excluded: Joi.array().items(Joi.string()),
 }).options(options);
 
+exports.mainFiltersSchema = Joi.object().keys({
+  path: Joi.array().items(Joi.string()),
+});
+
 exports.userDepartmentsSchema = Joi.object().keys({
   userName: Joi.string().required(),
   name: Joi.string(),
