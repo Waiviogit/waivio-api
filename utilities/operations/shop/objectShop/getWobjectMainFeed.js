@@ -16,13 +16,14 @@ const getWobjectMainFeed = async ({
   path = [],
   skip,
   limit,
+  filter,
 }) => {
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
-  const { filter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
+  const { wobjectFilter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
 
   if (error) return { error };
   const { result: objectDepartments } = await getWobjectDepartments({
-    app, authorPermlink, filter, name: department, excluded: excludedDepartments,
+    app, authorPermlink, wobjectFilter, name: department, excluded: excludedDepartments,
   });
 
   const departments = objectDepartments.slice(skip, skip + limit);
@@ -34,12 +35,12 @@ const getWobjectMainFeed = async ({
     app,
     locale,
     countryCode,
-    filter,
+    wobjectFilter,
     user,
     follower,
     path: [...path, d.name],
+    filter,
   })));
-
 
   return {
     result,

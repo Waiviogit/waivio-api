@@ -1,18 +1,21 @@
 const shopHelper = require('utilities/helpers/shopHelper');
 const { Wobj } = require('models');
 const _ = require('lodash');
-const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
+const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 
 const getWobjectDepartments = async ({
-  authorPermlink, app, name, excluded, filter,
+  authorPermlink, app, name, excluded, wobjectFilter,
 }) => {
   const emptyResult = { result: [] };
-  if (!filter) ({ filter } = await shopHelper.getWobjectFilter({ app, authorPermlink }));
+  if (!wobjectFilter) {
+    ({ wobjectFilter } = await shopHelper
+      .getWobjectFilter({ app, authorPermlink }));
+  }
 
-  if (_.isEmpty(filter)) return emptyResult;
+  if (_.isEmpty(wobjectFilter)) return emptyResult;
   // or we can group in aggregation
   const { result } = await Wobj.findObjects({
-    filter,
+    filter: wobjectFilter,
     projection: { departments: 1 },
   });
 
