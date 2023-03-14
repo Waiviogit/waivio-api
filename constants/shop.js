@@ -3,3 +3,5 @@ exports.SHOP_DEPARTMENTS_TYPE = {
   USER: 'user',
   OBJECT: 'object',
 };
+
+exports.SHOP_ITEM_RATINGS = [10, 8, 6];

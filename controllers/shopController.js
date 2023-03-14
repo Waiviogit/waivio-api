@@ -58,7 +58,17 @@ const getFeedByDepartment = async (req, res, next) => {
 };
 
 const getFilters = async (req, res, next) => {
-  const { result, error } = await shop.getShopFilters();
+  const value = validators.validate(req.body, validators.shop.mainFiltersSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getShopFilters.getFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getMoreTags = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.tagsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getShopFilters.getMoreTagFilters(value);
   if (error) return next(error);
   res.json(result);
 };
@@ -223,4 +233,5 @@ module.exports = {
   restoreShopState,
   getWobjectFilters,
   getWobjectTags,
+  getMoreTags,
 };

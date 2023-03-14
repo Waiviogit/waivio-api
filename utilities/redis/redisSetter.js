@@ -115,6 +115,7 @@ function validateUpdateNewsCache(ids, locale) {
 
 exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zaddAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
 exports.incrementTag = async ({ categoryName, tag, objectType }) => tagCategoriesClient.zincrbyAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${objectType}:${categoryName}`, 1, tag);
+exports.incrementDepartmentTag = async ({ categoryName, tag, department }) => tagCategoriesClient.zincrbyAsync(`${FIELDS_NAMES.DEPARTMENTS}:${department}:${categoryName}`, 1, tag);
 
 exports.incrementWebsitesSuspended = async ({ key, expire }) => {
   const counter = await appUsersStatistics.incrAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`);

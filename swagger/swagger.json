@@ -265,7 +265,25 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -279,6 +297,58 @@
               "example": {
                 "message": "Validation Error"
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/filters/tags": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tagCategory": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "succesfull operation",
+            "schema": {
+              "$ref": "#/definitions/tagCategory_response"
+            }
+          },
+          "422": {
+            "description": "Unprocessible Entity",
+            "schema": {
+              "$ref": "#/definitions/inline_response_400"
             }
           }
         }
