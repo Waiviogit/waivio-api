@@ -114,6 +114,13 @@ exports.wobjectFeedSchema = Joi.object().keys({
   path: Joi.array().items(Joi.string()),
   skip: Joi.number().default(0),
   limit: Joi.number().default(5),
+  filter: Joi.object().keys({
+    rating: Joi.number().min(0).max(10),
+    tagCategory: Joi.array().items(Joi.object().keys({
+      categoryName: Joi.string(),
+      tags: Joi.array().items(Joi.string()),
+    })),
+  }),
 }).options(options);
 
 exports.wobjectFeedDepartmentsSchema = Joi.object().keys({
@@ -124,6 +131,13 @@ exports.wobjectFeedDepartmentsSchema = Joi.object().keys({
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
   path: Joi.array().items(Joi.string()).required(),
+  filter: Joi.object().keys({
+    rating: Joi.number().min(0).max(10),
+    tagCategory: Joi.array().items(Joi.object().keys({
+      categoryName: Joi.string(),
+      tags: Joi.array().items(Joi.string()),
+    })),
+  }),
 }).options(options);
 
 exports.wobjectFiltersSchema = Joi.object().keys({

@@ -35,51 +35,69 @@ const makeFilterCondition = (filter = {}) => {
   return result;
 };
 
-const getMongoFilterForShop = (field) => _.reduce(field, (acc, el, index) => {
-  if (index === 'type') {
-    if (!_.isEmpty(field[index])) {
-      acc.object_type = field[index];
-    }
-    return acc;
-  }
-  if (index === 'departments') {
-    const departmentsOr = _.reduce(field[index], (innerAcc, innerEl) => {
-      if (Array.isArray(innerEl) && innerEl.length) {
-        innerAcc.push(
-          {
-            departments: {
-              $all: innerEl,
-            },
-          },
-        );
+const getMongoFilterForShop = ({ field, tagFilter }) => {
+  const fieldCondition = _.reduce(field, (acc, el, index) => {
+    if (index === 'type') {
+      if (!_.isEmpty(field[index])) {
+        acc.object_type = field[index];
       }
-      return innerAcc;
-    }, []);
-    if (!_.isEmpty(departmentsOr)) {
-      acc.$or ? acc.$or.push(...departmentsOr) : acc.$or = departmentsOr;
+      return acc;
+    }
+    if (index === 'departments') {
+      const departmentsOr = _.reduce(field[index], (innerAcc, innerEl) => {
+        if (Array.isArray(innerEl) && innerEl.length) {
+          innerAcc.push(
+            {
+              departments: {
+                $all: innerEl,
+              },
+            },
+          );
+        }
+        return innerAcc;
+      }, []);
+      if (!_.isEmpty(departmentsOr)) {
+        acc.$or ? acc.$or.push(...departmentsOr) : acc.$or = departmentsOr;
+      }
+      return acc;
+    }
+    if (index === 'tags') {
+      if (!_.isEmpty(field[index])) {
+        acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
+      }
+      return acc;
+    }
+    if (index === 'authorities') {
+      const authoritiesOr = _.flatten(_.map(field[index], (user) => [
+        { 'authority.ownership': user },
+        { 'authority.administrative': user },
+      ]));
+      if (!_.isEmpty(authoritiesOr)) {
+        acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
+      }
+      return acc;
     }
     return acc;
-  }
-  if (index === 'tags') {
-    if (!_.isEmpty(field[index])) {
-      acc.fields = { $elemMatch: { name: 'categoryItem', body: { $in: field[index] } } };
-    }
-    return acc;
-  }
-  if (index === 'authorities') {
-    const authoritiesOr = _.flatten(_.map(field[index], (user) => [
-      { 'authority.ownership': user },
-      { 'authority.administrative': user },
-    ]));
-    if (!_.isEmpty(authoritiesOr)) {
-      acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
-    }
-    return acc;
-  }
-  return acc;
-}, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
+  }, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
 
-const getWobjectFilter = async ({ authorPermlink, app }) => {
+  if (_.isEmpty(tagFilter)) return fieldCondition;
+
+  if (fieldCondition.$or) {
+    return {
+      ..._.omit(fieldCondition, '$or'),
+      $and: [
+        { $or: fieldCondition.$or },
+        tagFilter,
+      ],
+    };
+  }
+  return {
+    ...fieldCondition,
+    ...tagFilter,
+  };
+};
+
+const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
   const { result } = await Wobj.findOne({
     author_permlink: authorPermlink,
     object_type: OBJECT_TYPES.SHOP,
@@ -96,7 +114,7 @@ const getWobjectFilter = async ({ authorPermlink, app }) => {
   const field = jsonHelper.parseJson(processedObject[FIELDS_NAMES.SHOP_FILTER], null);
   if (_.isEmpty(field)) return { error: { status: 404, message: 'Not Found' } };
 
-  return { filter: getMongoFilterForShop(field) };
+  return { wobjectFilter: getMongoFilterForShop({ field, tagFilter }) };
 };
 
 const mainFilterDepartment = (departments) => {
@@ -288,5 +306,5 @@ module.exports = {
   getUniqArrayWithScore,
   getTagCategoriesForFilter,
   getFilteredTagCategories,
-  getMoreTagsForCategory
+  getMoreTagsForCategory,
 };
