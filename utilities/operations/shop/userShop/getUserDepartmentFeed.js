@@ -58,7 +58,7 @@ module.exports = async ({
         ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
         $and: [
           { $or: orFilter },
-          shopHelper.makeFilterCondition(filter, orFilter),
+          shopHelper.makeFilterCondition(filter),
         ],
       },
     },
