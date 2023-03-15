@@ -565,7 +565,9 @@ const getAppAffiliateCodes = async ({ app, countryCode }) => {
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {
-  if (_.isEmpty(affiliateCodes)) return;
+  if (_.isEmpty(affiliateCodes) && productId) {
+    return { type: AFFILIATE_TYPE.AMAZON, link: `https://www.${AMAZON_LINKS_BY_COUNTRY.US}/dp/${productId}` };
+  }
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
   if (!code) return;
   const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
@@ -581,6 +583,25 @@ const formWalmartLink = ({ productId }) => {
 const formTargetLink = ({ productId }) => {
   const link = `https://www.target.com/p/${productId}`;
   return { type: AFFILIATE_TYPE.TARGET, link };
+};
+
+const specialAmazonLink = ({
+  productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds = [],
+}) => {
+  if (productIdObj.productId === 'none') {
+    const productObj = mappedProductIds.find(
+      (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
+    );
+    return formAmazonLink({
+      affiliateCodes: defaultCountryCode,
+      productId: productObj.productId,
+    });
+  }
+
+  return formAmazonLink({
+    affiliateCodes: requestCountryCode,
+    productId: productIdObj.productId,
+  });
 };
 
 const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) => {
@@ -600,19 +621,12 @@ const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) =>
     (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE,
   );
 
-  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon' && aff.countryCode === countryCode);
   const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
   if (productIdObj) {
-    const codes = productIdObj.productId === 'none'
-      ? defaultCountryCode
-      : requestCountryCode.length > 0
-        ? requestCountryCode
-        : defaultCountryCode;
-
-    const link = formAmazonLink({
-      affiliateCodes: codes,
-      productId: productIdObj.productId,
+    const link = specialAmazonLink({
+      productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds,
     });
     if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
   }
@@ -620,7 +634,10 @@ const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) =>
     const { productId, productIdType } = mappedProductId;
     if (AMAZON_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.AMAZON)) {
-      const link = formAmazonLink({ affiliateCodes, productId });
+      const link = formAmazonLink({
+        affiliateCodes: requestCountryCode.length ? requestCountryCode : defaultCountryCode,
+        productId,
+      });
       if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
     }
     if (WALMART_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
