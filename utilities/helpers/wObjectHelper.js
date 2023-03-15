@@ -592,6 +592,8 @@ const specialAmazonLink = ({
     const productObj = mappedProductIds.find(
       (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
     );
+    if (!productObj) return;
+
     return formAmazonLink({
       affiliateCodes: defaultCountryCode,
       productId: productObj.productId,
