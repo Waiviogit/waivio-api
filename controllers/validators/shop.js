@@ -6,6 +6,7 @@ const options = { stripUnknown: true, convert: true };
 exports.departmentsSchema = Joi.object().keys({
   name: Joi.string(),
   excluded: Joi.array().items(Joi.string()),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.mainFiltersSchema = Joi.object().keys({
@@ -23,6 +24,7 @@ exports.userDepartmentsSchema = Joi.object().keys({
   userName: Joi.string().required(),
   name: Joi.string(),
   excluded: Joi.array().items(Joi.string()),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.userFiltersSchema = Joi.object().keys({
@@ -42,6 +44,7 @@ exports.wobjectDepartmentsSchema = Joi.object().keys({
   authorPermlink: Joi.string().required(),
   name: Joi.string(),
   excluded: Joi.array().items(Joi.string()),
+  path: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.mainFeedSchema = Joi.object().keys({

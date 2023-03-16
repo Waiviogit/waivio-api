@@ -21,7 +21,7 @@ module.exports = async ({
   const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
   const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
-      userName, wobjectsFromPosts, user, name: department, excluded: excludedDepartments,
+      userName, wobjectsFromPosts, user, name: department, excluded: excludedDepartments, path,
     });
 
   const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
