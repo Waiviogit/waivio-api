@@ -39,7 +39,7 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
   if (name) {
     return {
       result: await mapDepartments(
-        filterDepartments(departments, [...excluded, name]),
+        await filterDepartments(departments, [...excluded, name], path),
         [...excluded, name],
         path,
       ),
