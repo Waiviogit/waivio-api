@@ -1,20 +1,42 @@
-const { Department } = require('models');
+const { Department, Wobj } = require('models');
 const _ = require('lodash');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
 const BOTTOM_LINE_PERCENT = 0.05;
 
-const filterDepartments = (departments, excluded = []) => {
+const getObjWithPath = async (path) => {
+  const { result } = await Wobj.findOne(
+    { departments: { $all: path } },
+    { _id: 1 },
+  );
+
+  return !!result;
+};
+
+const filterDepartments = async (departments, excluded = [], path = []) => {
   const objectsTotal = _.sumBy(departments, 'objectsCount');
   const topCounter = objectsTotal * TOP_LINE_PERCENT;
   const bottomCounter = objectsTotal * BOTTOM_LINE_PERCENT;
 
   const filterCondition = _.isEmpty(excluded)
     ? (d) => d.objectsCount < topCounter
-    : (d) => d.objectsCount < topCounter && d.objectsCount > bottomCounter;
+    : (d) => d.objectsCount < topCounter
+      && d.objectsCount > bottomCounter
+      && d.objectsCount > MIN_SUB_OBJECTS;
 
-  return _.filter(departments, filterCondition);
+  const filtered = _.filter(departments, filterCondition);
+  if (!path.length) return filtered;
+
+  const result = [];
+
+  for (const el of filtered) {
+    const existObjects = await getObjWithPath([el.name, ...path]);
+    if (!existObjects) continue;
+    result.push(el);
+  }
+
+  return result;
 };
 
 const mapDepartments = async (departments, excluded = [], path = []) => {
@@ -27,7 +49,8 @@ const mapDepartments = async (departments, excluded = [], path = []) => {
         filter: makeConditions({ name: department.name, excluded, path }),
       },
     );
-    const filtered = filterDepartments(subDepartments, [department.name, ...excluded]);
+
+    const filtered = await filterDepartments(subDepartments, [department.name, ...excluded], [department.name, ...path]);
 
     const subdirectory = department.objectsCount > MIN_SUB_OBJECTS
       && filtered.length > 1;
@@ -65,7 +88,7 @@ const getDepartmentsOnWobject = async (departments) => Promise.all(departments.m
     },
   );
   if (_.isEmpty(subDepartments)) return emptyDirectory;
-  const filtered = filterDepartments(subDepartments);
+  const filtered = await filterDepartments(subDepartments);
   if (_.isEmpty(filtered)) return emptyDirectory;
   return {
     name: d.name,

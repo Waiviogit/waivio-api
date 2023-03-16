@@ -200,15 +200,23 @@ const getDefaultGroupStage = () => [
 const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
 
-const getDepartmentsFromObjects = (objects) => {
+const getDepartmentsFromObjects = (objects, path) => {
   const departmentsMap = new Map();
 
   for (const { departments = [] } of objects) {
     for (const department of departments) {
       const { related = [], objectsCount = 0 } = departmentsMap.get(department) ?? {};
+      const filter = !_.every(path, (p) => _.includes(related, p))
+      const relatedToPush =  filter
+        ? _.filter(related, (r) => !_.includes(path, r))
+        : related;
+
       departmentsMap.set(department, {
         name: department,
-        related:  [...new Set([...related, ...departments])],
+        related:  [...new Set([
+          ...relatedToPush,
+          ...departments
+        ])],
         objectsCount: objectsCount + 1,
       });
     }
