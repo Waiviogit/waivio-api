@@ -2,6 +2,7 @@ const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
   AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
+  AFFILIATE_NULL_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -588,7 +589,7 @@ const formTargetLink = ({ productId }) => {
 const specialAmazonLink = ({
   productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds = [],
 }) => {
-  if (productIdObj.productId === 'none') {
+  if (AFFILIATE_NULL_TYPES.includes(productIdObj.productId.toLocaleLowerCase())) {
     const productObj = mappedProductIds.find(
       (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
     );
