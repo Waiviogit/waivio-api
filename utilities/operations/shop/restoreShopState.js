@@ -32,7 +32,7 @@ const restoreShopState = async ({
 
   for (const department of path) {
     const { result: nextLvl } = await handler[type]({
-      app, authorPermlink, userName, name: department, excluded,
+      app, authorPermlink, userName, name: department, excluded, path,
     });
     excluded.push(...nextLvl.map((el) => el.name));
     subdirectory = !!nextLvl.length;
