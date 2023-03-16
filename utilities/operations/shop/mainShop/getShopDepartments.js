@@ -12,7 +12,7 @@ const makeConditions = ({ name, excluded = [], path = [] }) => {
 };
 
 // we can add host in future for sites
-module.exports = async ({ name, excluded = [], path } = {}) => {
+module.exports = async ({ name, excluded = [], path = [] } = {}) => {
   const { result: departments, error } = await Department.find(
     {
       filter: makeConditions({ name, excluded, path }),
@@ -41,6 +41,7 @@ module.exports = async ({ name, excluded = [], path } = {}) => {
       result: await mapDepartments(
         filterDepartments(departments, [...excluded, name]),
         [...excluded, name],
+        path,
       ),
     };
   }

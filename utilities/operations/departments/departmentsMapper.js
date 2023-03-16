@@ -17,14 +17,14 @@ const filterDepartments = (departments, excluded = []) => {
   return _.filter(departments, filterCondition);
 };
 
-const mapDepartments = async (departments, excluded = []) => {
+const mapDepartments = async (departments, excluded = [], path = []) => {
   const result = [];
   for (const department of departments) {
     const filterCondition = (el) => el !== department.name && !excluded.includes(el);
 
     const { result: subDepartments = [] } = await Department.find(
       {
-        filter: makeConditions({ name: department.name, excluded }),
+        filter: makeConditions({ name: department.name, excluded, path }),
       },
     );
     const filtered = filterDepartments(subDepartments, [department.name, ...excluded]);
@@ -45,8 +45,10 @@ const mapDepartments = async (departments, excluded = []) => {
   return result;
 };
 
-const makeConditions = ({ name, names, excluded = [] }) => {
-  if (name) return { name: { $nin: [name, ...excluded] }, related: name };
+const makeConditions = ({
+  name, names, excluded = [], path = [],
+}) => {
+  if (name) return { name: { $nin: [name, ...excluded] }, related: { $all: [name, ...path] } };
   if (names) return { name: { $in: names } };
   return { level: 1 };
 };
