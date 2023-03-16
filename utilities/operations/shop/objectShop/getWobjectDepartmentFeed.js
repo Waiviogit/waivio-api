@@ -26,6 +26,7 @@ const getObjectDepartmentCondition = async ({
       app,
       name: department,
       wobjectFilter,
+      path,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }
@@ -47,6 +48,7 @@ const getWobjectDepartmentFeed = async ({
   path,
   filter,
 }) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   if (!user) ({ user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP));
   const emptyResp = {
     department,

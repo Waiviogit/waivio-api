@@ -25,6 +25,7 @@ module.exports = async ({
   } = await getShopDepartments({
     name: department,
     excluded: excludedDepartments,
+    path,
   });
   if (error) return { error };
 

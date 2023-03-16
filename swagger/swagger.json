@@ -90,6 +90,12 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -375,6 +381,12 @@
               },
               "excluded" : {
                 "type" : "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "path": {
+                "type": "array",
                 "items": {
                   "type": "string"
                 }
@@ -676,6 +688,12 @@
                 "type" : "string"
               },
               "excluded": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "path": {
                 "type": "array",
                 "items": {
                   "type": "string"

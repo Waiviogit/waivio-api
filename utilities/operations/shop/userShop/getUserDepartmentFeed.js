@@ -26,6 +26,7 @@ const getUserDepartmentCondition = async ({
       userName,
       user,
       name: department,
+      path,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }
@@ -47,6 +48,7 @@ module.exports = async ({
   follower,
   path,
 }) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
 
   if (!wobjectsFromPosts) {
