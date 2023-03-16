@@ -42,7 +42,7 @@ exports.getTopDepartments = async ({
   });
 
   const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
-  const allDepartments = shopHelper.getDepartmentsFromObjects(result);
+  const allDepartments = shopHelper.getDepartmentsFromObjects(result, path);
 
   const filteredDepartments = name && name !== OTHERS_DEPARTMENT
     ? shopHelper.secondaryFilterDepartment({

@@ -8,7 +8,8 @@ const _ = require('lodash');
 const getObjects = async ({
   authorPermlink, tagCategory, app, path,
 }) => {
-  const { wobjectFilter } = await shopHelper.getWobjectFilter({ app, authorPermlink });
+  const { wobjectFilter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
+  if (error) return [];
 
   const { result } = await Wobj.findObjects({
     filter: {
