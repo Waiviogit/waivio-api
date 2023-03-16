@@ -43,7 +43,6 @@ const departmentsRelatedFix = async () => {
         related: [relate, name],
       });
       if (object) continue;
-      console.log();
       await pullRelated({ name, relate });
     }
   }

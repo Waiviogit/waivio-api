@@ -47,6 +47,7 @@ module.exports = async ({
   follower,
   path,
 }) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
 
   if (!wobjectsFromPosts) {
