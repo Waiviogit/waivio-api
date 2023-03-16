@@ -1,3 +1,3 @@
 exports.UNCATEGORIZED_DEPARTMENT = 'Uncategorized';
 
-exports.OTHERS_DEPARTMENT = 'Others';
+exports.OTHERS_DEPARTMENT = 'Other';
