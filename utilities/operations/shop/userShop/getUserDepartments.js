@@ -1,17 +1,15 @@
 const {
-  Wobj, Post, Department, User, userShopDeselectModel,
+  Wobj, Post, User, userShopDeselectModel,
 } = require('models');
 const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsData');
 const _ = require('lodash');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
-const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const shopHelper = require('utilities/helpers/shopHelper');
 
 exports.getTopDepartments = async ({
   userName,
   wobjectsFromPosts,
-  skip = 0,
-  limit = 10,
   user,
   name,
   excluded,
@@ -43,24 +41,26 @@ exports.getTopDepartments = async ({
   });
 
   const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
+  const allDepartments = shopHelper.getDepartmentsFromObjects(result);
 
-  const names = _.uniq(
-    _.flatten(_.map(result, (item) => _.map(item.departments, (department) => department))),
-  );
-  const { result: allDepartments } = await Department.find({
-    filter: { name: { $in: names } },
-    options: {
-      sort: { sortScore: 1, objectsCount: -1 },
-      options: { skip, limit: limit + 1 },
-    },
-  });
-
-  const filteredDepartments = name
+  const filteredDepartments = name && name !== OTHERS_DEPARTMENT
     ? shopHelper.secondaryFilterDepartment({ allDepartments, name, excluded })
     : shopHelper.mainFilterDepartment(allDepartments);
 
   const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
+
+  if (orderedDepartments.length > 20 && name !== OTHERS_DEPARTMENT) {
+    orderedDepartments.splice(20, orderedDepartments.length);
+    orderedDepartments.push({
+      name: OTHERS_DEPARTMENT,
+      subdirectory: true,
+    });
+  }
+
+  if (name === OTHERS_DEPARTMENT) {
+    orderedDepartments.splice(0, 20);
+  }
 
   if (!name && uncategorized.length) {
     orderedDepartments.push({
