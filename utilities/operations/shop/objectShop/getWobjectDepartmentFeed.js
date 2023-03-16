@@ -11,7 +11,27 @@ const {
 } = require('constants/wobjectsData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
-const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
+const getWobjectDepartments = require('./getWobjectDepartments');
+
+const getObjectDepartmentCondition = async ({
+  department, path, authorPermlink, app, wobjectFilter,
+}) => {
+  if (department === UNCATEGORIZED_DEPARTMENT) {
+    return { $or: [{ departments: [] }, { departments: null }] };
+  }
+  if (department === OTHERS_DEPARTMENT) {
+    const { result } = await getWobjectDepartments({
+      authorPermlink,
+      app,
+      name: department,
+      wobjectFilter,
+    });
+    return { departments: { $in: _.map(result, 'name') } };
+  }
+
+  return { departments: { $all: path } };
+};
 
 const getWobjectDepartmentFeed = async ({
   department,
@@ -42,9 +62,9 @@ const getWobjectDepartmentFeed = async ({
     }));
   }
 
-  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
-    ? { $or: [{ departments: [] }, { departments: null }] }
-    : { departments: { $all: path } };
+  const departmentCondition = await getObjectDepartmentCondition({
+    department, path, authorPermlink, app, wobjectFilter,
+  });
 
   const {
     wobjects: result,
