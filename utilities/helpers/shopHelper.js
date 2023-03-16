@@ -197,21 +197,20 @@ const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
 
 const getDepartmentsFromObjects = (objects) => {
-  const departments = new Map();
+  const departmentsMap = new Map();
 
-  for (const object of objects) {
-    if (!object.departments) continue;
-    for (const department of object.departments) {
-      const record = departments.get(department);
-
-      departments.set(department, {
+  for (const { departments = [] } of objects) {
+    for (const department of departments) {
+      const { related = [], objectsCount = 0 } = departmentsMap.get(department) ?? {};
+      departmentsMap.set(department, {
         name: department,
-        related: record ? _.uniq([...record.related, ...object.departments]) : object.departments,
-        objectsCount: record ? record.objectsCount + 1 : 1,
+        related:  [...new Set([...related, ...departments])],
+        objectsCount: objectsCount + 1,
       });
     }
   }
-  return Array.from(departments.values());
+
+  return [...departmentsMap.values()];
 };
 
 const getUniqArrayWithScore = (arr) => {
