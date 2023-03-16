@@ -11,7 +11,28 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
+const getUserDepartments = require('./getUserDepartments');
+
+const getUserDepartmentCondition = async ({
+  department, path, wobjectsFromPosts, userName, user,
+}) => {
+  if (department === UNCATEGORIZED_DEPARTMENT) {
+    return { $or: [{ departments: [] }, { departments: null }] };
+  }
+  if (department === OTHERS_DEPARTMENT) {
+    const { result } = await getUserDepartments.getTopDepartments({
+      wobjectsFromPosts,
+      userName,
+      user,
+      name: department,
+      path,
+    });
+    return { departments: { $in: _.map(result, 'name') } };
+  }
+
+  return { departments: { $all: path } };
+};
 
 module.exports = async ({
   countryCode,
@@ -25,7 +46,9 @@ module.exports = async ({
   app,
   wobjectsFromPosts,
   follower,
+  path,
 }) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
 
   if (!wobjectsFromPosts) {
@@ -44,9 +67,9 @@ module.exports = async ({
     orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
   }
 
-  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
-    ? { $or: [{ departments: [] }, { departments: null }] }
-    : { departments: department };
+  const departmentCondition = await getUserDepartmentCondition({
+    department, path, user, userName, wobjectsFromPosts,
+  });
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
@@ -57,7 +80,7 @@ module.exports = async ({
         ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
         $and: [
           { $or: orFilter },
-          shopHelper.makeFilterCondition(filter, orFilter),
+          shopHelper.makeFilterCondition(filter),
         ],
       },
     },

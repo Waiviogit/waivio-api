@@ -22,13 +22,13 @@ const getFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getShopFeed({
+  const { result, hasMore, error } = await shop.getShopFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 const getFeedByDepartment = async (req, res, next) => {
@@ -58,7 +58,17 @@ const getFeedByDepartment = async (req, res, next) => {
 };
 
 const getFilters = async (req, res, next) => {
-  const { result, error } = await shop.getShopFilters();
+  const value = validators.validate(req.body, validators.shop.mainFiltersSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getShopFilters.getFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getMoreTags = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.tagsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.getShopFilters.getMoreTagFilters(value);
   if (error) return next(error);
   res.json(result);
 };
@@ -78,13 +88,13 @@ const getUserFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getUserFeed({
+  const { result, hasMore, error } = await shop.getUserFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
   if (error) return next(error);
-  res.json(result);
+  res.json({ result, hasMore });
 };
 
 const getUserFeedByDepartment = async (req, res, next) => {
@@ -167,12 +177,42 @@ const getWobjectMainFeed = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { result, error } = await shop.getWobjectMainFeed({
+  const { result, hasMore, error } = await shop.getWobjectMainFeed({
     ...value,
     app: req.appData,
     countryCode,
   });
 
+  if (error) return next(error);
+  res.json({ result, hasMore });
+};
+
+const restoreShopState = async (req, res, next) => {
+  const value = validators.validate(
+    req.body, validators.shop.restoreShopSchema, next,
+  );
+  if (!value) return;
+
+  const { result } = await shop.restoreShopState({
+    ...value,
+    app: req.appData,
+  });
+
+  res.json(result);
+};
+
+const getWobjectFilters = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.wobjectFiltersSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.objectFilters.getObjectFilters(value);
+  if (error) return next(error);
+  res.json(result);
+};
+
+const getWobjectTags = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.shop.wobjectTagsSchema, next);
+  if (!value) return;
+  const { result, error } = await shop.objectFilters.getMoreTagFilters(value);
   if (error) return next(error);
   res.json(result);
 };
@@ -190,4 +230,8 @@ module.exports = {
   getWobjectMainFeed,
   getUserFilters,
   getUserTags,
+  restoreShopState,
+  getWobjectFilters,
+  getWobjectTags,
+  getMoreTags,
 };

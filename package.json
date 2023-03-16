@@ -16,6 +16,9 @@
     "updateImagesOnPages": "NODE_PATH=. node utilities/tasks/updateImagesOnPages/run.js",
     "addUsdRateCampaignPosts": "NODE_PATH=. node utilities/tasks/addUsdRateCampaignPosts/run.js",
     "updateCampaignPayments": "NODE_PATH=. node utilities/tasks/updatePayments/run.js",
+    "fillTagCategoryByObjectType": "NODE_PATH=. node utilities/tasks/fillTagCategoryByObjectType/run.js",
+    "fillTagCategoryByDepartment": "NODE_PATH=. node utilities/tasks/fillTagCategoryByDepartment/run.js",
+    "departmentsRelatedFix": "NODE_PATH=. node utilities/tasks/departmentsRelatedFix/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {

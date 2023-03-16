@@ -98,6 +98,8 @@ shopRoutes.route('/department-feed').post(shopController.getFeedByDepartment);
 shopRoutes.route('/main-feed').post(shopController.getFeed);
 shopRoutes.route('/departments').post(shopController.getDepartments);
 shopRoutes.route('/filters').post(shopController.getFilters);
+shopRoutes.route('/filters/tags').post(shopController.getMoreTags);
+shopRoutes.route('/state').post(shopController.restoreShopState);
 
 shopRoutes.route('/user/departments').post(shopController.getUserDepartments);
 shopRoutes.route('/user/department-feed').post(shopController.getUserFeedByDepartment);
@@ -108,6 +110,8 @@ shopRoutes.route('/user/filters/tags').post(shopController.getUserTags);
 shopRoutes.route('/wobject/departments').post(shopController.getWobjectDepartments);
 shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepartmentFeed);
 shopRoutes.route('/wobject/main-feed').post(shopController.getWobjectMainFeed);
+shopRoutes.route('/wobject/filters').post(shopController.getWobjectFilters);
+shopRoutes.route('/wobject/filters/tags').post(shopController.getWobjectTags);
 // endregion
 
 // region Wobject

@@ -1,25 +1,40 @@
-const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj, User } = require('models');
 const _ = require('lodash');
+const {
+  REMOVE_OBJ_STATUSES,
+  REQUIREDFILDS_WOBJ_LIST,
+  SHOP_OBJECT_TYPES,
+} = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const shopHelper = require('utilities/helpers/shopHelper');
+const { Wobj } = require('models');
+const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 
-const getWobjectDepartmentFeed = async ({
-  department, filter, app, authorPermlink, skip = 0, limit = 3, follower, locale, countryCode, user,
+module.exports = async ({
+  countryCode,
+  department = '',
+  userName,
+  locale,
+  filter,
+  limit = 3,
+  skip = 0,
+  user,
+  app,
+  path,
 }) => {
-  if (!user) ({ user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP));
   const emptyResp = { department, wobjects: [], hasMore: false };
-  // inside departments in and condition so we can add direct filter
-  if (!filter)({ filter } = await shopHelper.getWobjectFilter({ app, authorPermlink }));
+
+  const departmentCondition = department === UNCATEGORIZED_DEPARTMENT
+    ? { $or: [{ departments: [] }, { departments: null }] }
+    : { departments: { $all: path } };
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
-        ...filter,
-        departments: department,
+        ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...shopHelper.makeFilterCondition(filter),
+        object_type: { $in: SHOP_OBJECT_TYPES },
       },
     },
     ...shopHelper.getDefaultGroupStage(),
@@ -32,7 +47,7 @@ const getWobjectDepartmentFeed = async ({
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(result, limit),
     fields: REQUIREDFILDS_WOBJ_LIST,
-    reqUserName: follower,
+    reqUserName: userName,
     app,
     locale,
     countryCode,
@@ -46,5 +61,3 @@ const getWobjectDepartmentFeed = async ({
     hasMore: result.length > limit,
   };
 };
-
-module.exports = getWobjectDepartmentFeed;

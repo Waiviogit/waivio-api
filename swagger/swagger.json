@@ -90,6 +90,12 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -152,6 +158,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -212,6 +224,18 @@
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
                 }
               }
             }
@@ -247,7 +271,25 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "successful operation",
@@ -261,6 +303,58 @@
               "example": {
                 "message": "Validation Error"
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/filters/tags": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tagCategory": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "succesfull operation",
+            "schema": {
+              "$ref": "#/definitions/tagCategory_response"
+            }
+          },
+          "422": {
+            "description": "Unprocessible Entity",
+            "schema": {
+              "$ref": "#/definitions/inline_response_400"
             }
           }
         }
@@ -287,6 +381,12 @@
               },
               "excluded" : {
                 "type" : "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "path": {
+                "type": "array",
                 "items": {
                   "type": "string"
                 }
@@ -357,6 +457,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -422,6 +528,18 @@
                 },
                 "filter": {
                   "$ref": "#/definitions/shop_filter"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
                 }
               }
             }
@@ -467,6 +585,12 @@
             "properties": {
               "userName": {
                 "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
               }
             }
           }
@@ -517,6 +641,12 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 }
               }
             }
@@ -558,6 +688,12 @@
                 "type" : "string"
               },
               "excluded": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "path": {
                 "type": "array",
                 "items": {
                   "type": "string"
@@ -626,6 +762,15 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "filter": {
+                  "$ref": "#/definitions/shop_filter"
                 }
               }
             }
@@ -688,6 +833,21 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "filter": {
+                  "$ref": "#/definitions/shop_filter"
                 }
               }
             }
@@ -700,6 +860,175 @@
               "type": "array",
               "items" : {
                 "$ref": "#/definitions/shop_object_feed"
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/wobject/filters": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "Get filters",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+          "name": "params",
+          "in": "body",
+          "description": "no params",
+          "required": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "authorPermlink": {
+                "type": "string"
+              },
+              "path": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/shop_filter_resp"
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/wobject/filters/tags": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "tagCategory": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "succesfull operation",
+            "schema": {
+              "$ref": "#/definitions/tagCategory_response"
+            }
+          },
+          "422": {
+            "description": "Unprocessible Entity",
+            "schema": {
+              "$ref": "#/definitions/inline_response_400"
+            }
+          }
+        }
+      }
+    },
+    "/api/shop/state": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "description": "get shop state",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "description": "no params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "userName": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "type" : {
+                  "type": "string",
+                  "enum": ["main", "user", "object"]
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "subdirectory": {
+                  "type": "boolean"
+                },
+                "excludedDepartments": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
               }
             }
           },

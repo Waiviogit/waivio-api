@@ -170,7 +170,8 @@ exports.getRelatedAlbum = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   authorPermlink: Joi.string().required(),
-});
+  locale: Joi.string(),
+}).options(options);
 
 exports.mapExpertsScheme = Joi.object().keys({
   box: boxScheme,

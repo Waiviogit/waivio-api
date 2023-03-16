@@ -6,16 +6,16 @@ const {
 } = require('utilities/operations/departments/departmentsMapper');
 const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
 
-const makeConditions = ({ name, excluded = [] }) => {
-  if (name) return { name: { $nin: [name, ...excluded] }, related: name };
+const makeConditions = ({ name, excluded = [], path = [] }) => {
+  if (name) return { name: { $nin: [name, ...excluded] }, related: { $all: [name, ...path] } };
   return { level: 1 };
 };
 
 // we can add host in future for sites
-module.exports = async ({ name, excluded = [] } = {}) => {
+module.exports = async ({ name, excluded = [], path = [] } = {}) => {
   const { result: departments, error } = await Department.find(
     {
-      filter: makeConditions({ name, excluded }),
+      filter: makeConditions({ name, excluded, path }),
       options: { sort: { sortScore: 1, objectsCount: -1 } },
     },
   );
@@ -39,8 +39,9 @@ module.exports = async ({ name, excluded = [] } = {}) => {
   if (name) {
     return {
       result: await mapDepartments(
-        filterDepartments(departments, [...excluded, name]),
+        await filterDepartments(departments, [...excluded, name], path),
         [...excluded, name],
+        path,
       ),
     };
   }

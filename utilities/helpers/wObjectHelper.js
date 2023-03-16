@@ -2,6 +2,7 @@ const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
   AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
+  AFFILIATE_NULL_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -397,6 +398,8 @@ const getLinkToPageLoad = (obj) => {
       return `/object/${obj.author_permlink}/widget`;
     case OBJECT_TYPES.NEWS_FEED:
       return `/object/${obj.author_permlink}/newsfeed`;
+    case OBJECT_TYPES.SHOP:
+      return `/object/${obj.author_permlink}/shop`;
     default:
       return `/object/${obj.author_permlink}`;
   }
@@ -551,19 +554,21 @@ const addOptions = async ({
 const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!app) return [];
   const { result } = await AppAffiliateModel.find(
-    { filter: { host: app.host, countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] } } },
+    {
+      filter: {
+        host: app.host || config.appHost,
+        countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] },
+      },
+    },
   );
-  const requestCountryCode = _.filter(result, (aff) => aff.countryCode === countryCode);
-  if (!_.isEmpty(requestCountryCode)) return requestCountryCode;
-  const defaultCountryCode = _.filter(result, (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE);
-  if (!_.isEmpty(defaultCountryCode)) return defaultCountryCode;
-  if (app.host === config.appHost) return [];
 
-  return getAppAffiliateCodes({ app: { host: config.appHost }, countryCode });
+  return result;
 };
 
 const formAmazonLink = ({ affiliateCodes, productId }) => {
-  if (_.isEmpty(affiliateCodes)) return;
+  if (_.isEmpty(affiliateCodes) && productId) {
+    return { type: AFFILIATE_TYPE.AMAZON, link: `https://www.${AMAZON_LINKS_BY_COUNTRY.US}/dp/${productId}` };
+  }
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
   if (!code) return;
   const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
@@ -581,7 +586,28 @@ const formTargetLink = ({ productId }) => {
   return { type: AFFILIATE_TYPE.TARGET, link };
 };
 
-const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
+const specialAmazonLink = ({
+  productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds = [],
+}) => {
+  if (AFFILIATE_NULL_TYPES.includes(productIdObj.productId.toLocaleLowerCase())) {
+    const productObj = mappedProductIds.find(
+      (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
+    );
+    if (!productObj) return;
+
+    return formAmazonLink({
+      affiliateCodes: defaultCountryCode,
+      productId: productObj.productId,
+    });
+  }
+
+  return formAmazonLink({
+    affiliateCodes: requestCountryCode,
+    productId: productIdObj.productId,
+  });
+};
+
+const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) => {
   const links = new Map();
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
@@ -591,33 +617,45 @@ const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
       productIdType: body.productIdType,
     };
   }));
-  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+  const requestCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === countryCode,
+  );
+  const defaultCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE,
+  );
+
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon' && aff.countryCode === countryCode);
   const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
   if (productIdObj) {
-    const link = formAmazonLink({ affiliateCodes, productId: productIdObj.productId });
+    const link = specialAmazonLink({
+      productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds,
+    });
     if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
   }
   for (const mappedProductId of mappedProductIds) {
     const { productId, productIdType } = mappedProductId;
-    if (_.includes(AMAZON_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (AMAZON_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.AMAZON)) {
-      const link = formAmazonLink({ affiliateCodes, productId });
+      const link = formAmazonLink({
+        affiliateCodes: requestCountryCode.length ? requestCountryCode : defaultCountryCode,
+        productId,
+      });
       if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
     }
-    if (_.includes(WALMART_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (WALMART_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.WALMART)) {
       const link = formWalmartLink({ productId });
       if (link) links.set(AFFILIATE_TYPE.WALMART, link);
     }
-    if (_.includes(TARGET_PRODUCT_IDS, productIdType.toLocaleLowerCase())
+    if (TARGET_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
       && !links.has(AFFILIATE_TYPE.TARGET)) {
       const link = formTargetLink({ productId });
       if (link) links.set(AFFILIATE_TYPE.TARGET, link);
     }
   }
 
-  return Array.from(links, ([, value]) => ({ ...value }));
+  return [...links.values()];
 };
 
 /** Parse wobjects to get its winning */
@@ -713,7 +751,7 @@ const processWobjects = async ({
       obj.parent = await getParentInfo({ locale, app, parent });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
+      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId, countryCode });
       if (!_.isEmpty(affiliateLinks)) {
         obj.affiliateLinks = affiliateLinks;
         obj.website = null;

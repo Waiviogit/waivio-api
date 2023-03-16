@@ -368,3 +368,5 @@ exports.SHOP_OBJECT_TYPES = [
   this.OBJECT_TYPES.BOOK,
   this.OBJECT_TYPES.PRODUCT,
 ];
+
+exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
