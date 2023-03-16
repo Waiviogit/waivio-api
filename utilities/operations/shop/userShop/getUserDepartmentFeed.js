@@ -26,6 +26,7 @@ const getUserDepartmentCondition = async ({
       userName,
       user,
       name: department,
+      path,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }

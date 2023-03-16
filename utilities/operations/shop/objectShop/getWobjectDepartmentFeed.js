@@ -26,6 +26,7 @@ const getObjectDepartmentCondition = async ({
       app,
       name: department,
       wobjectFilter,
+      path,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }

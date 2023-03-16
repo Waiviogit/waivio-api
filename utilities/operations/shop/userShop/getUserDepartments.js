@@ -13,6 +13,7 @@ exports.getTopDepartments = async ({
   user,
   name,
   excluded,
+  path,
 }) => {
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
   const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
@@ -44,7 +45,9 @@ exports.getTopDepartments = async ({
   const allDepartments = shopHelper.getDepartmentsFromObjects(result);
 
   const filteredDepartments = name && name !== OTHERS_DEPARTMENT
-    ? shopHelper.secondaryFilterDepartment({ allDepartments, name, excluded })
+    ? shopHelper.secondaryFilterDepartment({
+      allDepartments, name, excluded, path,
+    })
     : shopHelper.mainFilterDepartment(allDepartments);
 
   const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });

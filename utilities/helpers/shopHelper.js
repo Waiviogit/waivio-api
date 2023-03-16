@@ -5,6 +5,7 @@ const {
 const { Wobj, ObjectType } = require('models');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
+const { OTHERS_DEPARTMENT } = require('constants/departments');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -135,12 +136,15 @@ const mainFilterDepartment = (departments) => {
     .value();
 };
 
-const secondaryFilterDepartment = ({ allDepartments, name, excluded }) => {
+const secondaryFilterDepartment = ({ allDepartments, name, excluded, path = [] }) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const preFilter = _.filter(allDepartments,
     (department) => {
       const mainCondition = department.name !== name
       && !_.includes(excluded, department.name);
-      return !name ? mainCondition : mainCondition && _.includes(department.related, name);
+      return !name
+        ? mainCondition
+        : mainCondition &&  _.every([...path, name], (r) => _.includes(department.related, r));
     });
 
   const objectsTotal = _.sumBy(preFilter, 'objectsCount');

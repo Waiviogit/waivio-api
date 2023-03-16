@@ -23,7 +23,7 @@ const getWobjectMainFeed = async ({
 
   if (error) return { error };
   const { result: objectDepartments } = await getWobjectDepartments({
-    app, authorPermlink, wobjectFilter, name: department, excluded: excludedDepartments,
+    app, authorPermlink, wobjectFilter, name: department, excluded: excludedDepartments, path,
   });
   const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
 
