@@ -25,8 +25,11 @@ const getWobjectMainFeed = async ({
   const { result: objectDepartments } = await getWobjectDepartments({
     app, authorPermlink, wobjectFilter, name: department, excluded: excludedDepartments,
   });
+  const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
 
-  const departments = objectDepartments.slice(skip, skip + limit);
+  const departments = isEmptyFilter
+    ? objectDepartments.slice(skip, skip + limit)
+    : objectDepartments;
 
   if (_.isEmpty(departments)) return { result: [] };
 
@@ -42,9 +45,20 @@ const getWobjectMainFeed = async ({
     filter,
   })));
 
+  const hasMore = objectDepartments.length > departments.length + skip;
+  if (!isEmptyFilter) {
+    const filtered = _.filter(result, (el) => !_.isEmpty(el.wobjects));
+    const filterResult = filtered.slice(skip, skip + limit);
+    const filterHasMore = filtered.length > filterResult.length + skip;
+    return {
+      result: filterResult,
+      hasMore: filterHasMore,
+    };
+  }
+
   return {
     result,
-    hasMore: objectDepartments.length > departments.length + skip,
+    hasMore,
   };
 };
 
