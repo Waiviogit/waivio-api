@@ -199,6 +199,7 @@ const arrayFieldFilter = ({
         break;
       case FIELDS_NAMES.GROUP_ID:
       case FIELDS_NAMES.REMOVE:
+      case FIELDS_NAMES.MENU_ITEM:
         if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:

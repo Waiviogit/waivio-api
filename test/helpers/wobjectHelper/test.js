@@ -1883,4 +1883,37 @@ describe('On wobjectHelper', async () => {
       expect(result.shopFilter).to.be.eq(body);
     });
   });
+
+  describe('On menuItem field', async () => {
+    const body = JSON.stringify({
+      title: faker.random.string(),
+      style: faker.random.string(),
+      image: faker.random.string(),
+      linkToObject: faker.random.string(),
+      linkToWeb: faker.random.string(),
+    });
+
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.RESTAURANT,
+        name: FIELDS_NAMES.MENU_ITEM,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.MENU_ITEM],
+      });
+    });
+
+    it('should MENU_ITEM eq', async () => {
+      const field = result[FIELDS_NAMES.MENU_ITEM][0];
+      expect(field).to.be.eq(body);
+    });
+  });
 });
