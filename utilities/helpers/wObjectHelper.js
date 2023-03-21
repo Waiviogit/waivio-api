@@ -195,11 +195,11 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.FEATURES:
       case FIELDS_NAMES.AUTHORITY:
       case FIELDS_NAMES.PIN:
+      case FIELDS_NAMES.MENU_ITEM:
         if (arrayFieldPush({ filter, field })) validFields.push(field);
         break;
       case FIELDS_NAMES.GROUP_ID:
       case FIELDS_NAMES.REMOVE:
-      case FIELDS_NAMES.MENU_ITEM:
         if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:

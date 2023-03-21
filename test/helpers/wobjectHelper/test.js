@@ -1913,7 +1913,7 @@ describe('On wobjectHelper', async () => {
 
     it('should MENU_ITEM eq', async () => {
       const field = result[FIELDS_NAMES.MENU_ITEM][0];
-      expect(field).to.be.eq(body);
+      expect(field.body).to.be.eq(body);
     });
   });
 });
