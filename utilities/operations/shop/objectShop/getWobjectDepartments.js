@@ -16,12 +16,12 @@ const getWobjectDepartments = async ({
   // or we can group in aggregation
   const { result } = await Wobj.findObjects({
     filter: wobjectFilter,
-    projection: { departments: 1 },
+    projection: { departments: 1, metaGroupId: 1 },
   });
 
   const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
 
-  const allDepartments = shopHelper.getDepartmentsFromObjects(result, path);
+  const allDepartments = shopHelper.getDepartmentsFromObjects(_.groupBy(result, 'metaGroupId'), path);
 
   const filteredDepartments = name && name !== OTHERS_DEPARTMENT
     ? shopHelper.secondaryFilterDepartment({

@@ -3,9 +3,9 @@ const {
   FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const { Wobj, ObjectType } = require('models');
+const { OTHERS_DEPARTMENT } = require('constants/departments');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
-const { OTHERS_DEPARTMENT } = require('constants/departments');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -136,7 +136,9 @@ const mainFilterDepartment = (departments) => {
     .value();
 };
 
-const secondaryFilterDepartment = ({ allDepartments, name, excluded, path = [] }) => {
+const secondaryFilterDepartment = ({
+  allDepartments, name, excluded, path = [],
+}) => {
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const preFilter = _.filter(allDepartments,
     (department) => {
@@ -144,7 +146,7 @@ const secondaryFilterDepartment = ({ allDepartments, name, excluded, path = [] }
       && !_.includes(excluded, department.name);
       return !name
         ? mainCondition
-        : mainCondition &&  _.every([...path, name], (r) => _.includes(department.related, r));
+        : mainCondition && _.every([...path, name], (r) => _.includes(department.related, r));
     });
 
   const objectsTotal = _.sumBy(preFilter, 'objectsCount');
@@ -153,8 +155,7 @@ const secondaryFilterDepartment = ({ allDepartments, name, excluded, path = [] }
 
   const filterCondition = (d) => d.objectsCount < topCounter
     && d.objectsCount > bottomCounter
-    && d.objectsCount > MIN_SUB_OBJECTS;
-
+   // && d.objectsCount > MIN_SUB_OBJECTS;
   return _.filter(preFilter, filterCondition);
 };
 
@@ -203,24 +204,27 @@ const orderBySubdirectory = (departments) => _
 const getDepartmentsFromObjects = (objects, path) => {
   const departmentsMap = new Map();
 
-  for (const { departments = [] } of objects) {
+  for (const object in objects) {
+    const departments = _.flatten(_.map(objects[object], 'departments'));
     for (const department of departments) {
-      const { related = [], objectsCount = 0 } = departmentsMap.get(department) ?? {};
+      const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
       const filter = !_.every(path, (p) => _.includes(related, p))
-      const relatedToPush =  filter
+      const relatedToPush = filter
         ? _.filter(related, (r) => !_.includes(path, r))
         : related;
-
+      const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])]
       departmentsMap.set(department, {
         name: department,
-        related:  [...new Set([
+        related: [...new Set([
           ...relatedToPush,
           ...departments
         ])],
-        objectsCount: objectsCount + 1,
+        metaGroupIds: updatedMetaGroupIds,
+        objectsCount: updatedMetaGroupIds.length,
       });
     }
   }
+
 
   return [...departmentsMap.values()];
 };
