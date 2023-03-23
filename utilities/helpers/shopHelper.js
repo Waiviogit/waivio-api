@@ -208,9 +208,9 @@ const getDepartmentsFromObjects = (objects, path) => {
   const departmentsMap = new Map();
 
   for (const object in objects) {
-    const filteredPath = _.filter(objects[object], (o) => _.every(path, (p) => _.includes(o.departments, p)))
-    if(!filteredPath.length) continue
-    const departments = _.flatten(_.map(filteredPath, 'departments'));
+    // const filteredPath = _.filter(objects[object], (o) => _.every(path, (p) => _.includes(o.departments, p)))
+    // if(!filteredPath.length) continue
+    const departments = _.flatten(_.map(objects[object], 'departments'));
 
     if(!departments.length) continue;
     for (const department of departments) {
