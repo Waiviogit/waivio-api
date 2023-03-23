@@ -33,7 +33,7 @@ const getWobjectDepartments = async ({
 
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 
-  if (orderedDepartments.length > 20 && name !== OTHERS_DEPARTMENT) {
+  if (orderedDepartments.length > 20 && !name) {
     orderedDepartments.splice(20, orderedDepartments.length);
     orderedDepartments.push({
       name: OTHERS_DEPARTMENT,

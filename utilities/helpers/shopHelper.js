@@ -9,7 +9,7 @@ const jsonHelper = require('./jsonHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
-const BOTTOM_LINE_PERCENT = 0.05;
+const BOTTOM_LINE_PERCENT = 0.01;
 
 const makeFilterCondition = (filter = {}) => {
   const result = {};
@@ -155,7 +155,8 @@ const secondaryFilterDepartment = ({
 
   const filterCondition = (d) => d.objectsCount < topCounter
     && d.objectsCount > bottomCounter
-   // && d.objectsCount > MIN_SUB_OBJECTS;
+    && d.objectsCount > MIN_SUB_OBJECTS;
+
   return _.filter(preFilter, filterCondition);
 };
 
