@@ -157,7 +157,9 @@ const secondaryFilterDepartment = ({
     && d.objectsCount > bottomCounter
     && d.objectsCount > MIN_SUB_OBJECTS;
 
-  return _.filter(preFilter, filterCondition);
+  const result = _.filter(preFilter, filterCondition);
+
+  return result
 };
 
 const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
@@ -206,7 +208,11 @@ const getDepartmentsFromObjects = (objects, path) => {
   const departmentsMap = new Map();
 
   for (const object in objects) {
-    const departments = _.flatten(_.map(objects[object], 'departments'));
+    const filteredPath = _.filter(objects[object], (o) => _.every(path, (p) => _.includes(o.departments, p)))
+    if(!filteredPath.length) continue
+    const departments = _.flatten(_.map(filteredPath, 'departments'));
+
+    if(!departments.length) continue;
     for (const department of departments) {
       const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
       const filter = !_.every(path, (p) => _.includes(related, p))
