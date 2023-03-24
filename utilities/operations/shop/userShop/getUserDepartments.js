@@ -42,8 +42,9 @@ exports.getTopDepartments = async ({
   });
 
   const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
+  const groupedResult = _.groupBy(result, 'metaGroupId');
 
-  const allDepartments = shopHelper.getDepartmentsFromObjects(_.groupBy(result, 'metaGroupId'), path);
+  const allDepartments = shopHelper.getDepartmentsFromObjects(groupedResult, path);
 
   const filteredDepartments = name && name !== OTHERS_DEPARTMENT
     ? shopHelper.secondaryFilterDepartment({
@@ -53,9 +54,11 @@ exports.getTopDepartments = async ({
 
   const mappedDepartments = shopHelper.subdirectoryMap({
     filteredDepartments,
-    allDepartments,
+    allDepartments: groupedResult,
     excluded,
+    path,
   });
+
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 
   if (orderedDepartments.length > 20 && !name) {
