@@ -210,6 +210,7 @@ const getDepartmentsFromObjects = (objects, path) => {
 
     if(!departments.length) continue;
     for (const department of departments) {
+      if(!department) continue;
       const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
       const filter = !_.every(path, (p) => _.includes(related, p))
       const relatedToPush = filter
