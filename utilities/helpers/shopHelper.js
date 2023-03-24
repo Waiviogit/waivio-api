@@ -162,7 +162,7 @@ const secondaryFilterDepartment = ({
   return result
 };
 
-const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
+const subdirectoryMap = ({ filteredDepartments, allDepartments, excluded = [] }) => _
   .map(filteredDepartments, (department) => {
     const subdirectories = _.filter(
       allDepartments,
@@ -173,7 +173,7 @@ const subdirectoryMap = ({ filteredDepartments, allDepartments }) => _
     // second filter
     const subFilter = secondaryFilterDepartment({
       allDepartments: subdirectories,
-      excluded: _.map(filteredDepartments, 'name'),
+      excluded: [..._.map(filteredDepartments, 'name'),...excluded],
       name: department.name,
     });
 

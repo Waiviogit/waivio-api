@@ -29,7 +29,11 @@ const getWobjectDepartments = async ({
     })
     : shopHelper.mainFilterDepartment(allDepartments);
 
-  const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
+  const mappedDepartments = shopHelper.subdirectoryMap({
+    filteredDepartments,
+    allDepartments,
+    excluded,
+  });
 
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 

@@ -51,7 +51,11 @@ exports.getTopDepartments = async ({
     })
     : shopHelper.mainFilterDepartment(allDepartments);
 
-  const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
+  const mappedDepartments = shopHelper.subdirectoryMap({
+    filteredDepartments,
+    allDepartments,
+    excluded,
+  });
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 
   if (orderedDepartments.length > 20 && !name) {
