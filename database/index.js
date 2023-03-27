@@ -4,10 +4,8 @@ const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
 const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
-mongoose.connect(URI, {
-  useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false,
-})
-  .then(() => console.log('connection successful!'))
+mongoose.connect(URI)
+  .then(() => console.log(`${config.db.database} connected`))
   .catch((error) => console.log(error));
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
