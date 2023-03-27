@@ -9,4 +9,6 @@ currenciesDb.once('open', () => {
   console.log(`${config.currenciesDB.database} connected`);
 });
 
+currenciesDb.on('close', () => console.log(`closed ${config.currenciesDB.database}`));
+
 module.exports = currenciesDb;

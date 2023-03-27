@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const config = require('config');
+const currenciesDb = require('currenciesDB/currenciesDB_Connection');
 const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
 const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
@@ -9,10 +10,16 @@ mongoose.connect(URI)
   .catch((error) => console.log(error));
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+mongoose.connection.on('close', () => console.log(`closed ${config.db.database}`));
 
 mongoose.plugin(cursorTimeout);
 
 mongoose.set('debug', process.env.NODE_ENV === 'development');
+
+const closeMongoConnections = async () => {
+  await mongoose.connection.close(false);
+  await currenciesDb.close(false);
+};
 
 const models = {};
 
@@ -54,4 +61,5 @@ models.UserShopDeselect = require('./schemas/UserShopDeselectSchema');
 module.exports = {
   Mongoose: mongoose,
   models,
+  closeMongoConnections,
 };
