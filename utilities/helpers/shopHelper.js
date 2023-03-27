@@ -140,14 +140,16 @@ const secondaryFilterDepartment = ({
   allDepartments, name, excluded, path = [],
 }) => {
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
-  const preFilter = _.filter(allDepartments,
+  const preFilter = _.filter(
+    allDepartments,
     (department) => {
       const mainCondition = department.name !== name
       && !_.includes(excluded, department.name);
       return !name
         ? mainCondition
         : mainCondition && _.every([...path, name], (r) => _.includes(department.related, r));
-    });
+    },
+  );
 
   const objectsTotal = _.sumBy(preFilter, 'objectsCount');
   const topCounter = objectsTotal * TOP_LINE_PERCENT;
@@ -212,6 +214,7 @@ const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
 
 const getDepartmentsFromObjects = (objects, path) => {
+  path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const departmentsMap = new Map();
 
   for (const object in objects) {
