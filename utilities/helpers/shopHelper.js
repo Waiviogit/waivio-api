@@ -159,18 +159,29 @@ const secondaryFilterDepartment = ({
 
   const result = _.filter(preFilter, filterCondition);
 
-  return result
+  const diferenceWithID = _.reduce(_.orderBy(result, 'objectsCount', 'desc'), (acc, el) => {
+    for (const accElement of acc) {
+      const difference = _.difference(accElement.metaGroupIds, el.metaGroupIds);
+      if (difference.length < 10) return acc;
+    }
+    acc.push(el);
+    return acc;
+  }, []);
+
+  return diferenceWithID;
 };
 
-const subdirectoryMap = ({ filteredDepartments, allDepartments, excluded = [], path = [] }) => _
+const subdirectoryMap = ({
+  filteredDepartments, allDepartments, excluded = [], path = [],
+}) => _
   .map(filteredDepartments, (department) => {
-    const subdirectories = getDepartmentsFromObjects(allDepartments, [department.name,...path]);
+    const subdirectories = getDepartmentsFromObjects(allDepartments, [department.name, ...path]);
 
     const subFilter = secondaryFilterDepartment({
       allDepartments: subdirectories,
-      excluded: [..._.map(filteredDepartments, 'name'),...excluded],
+      excluded: [..._.map(filteredDepartments, 'name'), ...excluded],
       name: department.name,
-      path
+      path,
     });
 
     const subdirectoriesCondition = subFilter.length > 1;
@@ -204,31 +215,33 @@ const getDepartmentsFromObjects = (objects, path) => {
   const departmentsMap = new Map();
 
   for (const object in objects) {
-    const filteredPath = _.filter(objects[object], (o) => _.every(path, (p) => _.includes(o.departments, p)))
-    if(!filteredPath.length) continue
+    const filteredPath = _.filter(
+      objects[object],
+      (o) => _.every(path, (p) => _.includes(o.departments, p)),
+    );
+    if (!filteredPath.length) continue;
     const departments = _.flatten(_.map(filteredPath, 'departments'));
 
-    if(!departments.length) continue;
+    if (!departments.length) continue;
     for (const department of departments) {
-      if(!department) continue;
+      if (!department) continue;
       const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
-      const filter = !_.every(path, (p) => _.includes(related, p))
+      const filter = !_.every(path, (p) => _.includes(related, p));
       const relatedToPush = filter
         ? _.filter(related, (r) => !_.includes(path, r))
         : related;
-      const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])]
+      const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
       departmentsMap.set(department, {
         name: department,
         related: [...new Set([
           ...relatedToPush,
-          ...departments
+          ...departments,
         ])],
         metaGroupIds: updatedMetaGroupIds,
         objectsCount: updatedMetaGroupIds.length,
       });
     }
   }
-
 
   return [...departmentsMap.values()];
 };
