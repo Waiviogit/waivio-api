@@ -208,6 +208,7 @@ const getDefaultGroupStage = () => [
       newRoot: '$doc',
     },
   },
+  { $sort: { weight: -1, createdAt: -1 } },
 ];
 
 const orderBySubdirectory = (departments) => _
