@@ -3,7 +3,7 @@ const _ = require('lodash');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
-const BOTTOM_LINE_PERCENT = 0.05;
+const BOTTOM_LINE_PERCENT = 0.01;
 
 const getObjWithPath = async (path) => {
   const { result } = await Wobj.findOne(
