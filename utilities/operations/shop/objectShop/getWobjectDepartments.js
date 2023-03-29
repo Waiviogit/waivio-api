@@ -16,12 +16,13 @@ const getWobjectDepartments = async ({
   // or we can group in aggregation
   const { result } = await Wobj.findObjects({
     filter: wobjectFilter,
-    projection: { departments: 1 },
+    projection: { departments: 1, metaGroupId: 1 },
   });
 
   const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
+  const groupedResult = _.groupBy(result, 'metaGroupId');
 
-  const allDepartments = shopHelper.getDepartmentsFromObjects(result, path);
+  const allDepartments = shopHelper.getDepartmentsFromObjects(groupedResult, path);
 
   const filteredDepartments = name && name !== OTHERS_DEPARTMENT
     ? shopHelper.secondaryFilterDepartment({
@@ -29,11 +30,16 @@ const getWobjectDepartments = async ({
     })
     : shopHelper.mainFilterDepartment(allDepartments);
 
-  const mappedDepartments = shopHelper.subdirectoryMap({ filteredDepartments, allDepartments });
+  const mappedDepartments = shopHelper.subdirectoryMap({
+    filteredDepartments,
+    allDepartments: groupedResult,
+    excluded,
+    path,
+  });
 
   const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
 
-  if (orderedDepartments.length > 20 && name !== OTHERS_DEPARTMENT) {
+  if (orderedDepartments.length > 20 && !name) {
     orderedDepartments.splice(20, orderedDepartments.length);
     orderedDepartments.push({
       name: OTHERS_DEPARTMENT,

@@ -6,6 +6,7 @@
 
 const app = require('../app');
 const http = require('http');
+const { closeMongoConnections } = require('../database');
 
 /**
  * Get port from environment and store in Express.
@@ -28,6 +29,19 @@ const server = http.createServer(app);
 server.listen(port);
 server.on('error', onError);
 server.on('listening', onListening);
+
+const signalHandler = async (signal) => {
+  console.info(`${signal} signal received.`);
+  console.log('Closing http server.');
+  await server.close();
+  console.log('Sever is closed...');
+  await closeMongoConnections()
+  process.exit(0)
+};
+
+process.on('SIGINT', signalHandler);
+process.on('SIGTERM', signalHandler);
+process.on('SIGQUIT', signalHandler);
 
 /**
  * Normalize a port into a number, string, or false.
