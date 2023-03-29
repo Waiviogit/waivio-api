@@ -37,12 +37,13 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
     return { result: mappedDepartments };
   }
   if (name) {
+    const mappedDepartments = await mapDepartments(
+      await filterDepartments(departments, [...excluded, name], path),
+      [...excluded, name],
+      path,
+    );
     return {
-      result: await mapDepartments(
-        await filterDepartments(departments, [...excluded, name], path),
-        [...excluded, name],
-        path,
-      ),
+      result: shopHelper.orderBySubdirectory(mappedDepartments),
     };
   }
 
