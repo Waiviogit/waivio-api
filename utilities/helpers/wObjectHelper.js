@@ -143,8 +143,10 @@ const addDataToFields = ({
 const specialFieldFilter = (idField, allFields, id) => {
   if (!idField.adminVote && idField.weight < 0) return null;
   idField.items = [];
-  const filteredItems = _.filter(allFields[categorySwitcher[id]],
-    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
+  const filteredItems = _.filter(
+    allFields[categorySwitcher[id]],
+    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED,
+  );
 
   for (const itemField of filteredItems) {
     if (!idField.adminVote && itemField.weight < 0) continue;
@@ -215,9 +217,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership) {
-    result = result && _.includes(
-      [ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role'),
-    );
+    result = result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role'));
   }
   return result;
 };
@@ -306,8 +306,10 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 
   const groupedFields = _.groupBy(filteredFields, 'name');
   for (const id of Object.keys(groupedFields)) {
-    const approvedFields = _.filter(groupedFields[id],
-      (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED);
+    const approvedFields = _.filter(
+      groupedFields[id],
+      (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED,
+    );
 
     if (_.includes(ARRAY_FIELDS, id)) {
       const { result, id: newId } = arrayFieldFilter({
@@ -318,10 +320,14 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     }
 
     if (approvedFields.length) {
-      const ownerVotes = _.filter(approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
-      const adminVotes = _.filter(approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
+      const ownerVotes = _.filter(
+        approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.OWNER,
+      );
+      const adminVotes = _.filter(
+        approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN,
+      );
       if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
       else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
       else winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
@@ -365,9 +371,11 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
     let post = _.get(result, `content['${field.author}/${field.permlink}']`);
     if (!post || !post.author) post = createMockPost(field);
 
-    Object.assign(field,
+    Object.assign(
+      field,
       _.pick(post, ['children', 'total_pending_payout_value',
-        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']),
+    );
     field.fullBody = post.body;
   });
   return obj;
@@ -379,7 +387,7 @@ const getLinkToPageLoad = (obj) => {
       ? `/object/${obj.author_permlink}`
       : `/object/${obj.author_permlink}/about`;
   }
-  if (_.get(obj, 'sortCustom', []).length) return getCustomSortLink(obj);
+  if (_.get(obj, 'sortCustom.include', []).length) return getCustomSortLink(obj);
 
   switch (obj.object_type) {
     case OBJECT_TYPES.PAGE:
@@ -529,8 +537,10 @@ const addOptions = async ({
       owner,
       blacklist,
     });
-    Object.assign(el,
-      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
+    Object.assign(
+      el,
+      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length),
+    );
 
     const conditionToAdd = el.groupId
       && _.some(el.groupId, (gId) => _.includes(object.groupId, gId))
@@ -685,12 +695,8 @@ const processWobjects = async ({
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const owner = _.get(app, 'owner');
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(
-      _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
-    );
-    const administrative = _.intersection(
-      _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
-    );
+    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
+    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
     const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
@@ -710,15 +716,15 @@ const processWobjects = async ({
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
-    Object.assign(obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
+    Object.assign(
+      obj,
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length),
+    );
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
       obj.photos_count = _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []).length;
-      obj.preview_gallery = _.orderBy(
-        _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
-      );
+      obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
       if (obj.avatar) {
         obj.preview_gallery.unshift({
           body: obj.avatar,
@@ -776,9 +782,7 @@ const processWobjects = async ({
 };
 
 const getCurrentNames = async (names) => {
-  const { result: wobjects } = await Wobj.find(
-    { author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 },
-  );
+  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 });
   const result = await Promise.all(wobjects.map(async (wobject) => {
     const { name } = await processWobjects({
       wobjects: [wobject], fields: [FIELDS_NAMES.NAME], returnArray: false,
