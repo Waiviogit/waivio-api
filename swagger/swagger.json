@@ -4811,6 +4811,94 @@
         }
       }
     },
+    "/api/user/{userName}/waiv-vote": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Estimate user vote value",
+        "description": "Estimate user vote value in HIVE or HBD",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user to calc vote value",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "weight",
+            "in": "query",
+            "description": "vote weight min 0 max 100",
+            "required": true,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "properties": {
+                "result": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/white-list-object": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Shows either user in white list for vote on updates",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user to calc vote value",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "properties": {
+                "result": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{userName}/creation-date": {
       "get": {
         "tags": [

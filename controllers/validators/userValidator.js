@@ -226,6 +226,11 @@ exports.voteValue = Joi.object().keys({
   weight: Joi.number().min(0).max(100).required(),
 });
 
+exports.waivVoteValue = Joi.object().keys({
+  userName: Joi.string().required(),
+  weight: Joi.number().min(0).max(100).required(),
+});
+
 exports.putGeo = Joi.object().keys({
   ip: Joi.string().required(),
   longitude: Joi.number().min(-180).max(180).required(),
