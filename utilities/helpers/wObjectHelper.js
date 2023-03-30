@@ -409,9 +409,9 @@ const getLinkToPageLoad = (obj) => {
 const getCustomSortLink = (obj) => {
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
 
-  const field = _.find(_.get(obj, 'listItem', []), { body: obj.sortCustom[0] });
-  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === obj.sortCustom[0]);
-  const news = _.find(_.get(obj, 'newsFilter', []), (el) => el.permlink === obj.sortCustom[0]);
+  const field = _.find(_.get(obj, 'listItem', []), { body: _.get(obj, 'sortCustom.include[0]') });
+  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
+  const news = _.find(_.get(obj, 'newsFilter', []), (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
   if (field) return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
   if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
   if (news) return `/object/${obj.author_permlink}/newsFilter/${news.permlink}`;
