@@ -29,3 +29,11 @@ exports.USER_IDENTIFIERS = {
   FROM: 'from',
   AUTHOR: 'author',
 };
+
+exports.SELECT_USER_CAMPAIGN_SHOP = {
+  user_metadata: 1,
+  name: 1,
+  count_posts: 1,
+  followers_count: 1,
+  wobjects_weight: 1,
+};

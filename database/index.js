@@ -1,20 +1,25 @@
 const mongoose = require('mongoose');
 const config = require('config');
+const currenciesDb = require('currenciesDB/currenciesDB_Connection');
 const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
 const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
-mongoose.connect(URI, {
-  useNewUrlParser: true, useCreateIndex: true, useUnifiedTopology: true, useFindAndModify: false,
-})
-  .then(() => console.log('connection successful!'))
+mongoose.connect(URI)
+  .then(() => console.log(`${config.db.database} connected`))
   .catch((error) => console.log(error));
 
 mongoose.connection.on('error', console.error.bind(console, 'MongoDB connection error:'));
+mongoose.connection.on('close', () => console.log(`closed ${config.db.database}`));
 
 mongoose.plugin(cursorTimeout);
 
 mongoose.set('debug', process.env.NODE_ENV === 'development');
+
+const closeMongoConnections = async () => {
+  await mongoose.connection.close(false);
+  await currenciesDb.close(false);
+};
 
 const models = {};
 
@@ -28,7 +33,7 @@ models.Post = require('./schemas/PostSchema');
 models.App = require('./schemas/AppSchema');
 models.Campaign = require('./schemas/CampaignSchema');
 models.CampaignV2 = require('./schemas/CampaignV2Schema');
-models.CampaignPayments= require('./schemas/CampaignPaymentsSchema');
+models.CampaignPayments = require('./schemas/CampaignPaymentsSchema');
 models.PaymentHistory = require('./schemas/paymentHistorySchema');
 models.Subscriptions = require('./schemas/SubscriptionSchema');
 models.WobjectSubscriptions = require('./schemas/WobjectSubscriptionSchema');
@@ -51,8 +56,10 @@ models.Department = require('./schemas/DepartmentSchema');
 models.CampaignPosts = require('./schemas/CampaignPostsSchema');
 models.AppAffiliate = require('./schemas/AppAffiliateSchema');
 models.SponsorsUpvote = require('./schemas/SponsorsUpvoteSchema');
+models.UserShopDeselect = require('./schemas/UserShopDeselectSchema');
 
 module.exports = {
   Mongoose: mongoose,
   models,
+  closeMongoConnections,
 };

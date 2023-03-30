@@ -143,6 +143,24 @@ const countWobjectsByArea = async ({
   }
 };
 
+const getWobjectsByGroupId = async (groupId) => {
+  const { result } = await findObjects({
+    filter: {
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.GROUP_ID,
+          body: { $in: groupId },
+        },
+      },
+    },
+    projection: {
+      search: 0,
+    },
+  });
+  if (!result) return [];
+  return result;
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -154,4 +172,5 @@ module.exports = {
   getOne,
   find,
   findObjects,
+  getWobjectsByGroupId,
 };

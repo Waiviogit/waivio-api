@@ -1,7 +1,8 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  COUNTRY_CODES, AFFILIATE_TYPES, AMAZON_LINKS_BY_COUNTRY,
+  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
+  AFFILIATE_NULL_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -17,6 +18,7 @@ const _ = require('lodash');
 const config = require('config');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -44,7 +46,8 @@ const getBlacklist = async (admins) => {
   _.forEach(fromFollows, (el) => {
     resultBlacklist = _.union(resultBlacklist, el.blackList);
   });
-  return resultBlacklist;
+
+  return _.difference(resultBlacklist, admins);
 };
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
@@ -96,7 +99,11 @@ const addDataToFields = ({
 
   for (const field of fields) {
     // recount field weight and filter votes if black list not empty
-    if (!_.isEmpty(blacklist) && !_.isEmpty(field.active_votes)) {
+    if (
+      !_.isEmpty(blacklist)
+      && !_.isEmpty(field.active_votes)
+     && field.name !== FIELDS_NAMES.AUTHORITY
+    ) {
       field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
       field.weight = 1 + _.sumBy(field.active_votes, (vote) => vote.weight);
     }
@@ -136,14 +143,31 @@ const addDataToFields = ({
 const specialFieldFilter = (idField, allFields, id) => {
   if (!idField.adminVote && idField.weight < 0) return null;
   idField.items = [];
-  const filteredItems = _.filter(allFields[categorySwitcher[id]],
-    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED);
+  const filteredItems = _.filter(
+    allFields[categorySwitcher[id]],
+    (item) => item.id === idField.id && _.get(item, 'adminVote.status') !== VOTE_STATUSES.REJECTED,
+  );
 
   for (const itemField of filteredItems) {
     if (!idField.adminVote && itemField.weight < 0) continue;
     idField.items.push(itemField);
   }
   return idField;
+};
+
+const arrayFieldPush = ({ filter, field }) => {
+  if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
+  if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
+  if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+    return true;
+  }
+  return false;
+};
+
+const arrayFieldsSpecialSort = (a, b) => {
+  if (!!a.adminVote && !!b.adminVote) return b._id - a._id;
+  if (!!a.adminVote || !!b.adminVote) return !!b.adminVote - !!a.adminVote;
+  return b.weight - a.weight;
 };
 
 const arrayFieldFilter = ({
@@ -171,14 +195,17 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.AUTHORS:
       case FIELDS_NAMES.DEPARTMENTS:
       case FIELDS_NAMES.FEATURES:
+      case FIELDS_NAMES.AUTHORITY:
+      case FIELDS_NAMES.PIN:
+      case FIELDS_NAMES.MENU_ITEM:
       case FIELDS_NAMES.ADD_ON:
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
-        if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) break;
-        if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) validFields.push(field);
-        else if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
-          validFields.push(field);
-        }
+        if (arrayFieldPush({ filter, field })) validFields.push(field);
+        break;
+      case FIELDS_NAMES.GROUP_ID:
+      case FIELDS_NAMES.REMOVE:
+        if (arrayFieldPush({ filter, field })) validFields.push(field.body);
         break;
       default:
         break;
@@ -193,9 +220,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership) {
-    result = result && _.includes(
-      [ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role'),
-    );
+    result = result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role'));
   }
   return result;
 };
@@ -284,8 +309,10 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 
   const groupedFields = _.groupBy(filteredFields, 'name');
   for (const id of Object.keys(groupedFields)) {
-    const approvedFields = _.filter(groupedFields[id],
-      (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED);
+    const approvedFields = _.filter(
+      groupedFields[id],
+      (field) => _.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED,
+    );
 
     if (_.includes(ARRAY_FIELDS, id)) {
       const { result, id: newId } = arrayFieldFilter({
@@ -296,10 +323,14 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     }
 
     if (approvedFields.length) {
-      const ownerVotes = _.filter(approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.OWNER);
-      const adminVotes = _.filter(approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN);
+      const ownerVotes = _.filter(
+        approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.OWNER,
+      );
+      const adminVotes = _.filter(
+        approvedFields,
+        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN,
+      );
       if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
       else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
       else winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
@@ -343,9 +374,11 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
     let post = _.get(result, `content['${field.author}/${field.permlink}']`);
     if (!post || !post.author) post = createMockPost(field);
 
-    Object.assign(field,
+    Object.assign(
+      field,
       _.pick(post, ['children', 'total_pending_payout_value',
-        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']),
+    );
     field.fullBody = post.body;
   });
   return obj;
@@ -357,7 +390,7 @@ const getLinkToPageLoad = (obj) => {
       ? `/object/${obj.author_permlink}`
       : `/object/${obj.author_permlink}/about`;
   }
-  if (_.get(obj, 'sortCustom', []).length) return getCustomSortLink(obj);
+  if (_.get(obj, 'sortCustom.include', []).length) return getCustomSortLink(obj);
 
   switch (obj.object_type) {
     case OBJECT_TYPES.PAGE:
@@ -377,6 +410,8 @@ const getLinkToPageLoad = (obj) => {
       return `/object/${obj.author_permlink}/widget`;
     case OBJECT_TYPES.NEWS_FEED:
       return `/object/${obj.author_permlink}/newsfeed`;
+    case OBJECT_TYPES.SHOP:
+      return `/object/${obj.author_permlink}/shop`;
     default:
       return `/object/${obj.author_permlink}`;
   }
@@ -385,9 +420,9 @@ const getLinkToPageLoad = (obj) => {
 const getCustomSortLink = (obj) => {
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
 
-  const field = _.find(_.get(obj, 'listItem', []), { body: obj.sortCustom[0] });
-  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === obj.sortCustom[0]);
-  const news = _.find(_.get(obj, 'newsFilter', []), (el) => el.permlink === obj.sortCustom[0]);
+  const field = _.find(_.get(obj, 'listItem', []), { body: _.get(obj, 'sortCustom.include[0]') });
+  const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
+  const news = _.find(_.get(obj, 'newsFilter', []), (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
   if (field) return `/object/${obj.author_permlink}/${field.type === 'menuPage' ? 'page' : 'menu'}#${field.body}`;
   if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
   if (news) return `/object/${obj.author_permlink}/newsFilter/${news.permlink}`;
@@ -481,9 +516,18 @@ const addOptions = async ({
     FIELDS_NAMES.PRICE,
     FIELDS_NAMES.AVATAR,
   ];
-  const { wobjects } = await Wobj.getByField(
-    { fieldName: FIELDS_NAMES.GROUP_ID, fieldBody: object.groupId },
-  );
+
+  const { result: wobjects } = await Wobj.findObjects({
+    filter: {
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.GROUP_ID,
+          body: { $in: object.groupId },
+        },
+      },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+  });
 
   const options = _.reduce(wobjects, (acc, el) => {
     el.fields = addDataToFields({
@@ -496,9 +540,16 @@ const addOptions = async ({
       owner,
       blacklist,
     });
-    Object.assign(el,
-      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length));
-    if (el.groupId === object.groupId && !_.isEmpty(el.options)) {
+    Object.assign(
+      el,
+      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length),
+    );
+
+    const conditionToAdd = el.groupId
+      && _.some(el.groupId, (gId) => _.includes(object.groupId, gId))
+      && !_.isEmpty(el.options);
+
+    if (conditionToAdd) {
       acc.push(..._.map(el.options, (opt) => ({
         ...opt,
         author_permlink: el.author_permlink,
@@ -511,44 +562,120 @@ const addOptions = async ({
 
   return groupOptions(options);
 };
-
 /**
  * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
  */
 const getAppAffiliateCodes = async ({ app, countryCode }) => {
   if (!app) return [];
   const { result } = await AppAffiliateModel.find(
-    { filter: { host: app.host, countryCode } },
+    {
+      filter: {
+        host: app.host || config.appHost,
+        countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] },
+      },
+    },
   );
-  if (!_.isEmpty(result)) return result;
-  if (app.host === config.appHost) return [];
-  const { result: waivioAffiliate } = await AppAffiliateModel.find(
-    { filter: { host: config.appHost, countryCode } },
-  );
-  return waivioAffiliate;
+
+  return result;
 };
 
-const formAffiliateLinks = ({ affiliateCodes, productIds }) => {
-  if (_.isEmpty(affiliateCodes)) return [];
-  return _.reduce(productIds, (acc, el) => {
-    if (!_.isEmpty(acc)) return acc;
+const formAmazonLink = ({ affiliateCodes, productId }) => {
+  if (_.isEmpty(affiliateCodes) && productId) {
+    return { type: AFFILIATE_TYPE.AMAZON, link: `https://www.${AMAZON_LINKS_BY_COUNTRY.US}/dp/${productId}` };
+  }
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
+  if (!code) return;
+  const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
+  const link = `https://www.${host}/dp/${productId}/ref=nosim?tag=${code.affiliateCode}`;
+  return { type: AFFILIATE_TYPE.AMAZON, link };
+};
+
+const formWalmartLink = ({ productId }) => {
+  const link = `https://www.walmart.com/ip/${productId}`;
+  return { type: AFFILIATE_TYPE.WALMART, link };
+};
+
+const formTargetLink = ({ productId }) => {
+  const link = `https://www.target.com/p/${productId}`;
+  return { type: AFFILIATE_TYPE.TARGET, link };
+};
+
+const specialAmazonLink = ({
+  productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds = [],
+}) => {
+  if (AFFILIATE_NULL_TYPES.includes(productIdObj.productId.toLocaleLowerCase())) {
+    const productObj = mappedProductIds.find(
+      (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
+    );
+    if (!productObj) return;
+
+    return formAmazonLink({
+      affiliateCodes: defaultCountryCode,
+      productId: productObj.productId,
+    });
+  }
+
+  return formAmazonLink({
+    affiliateCodes: requestCountryCode,
+    productId: productIdObj.productId,
+  });
+};
+
+const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) => {
+  const links = new Map();
+  const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
     if (!_.get(body, 'productIdType')) return;
-    if (!_.includes(AFFILIATE_TYPES, body.productIdType.toLocaleLowerCase())) return acc;
-    const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
-    if (!code) return acc;
-    const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
-    const asin = body.productId;
-    const link = `https://www.${host}/dp/${asin}/ref=nosim?tag=${code.affiliateCode}`;
-    acc.push({ type: 'amazon', link });
-    return acc;
-  }, []);
+    return {
+      productId: body.productId,
+      productIdType: body.productIdType,
+    };
+  }));
+  const requestCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === countryCode,
+  );
+  const defaultCountryCode = affiliateCodes.filter(
+    (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE,
+  );
+
+  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon' && aff.countryCode === countryCode);
+  const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
+  const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
+  if (productIdObj) {
+    const link = specialAmazonLink({
+      productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds,
+    });
+    if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
+  }
+  for (const mappedProductId of mappedProductIds) {
+    const { productId, productIdType } = mappedProductId;
+    if (AMAZON_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.AMAZON)) {
+      const link = formAmazonLink({
+        affiliateCodes: requestCountryCode.length ? requestCountryCode : defaultCountryCode,
+        productId,
+      });
+      if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
+    }
+    if (WALMART_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.WALMART)) {
+      const link = formWalmartLink({ productId });
+      if (link) links.set(AFFILIATE_TYPE.WALMART, link);
+    }
+    if (TARGET_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
+      && !links.has(AFFILIATE_TYPE.TARGET)) {
+      const link = formTargetLink({ productId });
+      if (link) links.set(AFFILIATE_TYPE.TARGET, link);
+    }
+  }
+
+  return [...links.values()];
 };
 
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit, countryCode,
+  app, returnArray = true, topTagsLimit, countryCode, reqUserName,
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -571,12 +698,8 @@ const processWobjects = async ({
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const owner = _.get(app, 'owner');
     const admins = _.get(app, 'admins', []);
-    const ownership = _.intersection(
-      _.get(obj, 'authority.ownership', []), _.get(app, 'authority', []),
-    );
-    const administrative = _.intersection(
-      _.get(obj, 'authority.administrative', []), _.get(app, 'authority', []),
-    );
+    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
+    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
     const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
@@ -596,15 +719,15 @@ const processWobjects = async ({
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
     obj = _.omit(obj, ['map']);
-    Object.assign(obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length));
+    Object.assign(
+      obj,
+      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length),
+    );
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
       obj.photos_count = _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []).length;
-      obj.preview_gallery = _.orderBy(
-        _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc'],
-      );
+      obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
       if (obj.avatar) {
         obj.preview_gallery.unshift({
           body: obj.avatar,
@@ -612,14 +735,23 @@ const processWobjects = async ({
           id: obj.author_permlink,
         });
       }
+      if (obj.options || obj.groupId) {
+        obj.options = obj.groupId
+          ? await addOptions({
+            object: obj, ownership, admins, administrative, owner, blacklist, locale,
+          })
+          : groupOptions(obj.options, obj);
+      }
     }
-    if (obj.options || obj.groupId) {
+
+    if ((obj.options || obj.groupId) && _.includes(fields, FIELDS_NAMES.OPTIONS)) {
       obj.options = obj.groupId
         ? await addOptions({
           object: obj, ownership, admins, administrative, owner, blacklist, locale,
         })
         : groupOptions(obj.options, obj);
     }
+
     if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
     if (obj.newsFilter) {
       obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
@@ -629,7 +761,7 @@ const processWobjects = async ({
       obj.parent = await getParentInfo({ locale, app, parent });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId });
+      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId, countryCode });
       if (!_.isEmpty(affiliateLinks)) {
         obj.affiliateLinks = affiliateLinks;
         obj.website = null;
@@ -640,6 +772,10 @@ const processWobjects = async ({
     }
     obj.defaultShowLink = getLinkToPageLoad(obj);
     obj.exposedFields = exposedFields;
+    obj.authority = _.find(
+      obj.authority,
+      (a) => a.creator === reqUserName && a.body === 'administrative',
+    );
     if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
     if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
     filteredWobj.push(obj);
@@ -649,9 +785,7 @@ const processWobjects = async ({
 };
 
 const getCurrentNames = async (names) => {
-  const { result: wobjects } = await Wobj.find(
-    { author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 },
-  );
+  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 });
   const result = await Promise.all(wobjects.map(async (wobject) => {
     const { name } = await processWobjects({
       wobjects: [wobject], fields: [FIELDS_NAMES.NAME], returnArray: false,
@@ -687,4 +821,5 @@ module.exports = {
   calculateApprovePercent,
   addDataToFields,
   moderatePosts,
+  arrayFieldsSpecialSort,
 };

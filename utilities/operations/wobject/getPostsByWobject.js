@@ -2,12 +2,13 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { WOBJECT_LATEST_POSTS_COUNT, OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 module.exports = async (data) => {
+  const groupIdPermlinks = [];
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
   const { result: muted = [] } = await mutedUserModel
     .find({ condition: { mutedBy: data.userName } });
@@ -15,24 +16,53 @@ module.exports = async (data) => {
   const { wObject, error: wobjError } = await Wobj.getOne(data.author_permlink);
   if (wobjError) return { error: wobjError };
 
-  if (data.newsFeed) {
-    if (wObject.object_type !== OBJECT_TYPES.NEWS_FEED) return { posts: [] };
-    const processedObj = await wObjectHelper.processWobjects({
-      wobjects: [wObject],
-      locale: data.locale,
-      fields: [FIELDS_NAMES.NEWS_FEED],
-      returnArray: false,
-      app: data.app,
-    });
+  const pinnedLinks = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.PIN)
+    .map((el) => el.body)
+    .value();
 
+  const removeLinks = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.REMOVE)
+    .map((el) => el.body)
+    .value();
+
+  const processedObj = await wObjectHelper.processWobjects({
+    wobjects: [_.cloneDeep(wObject)],
+    locale: data.locale,
+    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.PIN, FIELDS_NAMES.REMOVE],
+    returnArray: false,
+    app: data.app,
+  });
+
+  if (data.newsFeed) {
     const newsPermlink = _.get(processedObj, 'newsFeed.permlink');
     if (!newsPermlink) return { posts: [] };
     data.newsPermlink = newsPermlink;
   }
 
+  if (processedObj.groupId) {
+    const groupIdObjects = await Wobj.getWobjectsByGroupId(processedObj.groupId);
+    const processedObjects = await wObjectHelper.processWobjects({
+      wobjects: groupIdObjects,
+      locale: data.locale,
+      fields: [FIELDS_NAMES.GROUP_ID],
+      returnArray: true,
+      app: data.app,
+    });
+    const links = _.chain(processedObjects)
+      .filter((o) => _.some(processedObj.groupId, (id) => _.includes(_.get(o, 'groupId', []), id)))
+      .map('author_permlink').value();
+    groupIdPermlinks.push(...links);
+  }
+
+  const removeFilter = getRemoveFilter(processedObj);
+
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject,
+    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter,
   });
+
   if (conditionError) return { error: conditionError };
 
   const { posts, error } = await Post.getWobjectPosts({
@@ -43,13 +73,31 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
+  if (data.skip === 0) {
+    const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));
+    if (!_.isEmpty(pinPosts)) {
+      posts.unshift(..._.map(pinPosts, (el) => ({ ...el, pin: true })));
+    }
+  }
+
+  if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
+    _.forEach(posts, (p) => {
+      if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
+        p.hasPinUpdate = true;
+      }
+      if (_.includes(removeLinks, `${p.author}/${p.permlink}`)) {
+        p.hasRemoveUpdate = true;
+      }
+    });
+  }
+
   return { posts };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
-  author_permlink, skip, limit, user_languages,
-  lastId, hiddenPosts, muted, newsPermlink, app, wObject,
+  author_permlink, user_languages, removeFilter,
+  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
@@ -67,24 +115,17 @@ const getWobjFeedCondition = async ({
 
   if (newsPermlink) {
     return getNewsFilterCondition({
-      condition, wObject, newsPermlink, app, author_permlink,
+      condition, wObject, newsPermlink, app, author_permlink, removeFilter,
     });
   }
 
-  // we will never use this condition
-  if (!skip && limit <= WOBJECT_LATEST_POSTS_COUNT && _.isEmpty(user_languages)) {
-    // if wobject have no newsFilter and count of
-    // posts less than cashed count => get posts from cashed array
-    condition._id = { $in: [...wObject.latest_posts || []] };
-    return { condition };
-  }
-
-  condition['wobjects.author_permlink'] = author_permlink;
+  condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks]) };
+  if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
   return { condition };
 };
 
 const getNewsFilterCondition = ({
-  condition, wObject, newsPermlink, app, author_permlink,
+  condition, wObject, newsPermlink, app, author_permlink, removeFilter,
 }) => {
   const newsFilter = JSON.parse(_.get(
     _.find(wObject.fields, (f) => f.permlink === newsPermlink),
@@ -143,6 +184,33 @@ const getNewsFilterCondition = ({
   }
 
   condition.$and = _.compact([firstCond, secondCond]);
+  if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
 
   return { condition };
+};
+
+const getRemoveFilter = (processedObj) => _.chain([
+  ...(processedObj.remove || []),
+  ..._.map(getPinFilter(processedObj), (el) => `${el.author}/${el.permlink}`),
+])
+  .compact()
+  .uniq()
+  .map((el) => {
+    const [author, permlink] = el.split('/');
+    return { author, permlink };
+  })
+  .value();
+
+const getPinFilter = (processedObj) => {
+  const filteredPinBody = _.difference(_.map(processedObj.pin, 'body'), processedObj.remove);
+
+  return _.chain(processedObj.pin)
+    .filter((el) => _.includes(filteredPinBody, el.body))
+    .sort(wObjectHelper.arrayFieldsSpecialSort)
+    .take(3)
+    .map((el) => {
+      const [author, permlink] = el.body.split('/');
+      return { author, permlink };
+    })
+    .value();
 };

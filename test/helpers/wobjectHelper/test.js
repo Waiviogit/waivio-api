@@ -1406,9 +1406,9 @@ describe('On wobjectHelper', async () => {
     });
 
     it('should groupId to be eq obj groupId', async () => {
-      expect(groupId)
+      expect([groupId])
         .to
-        .be
+        .be.deep
         .eq(result.groupId);
     });
   });
@@ -1850,6 +1850,70 @@ describe('On wobjectHelper', async () => {
     it('should includes 2 feature', async () => {
       const feature = result.features.find((f) => f.body === feature2);
       expect(feature).not.to.be.undefined;
+    });
+  });
+
+  describe('On shopFilter field', async () => {
+    const body = JSON.stringify({
+      type: faker.random.string(),
+      departments: [faker.random.string()],
+      tags: [faker.random.string()],
+      authorities: [faker.random.string()],
+    });
+
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.SHOP,
+        name: FIELDS_NAMES.SHOP_FILTER,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.SHOP_FILTER],
+      });
+    });
+
+    it('should shopFilter eq', async () => {
+      expect(result.shopFilter).to.be.eq(body);
+    });
+  });
+
+  describe('On menuItem field', async () => {
+    const body = JSON.stringify({
+      title: faker.random.string(),
+      style: faker.random.string(),
+      image: faker.random.string(),
+      linkToObject: faker.random.string(),
+      linkToWeb: faker.random.string(),
+    });
+
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.RESTAURANT,
+        name: FIELDS_NAMES.MENU_ITEM,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [FIELDS_NAMES.MENU_ITEM],
+      });
+    });
+
+    it('should MENU_ITEM eq', async () => {
+      const field = result[FIELDS_NAMES.MENU_ITEM][0];
+      expect(field.body).to.be.eq(body);
     });
   });
 

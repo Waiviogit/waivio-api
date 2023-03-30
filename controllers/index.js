@@ -11,5 +11,6 @@ moduleExports.sitesController = require('./sitesController');
 moduleExports.vipTicketsController = require('./vipTicketsController');
 moduleExports.hiveController = require('./hiveController');
 moduleExports.departmentController = require('./departmentController');
+moduleExports.shopController = require('./shopController');
 
 module.exports = moduleExports;

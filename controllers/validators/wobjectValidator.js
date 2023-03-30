@@ -150,6 +150,7 @@ exports.getWobjectField = Joi.object().keys({
   fieldName: Joi.string().required(),
   locale: Joi.string().default('en-US'),
   app: Joi.string().required(),
+  reqUserName: Joi.string(),
 });
 
 exports.getWobjectsNearby = Joi.object().keys({
@@ -169,7 +170,8 @@ exports.getRelatedAlbum = Joi.object().keys({
     .default(30),
   skip: Joi.number().integer().min(0).default(0),
   authorPermlink: Joi.string().required(),
-});
+  locale: Joi.string(),
+}).options(options);
 
 exports.mapExpertsScheme = Joi.object().keys({
   box: boxScheme,
@@ -221,7 +223,7 @@ exports.wobjectsNamesScheme = Joi.object().keys({
 });
 
 exports.wobjectsOptionsScheme = Joi.object().keys({
-  groupId: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
   category: Joi.string().required(),
   limit: Joi.number().integer().min(1).default(10),
   skip: Joi.number().integer().min(0).default(0),

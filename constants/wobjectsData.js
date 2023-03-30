@@ -51,6 +51,9 @@ exports.FIELDS_NAMES = {
   MANUFACTURER: 'manufacturer',
   BRAND: 'brand',
   FEATURES: 'features',
+  PIN: 'pin',
+  REMOVE: 'remove',
+  SHOP_FILTER: 'shopFilter',
   RELATED: 'related',
   ADD_ON: 'add-on',
   SIMILAR: 'similar',
@@ -89,6 +92,7 @@ exports.OBJECT_TYPES = {
   BOOK: 'book',
   WIDGET: 'widget',
   NEWS_FEED: 'newsfeed',
+  SHOP: 'shop',
 };
 
 exports.ADMIN_ROLES = {
@@ -125,6 +129,11 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.AUTHORS,
   this.FIELDS_NAMES.DEPARTMENTS,
   this.FIELDS_NAMES.FEATURES,
+  this.FIELDS_NAMES.AUTHORITY,
+  this.FIELDS_NAMES.GROUP_ID,
+  this.FIELDS_NAMES.PIN,
+  this.FIELDS_NAMES.REMOVE,
+  this.FIELDS_NAMES.MENU_ITEM,
   this.FIELDS_NAMES.RELATED,
   this.FIELDS_NAMES.ADD_ON,
   this.FIELDS_NAMES.SIMILAR,
@@ -224,6 +233,8 @@ exports.REQUIREDFILDS_WOBJ_LIST = [
   this.FIELDS_NAMES.SORT_CUSTOM,
   this.FIELDS_NAMES.PRODUCT_ID,
   this.FIELDS_NAMES.NEWS_FEED,
+  this.FIELDS_NAMES.AUTHORITY,
+  this.FIELDS_NAMES.GROUP_ID,
 ];
 
 exports.DEFAULT_LINK_FIELDS = [
@@ -248,6 +259,7 @@ exports.SPECIFIC_FIELDS_MAPPINGS = {
   galleryAlbum: [this.FIELDS_NAMES.GALLERY_ALBUM, this.FIELDS_NAMES.GALLERY_ITEM],
   categoryItem: [this.FIELDS_NAMES.TAG_CATEGORY, this.FIELDS_NAMES.CATEGORY_ITEM],
   avatar: [this.FIELDS_NAMES.AVATAR, this.FIELDS_NAMES.PARENT],
+  options: [this.FIELDS_NAMES.OPTIONS, this.FIELDS_NAMES.GROUP_ID],
 };
 
 exports.MIN_PERCENT_TO_SHOW_UPGATE = 70;
@@ -316,7 +328,6 @@ exports.COUNTRY_CODES = {
   SG: 'Singapore',
   JP: 'Japan',
   AU: 'Australia',
-  UA: 'Ukraine', /// test todo remove
   NONE: 'NONE',
 };
 
@@ -339,8 +350,30 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   SG: 'amazon.sg',
   JP: 'amazon.co.jp',
   AU: 'amazon.com.au',
-  UA: 'amazon.co.jp', /// test todo remove
   NONE: 'NONE',
 };
 
-exports.AFFILIATE_TYPES = ['asin', 'isbn-10', 'asins'];
+exports.AFFILIATE_TYPE = {
+  WALMART: 'walmart',
+  AMAZON: 'amazon',
+  TARGET: 'target',
+};
+
+exports.DEFAULT_COUNTRY_CODE = 'US';
+
+exports.AMAZON_PRODUCT_IDS = ['asin', 'isbn-10', 'asins'];
+exports.WALMART_PRODUCT_IDS = ['walmartNum', 'walmart'];
+exports.TARGET_PRODUCT_IDS = ['target'];
+
+exports.OBJECT_TYPES_FOR_GROUP_ID = [
+  this.OBJECT_TYPES.PRODUCT,
+  this.OBJECT_TYPES.SERVICE,
+  this.OBJECT_TYPES.BOOK,
+];
+
+exports.SHOP_OBJECT_TYPES = [
+  this.OBJECT_TYPES.BOOK,
+  this.OBJECT_TYPES.PRODUCT,
+];
+
+exports.AFFILIATE_NULL_TYPES = ['none', 'null'];

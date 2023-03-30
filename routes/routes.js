@@ -11,6 +11,7 @@ const {
   vipTicketsController,
   hiveController,
   departmentController,
+  shopController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -22,6 +23,7 @@ const objectTypeRoutes = new Router();
 const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
+const shopRoutes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -31,6 +33,7 @@ apiRoutes.use('/api', objectTypeRoutes);
 apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
+apiRoutes.use('/api/shop', shopRoutes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -86,6 +89,29 @@ wobjRoutes.route('/departments')
   .post(departmentController.getDepartments);
 wobjRoutes.route('/departments/wobjects')
   .post(departmentController.getWobjectsByDepartments);
+wobjRoutes.route('/departments/search')
+  .post(departmentController.getDepartmentsSearch);
+// endregion
+
+// region Shop
+shopRoutes.route('/department-feed').post(shopController.getFeedByDepartment);
+shopRoutes.route('/main-feed').post(shopController.getFeed);
+shopRoutes.route('/departments').post(shopController.getDepartments);
+shopRoutes.route('/filters').post(shopController.getFilters);
+shopRoutes.route('/filters/tags').post(shopController.getMoreTags);
+shopRoutes.route('/state').post(shopController.restoreShopState);
+
+shopRoutes.route('/user/departments').post(shopController.getUserDepartments);
+shopRoutes.route('/user/department-feed').post(shopController.getUserFeedByDepartment);
+shopRoutes.route('/user/main-feed').post(shopController.getUserFeed);
+shopRoutes.route('/user/filters').post(shopController.getUserFilters);
+shopRoutes.route('/user/filters/tags').post(shopController.getUserTags);
+
+shopRoutes.route('/wobject/departments').post(shopController.getWobjectDepartments);
+shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepartmentFeed);
+shopRoutes.route('/wobject/main-feed').post(shopController.getWobjectMainFeed);
+shopRoutes.route('/wobject/filters').post(shopController.getWobjectFilters);
+shopRoutes.route('/wobject/filters/tags').post(shopController.getWobjectTags);
 // endregion
 
 // region Wobject
@@ -123,6 +149,8 @@ wobjRoutes.route('/wobject/:authorPermlink/fields')
   .get(WobjController.getWobjectUpdates);
 wobjRoutes.route('/wobject/:authorPermlink/newsfeed')
   .post(WobjController.newsfeed);
+wobjRoutes.route('/wobject/:authorPermlink/authority-fields')
+  .get(WobjController.getAuthorities);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(WobjController.getMapObjectExperts);
@@ -195,6 +223,7 @@ userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWalle
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
 userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
 userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+// endregion
 // region Draft
 
 // Deprecated. Used for subscribe button for users who liked the post

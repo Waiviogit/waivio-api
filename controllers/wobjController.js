@@ -3,6 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
+  getWobjectAuthorities,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -193,6 +194,7 @@ const getWobjectField = async (req, res, next) => {
     locale: req.headers.locale,
     app: req.headers.app,
     authorPermlink: req.params.authorPermlink,
+    reqUserName: req.headers.follower,
   }),
   validators.wobject.getWobjectField, next);
   if (!value) return;
@@ -230,13 +232,20 @@ const countWobjectsByArea = async (req, res, next) => {
 
 const related = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.params, ...req.query },
+    {
+      ...req.params,
+      ...req.query,
+      ...req.headers,
+    },
     validators.wobject.getRelatedAlbum,
     next,
   );
   if (!value) return;
 
-  const { json, error } = await getRelated(value);
+  const { json, error } = await getRelated({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.result = { status: 200, json };
   next();
@@ -369,6 +378,14 @@ const getWobjectOptions = async (req, res, next) => {
   next();
 };
 
+const getAuthorities = async (req, res, next) => {
+  const { result, error } = await getWobjectAuthorities(req.params.authorPermlink);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -392,4 +409,5 @@ module.exports = {
   getWobjectNames,
   newsfeed,
   getWobjectOptions,
+  getAuthorities,
 };

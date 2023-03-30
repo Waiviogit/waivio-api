@@ -1,5 +1,6 @@
 const axios = require('axios');
 const { telegramApi } = require('constants/requestData');
+const Sentry = require('@sentry/node');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.sendSentryNotification = async () => {
@@ -15,4 +16,10 @@ exports.sendSentryNotification = async () => {
   } catch (error) {
     return { error };
   }
+};
+
+exports.captureException = async (error = {}) => {
+  Sentry.captureException({ error });
+  await this.sendSentryNotification();
+  return false;
 };

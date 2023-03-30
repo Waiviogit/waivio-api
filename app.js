@@ -11,7 +11,7 @@ const { routes } = require('routes');
 const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
-  checkUserFollowings, checkObjectsFollowings, checkBellNotifications,
+  checkUserFollowings, checkObjectsFollowings, checkBellNotifications, filterUniqGroupId,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
@@ -85,6 +85,7 @@ app.use('/', checkBellNotifications.check);
 
 // Check objects for followings for some routes
 app.use('/', checkObjectsFollowings.check);
+app.use('/', filterUniqGroupId);
 
 app.use(Sentry.Handlers.errorHandler({
   shouldHandleError(error) {
