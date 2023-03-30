@@ -15,13 +15,11 @@ const { getPageDraft } = require('../utilities/operations/user/getPageDraft');
 const { createOrUpdateDraft } = require('../utilities/operations/user/createOrUpdatePageDraft');
 
 const index = async (req, res, next) => {
-  const value = validators.validate(
-    {
-      limit: req.query.limit,
-      skip: req.query.skip,
-      sample: req.query.sample,
-    }, validators.user.indexSchema, next,
-  );
+  const value = validators.validate({
+    limit: req.query.limit,
+    skip: req.query.skip,
+    sample: req.query.sample,
+  }, validators.user.indexSchema, next);
   if (!value) return;
   const { users, error } = await getManyUsers.getUsers(value);
 
@@ -408,6 +406,24 @@ const getEstimatedVote = async (req, res, next) => {
   next();
 };
 
+const checkObjectWhiteList = async (req, res, next) => {
+  const result = await calcVoteValue.checkUserWhiteList(req.params);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getWaivVote = async (req, res, next) => {
+  const value = validators
+    .validate({ ...req.query, ...req.params }, validators.user.waivVoteValue, next);
+  if (!value) return;
+
+  const result = await calcVoteValue.waivVoteUSD(value);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getGeoByIp = async (req, res, next) => {
   const { longitude, latitude } = await geoData.getLocation(getIpFromHeaders(req));
 
@@ -416,9 +432,7 @@ const getGeoByIp = async (req, res, next) => {
 };
 
 const putUserGeo = async (req, res, next) => {
-  const value = validators.validate(
-    { ...req.body, ip: getIpFromHeaders(req) }, validators.user.putGeo, next,
-  );
+  const value = validators.validate({ ...req.body, ip: getIpFromHeaders(req) }, validators.user.putGeo, next);
   if (!value) return;
 
   const { longitude, latitude, error } = await geoData.putLocation({ req, ...value });
@@ -445,8 +459,11 @@ const getLastActivity = async (req, res, next) => {
 };
 
 const getAdvancedReport = async (req, res, next) => {
-  const value = validators.validate({ ...req.body },
-    validators.user.advancedWalletSchema, next);
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.advancedWalletSchema,
+    next,
+  );
   if (!value) return;
 
   const { result, error } = await getWalletAdvancedReport(value);
@@ -457,9 +474,7 @@ const getAdvancedReport = async (req, res, next) => {
 };
 
 const getGuestWallet = async (req, res, next) => {
-  const value = validators.validate(
-    { ...req.query, ...req.params }, validators.user.guestWallet, next,
-  );
+  const value = validators.validate({ ...req.query, ...req.params }, validators.user.guestWallet, next);
   if (!value) return;
   const { result, error } = await guestWalletOperations.getWallet(value);
   if (error) return next(error);
@@ -468,9 +483,7 @@ const getGuestWallet = async (req, res, next) => {
 };
 
 const getGuestBalance = async (req, res, next) => {
-  const value = validators.validate(
-    { ...req.query, ...req.params }, validators.user.guestBalance, next,
-  );
+  const value = validators.validate({ ...req.query, ...req.params }, validators.user.guestBalance, next);
   if (!value) return;
   const { result, error } = await guestWalletOperations.getBalance(value);
 
@@ -549,4 +562,6 @@ module.exports = {
   createOrUpdatePageDraft,
   getOnePageDraft,
   blogTags,
+  getWaivVote,
+  checkObjectWhiteList,
 };

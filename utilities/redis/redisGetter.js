@@ -1,5 +1,5 @@
 const {
-  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics,
+  wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics, processedPostClient,
 } = require('utilities/redis/redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
@@ -111,3 +111,7 @@ exports.getFromCache = async ({ key, client = mainFeedsCacheClient }) => {
   if (!parsedData) return;
   return parsedData;
 };
+
+exports.sismember = async ({
+  key, member, client = processedPostClient,
+}) => client.sismemberAsync(key, member);

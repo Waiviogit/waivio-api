@@ -377,3 +377,5 @@ exports.SHOP_OBJECT_TYPES = [
 ];
 
 exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
+
+exports.WHITE_LIST_KEY = 'white_list_import';
