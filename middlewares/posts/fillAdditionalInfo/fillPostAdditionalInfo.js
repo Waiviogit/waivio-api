@@ -26,7 +26,7 @@ exports.fill = async (req, res, next) => {
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight(res.result.json);
       // if review  add additional sponsor obligations to calculations
-      res.result.json = await postHelper.additionalSponsorObligations(res.result.json);
+      res.result.json = await postHelper.additionalSponsorObligations(res.result.json, userName);
       break;
     case 2:
       // replace reblog post blank to source post
@@ -38,7 +38,7 @@ exports.fill = async (req, res, next) => {
         [res.result.json], _.get(req, 'headers.app'), userName,
       );
       // if review  add additional sponsor obligations to calculations
-      [res.result.json] = await postHelper.additionalSponsorObligations([res.result.json]);
+      [res.result.json] = await postHelper.additionalSponsorObligations([res.result.json], userName);
       break;
     case 3:
       // replace reblog post blank to source post
@@ -48,12 +48,12 @@ exports.fill = async (req, res, next) => {
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight(res.result.json.posts);
       // if review  add additional sponsor obligations to calculations
-      res.result.json.posts = await postHelper.additionalSponsorObligations(res.result.json.posts);
+      res.result.json.posts = await postHelper.additionalSponsorObligations(res.result.json.posts, userName);
       break;
     case 4:
       const iteratedArray = res.result.json[currentSchema.pathToArray];
       for (let i = 0; i < iteratedArray.length; i++) {
-        const posts = await postHelper.additionalSponsorObligations([iteratedArray[i][currentSchema.pathToPost]]);
+        const posts = await postHelper.additionalSponsorObligations([iteratedArray[i][currentSchema.pathToPost]], userName);
         if (_.isEmpty(posts)) continue;
         res.result.json[currentSchema.pathToArray][i][currentSchema.pathToPost] = posts[0];
       }
