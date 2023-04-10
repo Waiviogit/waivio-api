@@ -10,6 +10,7 @@ const {
   CampaignPosts,
   CampaignV2,
   SponsorsUpvote,
+  blacklistModel,
 } = require('models');
 const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
 const { Post } = require('database').models;
@@ -38,17 +39,15 @@ const BigNumber = require('bignumber.js');
  */
 const getPostObjects = async (wobjects) => {
   if (Array.isArray(wobjects) && !_.isEmpty(wobjects)) {
-    const { result: wObjectsData } = await Wobj.find(
-      { author_permlink: { $in: _.map(wobjects, 'author_permlink') } }, {
-        fields: 1,
-        author_permlink: 1,
-        weight: 1,
-        object_type: 1,
-        default_name: 1,
-        parent: 1,
-        'status.title': 1,
-      },
-    );
+    const { result: wObjectsData } = await Wobj.find({ author_permlink: { $in: _.map(wobjects, 'author_permlink') } }, {
+      fields: 1,
+      author_permlink: 1,
+      weight: 1,
+      object_type: 1,
+      default_name: 1,
+      parent: 1,
+      'status.title': 1,
+    });
     wObjectsData.forEach((wobj) => {
       wobj.fields = wobj.fields.filter((field) => _.includes(REQUIREDFIELDS_POST, field.name));
     });
@@ -279,7 +278,14 @@ const checkUserStatus = async ({
 const sponsorObligationsNewReview = async ({
   post,
   newReview,
+  blacklist = [],
 }) => {
+  const { guideName = '', reservationPermlink = '' } = newReview;
+
+  post.guideName = guideName;
+  post.reservationPermlink = reservationPermlink;
+  post.blacklisted = blacklist.includes(post.author);
+
   const totalPayout = _.get(post, `total_payout_${newReview.symbol}`);
   const voteRshares = _.get(post, `net_rshares_${newReview.symbol}`);
 
@@ -377,14 +383,17 @@ const sponsorObligationsNewReview = async ({
   }
   post[`net_rshares_${newReview.symbol}`] = _.reduce(
     post.active_votes,
-    (acc, el) => acc + _.get(el, `rshares${newReview.symbol}`, 0), 0,
+    (acc, el) => acc + _.get(el, `rshares${newReview.symbol}`, 0),
+    0,
   );
 };
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
  */
-const additionalSponsorObligations = async (posts) => {
+const additionalSponsorObligations = async (posts, userName) => {
+  const blacklist = await blacklistModel.getUserBlacklist(userName);
+
   for (const post of posts) {
     if (!post) continue;
     const metadata = post.json_metadata ? jsonParse(post) : null;
@@ -401,6 +410,7 @@ const additionalSponsorObligations = async (posts) => {
       await sponsorObligationsNewReview({
         post,
         newReview,
+        blacklist,
       });
       continue;
     }
@@ -429,8 +439,11 @@ const additionalSponsorObligations = async (posts) => {
     const totalPayout = beforeCashOut
       ? postPendingPayout
       : postTotalPayout + postCuratorPayout;
-    const voteRshares = _.reduce(post.active_votes,
-      (a, b) => a + parseInt(b.rshares, 10), 0);
+    const voteRshares = _.reduce(
+      post.active_votes,
+      (a, b) => a + parseInt(b.rshares, 10),
+      0,
+    );
     const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
 
     if (ratio) {
