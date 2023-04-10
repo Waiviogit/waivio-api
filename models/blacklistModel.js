@@ -17,8 +17,8 @@ exports.findOne = async ({ filter, projection, options }) => {
 };
 
 exports.getUserBlacklist = async (user = '') => {
-  const { result, error } = await this.findOne({ filter: { user } });
-  if (!result || error) return [];
+  const { result } = await this.findOne({ filter: { user } });
+  if (!result) return [];
 
   return [
     ...new Set([
