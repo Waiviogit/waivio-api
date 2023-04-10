@@ -19,6 +19,7 @@
     "fillTagCategoryByObjectType": "NODE_PATH=. node utilities/tasks/fillTagCategoryByObjectType/run.js",
     "fillTagCategoryByDepartment": "NODE_PATH=. node utilities/tasks/fillTagCategoryByDepartment/run.js",
     "departmentsRelatedFix": "NODE_PATH=. node utilities/tasks/departmentsRelatedFix/run.js",
+    "addDataToCampaignPosts": "NODE_PATH=. node utilities/tasks/addDataToCampaignPosts/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {
