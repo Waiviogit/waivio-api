@@ -87,8 +87,10 @@ const addWalletDataToAccounts = async ({
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
   if (account.lastId) {
-    const updateSkip = account.wallet.indexOf(_.find(account.wallet,
-      (obj) => obj._id.toString() === account.lastId)) + 1;
+    const updateSkip = account.wallet.indexOf(_.find(
+      account.wallet,
+      (obj) => obj._id.toString() === account.lastId,
+    )) + 1;
     account.wallet = account.wallet.slice(updateSkip - 1);
   }
   account.hasMore = account.wallet.length > limit;
@@ -191,7 +193,7 @@ const getExemptions = async ({ user, wallet }) => {
   let exemptions = [];
   if (user) {
     const condition = _.reduce(wallet, (acc, record) => {
-      const filter = { userName: user, userWithExemptions: record.account, recordId: ObjectId(record._id) };
+      const filter = { userName: user, userWithExemptions: record.account, recordId: new ObjectId(record._id) };
       acc.push({ ...filter });
       return acc;
     }, []);
@@ -315,8 +317,10 @@ const calcWalletRecordRate = ({
 
 const accumulateAcc = ({ resultArray, account, acc }) => {
   const lastId = _.get(_.last(account.wallet), '_id', '');
-  const filterWallet = _.filter(account.wallet,
-    (record) => !_.some(resultArray, (result) => _.isEqual(result, record)));
+  const filterWallet = _.filter(
+    account.wallet,
+    (record) => !_.some(resultArray, (result) => _.isEqual(result, record)),
+  );
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
 
   account.lastId = _.isEmpty(filterWallet)
