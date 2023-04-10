@@ -54,6 +54,9 @@ exports.FIELDS_NAMES = {
   PIN: 'pin',
   REMOVE: 'remove',
   SHOP_FILTER: 'shopFilter',
+  RELATED: 'related',
+  ADD_ON: 'add-on',
+  SIMILAR: 'similar',
 };
 
 exports.LIST_TYPES = {
@@ -131,6 +134,9 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.PIN,
   this.FIELDS_NAMES.REMOVE,
   this.FIELDS_NAMES.MENU_ITEM,
+  this.FIELDS_NAMES.RELATED,
+  this.FIELDS_NAMES.ADD_ON,
+  this.FIELDS_NAMES.SIMILAR,
 ];
 
 exports.REQUIREDFIELDS = [
@@ -371,3 +377,5 @@ exports.SHOP_OBJECT_TYPES = [
 ];
 
 exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
+
+exports.WHITE_LIST_KEY = 'white_list_import';

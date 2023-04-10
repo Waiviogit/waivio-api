@@ -4,7 +4,9 @@ const postsUtil = require('utilities/hiveApi/postsUtil');
 const { TOKEN_WAIV } = require('constants/hiveEngine');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
-const { Post, Comment } = require('../../../models');
+const { Post, Comment } = require('models');
+const { redisGetter } = require('utilities/redis');
+const { WHITE_LIST_KEY } = require('constants/wobjectsData');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -35,8 +37,10 @@ exports.sliderCalc = async ({
 const includesPostRewards = (post) => {
   const jsonMetadata = jsonHelper.parseJson(_.get(post, 'json_metadata', ''));
   if (_.isEmpty(jsonMetadata)) return false;
-  return _.some(TOKEN_WAIV.TAGS,
-    (tag) => _.includes(_.get(jsonMetadata, 'tags', []), tag));
+  return _.some(
+    TOKEN_WAIV.TAGS,
+    (tag) => _.includes(_.get(jsonMetadata, 'tags', []), tag),
+  );
 };
 
 const checkPostForRewards = async ({ postDb, author, permlink }) => {
@@ -76,5 +80,32 @@ exports.userInfoCalc = async ({ userName }) => {
   return {
     estimatedHIVE: hive.estimatedHIVE,
     estimatedWAIV: waiv.engineVotePrice,
+  };
+};
+
+exports.waivVoteUSD = async ({ userName, weight }) => {
+  const { engineVotePrice } = await engineOperations.calculateHiveEngineVote({
+    symbol: TOKEN_WAIV.SYMBOL,
+    account: userName,
+    poolId: TOKEN_WAIV.POOL_ID,
+    dieselPoolId: TOKEN_WAIV.DIESEL_POOL_ID,
+    weight: weight * 100,
+  });
+
+  return {
+    result: engineVotePrice,
+  };
+};
+
+exports.checkUserWhiteList = async ({
+  userName,
+}) => {
+  const result = await redisGetter.sismember({
+    key: WHITE_LIST_KEY,
+    member: userName,
+  });
+
+  return {
+    result: !!result,
   };
 };

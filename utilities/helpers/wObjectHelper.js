@@ -198,6 +198,9 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.AUTHORITY:
       case FIELDS_NAMES.PIN:
       case FIELDS_NAMES.MENU_ITEM:
+      case FIELDS_NAMES.ADD_ON:
+      case FIELDS_NAMES.RELATED:
+      case FIELDS_NAMES.SIMILAR:
         if (arrayFieldPush({ filter, field })) validFields.push(field);
         break;
       case FIELDS_NAMES.GROUP_ID:

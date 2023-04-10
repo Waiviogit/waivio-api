@@ -212,6 +212,10 @@ userRoutes.route('/user/:userName/vote-value')
   .get(UserController.getVoteValue);
 userRoutes.route('/user/:userName/vote-value-info')
   .get(UserController.getEstimatedVote);
+userRoutes.route('/user/:userName/waiv-vote')
+  .get(UserController.getWaivVote);
+userRoutes.route('/user/:userName/white-list-object')
+  .get(UserController.checkObjectWhiteList);
 userRoutes.route('/geo-ip')
   .get(UserController.getGeoByIp)
   .put(UserController.putUserGeo);
