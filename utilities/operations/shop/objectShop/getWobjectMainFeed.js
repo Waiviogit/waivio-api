@@ -19,7 +19,11 @@ const getWobjectMainFeed = async ({
   filter,
 }) => {
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
-  const { wobjectFilter, error } = await shopHelper.getWobjectFilter({ app, authorPermlink });
+  const { wobjectFilter, error } = await shopHelper.getWobjectFilter({
+    app,
+    authorPermlink,
+    tagFilter: shopHelper.makeFilterCondition(filter),
+  });
 
   if (error) return { error };
   const { result: objectDepartments } = await getWobjectDepartments({

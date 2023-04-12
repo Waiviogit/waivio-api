@@ -9,6 +9,7 @@ const CampaignPostsSchema = new Schema({
   rewardInToken: { type: Number },
   payoutTokenRateUSD: { type: Number },
   symbol: { type: String },
+  reservationPermlink: { type: String },
 });
 
 CampaignPostsSchema.index({ author: 1, permlink: 1 }, { unique: true });
