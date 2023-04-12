@@ -1,4 +1,5 @@
 const { engineProxy } = require('utilities/hiveEngine/engineQuery');
+const _ = require('lodash');
 
 /**
  * fields
@@ -34,13 +35,25 @@ exports.getRewardPools = async ({ query }) => engineProxy({
  * downvotingPower: downvoting power at last vote timestamp
  */
 
-exports.getVotingPower = async ({ query }) => engineProxy({
-  params: {
-    contract: 'comments',
-    table: 'votingPower',
-    query,
-  },
-});
+exports.getVotingPower = async ({ query }) => {
+  const response = await engineProxy({
+    params: {
+      contract: 'comments',
+      table: 'votingPower',
+      query,
+    },
+  });
+
+  if (!_.isEmpty(response)) return response;
+
+  return [{
+    account: query?.account,
+    rewardPoolId: query?.rewardPoolId,
+    lastVoteTimestamp: 1000000000000,
+    votingPower: 10000,
+    downvotingPower: 10000,
+  }];
+};
 
 exports.getPosts = async ({ query }) => engineProxy({
   params: {
