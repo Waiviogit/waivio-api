@@ -163,6 +163,8 @@ wobjRoutes.route('/wobjects/names')
   .post(WobjController.getWobjectNames);
 wobjRoutes.route('/wobjects/options')
   .post(WobjController.getWobjectOptions);
+wobjRoutes.route('/wobjects/group-id')
+  .post(WobjController.getWobjectsByGroupId);
 // endregion
 // region User
 userRoutes.route('/users')

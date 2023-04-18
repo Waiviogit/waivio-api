@@ -1,8 +1,6 @@
 const {
   REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
   ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
-  AFFILIATE_TYPE, AMAZON_PRODUCT_IDS, AMAZON_LINKS_BY_COUNTRY, WALMART_PRODUCT_IDS, TARGET_PRODUCT_IDS, DEFAULT_COUNTRY_CODE,
-  AFFILIATE_NULL_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
@@ -12,13 +10,15 @@ const { DEVICE, LANGUAGES_POPULARITY } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
-const AppAffiliateModel = require('models/AppAffiliateModel');
 const moment = require('moment');
 const _ = require('lodash');
-const config = require('config');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
+const {
+  formAffiliateLinks,
+  getAppAffiliateCodes,
+} = require('./affiliateHelper');
 
 const getBlacklist = async (admins) => {
   let followList = [];
@@ -565,112 +565,6 @@ const addOptions = async ({
 /**
  * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
  */
-const getAppAffiliateCodes = async ({ app, countryCode }) => {
-  if (!app) return [];
-  const { result } = await AppAffiliateModel.find(
-    {
-      filter: {
-        host: app.host || config.appHost,
-        countryCode: { $in: [countryCode, DEFAULT_COUNTRY_CODE] },
-      },
-    },
-  );
-
-  return result;
-};
-
-const formAmazonLink = ({ affiliateCodes, productId }) => {
-  if (_.isEmpty(affiliateCodes) && productId) {
-    return { type: AFFILIATE_TYPE.AMAZON, link: `https://www.${AMAZON_LINKS_BY_COUNTRY.US}/dp/${productId}` };
-  }
-  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon');
-  if (!code) return;
-  const host = AMAZON_LINKS_BY_COUNTRY[code.countryCode];
-  const link = `https://www.${host}/dp/${productId}/ref=nosim?tag=${code.affiliateCode}`;
-  return { type: AFFILIATE_TYPE.AMAZON, link };
-};
-
-const formWalmartLink = ({ productId }) => {
-  const link = `https://www.walmart.com/ip/${productId}`;
-  return { type: AFFILIATE_TYPE.WALMART, link };
-};
-
-const formTargetLink = ({ productId }) => {
-  const link = `https://www.target.com/p/${productId}`;
-  return { type: AFFILIATE_TYPE.TARGET, link };
-};
-
-const specialAmazonLink = ({
-  productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds = [],
-}) => {
-  if (AFFILIATE_NULL_TYPES.includes(productIdObj.productId.toLocaleLowerCase())) {
-    const productObj = mappedProductIds.find(
-      (mp) => AMAZON_PRODUCT_IDS.includes(mp.productIdType.toLocaleLowerCase()),
-    );
-    if (!productObj) return;
-
-    return formAmazonLink({
-      affiliateCodes: defaultCountryCode,
-      productId: productObj.productId,
-    });
-  }
-
-  return formAmazonLink({
-    affiliateCodes: requestCountryCode,
-    productId: productIdObj.productId,
-  });
-};
-
-const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) => {
-  const links = new Map();
-  const mappedProductIds = _.compact(_.map(productIds, (el) => {
-    const body = jsonHelper.parseJson(el.body, {});
-    if (!_.get(body, 'productIdType')) return;
-    return {
-      productId: body.productId,
-      productIdType: body.productIdType,
-    };
-  }));
-  const requestCountryCode = affiliateCodes.filter(
-    (aff) => aff.countryCode === countryCode,
-  );
-  const defaultCountryCode = affiliateCodes.filter(
-    (aff) => aff.countryCode === DEFAULT_COUNTRY_CODE,
-  );
-
-  const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon' && aff.countryCode === countryCode);
-  const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
-  const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
-  if (productIdObj) {
-    const link = specialAmazonLink({
-      productIdObj, defaultCountryCode, requestCountryCode, mappedProductIds,
-    });
-    if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
-  }
-  for (const mappedProductId of mappedProductIds) {
-    const { productId, productIdType } = mappedProductId;
-    if (AMAZON_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
-      && !links.has(AFFILIATE_TYPE.AMAZON)) {
-      const link = formAmazonLink({
-        affiliateCodes: requestCountryCode.length ? requestCountryCode : defaultCountryCode,
-        productId,
-      });
-      if (link) links.set(AFFILIATE_TYPE.AMAZON, link);
-    }
-    if (WALMART_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
-      && !links.has(AFFILIATE_TYPE.WALMART)) {
-      const link = formWalmartLink({ productId });
-      if (link) links.set(AFFILIATE_TYPE.WALMART, link);
-    }
-    if (TARGET_PRODUCT_IDS.includes(productIdType.toLocaleLowerCase())
-      && !links.has(AFFILIATE_TYPE.TARGET)) {
-      const link = formTargetLink({ productId });
-      if (link) links.set(AFFILIATE_TYPE.TARGET, link);
-    }
-  }
-
-  return [...links.values()];
-};
 
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
