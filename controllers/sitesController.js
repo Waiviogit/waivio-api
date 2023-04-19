@@ -280,7 +280,8 @@ exports.getRestrictions = async (req, res, next) => {
 exports.showAllPrefetches = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query },
-    validators.sites.showAllPrefetches, next,
+    validators.sites.showAllPrefetches,
+    next,
   );
   if (!value) return;
   const { result, error } = await prefetchWobjs.showAllPrefetches(value);
@@ -292,7 +293,8 @@ exports.showAllPrefetches = async (req, res, next) => {
 exports.getPrefetchesList = async (req, res, next) => {
   const value = validators.validate(
     { ...req.query },
-    validators.sites.getPrefetchList, next,
+    validators.sites.getPrefetchList,
+    next,
   );
   if (!value) return;
   const { result, error } = await prefetchWobjs.getPrefetchList(value);
@@ -304,7 +306,8 @@ exports.getPrefetchesList = async (req, res, next) => {
 exports.createPrefetch = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body },
-    validators.sites.createPrefetch, next,
+    validators.sites.createPrefetch,
+    next,
   );
   if (!value) return;
   const { result, error } = await prefetchWobjs.createPrefetch(value);
@@ -317,7 +320,8 @@ exports.createPrefetch = async (req, res, next) => {
 exports.updatePrefetchesList = async (req, res, next) => {
   const value = validators.validate(
     { userName: req.headers.username, ...req.body },
-    validators.sites.updatePrefetchList, next,
+    validators.sites.updatePrefetchList,
+    next,
   );
   if (!value) return;
 
@@ -326,6 +330,32 @@ exports.updatePrefetchesList = async (req, res, next) => {
 
   const { result, error } = await prefetchWobjs.updatePrefetchList(value);
 
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getAffiliateList = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.sites.getPrefetchList,
+    next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.getPrefetchList(value);
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
+
+exports.updateAffiliateList = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.getPrefetchList,
+    next,
+  );
+  if (!value) return;
+  const { result, error } = await prefetchWobjs.getPrefetchList(value);
   if (error) return next(error);
   res.result = { status: 200, json: result };
   next();

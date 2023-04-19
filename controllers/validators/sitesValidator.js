@@ -127,3 +127,12 @@ exports.updatePrefetchList = Joi.object().keys({
   userName: Joi.string().required(),
   names: Joi.array().items(Joi.string()).required(),
 });
+
+exports.getAffiliateList = Joi.object().keys({
+  host: Joi.string().required(),
+});
+
+exports.updateAffiliateList = Joi.object().keys({
+  host: Joi.string().required(),
+  names: Joi.array().items(Joi.string()).required(),
+});
