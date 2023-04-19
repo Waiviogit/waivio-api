@@ -28,8 +28,11 @@ const getMany = async (data) => {
   const condition = getCondition(data);
   // eslint-disable-next-line prefer-const
   let { result: wObjects, error } = await Wobj.find(
-    condition, 'default_name weight parent fields object_type author_permlink',
-    { weight: -1 }, data.skip, data.sample ? 100 : data.limit + 1,
+    condition,
+    'default_name weight parent fields object_type author_permlink author',
+    { weight: -1 },
+    data.skip,
+    data.sample ? 100 : data.limit + 1,
   );
   /** Data sample use for short info about wobject, it must be light request */
   if (data.sample) {
