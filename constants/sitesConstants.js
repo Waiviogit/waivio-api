@@ -9,6 +9,11 @@ exports.STATUSES = {
   SUSPENDED: 'suspended',
 };
 
+exports.SHOP_SETTINGS_TYPE = {
+  USER: 'user',
+  OBJECT: 'object',
+};
+
 exports.CAN_DELETE_STATUSES = [
   this.STATUSES.INACTIVE,
   this.STATUSES.PENDING,
