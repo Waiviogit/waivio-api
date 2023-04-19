@@ -2,6 +2,7 @@ const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const { sitesHelper } = require('utilities/helpers');
 const prefetchWobjs = require('utilities/operations/sites/prefetchWobjs');
+const affiliateShop = require('utilities/operations/sites/affiliateShop');
 const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
@@ -338,11 +339,14 @@ exports.updatePrefetchesList = async (req, res, next) => {
 exports.getAffiliateList = async (req, res, next) => {
   const value = validators.validate(
     req.query,
-    validators.sites.getPrefetchList,
+    validators.sites.getAffiliateList,
     next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.getPrefetchList(value);
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await affiliateShop.getAffiliateSites(value);
   if (error) return next(error);
   res.result = { status: 200, json: result };
   next();
@@ -351,11 +355,15 @@ exports.getAffiliateList = async (req, res, next) => {
 exports.updateAffiliateList = async (req, res, next) => {
   const value = validators.validate(
     req.body,
-    validators.sites.getPrefetchList,
+    validators.sites.updateAffiliateList,
     next,
   );
   if (!value) return;
-  const { result, error } = await prefetchWobjs.getPrefetchList(value);
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await affiliateShop.updateAffiliateSites(value);
   if (error) return next(error);
   res.result = { status: 200, json: result };
   next();

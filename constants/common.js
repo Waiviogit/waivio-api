@@ -6,6 +6,7 @@ exports.ERROR_MESSAGE = {
   UPLOAD_IMAGE: 'Error upload image',
   NOT_FOUND: 'Not Found',
   WEBSITE_UNAVAILABLE: 'Website Temporary Unavailable',
+  FORBIDDEN: 'Forbidden',
 };
 
 exports.RESPONSE_STATUS = {
@@ -18,6 +19,10 @@ exports.ERROR_OBJ = {
   NOT_FOUND: {
     status: this.RESPONSE_STATUS.NOT_FOUND,
     message: this.ERROR_MESSAGE.NOT_FOUND,
+  },
+  FORBIDDEN: {
+    status: this.RESPONSE_STATUS.FORBIDDEN,
+    message: this.ERROR_MESSAGE.FORBIDDEN,
   },
 };
 

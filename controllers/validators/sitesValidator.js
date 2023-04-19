@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { MAIN_OBJECT_TYPES } = require('constants/wobjectsData');
+const { MAIN_OBJECT_TYPES, AFFILIATE_TYPE, COUNTRY_CODES } = require('constants/wobjectsData');
 const { customJoi } = require('controllers/validators/customSchema');
 const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
 
@@ -130,9 +130,19 @@ exports.updatePrefetchList = Joi.object().keys({
 
 exports.getAffiliateList = Joi.object().keys({
   host: Joi.string().required(),
+  userName: Joi.string().required(),
 });
 
 exports.updateAffiliateList = Joi.object().keys({
   host: Joi.string().required(),
-  names: Joi.array().items(Joi.string()).required(),
+  userName: Joi.string().required(),
+  links: Joi.array()
+    .items(Joi.object()
+      .keys({
+        host: Joi.string().required(),
+        countryCode: Joi.string().required().valid(...Object.keys(COUNTRY_CODES)),
+        type: Joi.string().required().valid(...Object.values(AFFILIATE_TYPE)),
+        affiliateCode: Joi.string().allow('').required(),
+      }))
+    .required(),
 });

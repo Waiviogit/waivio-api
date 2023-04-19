@@ -115,7 +115,7 @@ const formAffiliateLinks = ({ affiliateCodes = [], productIds, countryCode }) =>
   );
 
   const code = _.find(affiliateCodes, (aff) => aff.type === 'amazon' && aff.countryCode === countryCode);
-  const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode', 'NONE')];
+  const host = AMAZON_LINKS_BY_COUNTRY[_.get(code, 'countryCode')];
   const productIdObj = _.find(mappedProductIds, (id) => id.productIdType === host);
   if (productIdObj) {
     const link = specialAmazonLink({
