@@ -3353,6 +3353,108 @@
         }
       }
     },
+    "/api/sites/affiliate": {
+      "get": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "Get list affiliate by host",
+        "description": "Get list affiliate by host",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "userName",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/affiliate_list"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "Update list affiliate by host",
+        "description": "Update list affiliate by host",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                },
+                "userName" : {
+                  "type": "string"
+                },
+                "links": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/affiliate_list"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "updated": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -10270,6 +10372,23 @@
           "items" : {
             "type" : "string"
           }
+        }
+      }
+    },
+    "affiliate_list": {
+      "type": "object",
+      "properties": {
+        "host": {
+          "type": "string"
+        },
+        "countryCode": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "affiliateCode": {
+          "type": "string"
         }
       }
     }

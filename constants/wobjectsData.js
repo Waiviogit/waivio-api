@@ -328,7 +328,6 @@ exports.COUNTRY_CODES = {
   SG: 'Singapore',
   JP: 'Japan',
   AU: 'Australia',
-  NONE: 'NONE',
 };
 
 exports.AMAZON_LINKS_BY_COUNTRY = {
@@ -350,7 +349,6 @@ exports.AMAZON_LINKS_BY_COUNTRY = {
   SG: 'amazon.sg',
   JP: 'amazon.co.jp',
   AU: 'amazon.com.au',
-  NONE: 'NONE',
 };
 
 exports.AFFILIATE_TYPE = {

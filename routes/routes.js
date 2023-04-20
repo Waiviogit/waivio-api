@@ -82,6 +82,9 @@ sitesRoutes.route('/sites/prefetch')
   .put(sitesController.updatePrefetchesList);
 sitesRoutes.route('/sites/all-prefetches')
   .get(sitesController.showAllPrefetches);
+sitesRoutes.route('/sites/affiliate')
+  .get(sitesController.getAffiliateList)
+  .put(sitesController.updateAffiliateList);
 // endregion
 
 // region Department
