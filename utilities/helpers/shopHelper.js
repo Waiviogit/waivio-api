@@ -6,6 +6,7 @@ const { Wobj, ObjectType } = require('models');
 const { OTHERS_DEPARTMENT } = require('constants/departments');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
+const { checkForSocialSite } = require('./sitesHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -36,7 +37,7 @@ const makeFilterCondition = (filter = {}) => {
   return result;
 };
 
-const getMongoFilterForShop = ({ field, tagFilter }) => {
+const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
   const fieldCondition = _.reduce(field, (acc, el, index) => {
     if (index === 'type') {
       if (!_.isEmpty(field[index])) {
@@ -73,6 +74,12 @@ const getMongoFilterForShop = ({ field, tagFilter }) => {
         { 'authority.ownership': user },
         { 'authority.administrative': user },
       ]));
+      if (authority.length) {
+        authoritiesOr.push(..._.flatten(_.map(authority, (user) => [
+          { 'authority.ownership': user },
+          { 'authority.administrative': user },
+        ])));
+      }
       if (!_.isEmpty(authoritiesOr)) {
         acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
       }
@@ -99,6 +106,11 @@ const getMongoFilterForShop = ({ field, tagFilter }) => {
 };
 
 const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
+  const authority = [];
+  const social = checkForSocialSite(app?.host ?? '');
+  if (social) {
+    authority.push(...[app.owner, ...app.authority]);
+  }
   const { result } = await Wobj.findOne({
     author_permlink: authorPermlink,
     object_type: OBJECT_TYPES.SHOP,
@@ -115,7 +127,7 @@ const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
   const field = jsonHelper.parseJson(processedObject[FIELDS_NAMES.SHOP_FILTER], null);
   if (_.isEmpty(field)) return { error: { status: 404, message: 'Not Found' } };
 
-  return { wobjectFilter: getMongoFilterForShop({ field, tagFilter }) };
+  return { wobjectFilter: getMongoFilterForShop({ field, tagFilter, authority }) };
 };
 
 const mainFilterDepartment = (departments) => {
