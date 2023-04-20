@@ -30,6 +30,7 @@ exports.TEST_DOMAINS = [
   'dinings.pp.ua',
   'dinings.club',
   'dining.pp.ua',
+  'socialgifts.pp.ua',
 ];
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',

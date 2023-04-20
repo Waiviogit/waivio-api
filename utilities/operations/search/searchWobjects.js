@@ -6,6 +6,8 @@ const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
 
+const SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua'];
+
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
   if (!_.includes(data.string, '@') || !_.includes(data.string, '.')) {
@@ -20,10 +22,39 @@ exports.searchWobjects = async (data) => {
   addRequestDetails(data);
 
   if (appInfo.forExtended || appInfo.forSites) {
+    const host = appInfo?.app?.host ?? '';
+    const social = SOCIAL_HOSTS.some((sh) => host.includes(sh));
+
+    if (social) return socialSearch({ ...data, ...appInfo });
     return sitesWobjectSearch({ ...data, ...appInfo });
   }
 
   return defaultWobjectSearch({ ...data, ...appInfo });
+};
+
+const socialSearch = async (data) => {
+  const { wobjects, error } = await getWobjectsFromAggregation({
+    pipeline: matchSocialPipe(data),
+    string: data.string,
+    object_type: data.object_type,
+  });
+
+  if (data.needCounters && !error) {
+    return searchWithCounters({
+      ...data,
+      wobjects,
+      socialSites: true,
+    });
+  }
+
+  const user = data.userName ? (await User.getOne(data.userName))?.user : {};
+  const result = await addCampaignsToWobjectsSites({ wobjects, user, ...data });
+
+  return {
+    wobjects: _.take(result, data.limit),
+    hasMore: wobjects.length > data.limit,
+    error,
+  };
 };
 
 const defaultWobjectSearch = async (data) => {
@@ -184,16 +215,20 @@ const makePipeline = ({
 };
 
 const makeCountPipeline = ({
-  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+  string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended, socialSites = false,
 }) => {
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
     { $project: { _id: 0, object_type: '$_id', count: 1 } },
   ];
   if (forSites || forExtended) {
-    pipeline.unshift(...matchSitesPipe({
-      string, crucialWobjects, object_type, supportedTypes, forSites,
-    }));
+    socialSites
+      ? pipeline.unshift(...matchSocialPipe({
+        string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+      }))
+      : pipeline.unshift(...matchSitesPipe({
+        string, crucialWobjects, object_type, supportedTypes, forSites,
+      }));
   } else {
     pipeline.unshift(matchSimplePipe({ string, object_type }));
   }
@@ -248,6 +283,28 @@ const matchSitesPipe = ({
   object_type && pipeline.push({
     $match: { object_type },
   });
+  return pipeline;
+};
+
+const matchSocialPipe = ({
+  crucialWobjects, string, forSites, addHashtag, object_type, app, skip, limit,
+}) => {
+  const pipeline = [
+    {
+      $match: {
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        'authority.administrative': { $in: [app.owner, ...app.authority] },
+        ...(forSites && !addHashtag && { author_permlink: { $in: crucialWobjects } }),
+        ...(object_type && { object_type }),
+      },
+    },
+    { $sort: { weight: -1 } },
+    { $skip: skip || 0 },
+    { $limit: limit + 1 },
+  ];
+  if (string) {
+    pipeline.unshift({ $match: { $text: { $search: `\"${string}\"` } } });
+  }
   return pipeline;
 };
 
