@@ -6,19 +6,24 @@ const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
 
-exports.searchWobjects = async (data) => {
-  const appInfo = await searchHelper.getAppInfo(data);
-
+const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
   if (!_.includes(data.string, '@') || !_.includes(data.string, '.')) {
     data.string = data.string.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '').trim();
   }
   data.string = data.string.replace(/  +/g, ' ');
   if (_.isUndefined(data.limit)) data.limit = 10;
+};
 
-  return appInfo.forExtended || appInfo.forSites
-    ? sitesWobjectSearch({ ...data, ...appInfo })
-    : defaultWobjectSearch({ ...data, ...appInfo });
+exports.searchWobjects = async (data) => {
+  const appInfo = await searchHelper.getAppInfo(data);
+  addRequestDetails(data);
+
+  if (appInfo.forExtended || appInfo.forSites) {
+    return sitesWobjectSearch({ ...data, ...appInfo });
+  }
+
+  return defaultWobjectSearch({ ...data, ...appInfo });
 };
 
 const defaultWobjectSearch = async (data) => {
@@ -119,8 +124,10 @@ const fillTagCategories = async (wobjectsCounts) => {
       wobj.tagCategories = [];
       return wobj;
     }
-    const tagCategory = _.find(objectType.supposed_updates,
-      { name: FIELDS_NAMES.TAG_CATEGORY });
+    const tagCategory = _.find(
+      objectType.supposed_updates,
+      { name: FIELDS_NAMES.TAG_CATEGORY },
+    );
     if (tagCategory) wobj.tagCategories = tagCategory.values;
     return wobj;
   });
@@ -161,13 +168,15 @@ const makePipeline = ({
 }) => {
   const pipeline = [matchSimplePipe({ string, object_type })];
   if (_.get(crucialWobjects, 'length') || forParent) {
-    pipeline.push({
-      $addFields: {
-        crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
-        priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+    pipeline.push(
+      {
+        $addFields: {
+          crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
+          priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+        },
       },
-    },
-    { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
+      { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
+    );
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
