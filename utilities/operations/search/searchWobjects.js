@@ -5,8 +5,7 @@ const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
-
-const SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua'];
+const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
 
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
@@ -22,8 +21,7 @@ exports.searchWobjects = async (data) => {
   addRequestDetails(data);
 
   if (appInfo.forExtended || appInfo.forSites) {
-    const host = appInfo?.app?.host ?? '';
-    const social = SOCIAL_HOSTS.some((sh) => host.includes(sh));
+    const social = checkForSocialSite(appInfo?.app?.host ?? '');
 
     if (social) return socialSearch({ ...data, ...appInfo });
     return sitesWobjectSearch({ ...data, ...appInfo });
