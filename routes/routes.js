@@ -82,6 +82,9 @@ sitesRoutes.route('/sites/prefetch')
   .put(sitesController.updatePrefetchesList);
 sitesRoutes.route('/sites/all-prefetches')
   .get(sitesController.showAllPrefetches);
+sitesRoutes.route('/sites/affiliate')
+  .get(sitesController.getAffiliateList)
+  .put(sitesController.updateAffiliateList);
 // endregion
 
 // region Department
@@ -163,6 +166,8 @@ wobjRoutes.route('/wobjects/names')
   .post(WobjController.getWobjectNames);
 wobjRoutes.route('/wobjects/options')
   .post(WobjController.getWobjectOptions);
+wobjRoutes.route('/wobjects/group-id')
+  .post(WobjController.getWobjectsByGroupId);
 // endregion
 // region User
 userRoutes.route('/users')

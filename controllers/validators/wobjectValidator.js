@@ -228,3 +228,9 @@ exports.wobjectsOptionsScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(10),
   skip: Joi.number().integer().min(0).default(0),
 });
+
+exports.wobjectsGroupIdScheme = Joi.object().keys({
+  groupId: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});

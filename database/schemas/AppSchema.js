@@ -1,4 +1,6 @@
-const { STATUSES, SUPPORTED_COLORS } = require('constants/sitesConstants');
+const {
+  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE,
+} = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
 const { APP_LANGUAGES } = require('constants/common');
@@ -71,7 +73,12 @@ const Colors = new Schema({
 const CitySchema = new Schema({
   city: { type: String },
   route: { type: String },
-});
+}, { _id: false });
+
+const ShopSettingsSchema = new Schema({
+  type: { type: String, enum: Object.values(SHOP_SETTINGS_TYPE) },
+  value: { type: String },
+}, { _id: false });
 
 const Configuration = new Schema({
   configurationFields: { type: [String] },
@@ -81,6 +88,7 @@ const Configuration = new Schema({
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
   availableCities: { type: [CitySchema], default: [] },
+  shopSettings: { type: ShopSettingsSchema },
   colors: { type: Colors, default: () => ({}) },
   header: { type: AppHeader },
 }, { _id: false });

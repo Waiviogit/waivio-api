@@ -19,7 +19,8 @@ const fillPostsSubscriptions = async ({ posts, userName }) => {
 
   _.forEach(posts, (following) => {
     const result = _.find(users, (user) => Object.keys(user)[0] === following.author);
-    following.youFollows = result[following.author];
+
+    following.youFollows = !!result && result[following.author];
   });
 };
 
