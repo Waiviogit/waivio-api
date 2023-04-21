@@ -1,10 +1,12 @@
-const { Wobj } = require('models');
+const { Wobj, User } = require('models');
 const UserWobjectsModel = require('database').models.UserWobjects;
 const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const {
   REQUIREDFIELDS, REQUIREDFIELDS_SEARCH, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
+const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 
 const getCondition = (data) => {
   const findParams = {};
@@ -62,6 +64,8 @@ const getMany = async (data) => {
       wobj.user_count = wobj.users.length;
     }));
   } // assign top users to each of wobject
+  const { user } = await User.getOne(data?.userName ?? '', SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: wObjects });
 
   return {
     hasMore: wObjects.length > data.limit,
