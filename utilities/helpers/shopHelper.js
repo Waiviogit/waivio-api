@@ -2,11 +2,15 @@ const _ = require('lodash');
 const {
   FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
-const { Wobj, ObjectType } = require('models');
+const {
+  Wobj, ObjectType, User, Post, userShopDeselectModel,
+} = require('models');
 const { OTHERS_DEPARTMENT } = require('constants/departments');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 const { checkForSocialSite } = require('./sitesHelper');
+const sitesHelper = require('./sitesHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -342,6 +346,38 @@ const getMoreTagsForCategory = ({
   };
 };
 
+const getUserFilter = async ({
+  userName, app,
+}) => {
+  const social = sitesHelper.checkForSocialSite(app?.host ?? '');
+
+  const users = social
+    ? [...new Set([userName, ...app.authority])]
+    : [userName];
+  const orFilter = [];
+  const deselectLinks = [];
+
+  for (const acc of users) {
+    const { user } = await User.getOne(acc, SELECT_USER_CAMPAIGN_SHOP);
+    const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
+    const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName: acc });
+    orFilter.push(...[
+      { 'authority.ownership': acc },
+      { 'authority.administrative': acc },
+    ]);
+    if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
+      orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
+    }
+    const deselect = await userShopDeselectModel.findUsersLinks({ userName: acc });
+    if (deselect?.length) deselectLinks.push(...deselect);
+  }
+
+  return {
+    $or: orFilter,
+    ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
+  };
+};
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -355,4 +391,5 @@ module.exports = {
   getTagCategoriesForFilter,
   getFilteredTagCategories,
   getMoreTagsForCategory,
+  getUserFilter,
 };

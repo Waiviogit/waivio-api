@@ -76,14 +76,19 @@ const getMoreTags = async (req, res, next) => {
 const getUserDepartments = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userDepartmentsSchema, next);
   if (!value) return;
-  const { result, error } = await shop.getUserDepartments.getTopDepartments(value);
+  const { result, error } = await shop.getUserDepartments.getTopDepartments({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
 
 const getUserFeed = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body, ...req.headers }, validators.shop.userFeedSchema, next,
+    { ...req.body, ...req.headers },
+    validators.shop.userFeedSchema,
+    next,
   );
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
@@ -172,7 +177,9 @@ const getWobjectDepartmentFeed = async (req, res, next) => {
 
 const getWobjectMainFeed = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body, ...req.headers }, validators.shop.wobjectFeedSchema, next,
+    { ...req.body, ...req.headers },
+    validators.shop.wobjectFeedSchema,
+    next,
   );
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
@@ -188,9 +195,7 @@ const getWobjectMainFeed = async (req, res, next) => {
 };
 
 const restoreShopState = async (req, res, next) => {
-  const value = validators.validate(
-    req.body, validators.shop.restoreShopSchema, next,
-  );
+  const value = validators.validate(req.body, validators.shop.restoreShopSchema, next);
   if (!value) return;
 
   const { result } = await shop.restoreShopState({
