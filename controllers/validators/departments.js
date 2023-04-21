@@ -18,4 +18,5 @@ exports.departmentsSearchSchema = Joi.object().keys({
   searchString: Joi.string().required(),
   skip: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(10),
+  userName: Joi.string(),
 }).options(options);

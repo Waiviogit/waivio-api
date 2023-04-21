@@ -49,6 +49,7 @@ exports.indexSchema = Joi.object().keys({
     ),
     radius: Joi.number().min(0),
   }),
+  userName: Joi.string(),
 });
 
 exports.postsScheme = Joi.object().keys({
@@ -227,10 +228,12 @@ exports.wobjectsOptionsScheme = Joi.object().keys({
   category: Joi.string().required(),
   limit: Joi.number().integer().min(1).default(10),
   skip: Joi.number().integer().min(0).default(0),
+  userName: Joi.string(),
 });
 
 exports.wobjectsGroupIdScheme = Joi.object().keys({
   groupId: Joi.string().required(),
   limit: Joi.number().integer().min(1).default(10),
   skip: Joi.number().integer().min(0).default(0),
+  userName: Joi.string(),
 });
