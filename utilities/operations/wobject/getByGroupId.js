@@ -1,9 +1,11 @@
-const { Wobj } = require('models');
+const { Wobj, User } = require('models');
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const _ = require('lodash');
+const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 
 const getByGroupId = async ({
-  groupId, skip, limit,
+  groupId, skip, limit, userName = '',
 }) => {
   const { result: wobjects, error: wobjError } = await Wobj.find(
     {
@@ -26,6 +28,9 @@ const getByGroupId = async ({
   );
 
   if (wobjError) return { error: wobjError };
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
+
   return {
     wobjects: _.take(wobjects, limit),
     hasMore: wobjects.length > limit,

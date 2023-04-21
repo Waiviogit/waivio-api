@@ -1,9 +1,11 @@
-const { Wobj } = require('models');
+const { Wobj, User } = require('models');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
+const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 
 module.exports = async ({
-  authorPermlink, category, skip, limit, locale, app,
+  authorPermlink, category, skip, limit, locale, app, userName = '',
 }) => {
   const emptyResp = { wobjects: [], hasMore: false };
   const { result, error } = await Wobj.findOne(
@@ -33,6 +35,9 @@ module.exports = async ({
     limit + 1,
   );
   if (wobjError) return { error: wobjError };
+
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
   return {
     wobjects: _.take(wobjects, limit),
     hasMore: wobjects.length > limit,

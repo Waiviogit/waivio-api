@@ -13,8 +13,11 @@ const getDepartments = async (req, res, next) => {
 };
 
 const getWobjectsByDepartments = async (req, res, next) => {
-  const value = validators
-    .validate(req.body, validators.departments.departmentsWobjectsSchema, next);
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.departments.departmentsWobjectsSchema,
+    next,
+  );
   if (!value) return;
   const {
     wobjects,
