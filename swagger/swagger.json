@@ -4986,6 +4986,9 @@
               "properties": {
                 "result": {
                   "type": "boolean"
+                },
+                "minWeight" : {
+                  "type": "number"
                 }
               }
             }
