@@ -382,3 +382,8 @@ exports.SHOP_OBJECT_TYPES = [
 exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
 
 exports.WHITE_LIST_KEY = 'white_list_import';
+
+exports.VOTE_COST = {
+  USUAL: 0.001,
+  FOR_WHITE_LIST: 0.0001,
+};

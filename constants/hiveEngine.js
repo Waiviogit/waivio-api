@@ -3,6 +3,7 @@ exports.TOKEN_WAIV = {
   POOL_ID: 13,
   DIESEL_POOL_ID: 63,
   TAGS: ['waivio', 'neoxian', 'palnet', 'waiv', 'food'],
+  DP: 8,
 };
 
 exports.TRANSACTION_TYPES = {

@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const { CACHE_KEY } = require('constants/common');
 const { captureException } = require('utilities/helpers/sentryHelper');
+const BigNumber = require('bignumber.js');
 const commentContract = require('./commentContract');
 const tokensContract = require('./tokensContract');
 const marketPools = require('./marketPools');
@@ -116,4 +117,49 @@ exports.addWAIVToSingleComment = async (content) => {
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
 
   content.total_payout_WAIV = rewards * commentsWithWaiv[0].voteRshareSum;
+};
+
+exports.usdToWaiv = async ({ amountUsd }) => {
+  const hiveCurrency = await redisGetter.importUserClientHGetAll(CACHE_KEY.CURRENT_PRICE_INFO);
+  const [pool] = await marketPools.getMarketPools({ query: { _id: TOKEN_WAIV.DIESEL_POOL_ID } });
+
+  const hiveAmount = BigNumber(amountUsd).div(hiveCurrency.price);
+  const waivAmount = hiveAmount.times(pool.basePrice);
+
+  return waivAmount.dp(TOKEN_WAIV.DP).toNumber();
+};
+
+exports.getWeightToVote = async ({
+  // amount in hiveEngine tokens
+  amount,
+  symbol,
+  account,
+  maxVoteWeight,
+  poolId,
+}) => {
+  const [balances, votingPowers] = await Promise.all([
+    tokensContract.getTokenBalances({ query: { symbol, account } }),
+    commentContract.getVotingPower({ query: { rewardPoolId: poolId, account } }),
+  ]);
+  const { stake, delegationsIn } = balances[0];
+  const { rewardPool, pendingClaims } = await redisGetter
+    .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${symbol}`);
+  const { votingPower } = this.calculateMana(votingPowers[0]);
+
+  const rewards = new BigNumber(rewardPool).dividedBy(pendingClaims);
+  const finalRshares = new BigNumber(stake).plus(delegationsIn);
+
+  const reverseRshares = new BigNumber(amount).dividedBy(rewards);
+
+  const reversePower = reverseRshares
+    .times(MAX_VOTING_POWER)
+    .dividedBy(finalRshares);
+
+  const weight = reversePower
+    .times(MAX_VOTING_POWER)
+    .dividedBy(votingPower)
+    .integerValue()
+    .toNumber();
+
+  return weight > maxVoteWeight ? maxVoteWeight : weight;
 };
