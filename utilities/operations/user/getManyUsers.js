@@ -5,7 +5,7 @@ const getUsers = async ({ limit, skip, sample }) => {
   if (sample) limit = 100;
 
   const { usersData: users, error } = await User.find({
-    condition: {},
+    condition: { last_posts_count: { $gt: 0 } },
     sort: { wobjects_weight: -1 },
     limit,
     skip,
