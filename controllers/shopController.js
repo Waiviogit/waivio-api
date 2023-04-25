@@ -128,7 +128,10 @@ const getUserFeedByDepartment = async (req, res, next) => {
 const getUserFilters = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userFiltersSchema, next);
   if (!value) return;
-  const { result, error } = await shop.userFilters.getUserFilters(value);
+  const { result, error } = await shop.userFilters.getUserFilters({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
@@ -136,7 +139,10 @@ const getUserFilters = async (req, res, next) => {
 const getUserTags = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userTagsSchema, next);
   if (!value) return;
-  const { result, error } = await shop.userFilters.getMoreTagFilters(value);
+  const { result, error } = await shop.userFilters.getMoreTagFilters({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
