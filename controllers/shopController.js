@@ -255,7 +255,7 @@ const getRelated = async (req, res, next) => {
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
-  const { wobjects, hasMore, error } = await shop.getCloseProducts.getSimilar({
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getRelated({
     ...value, app: req.appData, locale: req.headers.locale, countryCode,
   });
   if (error) return next(error);

@@ -58,7 +58,41 @@ const getObjects = async ({ skip, limit, matchCondition }) => {
 const getRelated = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
+  const departments = await getDepartments({ authorPermlink, app, locale });
+  if (!departments.length) return { error: ERROR_OBJ.NOT_FOUND };
 
+  // Calculate the average objectsCount
+  const totalObjectsCount = departments.reduce((sum, obj) => sum + obj.objectsCount, 0);
+  const averageObjectsCount = totalObjectsCount / departments.length;
+
+  // Filter the objects array by objectsCount greater than averageObjectsCount
+  const filteredObjects = departments.filter((obj) => obj.objectsCount > averageObjectsCount);
+
+  const wobjects = await getObjects({
+    skip,
+    limit: limit + 1,
+    matchCondition: {
+      departments: { $in: _.map(filteredObjects, 'name') },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      author_permlink: { $ne: authorPermlink },
+    },
+  });
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
+
+  const processed = await wObjectHelper.processWobjects({
+    wobjects,
+    fields: REQUIREDFIELDS,
+    app,
+    returnArray: true,
+    locale,
+    countryCode,
+  });
+
+  return {
+    wobjects: _.take(processed, limit),
+    hasMore: wobjects.length > limit,
+  };
 };
 
 const getSimilar = async ({
@@ -75,6 +109,7 @@ const getSimilar = async ({
   for (const sortedElement of sorted) {
     const matchCondition = {
       $and: [
+        { author_permlink: { $ne: authorPermlink } },
         { departments: sortedElement.name },
         { departments: { $nin: usedDepartments } },
       ],
@@ -98,16 +133,27 @@ const getSimilar = async ({
       matchCondition,
     });
     if (objects.length < updatedLimit) updatedLimit -= objects.length;
-    objectsForResponse.push(objects);
+    objectsForResponse.push(...objects);
+    usedDepartments.push(sortedElement.name);
     if (objectsForResponse.length >= limit + 1) break;
   }
 
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: objectsForResponse });
 
-  console.log();
+  const processed = await wObjectHelper.processWobjects({
+    wobjects: objectsForResponse,
+    fields: REQUIREDFIELDS,
+    app,
+    returnArray: true,
+    locale,
+    countryCode,
+  });
 
-  console.log();
+  return {
+    wobjects: _.take(processed, limit),
+    hasMore: objectsForResponse.length > limit,
+  };
 };
 
 module.exports = {
