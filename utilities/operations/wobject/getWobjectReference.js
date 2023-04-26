@@ -86,6 +86,7 @@ const getAll = async ({ authorPermlink, app, locale }) => {
       ...shopHelper.getDefaultGroupStage(),
       { $limit: 5 },
     ]);
+    if (!wobjects?.length) continue;
 
     referenceObject[referenceObjectType] = await wObjectHelper.processWobjects({
       wobjects,
