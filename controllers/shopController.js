@@ -214,7 +214,7 @@ const getWobjectTags = async (req, res, next) => {
 const getAllReferences = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body, userName: req.headers.follower },
-    validators.shop.getAllReferences,
+    validators.shop.getAllReferencesSchema,
     next,
   );
   if (!value) return;
@@ -246,6 +246,42 @@ const getReferencesByType = async (req, res, next) => {
   next();
 };
 
+const getRelated = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getRelatedSchema,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getSimilar({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
+const getSimilar = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getSimilarSchema,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getSimilar({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -265,4 +301,6 @@ module.exports = {
   getMoreTags,
   getAllReferences,
   getReferencesByType,
+  getRelated,
+  getSimilar,
 };

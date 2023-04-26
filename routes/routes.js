@@ -120,6 +120,10 @@ shopRoutes.route('/wobject/reference')
   .post(shopController.getAllReferences);
 shopRoutes.route('/wobject/reference/type')
   .post(shopController.getReferencesByType);
+shopRoutes.route('/wobject/related')
+  .post(shopController.getRelated);
+shopRoutes.route('/wobject/similar')
+  .post(shopController.getSimilar);
 // endregion
 
 // region Wobject
