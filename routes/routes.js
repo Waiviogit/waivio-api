@@ -115,6 +115,11 @@ shopRoutes.route('/wobject/department-feed').post(shopController.getWobjectDepar
 shopRoutes.route('/wobject/main-feed').post(shopController.getWobjectMainFeed);
 shopRoutes.route('/wobject/filters').post(shopController.getWobjectFilters);
 shopRoutes.route('/wobject/filters/tags').post(shopController.getWobjectTags);
+
+shopRoutes.route('/wobject/reference')
+  .post(shopController.getAllReferences);
+shopRoutes.route('/wobject/reference/type')
+  .post(shopController.getReferencesByType);
 // endregion
 
 // region Wobject
@@ -168,10 +173,6 @@ wobjRoutes.route('/wobjects/options')
   .post(WobjController.getWobjectOptions);
 wobjRoutes.route('/wobjects/group-id')
   .post(WobjController.getWobjectsByGroupId);
-wobjRoutes.route('/wobjects/reference')
-  .post(WobjController.getAllReferences);
-wobjRoutes.route('/wobjects/reference/type')
-  .post(WobjController.getReferencesByType);
 // endregion
 // region User
 userRoutes.route('/users')

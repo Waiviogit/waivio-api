@@ -12,4 +12,5 @@ module.exports = {
   userFilters: require('./userShop/getUserFilters'),
   objectFilters: require('./objectShop/getWobjectFilters'),
   restoreShopState: require('./restoreShopState'),
+  getReference: require('./getReference'),
 };

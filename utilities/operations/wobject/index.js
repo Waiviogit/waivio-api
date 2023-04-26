@@ -17,6 +17,5 @@ moduleExports.getWobjectsNames = require('./getWobjectsNames');
 moduleExports.getWobjectAuthorities = require('./getWobjectAuthorities');
 moduleExports.getByOptionsCategory = require('./getByOptionsCategory');
 moduleExports.getByGroupId = require('./getByGroupId');
-moduleExports.getWobjectReference = require('./getWobjectReference');
 
 module.exports = moduleExports;
