@@ -7,12 +7,14 @@ exports.ERROR_MESSAGE = {
   NOT_FOUND: 'Not Found',
   WEBSITE_UNAVAILABLE: 'Website Temporary Unavailable',
   FORBIDDEN: 'Forbidden',
+  UNPROCESSABLE: 'Unprocessable Entity',
 };
 
 exports.RESPONSE_STATUS = {
   NOT_FOUND: 404,
   FORBIDDEN: 403,
   NOT_ACCEPTABLE: 406,
+  UNPROCESSABLE: 422,
 };
 
 exports.ERROR_OBJ = {
@@ -23,6 +25,10 @@ exports.ERROR_OBJ = {
   FORBIDDEN: {
     status: this.RESPONSE_STATUS.FORBIDDEN,
     message: this.ERROR_MESSAGE.FORBIDDEN,
+  },
+  UNPROCESSABLE: {
+    status: this.RESPONSE_STATUS.UNPROCESSABLE,
+    message: this.ERROR_MESSAGE.UNPROCESSABLE,
   },
 };
 

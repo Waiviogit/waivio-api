@@ -3,13 +3,16 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities, getByGroupId,
+  getWobjectAuthorities, getByGroupId, getWobjectReference,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
+const {
+  getIpFromHeaders,
+  getCountryCodeFromIp,
+} = require('utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields } = require('../utilities/operations/wobject/getFields');
-const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -424,6 +427,41 @@ const getWobjectsByGroupId = async (req, res, next) => {
   next();
 };
 
+const getAllReferences = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.wobject.getAllReferences,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await getWobjectReference.getAll({
+    ...value, app: req.appData, locale: req.headers.locale,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getReferencesByType = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.wobject.getReferencesByTypeScheme,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await getWobjectReference.getByType({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -449,4 +487,6 @@ module.exports = {
   getWobjectOptions,
   getAuthorities,
   getWobjectsByGroupId,
+  getAllReferences,
+  getReferencesByType,
 };
