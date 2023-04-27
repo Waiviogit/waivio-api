@@ -7,9 +7,11 @@ const {
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
+const {
+  getIpFromHeaders,
+} = require('utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields } = require('../utilities/operations/wobject/getFields');
-const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
