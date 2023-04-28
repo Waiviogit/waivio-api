@@ -1,6 +1,6 @@
 const { Wobj, User, Department } = require('models');
 const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, OBJECT_TYPES, DEFAULT_LINK_FIELDS, REQUIREDFIELDS,
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST,
 } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
@@ -82,7 +82,7 @@ const getRelated = async ({
 
   const processed = await wObjectHelper.processWobjects({
     wobjects,
-    fields: REQUIREDFIELDS,
+    fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: true,
     locale,
@@ -144,7 +144,7 @@ const getSimilar = async ({
 
   const processed = await wObjectHelper.processWobjects({
     wobjects: objectsForResponse,
-    fields: REQUIREDFIELDS,
+    fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: true,
     locale,
