@@ -1,6 +1,6 @@
 const { Wobj, User } = require('models');
 const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, OBJECT_TYPES, DEFAULT_LINK_FIELDS, REQUIREDFIELDS,
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, OBJECT_TYPES, DEFAULT_LINK_FIELDS, REQUIREDFILDS_WOBJ_LIST,
 } = require('constants/wobjectsData');
 const { wObjectHelper } = require('utilities/helpers');
 const { ERROR_OBJ } = require('constants/common');
@@ -130,7 +130,7 @@ const getByType = async ({
 
   const processed = await wObjectHelper.processWobjects({
     wobjects,
-    fields: REQUIREDFIELDS,
+    fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: true,
     locale,
