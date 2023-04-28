@@ -87,6 +87,7 @@ const getRelated = async ({
     returnArray: true,
     locale,
     countryCode,
+    reqUserName: userName,
   });
 
   return {
@@ -148,6 +149,7 @@ const getSimilar = async ({
     returnArray: true,
     locale,
     countryCode,
+    reqUserName: userName,
   });
 
   return {
