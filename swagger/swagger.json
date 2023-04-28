@@ -10052,6 +10052,12 @@
           },
           "sortByApp": {
             "type": "string"
+          },
+          "onlyObjectTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
