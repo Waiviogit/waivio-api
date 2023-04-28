@@ -135,6 +135,7 @@ const getByType = async ({
     returnArray: true,
     locale,
     countryCode,
+    reqUserName: userName,
   });
 
   return {
