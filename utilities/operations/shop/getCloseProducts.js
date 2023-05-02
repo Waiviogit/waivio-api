@@ -70,11 +70,12 @@ const getRelated = async ({
     {
       $match: { author_permlink: { $in: related } },
     },
-    ...shopHelper.getDefaultGroupStage(),
     { $limit: limit + 1 },
   ]);
 
   response.push(...relatedObjects.slice(skip, skip + limit + 1));
+
+  const metaGroupId = _.compact(_.map(response, 'metaGroupId'));
 
   if (response.length < limit + 1) {
     // Calculate the average objectsCount
@@ -91,6 +92,7 @@ const getRelated = async ({
         departments: { $in: _.map(filteredObjects, 'name') },
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         author_permlink: { $nin: [authorPermlink, ...related] },
+        ...(metaGroupId.length && { metaGroupId: { $nin: metaGroupId } }),
       },
     });
     response.push(...wobjects);
@@ -126,11 +128,12 @@ const getSimilar = async ({
     {
       $match: { author_permlink: { $in: similar } },
     },
-    ...shopHelper.getDefaultGroupStage(),
     { $limit: limit + 1 },
   ]);
 
   objectsForResponse.push(...similarObjects.slice(skip, skip + limit + 1));
+
+  const metaGroupId = _.compact(_.map(objectsForResponse, 'metaGroupId'));
 
   const sorted = _.orderBy(departments, ['objectsCount'], ['asc']);
   const usedDepartments = [];
@@ -151,6 +154,7 @@ const getSimilar = async ({
         { departments: { $nin: usedDepartments } },
       ],
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(metaGroupId.length && { metaGroupId: { $nin: metaGroupId } }),
     };
 
     const count = await getObjectsCount(matchCondition);
