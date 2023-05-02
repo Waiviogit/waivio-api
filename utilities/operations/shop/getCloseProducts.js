@@ -10,14 +10,17 @@ const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 
 const getDepartments = async ({ authorPermlink, app, locale }) => {
-  const emptyDepartments = [];
+  const emptyDepartments = {
+    departments: [],
+    related: [],
+  };
   const { result, error } = await Wobj
     .findOne({ author_permlink: authorPermlink });
   if (!result || error) return emptyDepartments;
 
   const object = await wObjectHelper.processWobjects({
     wobjects: [result],
-    fields: [FIELDS_NAMES.DEPARTMENTS],
+    fields: [FIELDS_NAMES.DEPARTMENTS, FIELDS_NAMES.RELATED, FIELDS_NAMES.SIMILAR],
     app,
     returnArray: false,
     locale,
@@ -28,7 +31,7 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
 
   const { result: departments } = await Department.find({ filter: { name: { $in: names } } });
 
-  return departments;
+  return { departments, related: _.map(object?.related, 'body'), similar: _.map(object?.similar, 'body') };
 };
 
 const getObjectsCount = async (matchCondition) => {
@@ -58,30 +61,46 @@ const getObjects = async ({ skip, limit, matchCondition }) => {
 const getRelated = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
-  const departments = await getDepartments({ authorPermlink, app, locale });
+  const { departments, related } = await getDepartments({ authorPermlink, app, locale });
   if (!departments.length) return { error: ERROR_OBJ.NOT_FOUND };
 
-  // Calculate the average objectsCount
-  const totalObjectsCount = departments.reduce((sum, obj) => sum + obj.objectsCount, 0);
-  const averageObjectsCount = totalObjectsCount / departments.length;
+  const response = [];
 
-  // Filter the objects array by objectsCount greater than averageObjectsCount
-  const filteredObjects = departments.filter((obj) => obj.objectsCount > averageObjectsCount);
-
-  const wobjects = await getObjects({
-    skip,
-    limit: limit + 1,
-    matchCondition: {
-      departments: { $in: _.map(filteredObjects, 'name') },
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      author_permlink: { $ne: authorPermlink },
+  const { wobjects: relatedObjects = [] } = await Wobj.fromAggregation([
+    {
+      $match: { author_permlink: { $in: related } },
     },
-  });
+    ...shopHelper.getDefaultGroupStage(),
+    { $limit: limit + 1 },
+  ]);
+
+  response.push(...relatedObjects.slice(skip, skip + limit + 1));
+
+  if (response.length < limit + 1) {
+    // Calculate the average objectsCount
+    const totalObjectsCount = departments.reduce((sum, obj) => sum + obj.objectsCount, 0);
+    const averageObjectsCount = totalObjectsCount / departments.length;
+
+    // Filter the objects array by objectsCount greater than averageObjectsCount
+    const filteredObjects = departments.filter((obj) => obj.objectsCount >= averageObjectsCount);
+
+    const wobjects = await getObjects({
+      skip: skip ? skip - (relatedObjects.length - response.length) : skip,
+      limit: (limit + 1) - response.length,
+      matchCondition: {
+        departments: { $in: _.map(filteredObjects, 'name') },
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        author_permlink: { $nin: [authorPermlink, ...related] },
+      },
+    });
+    response.push(...wobjects);
+  }
+
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
-  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: response });
 
   const processed = await wObjectHelper.processWobjects({
-    wobjects,
+    wobjects: response,
     fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: true,
@@ -92,25 +111,42 @@ const getRelated = async ({
 
   return {
     wobjects: _.take(processed, limit),
-    hasMore: wobjects.length > limit,
+    hasMore: response.length > limit,
   };
 };
 
 const getSimilar = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
-  const departments = await getDepartments({ authorPermlink, app, locale });
+  const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
   if (!departments.length) return { error: ERROR_OBJ.NOT_FOUND };
   const objectsForResponse = [];
+
+  const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
+    {
+      $match: { author_permlink: { $in: similar } },
+    },
+    ...shopHelper.getDefaultGroupStage(),
+    { $limit: limit + 1 },
+  ]);
+
+  objectsForResponse.push(...similarObjects.slice(skip, skip + limit + 1));
+
   const sorted = _.orderBy(departments, ['objectsCount'], ['asc']);
   const usedDepartments = [];
 
-  let updatedLimit = limit + 1;
-  let updatedSkip = skip;
+  let updatedLimit = objectsForResponse.length
+    ? (limit + 1) - objectsForResponse.length
+    : limit + 1;
+  let updatedSkip = objectsForResponse.length
+    ? skip - (similarObjects.length - objectsForResponse.length)
+    : skip;
+
   for (const sortedElement of sorted) {
+    if (objectsForResponse.length >= limit + 1) break;
     const matchCondition = {
       $and: [
-        { author_permlink: { $ne: authorPermlink } },
+        { author_permlink: { $nin: [authorPermlink, ...similar] } },
         { departments: sortedElement.name },
         { departments: { $nin: usedDepartments } },
       ],
@@ -136,7 +172,6 @@ const getSimilar = async ({
     if (objects.length < updatedLimit) updatedLimit -= objects.length;
     objectsForResponse.push(...objects);
     usedDepartments.push(sortedElement.name);
-    if (objectsForResponse.length >= limit + 1) break;
   }
 
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
