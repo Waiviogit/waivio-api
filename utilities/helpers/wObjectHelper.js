@@ -717,4 +717,5 @@ module.exports = {
   addDataToFields,
   moderatePosts,
   arrayFieldsSpecialSort,
+  getBlacklist,
 };

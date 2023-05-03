@@ -27,9 +27,12 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
 
   const names = _.map(object?.departments, 'body');
 
+  const related = _.chain(object?.related).orderBy(['_id'], ['desc']).map('body').value();
+  const similar = _.chain(object?.similar).orderBy(['_id'], ['desc']).map('body').value();
+
   const { result: departments } = await Department.find({ filter: { name: { $in: names } } });
 
-  return { departments, related: _.map(object?.related, 'body'), similar: _.map(object?.similar, 'body') };
+  return { departments, related, similar };
 };
 
 const getObjectsCount = async (matchCondition) => {
@@ -67,6 +70,8 @@ const getRelated = async ({
     {
       $match: { author_permlink: { $in: related } },
     },
+    { $addFields: { __order: { $indexOfArray: [related, '$author_permlink'] } } },
+    { $sort: { __order: 1 } },
     { $limit: limit + 1 },
   ]);
 
@@ -126,6 +131,8 @@ const getSimilar = async ({
     {
       $match: { author_permlink: { $in: similar } },
     },
+    { $addFields: { __order: { $indexOfArray: [similar, '$author_permlink'] } } },
+    { $sort: { __order: 1 } },
     { $limit: limit + 1 },
   ]);
 
