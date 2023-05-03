@@ -102,10 +102,11 @@ const addDataToFields = ({
     if (
       !_.isEmpty(blacklist)
       && !_.isEmpty(field.active_votes)
-     && field.name !== FIELDS_NAMES.AUTHORITY
+      && field.name !== FIELDS_NAMES.AUTHORITY
+      && _.some(field.active_votes, (v) => _.includes(blacklist, v.voter))
     ) {
       field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
-      field.weight = 1 + _.sumBy(field.active_votes, (vote) => vote.weight);
+      field.weight = _.sumBy(field.active_votes, (vote) => vote.weight) || 0;
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
