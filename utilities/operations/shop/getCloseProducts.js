@@ -26,7 +26,6 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
   });
 
   const names = _.map(object?.departments, 'body');
-  if (!names.length) return emptyDepartments;
 
   const { result: departments } = await Department.find({ filter: { name: { $in: names } } });
 
