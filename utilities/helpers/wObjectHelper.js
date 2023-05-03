@@ -63,9 +63,8 @@ const getWobjectFields = async (permlink) => {
 };
 
 const calculateApprovePercent = (field) => {
-  if (_.isEmpty(field.active_votes)) return 100;
   if (field.adminVote) return field.adminVote.status === VOTE_STATUSES.APPROVED ? 100 : 0;
-  if (field.weight < 0) return 0;
+  if (field.weight <= 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent < 0) {
