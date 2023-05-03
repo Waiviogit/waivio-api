@@ -119,8 +119,10 @@ const fillTagCategories = async (wobjectsCounts) => {
       wobj.tagCategories = [];
       return wobj;
     }
-    const tagCategory = _.find(objectType.supposed_updates,
-      { name: FIELDS_NAMES.TAG_CATEGORY });
+    const tagCategory = _.find(
+      objectType.supposed_updates,
+      { name: FIELDS_NAMES.TAG_CATEGORY },
+    );
     if (tagCategory) wobj.tagCategories = tagCategory.values;
     return wobj;
   });
@@ -157,17 +159,19 @@ const makeSitePipelineForRestaurants = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent, object_type,
+  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type })];
+  const pipeline = [matchSimplePipe({ string, object_type, onlyObjectTypes })];
   if (_.get(crucialWobjects, 'length') || forParent) {
-    pipeline.push({
-      $addFields: {
-        crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
-        priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+    pipeline.push(
+      {
+        $addFields: {
+          crucial_wobject: { $cond: { if: { $in: ['$author_permlink', crucialWobjects] }, then: 1, else: 0 } },
+          priority: { $cond: { if: { $eq: ['$parent', forParent] }, then: 1, else: 0 } },
+        },
       },
-    },
-    { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } });
+      { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
+    );
   } else pipeline.push({ $sort: { weight: -1 } });
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
@@ -242,10 +246,11 @@ const matchSitesPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type }) => ({
+const matchSimplePipe = ({ string, object_type, onlyObjectTypes }) => ({
   $match: {
-    ...object_type && { object_type },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    ...(object_type && { object_type }),
+    ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
     ...(string && { $text: { $search: `\"${string}\"` } }),
   },
 });

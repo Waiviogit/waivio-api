@@ -170,3 +170,30 @@ exports.restoreShopSchema = Joi.object().keys({
   type: Joi.string().valid(...Object.values(SHOP_DEPARTMENTS_TYPE))
     .default(SHOP_DEPARTMENTS_TYPE.MAIN),
 }).options(options);
+
+exports.getReferencesByTypeScheme = Joi.object().keys({
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+  referenceObjectType: Joi.string().required(),
+});
+
+exports.getAllReferencesSchema = Joi.object().keys({
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+});
+
+exports.getRelatedSchema = Joi.object().keys({
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});
+
+exports.getSimilarSchema = Joi.object().keys({
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});
