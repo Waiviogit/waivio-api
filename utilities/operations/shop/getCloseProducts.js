@@ -4,7 +4,6 @@ const {
 } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
-const { ERROR_OBJ } = require('constants/common');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
@@ -62,7 +61,6 @@ const getRelated = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
   const { departments, related } = await getDepartments({ authorPermlink, app, locale });
-  if (!departments.length) return { error: ERROR_OBJ.NOT_FOUND };
 
   const response = [];
 
@@ -74,6 +72,7 @@ const getRelated = async ({
   ]);
 
   response.push(...relatedObjects.slice(skip, skip + limit + 1));
+  if (!departments.length && !response.length) return { wobjects: [], hasMore: false };
 
   const metaGroupId = _.compact(_.map(response, 'metaGroupId'));
 
@@ -121,7 +120,7 @@ const getSimilar = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
   const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
-  if (!departments.length) return { error: ERROR_OBJ.NOT_FOUND };
+
   const objectsForResponse = [];
 
   const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
@@ -132,6 +131,7 @@ const getSimilar = async ({
   ]);
 
   objectsForResponse.push(...similarObjects.slice(skip, skip + limit + 1));
+  if (!departments.length && !objectsForResponse.length) return { wobjects: [], hasMore: false };
 
   const metaGroupId = _.compact(_.map(objectsForResponse, 'metaGroupId'));
 
