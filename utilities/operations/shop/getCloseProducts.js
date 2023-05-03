@@ -27,8 +27,8 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
 
   const names = _.map(object?.departments, 'body');
 
-  const related = _.chain(object?.related).orderBy(['_id'], ['desc']).map('body').value();
-  const similar = _.chain(object?.similar).orderBy(['_id'], ['desc']).map('body').value();
+  const related = _.chain(object?.related).orderBy(['_id'], ['asc']).map('body').value();
+  const similar = _.chain(object?.similar).orderBy(['_id'], ['asc']).map('body').value();
 
   const { result: departments } = await Department.find({ filter: { name: { $in: names } } });
 
