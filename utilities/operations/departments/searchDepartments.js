@@ -7,7 +7,7 @@ module.exports = async ({ searchString = '', skip, limit }) => {
     filter: {
       $or: [
         { $text: { $search: `\"${searchString}\"` } },
-        { name: { $regex: `^${searchString}` } },
+        { name: { $regex: `^${searchString}`, $options: 'i' } },
       ],
     },
     projection: { name: 1 },
