@@ -31,10 +31,9 @@ module.exports = async (data) => {
       (g) => !_.includes(albumsId, g.id),
     );
 
-    const avatarField = findFieldByBody(wObject.fields, processedObject.avatar);
-
     defaultPhotosAlbum.items.push(
-      { weight: 1, body: processedObject.avatar, creator: avatarField?.creator ?? '' },
+      findFieldByBody(wObject.fields, processedObject.avatar)
+      ?? { weight: 1, body: processedObject.avatar },
       ...photoWithoutAlbum,
     );
   }
@@ -47,8 +46,10 @@ module.exports = async (data) => {
     const album = { items: photoWithoutAlbum, body: 'Photos', id: data.authorPermlink };
 
     if (processedObject.avatar) {
-      const avatarField = findFieldByBody(wObject.fields, processedObject.avatar);
-      album.items.push({ weight: 1, body: processedObject.avatar, creator: avatarField?.creator ?? '' });
+      album.items.push(
+        findFieldByBody(wObject.fields, processedObject.avatar)
+        ?? { weight: 1, body: processedObject.avatar },
+      );
     }
     processedObject.galleryAlbum
       ? processedObject.galleryAlbum.push(album)
