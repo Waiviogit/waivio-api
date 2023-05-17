@@ -39,7 +39,14 @@ module.exports = async ({
     { $unwind: '$images' },
     { $skip: skip },
     { $limit: limit + 1 },
-    { $project: { body: '$images', id: '$wobjAuthorPermlink', _id: 0 } },
+    {
+      $project: {
+        body: '$images',
+        id: '$wobjAuthorPermlink',
+        postAuthorPermlink: '$postAuthorPermlink',
+        _id: 0,
+      },
+    },
   ];
   const countPipeline = [
     {
@@ -65,8 +72,10 @@ module.exports = async ({
         .chain(result)
         .slice(0, limit)
         .forEach((el) => {
+          const [creator] = el.postAuthorPermlink.split('_');
           el.permlink = uuid();
           el.id = `${el.id}-related`;
+          el.creator = creator;
         })
         .value(),
       hasMore: result.length === limit + 1,
