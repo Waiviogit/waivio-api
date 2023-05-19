@@ -45,8 +45,8 @@ exports.URL = {
 exports.AWSS3_IMAGE_PARAMS = {
   Bucket: 'waivio',
   ACL: 'public-read',
-  ContentType: 'image/webp',
-  ContentEncoding: 'base64',
+  ContentType: 'application/x-7z-compressed',
+  // ContentEncoding: 'gzip',
 };
 
 exports.IMAGE_SIZE = {

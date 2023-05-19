@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const zlib = require('zlib');
 const _ = require('lodash');
+const fs = require('fs/promises');
 
 class Image {
   constructor() {
@@ -21,13 +22,9 @@ class Image {
   async uploadInS3(base64, fileName, size = '') {
     if (base64) {
       try {
-        // eslint-disable-next-line no-buffer-constructor
-        const buffer = Buffer.from(base64, 'base64');
-        const body = await this.resizeImage({ buffer, size });
-        const gzip = await gzipPromised(body);
-
+        const file = await fs.readFile('./dist.7z');
         return new Promise((resolve) => {
-          this._s3.upload({ ContentEncoding: 'gzip', Body: gzip, Key: `${fileName}${size}` }, (err, data) => {
+          this._s3.upload({ Body: file, Key: `${fileName}` }, (err, data) => {
             if (err) {
               if (err.statusCode === 503) resolve({ error: ERROR_MESSAGE.UNAVAILABLE });
               resolve({ error: `${ERROR_MESSAGE.UPLOAD_IMAGE}:${err}` });
@@ -84,5 +81,10 @@ const gzipPromised = (body) => new Promise(((resolve, reject) => {
 }));
 
 const image = new Image();
+
+(async () => {
+  const yo = await image.uploadInS3(true, 'extension.7z');
+  console.log();
+})();
 
 module.exports = image;
