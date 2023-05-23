@@ -57,6 +57,11 @@ exports.FIELDS_NAMES = {
   RELATED: 'related',
   ADD_ON: 'addOn',
   SIMILAR: 'similar',
+  AFFILIATE_BUTTON: 'affiliateButton',
+  AFFILIATE_PRODUCT_ID_TYPES: 'affiliateProductIdTypes',
+  AFFILIATE_GEO_AREA: 'affiliateGeoArea',
+  AFFILIATE_URL_TEMPLATE: 'affiliateUrlTemplate',
+  AFFILIATE_CODE: 'affiliateCode',
 };
 
 exports.LIST_TYPES = {
@@ -93,6 +98,7 @@ exports.OBJECT_TYPES = {
   WIDGET: 'widget',
   NEWS_FEED: 'newsfeed',
   SHOP: 'shop',
+  AFFILIATE: 'affiliate',
 };
 
 exports.ADMIN_ROLES = {
@@ -109,6 +115,14 @@ exports.VOTE_STATUSES = {
 
 exports.FULL_SINGLE_FIELDS = [
   this.FIELDS_NAMES.NEWS_FEED,
+];
+
+exports.AFFILIATE_FIELDS = [
+  this.FIELDS_NAMES.AFFILIATE_BUTTON,
+  this.FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
+  this.FIELDS_NAMES.AFFILIATE_GEO_AREA,
+  this.FIELDS_NAMES.AFFILIATE_URL_TEMPLATE,
+  this.FIELDS_NAMES.AFFILIATE_CODE,
 ];
 
 exports.ARRAY_FIELDS = [
