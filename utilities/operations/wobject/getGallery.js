@@ -6,6 +6,8 @@ const {
 } = require('models');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 
+const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
+
 module.exports = async (data) => {
   const {
     wObject,
@@ -18,7 +20,7 @@ module.exports = async (data) => {
   const processedObject = await wObjectHelper.processWobjects({
     app,
     locale: data.locale,
-    wobjects: [wObject],
+    wobjects: [_.cloneDeep(wObject)],
     returnArray: false,
   });
   const defaultPhotosAlbum = _.find(processedObject.galleryAlbum, (a) => a.body === 'Photos');
@@ -30,7 +32,8 @@ module.exports = async (data) => {
     );
 
     defaultPhotosAlbum.items.push(
-      { weight: 1, body: processedObject.avatar },
+      findFieldByBody(wObject.fields, processedObject.avatar)
+      ?? { weight: 1, body: processedObject.avatar },
       ...photoWithoutAlbum,
     );
   }
@@ -41,7 +44,13 @@ module.exports = async (data) => {
     );
 
     const album = { items: photoWithoutAlbum, body: 'Photos', id: data.authorPermlink };
-    processedObject.avatar && album.items.push({ weight: 1, body: processedObject.avatar });
+
+    if (processedObject.avatar) {
+      album.items.push(
+        findFieldByBody(wObject.fields, processedObject.avatar)
+        ?? { weight: 1, body: processedObject.avatar },
+      );
+    }
     processedObject.galleryAlbum
       ? processedObject.galleryAlbum.push(album)
       : processedObject.galleryAlbum = [album];
