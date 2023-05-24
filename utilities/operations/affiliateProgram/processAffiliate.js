@@ -1,6 +1,8 @@
 const { Wobj } = require('models');
 const Joi = require('joi');
-const { OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS } = require('constants/wobjectsData');
+const {
+  OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS, REMOVE_OBJ_STATUSES,
+} = require('constants/wobjectsData');
 const {
   COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY, WAIVIO_AFFILIATE_HOSTS, AFFILIATE_AUTHORITY,
 } = require('constants/affiliateData');
@@ -80,6 +82,7 @@ const makeFilterAppCondition = (app) => {
 
   return {
     object_type: OBJECT_TYPES.AFFILIATE,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
     fields: {
       $elemMatch: {
         name: FIELDS_NAMES.AFFILIATE_CODE,
@@ -96,6 +99,7 @@ const makeFilterUserCondition = ({ app, creator }) => {
   if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
     return {
       object_type: OBJECT_TYPES.AFFILIATE,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
       fields: {
         $elemMatch: {
           name: FIELDS_NAMES.AFFILIATE_CODE,
@@ -107,6 +111,7 @@ const makeFilterUserCondition = ({ app, creator }) => {
   }
   return {
     object_type: OBJECT_TYPES.AFFILIATE,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
     fields: {
       $elemMatch: {
         name: FIELDS_NAMES.AFFILIATE_CODE,
