@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
-const makeAffiliateLinks = ({ productIds, affiliateLinks }) => {
+const makeAffiliateLinks = ({ productIds, affiliateCodes }) => {
   const usedAffiliate = [];
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
@@ -13,7 +13,7 @@ const makeAffiliateLinks = ({ productIds, affiliateLinks }) => {
   }));
 
   const links = mappedProductIds.reduce((acc, el) => {
-    const affiliate = affiliateLinks
+    const affiliate = affiliateCodes
       .find((a) => a.affiliateProductIdTypes.includes(el.productIdType));
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;

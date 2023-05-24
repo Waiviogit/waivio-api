@@ -12,6 +12,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
@@ -569,7 +570,7 @@ const addOptions = async ({
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit, countryCode, reqUserName,
+  app, returnArray = true, topTagsLimit, countryCode, reqUserName, affiliateCodes = [],
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -579,7 +580,7 @@ const processWobjects = async ({
   if (parentPermlinks.length) {
     ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   }
-  const affiliateCodes = await getAppAffiliateCodes({ app, countryCode });
+  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
   for (let obj of wobjects) {
     let exposedFields = [];
@@ -655,10 +656,20 @@ const processWobjects = async ({
       obj.parent = await getParentInfo({ locale, app, parent });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({ affiliateCodes, productIds: obj.productId, countryCode });
-      if (!_.isEmpty(affiliateLinks)) {
-        obj.affiliateLinks = affiliateLinks;
-        obj.website = null;
+      if (affiliateCodes.length) {
+        obj.affiliateLinks = makeAffiliateLinks({
+          affiliateCodes,
+          productIds: obj.productId,
+        });
+      }
+      if (!obj?.affiliateLinks?.length) {
+        const affiliateLinks = formAffiliateLinks({
+          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
+        });
+        if (!_.isEmpty(affiliateLinks)) {
+          obj.affiliateLinks = affiliateLinks;
+          obj.website = null;
+        }
       }
     }
     if (obj.departments && typeof obj.departments[0] === 'string') {
