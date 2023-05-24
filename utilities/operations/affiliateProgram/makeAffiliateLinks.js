@@ -24,7 +24,7 @@ const makeAffiliateLinks = ({ productIds, affiliateLinks }) => {
 
     acc.push({ link, image: affiliate.affiliateButton });
     return acc;
-  });
+  }, []);
 
   return links;
 };

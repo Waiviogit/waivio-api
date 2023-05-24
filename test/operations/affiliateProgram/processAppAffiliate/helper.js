@@ -35,7 +35,7 @@ const createAffiliateUrlTemplate = ({ body, weight } = {}) => createField({
 
 const createAffiliateCode = ({ body, weight } = {}) => createField({
   name: FIELDS_NAMES.AFFILIATE_CODE,
-  body: body || JSON.stringify(['waivio.com', 'TEST_CODE']),
+  body: body || JSON.stringify(['waiviotest.com', 'TEST_CODE']),
   weight: weight || 1,
 });
 
@@ -50,4 +50,7 @@ const createFieldsForAffiliate = () => [
 module.exports = {
   createFieldsForAffiliate,
   createAffiliateGeoArea,
+  createAffiliateCode,
+  createAffiliateUrlTemplate,
+  createAffiliateProductIdTypes,
 };

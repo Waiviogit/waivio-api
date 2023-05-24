@@ -1,6 +1,7 @@
 const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const {
-  expect, dropDatabase, sinon,
+  expect, dropDatabase, sinon, faker,
 } = require('test/testHelper');
 const {
   AppFactory, ObjectFactory,
@@ -9,7 +10,9 @@ const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY } = require('constants/affiliateData');
-const { createFieldsForAffiliate, createAffiliateGeoArea } = require('./helper');
+const {
+  createFieldsForAffiliate, createAffiliateGeoArea, createAffiliateCode, createAffiliateUrlTemplate, createAffiliateProductIdTypes,
+} = require('./helper');
 
 describe('On affiliate program', async () => {
   let currentApp, session, result;
@@ -17,7 +20,7 @@ describe('On affiliate program', async () => {
     await dropDatabase();
     currentApp = await AppFactory.Create({
       status: STATUSES.ACTIVE,
-      host: 'waivio.com',
+      host: 'waiviotest.com',
     });
     session = getNamespace('request-session');
     sinon.stub(session, 'get').returns(currentApp.host);
@@ -82,6 +85,53 @@ describe('On affiliate program', async () => {
         const expected = resultEl.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY);
         expect(expected).to.be.eq(true);
       }
+    });
+  });
+
+  describe('on make Affiliate links', async () => {
+    const countryCode = 'US';
+    const affiliateCode = faker.random.string();
+    const affiliateType = faker.random.string();
+    const productId = faker.random.string();
+    const template = 'https://amazon.com/dp/$productId/ref=?$affiliateCode';
+    const productIds = [{
+      body: JSON.stringify({ productId, productIdType: affiliateType }),
+    }];
+
+    beforeEach(async () => {
+      await ObjectFactory.Create({
+        fields: [
+          ...createFieldsForAffiliate(),
+          createAffiliateCode({
+            body: JSON.stringify([currentApp.host, affiliateCode]),
+            weight: 100,
+          }),
+          createAffiliateUrlTemplate({
+            body: template,
+            weight: 100,
+          }),
+          createAffiliateProductIdTypes({
+            body: JSON.stringify([affiliateType]),
+            weight: 100,
+          }),
+        ],
+        objectType: OBJECT_TYPES.AFFILIATE,
+      });
+    });
+
+    it('should form proper Link', async () => {
+      const expectedLink = `https://amazon.com/dp/${productId}/ref=?${affiliateCode}`;
+      const affiliateLinks = await processAppAffiliate({
+        app: currentApp,
+        countryCode,
+      });
+
+      result = makeAffiliateLinks({
+        affiliateLinks,
+        productIds,
+      });
+      console.log();
+      expect(result[0].link).to.be.eq(expectedLink);
     });
   });
 });
