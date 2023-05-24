@@ -141,6 +141,15 @@ const processUserAffiliate = async ({
   });
   if (error) return [];
 
+  if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
+    for (const resultElement of result) {
+      resultElement.fields = resultElement.fields.filter((el) => {
+        if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
+        return el.creator === creator;
+      });
+    }
+  }
+
   return processObjectsToAffiliateArray({
     wobjects: result, app, locale, countryCode,
   });
