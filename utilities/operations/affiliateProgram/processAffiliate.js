@@ -90,6 +90,32 @@ const makeFilterAppCondition = (app) => {
   };
 };
 
+const makeFilterUserCondition = ({ app, creator }) => {
+  const regex = '\\["PERSONAL';
+  const appRegex = `\\["${app.host.replace(/\./g, '\\.')}`;
+  if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
+    return {
+      object_type: OBJECT_TYPES.AFFILIATE,
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.AFFILIATE_CODE,
+          body: { $regex: regex },
+          creator,
+        },
+      },
+    };
+  }
+  return {
+    object_type: OBJECT_TYPES.AFFILIATE,
+    fields: {
+      $elemMatch: {
+        name: FIELDS_NAMES.AFFILIATE_CODE,
+        body: { $regex: appRegex },
+      },
+    },
+  };
+};
+
 const processObjectsToAffiliateArray = async ({
   wobjects, app, locale, countryCode,
 }) => {
@@ -107,9 +133,17 @@ const processObjectsToAffiliateArray = async ({
   return filterByIdType({ objects: parsedValidAffiliates, countryCode });
 };
 
-const processUserAffiliate = async ({}) => {
-  // filter fields before by creator processing
+const processUserAffiliate = async ({
+  countryCode = 'US', app, locale = 'en-US', creator,
+}) => {
+  const { result, error } = await Wobj.findObjects({
+    filter: makeFilterUserCondition({ app, creator }),
+  });
+  if (error) return [];
 
+  return processObjectsToAffiliateArray({
+    wobjects: result, app, locale, countryCode,
+  });
 };
 
 const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }) => {
