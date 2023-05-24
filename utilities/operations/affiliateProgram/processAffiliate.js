@@ -1,6 +1,111 @@
 const { Wobj } = require('models');
-const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
+const Joi = require('joi');
+const { OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS } = require('constants/wobjectsData');
+const {
+  COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY, WAIVIO_AFFILIATE_HOSTS, AFFILIATE_AUTHORITY,
+} = require('constants/affiliateData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
+const _ = require('lodash');
+
+const affiliateScheme = Joi.object().keys({
+  affiliateButton: Joi.string().required(),
+  affiliateProductIdTypes: Joi.string().required(),
+  affiliateGeoArea: Joi.string().required(),
+  affiliateUrlTemplate: Joi.string().required(),
+  affiliateCode: Joi.string().required(),
+});
+
+const filterAffiliateObjects = (objects) => objects.filter((el) => {
+  const { error } = affiliateScheme.validate(el);
+  return !!error;
+});
+
+const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
+  const {
+    affiliateButton,
+    affiliateProductIdTypes,
+    affiliateGeoArea,
+    affiliateUrlTemplate,
+    affiliateCode,
+  } = el;
+  const parsedCode = jsonHelper.parseJson(affiliateCode, null);
+  const parsedGeo = jsonHelper.parseJson(affiliateGeoArea, null);
+  const parsedTypes = jsonHelper.parseJson(affiliateProductIdTypes, null);
+  if (!parsedCode || !parsedGeo || !parsedTypes) return acc;
+  acc.push({
+    affiliateButton,
+    affiliateUrlTemplate,
+    affiliateCode: parsedCode,
+    affiliateGeoArea: parsedGeo,
+    affiliateProductIdTypes: parsedTypes,
+  });
+
+  return acc;
+}, []);
+
+const chooseOneFromSimilar = ({ similar, countryCode }) => {
+  const continent = COUNTRY_TO_CONTINENT[countryCode];
+
+  const affiliateObject = similar.find(
+    (el) => el.affiliateGeoArea.includes(countryCode)
+      || el.affiliateGeoArea.includes(continent)
+      || el.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY),
+  );
+
+  return affiliateObject;
+};
+
+const filterByIdType = ({ objects, countryCode }) => {
+  const filtered = [];
+  const alreadyUsed = [];
+
+  for (const object of objects) {
+    if (alreadyUsed.some((el) => _.isEqual(el, object))) continue;
+    const similar = objects.filter(
+      (el) => el.affiliateProductIdTypes.some((t) => object.affiliateProductIdTypes.includes(t)),
+    );
+    const filteredEl = chooseOneFromSimilar({ similar, countryCode });
+
+    if (!filteredEl) continue;
+    filtered.push(filteredEl);
+    alreadyUsed.push(...similar);
+  }
+
+  return filtered;
+};
+
+const makeFilterAppCondition = (app) => {
+  const regex = `\\["${app.host.replace(/\./g, '\\.')}`;
+
+  return {
+    object_type: OBJECT_TYPES.AFFILIATE,
+    fields: {
+      $elemMatch: {
+        name: FIELDS_NAMES.AFFILIATE_CODE,
+        body: { $regex: regex },
+      },
+    },
+    ...(WAIVIO_AFFILIATE_HOSTS.includes(app.host) && { 'authority.ownership': AFFILIATE_AUTHORITY }),
+  };
+};
+
+const processObjectsToAffiliateArray = async ({
+  wobjects, app, locale, countryCode,
+}) => {
+  const processed = await wObjectHelper.processWobjects({
+    wobjects,
+    app,
+    locale,
+    fields: AFFILIATE_FIELDS,
+  });
+
+  const validObjects = filterAffiliateObjects(processed);
+
+  const parsedValidAffiliates = parseAffiliateFields(validObjects);
+
+  return filterByIdType({ objects: parsedValidAffiliates, countryCode });
+};
 
 const processUserAffiliate = async ({}) => {
   // filter fields before by creator processing
@@ -8,33 +113,15 @@ const processUserAffiliate = async ({}) => {
 };
 
 const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }) => {
-  // wor waivio condition authority === 'waivio'
-  // else owner and admins
-  // country code + global + continents
-  // locale exploit
-
-  const regex = `\\["${app.host.replace(/\./g, '\\.')}`;
-  // add to conditions waivio and others
   const { result, error } = await Wobj.findObjects({
-    filter: {
-      object_type: OBJECT_TYPES.AFFILIATE,
-      fields: {
-        $elemMatch: {
-          name: FIELDS_NAMES.AFFILIATE_CODE,
-          body: { $regex: regex },
-        },
-      },
-    },
+    filter: makeFilterAppCondition(app),
   });
 
-  const processed = await wObjectHelper.processWobjects({
-    wobjects: result,
-    app,
-    locale,
-    fields: [],
-  });
+  if (error) return [];
 
-  console.log();
+  return processObjectsToAffiliateArray({
+    wobjects: result, app, locale, countryCode,
+  });
 };
 
 module.exports = {

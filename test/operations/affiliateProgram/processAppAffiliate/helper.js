@@ -49,4 +49,5 @@ const createFieldsForAffiliate = () => [
 
 module.exports = {
   createFieldsForAffiliate,
+  createAffiliateGeoArea,
 };
