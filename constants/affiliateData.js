@@ -431,4 +431,4 @@ exports.COUNTRY_TO_CONTINENT = {
 };
 
 exports.WAIVIO_AFFILIATE_HOSTS = ['waivio.com', 'waiviodev.com'];
-exports.AFFILIATE_AUTHORITY = 'waivio';
+exports.AFFILIATE_AUTHORITY = process.env.AFFILIATE_AUTHORITY || 'waivio';
