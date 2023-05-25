@@ -228,6 +228,77 @@ const getWobjectTags = async (req, res, next) => {
   res.json(result);
 };
 
+const getAllReferences = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getAllReferencesSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await shop.getReference.getAll({
+    ...value, app: req.appData, locale: req.headers.locale,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getReferencesByType = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getReferencesByTypeScheme,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getReference.getByType({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
+const getRelated = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getRelatedSchema,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getRelated({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
+const getSimilar = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getSimilarSchema,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getSimilar({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -245,4 +316,8 @@ module.exports = {
   getWobjectFilters,
   getWobjectTags,
   getMoreTags,
+  getAllReferences,
+  getReferencesByType,
+  getRelated,
+  getSimilar,
 };

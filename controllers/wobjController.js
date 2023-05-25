@@ -7,9 +7,11 @@ const {
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
+const {
+  getIpFromHeaders,
+} = require('utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields } = require('../utilities/operations/wobject/getFields');
-const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -23,6 +25,7 @@ const index = async (req, res, next) => {
     skip: req.body.skip,
     sample: req.body.sample,
     map: req.body.map,
+    userName: req.headers.follower,
   }, validators.wobject.indexSchema, next);
 
   if (!value) return;
@@ -178,7 +181,8 @@ const getByField = async (req, res, next) => {
 const getChildWobjects = async (req, res, next) => {
   const value = validators.validate(
     { ...req.params, ...req.query },
-    validators.wobject.getChildWobjects, next,
+    validators.wobject.getChildWobjects,
+    next,
   );
 
   if (!value) return;
@@ -190,13 +194,16 @@ const getChildWobjects = async (req, res, next) => {
 };
 
 const getWobjectField = async (req, res, next) => {
-  const value = validators.validate(Object.assign(req.query, {
-    locale: req.headers.locale,
-    app: req.headers.app,
-    authorPermlink: req.params.authorPermlink,
-    reqUserName: req.headers.follower,
-  }),
-  validators.wobject.getWobjectField, next);
+  const value = validators.validate(
+    Object.assign(req.query, {
+      locale: req.headers.locale,
+      app: req.headers.app,
+      authorPermlink: req.params.authorPermlink,
+      reqUserName: req.headers.follower,
+    }),
+    validators.wobject.getWobjectField,
+    next,
+  );
   if (!value) return;
   const { toDisplay, field, error } = await getWobjField(value);
 
@@ -206,11 +213,14 @@ const getWobjectField = async (req, res, next) => {
 };
 
 const getWobjectsNearby = async (req, res, next) => {
-  const value = validators.validate({
-    authorPermlink: req.params.authorPermlink,
-    ...req.query,
-  },
-  validators.wobject.getWobjectsNearby, next);
+  const value = validators.validate(
+    {
+      authorPermlink: req.params.authorPermlink,
+      ...req.query,
+    },
+    validators.wobject.getWobjectsNearby,
+    next,
+  );
   if (!value) return;
   const { wobjects, error } = await getWobjsNearby(value);
 
@@ -220,8 +230,11 @@ const getWobjectsNearby = async (req, res, next) => {
 };
 
 const countWobjectsByArea = async (req, res, next) => {
-  const value = validators.validate({ ...req.query },
-    validators.wobject.countWobjectsByArea, next);
+  const value = validators.validate(
+    { ...req.query },
+    validators.wobject.countWobjectsByArea,
+    next,
+  );
   if (!value) return;
   const { wobjects: wobjectCounts, error } = await countWobjsByArea(value);
   if (error) return next(error);
@@ -316,8 +329,11 @@ const checkIfObjectExists = async (req, res, next) => {
 };
 
 const getWobjectUpdates = async (req, res, next) => {
-  const value = validators.validate({ ...req.params, ...req.query },
-    validators.wobject.getFieldsScheme, next);
+  const value = validators.validate(
+    { ...req.params, ...req.query },
+    validators.wobject.getFieldsScheme,
+    next,
+  );
   if (!value) return;
 
   const { fields, hasMore, error } = await getFields({ ...value, app: req.appData });
@@ -328,16 +344,19 @@ const getWobjectUpdates = async (req, res, next) => {
 };
 
 const newsfeed = async (req, res, next) => {
-  const value = validators.validate({
-    author_permlink: req.params.authorPermlink,
-    limit: req.body.limit,
-    skip: req.body.skip,
-    user_languages: req.body.user_languages,
-    lastId: req.body.lastId,
-    userName: req.headers.follower,
-    locale: req.headers.locale,
-  },
-  validators.wobject.getNewsfeed, next);
+  const value = validators.validate(
+    {
+      author_permlink: req.params.authorPermlink,
+      limit: req.body.limit,
+      skip: req.body.skip,
+      user_languages: req.body.user_languages,
+      lastId: req.body.lastId,
+      userName: req.headers.follower,
+      locale: req.headers.locale,
+    },
+    validators.wobject.getNewsfeed,
+    next,
+  );
   if (!value) return;
 
   const { posts: wobjectPosts, error } = await getPostsByWobject({
@@ -351,8 +370,11 @@ const newsfeed = async (req, res, next) => {
 };
 
 const getWobjectNames = async (req, res, next) => {
-  const value = validators.validate(req.body,
-    validators.wobject.wobjectsNamesScheme, next);
+  const value = validators.validate(
+    req.body,
+    validators.wobject.wobjectsNamesScheme,
+    next,
+  );
   if (!value) return;
 
   const { wobjects, error } = await getWobjectsNames({
@@ -365,8 +387,11 @@ const getWobjectNames = async (req, res, next) => {
 };
 
 const getWobjectOptions = async (req, res, next) => {
-  const value = validators.validate(req.body,
-    validators.wobject.wobjectsOptionsScheme, next);
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.wobject.wobjectsOptionsScheme,
+    next,
+  );
   if (!value) return;
 
   const { wobjects, hasMore, error } = await getByOptionsCategory({
@@ -387,8 +412,11 @@ const getAuthorities = async (req, res, next) => {
 };
 
 const getWobjectsByGroupId = async (req, res, next) => {
-  const value = validators.validate(req.body,
-    validators.wobject.wobjectsGroupIdScheme, next);
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.wobject.wobjectsGroupIdScheme,
+    next,
+  );
   if (!value) return;
 
   const { wobjects, hasMore, error } = await getByGroupId(value);

@@ -193,9 +193,9 @@ const makeSitePipelineForRestaurants = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent, object_type,
+  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type })];
+  const pipeline = [matchSimplePipe({ string, object_type, onlyObjectTypes })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push(
       {
@@ -306,10 +306,11 @@ const matchSocialPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type }) => ({
+const matchSimplePipe = ({ string, object_type, onlyObjectTypes }) => ({
   $match: {
-    ...object_type && { object_type },
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    ...(object_type && { object_type }),
+    ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
     ...(string && { $text: { $search: `\"${string}\"` } }),
   },
 });

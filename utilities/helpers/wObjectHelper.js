@@ -20,6 +20,8 @@ const {
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
 
+const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
+
 const getBlacklist = async (admins) => {
   let followList = [];
   let resultBlacklist = [];
@@ -63,9 +65,8 @@ const getWobjectFields = async (permlink) => {
 };
 
 const calculateApprovePercent = (field) => {
-  if (_.isEmpty(field.active_votes)) return 100;
   if (field.adminVote) return field.adminVote.status === VOTE_STATUSES.APPROVED ? 100 : 0;
-  if (field.weight < 0) return 0;
+  if (field.weight <= 0) return 0;
 
   const rejectsWeight = _.sumBy(field.active_votes, (vote) => {
     if (vote.percent < 0) {
@@ -102,10 +103,11 @@ const addDataToFields = ({
     if (
       !_.isEmpty(blacklist)
       && !_.isEmpty(field.active_votes)
-     && field.name !== FIELDS_NAMES.AUTHORITY
+      && field.name !== FIELDS_NAMES.AUTHORITY
+      && _.some(field.active_votes, (v) => _.includes(blacklist, v.voter))
     ) {
       field.active_votes = _.filter(field.active_votes, (o) => !_.includes(blacklist, o.voter));
-      field.weight = 1 + _.sumBy(field.active_votes, (vote) => vote.weight);
+      field.weight = _.sumBy(field.active_votes, (vote) => vote.weight) || 0;
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
@@ -624,8 +626,7 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
       if (obj.avatar) {
         obj.preview_gallery.unshift({
-          body: obj.avatar,
-          name: FIELDS_NAMES.AVATAR,
+          ...findFieldByBody(obj.fields, obj.avatar),
           id: obj.author_permlink,
         });
       }
@@ -716,4 +717,6 @@ module.exports = {
   addDataToFields,
   moderatePosts,
   arrayFieldsSpecialSort,
+  getBlacklist,
+  findFieldByBody,
 };

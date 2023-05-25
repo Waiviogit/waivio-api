@@ -4,7 +4,12 @@ const _ = require('lodash');
 module.exports = async ({ searchString = '', skip, limit }) => {
   const { result, error } = await Department.find({
     // eslint-disable-next-line no-useless-escape
-    filter: { $text: { $search: `\"${searchString}\"` } },
+    filter: {
+      $or: [
+        { $text: { $search: `\"${searchString}\"` } },
+        { name: { $regex: `^${searchString}`, $options: 'i' } },
+      ],
+    },
     projection: { name: 1 },
     options: { skip, limit: limit + 1 },
   });

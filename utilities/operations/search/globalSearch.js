@@ -5,7 +5,7 @@ const { searchWobjects } = require('utilities/operations/search/searchWobjects')
 const { getSessionApp } = require('utilities/helpers/sitesHelper');
 
 exports.getGlobalSearch = async ({
-  searchString, userLimit, wobjectsLimit, objectsTypeLimit, sortByApp,
+  searchString, userLimit, wobjectsLimit, objectsTypeLimit, sortByApp, onlyObjectTypes,
 }) => {
   const { result: app } = await getSessionApp();
 
@@ -13,7 +13,7 @@ exports.getGlobalSearch = async ({
     { string: searchString, limit: objectsTypeLimit, supportedTypes: _.get(app, 'supported_object_types', []) },
   );
   const { wobjects, wobjectsCounts } = await searchWobjects({
-    string: searchString, limit: wobjectsLimit, sortByApp, needCounters: true, app,
+    string: searchString, limit: wobjectsLimit, sortByApp, needCounters: true, app, onlyObjectTypes,
   });
   const { users, usersCount } = await searchUsers({ string: searchString, limit: userLimit });
 

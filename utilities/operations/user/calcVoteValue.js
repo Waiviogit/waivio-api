@@ -6,7 +6,8 @@ const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 const { Post, Comment } = require('models');
 const { redisGetter } = require('utilities/redis');
-const { WHITE_LIST_KEY } = require('constants/wobjectsData');
+const { WHITE_LIST_KEY, VOTE_COST } = require('constants/wobjectsData');
+const { roundToEven } = require('utilities/helpers/calcHelper');
 
 exports.sliderCalc = async ({
   userName, weight, author, permlink,
@@ -104,8 +105,19 @@ exports.checkUserWhiteList = async ({
     key: WHITE_LIST_KEY,
     member: userName,
   });
+  const amountUsd = result ? VOTE_COST.FOR_WHITE_LIST : VOTE_COST.USUAL;
+  const amount = await engineOperations.usdToWaiv({ amountUsd });
+
+  const minWeight = await engineOperations.getWeightToVote({
+    amount,
+    symbol: TOKEN_WAIV.SYMBOL,
+    account: userName,
+    maxVoteWeight: 10000,
+    poolId: TOKEN_WAIV.POOL_ID,
+  });
 
   return {
     result: !!result,
+    minWeight: roundToEven(minWeight),
   };
 };

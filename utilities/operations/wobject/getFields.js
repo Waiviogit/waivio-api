@@ -1,12 +1,13 @@
 const _ = require('lodash');
 const { addDataToFields } = require('utilities/helpers/wObjectHelper');
 const engineOperations = require('utilities/hiveEngine/engineOperations');
-const { getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
-const ObjectTypeModel = require('../../../models/ObjectTypeModel');
+const { getWaivioAdminsAndOwner } = require('utilities/helpers/getWaivioAdminsAndOwnerHelper');
+const { getBlacklist, getWobjectFields, calculateApprovePercent } = require('utilities/helpers/wObjectHelper');
+const ObjectTypeModel = require('models/ObjectTypeModel');
 const {
   FIELDS_NAMES, LIST_TYPES,
-} = require('../../../constants/wobjectsData');
-const { postsUtil } = require('../../hiveApi');
+} = require('constants/wobjectsData');
+const { postsUtil } = require('utilities/hiveApi');
 
 exports.getFields = async ({
   authorPermlink, skip, limit, type, locale, sort, app,
@@ -22,7 +23,6 @@ exports.getFields = async ({
     type,
     locale,
   });
-
   const limitedUpdates = _.chain(updates)
     .orderBy([sort], ['desc'])
     .slice(skip, skip + limit)
@@ -61,14 +61,13 @@ const fillUpdates = async ({
   wobject,
   app,
 }) => {
+  const waivioAdmins = await getWaivioAdminsAndOwner();
+
   const owner = _.get(app, 'owner');
   const admins = _.get(app, 'admins', []);
-  const ownership = _.intersection(
-    _.get(wobject, 'authority.ownership', []), _.get(app, 'authority', []),
-  );
-  const administrative = _.intersection(
-    _.get(wobject, 'authority.administrative', []), _.get(app, 'authority', []),
-  );
+  const ownership = _.intersection(_.get(wobject, 'authority.ownership', []), _.get(app, 'authority', []));
+  const administrative = _.intersection(_.get(wobject, 'authority.administrative', []), _.get(app, 'authority', []));
+  const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
 
   const filtered = addDataToFields({
     fields: limitedUpdates,
@@ -77,6 +76,7 @@ const fillUpdates = async ({
     ownership,
     administrative,
     owner,
+    blacklist,
   });
 
   const { comments } = await postsUtil.getCommentsArr(formatUpdatesForRequest(limitedUpdates));
@@ -86,9 +86,11 @@ const fillUpdates = async ({
       comments,
       (el) => el.author === update.author && el.permlink === update.permlink,
     );
-    Object.assign(update,
+    Object.assign(
+      update,
       _.pick(comment, ['children', 'total_pending_payout_value', 'total_payout_WAIV',
-        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']));
+        'total_payout_value', 'pending_payout_value', 'curator_payout_value', 'cashout_time']),
+    );
     update.fullBody = _.get(comment, 'body', '');
   }
   return filtered;
