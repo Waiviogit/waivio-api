@@ -20,6 +20,8 @@ const {
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
 
+const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
+
 const getBlacklist = async (admins) => {
   let followList = [];
   let resultBlacklist = [];
@@ -624,8 +626,7 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
       if (obj.avatar) {
         obj.preview_gallery.unshift({
-          body: obj.avatar,
-          name: FIELDS_NAMES.AVATAR,
+          ...findFieldByBody(obj.fields, obj.avatar),
           id: obj.author_permlink,
         });
       }
@@ -717,4 +718,5 @@ module.exports = {
   moderatePosts,
   arrayFieldsSpecialSort,
   getBlacklist,
+  findFieldByBody,
 };
