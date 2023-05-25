@@ -92,6 +92,12 @@ const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
     return acc;
   }, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
 
+  if (!fieldCondition?.$or && authority.length) {
+    fieldCondition.$or = _.flatten(_.map(authority, (user) => [
+      { 'authority.ownership': user },
+      { 'authority.administrative': user },
+    ]));
+  }
   if (_.isEmpty(tagFilter)) return fieldCondition;
 
   if (fieldCondition.$or) {
