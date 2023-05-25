@@ -6,6 +6,7 @@ const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
+const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
 
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
@@ -285,14 +286,17 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  crucialWobjects, string, forSites, addHashtag, object_type, app, skip, limit,
+  string, addHashtag, object_type, app, skip, limit,
 }) => {
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const authorities = [app.owner, ...app.authority];
+  if (userShop) authorities.push(app?.configuration?.shopSettings?.value);
+
   const pipeline = [
     {
       $match: {
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        'authority.administrative': { $in: [app.owner, ...app.authority] },
-        ...(forSites && !addHashtag && { author_permlink: { $in: crucialWobjects } }),
+        ...(!addHashtag && { 'authority.administrative': { $in: authorities } }),
         ...(object_type && { object_type }),
       },
     },
