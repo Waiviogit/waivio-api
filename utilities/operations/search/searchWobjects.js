@@ -5,20 +5,55 @@ const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const { Wobj, ObjectType, User } = require('models');
 const _ = require('lodash');
+const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
+const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
 
-exports.searchWobjects = async (data) => {
-  const appInfo = await searchHelper.getAppInfo(data);
-
+const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
   if (!_.includes(data.string, '@') || !_.includes(data.string, '.')) {
     data.string = data.string.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '').trim();
   }
   data.string = data.string.replace(/  +/g, ' ');
   if (_.isUndefined(data.limit)) data.limit = 10;
+};
 
-  return appInfo.forExtended || appInfo.forSites
-    ? sitesWobjectSearch({ ...data, ...appInfo })
-    : defaultWobjectSearch({ ...data, ...appInfo });
+exports.searchWobjects = async (data) => {
+  const appInfo = await searchHelper.getAppInfo(data);
+  addRequestDetails(data);
+
+  if (appInfo.forExtended || appInfo.forSites) {
+    const social = checkForSocialSite(appInfo?.app?.host ?? '');
+
+    if (social) return socialSearch({ ...data, ...appInfo });
+    return sitesWobjectSearch({ ...data, ...appInfo });
+  }
+
+  return defaultWobjectSearch({ ...data, ...appInfo });
+};
+
+const socialSearch = async (data) => {
+  const { wobjects, error } = await getWobjectsFromAggregation({
+    pipeline: matchSocialPipe(data),
+    string: data.string,
+    object_type: data.object_type,
+  });
+
+  if (data.needCounters && !error) {
+    return searchWithCounters({
+      ...data,
+      wobjects,
+      socialSites: true,
+    });
+  }
+
+  const user = data.userName ? (await User.getOne(data.userName))?.user : {};
+  const result = await addCampaignsToWobjectsSites({ wobjects, user, ...data });
+
+  return {
+    wobjects: _.take(result, data.limit),
+    hasMore: wobjects.length > data.limit,
+    error,
+  };
 };
 
 const defaultWobjectSearch = async (data) => {
@@ -179,16 +214,20 @@ const makePipeline = ({
 };
 
 const makeCountPipeline = ({
-  string, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+  string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended, socialSites = false,
 }) => {
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
     { $project: { _id: 0, object_type: '$_id', count: 1 } },
   ];
   if (forSites || forExtended) {
-    pipeline.unshift(...matchSitesPipe({
-      string, crucialWobjects, object_type, supportedTypes, forSites,
-    }));
+    socialSites
+      ? pipeline.unshift(...matchSocialPipe({
+        string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+      }))
+      : pipeline.unshift(...matchSitesPipe({
+        string, crucialWobjects, object_type, supportedTypes, forSites,
+      }));
   } else {
     pipeline.unshift(matchSimplePipe({ string, object_type }));
   }
@@ -243,6 +282,31 @@ const matchSitesPipe = ({
   object_type && pipeline.push({
     $match: { object_type },
   });
+  return pipeline;
+};
+
+const matchSocialPipe = ({
+  string, addHashtag, object_type, app, skip, limit,
+}) => {
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const authorities = [app.owner, ...app.authority];
+  if (userShop) authorities.push(app?.configuration?.shopSettings?.value);
+
+  const pipeline = [
+    {
+      $match: {
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...(!addHashtag && { 'authority.administrative': { $in: authorities } }),
+        ...(object_type && { object_type }),
+      },
+    },
+    { $sort: { weight: -1 } },
+    { $skip: skip || 0 },
+    { $limit: limit + 1 },
+  ];
+  if (string) {
+    pipeline.unshift({ $match: { $text: { $search: `\"${string}\"` } } });
+  }
   return pipeline;
 };
 

@@ -2,10 +2,15 @@ const _ = require('lodash');
 const {
   FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
-const { Wobj, ObjectType } = require('models');
+const {
+  Wobj, ObjectType, User, Post, userShopDeselectModel,
+} = require('models');
 const { OTHERS_DEPARTMENT } = require('constants/departments');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
+const { checkForSocialSite } = require('./sitesHelper');
+const sitesHelper = require('./sitesHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -36,7 +41,7 @@ const makeFilterCondition = (filter = {}) => {
   return result;
 };
 
-const getMongoFilterForShop = ({ field, tagFilter }) => {
+const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
   const fieldCondition = _.reduce(field, (acc, el, index) => {
     if (index === 'type') {
       if (!_.isEmpty(field[index])) {
@@ -73,6 +78,12 @@ const getMongoFilterForShop = ({ field, tagFilter }) => {
         { 'authority.ownership': user },
         { 'authority.administrative': user },
       ]));
+      if (authority.length) {
+        authoritiesOr.push(..._.flatten(_.map(authority, (user) => [
+          { 'authority.ownership': user },
+          { 'authority.administrative': user },
+        ])));
+      }
       if (!_.isEmpty(authoritiesOr)) {
         acc.$or ? acc.$or.push(...authoritiesOr) : acc.$or = authoritiesOr;
       }
@@ -81,6 +92,12 @@ const getMongoFilterForShop = ({ field, tagFilter }) => {
     return acc;
   }, { 'status.title': { $nin: REMOVE_OBJ_STATUSES } });
 
+  if (!fieldCondition?.$or && authority.length) {
+    fieldCondition.$or = _.flatten(_.map(authority, (user) => [
+      { 'authority.ownership': user },
+      { 'authority.administrative': user },
+    ]));
+  }
   if (_.isEmpty(tagFilter)) return fieldCondition;
 
   if (fieldCondition.$or) {
@@ -99,6 +116,11 @@ const getMongoFilterForShop = ({ field, tagFilter }) => {
 };
 
 const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
+  const authority = [];
+  const social = checkForSocialSite(app?.host ?? '');
+  if (social) {
+    authority.push(...[app.owner, ...app.authority]);
+  }
   const { result } = await Wobj.findOne({
     author_permlink: authorPermlink,
     object_type: OBJECT_TYPES.SHOP,
@@ -115,7 +137,7 @@ const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
   const field = jsonHelper.parseJson(processedObject[FIELDS_NAMES.SHOP_FILTER], null);
   if (_.isEmpty(field)) return { error: { status: 404, message: 'Not Found' } };
 
-  return { wobjectFilter: getMongoFilterForShop({ field, tagFilter }) };
+  return { wobjectFilter: getMongoFilterForShop({ field, tagFilter, authority }) };
 };
 
 const mainFilterDepartment = (departments) => {
@@ -330,6 +352,38 @@ const getMoreTagsForCategory = ({
   };
 };
 
+const getUserFilter = async ({
+  userName, app,
+}) => {
+  const social = sitesHelper.checkForSocialSite(app?.host ?? '');
+
+  const users = social
+    ? [...new Set([userName, ...app.authority])]
+    : [userName];
+  const orFilter = [];
+  const deselectLinks = [];
+
+  for (const acc of users) {
+    const { user } = await User.getOne(acc, SELECT_USER_CAMPAIGN_SHOP);
+    const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
+    const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName: acc });
+    orFilter.push(...[
+      { 'authority.ownership': acc },
+      { 'authority.administrative': acc },
+    ]);
+    if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
+      orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
+    }
+    const deselect = await userShopDeselectModel.findUsersLinks({ userName: acc });
+    if (deselect?.length) deselectLinks.push(...deselect);
+  }
+
+  return {
+    $or: orFilter,
+    ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
+  };
+};
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -343,4 +397,5 @@ module.exports = {
   getTagCategoriesForFilter,
   getFilteredTagCategories,
   getMoreTagsForCategory,
+  getUserFilter,
 };
