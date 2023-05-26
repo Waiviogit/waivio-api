@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const {
-  Wobj, Post, User, userShopDeselectModel,
+  Wobj, User,
 } = require('models');
 const {
   REMOVE_OBJ_STATUSES,
@@ -15,18 +15,17 @@ const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/depar
 const getUserDepartments = require('./getUserDepartments');
 
 const getUserDepartmentCondition = async ({
-  department, path, wobjectsFromPosts, userName, user,
+  department, path, userName, userFilter,
 }) => {
   if (department === UNCATEGORIZED_DEPARTMENT) {
     return { $or: [{ departments: [] }, { departments: null }] };
   }
   if (department === OTHERS_DEPARTMENT) {
     const { result } = await getUserDepartments.getTopDepartments({
-      wobjectsFromPosts,
       userName,
-      user,
       name: department,
       path,
+      userFilter,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }
@@ -44,31 +43,18 @@ module.exports = async ({
   skip = 0,
   user,
   app,
-  wobjectsFromPosts,
   follower,
   path,
+  userFilter,
 }) => {
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
 
-  if (!wobjectsFromPosts) {
-    wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
-  }
+  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
-  const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
-
-  const orFilter = [
-    { 'authority.ownership': userName },
-    { 'authority.administrative': userName },
-  ];
-  const deselectLinks = await userShopDeselectModel.findUsersLinks({ userName });
-
-  if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
-    orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
-  }
 
   const departmentCondition = await getUserDepartmentCondition({
-    department, path, user, userName, wobjectsFromPosts,
+    department, path, userName, userFilter,
   });
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
@@ -77,9 +63,8 @@ module.exports = async ({
         ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         object_type: { $in: SHOP_OBJECT_TYPES },
-        ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
         $and: [
-          { $or: orFilter },
+          userFilter,
           shopHelper.makeFilterCondition(filter),
         ],
       },
