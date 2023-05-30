@@ -91,7 +91,13 @@ const getListItems = async (wobject, data, app) => {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
-      locale: data.locale, fields: REQUIREDFIELDS, wobjects: [wobj], returnArray: false, app, countryCode,
+      locale: data.locale,
+      fields: REQUIREDFIELDS,
+      wobjects: [wobj],
+      returnArray: false,
+      app,
+      countryCode,
+      reqUserName: data.user,
     });
     wobj.type = _.get(fieldInList, 'type');
     wobj.listItemsCount = await getItemsCount({
