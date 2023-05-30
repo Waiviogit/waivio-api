@@ -4,7 +4,7 @@ const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
 const {
-  Wobj, ObjectType, User, Post,
+  Wobj, ObjectType, User, Post, userShopDeselectModel,
 } = require('models');
 const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
@@ -36,10 +36,10 @@ exports.searchWobjects = async (data) => {
 const socialSearch = async (data) => {
   const userShop = data?.app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
   if (userShop) {
+    const names = [data?.app?.configuration?.shopSettings?.value, ...data?.app?.authority ?? []];
     data.userShop = userShop;
-    data.userLinks = await Post.getProductLinksFromPosts({
-      names: [data?.app?.configuration?.shopSettings?.value, ...data?.app?.authority ?? []],
-    });
+    data.userLinks = await Post.getProductLinksFromPosts({ names });
+    data.deselect = await userShopDeselectModel.findUsersLinks({ names });
   }
 
   const { wobjects, error } = await getWobjectsFromAggregation({
@@ -296,7 +296,7 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [],
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [],
 }) => {
   const authorities = [...app.authority];
   userShop
@@ -312,7 +312,6 @@ const matchSocialPipe = ({
             {
               'authority.administrative': { $in: authorities },
             },
-            (userLinks.length && { author_permlink: { $in: userLinks } }),
           ],
         }),
         ...(object_type && { object_type }),
@@ -322,6 +321,14 @@ const matchSocialPipe = ({
     { $skip: skip || 0 },
     { $limit: limit + 1 },
   ];
+  if (userLinks.length) {
+    const and = deselect.length
+      ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
+      : [{ author_permlink: { $in: userLinks } }];
+    pipeline[0].$match.$or.push({
+      $and: and,
+    });
+  }
   if (string) {
     pipeline.unshift({ $match: { $text: { $search: `\"${string}\"` } } });
   }

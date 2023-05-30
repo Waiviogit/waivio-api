@@ -10,9 +10,9 @@ const find = async ({ filter, projection, options }) => {
   }
 };
 
-const findUsersLinks = async ({ userName }) => {
+const findUsersLinks = async ({ userName, names }) => {
   const { result, error } = await find({
-    filter: { userName },
+    filter: { userName: userName || { $in: names } },
   });
   if (error) return [];
 
