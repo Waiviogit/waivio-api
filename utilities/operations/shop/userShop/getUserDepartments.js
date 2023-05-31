@@ -5,6 +5,9 @@ const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsDa
 const _ = require('lodash');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
+const { CACHE_KEY, TTL_TIME } = require('constants/common');
 
 exports.getTopDepartments = async ({
   userName,
@@ -14,6 +17,14 @@ exports.getTopDepartments = async ({
   app,
   userFilter,
 }) => {
+  const key = `${CACHE_KEY.USER_SHOP_DEPARTMENTS}:${getCacheKey({
+    userName, name, host: app.host, path, excluded,
+  })}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: [] });
+  }
+
   if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
 
   const { result } = await Wobj.findObjects({
@@ -63,6 +74,10 @@ exports.getTopDepartments = async ({
       subdirectory: false,
     });
   }
+
+  await setCachedData({
+    key, data: { result: orderedDepartments }, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
 
   return { result: orderedDepartments };
 };

@@ -3,7 +3,9 @@ const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelp
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const searchHelper = require('utilities/helpers/searchHelper');
 const geoHelper = require('utilities/helpers/geoHelper');
-const { Wobj, ObjectType, User } = require('models');
+const {
+  Wobj, ObjectType, User, Post, userShopDeselectModel,
+} = require('models');
 const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
 const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
@@ -32,11 +34,15 @@ exports.searchWobjects = async (data) => {
 };
 
 const socialSearch = async (data) => {
-  const { wobjects, error } = await getWobjectsFromAggregation({
-    pipeline: matchSocialPipe(data),
-    string: data.string,
-    object_type: data.object_type,
-  });
+  const userShop = data?.app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  if (userShop) {
+    const names = [data?.app?.configuration?.shopSettings?.value, ...data?.app?.authority ?? []];
+    data.userShop = userShop;
+    data.userLinks = await Post.getProductLinksFromPosts({ names });
+    data.deselect = await userShopDeselectModel.findUsersLinks({ names });
+  }
+
+  const { wobjects = [], error } = await Wobj.fromAggregation(matchSocialPipe(data));
 
   if (data.needCounters && !error) {
     return searchWithCounters({
@@ -286,17 +292,24 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit,
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [],
 }) => {
-  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
-  const authorities = [app.owner, ...app.authority];
-  if (userShop) authorities.push(app?.configuration?.shopSettings?.value);
+  const authorities = [...app.authority];
+  userShop
+    ? authorities.push(app?.configuration?.shopSettings?.value)
+    : authorities.push(app.owner);
 
   const pipeline = [
     {
       $match: {
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        ...(!addHashtag && { 'authority.administrative': { $in: authorities } }),
+        ...(!addHashtag && {
+          $or: [
+            {
+              'authority.administrative': { $in: authorities },
+            },
+          ],
+        }),
         ...(object_type && { object_type }),
       },
     },
@@ -304,6 +317,14 @@ const matchSocialPipe = ({
     { $skip: skip || 0 },
     { $limit: limit + 1 },
   ];
+  if (userLinks.length) {
+    const and = deselect.length
+      ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
+      : [{ author_permlink: { $in: userLinks } }];
+    pipeline[0].$match.$or.push({
+      $and: and,
+    });
+  }
   if (string) {
     pipeline.unshift({ $match: { $text: { $search: `\"${string}\"` } } });
   }
