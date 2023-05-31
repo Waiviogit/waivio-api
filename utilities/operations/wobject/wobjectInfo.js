@@ -6,8 +6,10 @@ const {
 const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
+const { CACHE_KEY, TTL_TIME } = require('constants/common');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
+const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 
 /**
@@ -100,11 +102,27 @@ const getListItems = async (wobject, data, app) => {
       reqUserName: data.user,
     });
     wobj.type = _.get(fieldInList, 'type');
-    wobj.listItemsCount = await getItemsCount({
+    // caching of items count the most slow query // can't be done inside because of recursive fn
+    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${getCacheKey({
       authorPermlink: wobj.author_permlink,
+      host: app.host,
       handledItems: [wobject.author_permlink, wobj.author_permlink],
-      app,
-    });
+    })}`;
+    const cache = await getCachedData(key);
+    if (cache) {
+      wobj.listItemsCount = Number(cache);
+    } else {
+      const count = await getItemsCount({
+        authorPermlink: wobj.author_permlink,
+        handledItems: [wobject.author_permlink, wobj.author_permlink],
+        app,
+      });
+      wobj.listItemsCount = count;
+      await setCachedData({
+        key, data: count, ttl: TTL_TIME.THIRTY_MINUTES,
+      });
+    }
+
     wobj.addedAt = fieldInList._id && fieldInList._id.getTimestamp();
     const { result, error } = await Campaign.findByCondition({ objects: wobj.author_permlink, status: 'active' });
     if (error || !result.length) return wobj;

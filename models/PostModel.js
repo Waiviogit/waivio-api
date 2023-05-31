@@ -238,9 +238,12 @@ exports.find = async ({ filter, projection, options }) => {
   }
 };
 
-exports.getProductLinksFromPosts = async ({ userName }) => {
+exports.getProductLinksFromPosts = async ({ userName, names }) => {
   const { result } = await this.find({
-    filter: { author: userName, 'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] } },
+    filter: {
+      author: userName || { $in: names },
+      'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+    },
     projection: { wobjects: 1 },
   });
 
