@@ -2,11 +2,30 @@ const shopHelper = require('utilities/helpers/shopHelper');
 const { Wobj } = require('models');
 const _ = require('lodash');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
+const {
+  CACHE_KEY,
+  TTL_TIME,
+} = require('constants/common');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('utilities/helpers/cacheHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 const getWobjectDepartments = async ({
   authorPermlink, app, name, excluded, wobjectFilter, path,
 }) => {
   const emptyResult = { result: [] };
+
+  const key = `${CACHE_KEY.OBJECT_SHOP_DEPARTMENTS}:${getCacheKey({
+    authorPermlink, name, host: app.host, path, excluded,
+  })}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, emptyResult);
+  }
+
   if (!wobjectFilter) {
     ({ wobjectFilter } = await shopHelper
       .getWobjectFilter({ app, authorPermlink }));
@@ -57,6 +76,10 @@ const getWobjectDepartments = async ({
       subdirectory: false,
     });
   }
+
+  await setCachedData({
+    key, data: { result: orderedDepartments }, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
 
   return { result: orderedDepartments };
 };
