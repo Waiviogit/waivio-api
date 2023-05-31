@@ -1,5 +1,5 @@
 const {
-  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER,
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
 } = require('constants/sitesConstants');
 const {
@@ -309,3 +309,5 @@ exports.getSumByPaymentType = (payments, type) => _
   .filter((el) => el.type === type)
   .reduce((acc, payment) => new BigNumber(payment.amount).plus(acc), new BigNumber(0))
   .value();
+
+exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));

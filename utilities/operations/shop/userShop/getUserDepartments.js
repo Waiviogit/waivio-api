@@ -1,42 +1,37 @@
 const {
-  Wobj, Post, User, userShopDeselectModel,
+  Wobj,
 } = require('models');
 const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsData');
 const _ = require('lodash');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
+const { CACHE_KEY, TTL_TIME } = require('constants/common');
 
 exports.getTopDepartments = async ({
   userName,
-  wobjectsFromPosts,
-  user,
   name,
   excluded,
   path,
+  app,
+  userFilter,
 }) => {
-  if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
-  const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
-  if (!wobjectsFromPosts) {
-    wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
+  const key = `${CACHE_KEY.USER_SHOP_DEPARTMENTS}:${getCacheKey({
+    userName, name, host: app.host, path, excluded,
+  })}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: [] });
   }
 
-  const orFilter = [
-    { 'authority.ownership': userName },
-    { 'authority.administrative': userName },
-  ];
-  if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
-    orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
-  }
-
-  const deselectLinks = await userShopDeselectModel.findUsersLinks({ userName });
+  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
 
   const { result } = await Wobj.findObjects({
     filter: {
-      $or: orFilter,
+      ...userFilter,
       object_type: { $in: SHOP_OBJECT_TYPES },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...(!_.isEmpty(deselectLinks) && { author_permlink: { $nin: deselectLinks } }),
     },
     projection: { departments: 1, metaGroupId: 1 },
   });
@@ -79,6 +74,10 @@ exports.getTopDepartments = async ({
       subdirectory: false,
     });
   }
+
+  await setCachedData({
+    key, data: { result: orderedDepartments }, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
 
   return { result: orderedDepartments };
 };
