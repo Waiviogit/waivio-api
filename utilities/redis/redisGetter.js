@@ -115,3 +115,5 @@ exports.getFromCache = async ({ key, client = mainFeedsCacheClient }) => {
 exports.sismember = async ({
   key, member, client = processedPostClient,
 }) => client.sismemberAsync(key, member);
+
+exports.keys = ({ key, client = mainFeedsCacheClient }) => client.keysAsync(key);

@@ -96,6 +96,7 @@ exports.CACHE_KEY = {
 
 exports.TTL_TIME = {
   THIRTY_MINUTES: 1800,
+  ONE_DAY: 86400,
 };
 
 exports.BLOCK_NUM_KEYS = {
