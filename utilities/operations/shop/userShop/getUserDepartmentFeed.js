@@ -15,7 +15,7 @@ const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/depar
 const getUserDepartments = require('./getUserDepartments');
 
 const getUserDepartmentCondition = async ({
-  department, path, userName, userFilter,
+  department, path, userName, userFilter, app,
 }) => {
   if (department === UNCATEGORIZED_DEPARTMENT) {
     return { $or: [{ departments: [] }, { departments: null }] };
@@ -26,6 +26,7 @@ const getUserDepartmentCondition = async ({
       name: department,
       path,
       userFilter,
+      app,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }
@@ -54,7 +55,7 @@ module.exports = async ({
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
 
   const departmentCondition = await getUserDepartmentCondition({
-    department, path, userName, userFilter,
+    department, path, userName, userFilter, app,
   });
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
