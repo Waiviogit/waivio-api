@@ -46,9 +46,9 @@ const socialSearch = async (data) => {
 
   if (data.needCounters && !error) {
     return searchWithCounters({
-      ...data,
       wobjects,
       socialSites: true,
+      ...data,
     });
   }
 
@@ -140,7 +140,6 @@ const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => 
 
 const searchWithCounters = async (data) => {
   const { wobjects: wobjectsCounts, error } = await Wobj.fromAggregation(makeCountPipeline(data));
-
   return {
     error,
     wobjects: _.take(data.wobjects, data.limit),
@@ -219,9 +218,11 @@ const makePipeline = ({
   return pipeline;
 };
 
-const makeCountPipeline = ({
-  string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended, socialSites = false,
-}) => {
+const makeCountPipeline = (data = {}) => {
+  const {
+    string, forSites, crucialWobjects, object_type,
+    supportedTypes, forExtended, socialSites = false,
+  } = data;
   const pipeline = [
     { $group: { _id: '$object_type', count: { $sum: 1 } } },
     { $project: { _id: 0, object_type: '$_id', count: 1 } },
@@ -229,7 +230,8 @@ const makeCountPipeline = ({
   if (forSites || forExtended) {
     socialSites
       ? pipeline.unshift(...matchSocialPipe({
-        string, app, forSites, crucialWobjects, object_type, supportedTypes, forExtended,
+        ...data,
+        counters: true,
       }))
       : pipeline.unshift(...matchSitesPipe({
         string, crucialWobjects, object_type, supportedTypes, forSites,
@@ -292,7 +294,7 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [],
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters,
 }) => {
   const authorities = [...app.authority];
   userShop
@@ -314,9 +316,10 @@ const matchSocialPipe = ({
       },
     },
     { $sort: { weight: -1 } },
-    { $skip: skip || 0 },
-    { $limit: limit + 1 },
   ];
+  if (!counters) {
+    pipeline.push(...[{ $skip: skip || 0 }, { $limit: limit + 1 }]);
+  }
   if (userLinks.length) {
     const and = deselect.length
       ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
