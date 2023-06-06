@@ -85,6 +85,7 @@ const Configuration = new Schema({
   desktopLogo: { type: String },
   mobileLogo: { type: String },
   mainBanner: { type: String },
+  defaultListImage: { type: String },
   aboutObject: { type: String },
   desktopMap: { type: MapPoints },
   mobileMap: { type: MapPoints },
