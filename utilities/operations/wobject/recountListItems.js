@@ -1,5 +1,5 @@
 const { Wobj, App } = require('models');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
 const { setCachedData } = require('utilities/helpers/cacheHelper');
 const { CACHE_KEY, TTL_TIME } = require('constants/common');
 const redisGetter = require('utilities/redis/redisGetter');
@@ -52,6 +52,9 @@ const getAppsFromKeys = async (keys) => {
 
 const recountItems = async ({ addedObject, mainObject }) => {
   const setOfPairs = new Set();
+
+  const mainListItems = mainObject.fields
+    .filter((el) => el.name === FIELDS_NAMES.LIST_ITEM).map((el) => el.body);
   // find parents
   const updatedSet = await getPairs({
     authorPermlink: mainObject.author_permlink,
@@ -71,10 +74,13 @@ const recountItems = async ({ addedObject, mainObject }) => {
     const [, main, added, host] = key.split(':');
     const app = apps.find((el) => el.host === host);
     if (!app) continue;
+    if (main === mainObject.author_permlink && mainListItems.includes(added)) {
+      continue;
+    }
 
     const count = await getItemsCount({
       authorPermlink: added,
-      handledItems: [main.author_permlink, added],
+      handledItems: [main, added],
       app,
     });
 

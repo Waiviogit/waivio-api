@@ -9,7 +9,7 @@ const {
 const { CACHE_KEY, TTL_TIME } = require('constants/common');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
-const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
+const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 
 /**
