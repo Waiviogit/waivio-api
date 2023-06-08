@@ -33,7 +33,7 @@ exports.TEST_DOMAINS = [
   'socialgifts.pp.ua',
 ];
 
-exports.SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua'];
+exports.SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua', 'localhost:4000'];
 
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
