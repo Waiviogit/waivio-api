@@ -25,7 +25,10 @@ const getItemsCount = async ({
   authorPermlink, handledItems, app, recursive = false,
 }) => {
   let count = 0;
-  const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
   if (error || !wobject) return 0;
   if (wobject.object_type === OBJECT_TYPES.LIST) {
     const wobj = await wObjectHelper.processWobjects({
