@@ -50,7 +50,7 @@ const getAppsFromKeys = async (keys) => {
   return result;
 };
 
-const recountItems = async ({ addedObject, mainObject }) => {
+const recountItems = async ({ addedObject = {}, mainObject }) => {
   const setOfPairs = new Set();
 
   const mainListItems = mainObject.fields
@@ -94,9 +94,8 @@ const recountItems = async ({ addedObject, mainObject }) => {
 
 const recountListItems = async ({ authorPermlink, listItemLink }) => {
   const { wObject: mainObject, error: mainObjErr } = await Wobj.getOne(authorPermlink);
-  const { wObject: addedObject, error: addedObjErr } = await Wobj.getOne(listItemLink);
+  const { wObject: addedObject } = await Wobj.getOne(listItemLink);
   if (mainObjErr) return { error: mainObjErr };
-  if (addedObjErr) return { error: addedObjErr };
 
   recountItems({
     addedObject, mainObject,
