@@ -240,5 +240,5 @@ exports.wobjectsGroupIdScheme = Joi.object().keys({
 
 exports.wobjectsRecountListItemsScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
-  listItemLink: Joi.string().required(),
+  listItemLink: Joi.string().allow(''),
 });
