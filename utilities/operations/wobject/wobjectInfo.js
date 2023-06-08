@@ -103,15 +103,12 @@ const getListItems = async (wobject, data, app) => {
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
-    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${getCacheKey({
-      authorPermlink: wobj.author_permlink,
-      host: app.host,
-      handledItems: [wobject.author_permlink, wobj.author_permlink],
-    })}`;
+    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app.host}`;
     const cache = await getCachedData(key);
     if (cache) {
       wobj.listItemsCount = Number(cache);
     } else {
+      // authorPermlink = added list item ,
       const count = await getItemsCount({
         authorPermlink: wobj.author_permlink,
         handledItems: [wobject.author_permlink, wobj.author_permlink],
@@ -119,7 +116,7 @@ const getListItems = async (wobject, data, app) => {
       });
       wobj.listItemsCount = count;
       await setCachedData({
-        key, data: count, ttl: TTL_TIME.THIRTY_MINUTES,
+        key, data: count, ttl: TTL_TIME.ONE_DAY,
       });
     }
 
@@ -160,4 +157,5 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
 module.exports = {
   getOne,
+  getItemsCount,
 };
