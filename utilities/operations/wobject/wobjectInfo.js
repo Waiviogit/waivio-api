@@ -106,7 +106,7 @@ const getListItems = async (wobject, data, app) => {
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
-    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app.host}`;
+    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app?.host}`;
     const cache = await getCachedData(key);
     if (cache) {
       wobj.listItemsCount = Number(cache);

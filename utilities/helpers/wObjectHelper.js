@@ -474,6 +474,24 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
   return obj;
 };
 
+const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
+  const defaultLink = `/object/${mainObjectPermlink}`;
+  const body = jsonHelper.parseJson(menu.body, null);
+  if (!body) return defaultLink;
+  if (!body.linkToObject) return defaultLink;
+  const links = {
+    [OBJECT_TYPES.LIST]: `/menu#${body.linkToObject}`,
+    [OBJECT_TYPES.PAGE]: `/page#${body.linkToObject}`,
+    [OBJECT_TYPES.NEWS_FEED]: `/newsFilter/${body.linkToObject}`,
+    [OBJECT_TYPES.NEWS_FEED]: `/widget#${body.linkToObject}`,
+    default: '',
+  };
+
+  const linkEnding = links[body.objectType] || links.default;
+
+  return `${defaultLink}${linkEnding}`;
+};
+
 const getLinkToPageLoad = (obj) => {
   if (getNamespace('request-session')
     .get('device') === DEVICE.MOBILE) {
@@ -514,9 +532,7 @@ const getCustomSortLink = (obj) => {
 
   const menu = _.find(obj?.menuItem, (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
   if (menu) {
-    const body = jsonHelper.parseJson(menu.body, null);
-    if (!body) return defaultLink;
-    return `/object/${obj.author_permlink}/menu#${body.linkToObject}`;
+    return getLinkFromMenuItem({ mainObjectPermlink: obj.author_permlink, menu });
   }
 
   const field = _.find(_.get(obj, 'listItem', []), { body: _.get(obj, 'sortCustom.include[0]') });
@@ -531,11 +547,9 @@ const getCustomSortLink = (obj) => {
 
 const getDefaultLink = (obj) => {
   const defaultLink = `/object/${obj.author_permlink}`;
-  const menu = _.find(obj?.menuItem, (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
+  const menu = _.find(obj?.menuItem, (el) => el.name === FIELDS_NAMES.MENU_ITEM);
   if (menu) {
-    const body = jsonHelper.parseJson(menu.body, null);
-    if (!body) return defaultLink;
-    return `/object/${obj.author_permlink}/menu#${body.linkToObject}`;
+    return getLinkFromMenuItem({ mainObjectPermlink: obj.author_permlink, menu });
   }
   let listItem = _.get(obj, 'listItem', []);
   if (listItem.length) {
