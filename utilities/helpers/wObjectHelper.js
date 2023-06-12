@@ -267,9 +267,20 @@ const arrayFieldFilter = ({
         break;
     }
   }
+  const result = _.compact(validFields);
+
+  if (id === FIELDS_NAMES.DEPARTMENTS) {
+    if (result.length > 10) {
+      const sorted = _.orderBy(result, ['weight'], ['desc']);
+      return {
+        result: _.take(sorted, 10),
+        id,
+      };
+    }
+  }
 
   return {
-    result: _.compact(validFields),
+    result,
     id,
   };
 };
