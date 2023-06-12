@@ -494,7 +494,7 @@ const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
     [OBJECT_TYPES.LIST]: `/menu#${body.linkToObject}`,
     [OBJECT_TYPES.PAGE]: `/page#${body.linkToObject}`,
     [OBJECT_TYPES.NEWS_FEED]: `/newsFilter/${body.linkToObject}`,
-    [OBJECT_TYPES.NEWS_FEED]: `/widget#${body.linkToObject}`,
+    [OBJECT_TYPES.WIDGET]: `/widget#${body.linkToObject}`,
     default: '',
   };
 
