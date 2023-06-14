@@ -9,8 +9,9 @@ const {
 const { CACHE_KEY, TTL_TIME } = require('constants/common');
 const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
-const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
+const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
+const redisSetter = require('../../redis/redisSetter');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -25,7 +26,10 @@ const getItemsCount = async ({
   authorPermlink, handledItems, app, recursive = false,
 }) => {
   let count = 0;
-  const { result: wobject, error } = await Wobj.findOne({ author_permlink: authorPermlink });
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
   if (error || !wobject) return 0;
   if (wobject.object_type === OBJECT_TYPES.LIST) {
     const wobj = await wObjectHelper.processWobjects({
@@ -103,15 +107,13 @@ const getListItems = async (wobject, data, app) => {
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
-    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${getCacheKey({
-      authorPermlink: wobj.author_permlink,
-      host: app.host,
-      handledItems: [wobject.author_permlink, wobj.author_permlink],
-    })}`;
+    const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app?.host}`;
     const cache = await getCachedData(key);
     if (cache) {
       wobj.listItemsCount = Number(cache);
+      await redisSetter.expire({ key, ttl: TTL_TIME.SEVEN_DAYS });
     } else {
+      // authorPermlink = added list item ,
       const count = await getItemsCount({
         authorPermlink: wobj.author_permlink,
         handledItems: [wobject.author_permlink, wobj.author_permlink],
@@ -119,7 +121,7 @@ const getListItems = async (wobject, data, app) => {
       });
       wobj.listItemsCount = count;
       await setCachedData({
-        key, data: count, ttl: TTL_TIME.THIRTY_MINUTES,
+        key, data: count, ttl: TTL_TIME.SEVEN_DAYS,
       });
     }
 
@@ -160,4 +162,5 @@ const getOne = async (data) => { // get one wobject by author_permlink
 
 module.exports = {
   getOne,
+  getItemsCount,
 };
