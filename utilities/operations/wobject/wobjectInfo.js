@@ -11,6 +11,7 @@ const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
 const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
 const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
+const redisSetter = require('../../redis/redisSetter');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -110,6 +111,7 @@ const getListItems = async (wobject, data, app) => {
     const cache = await getCachedData(key);
     if (cache) {
       wobj.listItemsCount = Number(cache);
+      await redisSetter.expire({ key, ttl: TTL_TIME.SEVEN_DAYS });
     } else {
       // authorPermlink = added list item ,
       const count = await getItemsCount({
@@ -119,7 +121,7 @@ const getListItems = async (wobject, data, app) => {
       });
       wobj.listItemsCount = count;
       await setCachedData({
-        key, data: count, ttl: TTL_TIME.ONE_DAY,
+        key, data: count, ttl: TTL_TIME.SEVEN_DAYS,
       });
     }
 
