@@ -87,7 +87,7 @@ const recountItems = async ({ addedObject = {}, mainObject }) => {
     await setCachedData({
       key,
       data: count,
-      ttl: TTL_TIME.ONE_DAY,
+      ttl: TTL_TIME.SEVEN_DAYS,
     });
   }
 };
