@@ -1,12 +1,25 @@
 const {
-  REQUIREDFIELDS_PARENT, MIN_PERCENT_TO_SHOW_UPGATE, VOTE_STATUSES, OBJECT_TYPES, REQUIREDFILDS_WOBJ_LIST,
-  ADMIN_ROLES, categorySwitcher, FIELDS_NAMES, ARRAY_FIELDS, INDEPENDENT_FIELDS, LIST_TYPES, FULL_SINGLE_FIELDS,
+  REQUIREDFIELDS_PARENT,
+  MIN_PERCENT_TO_SHOW_UPGATE,
+  VOTE_STATUSES,
+  OBJECT_TYPES,
+  REQUIREDFILDS_WOBJ_LIST,
+  ADMIN_ROLES,
+  categorySwitcher,
+  FIELDS_NAMES,
+  ARRAY_FIELDS,
+  INDEPENDENT_FIELDS,
+  LIST_TYPES,
+  FULL_SINGLE_FIELDS,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const blacklistModel = require('models/blacklistModel');
 const UserWobjects = require('models/UserWobjects');
-const { DEVICE, LANGUAGES_POPULARITY } = require('constants/common');
+const {
+  DEVICE,
+  LANGUAGES_POPULARITY,
+} = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
@@ -21,13 +34,18 @@ const {
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
 
+const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
+
 const getBlacklist = async (admins) => {
   let followList = [];
   let resultBlacklist = [];
   if (_.isEmpty(admins)) return resultBlacklist;
 
   const { blackLists } = await blacklistModel
-    .find({ user: { $in: admins } }, { followLists: 1, blackList: 1 });
+    .find({ user: { $in: admins } }, {
+      followLists: 1,
+      blackList: 1,
+    });
 
   _.forEach(blackLists, (el) => {
     followList = _.union(followList, el.followLists);
@@ -52,14 +70,24 @@ const getBlacklist = async (admins) => {
 };
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
-  const userObjectShare = await UserWobjects.findOne({ user_name: name, author_permlink }, '-_id weight');
+  const userObjectShare = await UserWobjects.findOne({
+    user_name: name,
+    author_permlink,
+  }, '-_id weight');
 
   return _.get(userObjectShare, 'weight') || 0;
 };
 
 const getWobjectFields = async (permlink) => {
   const { result } = await Wobj.findOne({ author_permlink: permlink });
-  if (!result) return { error: { status: 404, message: 'Wobject not found' } };
+  if (!result) {
+    return {
+      error: {
+        status: 404,
+        message: 'Wobject not found',
+      },
+    };
+  }
   return { wobject: result };
 };
 
@@ -92,7 +120,14 @@ const getFieldVoteRole = (vote) => {
 };
 
 const addDataToFields = ({
-  fields, filter, admins, ownership, administrative, isOwnershipObj, owner, blacklist = [],
+  fields,
+  filter,
+  admins,
+  ownership,
+  administrative,
+  isOwnershipObj,
+  owner,
+  blacklist = [],
 }) => {
   /** Filter, if we need not all fields */
   if (filter) fields = _.filter(fields, (field) => _.includes(filter, field.name));
@@ -110,7 +145,8 @@ const addDataToFields = ({
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
-      vote.timestamp = vote._id.getTimestamp().valueOf();
+      vote.timestamp = vote._id.getTimestamp()
+        .valueOf();
       if (vote.voter === owner) {
         vote.owner = true;
         ownerVote = vote;
@@ -125,7 +161,10 @@ const addDataToFields = ({
         vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
       }
     });
-    if (_.has(field, '_id')) field.createdAt = field._id.getTimestamp().valueOf();
+    if (_.has(field, '_id')) {
+      field.createdAt = field._id.getTimestamp()
+        .valueOf();
+    }
     /** If field includes admin votes fill in it */
     if (ownerVote || adminVote || administrativeVote || ownershipVote) {
       const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
@@ -156,7 +195,10 @@ const specialFieldFilter = (idField, allFields, id) => {
   return idField;
 };
 
-const arrayFieldPush = ({ filter, field }) => {
+const arrayFieldPush = ({
+  filter,
+  field,
+}) => {
   if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
   if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
   if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
@@ -172,7 +214,11 @@ const arrayFieldsSpecialSort = (a, b) => {
 };
 
 const arrayFieldFilter = ({
-  idFields, allFields, filter, id, permlink,
+  idFields,
+  allFields,
+  filter,
+  id,
+  permlink,
 }) => {
   const validFields = [];
   for (const field of idFields) {
@@ -202,18 +248,42 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.ADD_ON:
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
-        if (arrayFieldPush({ filter, field })) validFields.push(field);
+        if (arrayFieldPush({
+          filter,
+          field,
+        })) {
+          validFields.push(field);
+        }
         break;
       case FIELDS_NAMES.GROUP_ID:
       case FIELDS_NAMES.REMOVE:
-        if (arrayFieldPush({ filter, field })) validFields.push(field.body);
+        if (arrayFieldPush({
+          filter,
+          field,
+        })) {
+          validFields.push(field.body);
+        }
         break;
       default:
         break;
     }
   }
+  const result = _.compact(validFields);
 
-  return { result: _.compact(validFields), id };
+  if (id === FIELDS_NAMES.DEPARTMENTS) {
+    if (result.length > 10) {
+      const sorted = _.orderBy(result, ['weight'], ['desc']);
+      return {
+        result: _.take(sorted, 10),
+        id,
+      };
+    }
+  }
+
+  return {
+    result,
+    id,
+  };
 };
 
 const filterFieldValidation = (filter, field, locale, ownership) => {
@@ -255,7 +325,10 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
     if (_.has(acc, `${el.name}`)) {
       const locales = _.find(fieldsLanguages, (l) => l.type === el.name);
       if (!locales && conditionLocale) {
-        fieldsLanguages.push({ type: el.name, languages: [el.locale] });
+        fieldsLanguages.push({
+          type: el.name,
+          languages: [el.locale],
+        });
       }
       if (locales && !_.includes(locales.languages, el.locale) && conditionLocale) {
         locales.languages.push(el.locale);
@@ -265,7 +338,10 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
       return acc;
     }
     if (conditionLocale) {
-      fieldsLanguages.push({ type: el.name, languages: [el.locale] });
+      fieldsLanguages.push({
+        type: el.name,
+        languages: [el.locale],
+      });
     }
     acc[el.name] = [el];
     return acc;
@@ -316,8 +392,15 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     );
 
     if (_.includes(ARRAY_FIELDS, id)) {
-      const { result, id: newId } = arrayFieldFilter({
-        idFields: groupedFields[id], allFields: groupedFields, filter, id, permlink,
+      const {
+        result,
+        id: newId,
+      } = arrayFieldFilter({
+        idFields: groupedFields[id],
+        allFields: groupedFields,
+        filter,
+        id,
+        permlink,
       });
       if (result.length) winningFields[newId] = result;
       continue;
@@ -332,14 +415,20 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
         approvedFields,
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN,
       );
-      if (ownerVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
-      else if (adminVotes.length) winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
-      else winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
+      if (ownerVotes.length) {
+        winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+      } else if (adminVotes.length) {
+        winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
+      } else {
+        winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
+      }
       continue;
     }
     const heaviestField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
-          && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) return field.weight;
+        && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
+        return field.weight;
+      }
     });
     if (heaviestField) winningFields[id] = getSingleFieldsDisplay(heaviestField);
   }
@@ -348,20 +437,32 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
 
 /** Get info of wobject parent with specific winning fields */
 const getParentInfo = async ({
-  locale, app, parent,
+  locale,
+  app,
+  parent,
 }) => {
   if (parent) {
     if (!parent) return '';
     parent = await processWobjects({
-      locale, fields: REQUIREDFIELDS_PARENT, wobjects: [_.omit(parent, 'parent')], returnArray: false, app,
+      locale,
+      fields: REQUIREDFIELDS_PARENT,
+      wobjects: [_.omit(parent, 'parent')],
+      returnArray: false,
+      app,
     });
-  } else parent = '';
+  } else {
+    parent = '';
+  }
   return parent;
 };
 
 const fillObjectByExposedFields = async (obj, exposedFields) => {
   const { result } = await postsUtil.getPostState(
-    { author: obj.author, permlink: obj.author_permlink, category: 'waivio-object' },
+    {
+      author: obj.author,
+      permlink: obj.author_permlink,
+      category: 'waivio-object',
+    },
   );
   if (!result) {
     obj.fields = [];
@@ -385,8 +486,27 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
   return obj;
 };
 
+const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
+  const defaultLink = `/object/${mainObjectPermlink}`;
+  const body = jsonHelper.parseJson(menu.body, null);
+  if (!body) return defaultLink;
+  if (!body.linkToObject) return defaultLink;
+  const links = {
+    [OBJECT_TYPES.LIST]: `/menu#${body.linkToObject}`,
+    [OBJECT_TYPES.PAGE]: `/page#${body.linkToObject}`,
+    [OBJECT_TYPES.NEWS_FEED]: `/newsFilter/${body.linkToObject}`,
+    [OBJECT_TYPES.WIDGET]: `/widget#${body.linkToObject}`,
+    default: '',
+  };
+
+  const linkEnding = links[body.objectType] || links.default;
+
+  return `${defaultLink}${linkEnding}`;
+};
+
 const getLinkToPageLoad = (obj) => {
-  if (getNamespace('request-session').get('device') === DEVICE.MOBILE) {
+  if (getNamespace('request-session')
+    .get('device') === DEVICE.MOBILE) {
     return obj.object_type === OBJECT_TYPES.HASHTAG
       ? `/object/${obj.author_permlink}`
       : `/object/${obj.author_permlink}/about`;
@@ -420,6 +540,12 @@ const getLinkToPageLoad = (obj) => {
 
 const getCustomSortLink = (obj) => {
   if (obj.object_type === OBJECT_TYPES.LIST) return `/object/${obj.author_permlink}/list`;
+  const defaultLink = `/object/${obj.author_permlink}`;
+
+  const menu = _.find(obj?.menuItem, (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
+  if (menu) {
+    return getLinkFromMenuItem({ mainObjectPermlink: obj.author_permlink, menu });
+  }
 
   const field = _.find(_.get(obj, 'listItem', []), { body: _.get(obj, 'sortCustom.include[0]') });
   const blog = _.find(_.get(obj, 'blog', []), (el) => el.permlink === _.get(obj, 'sortCustom.include[0]'));
@@ -428,10 +554,15 @@ const getCustomSortLink = (obj) => {
   if (blog) return `/object/${obj.author_permlink}/blog/@${blog.body}`;
   if (news) return `/object/${obj.author_permlink}/newsFilter/${news.permlink}`;
 
-  return `/object/${obj.author_permlink}`;
+  return defaultLink;
 };
 
 const getDefaultLink = (obj) => {
+  const defaultLink = `/object/${obj.author_permlink}`;
+  const menu = _.find(obj?.menuItem, (el) => el.name === FIELDS_NAMES.MENU_ITEM);
+  if (menu) {
+    return getLinkFromMenuItem({ mainObjectPermlink: obj.author_permlink, menu });
+  }
   let listItem = _.get(obj, 'listItem', []);
   if (listItem.length) {
     _.find(listItem, (list) => list.type === 'menuList')
@@ -447,7 +578,7 @@ const getDefaultLink = (obj) => {
   if (_.get(obj, 'newsFilter', []).length) return `/object/${obj.author_permlink}/newsFilter/${obj.newsFilter[0].permlink}`;
   if (_.get(obj, 'blog', []).length) return `/object/${obj.author_permlink}/blog/@${obj.blog[0].body}`;
 
-  return `/object/${obj.author_permlink}`;
+  return defaultLink;
 };
 
 const getTopTags = (obj, limit = 2) => {
@@ -472,7 +603,9 @@ const createMockPost = (field) => ({
   total_payout_value: '0.000 HBD',
   pending_payout_value: '0.000 HBD',
   curator_payout_value: '0.000 HBD',
-  cashout_time: moment.utc().add(7, 'days').toDate(),
+  cashout_time: moment.utc()
+    .add(7, 'days')
+    .toDate(),
   body: `@${field.creator} added ${field.name} (${field.locale})`,
 });
 
@@ -494,7 +627,10 @@ const getExposedFields = (objectType, fields) => {
     if (value !== undefined) exposedMap.set(field.name, value + 1);
   }
 
-  const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({ name, value }));
+  const exposedFieldsWithCounters = Array.from(exposedMap, ([name, value]) => ({
+    name,
+    value,
+  }));
   exposedMap.clear();
   return exposedFieldsWithCounters;
 };
@@ -503,13 +639,25 @@ const groupOptions = (options, obj) => _.chain(options)
   .map((option) => ({
     ...option,
     body: jsonHelper.parseJson(option.body),
-    ...(obj && { author_permlink: obj.author_permlink, price: obj.price, avatar: obj.avatar }),
-  })).groupBy(
+    ...(obj && {
+      author_permlink: obj.author_permlink,
+      price: obj.price,
+      avatar: obj.avatar,
+    }),
+  }))
+  .groupBy(
     (option) => _.get(option, 'body.category'),
-  ).value();
+  )
+  .value();
 
 const addOptions = async ({
-  object, ownership, admins, administrative, owner, blacklist, locale,
+  object,
+  ownership,
+  admins,
+  administrative,
+  owner,
+  blacklist,
+  locale,
 }) => {
   const filter = [
     FIELDS_NAMES.GROUP_ID,
@@ -569,13 +717,24 @@ const addOptions = async ({
 
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
-  wobjects, fields, hiveData = false, locale = 'en-US',
-  app, returnArray = true, topTagsLimit, countryCode, reqUserName, affiliateCodes = [],
+  wobjects,
+  fields,
+  hiveData = false,
+  locale = 'en-US',
+  app,
+  returnArray = true,
+  topTagsLimit,
+  countryCode,
+  reqUserName,
+  affiliateCodes = [],
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
   let parents = [];
-  const parentPermlinks = _.chain(wobjects).map('parent').compact().uniq()
+  const parentPermlinks = _.chain(wobjects)
+    .map('parent')
+    .compact()
+    .uniq()
     .value();
   if (parentPermlinks.length) {
     ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
@@ -625,15 +784,20 @@ const processWobjects = async ({
       obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
       if (obj.avatar) {
         obj.preview_gallery.unshift({
-          body: obj.avatar,
-          name: FIELDS_NAMES.AVATAR,
+          ...findFieldByBody(obj.fields, obj.avatar),
           id: obj.author_permlink,
         });
       }
       if (obj.options || obj.groupId) {
         obj.options = obj.groupId
           ? await addOptions({
-            object: obj, ownership, admins, administrative, owner, blacklist, locale,
+            object: obj,
+            ownership,
+            admins,
+            administrative,
+            owner,
+            blacklist,
+            locale,
           })
           : groupOptions(obj.options, obj);
       }
@@ -642,7 +806,13 @@ const processWobjects = async ({
     if ((obj.options || obj.groupId) && _.includes(fields, FIELDS_NAMES.OPTIONS)) {
       obj.options = obj.groupId
         ? await addOptions({
-          object: obj, ownership, admins, administrative, owner, blacklist, locale,
+          object: obj,
+          ownership,
+          admins,
+          administrative,
+          owner,
+          blacklist,
+          locale,
         })
         : groupOptions(obj.options, obj);
     }
@@ -653,7 +823,11 @@ const processWobjects = async ({
     }
     if (_.isString(obj.parent)) {
       const parent = _.find(parents, { author_permlink: obj.parent });
-      obj.parent = await getParentInfo({ locale, app, parent });
+      obj.parent = await getParentInfo({
+        locale,
+        app,
+        parent,
+      });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
       if (affiliateCodes.length) {
@@ -690,17 +864,29 @@ const processWobjects = async ({
 };
 
 const getCurrentNames = async (names) => {
-  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: names } }, { author_permlink: 1, fields: 1 });
+  const { result: wobjects } = await Wobj.find({ author_permlink: { $in: names } }, {
+    author_permlink: 1,
+    fields: 1,
+  });
   const result = await Promise.all(wobjects.map(async (wobject) => {
     const { name } = await processWobjects({
-      wobjects: [wobject], fields: [FIELDS_NAMES.NAME], returnArray: false,
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.NAME],
+      returnArray: false,
     });
-    return { author_permlink: wobject.author_permlink, name };
+    return {
+      author_permlink: wobject.author_permlink,
+      name,
+    };
   }));
   return { result };
 };
 
-const moderatePosts = async ({ posts, app, locale }) => {
+const moderatePosts = async ({
+  posts,
+  app,
+  locale,
+}) => {
   await Promise.all(posts.map(async (post) => {
     if (post.wobjects) {
       post.wobjects = await processWobjects({
@@ -728,4 +914,5 @@ module.exports = {
   moderatePosts,
   arrayFieldsSpecialSort,
   getBlacklist,
+  findFieldByBody,
 };

@@ -89,6 +89,15 @@ exports.CACHE_KEY = {
   CURRENT_MEDIAN_HISTORY_PRICE: 'current_median_history_price',
   SMT_POOL: 'smt_pool',
   CURRENT_PRICE_INFO: 'current_price_info',
+  LIST_ITEMS_COUNT: 'listItemsCount',
+  USER_SHOP_DEPARTMENTS: 'userShopDepartments',
+  OBJECT_SHOP_DEPARTMENTS: 'userShopDepartments',
+};
+
+exports.TTL_TIME = {
+  THIRTY_MINUTES: 1800,
+  ONE_DAY: 86400,
+  SEVEN_DAYS: 86400 * 7,
 };
 
 exports.BLOCK_NUM_KEYS = {

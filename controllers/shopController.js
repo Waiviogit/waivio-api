@@ -76,13 +76,20 @@ const getMoreTags = async (req, res, next) => {
 const getUserDepartments = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userDepartmentsSchema, next);
   if (!value) return;
-  const { result, error } = await shop.getUserDepartments.getTopDepartments(value);
+  const { result, error } = await shop.getUserDepartments.getTopDepartments({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
 
 const getUserFeed = async (req, res, next) => {
-  const value = validators.validate({ ...req.body, ...req.headers }, validators.shop.userFeedSchema, next);
+  const value = validators.validate(
+    { ...req.body, ...req.headers },
+    validators.shop.userFeedSchema,
+    next,
+  );
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
@@ -121,7 +128,10 @@ const getUserFeedByDepartment = async (req, res, next) => {
 const getUserFilters = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userFiltersSchema, next);
   if (!value) return;
-  const { result, error } = await shop.userFilters.getUserFilters(value);
+  const { result, error } = await shop.userFilters.getUserFilters({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
@@ -129,7 +139,10 @@ const getUserFilters = async (req, res, next) => {
 const getUserTags = async (req, res, next) => {
   const value = validators.validate(req.body, validators.shop.userTagsSchema, next);
   if (!value) return;
-  const { result, error } = await shop.userFilters.getMoreTagFilters(value);
+  const { result, error } = await shop.userFilters.getMoreTagFilters({
+    ...value,
+    app: req.appData,
+  });
   if (error) return next(error);
   res.json(result);
 };
@@ -169,7 +182,11 @@ const getWobjectDepartmentFeed = async (req, res, next) => {
 };
 
 const getWobjectMainFeed = async (req, res, next) => {
-  const value = validators.validate({ ...req.body, ...req.headers }, validators.shop.wobjectFeedSchema, next);
+  const value = validators.validate(
+    { ...req.body, ...req.headers },
+    validators.shop.wobjectFeedSchema,
+    next,
+  );
   if (!value) return;
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 

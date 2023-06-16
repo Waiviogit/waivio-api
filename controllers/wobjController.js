@@ -3,7 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities, getByGroupId,
+  getWobjectAuthorities, getByGroupId, recountListItems,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -426,6 +426,24 @@ const getWobjectsByGroupId = async (req, res, next) => {
   next();
 };
 
+const recountList = async (req, res, next) => {
+  const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+  if (!validKey) return next();
+  const value = validators.validate(
+    { ...req.body },
+    validators.wobject.wobjectsRecountListItemsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, error } = await recountListItems(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -451,4 +469,5 @@ module.exports = {
   getWobjectOptions,
   getAuthorities,
   getWobjectsByGroupId,
+  recountList,
 };

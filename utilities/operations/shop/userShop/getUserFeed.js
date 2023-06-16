@@ -1,8 +1,9 @@
-const { Post, User } = require('models');
+const { User } = require('models');
 const _ = require('lodash');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const getUserDepartments = require('./getUserDepartments');
 const getUserDepartmentFeed = require('./getUserDepartmentFeed');
+const shopHelper = require('../../../helpers/shopHelper');
 
 module.exports = async ({
   userName,
@@ -18,10 +19,12 @@ module.exports = async ({
   limit,
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
-  const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName });
+
+  const userFilter = await shopHelper.getUserFilter({ userName, app });
+
   const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
-      userName, wobjectsFromPosts, user, name: department, excluded: excludedDepartments, path,
+      userName, user, name: department, excluded: excludedDepartments, path, userFilter, app,
     });
 
   const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
@@ -34,11 +37,11 @@ module.exports = async ({
     locale,
     countryCode,
     filter,
-    wobjectsFromPosts,
     user,
     userName,
     follower,
     path: [...path, d.name],
+    userFilter,
   })));
 
   const hasMore = userDepartments.length > departments.length + skip;

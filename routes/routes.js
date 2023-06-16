@@ -177,6 +177,8 @@ wobjRoutes.route('/wobjects/options')
   .post(WobjController.getWobjectOptions);
 wobjRoutes.route('/wobjects/group-id')
   .post(WobjController.getWobjectsByGroupId);
+wobjRoutes.route('/wobjects/list-item-process')
+  .post(WobjController.recountList);
 // endregion
 // region User
 userRoutes.route('/users')

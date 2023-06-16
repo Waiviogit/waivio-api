@@ -30,7 +30,11 @@ exports.TEST_DOMAINS = [
   'dinings.pp.ua',
   'dinings.club',
   'dining.pp.ua',
+  'socialgifts.pp.ua',
 ];
+
+exports.SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua', 'localhost:4000'];
+
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
   WRITE_OFF: 'writeOff',
