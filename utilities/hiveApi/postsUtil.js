@@ -1,6 +1,5 @@
 const { postClient } = require('utilities/hiveApi/hiveClient');
 const _ = require('lodash');
-const moment = require('moment');
 
 exports.getPostsByCategory = async (data) => {
   try {
@@ -121,9 +120,3 @@ exports.getContent = async ({ author, permlink }) => {
     return { error: { message: error.message } };
   }
 };
-
-
-(async () => {
-  const yo = moment.utc().diff(moment('2023-05-09T11:43:27'), 'seconds');
-  console.log();
-})();
