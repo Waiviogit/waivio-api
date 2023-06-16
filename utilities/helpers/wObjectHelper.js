@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const {
   REQUIREDFIELDS_PARENT,
   MIN_PERCENT_TO_SHOW_UPGATE,
@@ -218,7 +219,6 @@ const arrayFieldFilter = ({
   allFields,
   filter,
   id,
-  permlink,
 }) => {
   const validFields = [];
   for (const field of idFields) {
