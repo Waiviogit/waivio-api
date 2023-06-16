@@ -148,6 +148,9 @@ const processUserAffiliate = async ({
 
   if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
     for (const resultElement of result) {
+      if (resultElement?.authority?.ownership) {
+        resultElement.authority.ownership = [];
+      }
       resultElement.fields = resultElement.fields.filter((el) => {
         if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
         return el.creator === creator;

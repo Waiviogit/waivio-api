@@ -275,3 +275,8 @@ exports.getOnePageDraftSchema = Joi.object().keys({
   user: Joi.string().required(),
   authorPermlink: Joi.string().required(),
 });
+
+exports.getAffiliateSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string(),
+});

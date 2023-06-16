@@ -3,10 +3,13 @@ const {
 } = require('test/testHelper');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 
-const createField = ({ name, weight, body } = {}) => ({
+const createField = ({
+  name, weight, body, creator,
+} = {}) => ({
   name: name || faker.random.string(),
   weight: weight || 1,
   body: body || faker.random.string(),
+  creator: creator || faker.random.string(),
 });
 
 const createAffiliateButton = ({ body, weight } = {}) => createField({
@@ -33,10 +36,11 @@ const createAffiliateUrlTemplate = ({ body, weight } = {}) => createField({
   weight: weight || 1,
 });
 
-const createAffiliateCode = ({ body, weight } = {}) => createField({
+const createAffiliateCode = ({ body, weight, creator } = {}) => createField({
   name: FIELDS_NAMES.AFFILIATE_CODE,
   body: body || JSON.stringify(['waiviotest.com', 'TEST_CODE']),
   weight: weight || 1,
+  creator,
 });
 
 const createFieldsForAffiliate = () => [

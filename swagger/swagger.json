@@ -8080,6 +8080,56 @@
           }
         }
       }
+    },
+    "/user/{userName}/affiliate": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get affiliate objects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of authorized user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/wobjectonlist"
+            }
+          },
+          "401":  {
+            "description": "Token not valid!"
+          },
+          "404":  {
+            "description": "Not found"
+          },
+          "422":  {
+            "description": "Validation error"
+          }
+        }
+      }
     }
   },
   "definitions": {

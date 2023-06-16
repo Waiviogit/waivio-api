@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
-const makeAffiliateLinks = ({ productIds, affiliateCodes }) => {
+const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
   const usedAffiliate = [];
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});

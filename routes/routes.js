@@ -241,6 +241,7 @@ userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWalle
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
 userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
 userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+userRoutes.route('/user/:userName/affiliate').post(UserController.getAffiliate);
 // endregion
 // region Draft
 

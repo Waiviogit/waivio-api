@@ -12,7 +12,7 @@ const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY } = require('constants/affiliateData');
 const {
   createFieldsForAffiliate, createAffiliateGeoArea, createAffiliateCode, createAffiliateUrlTemplate, createAffiliateProductIdTypes,
-} = require('./helper');
+} = require('../helper');
 
 describe('On affiliate program', async () => {
   let currentApp, session, result;
@@ -127,10 +127,10 @@ describe('On affiliate program', async () => {
       });
 
       result = makeAffiliateLinks({
-        affiliateLinks,
+        affiliateCodes: affiliateLinks,
         productIds,
       });
-      console.log();
+
       expect(result[0].link).to.be.eq(expectedLink);
     });
   });
