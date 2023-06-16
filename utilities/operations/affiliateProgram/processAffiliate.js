@@ -4,7 +4,7 @@ const {
   OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const {
-  COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY, WAIVIO_AFFILIATE_HOSTS, AFFILIATE_AUTHORITY,
+  COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY, WAIVIO_AFFILIATE_HOSTS,
 } = require('constants/affiliateData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
@@ -89,7 +89,7 @@ const makeFilterAppCondition = (app) => {
         body: { $regex: regex },
       },
     },
-    ...(WAIVIO_AFFILIATE_HOSTS.includes(app.host) && { 'authority.ownership': AFFILIATE_AUTHORITY }),
+    ...(WAIVIO_AFFILIATE_HOSTS.includes(app.host) && { 'authority.ownership': { $in: app.authority } }),
   };
 };
 
