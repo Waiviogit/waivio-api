@@ -55,6 +55,11 @@ exports.IMAGE_SIZE = {
   CONTAIN: '_contain',
 };
 
+exports.IMAGES_FORMAT = {
+  WEBP: 'webp',
+  GIF: 'gif',
+};
+
 exports.TOKEN = {
   HIVE: 'HIVE',
   HBD: 'HBD',
