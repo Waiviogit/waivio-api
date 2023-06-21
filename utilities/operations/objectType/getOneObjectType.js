@@ -4,6 +4,8 @@ const {
 } = require('models');
 const _ = require('lodash');
 const { campaignsHelper, objectTypeHelper } = require('utilities/helpers');
+const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
+const { SHOP_SETTINGS_TYPE } = require('../../../constants/sitesConstants');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -23,9 +25,10 @@ const validateInput = ({ filter, sort }) => {
 };
 
 const getWobjWithFilters = async ({
-  objectType, filter, limit = 30, skip = 0, sort = 'weight', nsfw,
+  objectType, filter, limit = 30, skip = 0, sort = 'weight', nsfw, app,
 }) => {
   const aggregationPipeline = [];
+  const social = checkForSocialSite(app?.host ?? '');
 
   if (!validateInput({ filter, sort })) {
     return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
@@ -99,6 +102,19 @@ const getWobjWithFilters = async ({
       }
     }
   }
+  if (social) {
+    const authorities = [...app.authority];
+    const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+    userShop
+      ? authorities.push(app?.configuration?.shopSettings?.value)
+      : authorities.push(app.owner);
+    aggregationPipeline.push({
+      $match: {
+        'authority.administrative': { $in: authorities },
+      },
+    });
+  }
+
   aggregationPipeline.push(
     { $sort: { [sort]: sort !== 'proximity' ? -1 : 1 } },
     { $skip: skip },
@@ -115,7 +131,7 @@ const getWobjWithFilters = async ({
 };
 
 module.exports = async ({
-  name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName,
+  name, filter, wobjLimit, wobjSkip, sort, userName, simplified, appName, app,
 }) => {
   let tagCategory = [];
   const { objectType, error: objTypeError } = await ObjectType.getOne({ name });
@@ -136,6 +152,7 @@ module.exports = async ({
     skip: wobjSkip,
     sort,
     nsfw: _.get(user, 'user_metadata.settings.showNSFWPosts', false),
+    app,
   });
   if (wobjError) return { error: wobjError };
 
