@@ -128,6 +128,8 @@ exports.updateMetadataSchema = Joi.object().keys({
         like: Joi.boolean().default(true),
         downvote: Joi.boolean().default(false),
         claimReward: Joi.boolean().default(false),
+        objectUpdates: Joi.boolean().default(false),
+        objectGroupId: Joi.boolean().default(false),
       }),
     }),
     drafts: Joi.array().items(Joi.object().keys({
