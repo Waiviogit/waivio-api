@@ -1,11 +1,7 @@
 const _ = require('lodash');
 const {
-  User,
-  Post,
-  userShopDeselectModel,
   Wobj,
 } = require('models');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const {
   SHOP_OBJECT_TYPES,
   REMOVE_OBJ_STATUSES,
@@ -35,7 +31,9 @@ const getUserObjects = async ({
 const getMoreTagFilters = async ({
   userName, tagCategory, skip, limit, path, app,
 }) => {
-  const objects = await getUserObjects({ userName, tagCategory, app });
+  const objects = await getUserObjects({
+    userName, tagCategory, app, path,
+  });
 
   const { tags, hasMore } = shopHelper.getMoreTagsForCategory({
     objects, tagCategory, skip, limit, path,
