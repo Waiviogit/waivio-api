@@ -55,6 +55,46 @@ const getItemsCount = async ({
   return count;
 };
 
+const getAllObjectsInList = async ({
+  authorPermlink, handledItems = [], app,
+}) => {
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+  if (error || !wobject) return handledItems;
+  if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    if (_.isEmpty(listWobjects)) return handledItems;
+
+    for (const item of listWobjects) {
+      // condition for exit from looping
+      if (!handledItems.includes(item)) {
+        handledItems.push(item);
+        await getAllObjectsInList({
+          authorPermlink: item, handledItems, app, recursive: true,
+        });
+      }
+    }
+  }
+  return handledItems;
+};
+
+const getAllListPermlinks = async ({ authorPermlink, app }) => {
+  const handledItems = [authorPermlink];
+  const result = await getAllObjectsInList({
+    authorPermlink, app, handledItems,
+  });
+  return { result };
+};
+
 const getListItems = async (wobject, data, app) => {
   const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
 
@@ -163,4 +203,5 @@ const getOne = async (data) => { // get one wobject by author_permlink
 module.exports = {
   getOne,
   getItemsCount,
+  getAllListPermlinks,
 };
