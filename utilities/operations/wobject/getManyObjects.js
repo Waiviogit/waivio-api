@@ -28,17 +28,30 @@ const getCondition = (data) => {
 const getMany = async (data) => {
   data.required_fields = _.uniq([...data.required_fields, ...REQUIREDFIELDS]);
   const condition = getCondition(data);
+
+  const pipeline = [
+    { $match: condition },
+    { $sort: { weight: -1 } },
+    {
+      $project: {
+        default_name: 1,
+        weight: 1,
+        parent: 1,
+        fields: 1,
+        object_type: 1,
+        author_permlink: 1,
+        author: 1,
+      },
+    },
+  ];
+
+  pipeline.push(...[{ $skip: data.skip }, { $limit: data.sample ? 100 : data.limit + 1 }]);
+  if (data.sample) pipeline.push({ $sample: { size: 5 } });
   // eslint-disable-next-line prefer-const
-  let { result: wObjects, error } = await Wobj.find(
-    condition,
-    'default_name weight parent fields object_type author_permlink author',
-    { weight: -1 },
-    data.skip,
-    data.sample ? 100 : data.limit + 1,
-  );
+  let { wobjects: wObjects = [], error } = await Wobj.fromAggregation(pipeline);
   /** Data sample use for short info about wobject, it must be light request */
   if (data.sample) {
-    wObjects = _.sampleSize(wObjects, 5);
+    // wObjects = _.sampleSize(wObjects, 5);
     wObjects = wObjects.map((obj) => {
       obj.fields = _.filter(obj.fields, (field) => _.includes(REQUIREDFIELDS_SEARCH, field.name));
       return obj;
