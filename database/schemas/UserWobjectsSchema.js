@@ -9,6 +9,7 @@ const UserWobjectsSchema = new Schema({
 }, { timestamps: false });
 
 UserWobjectsSchema.index({ user_name: 1 });
+UserWobjectsSchema.index({ weight: -1 });
 UserWobjectsSchema.index({ author_permlink: 1, user_name: 1 }, { unique: true });
 UserWobjectsSchema.index({ author_permlink: 1, _id: 1 });
 
