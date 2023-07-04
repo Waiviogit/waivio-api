@@ -63,6 +63,16 @@ const getAllObjectsInList = async ({
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
   });
   if (error || !wobject) return handledItems;
+  if (wobject.object_type === OBJECT_TYPES.PRODUCT && wobject.metaGroupId) {
+    const { result } = await Wobj.findObjects({
+      filter: {
+        author_permlink: { $ne: wobject.author_permlink },
+        metaGroupId: wobject.metaGroupId,
+      },
+      projection: { author_permlink: 1 },
+    });
+    if (result.length)handledItems.push(result.map((el) => el.author_permlink));
+  }
   if (wobject.object_type === OBJECT_TYPES.LIST) {
     const wobj = await wObjectHelper.processWobjects({
       wobjects: [wobject],
@@ -92,7 +102,7 @@ const getAllListPermlinks = async ({ authorPermlink, app }) => {
   const result = await getAllObjectsInList({
     authorPermlink, app, handledItems,
   });
-  return { result };
+  return { result: _.uniq(result) };
 };
 
 const getListItems = async (wobject, data, app) => {
