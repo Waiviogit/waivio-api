@@ -742,20 +742,21 @@ const processWobjects = async ({
     countryCode,
   });
 
+  /** Get waivio admins and owner */
+  const waivioAdmins = await getWaivioAdminsAndOwner();
+  const owner = _.get(app, 'owner');
+  const admins = _.get(app, 'admins', []);
+  const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
+
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
     if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
 
-    /** Get waivio admins and owner */
-    const waivioAdmins = await getWaivioAdminsAndOwner();
-
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
-    const owner = _.get(app, 'owner');
-    const admins = _.get(app, 'admins', []);
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
-    const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
+
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
@@ -773,11 +774,12 @@ const processWobjects = async ({
       blacklist,
     });
     /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
-    obj = _.omit(obj, ['map']);
-    Object.assign(
-      obj,
-      getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length),
-    );
+    obj = _.omit(obj, ['map', 'search']);
+    obj = {
+      ...obj,
+      ...getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length),
+    };
+
     /** Get right count of photos in object in request for only one object */
     if (!fields) {
       obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
