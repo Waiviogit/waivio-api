@@ -509,7 +509,7 @@ const additionalSponsorObligations = async (posts, userName) => {
   return posts;
 };
 
-const getTagsByUser = async ({ author }) => {
+const getTagsByUser = async ({ author, skip, limit }) => {
   const tags = [];
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
 
@@ -526,20 +526,23 @@ const getTagsByUser = async ({ author }) => {
         });
     }
   }
-  const { result: wobjects } = await getCurrentNames(_.map(tags, 'author_permlink'));
+  tags.sort((a, b) => b.counter - a.counter);
+
+  const process = _.slice(tags, skip, skip + limit + 1);
+
+  const { result: wobjects } = await getCurrentNames(_.map(process, 'author_permlink'));
+
   const result = _.map(wobjects, (wobject) => {
-    for (const tag of tags) {
-      if (tag.author_permlink === wobject.author_permlink) {
-        return {
-          name: _.get(wobject, 'name', _.get(wobject, 'author_permlink')),
-          author_permlink: wobject.author_permlink,
-          counter: tag.counter,
-        };
-      }
-    }
+    const tag = tags.find((el) => wobject.author_permlink === el.author_permlink);
+
+    return {
+      name: _.get(wobject, 'name', _.get(wobject, 'author_permlink')),
+      author_permlink: wobject.author_permlink,
+      counter: tag?.counter ?? 0,
+    };
   });
 
-  return { tags: result.sort((a, b) => b.counter - a.counter) };
+  return { tags: result };
 };
 
 const getCachedPosts = async (key) => {
