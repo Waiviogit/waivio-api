@@ -51,7 +51,6 @@ const getMany = async (data) => {
   let { wobjects: wObjects = [], error } = await Wobj.fromAggregation(pipeline);
   /** Data sample use for short info about wobject, it must be light request */
   if (data.sample) {
-    // wObjects = _.sampleSize(wObjects, 5);
     wObjects = wObjects.map((obj) => {
       obj.fields = _.filter(obj.fields, (field) => _.includes(REQUIREDFIELDS_SEARCH, field.name));
       return obj;
