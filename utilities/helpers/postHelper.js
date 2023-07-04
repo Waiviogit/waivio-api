@@ -542,7 +542,7 @@ const getTagsByUser = async ({ author, skip, limit }) => {
     };
   });
 
-  return { tags: result };
+  return { tags: result.sort((a, b) => b.counter - a.counter) };
 };
 
 const getCachedPosts = async (key) => {
