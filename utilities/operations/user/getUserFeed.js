@@ -20,8 +20,8 @@ const getFeed = async ({
     skip, limit, user_languages, userName, method: 'getFeed',
   });
 
-  const cache = await getCachedPosts(cacheKey);
-  if (cache) return { posts: cache };
+  // const cache = await getCachedPosts(cacheKey);
+  // if (cache) return { posts: cache };
 
   let posts = [];
   const requestsMongo = await Promise.all([
@@ -52,7 +52,7 @@ const getFeed = async ({
   });
 
   if (filterError) return { error: filterError };
-
+  console.time('user posts');
   ({ posts } = await Post.getByFollowLists({
     skip,
     users,
@@ -63,6 +63,7 @@ const getFeed = async ({
     author_permlinks: wobjects,
     muted: _.map(muted, 'userName'),
   }));
+  console.timeEnd('user posts');
 
   posts = await postHelper.fillAdditionalInfo({ posts, userName });
   await wobjectHelper.moderatePosts({ posts, locale, app });
