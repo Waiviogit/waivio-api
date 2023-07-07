@@ -535,7 +535,7 @@ const getTagsByUser = async ({ author, skip, limit }) => {
   const result = _.map(process, (tag) => {
     const wobject = wobjects.find((el) => tag.author_permlink === el.author_permlink);
     return {
-      name: _.get(wobject, 'name', _.get(wobject, 'author_permlink')),
+      name: _.get(wobject, 'name', _.get(tag, 'author_permlink')),
       author_permlink: tag.author_permlink,
       counter: tag?.counter ?? 0,
     };
