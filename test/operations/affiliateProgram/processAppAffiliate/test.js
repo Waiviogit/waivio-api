@@ -133,5 +133,23 @@ describe('On affiliate program', async () => {
 
       expect(result[0].link).to.be.eq(expectedLink);
     });
+
+    it('with exact host', async () => {
+      const exactId = faker.random.string();
+      const expectedLink = `https://amazon.com/dp/${exactId}/ref=?${affiliateCode}`;
+      const affiliateLinks = await processAppAffiliate({
+        app: currentApp,
+        countryCode,
+      });
+
+      result = makeAffiliateLinks({
+        affiliateCodes: affiliateLinks,
+        productIds: [...productIds, {
+          body: JSON.stringify({ productId: exactId, productIdType: 'amazon.com' }),
+        }],
+      });
+
+      expect(result[0].link).to.be.eq(expectedLink);
+    });
   });
 });
