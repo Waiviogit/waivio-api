@@ -7,6 +7,7 @@ const _ = require('lodash');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
+const { checkForSocialSite } = require('../../helpers/sitesHelper');
 
 const getDepartments = async ({ authorPermlink, app, locale }) => {
   const emptyDepartments = {
@@ -66,9 +67,15 @@ const getRelated = async ({
 
   const response = [];
 
+  const social = checkForSocialSite(app.host);
+  const authorities = [app.owner, ...app.authority];
+
   const { wobjects: relatedObjects = [] } = await Wobj.fromAggregation([
     {
-      $match: { author_permlink: { $in: related } },
+      $match: {
+        author_permlink: { $in: related },
+        ...(social && { 'authority.administrative': { $in: authorities } }),
+      },
     },
     { $addFields: { __order: { $indexOfArray: [related, '$author_permlink'] } } },
     { $sort: { __order: 1 } },
@@ -96,6 +103,7 @@ const getRelated = async ({
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         author_permlink: { $nin: [authorPermlink, ...related] },
         ...(metaGroupId.length && { metaGroupId: { $nin: metaGroupId } }),
+        ...(social && { 'authority.administrative': { $in: authorities } }),
       },
     });
     response.push(...wobjects);
@@ -125,11 +133,15 @@ const getSimilar = async ({
 }) => {
   const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
 
+  const social = checkForSocialSite(app.host);
+  const authorities = [app.owner, ...app.authority];
+
   const objectsForResponse = [];
 
   const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
     {
       $match: { author_permlink: { $in: similar } },
+      ...(social && { 'authority.administrative': { $in: authorities } }),
     },
     { $addFields: { __order: { $indexOfArray: [similar, '$author_permlink'] } } },
     { $sort: { __order: 1 } },
@@ -161,6 +173,7 @@ const getSimilar = async ({
       ],
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
       ...(metaGroupId.length && { metaGroupId: { $nin: metaGroupId } }),
+      ...(social && { 'authority.administrative': { $in: authorities } }),
     };
 
     const count = await getObjectsCount(matchCondition);

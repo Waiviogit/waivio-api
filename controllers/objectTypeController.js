@@ -32,7 +32,10 @@ const show = async (req, res, next) => {
   }, validators.objectType.showSchema, next);
 
   if (!value) return;
-  const { objectType, error } = await getOne(value);
+  const { objectType, error } = await getOne({
+    ...value,
+    app: req.appData,
+  });
 
   if (error) {
     return next(error);
@@ -72,7 +75,8 @@ const expertise = async (req, res, next) => {
 const showMoreTags = async (req, res, next) => {
   const value = validators.validate(
     req.query,
-    validators.objectType.showMoreTagsSchema, next,
+    validators.objectType.showMoreTagsSchema,
+    next,
   );
   if (!value) return;
   const { tags, hasMore, error } = await showTags(value);
@@ -84,7 +88,8 @@ const showMoreTags = async (req, res, next) => {
 const tagsForFilter = async (req, res, next) => {
   const value = validators.validate(
     req.body,
-    validators.objectType.tagsForFilterSchema, next,
+    validators.objectType.tagsForFilterSchema,
+    next,
   );
   if (!value) return;
   const { tags, error } = await getTagsForFilter({ ...value, app: req.appData });

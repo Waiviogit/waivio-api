@@ -145,7 +145,11 @@ exports.firstLoad = async ({ app, redirect }) => {
   app = await this.aboutObjectFormat(app);
 
   return {
-    result: Object.assign(_.pick(app, FIRST_LOAD_FIELDS), { redirect }),
+    result: {
+      ..._.pick(app, FIRST_LOAD_FIELDS),
+      redirect,
+      administrators: [app.owner, ...app.admins],
+    },
   };
 };
 

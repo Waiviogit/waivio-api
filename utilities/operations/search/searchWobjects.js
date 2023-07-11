@@ -294,7 +294,7 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters,
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes
 }) => {
   const authorities = [...app.authority];
   userShop
@@ -313,6 +313,7 @@ const matchSocialPipe = ({
           ],
         }),
         ...(object_type && { object_type }),
+        ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
       },
     },
     { $sort: { weight: -1 } },

@@ -1,5 +1,5 @@
 const {
-  ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE,
+  ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE, IMAGES_FORMAT,
 } = require('constants/common');
 const AWS = require('aws-sdk');
 const sharp = require('sharp');
@@ -43,16 +43,34 @@ class Image {
     return { error: ERROR_MESSAGE.PARSE_IMAGE };
   }
 
-  // eslint-disable-next-line class-methods-use-this
+  getWidth(metadata) {
+    const defaultWidthH = 1920;
+    const defaultWidthV = 1080;
+    if (!metadata?.width) return defaultWidthH;
+    const { width, height } = metadata;
+    const horizontal = width > height;
+    if (horizontal) {
+      return width > defaultWidthH ? defaultWidthH : width;
+    }
+
+    return width > defaultWidthV ? defaultWidthV : width;
+  }
+
   async resizeImage({ buffer, size }) {
+    const image = sharp(buffer);
+    const metadata = await image.metadata();
+    const format = metadata?.format === IMAGES_FORMAT.GIF
+      ? IMAGES_FORMAT.GIF
+      : IMAGES_FORMAT.WEBP;
+
     if (size === IMAGE_SIZE.SMALL) {
-      return sharp(buffer).rotate(0).resize(34, 34).toBuffer();
+      return sharp(buffer).rotate(0).resize(34, 34).toFormat(format)
+        .toBuffer();
     } if (size === IMAGE_SIZE.MEDIUM) {
-      return sharp(buffer).rotate(0).resize(180, 180).toBuffer();
+      return sharp(buffer).rotate(0).resize(180, 180).toFormat(format)
+        .toBuffer();
     }
     if (size === IMAGE_SIZE.CONTAIN) {
-      const image = await sharp(buffer);
-      const metadata = await image.metadata();
       const defaultScale = 512;
       const width = _.get(metadata, 'width', defaultScale);
       const height = _.get(metadata, 'height', defaultScale);
@@ -64,15 +82,14 @@ class Image {
         background: { r: 255, g: 255, b: 255 },
       }).toBuffer();
     }
-    if (buffer.byteLength > 1500000) {
-      const image = sharp(buffer);
-      const metadata = await image.metadata();
 
-      const format = _.get(metadata, 'format', 'webp');
-      return sharp(buffer).resize(1980).withMetadata().toFormat(format)
-        .toBuffer();
-    }
-    return buffer;
+    if (format === IMAGES_FORMAT.GIF) return buffer;
+
+    const width = this.getWidth(metadata);
+
+    return sharp(buffer).resize(width).withMetadata()
+      .toFormat(format)
+      .toBuffer();
   }
 }
 
