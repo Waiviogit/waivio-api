@@ -96,6 +96,7 @@ exports.userFeedSchema = Joi.object().keys({
   path: Joi.array().items(Joi.string()),
   skip: Joi.number().default(0),
   limit: Joi.number().default(5),
+  categoryLimit: Joi.number().default(3),
 }).options(options);
 
 exports.userFeedDepartmentsSchema = Joi.object().keys({
@@ -124,6 +125,7 @@ exports.wobjectFeedSchema = Joi.object().keys({
   path: Joi.array().items(Joi.string()),
   skip: Joi.number().default(0),
   limit: Joi.number().default(5),
+  categoryLimit: Joi.number().default(3),
   filter: Joi.object().keys({
     rating: Joi.number().min(0).max(10),
     tagCategory: Joi.array().items(Joi.object().keys({

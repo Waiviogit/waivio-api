@@ -17,6 +17,7 @@ const getWobjectMainFeed = async ({
   skip,
   limit,
   filter,
+  categoryLimit,
 }) => {
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
   const { wobjectFilter, error } = await shopHelper.getWobjectFilter({
@@ -47,6 +48,7 @@ const getWobjectMainFeed = async ({
     follower,
     path: [...path, d.name],
     filter,
+    limit: categoryLimit,
   })));
 
   const hasMore = objectDepartments.length > departments.length + skip;
