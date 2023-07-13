@@ -121,15 +121,14 @@ const withdrawFromHive = async ({
     { status: 'success', transactionId: transaction?.id },
   );
 
-  const paymentData = {
+  await paymentHistory.addPaymentHistory({
     userName: withdraw.account,
     type: PAYMENT_HISTORIES_TYPES.DEMO_USER_TRANSFER,
-    payable: withdraw.amount,
+    amount: withdraw.amount,
     sponsor: withdraw.receiver,
     memo: withdraw.memo,
     withdraw: withdraw._id,
-  };
-  await paymentHistory.addPaymentHistory(paymentData);
+  });
 
   return { result: exchangeId };
 };
@@ -180,7 +179,6 @@ const withdrawRange = async ({ outputCoinType }) => {
     return { error };
   }
 };
-
 
 module.exports = {
   withdrawFromHive,
