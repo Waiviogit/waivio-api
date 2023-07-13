@@ -243,6 +243,9 @@ userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWalle
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
 userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
 userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+userRoutes.route('/users/guest-wallet/hive-withdraw').post(UserController.guestWithdrawHive);
+userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(UserController.guestWithdrawHiveEstimates);
+userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(UserController.guestWithdrawHiveRange);
 // endregion
 // region Draft
 
