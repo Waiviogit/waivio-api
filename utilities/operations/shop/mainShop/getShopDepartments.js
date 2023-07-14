@@ -5,6 +5,16 @@ const {
   filterDepartments, mapDepartments, getDepartmentsOnWobject,
 } = require('utilities/operations/departments/departmentsMapper');
 const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
+const {
+  CACHE_KEY,
+  TTL_TIME,
+} = require('../../../../constants/common');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('../../../helpers/cacheHelper');
+const jsonHelper = require('../../../helpers/jsonHelper');
 
 const makeConditions = ({ name, excluded = [], path = [] }) => {
   if (name) return { name: { $nin: [name, ...excluded] }, related: { $all: [name, ...path] } };
@@ -13,6 +23,14 @@ const makeConditions = ({ name, excluded = [], path = [] }) => {
 
 // we can add host in future for sites
 module.exports = async ({ name, excluded = [], path = [] } = {}) => {
+  const key = `${CACHE_KEY.MAIN_SHOP_DEPARTMENTS}:${getCacheKey({
+    name, path, excluded,
+  })}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: [] });
+  }
+
   const { result: departments, error } = await Department.find(
     {
       filter: makeConditions({ name, excluded, path }),
@@ -48,6 +66,10 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
   }
 
   const result = await getDepartmentsOnWobject(departments);
+  const ordered = shopHelper.orderBySubdirectory(result);
+  await setCachedData({
+    key, data: { result: ordered }, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
 
-  return { result: shopHelper.orderBySubdirectory(result) };
+  return { result: ordered };
 };
