@@ -96,7 +96,8 @@ exports.CACHE_KEY = {
   CURRENT_PRICE_INFO: 'current_price_info',
   LIST_ITEMS_COUNT: 'listItemsCount',
   USER_SHOP_DEPARTMENTS: 'userShopDepartments',
-  OBJECT_SHOP_DEPARTMENTS: 'userShopDepartments',
+  OBJECT_SHOP_DEPARTMENTS: 'objectShopDepartments',
+  MAIN_SHOP_DEPARTMENTS: 'mainShopDepartments',
 };
 
 exports.TTL_TIME = {
