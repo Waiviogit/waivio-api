@@ -32,4 +32,8 @@ exports.RATE_HIVE_ENGINE = [
   SUPPORTED_CURRENCIES.USD,
 ];
 
+exports.GUEST_COINS_TO_WITHDRAW = [
+  'ltc', 'btc', 'eth',
+];
+
 exports.USD_PRECISION = 14;

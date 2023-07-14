@@ -57,6 +57,7 @@ models.CampaignPosts = require('./schemas/CampaignPostsSchema');
 models.AppAffiliate = require('./schemas/AppAffiliateSchema');
 models.SponsorsUpvote = require('./schemas/SponsorsUpvoteSchema');
 models.UserShopDeselect = require('./schemas/UserShopDeselectSchema');
+models.WithdrawFunds = require('./schemas/WithdrawFundsSchema');
 
 module.exports = {
   Mongoose: mongoose,
