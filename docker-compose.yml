@@ -6,25 +6,11 @@ services:
     build: .
     command: npm run start
     restart: always
+    network_mode: host
     logging:
       driver: 'json-file'
       options:
         max-file: '5'
         max-size: '10m'
     env_file:
-      - .env
-    network_mode: host
-
-  secondary:
-    container_name: waivio-api-secondary
-    build: .
-    command: npm run start
-    restart: always
-    logging:
-      driver: 'json-file'
-      options:
-        max-file: '5'
-        max-size: '10m'
-    env_file:
-      - .secondary.env
-    network_mode: host
+      - ./.env
