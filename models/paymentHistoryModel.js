@@ -7,5 +7,21 @@ const findByCondition = async (condition) => {
     return { error };
   }
 };
+const aggregate = async (pipeline) => {
+  try {
+    return { result: await PaymentHistory.aggregate(pipeline) };
+  } catch (error) {
+    return { error };
+  }
+};
 
-module.exports = { findByCondition };
+const addPaymentHistory = async (data) => {
+  try {
+    const payment = await PaymentHistory.create(data);
+    return { result: payment };
+  } catch (error) {
+    return { result: false, error };
+  }
+};
+
+module.exports = { findByCondition, aggregate, addPaymentHistory };
