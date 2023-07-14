@@ -52,6 +52,11 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
         subdirectory: false,
       });
     }
+    await setCachedData({
+      key,
+      data: { result: mappedDepartments },
+      ttl: TTL_TIME.THIRTY_MINUTES,
+    });
     return { result: mappedDepartments };
   }
   if (name) {
@@ -60,6 +65,12 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
       [...excluded, name],
       path,
     );
+
+    await setCachedData({
+      key,
+      data: { result: shopHelper.orderBySubdirectory(mappedDepartments) },
+      ttl: TTL_TIME.THIRTY_MINUTES,
+    });
     return {
       result: shopHelper.orderBySubdirectory(mappedDepartments),
     };
