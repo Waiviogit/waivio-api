@@ -12,6 +12,7 @@ const {
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
+const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const getWobjectDepartments = require('./getWobjectDepartments');
 
 const getObjectDepartmentCondition = async ({
@@ -86,6 +87,13 @@ const getWobjectDepartmentFeed = async ({
 
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;
+
+  const affiliateCodes = processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
+
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(result, limit),
     fields: REQUIREDFILDS_WOBJ_LIST,
@@ -93,6 +101,7 @@ const getWobjectDepartmentFeed = async ({
     app,
     locale,
     countryCode,
+    affiliateCodes,
   });
 
   await campaignsV2Helper.addNewCampaignsToObjects({

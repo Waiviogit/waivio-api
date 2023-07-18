@@ -294,3 +294,8 @@ exports.guestWithdrawHiveEstimatesSchema = Joi.object().keys({
 exports.guestWithdrawHiveRangeSchema = Joi.object().keys({
   outputCoinType: Joi.string().valid(...GUEST_COINS_TO_WITHDRAW).required(),
 });
+
+exports.getAffiliateSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string(),
+});

@@ -11,23 +11,25 @@ const wobjectHelper = require('./wObjectHelper');
 const campaignsV2Helper = require('./campaignsV2Helper');
 
 exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
-    && _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users,
+    && _.floor(campaign.budget / campaign.reward) > _.filter(
+      campaign.users,
       (user) => (user.status === 'assigned' || user.status === 'completed')
-        && user.createdAt > moment().startOf('month')).length);
+        && user.createdAt > moment().startOf('month'),
+    ).length);
 
 exports.requirementFilters = async (campaign, user) => {
   let frequency = null, notBlacklisted = true, assignedUser, daysPassed;
   if (user && user.name) {
     user.wobjects_weight = user.wobjects_weight < 0 ? 0 : user.wobjects_weight;
     notBlacklisted = !_.includes(campaign.blacklist_users, user.name);
-    ({ lastCompleted: frequency, assignedUser } = await getCompletedUsersInSameCampaigns(
-      campaign.guideName, campaign.requiredObject, user.name,
-    ));
+    ({ lastCompleted: frequency, assignedUser } = await getCompletedUsersInSameCampaigns(campaign.guideName, campaign.requiredObject, user.name));
     daysPassed = Math.trunc((new Date().valueOf() - new Date(frequency).valueOf()) / 86400000);
   }
-  const canAssignByBudget = _.floor(campaign.budget / campaign.reward) > _.filter(campaign.users,
+  const canAssignByBudget = _.floor(campaign.budget / campaign.reward) > _.filter(
+    campaign.users,
     (usr) => (usr.status === 'assigned' || usr.status === 'completed')
-      && usr.createdAt > moment().startOf('month')).length;
+      && usr.createdAt > moment().startOf('month'),
+  ).length;
 
   return {
     can_assign_by_current_day: !!campaign.reservation_timetable[moment().format('dddd').toLowerCase()],
@@ -58,8 +60,10 @@ exports.campaignFilter = async (campaigns, user, app) => {
       const { result: payments } = await paymentHistory.findByCondition(
         { sponsor: campaign.guideName, type: PAYMENT_HISTORIES_TYPES.TRANSFER },
       );
-      const transfers = _.filter(payments,
-        (payment) => payment.type === PAYMENT_HISTORIES_TYPES.TRANSFER);
+      const transfers = _.filter(
+        payments,
+        (payment) => payment.type === PAYMENT_HISTORIES_TYPES.TRANSFER,
+      );
       const totalPayedVote = _.sumBy(payments, 'details.votesAmount');
       let totalPayed = _.sumBy(transfers, 'amount');
       if (totalPayedVote) totalPayed += totalPayedVote;
@@ -74,8 +78,10 @@ exports.campaignFilter = async (campaigns, user, app) => {
         totalPayed,
       };
 
-      campaign.assigned = user ? !!_.find(campaign.users,
-        (doer) => doer.name === user.name && doer.status === RESERVATION_STATUSES.ASSIGNED) : false;
+      campaign.assigned = user ? !!_.find(
+        campaign.users,
+        (doer) => doer.name === user.name && doer.status === RESERVATION_STATUSES.ASSIGNED,
+      ) : false;
       campaign.requirement_filters = await this.requirementFilters(campaign, user);
 
       validCampaigns.push(_.omit(campaign, ['payments', 'map', 'objects']));
@@ -142,14 +148,18 @@ exports.addCampaignsToWobjects = async ({
   await Promise.all(wobjects.map(async (wobj, index) => {
     if (_.includes(REMOVE_OBJ_STATUSES, _.get(wobjects[index], 'status.title'))) return;
     if (simplified) {
-      wobj.fields = _.filter(wobj.fields,
-        (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name));
+      wobj.fields = _.filter(
+        wobj.fields,
+        (field) => _.includes(REQUIREDFIELDS_SIMPLIFIED, field.name),
+      );
       wobj = _.pick(wobj, ['fields', 'author_permlink', 'map', 'weight', 'status', 'default_name', 'parent']);
     }
     const primaryCampaigns = _.filter(campaigns, { requiredObject: wobj.author_permlink });
     if (primaryCampaigns.length) {
-      const eligibleCampaigns = _.filter(primaryCampaigns,
-        (campaign) => this.campaignValidation(campaign) === true);
+      const eligibleCampaigns = _.filter(
+        primaryCampaigns,
+        (campaign) => this.campaignValidation(campaign) === true,
+      );
       if (eligibleCampaigns.length) {
         wobj.campaigns = {
           min_reward: (_.minBy(eligibleCampaigns, 'reward')).reward,
@@ -159,8 +169,10 @@ exports.addCampaignsToWobjects = async ({
       wobjects[index] = wobj;
       return;
     }
-    const secondaryCampaigns = _.filter(campaigns,
-      (campaign) => _.includes(campaign.objects, wobj.author_permlink));
+    const secondaryCampaigns = _.filter(
+      campaigns,
+      (campaign) => _.includes(campaign.objects, wobj.author_permlink),
+    );
     if (secondaryCampaigns.length) {
       const propositions = await this.campaignFilter(secondaryCampaigns, user, app);
       wobj.propositions = [_.maxBy(propositions, 'reward')];
