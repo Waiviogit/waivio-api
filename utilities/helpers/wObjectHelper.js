@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const {
   REQUIREDFIELDS_PARENT,
   MIN_PERCENT_TO_SHOW_UPGATE,
@@ -25,6 +26,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
@@ -217,7 +219,6 @@ const arrayFieldFilter = ({
   allFields,
   filter,
   id,
-  permlink,
 }) => {
   const validFields = [];
   for (const field of idFields) {
@@ -725,6 +726,7 @@ const processWobjects = async ({
   topTagsLimit,
   countryCode,
   reqUserName,
+  affiliateCodes = [],
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -737,10 +739,7 @@ const processWobjects = async ({
   if (parentPermlinks.length) {
     ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   }
-  const affiliateCodes = await getAppAffiliateCodes({
-    app,
-    countryCode,
-  });
+  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
   /** Get waivio admins and owner */
   const waivioAdmins = await getWaivioAdminsAndOwner();
@@ -833,14 +832,20 @@ const processWobjects = async ({
       });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({
-        affiliateCodes,
-        productIds: obj.productId,
-        countryCode,
-      });
-      if (!_.isEmpty(affiliateLinks)) {
-        obj.affiliateLinks = affiliateLinks;
-        obj.website = null;
+      if (affiliateCodes.length) {
+        obj.affiliateLinks = makeAffiliateLinks({
+          affiliateCodes,
+          productIds: obj.productId,
+        });
+      }
+      if (!obj?.affiliateLinks?.length) {
+        const affiliateLinks = formAffiliateLinks({
+          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
+        });
+        if (!_.isEmpty(affiliateLinks)) {
+          obj.affiliateLinks = affiliateLinks;
+          obj.website = null;
+        }
       }
     }
     if (obj.departments && typeof obj.departments[0] === 'string') {

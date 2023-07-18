@@ -13,6 +13,7 @@ const { getUserLastActivity } = require('../utilities/operations/user/getUserLas
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 const { getPageDraft } = require('../utilities/operations/user/getPageDraft');
 const { createOrUpdateDraft } = require('../utilities/operations/user/createOrUpdatePageDraft');
+const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -575,6 +576,23 @@ const guestWithdrawHiveRange = async (req, res, next) => {
   next();
 };
 
+const getAffiliate = async (req, res, next) => {
+  const value = validators.validate({
+    userName: req.params.userName,
+    ...req.body,
+  }, validators.user.getAffiliateSchema, next);
+  if (!value) return;
+
+  const { result, error } = await getAffiliateObjects({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -615,4 +633,5 @@ module.exports = {
   guestWithdrawHive,
   guestWithdrawHiveEstimates,
   guestWithdrawHiveRange,
+  getAffiliate,
 };

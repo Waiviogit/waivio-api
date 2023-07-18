@@ -6,6 +6,7 @@ const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
 const config = require('config');
 const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
+const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -32,6 +33,11 @@ exports.moderate = async (req, res, next) => {
 
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
   const reqUserName = _.get(req, 'headers.follower');
+  const affiliateCodes = processAppAffiliate({
+    countryCode,
+    app,
+    locale: req.headers.locale,
+  });
 
   switch (currentSchema.case) {
     case 1:
@@ -44,6 +50,7 @@ exports.moderate = async (req, res, next) => {
         locale: req.headers.locale,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
       wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
       res.result.json = _.omit(wobject, ['fields']);
@@ -55,6 +62,7 @@ exports.moderate = async (req, res, next) => {
         locale: req.headers.locale,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
       break;
     case 4:
@@ -65,6 +73,7 @@ exports.moderate = async (req, res, next) => {
         path: currentSchema.wobjects_path,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
       break;
     case 6:
@@ -74,6 +83,7 @@ exports.moderate = async (req, res, next) => {
         locale: req.headers.locale,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
       break;
     case 7:
@@ -84,6 +94,7 @@ exports.moderate = async (req, res, next) => {
         path: currentSchema.wobjects_path,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
       break;
   }
@@ -105,7 +116,7 @@ const getApp = async () => {
 };
 
 const newValidationArray = async ({
-  posts, app, locale, path, countryCode, reqUserName,
+  posts, app, locale, path, countryCode, reqUserName, affiliateCodes,
 }) => {
   await Promise.all(posts.map(async (post) => {
     if (post[path]) {
@@ -118,6 +129,7 @@ const newValidationArray = async ({
         fields: REQUIREDFILDS_WOBJ_LIST,
         countryCode,
         reqUserName,
+        affiliateCodes,
       });
     }
   }));
@@ -125,7 +137,7 @@ const newValidationArray = async ({
 };
 
 const newValidation = async ({
-  wobjects, app, locale, countryCode, reqUserName,
+  wobjects, app, locale, countryCode, reqUserName, affiliateCodes,
 }) => wobjectHelper.processWobjects({
-  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode, reqUserName,
+  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode, reqUserName, affiliateCodes,
 });
