@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -528,6 +528,54 @@ const getOnePageDraft = async (req, res, next) => {
   next();
 };
 
+const guestWithdrawHive = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await guestHiveWithdraw.withdrawFromHive(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const guestWithdrawHiveEstimates = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveEstimatesSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await guestHiveWithdraw.withdrawEstimates(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
+const guestWithdrawHiveRange = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveRangeSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await guestHiveWithdraw.withdrawRange(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getAffiliate = async (req, res, next) => {
   const value = validators.validate({
     userName: req.params.userName,
@@ -582,5 +630,8 @@ module.exports = {
   blogTags,
   getWaivVote,
   checkObjectWhiteList,
+  guestWithdrawHive,
+  guestWithdrawHiveEstimates,
+  guestWithdrawHiveRange,
   getAffiliate,
 };

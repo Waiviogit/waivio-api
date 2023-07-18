@@ -22,5 +22,6 @@ moduleExports.geoData = require('./geoData');
 moduleExports.getBlog = require('./getBlog');
 moduleExports.getBlogTags = require('./getBlogTags');
 moduleExports.guestWalletOperations = require('./guestWalletOperations');
+moduleExports.guestHiveWithdraw = require('./guestHiveWithdraw');
 
 module.exports = moduleExports;
