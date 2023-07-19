@@ -257,6 +257,8 @@ const arrayFieldFilter = ({
         break;
       case FIELDS_NAMES.GROUP_ID:
       case FIELDS_NAMES.REMOVE:
+      case FIELDS_NAMES.AFFILIATE_GEO_AREA:
+      case FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES:
         if (arrayFieldPush({
           filter,
           field,
