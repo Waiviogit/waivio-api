@@ -713,10 +713,16 @@ const addOptions = async ({
 
   return groupOptions(options);
 };
-/**
- * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
- */
+const getOwnerAndAdmins = (app) => {
+  let owner = app?.owner;
+  const admins = app?.admins ?? [];
+  /** if owner add himself to admins means that he has same rights on object as admins */
+  if (admins.includes(owner)) {
+    owner = '';
+  }
 
+  return { owner, admins };
+};
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects,
@@ -745,8 +751,7 @@ const processWobjects = async ({
 
   /** Get waivio admins and owner */
   const waivioAdmins = await getWaivioAdminsAndOwner();
-  const owner = _.get(app, 'owner');
-  const admins = _.get(app, 'admins', []);
+  const { owner, admins } = getOwnerAndAdmins(app);
   const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
 
   for (let obj of wobjects) {
