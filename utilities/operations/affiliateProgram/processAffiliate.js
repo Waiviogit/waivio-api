@@ -13,8 +13,8 @@ const _ = require('lodash');
 const affiliateScheme = Joi.object().keys({
   affiliateButton: Joi.string().required(),
   affiliateProductIdTypes: Joi.string().required(),
-  affiliateGeoArea: Joi.string().required(),
-  affiliateUrlTemplate: Joi.string().required(),
+  affiliateGeoArea: Joi.array().items(Joi.string()).min(1).required(),
+  affiliateUrlTemplate: Joi.array().items(Joi.string()).min(1).required(),
   affiliateCode: Joi.string().required(),
 });
 
@@ -32,15 +32,13 @@ const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
     affiliateCode,
   } = el;
   const parsedCode = jsonHelper.parseJson(affiliateCode, null);
-  const parsedGeo = jsonHelper.parseJson(affiliateGeoArea, null);
-  const parsedTypes = jsonHelper.parseJson(affiliateProductIdTypes, null);
-  if (!parsedCode || !parsedGeo || !parsedTypes) return acc;
+  if (!parsedCode) return acc;
   acc.push({
     affiliateButton,
     affiliateUrlTemplate,
     affiliateCode: parsedCode,
-    affiliateGeoArea: parsedGeo,
-    affiliateProductIdTypes: parsedTypes,
+    affiliateGeoArea,
+    affiliateProductIdTypes,
   });
 
   return acc;
@@ -49,13 +47,11 @@ const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
 const chooseOneFromSimilar = ({ similar, countryCode }) => {
   const continent = COUNTRY_TO_CONTINENT[countryCode];
 
-  const affiliateObject = similar.find(
-    (el) => el.affiliateGeoArea.includes(countryCode)
-      || el.affiliateGeoArea.includes(continent)
-      || el.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY),
-  );
+  const country = similar.find((el) => el.affiliateGeoArea.includes(countryCode));
+  const continentObj = similar.find((el) => el.affiliateGeoArea.includes(continent));
+  const global = similar.find((el) => el.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY));
 
-  return affiliateObject;
+  return country || continentObj || global;
 };
 
 const filterByIdType = ({ objects, countryCode }) => {

@@ -20,13 +20,13 @@ const createAffiliateButton = ({ body, weight } = {}) => createField({
 
 const createAffiliateProductIdTypes = ({ body, weight } = {}) => createField({
   name: FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
-  body: body || JSON.stringify(['asin']),
+  body: body || 'asin',
   weight: weight || 1,
 });
 
 const createAffiliateGeoArea = ({ body, weight } = {}) => createField({
   name: FIELDS_NAMES.AFFILIATE_GEO_AREA,
-  body: body || JSON.stringify(['US', 'GLOBAL']),
+  body: body || 'US',
   weight: weight || 1,
 });
 
@@ -45,8 +45,9 @@ const createAffiliateCode = ({ body, weight, creator } = {}) => createField({
 
 const createFieldsForAffiliate = () => [
   createAffiliateButton(),
-  createAffiliateProductIdTypes(),
-  createAffiliateGeoArea(),
+  createAffiliateProductIdTypes({ body: 'asin' }),
+  createAffiliateGeoArea({ body: 'US' }),
+  createAffiliateGeoArea({ body: 'GLOBAL' }),
   createAffiliateUrlTemplate(),
   createAffiliateCode(),
 ];

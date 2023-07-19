@@ -38,7 +38,7 @@ describe('On affiliate program', async () => {
       await ObjectFactory.Create({
         fields: [
           ...createFieldsForAffiliate(),
-          createAffiliateGeoArea({ body: JSON.stringify(['GLOBAL', 'EUROPE', 'UA']) }),
+          createAffiliateGeoArea({ body: 'EUROPE'}),
         ],
         objectType: OBJECT_TYPES.AFFILIATE,
       });
@@ -111,7 +111,7 @@ describe('On affiliate program', async () => {
             weight: 100,
           }),
           createAffiliateProductIdTypes({
-            body: JSON.stringify([affiliateType]),
+            body: affiliateType,
             weight: 100,
           }),
         ],
