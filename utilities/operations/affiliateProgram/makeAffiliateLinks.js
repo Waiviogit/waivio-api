@@ -10,7 +10,7 @@ const makeFromExactMatched = ({
 
   const links = mappedProductIds.reduce((acc, el) => {
     const affiliate = affiliateCodes
-      .find((a) => a.affiliateUrlTemplate.includes(el.productIdType));
+      .find((a) => a.affiliateUrlTemplate.includes(el.productIdType.toLocaleLowerCase()));
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
@@ -68,7 +68,7 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
 
   const links = mappedProductIds.reduce((acc, el) => {
     const affiliate = affiliateCodes
-      .find((a) => a.affiliateProductIdTypes.includes(el.productIdType));
+      .find((a) => a.affiliateProductIdTypes.includes(el.productIdType.toLocaleLowerCase()));
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
@@ -79,7 +79,6 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
     acc.push({ link, image: affiliate.affiliateButton });
     return acc;
   }, []);
-
   return links;
 };
 
