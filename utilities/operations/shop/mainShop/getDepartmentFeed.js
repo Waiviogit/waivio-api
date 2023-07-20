@@ -46,7 +46,7 @@ module.exports = async ({
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;
 
-  const affiliateCodes = processAppAffiliate({
+  const affiliateCodes = await processAppAffiliate({
     countryCode,
     app,
     locale,
