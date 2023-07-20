@@ -33,7 +33,11 @@ const getAffiliateObjects = async ({ userName, app, host = '' }) => {
     if (el?.authority?.ownership) el.authority.ownership = [];
     el.fields = el.fields.filter((f) => {
       if (f.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
-      return f.creator === userName;
+      const hostCondition = host
+        ? f.body.includes(host)
+        : f.body.includes('PERSONAL');
+
+      return f.creator === userName && hostCondition;
     });
     el.affiliateCodeFields = el.fields.filter((f) => f.creator === userName);
   });
@@ -57,7 +61,7 @@ const getAffiliateObjects = async ({ userName, app, host = '' }) => {
   const processed = await wObjectHelper.processWobjects({
     wobjects,
     app,
-    fields: AFFILIATE_FIELDS,
+    fields: [...AFFILIATE_FIELDS, FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME],
   });
 
   return {

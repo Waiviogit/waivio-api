@@ -26,6 +26,7 @@ const makeFromExactMatched = ({
 };
 
 const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
+  const links = [];
   const usedAffiliate = [];
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
     const body = jsonHelper.parseJson(el.body, {});
@@ -48,10 +49,12 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
         .some((aff) => aff.affiliateUrlTemplate.includes(el.productIdType)
           && !AFFILIATE_NULL_TYPES.includes(el.productId)));
 
-    return makeFromExactMatched({
+    const exec = makeFromExactMatched({
       affiliateCodes: exactMatched,
       mappedProductIds: ids,
     });
+    links.push(...exec);
+    usedAffiliate.push(...exactMatched);
   }
 
   const nullAffiliate = affiliateCodes.filter(
@@ -66,7 +69,7 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
       ));
   }
 
-  const links = mappedProductIds.reduce((acc, el) => {
+  const createdLinks = mappedProductIds.reduce((acc, el) => {
     const affiliate = affiliateCodes
       .find((a) => a.affiliateProductIdTypes.includes(el.productIdType.toLocaleLowerCase()));
     if (!affiliate) return acc;
@@ -79,6 +82,8 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
     acc.push({ link, image: affiliate.affiliateButton });
     return acc;
   }, []);
+
+  links.push(...createdLinks);
   return links;
 };
 
