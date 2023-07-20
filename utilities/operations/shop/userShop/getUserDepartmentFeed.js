@@ -79,7 +79,7 @@ module.exports = async ({
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;
 
-  const affiliateCodes = processUserAffiliate({
+  const affiliateCodes = await processUserAffiliate({
     countryCode,
     app,
     locale,
