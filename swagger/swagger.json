@@ -8238,6 +8238,58 @@
         }
       }
     },
+    "/api/users/min-reject" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "description" : "min reject amount on updates",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "params",
+            "in" : "body",
+            "description" : "no params",
+            "required" : true,
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "userName" : {
+                  "type" : "string"
+                },
+                "author" : {
+                  "type" : "string"
+                },
+                "permlink" : {
+                  "type" : "string"
+                },
+                "authorPermlink" : {
+                  "type" : "string"
+                }
+              }
+            }
+          } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "object",
+              "properties": {
+                "result": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/{userName}/affiliate": {
       "post": {
         "tags": [
