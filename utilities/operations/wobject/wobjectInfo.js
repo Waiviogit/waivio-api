@@ -12,6 +12,7 @@ const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
 const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const redisSetter = require('../../redis/redisSetter');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -125,6 +126,11 @@ const getListItems = async (wobject, data, app) => {
 
   const countryCode = await getCountryCodeFromIp(data.ip);
 
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+  });
+
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
@@ -158,6 +164,7 @@ const getListItems = async (wobject, data, app) => {
       app,
       countryCode,
       reqUserName: data.user,
+      affiliateCodes,
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
