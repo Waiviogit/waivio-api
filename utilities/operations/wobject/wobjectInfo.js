@@ -56,14 +56,16 @@ const getItemsCount = async ({
 };
 
 const getAllObjectsInList = async ({
-  authorPermlink, handledItems = [], app,
+  authorPermlink, handledItems = [], app, scanEmbedded,
 }) => {
   const { result: wobject, error } = await Wobj.findOne({
     author_permlink: authorPermlink,
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
   });
   if (error || !wobject) return handledItems;
-  if (wobject.object_type === OBJECT_TYPES.PRODUCT && wobject.metaGroupId) {
+
+  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)
+    && wobject.metaGroupId) {
     const { result } = await Wobj.findObjects({
       filter: {
         author_permlink: { $ne: wobject.author_permlink },
@@ -88,19 +90,21 @@ const getAllObjectsInList = async ({
       // condition for exit from looping
       if (!handledItems.includes(item)) {
         handledItems.push(item);
-        await getAllObjectsInList({
-          authorPermlink: item, handledItems, app, recursive: true,
-        });
+        if (scanEmbedded) {
+          await getAllObjectsInList({
+            authorPermlink: item, handledItems, app, recursive: true,
+          });
+        }
       }
     }
   }
   return handledItems;
 };
 
-const getAllListPermlinks = async ({ authorPermlink, app }) => {
+const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   const handledItems = [authorPermlink];
   const result = await getAllObjectsInList({
-    authorPermlink, app, handledItems,
+    authorPermlink, app, handledItems, scanEmbedded,
   });
   return { result: _.uniq(result) };
 };
