@@ -444,6 +444,26 @@ const recountList = async (req, res, next) => {
   next();
 };
 
+const getListLinks = async (req, res, next) => {
+  //const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+//  if (!validKey) return next();
+  const value = validators.validate(
+    req.body,
+    validators.wobject.wobjectsRecountListItemsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result } = await wobjectInfo.getAllListPermlinks({
+    ...value,
+    app: req.appData,
+  });
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -470,4 +490,5 @@ module.exports = {
   getAuthorities,
   getWobjectsByGroupId,
   recountList,
+  getListLinks,
 };

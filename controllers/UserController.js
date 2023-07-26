@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -13,6 +13,7 @@ const { getUserLastActivity } = require('../utilities/operations/user/getUserLas
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 const { getPageDraft } = require('../utilities/operations/user/getPageDraft');
 const { createOrUpdateDraft } = require('../utilities/operations/user/createOrUpdatePageDraft');
+const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -527,6 +528,71 @@ const getOnePageDraft = async (req, res, next) => {
   next();
 };
 
+const guestWithdrawHive = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await guestHiveWithdraw.withdrawFromHive(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const guestWithdrawHiveEstimates = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveEstimatesSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await guestHiveWithdraw.withdrawEstimates(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
+const guestWithdrawHiveRange = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveRangeSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await guestHiveWithdraw.withdrawRange(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getAffiliate = async (req, res, next) => {
+  const value = validators.validate({
+    userName: req.params.userName,
+    ...req.body,
+  }, validators.user.getAffiliateSchema, next);
+  if (!value) return;
+
+  const { result, error } = await getAffiliateObjects({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -564,4 +630,8 @@ module.exports = {
   blogTags,
   getWaivVote,
   checkObjectWhiteList,
+  guestWithdrawHive,
+  guestWithdrawHiveEstimates,
+  guestWithdrawHiveRange,
+  getAffiliate,
 };

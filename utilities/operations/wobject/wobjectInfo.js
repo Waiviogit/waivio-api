@@ -12,6 +12,7 @@ const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
 const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const redisSetter = require('../../redis/redisSetter');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -55,6 +56,60 @@ const getItemsCount = async ({
   return count;
 };
 
+const getAllObjectsInList = async ({
+  authorPermlink, handledItems = [], app, scanEmbedded,
+}) => {
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+  if (error || !wobject) return handledItems;
+
+  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)
+    && wobject.metaGroupId) {
+    const { result } = await Wobj.findObjects({
+      filter: {
+        author_permlink: { $ne: wobject.author_permlink },
+        metaGroupId: wobject.metaGroupId,
+      },
+      projection: { author_permlink: 1 },
+    });
+    if (result.length)handledItems.push(...result.map((el) => el.author_permlink));
+  }
+  if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    if (_.isEmpty(listWobjects)) return handledItems;
+
+    for (const item of listWobjects) {
+      // condition for exit from looping
+      if (!handledItems.includes(item)) {
+        handledItems.push(item);
+        if (scanEmbedded) {
+          await getAllObjectsInList({
+            authorPermlink: item, handledItems, app, recursive: true,
+          });
+        }
+      }
+    }
+  }
+  return handledItems;
+};
+
+const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
+  const handledItems = [authorPermlink];
+  const result = await getAllObjectsInList({
+    authorPermlink, app, handledItems, scanEmbedded,
+  });
+  return { result: _.uniq(result) };
+};
+
 const getListItems = async (wobject, data, app) => {
   const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
 
@@ -70,6 +125,11 @@ const getListItems = async (wobject, data, app) => {
   newObject.fields = fieldsToProcess;
 
   const countryCode = await getCountryCodeFromIp(data.ip);
+
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+  });
 
   const fields = (await wObjectHelper.processWobjects({
     locale: data.locale,
@@ -104,6 +164,7 @@ const getListItems = async (wobject, data, app) => {
       app,
       countryCode,
       reqUserName: data.user,
+      affiliateCodes,
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
@@ -163,4 +224,5 @@ const getOne = async (data) => { // get one wobject by author_permlink
 module.exports = {
   getOne,
   getItemsCount,
+  getAllListPermlinks,
 };

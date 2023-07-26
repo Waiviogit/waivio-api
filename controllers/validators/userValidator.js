@@ -3,7 +3,7 @@ const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
 const { customValidationHelper } = require('utilities/helpers');
 const Joi = require('joi');
 const moment = require('moment');
-const { SUPPORTED_CRYPTO_CURRENCIES } = require('../../constants/currencyData');
+const { SUPPORTED_CRYPTO_CURRENCIES, GUEST_COINS_TO_WITHDRAW } = require('../../constants/currencyData');
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
@@ -276,4 +276,26 @@ exports.createOrUpdatePageDraftSchema = Joi.object().keys({
 exports.getOnePageDraftSchema = Joi.object().keys({
   user: Joi.string().required(),
   authorPermlink: Joi.string().required(),
+});
+
+exports.guestWithdrawHiveSchema = Joi.object().keys({
+  amount: Joi.number().greater(0).required(),
+  address: Joi.string().required(),
+  userName: Joi.string().required(),
+  outputCoinType: Joi.string().valid(...GUEST_COINS_TO_WITHDRAW).required(),
+});
+
+exports.guestWithdrawHiveEstimatesSchema = Joi.object().keys({
+  amount: Joi.number().greater(0).required(),
+  outputCoinType: Joi.string().valid(...GUEST_COINS_TO_WITHDRAW).required(),
+
+});
+
+exports.guestWithdrawHiveRangeSchema = Joi.object().keys({
+  outputCoinType: Joi.string().valid(...GUEST_COINS_TO_WITHDRAW).required(),
+});
+
+exports.getAffiliateSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string(),
 });

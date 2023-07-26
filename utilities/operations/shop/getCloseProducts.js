@@ -8,6 +8,7 @@ const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
 const getDepartments = async ({ authorPermlink, app, locale }) => {
   const emptyDepartments = {
@@ -112,6 +113,12 @@ const getRelated = async ({
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: response });
 
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
+
   const processed = await wObjectHelper.processWobjects({
     wobjects: response,
     fields: REQUIREDFILDS_WOBJ_LIST,
@@ -120,6 +127,7 @@ const getRelated = async ({
     locale,
     countryCode,
     reqUserName: userName,
+    affiliateCodes,
   });
 
   return {
@@ -200,6 +208,12 @@ const getSimilar = async ({
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: objectsForResponse });
 
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
+
   const processed = await wObjectHelper.processWobjects({
     wobjects: objectsForResponse,
     fields: REQUIREDFILDS_WOBJ_LIST,
@@ -208,6 +222,7 @@ const getSimilar = async ({
     locale,
     countryCode,
     reqUserName: userName,
+    affiliateCodes,
   });
 
   return {

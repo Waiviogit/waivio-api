@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const {
   REQUIREDFIELDS_PARENT,
   MIN_PERCENT_TO_SHOW_UPGATE,
@@ -25,6 +26,7 @@ const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
+const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
@@ -217,7 +219,6 @@ const arrayFieldFilter = ({
   allFields,
   filter,
   id,
-  permlink,
 }) => {
   const validFields = [];
   for (const field of idFields) {
@@ -256,6 +257,8 @@ const arrayFieldFilter = ({
         break;
       case FIELDS_NAMES.GROUP_ID:
       case FIELDS_NAMES.REMOVE:
+      case FIELDS_NAMES.AFFILIATE_GEO_AREA:
+      case FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES:
         if (arrayFieldPush({
           filter,
           field,
@@ -710,10 +713,16 @@ const addOptions = async ({
 
   return groupOptions(options);
 };
-/**
- * @returns {Promise<[{countryCode: string, type: string, host: string, affiliateCode: string }]>}
- */
+const getOwnerAndAdmins = (app) => {
+  let owner = app?.owner;
+  const admins = app?.admins ?? [];
+  /** if owner add himself to admins means that he has same rights on object as admins */
+  if (admins.includes(owner)) {
+    owner = '';
+  }
 
+  return { owner, admins };
+};
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects,
@@ -725,6 +734,7 @@ const processWobjects = async ({
   topTagsLimit,
   countryCode,
   reqUserName,
+  affiliateCodes = [],
 }) => {
   const filteredWobj = [];
   if (!_.isArray(wobjects)) return filteredWobj;
@@ -737,15 +747,11 @@ const processWobjects = async ({
   if (parentPermlinks.length) {
     ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
   }
-  const affiliateCodes = await getAppAffiliateCodes({
-    app,
-    countryCode,
-  });
+  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
   /** Get waivio admins and owner */
   const waivioAdmins = await getWaivioAdminsAndOwner();
-  const owner = _.get(app, 'owner');
-  const admins = _.get(app, 'admins', []);
+  const { owner, admins } = getOwnerAndAdmins(app);
   const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
 
   for (let obj of wobjects) {
@@ -833,14 +839,20 @@ const processWobjects = async ({
       });
     }
     if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      const affiliateLinks = formAffiliateLinks({
-        affiliateCodes,
-        productIds: obj.productId,
-        countryCode,
-      });
-      if (!_.isEmpty(affiliateLinks)) {
-        obj.affiliateLinks = affiliateLinks;
-        obj.website = null;
+      if (affiliateCodes.length) {
+        obj.affiliateLinks = makeAffiliateLinks({
+          affiliateCodes,
+          productIds: obj.productId,
+        });
+      }
+      if (!obj?.affiliateLinks?.length) {
+        const affiliateLinks = formAffiliateLinks({
+          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
+        });
+        if (!_.isEmpty(affiliateLinks)) {
+          obj.affiliateLinks = affiliateLinks;
+          obj.website = null;
+        }
       }
     }
     if (obj.departments && typeof obj.departments[0] === 'string') {
