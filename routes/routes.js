@@ -263,6 +263,9 @@ postRoutes.route('/post/like-post')
   .post(PostController.likePost);
 postRoutes.route('/posts/getMany')
   .post(PostController.getManyPosts);
+postRoutes.route('/posts/preview-cache')
+  .post(PostController.getPreviewLinks)
+  .put(PostController.putPreviewUrl);
 postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')
