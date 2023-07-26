@@ -74,7 +74,7 @@ const getAllObjectsInList = async ({
       },
       projection: { author_permlink: 1 },
     });
-    if (result.length)handledItems.push(result.map((el) => el.author_permlink));
+    if (result.length)handledItems.push(...result.map((el) => el.author_permlink));
   }
   if (wobject.object_type === OBJECT_TYPES.LIST) {
     const wobj = await wObjectHelper.processWobjects({
