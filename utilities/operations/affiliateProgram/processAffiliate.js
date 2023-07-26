@@ -153,6 +153,17 @@ const processUserAffiliate = async ({
         return el.creator === creator && el.body.includes('PERSONAL');
       });
     }
+  } else {
+    for (const resultElement of result) {
+      if (resultElement?.authority?.ownership) {
+        resultElement.authority.ownership = [];
+      }
+
+      resultElement.fields = resultElement.fields.filter((el) => {
+        if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
+        return el.creator === creator && el.body.includes(app.host);
+      });
+    }
   }
 
   return processObjectsToAffiliateArray({
