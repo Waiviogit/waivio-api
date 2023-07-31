@@ -235,9 +235,10 @@ const getAllReferences = async (req, res, next) => {
     next,
   );
   if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
   const { result, error } = await shop.getReference.getAll({
-    ...value, app: req.appData, locale: req.headers.locale,
+    ...value, app: req.appData, locale: req.headers.locale, countryCode
   });
   if (error) return next(error);
 

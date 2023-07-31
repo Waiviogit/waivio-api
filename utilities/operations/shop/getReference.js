@@ -8,6 +8,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const _ = require('lodash');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
 const BUSINESS_FIELDS = [
   FIELDS_NAMES.MERCHANT, FIELDS_NAMES.MANUFACTURER, FIELDS_NAMES.BRAND, FIELDS_NAMES.PUBLISHER,
@@ -60,7 +61,9 @@ const makeFilterByType = ({ authorPermlink, objectType, referenceObjectType }) =
   return types[objectType];
 };
 
-const getAll = async ({ authorPermlink, app, locale }) => {
+const getAll = async ({
+  authorPermlink, app, locale, countryCode,
+}) => {
   const { result, error } = await Wobj
     .findOne({ author_permlink: authorPermlink }, { object_type: 1 });
 
@@ -87,13 +90,25 @@ const getAll = async ({ authorPermlink, app, locale }) => {
       { $limit: 5 },
     ]);
     if (!wobjects?.length) continue;
+    const affiliateCodes = await processAppAffiliate({
+      countryCode,
+      app,
+      locale,
+    });
 
     referenceObject[referenceObjectType] = await wObjectHelper.processWobjects({
       wobjects,
-      fields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR, ...DEFAULT_LINK_FIELDS],
+      fields: [
+        FIELDS_NAMES.NAME,
+        FIELDS_NAMES.AVATAR,
+        ...DEFAULT_LINK_FIELDS,
+        FIELDS_NAMES.RATING,
+        FIELDS_NAMES.PRICE,
+      ],
       app,
       returnArray: true,
       locale,
+      affiliateCodes,
     });
   }
 
