@@ -74,6 +74,11 @@ const getAll = async ({
   const referenceTypes = REFERENCE_TYPES[result.object_type] ?? [];
 
   const referenceObject = {};
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
 
   for (const referenceObjectType of referenceTypes) {
     const { wobjects } = await Wobj.fromAggregation([
@@ -90,11 +95,6 @@ const getAll = async ({
       { $limit: 5 },
     ]);
     if (!wobjects?.length) continue;
-    const affiliateCodes = await processAppAffiliate({
-      countryCode,
-      app,
-      locale,
-    });
 
     referenceObject[referenceObjectType] = await wObjectHelper.processWobjects({
       wobjects,
@@ -104,6 +104,8 @@ const getAll = async ({
         ...DEFAULT_LINK_FIELDS,
         FIELDS_NAMES.RATING,
         FIELDS_NAMES.PRICE,
+        FIELDS_NAMES.PRODUCT_ID,
+        FIELDS_NAMES.GROUP_ID,
       ],
       app,
       returnArray: true,
@@ -124,6 +126,12 @@ const getByType = async ({
   if (error) return { error };
   if (!result) return { error: ERROR_OBJ.NOT_FOUND };
   if (!validateTypeToReference(result?.object_type)) return { error: ERROR_OBJ.UNPROCESSABLE };
+
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
 
   const { wobjects } = await Wobj.fromAggregation([
     {
@@ -151,6 +159,7 @@ const getByType = async ({
     locale,
     countryCode,
     reqUserName: userName,
+    affiliateCodes,
   });
 
   return {
