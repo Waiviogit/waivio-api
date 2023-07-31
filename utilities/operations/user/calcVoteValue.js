@@ -11,6 +11,10 @@ const { redisGetter } = require('utilities/redis');
 const { WHITE_LIST_KEY, VOTE_COST } = require('constants/wobjectsData');
 const { roundToEven } = require('utilities/helpers/calcHelper');
 const userUtil = require('../../hiveApi/userUtil');
+const commentContract = require('../../hiveEngine/commentContract');
+const marketPools = require('../../hiveEngine/marketPools');
+const tokensContract = require('../../hiveEngine/tokensContract');
+const { CACHE_KEY } = require('../../../constants/common');
 
 const MAX_REJECT_WEIGHT = 9999;
 
@@ -151,15 +155,18 @@ const checkEvenAndAddOne = (num) => {
 const findWeightToReject = async ({
   userName, fieldWeight, authorPermlink,
 }) => {
-  const { userData: account } = await userUtil.getAccount(userName);
-  const userWobjectWeight = await getWeightFromObjectExpertise({
-    userName, authorPermlink,
-  });
-  if (!account) return MAX_REJECT_WEIGHT;
   const epsilon = 0.01; // Convergence tolerance
   let low = 1; // lower bound for weight
   let high = MAX_REJECT_WEIGHT; // upper bound for weight
   let mid;
+
+  /// hive data
+  const { userData: account } = await userUtil.getAccount(userName);
+  const userWobjectWeight = await getWeightFromObjectExpertise({
+    userName, authorPermlink,
+  });
+
+  if (!account) return MAX_REJECT_WEIGHT;
 
   const vests = parseFloat(account.vesting_shares)
     + parseFloat(account.received_vesting_shares)
@@ -171,16 +178,40 @@ const findWeightToReject = async ({
     account.voting_power + (10000 * previousVoteTime) / 432000,
   );
 
+  /// engine data
+
+  const requests = await Promise.all([
+    commentContract.getVotingPower(
+      { query: { rewardPoolId: TOKEN_WAIV.POOL_ID, account: userName } },
+    ),
+    tokensContract.getTokenBalances(
+      { query: { symbol: TOKEN_WAIV.SYMBOL, account: userName } },
+    ),
+  ]);
+
+  const [votingPowers, balances] = requests;
+
+  const stake = balances[0]?.stake ?? '0';
+  const delegationsIn = balances[0]?.delegationsIn ?? '0';
+  const { votingPower } = engineOperations.calculateMana(votingPowers[0]);
+
+  const finalRshares = parseFloat(stake) + parseFloat(delegationsIn);
+
   while (high - low > epsilon) {
     mid = (low + high) / 2;
 
     const power = ((accountVotingPower / 100) * mid) / 5000;
     const rShares = vests * power * 100 - 50000000;
+    const rSharesWeight = Math.round(Number(rShares) * 1e-6);
+    const fieldWeightHive = (userWobjectWeight + rSharesWeight * 0.25) * (mid / 10000);
 
-    const rSharesWeight2 = Math.round(Number(rShares) * 1e-6);
-    const currentMaxWeight2 = (userWobjectWeight + rSharesWeight2 * 0.25) * (mid / 10000);
+    const powerEngine = (votingPower * mid) / 10000;
+    const rsharesEngine = (powerEngine * finalRshares) / 10000;
+    const fieldWeightWaiv = (userWobjectWeight + rsharesEngine * 0.75) * (mid / 10000);
 
-    if (currentMaxWeight2 > fieldWeight) {
+    const totalWeight = fieldWeightHive + fieldWeightWaiv;
+
+    if (totalWeight > fieldWeight) {
       high = mid;
     } else {
       low = mid;
