@@ -179,6 +179,8 @@ wobjRoutes.route('/wobjects/group-id')
   .post(WobjController.getWobjectsByGroupId);
 wobjRoutes.route('/wobjects/list-item-process')
   .post(WobjController.recountList);
+wobjRoutes.route('/wobjects/list-item-links')
+  .post(WobjController.getListLinks);
 // endregion
 // region User
 userRoutes.route('/users')
@@ -262,6 +264,9 @@ postRoutes.route('/post/like-post')
   .post(PostController.likePost);
 postRoutes.route('/posts/getMany')
   .post(PostController.getManyPosts);
+postRoutes.route('/posts/preview-cache')
+  .post(PostController.getPreviewLinks)
+  .put(PostController.putPreviewUrl);
 postRoutes.route('/posts')
   .post(PostController.getByCategory);
 postRoutes.route('/post_comments')

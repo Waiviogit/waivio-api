@@ -12,15 +12,15 @@ const _ = require('lodash');
 
 const affiliateScheme = Joi.object().keys({
   affiliateButton: Joi.string().required(),
-  affiliateProductIdTypes: Joi.string().required(),
+  affiliateProductIdTypes: Joi.array().items(Joi.string()).min(1).required(),
   affiliateGeoArea: Joi.array().items(Joi.string()).min(1).required(),
-  affiliateUrlTemplate: Joi.array().items(Joi.string()).min(1).required(),
+  affiliateUrlTemplate: Joi.string().required(),
   affiliateCode: Joi.string().required(),
-});
+}).options({ allowUnknown: true });
 
 const filterAffiliateObjects = (objects) => objects.filter((el) => {
   const { error } = affiliateScheme.validate(el);
-  return !!error;
+  return !error;
 });
 
 const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
@@ -147,9 +147,21 @@ const processUserAffiliate = async ({
       if (resultElement?.authority?.ownership) {
         resultElement.authority.ownership = [];
       }
+
       resultElement.fields = resultElement.fields.filter((el) => {
         if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
-        return el.creator === creator;
+        return el.creator === creator && el.body.includes('PERSONAL');
+      });
+    }
+  } else {
+    for (const resultElement of result) {
+      if (resultElement?.authority?.ownership) {
+        resultElement.authority.ownership = [];
+      }
+
+      resultElement.fields = resultElement.fields.filter((el) => {
+        if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
+        return el.creator === creator && el.body.includes(app.host);
       });
     }
   }
@@ -163,6 +175,19 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
   const { result, error } = await Wobj.findObjects({
     filter: makeFilterAppCondition(app),
   });
+
+  if (!WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
+    for (const resultElement of result) {
+      if (resultElement?.authority?.ownership) {
+        resultElement.authority.ownership = [];
+      }
+
+      resultElement.fields = resultElement.fields.filter((el) => {
+        if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
+        return el.creator === app.owner && el.body.includes(app.host);
+      });
+    }
+  }
 
   if (error) return [];
 

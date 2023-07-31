@@ -1,5 +1,7 @@
 const {
-  getPostsByCategory, getSinglePost, getPostComments, getManyPosts, getPostSocialInfo, likePost,
+  getPostsByCategory, getSinglePost, getPostComments,
+  getManyPosts, getPostSocialInfo, likePost,
+  cachePreview,
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
@@ -98,5 +100,27 @@ exports.getSocialInfo = async (req, res, next) => {
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
+  next();
+};
+
+exports.getPreviewLinks = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.post.previewScema, next);
+
+  if (!value) return;
+
+  const json = await cachePreview.getLinks(value);
+
+  res.result = { status: 200, json };
+  next();
+};
+
+exports.putPreviewUrl = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.post.previewPutScema, next);
+
+  if (!value) return;
+
+  const json = await cachePreview.putLinks(value);
+
+  res.result = { status: 200, json };
   next();
 };

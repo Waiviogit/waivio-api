@@ -64,6 +64,15 @@ const getAffiliateObjects = async ({ userName, app, host = '' }) => {
     fields: [...AFFILIATE_FIELDS, FIELDS_NAMES.AVATAR, FIELDS_NAMES.NAME],
   });
 
+  for (const processedElement of processed) {
+    const { affiliateCode } = processedElement;
+
+    const field = processedElement?.affiliateCodeFields?.find((el) => el.body === affiliateCode);
+
+    processedElement.sortRange = new Date(field?._id?.getTimestamp() ?? 1).valueOf();
+  }
+  processed.sort((a, b) => a.sortRange - b.sortRange);
+
   return {
     result: processed,
   };

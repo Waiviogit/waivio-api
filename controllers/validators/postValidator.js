@@ -43,3 +43,12 @@ exports.likePost = Joi.object().keys({
     .max(10000)
     .required(),
 });
+
+exports.previewScema = Joi.object().keys({
+  urls: Joi.array().items(Joi.string()).min(1).required(),
+});
+
+exports.previewPutScema = Joi.object().keys({
+  url: Joi.string().required(),
+  urlPreview: Joi.string().required(),
+});

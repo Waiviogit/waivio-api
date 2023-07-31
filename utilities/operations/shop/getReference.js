@@ -8,6 +8,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const _ = require('lodash');
 const shopHelper = require('utilities/helpers/shopHelper');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
 const BUSINESS_FIELDS = [
   FIELDS_NAMES.MERCHANT, FIELDS_NAMES.MANUFACTURER, FIELDS_NAMES.BRAND, FIELDS_NAMES.PUBLISHER,
@@ -60,7 +61,9 @@ const makeFilterByType = ({ authorPermlink, objectType, referenceObjectType }) =
   return types[objectType];
 };
 
-const getAll = async ({ authorPermlink, app, locale }) => {
+const getAll = async ({
+  authorPermlink, app, locale, countryCode,
+}) => {
   const { result, error } = await Wobj
     .findOne({ author_permlink: authorPermlink }, { object_type: 1 });
 
@@ -71,6 +74,11 @@ const getAll = async ({ authorPermlink, app, locale }) => {
   const referenceTypes = REFERENCE_TYPES[result.object_type] ?? [];
 
   const referenceObject = {};
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
 
   for (const referenceObjectType of referenceTypes) {
     const { wobjects } = await Wobj.fromAggregation([
@@ -90,10 +98,19 @@ const getAll = async ({ authorPermlink, app, locale }) => {
 
     referenceObject[referenceObjectType] = await wObjectHelper.processWobjects({
       wobjects,
-      fields: [FIELDS_NAMES.NAME, FIELDS_NAMES.AVATAR, ...DEFAULT_LINK_FIELDS],
+      fields: [
+        FIELDS_NAMES.NAME,
+        FIELDS_NAMES.AVATAR,
+        ...DEFAULT_LINK_FIELDS,
+        FIELDS_NAMES.RATING,
+        FIELDS_NAMES.PRICE,
+        FIELDS_NAMES.PRODUCT_ID,
+        FIELDS_NAMES.GROUP_ID,
+      ],
       app,
       returnArray: true,
       locale,
+      affiliateCodes,
     });
   }
 
@@ -109,6 +126,12 @@ const getByType = async ({
   if (error) return { error };
   if (!result) return { error: ERROR_OBJ.NOT_FOUND };
   if (!validateTypeToReference(result?.object_type)) return { error: ERROR_OBJ.UNPROCESSABLE };
+
+  const affiliateCodes = await processAppAffiliate({
+    countryCode,
+    app,
+    locale,
+  });
 
   const { wobjects } = await Wobj.fromAggregation([
     {
@@ -136,6 +159,7 @@ const getByType = async ({
     locale,
     countryCode,
     reqUserName: userName,
+    affiliateCodes,
   });
 
   return {
