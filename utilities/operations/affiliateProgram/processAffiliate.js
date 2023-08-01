@@ -205,6 +205,7 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
   const { wobjects: result, error } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
   );
+  if (error) return [];
 
   if (!WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
     for (const resultElement of result) {
@@ -218,8 +219,6 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
       });
     }
   }
-
-  if (error) return [];
 
   return processObjectsToAffiliateArray({
     wobjects: result, app, locale, countryCode,
