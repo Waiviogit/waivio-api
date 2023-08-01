@@ -9,6 +9,7 @@ const {
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const config = require('config');
 
 const affiliateScheme = Joi.object().keys({
   affiliateButton: Joi.string().required(),
@@ -74,7 +75,10 @@ const filterByIdType = ({ objects, countryCode }) => {
 };
 
 const makeFilterAppCondition = (app) => {
-  const regex = `\\["${app.host.replace(/\./g, '\\.')}`;
+  const regex = app
+    ? `\\["${app.host.replace(/\./g, '\\.')}`
+    : `\\["${config.appHost.replace(/\./g, '\\.')}`;
+
   const match = {
     object_type: OBJECT_TYPES.AFFILIATE,
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
@@ -84,7 +88,7 @@ const makeFilterAppCondition = (app) => {
         body: { $regex: regex },
       },
     },
-    ...(WAIVIO_AFFILIATE_HOSTS.includes(app.host) && { 'authority.ownership': { $in: app.authority } }),
+    ...(WAIVIO_AFFILIATE_HOSTS.includes(app?.host) && { 'authority.ownership': { $in: app?.authority } }),
   };
 
   return [
@@ -202,7 +206,7 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
     makeFilterAppCondition(app),
   );
 
-  if (!WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
+  if (!WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
     for (const resultElement of result) {
       if (resultElement?.authority?.ownership) {
         resultElement.authority.ownership = [];
@@ -210,7 +214,7 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
 
       resultElement.fields = resultElement.fields.filter((el) => {
         if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
-        return el.creator === app.owner && el.body.includes(app.host);
+        return el.creator === app?.owner && el.body.includes(app?.host);
       });
     }
   }
