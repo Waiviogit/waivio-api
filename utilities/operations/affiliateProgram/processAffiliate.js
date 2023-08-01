@@ -75,8 +75,7 @@ const filterByIdType = ({ objects, countryCode }) => {
 
 const makeFilterAppCondition = (app) => {
   const regex = `\\["${app.host.replace(/\./g, '\\.')}`;
-
-  return {
+  const match = {
     object_type: OBJECT_TYPES.AFFILIATE,
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
     fields: {
@@ -87,6 +86,33 @@ const makeFilterAppCondition = (app) => {
     },
     ...(WAIVIO_AFFILIATE_HOSTS.includes(app.host) && { 'authority.ownership': { $in: app.authority } }),
   };
+
+  return [
+    { $match: match },
+    {
+      $addFields: {
+        fields: {
+          $let: {
+            vars: {
+              filteredFields: {
+                $filter: {
+                  input: '$fields',
+                  as: 'field',
+                  cond: {
+                    $or: [
+                      { $ne: ['$$field.name', 'affiliateCode'] },
+                      { $regexMatch: { input: '$$field.body', regex } },
+                    ],
+                  },
+                },
+              },
+            },
+            in: '$$filteredFields',
+          },
+        },
+      },
+    },
+  ];
 };
 
 const makeFilterUserCondition = ({ app, creator }) => {
@@ -172,9 +198,9 @@ const processUserAffiliate = async ({
 };
 
 const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }) => {
-  const { result, error } = await Wobj.findObjects({
-    filter: makeFilterAppCondition(app),
-  });
+  const { wobjects: result, error } = await Wobj.fromAggregation(
+    makeFilterAppCondition(app),
+  );
 
   if (!WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
     for (const resultElement of result) {
