@@ -89,7 +89,6 @@ const getWobjectDepartmentFeed = async ({
   if (_.isEmpty(result)) return emptyResp;
 
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale,
   });

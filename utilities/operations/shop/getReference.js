@@ -75,7 +75,6 @@ const getAll = async ({
 
   const referenceObject = {};
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale,
   });
@@ -111,6 +110,7 @@ const getAll = async ({
       returnArray: true,
       locale,
       affiliateCodes,
+      countryCode,
     });
   }
 
@@ -128,7 +128,6 @@ const getByType = async ({
   if (!validateTypeToReference(result?.object_type)) return { error: ERROR_OBJ.UNPROCESSABLE };
 
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale,
   });

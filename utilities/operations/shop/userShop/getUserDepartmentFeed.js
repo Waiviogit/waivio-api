@@ -80,7 +80,6 @@ module.exports = async ({
   if (_.isEmpty(result)) return emptyResp;
 
   const affiliateCodes = await processUserAffiliate({
-    countryCode,
     app,
     locale,
     creator: userName,

@@ -114,7 +114,6 @@ const getRelated = async ({
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: response });
 
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale,
   });
@@ -209,7 +208,6 @@ const getSimilar = async ({
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: objectsForResponse });
 
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale,
   });
