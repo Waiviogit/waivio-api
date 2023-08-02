@@ -95,7 +95,7 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [], countryCode 
       .some((p) => el.affiliateUrlTemplate.includes(p.productIdType)
         && AFFILIATE_NULL_TYPES.includes(p.productId)),
   );
-  if (nullAffiliate) {
+  if (nullAffiliate.length) {
     affiliateCodes = affiliateCodes
       .filter((aff) => !nullAffiliate.some(
         (nullAff) => _.isEqual(nullAff, aff),

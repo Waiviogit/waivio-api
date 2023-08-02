@@ -846,6 +846,7 @@ const processWobjects = async ({
         obj.affiliateLinks = makeAffiliateLinks({
           affiliateCodes,
           productIds: obj.productId,
+          countryCode,
         });
       }
       if (!obj?.affiliateLinks?.length) {
