@@ -1,6 +1,10 @@
 const _ = require('lodash');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const { AFFILIATE_NULL_TYPES } = require('../../../constants/wobjectsData');
+const {
+  COUNTRY_TO_CONTINENT,
+  GLOBAL_GEOGRAPHY,
+} = require('../../../constants/affiliateData');
 
 const makeFromExactMatched = ({
   affiliateCodes,
@@ -25,7 +29,36 @@ const makeFromExactMatched = ({
   return links;
 };
 
-const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
+const chooseOneFromSimilar = ({ similar, countryCode }) => {
+  const continent = COUNTRY_TO_CONTINENT[countryCode];
+
+  const country = similar.find((el) => el.affiliateGeoArea.includes(countryCode));
+  const continentObj = similar.find((el) => el.affiliateGeoArea.includes(continent));
+  const global = similar.find((el) => el.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY));
+
+  return country || continentObj || global;
+};
+
+const filterByIdType = ({ affiliateCodes, countryCode }) => {
+  const filtered = [];
+  const alreadyUsed = [];
+
+  for (const object of affiliateCodes) {
+    if (alreadyUsed.some((el) => _.isEqual(el, object))) continue;
+    const similar = affiliateCodes.filter(
+      (el) => el.affiliateProductIdTypes.some((t) => object.affiliateProductIdTypes.includes(t)),
+    );
+    const filteredEl = chooseOneFromSimilar({ similar, countryCode });
+
+    if (!filteredEl) continue;
+    filtered.push(filteredEl);
+    alreadyUsed.push(...similar);
+  }
+
+  return filtered;
+};
+
+const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [], countryCode }) => {
   const links = [];
   const usedAffiliate = [];
   const mappedProductIds = _.compact(_.map(productIds, (el) => {
@@ -68,6 +101,8 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [] }) => {
         (nullAff) => _.isEqual(nullAff, aff),
       ));
   }
+
+  affiliateCodes = filterByIdType({ affiliateCodes, countryCode });
 
   const createdLinks = mappedProductIds.reduce((acc, el) => {
     const affiliate = affiliateCodes

@@ -4,7 +4,7 @@ const {
   OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS, REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const {
-  COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY, WAIVIO_AFFILIATE_HOSTS,
+  WAIVIO_AFFILIATE_HOSTS,
 } = require('constants/affiliateData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
@@ -44,35 +44,6 @@ const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
 
   return acc;
 }, []);
-
-const chooseOneFromSimilar = ({ similar, countryCode }) => {
-  const continent = COUNTRY_TO_CONTINENT[countryCode];
-
-  const country = similar.find((el) => el.affiliateGeoArea.includes(countryCode));
-  const continentObj = similar.find((el) => el.affiliateGeoArea.includes(continent));
-  const global = similar.find((el) => el.affiliateGeoArea.includes(GLOBAL_GEOGRAPHY));
-
-  return country || continentObj || global;
-};
-
-const filterByIdType = ({ objects, countryCode }) => {
-  const filtered = [];
-  const alreadyUsed = [];
-
-  for (const object of objects) {
-    if (alreadyUsed.some((el) => _.isEqual(el, object))) continue;
-    const similar = objects.filter(
-      (el) => el.affiliateProductIdTypes.some((t) => object.affiliateProductIdTypes.includes(t)),
-    );
-    const filteredEl = chooseOneFromSimilar({ similar, countryCode });
-
-    if (!filteredEl) continue;
-    filtered.push(filteredEl);
-    alreadyUsed.push(...similar);
-  }
-
-  return filtered;
-};
 
 const makeFilterAppCondition = (app) => {
   const regex = app
@@ -148,7 +119,7 @@ const makeFilterUserCondition = ({ app, creator }) => {
 };
 
 const processObjectsToAffiliateArray = async ({
-  wobjects, app, locale, countryCode,
+  wobjects, app, locale,
 }) => {
   const processed = await wObjectHelper.processWobjects({
     wobjects,
@@ -159,13 +130,11 @@ const processObjectsToAffiliateArray = async ({
 
   const validObjects = filterAffiliateObjects(processed);
 
-  const parsedValidAffiliates = parseAffiliateFields(validObjects);
-
-  return filterByIdType({ objects: parsedValidAffiliates, countryCode });
+  return parseAffiliateFields(validObjects);
 };
 
 const processUserAffiliate = async ({
-  countryCode = 'US', app, locale = 'en-US', creator,
+  app, locale = 'en-US', creator,
 }) => {
   const { result, error } = await Wobj.findObjects({
     filter: makeFilterUserCondition({ app, creator }),
@@ -197,11 +166,11 @@ const processUserAffiliate = async ({
   }
 
   return processObjectsToAffiliateArray({
-    wobjects: result, app, locale, countryCode,
+    wobjects: result, app, locale,
   });
 };
 
-const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }) => {
+const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
   const { wobjects: result, error } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
   );
@@ -221,7 +190,7 @@ const processAppAffiliate = async ({ countryCode = 'US', app, locale = 'en-US' }
   }
 
   return processObjectsToAffiliateArray({
-    wobjects: result, app, locale, countryCode,
+    wobjects: result, app, locale,
   });
 };
 

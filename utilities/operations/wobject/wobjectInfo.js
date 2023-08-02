@@ -127,8 +127,8 @@ const getListItems = async (wobject, data, app) => {
   const countryCode = await getCountryCodeFromIp(data.ip);
 
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
+    locale: data.locale,
   });
 
   const fields = (await wObjectHelper.processWobjects({
