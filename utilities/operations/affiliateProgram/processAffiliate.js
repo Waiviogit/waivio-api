@@ -135,11 +135,19 @@ const processObjectsToAffiliateArray = async ({
 };
 
 const processUserAffiliate = async ({
-  app, locale = 'en-US', creator, usePersonal,
+  app, locale = 'en-US', creator,
 }) => {
-  const { result, error } = await Wobj.findObjects({
+  let usePersonal = false;
+
+  let { result, error } = await Wobj.findObjects({
     filter: makeFilterUserCondition({ app, creator, usePersonal }),
   });
+  if (!result?.length) {
+    usePersonal = true;
+    ({ result, error } = await Wobj.findObjects({
+      filter: makeFilterUserCondition({ app, creator, usePersonal }),
+    }));
+  }
   if (error) return [];
 
   if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
@@ -182,7 +190,6 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
       app,
       locale,
       creator: app?.owner,
-      usePersonal: true,
     });
   }
 
