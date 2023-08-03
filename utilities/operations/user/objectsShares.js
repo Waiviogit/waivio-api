@@ -16,9 +16,9 @@ const makePipeline = ({
         as: 'wobject',
       },
     },
+    { $unwind: '$wobject' },
     { $skip: skip },
     { $limit: limit + 1 },
-    { $unwind: '$wobject' },
     {
       $addFields: {
         'wobject.user_weight': '$weight',
@@ -38,7 +38,7 @@ const makePipeline = ({
 
   // eslint-disable-next-line camelcase
   if (object_types || exclude_object_types) {
-    pipeline.splice(3, 0, {
+    pipeline.splice(4, 0, {
       // eslint-disable-next-line camelcase
       $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } },
     });
@@ -90,7 +90,7 @@ const getUserObjectsShares = async (data) => {
   return {
     objects_shares:
       {
-        wobjects: wobjects.slice(0, data.limit),
+        wobjects: _.take(wobjects, data.limit),
         hasMore: wobjects.length > data.limit,
       },
   };
