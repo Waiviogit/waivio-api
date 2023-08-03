@@ -593,6 +593,17 @@ const getAffiliate = async (req, res, next) => {
   next();
 };
 
+const getMinReject = async (req, res, next) => {
+  const value = validators
+    .validate(req.body, validators.user.minRejectSchema, next);
+  if (!value) return;
+
+  const json = await calcVoteValue.getMinReject(value);
+
+  res.result = { status: 200, json };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -634,4 +645,5 @@ module.exports = {
   guestWithdrawHiveEstimates,
   guestWithdrawHiveRange,
   getAffiliate,
+  getMinReject,
 };

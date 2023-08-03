@@ -299,3 +299,10 @@ exports.getAffiliateSchema = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string(),
 });
+
+exports.minRejectSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+});
