@@ -174,6 +174,16 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
   const { wobjects: result, error } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
   );
+
+  if (error && app?.owner && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
+    // return user personal codes if the site doesn't have its own
+    return processUserAffiliate({
+      app,
+      locale,
+      creator: app?.owner,
+    });
+  }
+
   if (error) return [];
 
   if (!WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
