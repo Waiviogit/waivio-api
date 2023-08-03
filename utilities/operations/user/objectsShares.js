@@ -8,8 +8,6 @@ const makePipeline = ({
   const pipeline = [
     { $match: { user_name: name, weight: { $gt: 0 } } },
     { $sort: { weight: -1 } },
-    { $skip: skip },
-    { $limit: limit + 1 },
     {
       $lookup: {
         from: 'wobjects',
@@ -18,6 +16,8 @@ const makePipeline = ({
         as: 'wobject',
       },
     },
+    { $skip: skip },
+    { $limit: limit + 1 },
     { $unwind: '$wobject' },
     {
       $addFields: {
@@ -38,7 +38,7 @@ const makePipeline = ({
 
   // eslint-disable-next-line camelcase
   if (object_types || exclude_object_types) {
-    pipeline.splice(4, 0, {
+    pipeline.splice(3, 0, {
       // eslint-disable-next-line camelcase
       $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } },
     });
@@ -75,12 +75,10 @@ const makeCountPipeline = ({ name, object_types, exclude_object_types }) => {
 };
 
 const getUserObjectsShares = async (data) => {
-  console.time('aggregate');
   const {
     result: wobjects,
     error: userWobjectsError,
   } = await UserWobjects.aggregate(makePipeline(data));
-  console.timeEnd('aggregate');
 
   if (userWobjectsError) {
     return { error: userWobjectsError };

@@ -90,7 +90,7 @@ const makeFilterAppCondition = (app) => {
   ];
 };
 
-const makeFilterUserCondition = ({ app, creator }) => {
+const makeFilterUserCondition = ({ app, creator, usePersonal = false }) => {
   const regex = '\\["PERSONAL';
   const appRegex = `\\["${app.host.replace(/\./g, '\\.')}`;
   if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
@@ -112,7 +112,8 @@ const makeFilterUserCondition = ({ app, creator }) => {
     fields: {
       $elemMatch: {
         name: FIELDS_NAMES.AFFILIATE_CODE,
-        body: { $regex: appRegex },
+        body: { $regex: usePersonal ? regex : appRegex },
+        ...(usePersonal && { creator }),
       },
     },
   };
@@ -134,10 +135,10 @@ const processObjectsToAffiliateArray = async ({
 };
 
 const processUserAffiliate = async ({
-  app, locale = 'en-US', creator,
+  app, locale = 'en-US', creator, usePersonal,
 }) => {
   const { result, error } = await Wobj.findObjects({
-    filter: makeFilterUserCondition({ app, creator }),
+    filter: makeFilterUserCondition({ app, creator, usePersonal }),
   });
   if (error) return [];
 
@@ -160,7 +161,7 @@ const processUserAffiliate = async ({
 
       resultElement.fields = resultElement.fields.filter((el) => {
         if (el.name !== FIELDS_NAMES.AFFILIATE_CODE) return true;
-        return el.creator === creator && el.body.includes(app.host);
+        return el.creator === creator && (usePersonal ? el.body.includes('PERSONAL') : el.body.includes(app.host));
       });
     }
   }
@@ -181,6 +182,7 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
       app,
       locale,
       creator: app?.owner,
+      usePersonal: true,
     });
   }
 
