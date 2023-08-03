@@ -249,6 +249,7 @@ userRoutes.route('/user/:userName/affiliate').post(UserController.getAffiliate);
 userRoutes.route('/users/guest-wallet/hive-withdraw').post(UserController.guestWithdrawHive);
 userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(UserController.guestWithdrawHiveEstimates);
 userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(UserController.guestWithdrawHiveRange);
+userRoutes.route('/users/min-reject').post(UserController.getMinReject);
 // endregion
 // region Draft
 

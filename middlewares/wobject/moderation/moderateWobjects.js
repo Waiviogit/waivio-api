@@ -34,7 +34,6 @@ exports.moderate = async (req, res, next) => {
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
   const reqUserName = _.get(req, 'headers.follower');
   const affiliateCodes = await processAppAffiliate({
-    countryCode,
     app,
     locale: req.headers.locale,
   });
