@@ -8,8 +8,6 @@ const makePipeline = ({
   const pipeline = [
     { $match: { user_name: name, weight: { $gt: 0 } } },
     { $sort: { weight: -1 } },
-    { $skip: skip },
-    { $limit: limit + 1 },
     {
       $lookup: {
         from: 'wobjects',
@@ -19,6 +17,8 @@ const makePipeline = ({
       },
     },
     { $unwind: '$wobject' },
+    { $skip: skip },
+    { $limit: limit + 1 },
     {
       $addFields: {
         'wobject.user_weight': '$weight',
@@ -75,12 +75,10 @@ const makeCountPipeline = ({ name, object_types, exclude_object_types }) => {
 };
 
 const getUserObjectsShares = async (data) => {
-  console.time('aggregate');
   const {
     result: wobjects,
     error: userWobjectsError,
   } = await UserWobjects.aggregate(makePipeline(data));
-  console.timeEnd('aggregate');
 
   if (userWobjectsError) {
     return { error: userWobjectsError };
@@ -92,7 +90,7 @@ const getUserObjectsShares = async (data) => {
   return {
     objects_shares:
       {
-        wobjects: wobjects.slice(0, data.limit),
+        wobjects: _.take(wobjects, data.limit),
         hasMore: wobjects.length > data.limit,
       },
   };

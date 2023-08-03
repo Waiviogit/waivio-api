@@ -13,7 +13,13 @@ const {
   TOKEN_WAIV,
 } = require('../../constants/hiveEngine');
 
-exports.calculateMana = (votingPower) => {
+exports.calculateMana = (
+  votingPower = {
+    votingPower: MAX_VOTING_POWER,
+    downvotingPower: MAX_VOTING_POWER,
+    lastVoteTimestamp: Date.now(),
+  },
+) => {
   const timestamp = new Date().getTime();
   const result = {
     votingPower: votingPower.votingPower,
