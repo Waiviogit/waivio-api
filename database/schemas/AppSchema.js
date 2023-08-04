@@ -93,6 +93,7 @@ const Configuration = new Schema({
   shopSettings: { type: ShopSettingsSchema },
   colors: { type: Colors, default: () => ({}) },
   header: { type: AppHeader },
+  defaultHashtag: { type: String },
 }, { _id: false });
 
 const AppSchema = new Schema({
