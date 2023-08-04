@@ -257,12 +257,24 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
-  const { result } = await Wobj.findOne({ author_permlink: _.get(app, 'configuration.aboutObject') });
-  if (!result) return app;
-  const wobject = await processWobjects({
-    wobjects: [result], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
+  const aboutObject = app?.configuration?.aboutObject;
+  const defaultHashtag = app?.configuration?.defaultHashtag;
+  const { result: wobjects } = await Wobj
+    .findObjects({ filter: { author_permlink: { $in: [aboutObject, defaultHashtag] } } });
+
+  const processed = await processWobjects({
+    wobjects, returnArray: true, fields: REQUIREDFIELDS_SEARCH, app,
   });
-  app.configuration.aboutObject = _.pick(wobject, PICK_FIELDS_ABOUT_OBJ);
+  if (!processed.length) return app;
+  const aboutObjectProcessed = processed.find((el) => el.author_permlink === aboutObject);
+  if (aboutObjectProcessed) {
+    app.configuration.aboutObject = _.pick(aboutObjectProcessed, PICK_FIELDS_ABOUT_OBJ);
+  }
+  const defaultHashtagProcessed = processed.find((el) => el.author_permlink === defaultHashtag);
+  if (defaultHashtagProcessed) {
+    app.configuration.defaultHashtag = _.pick(defaultHashtagProcessed, PICK_FIELDS_ABOUT_OBJ);
+  }
+
   return app;
 };
 
