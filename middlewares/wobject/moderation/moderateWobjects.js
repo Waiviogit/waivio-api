@@ -6,7 +6,8 @@ const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
 const config = require('config');
 const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
-const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+const { processAppAffiliate, processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+const { WAIVIO_AFFILIATE_HOSTS } = require('constants/affiliateData');
 
 exports.moderate = async (req, res, next) => {
   /*
@@ -33,7 +34,7 @@ exports.moderate = async (req, res, next) => {
 
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
   const reqUserName = _.get(req, 'headers.follower');
-  const affiliateCodes = await processAppAffiliate({
+  let affiliateCodes = await processAppAffiliate({
     app,
     locale: req.headers.locale,
   });
@@ -76,6 +77,11 @@ exports.moderate = async (req, res, next) => {
       });
       break;
     case 6:
+      if (_.get(req, 'route.path') === '/post/:author/:permlink') {
+        const creator = res?.result?.json?.author;
+        affiliateCodes = await getAffiliateCodes({ app, creator, affiliateCodes });
+      }
+
       res.result.json[currentSchema.wobjects_path] = await newValidation({
         wobjects: res.result.json[currentSchema.wobjects_path],
         app,
@@ -140,3 +146,17 @@ const newValidation = async ({
 }) => wobjectHelper.processWobjects({
   wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode, reqUserName, affiliateCodes,
 });
+
+const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
+  if (!WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
+    ({ result: app } = await App.findOne({ host: config.appHost }));
+  }
+
+  const userAffiliate = await processUserAffiliate({
+    app,
+    creator,
+  });
+  if (userAffiliate.length) return userAffiliate;
+
+  return affiliateCodes;
+};
