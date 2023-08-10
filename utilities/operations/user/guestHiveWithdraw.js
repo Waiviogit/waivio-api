@@ -70,6 +70,7 @@ const validateWithdrawAmount = async ({ amount, userName }) => {
 const withdrawFromHive = async ({
   userName, address, outputCoinType, amount,
 }) => {
+  if (process.env.NODE_ENV !== 'production') return { error: { status: 403, message: 'Forbidden' } };
   const { user } = await User.getOne(userName, '+auth');
   if (!user && !user.auth) return { error: ERROR_OBJ.NOT_FOUND };
 
