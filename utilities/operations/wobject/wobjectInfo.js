@@ -93,9 +93,65 @@ const getAllObjectsInList = async ({
         handledItems.push(item);
         if (scanEmbedded) {
           await getAllObjectsInList({
-            authorPermlink: item, handledItems, app, recursive: true,
+            authorPermlink: item, handledItems, app, recursive: true, scanEmbedded,
           });
         }
+      }
+    }
+  }
+  return handledItems;
+};
+
+const getListDepartments = async ({
+  authorPermlink, handledItems = [], app, scanEmbedded, departments = [],
+}) => {
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+  if (error || !wobject) return handledItems;
+
+  const localDepartments = [...departments];
+
+  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)) {
+    const { result } = await Wobj.findObjects({
+      filter: {
+        metaGroupId: wobject.metaGroupId,
+      },
+      projection: { author_permlink: 1 },
+    });
+    if (result.length) {
+      handledItems.push({
+        departments: localDepartments,
+        objects: result.map((el) => el.author_permlink),
+      });
+    }
+  }
+  if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM, FIELDS_NAMES.NAME],
+      app,
+      returnArray: false,
+    });
+    localDepartments.push(wobj?.name ?? wobj.default_name);
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    if (_.isEmpty(listWobjects)) return handledItems;
+
+    for (const item of listWobjects) {
+      const { result: listItem } = await Wobj.findOne({
+        author_permlink: item,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      }, { object_type: 1 });
+      const conditionToEnter = listItem?.object_type !== OBJECT_TYPES.LIST
+        || !handledItems.find((el) => (el?.objects ?? []).includes(item));
+      // condition for exit from looping
+
+      if (scanEmbedded && conditionToEnter) {
+        await getListDepartments({
+          authorPermlink: item, handledItems, scanEmbedded, app, departments: localDepartments,
+        });
       }
     }
   }
@@ -225,4 +281,5 @@ module.exports = {
   getOne,
   getItemsCount,
   getAllListPermlinks,
+  getListDepartments,
 };

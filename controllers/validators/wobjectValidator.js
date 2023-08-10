@@ -244,6 +244,11 @@ exports.wobjectsRecountListItemsScheme = Joi.object().keys({
   scanEmbedded: Joi.boolean().default(true),
 });
 
+exports.wobjectsListDepartmentsScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  scanEmbedded: Joi.boolean().default(true),
+});
+
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
