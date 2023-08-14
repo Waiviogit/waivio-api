@@ -356,8 +356,9 @@ const getUserFilter = async ({
   userName, app,
 }) => {
   const social = sitesHelper.checkForSocialSite(app?.host ?? '');
+  const isMainObject = app?.configuration?.shopSettings?.value === userName;
 
-  const users = social
+  const users = social && isMainObject
     ? [...new Set([userName, ...app.authority])]
     : [userName];
   const orFilter = [];
