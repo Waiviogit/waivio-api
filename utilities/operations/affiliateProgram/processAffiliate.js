@@ -8,7 +8,6 @@ const {
 } = require('constants/affiliateData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
-const _ = require('lodash');
 const config = require('config');
 
 const affiliateScheme = Joi.object().keys({
@@ -134,21 +133,39 @@ const processObjectsToAffiliateArray = async ({
   return parseAffiliateFields(validObjects);
 };
 
+const getUserAffiliateObjects = async ({ app, creator }) => {
+  const isMainObject = app?.configuration?.shopSettings?.value === creator;
+  let result = [];
+  if (isMainObject) {
+    ({ result } = await Wobj.findObjects({
+      filter: makeFilterUserCondition({ app, creator, usePersonal: false }),
+    }));
+    if (!result?.length) {
+      ({ result } = await Wobj.findObjects({
+        filter: makeFilterUserCondition({ app, creator, usePersonal: true }),
+      }));
+      return { result, usePersonal: true };
+    }
+    return { result, usePersonal: false };
+  }
+  ({ result } = await Wobj.findObjects({
+    filter: makeFilterUserCondition({ app, creator, usePersonal: true }),
+  }));
+  if (!result?.length) {
+    ({ result } = await Wobj.findObjects({
+      filter: makeFilterUserCondition({ app, creator, usePersonal: false }),
+    }));
+    return { result, usePersonal: false };
+  }
+  return { result, usePersonal: true };
+};
+
 const processUserAffiliate = async ({
   app, locale = 'en-US', creator,
 }) => {
-  let usePersonal = false;
-
-  let { result, error } = await Wobj.findObjects({
-    filter: makeFilterUserCondition({ app, creator, usePersonal }),
+  const { result, usePersonal } = await getUserAffiliateObjects({
+    app, creator,
   });
-  if (!result?.length) {
-    usePersonal = true;
-    ({ result, error } = await Wobj.findObjects({
-      filter: makeFilterUserCondition({ app, creator, usePersonal }),
-    }));
-  }
-  if (error) return [];
 
   if (WAIVIO_AFFILIATE_HOSTS.includes(app.host)) {
     for (const resultElement of result) {
