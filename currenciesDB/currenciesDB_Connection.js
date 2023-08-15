@@ -1,7 +1,9 @@
 const mongoose = require('mongoose');
 const config = require('config');
 
-const URI = `mongodb://${config.currenciesDB.host}:${config.currenciesDB.port}/${config.currenciesDB.database}`;
+const URI = process.env.MONGO_URI
+  ? `${process.env.MONGO_URI}/${config.currenciesDB.database}`
+  : `mongodb://${config.currenciesDB.host}:${config.currenciesDB.port}/${config.currenciesDB.database}`;
 
 const currenciesDb = mongoose.createConnection(URI);
 currenciesDb.on('error', console.error.bind(console, 'connection error:'));

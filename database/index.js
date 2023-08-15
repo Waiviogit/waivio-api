@@ -3,7 +3,9 @@ const config = require('config');
 const currenciesDb = require('currenciesDB/currenciesDB_Connection');
 const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
-const URI = `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
+const URI = process.env.MONGO_URI
+  ? `${process.env.MONGO_URI}/${config.db.database}`
+  : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
 mongoose.connect(URI)
   .then(() => console.log(`${config.db.database} connected`))
