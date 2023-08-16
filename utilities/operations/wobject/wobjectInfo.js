@@ -103,7 +103,7 @@ const getAllObjectsInList = async ({
 };
 
 const getListDepartments = async ({
-  authorPermlink, handledItems = [], app, scanEmbedded, departments = [],
+  authorPermlink, handledItems = [], app, scanEmbedded, departments = [], listItems = [],
 }) => {
   const { result: wobject, error } = await Wobj.findOne({
     author_permlink: authorPermlink,
@@ -145,12 +145,20 @@ const getListDepartments = async ({
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
       }, { object_type: 1 });
       const conditionToEnter = listItem?.object_type !== OBJECT_TYPES.LIST
-        || !handledItems.find((el) => (el?.objects ?? []).includes(item));
+        || !listItems.includes(item);
       // condition for exit from looping
 
       if (scanEmbedded && conditionToEnter) {
+        if (listItem?.object_type === OBJECT_TYPES.LIST) {
+          listItems.push(item);
+        }
         await getListDepartments({
-          authorPermlink: item, handledItems, scanEmbedded, app, departments: localDepartments,
+          authorPermlink: item,
+          handledItems,
+          scanEmbedded,
+          app,
+          departments: localDepartments,
+          listItems,
         });
       }
     }
