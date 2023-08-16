@@ -445,7 +445,7 @@ const recountList = async (req, res, next) => {
 };
 
 const getListLinks = async (req, res, next) => {
-  //const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
 //  if (!validKey) return next();
   const value = validators.validate(
     req.body,
@@ -455,7 +455,27 @@ const getListLinks = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result } = await wobjectInfo.getAllListPermlinks({
+  const { result } = await wobjectInfo.getListDepartments({
+    ...value,
+    app: req.appData,
+  });
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getListDepartments = async (req, res, next) => {
+  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+//  if (!validKey) return next();
+  const value = validators.validate(
+    req.body,
+    validators.wobject.wobjectsListDepartmentsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await wobjectInfo.getListDepartments({
     ...value,
     app: req.appData,
   });
@@ -491,4 +511,5 @@ module.exports = {
   getWobjectsByGroupId,
   recountList,
   getListLinks,
+  getListDepartments,
 };
