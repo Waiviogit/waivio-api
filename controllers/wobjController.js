@@ -455,7 +455,7 @@ const getListLinks = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result } = await wobjectInfo.getListDepartments({
+  const { result } = await wobjectInfo.getAllListPermlinks({
     ...value,
     app: req.appData,
   });
