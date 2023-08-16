@@ -181,6 +181,8 @@ wobjRoutes.route('/wobjects/list-item-process')
   .post(WobjController.recountList);
 wobjRoutes.route('/wobjects/list-item-links')
   .post(WobjController.getListLinks);
+wobjRoutes.route('/wobjects/list-item-departments')
+  .post(WobjController.getListDepartments);
 // endregion
 // region User
 userRoutes.route('/users')
