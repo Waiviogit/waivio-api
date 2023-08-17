@@ -769,7 +769,7 @@ const processWobjects = async ({
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
 
-    if (!objectControl) ownership.push(...[owner, ...admins]);
+    if (objectControl) ownership.push(...[owner, ...admins]);
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
