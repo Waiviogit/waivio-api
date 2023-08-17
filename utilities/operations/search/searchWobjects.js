@@ -19,7 +19,7 @@ const addRequestDetails = (data) => {
   if (_.isUndefined(data.limit)) data.limit = 10;
 };
 
-exports.searchWobjects = async (data) => {
+const searchWobjects = async (data) => {
   const appInfo = await searchHelper.getAppInfo(data);
   addRequestDetails(data);
 
@@ -294,7 +294,7 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes,
 }) => {
   const authorities = [...app.authority];
   userShop
@@ -390,4 +390,9 @@ const makePipelineForDrinksAndDishes = ({
 
   pipeline.push({ $skip: skip || 0 }, { $limit: mapMarkers ? 250 : limit + 1 });
   return pipeline;
+};
+
+module.exports = {
+  searchWobjects,
+  defaultWobjectSearch,
 };

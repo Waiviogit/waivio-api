@@ -5,7 +5,7 @@ const {
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects } } = require('utilities/operations').search;
+const { wobjects: { searchWobjects, defaultWobjectSearch } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
@@ -123,6 +123,23 @@ const search = async (req, res, next) => {
   if (!value) return;
 
   const { wobjects, hasMore, error } = await searchWobjects(value);
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
+// site-independent search
+const searchDefault = async (req, res, next) => {
+  const value = validators.validate({
+    string: req.body.search_string,
+    ...req.body,
+  }, validators.wobject.searchScheme, next);
+
+  if (!value) return;
+
+  const { wobjects, hasMore, error } = await defaultWobjectSearch(value);
 
   if (error) return next(error);
 
@@ -512,4 +529,5 @@ module.exports = {
   recountList,
   getListLinks,
   getListDepartments,
+  searchDefault,
 };
