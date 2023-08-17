@@ -36,6 +36,12 @@ exports.schema = [
     wobjects_path: 'wobjects',
   },
   {
+    path: '/wobjects/search-default',
+    method: 'POST',
+    case: 6,
+    wobjects_path: 'wobjects',
+  },
+  {
     path: '/wobject/:authorPermlink/nearby',
     method: 'GET',
     case: 2,
