@@ -183,6 +183,8 @@ wobjRoutes.route('/wobjects/list-item-links')
   .post(WobjController.getListLinks);
 wobjRoutes.route('/wobjects/list-item-departments')
   .post(WobjController.getListDepartments);
+wobjRoutes.route('/wobjects/search-default')
+  .post(WobjController.searchDefault);
 // endregion
 // region User
 userRoutes.route('/users')

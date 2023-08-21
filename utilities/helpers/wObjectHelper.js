@@ -757,6 +757,9 @@ const processWobjects = async ({
   const { owner, admins } = getOwnerAndAdmins(app);
   const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
 
+  // means that owner want's all objects on sites behave like ownership objects
+  const objectControl = !!app?.objectControl;
+
   for (let obj of wobjects) {
     let exposedFields = [];
     obj.parent = '';
@@ -765,6 +768,8 @@ const processWobjects = async ({
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
+
+    if (objectControl) ownership.push(...[owner, ...admins]);
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
