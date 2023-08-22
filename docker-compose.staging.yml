@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  main:
+  waivio-api:
     container_name: waivio-api
     build: .
     command: npm run start
@@ -13,4 +13,4 @@ services:
         max-file: '5'
         max-size: '10m'
     env_file:
-      - ./.env
+      - .env
