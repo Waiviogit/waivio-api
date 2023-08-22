@@ -395,4 +395,5 @@ const makePipelineForDrinksAndDishes = ({
 module.exports = {
   searchWobjects,
   defaultWobjectSearch,
+  addRequestDetails,
 };

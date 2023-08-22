@@ -5,7 +5,7 @@ const {
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects, defaultWobjectSearch } } = require('utilities/operations').search;
+const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
@@ -138,6 +138,8 @@ const searchDefault = async (req, res, next) => {
   }, validators.wobject.searchScheme, next);
 
   if (!value) return;
+
+  addRequestDetails(value);
 
   const { wobjects, hasMore, error } = await defaultWobjectSearch(value);
 
