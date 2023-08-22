@@ -34,6 +34,7 @@ const {
   formAffiliateLinks,
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
+const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
@@ -759,6 +760,7 @@ const processWobjects = async ({
 
   // means that owner want's all objects on sites behave like ownership objects
   const objectControl = !!app?.objectControl;
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
 
   for (let obj of wobjects) {
     let exposedFields = [];
@@ -769,7 +771,19 @@ const processWobjects = async ({
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
 
-    if (objectControl) ownership.push(...[owner, ...admins]);
+    const extraAuthority = userShop
+      ? app?.configuration?.shopSettings?.value
+      : app.owner;
+
+    if (objectControl
+      && (!_.isEmpty(administrative)
+        || !_.isEmpty(ownership)
+        || _.get(obj, 'authority.administrative', []).includes(extraAuthority)
+        || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
+      )
+    ) {
+      ownership.push(extraAuthority, ...admins);
+    }
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
