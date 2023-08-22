@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  waivio-api-1:
+    container_name: waivio-api-1
+    build: .
+    command: npm run start
+    restart: always
+    network_mode: host
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    env_file:
+      - .env
+  waivio-api-2:
+    container_name: waivio-api-2
+    build: .
+    command: npm run start
+    restart: always
+    network_mode: host
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    env_file:
+      - .secondary.env
+
