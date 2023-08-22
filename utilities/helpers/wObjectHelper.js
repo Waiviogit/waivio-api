@@ -761,6 +761,9 @@ const processWobjects = async ({
   // means that owner want's all objects on sites behave like ownership objects
   const objectControl = !!app?.objectControl;
   const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const extraAuthority = userShop
+    ? app?.configuration?.shopSettings?.value
+    : app.owner;
 
   for (let obj of wobjects) {
     let exposedFields = [];
@@ -770,10 +773,6 @@ const processWobjects = async ({
     /** Get app admins, wobj administrators, which was approved by app owner(creator) */
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
-
-    const extraAuthority = userShop
-      ? app?.configuration?.shopSettings?.value
-      : app.owner;
 
     if (objectControl
       && (!_.isEmpty(administrative)
