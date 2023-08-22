@@ -148,10 +148,11 @@ const getListDepartments = async ({
         || !listItems.includes(item);
       // condition for exit from looping
 
-      if (scanEmbedded && conditionToEnter) {
-        if (listItem?.object_type === OBJECT_TYPES.LIST) {
-          listItems.push(item);
-        }
+      if (conditionToEnter) {
+        const isList = listItem?.object_type === OBJECT_TYPES.LIST;
+        if (isList) listItems.push(item);
+        if (isList && !scanEmbedded) continue;
+
         await getListDepartments({
           authorPermlink: item,
           handledItems,
