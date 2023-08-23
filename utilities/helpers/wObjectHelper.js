@@ -34,6 +34,7 @@ const {
   formAffiliateLinks,
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
+const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
@@ -172,12 +173,14 @@ const addDataToFields = ({
     /** If field includes admin votes fill in it */
     if (ownerVote || adminVote || administrativeVote || ownershipVote) {
       const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
-      field.adminVote = {
-        role: getFieldVoteRole(mainVote),
-        status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
-        name: mainVote.voter,
-        timestamp: mainVote.timestamp,
-      };
+      if (mainVote.percent !== 0) {
+        field.adminVote = {
+          role: getFieldVoteRole(mainVote),
+          status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
+          name: mainVote.voter,
+          timestamp: mainVote.timestamp,
+        };
+      }
     }
     field.approvePercent = calculateApprovePercent(field);
   }
@@ -759,6 +762,10 @@ const processWobjects = async ({
 
   // means that owner want's all objects on sites behave like ownership objects
   const objectControl = !!app?.objectControl;
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const extraAuthority = userShop
+    ? app?.configuration?.shopSettings?.value
+    : app?.owner;
 
   for (let obj of wobjects) {
     let exposedFields = [];
@@ -769,7 +776,15 @@ const processWobjects = async ({
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
 
-    if (objectControl) ownership.push(...[owner, ...admins]);
+    if (objectControl
+      && (!_.isEmpty(administrative)
+        || !_.isEmpty(ownership)
+        || _.get(obj, 'authority.administrative', []).includes(extraAuthority)
+        || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
+      )
+    ) {
+      ownership.push(extraAuthority, ...admins);
+    }
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {

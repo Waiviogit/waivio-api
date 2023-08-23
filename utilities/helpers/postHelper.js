@@ -299,8 +299,16 @@ const sponsorObligationsNewReview = async ({
         },
       },
     },
-    projection: { rewardInUSD: 1 },
+    projection: { rewardInUSD: 1, users: 1 },
   });
+  const user = _.find(
+    campaign.users,
+    (u) => u.name === newReview.author
+      && u.reservationPermlink === reservationPermlink,
+  );
+
+  post.reservationRootAuthor = user?.rootName || '';
+
   const { result: bots } = await SponsorsUpvote
     .find({
       filter: {
@@ -387,6 +395,7 @@ const sponsorObligationsNewReview = async ({
     0,
   );
 };
+
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
