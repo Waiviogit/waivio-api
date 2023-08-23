@@ -304,7 +304,7 @@ const sponsorObligationsNewReview = async ({
   const user = _.find(
     campaign.users,
     (u) => u.name === newReview.author
-      && u.reviewPermlink === reservationPermlink,
+      && u.reservationPermlink === reservationPermlink,
   );
 
   post.reservationRootAuthor = user?.rootName || '';
@@ -395,6 +395,7 @@ const sponsorObligationsNewReview = async ({
     0,
   );
 };
+
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
