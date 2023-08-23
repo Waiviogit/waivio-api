@@ -368,3 +368,16 @@ exports.updateAffiliateList = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
+
+exports.getAdSense = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.sites.getAdSenseSchema,
+    next,
+  );
+  if (!value) return;
+
+  const result = await sitesHelper.getAdSense(value);
+  res.result = { status: 200, json: result };
+  next();
+};
