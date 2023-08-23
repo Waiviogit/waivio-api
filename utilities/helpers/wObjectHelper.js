@@ -173,12 +173,14 @@ const addDataToFields = ({
     /** If field includes admin votes fill in it */
     if (ownerVote || adminVote || administrativeVote || ownershipVote) {
       const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
-      field.adminVote = {
-        role: getFieldVoteRole(mainVote),
-        status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
-        name: mainVote.voter,
-        timestamp: mainVote.timestamp,
-      };
+      if (mainVote.percent !== 0) {
+        field.adminVote = {
+          role: getFieldVoteRole(mainVote),
+          status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
+          name: mainVote.voter,
+          timestamp: mainVote.timestamp,
+        };
+      }
     }
     field.approvePercent = calculateApprovePercent(field);
   }
