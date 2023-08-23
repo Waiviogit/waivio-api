@@ -299,8 +299,16 @@ const sponsorObligationsNewReview = async ({
         },
       },
     },
-    projection: { rewardInUSD: 1 },
+    projection: { rewardInUSD: 1, users: 1 },
   });
+  const user = _.find(
+    campaign.users,
+    (u) => u.name === newReview.author
+      && u.reviewPermlink === reservationPermlink,
+  );
+
+  post.reservationRootAuthor = user?.rootName || '';
+
   const { result: bots } = await SponsorsUpvote
     .find({
       filter: {
