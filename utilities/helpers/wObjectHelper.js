@@ -763,7 +763,7 @@ const processWobjects = async ({
   const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
   const extraAuthority = userShop
     ? app?.configuration?.shopSettings?.value
-    : app.owner;
+    : app?.owner;
 
   for (let obj of wobjects) {
     let exposedFields = [];
