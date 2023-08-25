@@ -51,6 +51,8 @@ sitesRoutes.route('/sites/checkAvailable')
 sitesRoutes.route('/sites/configuration')
   .get(sitesController.configurationsList)
   .post(sitesController.saveConfigurations);
+sitesRoutes.route('/sites/ad-sense')
+  .get(sitesController.getAdSense);
 sitesRoutes.route('/sites/manage')
   .get(sitesController.managePage);
 sitesRoutes.route('/sites/report')
