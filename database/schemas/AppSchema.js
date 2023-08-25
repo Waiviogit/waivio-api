@@ -9,6 +9,11 @@ const _ = require('lodash');
 
 const { Schema } = mongoose;
 
+const AdSense = new Schema({
+  code: { type: String },
+  level: { type: String },
+}, { _id: false });
+
 const topUsersSchema = new Schema({
   name: { type: String, required: true },
   weight: { type: Number, default: 0 },
@@ -152,6 +157,7 @@ const AppSchema = new Schema({
   },
   prefetches: { type: [String] },
   objectControl: { type: Boolean, default: false },
+  adSense: { type: AdSense, default: () => ({}) },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {
