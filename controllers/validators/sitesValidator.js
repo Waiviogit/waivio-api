@@ -9,7 +9,8 @@ exports.availableCheck = Joi.object().keys({
   name: Joi.string().pattern(SITE_NAME_REGEX).invalid('www').min(1)
     .required(),
   parentId: Joi.string().required(),
-}).options(options);
+  host: Joi.string(),
+}).or('host', 'name').options(options);
 
 exports.getApps = Joi.object().keys({
   userName: Joi.string().required(),

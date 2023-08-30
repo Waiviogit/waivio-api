@@ -19,10 +19,15 @@ const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 
 /** Check for available domain for user site */
-exports.availableCheck = async (params) => {
-  const { result: parent } = await App.findOne({ _id: params.parentId, canBeExtended: true });
+exports.availableCheck = async ({ parentId, name, host }) => {
+  let app;
+  const { result: parent } = await App.findOne({ _id: parentId, canBeExtended: true });
   if (!parent) return { error: { status: 404, message: 'Parent not found' } };
-  const { result: app } = await App.findOne({ host: `${params.name}.${parent.host}` });
+  if (host) {
+    ({ result: app } = await App.findOne({ host }));
+  } else {
+    ({ result: app } = await App.findOne({ host: `${name}.${parent.host}` }));
+  }
   if (app) return { error: { status: 409, message: 'Subdomain already exists' } };
   return { result: true, parent };
 };
