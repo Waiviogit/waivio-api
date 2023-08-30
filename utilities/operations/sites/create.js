@@ -11,11 +11,14 @@ exports.createApp = async (params) => {
   const { balance, error: checkBalanceError } = await checkOwnerBalance(params.owner);
   if (checkBalanceError) return { error: checkBalanceError };
   if (balance < 0) return { error: { status: 402, message: 'Before creating a website, make sure that you have a positive balance.' } };
-
-  params.host = `${params.name}.${parent.host}`;
+  const advanced = params.host;
+  params.host = advanced ? params.host : `${params.name}.${parent.host}`;
   params.parentHost = parent.host;
-  const { result, error: createError } = await objectBotRequests.sendCustomJson(params,
-    `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`);
+  params.advanced = advanced;
+  const { result, error: createError } = await objectBotRequests.sendCustomJson(
+    params,
+    `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.CREATE_WEBSITE}`,
+  );
   if (createError) {
     return {
       error: { status: _.get(createError, 'response.status'), message: _.get(createError, 'response.statusText', 'Forbidden') },

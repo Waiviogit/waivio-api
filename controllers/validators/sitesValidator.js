@@ -24,7 +24,8 @@ exports.createApp = Joi.object().keys({
   owner: Joi.string().required(),
   name: Joi.string().regex(/[a-z,0-9]+$\b/).required(),
   parentId: Joi.string().required(),
-}).options(options);
+  host: Joi.string(),
+}).or('name', 'host').options(options);
 
 exports.managePage = Joi.object().keys({
   userName: Joi.string().required(),
