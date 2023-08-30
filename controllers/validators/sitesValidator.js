@@ -12,6 +12,10 @@ exports.availableCheck = Joi.object().keys({
   host: Joi.string(),
 }).or('host', 'name').options(options);
 
+exports.checkNsSchema = Joi.object().keys({
+  host: Joi.string(),
+}).options(options);
+
 exports.getApps = Joi.object().keys({
   userName: Joi.string().required(),
 }).options(options);
