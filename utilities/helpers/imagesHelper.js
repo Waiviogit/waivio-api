@@ -57,6 +57,9 @@ const base64ByUrl = async (url) => axios
   })
 // eslint-disable-next-line no-buffer-constructor
   .then((response) => new Buffer(response.data, 'binary').toString('base64'))
-  .catch(() => null);
+  .catch((error) => {
+    console.error('BASE64 BY URL ERROR', error);
+    return null;
+  });
 
 module.exports = { prepareImage, base64ByUrl, generateFileName };
