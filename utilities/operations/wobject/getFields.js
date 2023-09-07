@@ -86,6 +86,7 @@ const fillUpdates = async ({
       comments,
       (el) => el.author === update.author && el.permlink === update.permlink,
     );
+    comment.total_payout_value = comment?.total_payout_value?.amount || '0';
     Object.assign(
       update,
       _.pick(comment, ['children', 'total_pending_payout_value', 'total_payout_WAIV',
