@@ -48,6 +48,8 @@ sitesRoutes.route('/sites/create')
   .put(sitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
+sitesRoutes.route('/sites/check-ns')
+  .get(sitesController.checkNs);
 sitesRoutes.route('/sites/configuration')
   .get(sitesController.configurationsList)
   .post(sitesController.saveConfigurations);

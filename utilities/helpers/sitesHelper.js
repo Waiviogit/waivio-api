@@ -17,14 +17,33 @@ const Sentry = require('@sentry/node');
 const moment = require('moment');
 const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
+const dns = require('dns/promises');
 
 /** Check for available domain for user site */
-exports.availableCheck = async (params) => {
-  const { result: parent } = await App.findOne({ _id: params.parentId, canBeExtended: true });
+exports.availableCheck = async ({ parentId, name, host }) => {
+  let app;
+  const { result: parent } = await App.findOne({ _id: parentId, canBeExtended: true });
   if (!parent) return { error: { status: 404, message: 'Parent not found' } };
-  const { result: app } = await App.findOne({ host: `${params.name}.${parent.host}` });
+  if (host) {
+    ({ result: app } = await App.findOne({ host }));
+  } else {
+    ({ result: app } = await App.findOne({ host: `${name}.${parent.host}` }));
+  }
   if (app) return { error: { status: 409, message: 'Subdomain already exists' } };
   return { result: true, parent };
+};
+
+/** Check for cloudflare NS servers */
+exports.checkNs = async ({ host }) => {
+  try {
+    const nServers = await dns.resolveNs(host);
+    const [ns1, ns2] = nServers;
+    const cloudflareNs = ns1.endsWith('cloudflare.com') && ns2.endsWith('cloudflare.com');
+    if (!cloudflareNs) return { error: { status: 400, message: 'NS servers are not cloudflare' } };
+    return { result: true };
+  } catch (error) {
+    return { error: { status: 500, message: 'Something went wrong' } };
+  }
 };
 
 /** Get list of all parents available for extend */

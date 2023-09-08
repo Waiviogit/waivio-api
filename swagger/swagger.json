@@ -2219,6 +2219,13 @@
             "description": "id of subdomain parent",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "host",
+            "in": "query",
+            "description": "host of domain",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -2255,6 +2262,47 @@
             "schema": {
               "example": {
                 "message": "Parent not found"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/check-ns": {
+      "get": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "Check for ns is correct",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "description": "host of domain",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "ValidationError",
+            "schema": {
+              "example": {
+                "message": "Validation Error"
               }
             }
           }
