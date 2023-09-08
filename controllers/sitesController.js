@@ -59,6 +59,17 @@ exports.availableCheck = async (req, res, next) => {
   next();
 };
 
+exports.checkNs = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.sites.checkNsSchema, next);
+  if (!value) return;
+
+  const { result, error } = await sitesHelper.checkNs(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 exports.parentList = async (req, res, next) => {
   const { parents, error } = await sitesHelper.getParentsList();
   if (error) return next(error);
