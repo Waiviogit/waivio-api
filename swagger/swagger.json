@@ -2103,7 +2103,8 @@
               "example": {
                 "name": "van",
                 "owner": "grampo",
-                "parentId": "5e907213bc17bb418517a640"
+                "parentId": "5e907213bc17bb418517a640",
+                "host": "example.com"
               }
             }
           },
