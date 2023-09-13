@@ -70,7 +70,13 @@ exports.getUserApps = async (params) => {
   );
   if (error) return { error };
 
-  return { result: _.map(apps, (app) => ({ host: app.host, id: app._id })) };
+  return {
+    result: _.map(apps, (app) => ({
+      host: app.host,
+      id: app._id,
+      parentHost: app?.parentHost ?? '',
+    })),
+  };
 };
 
 exports.searchTags = async (params) => {
