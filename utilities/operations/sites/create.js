@@ -20,6 +20,7 @@ exports.createApp = async (params) => {
   params.host = advanced ? params.host : `${params.name}.${parent.host}`;
   params.parentHost = parent.host;
   params.advanced = advanced;
+  if (advanced) params.name = params.host;
 
   const { result, error: createError } = await objectBotRequests.sendCustomJson(
     params,
