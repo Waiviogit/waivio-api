@@ -40,6 +40,8 @@ sitesRoutes.route('/sites')
   .get(sitesController.getUserApps)
   .post(sitesController.firstLoad)
   .delete(sitesController.delete);
+sitesRoutes.route('/sites/parent-host')
+  .get(sitesController.getParentHost);
 sitesRoutes.route('/sites/info')
   .get(sitesController.info);
 sitesRoutes.route('/sites/getParents')

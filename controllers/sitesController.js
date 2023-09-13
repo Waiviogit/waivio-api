@@ -392,3 +392,16 @@ exports.getAdSense = async (req, res, next) => {
   res.result = { status: 200, json: result };
   next();
 };
+
+exports.getParentHost = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.sites.getParentHostSchema,
+    next,
+  );
+  if (!value) return;
+
+  const result = await sitesHelper.getParentHost(value);
+  res.result = { status: 200, json: result };
+  next();
+}
