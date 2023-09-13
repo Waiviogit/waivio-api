@@ -13,7 +13,7 @@ exports.createApp = async (params) => {
   if (balance < 0) return { error: { status: 402, message: 'Before creating a website, make sure that you have a positive balance.' } };
   const advanced = params.host;
   if (advanced) {
-    const { result, error: nsError } = await sitesHelper.checkNs(params.host);
+    const { result, error: nsError } = await sitesHelper.checkNs({ host: params.host });
     if (nsError) return { error: nsError };
   }
 
