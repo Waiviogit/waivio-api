@@ -155,3 +155,7 @@ exports.updateAffiliateList = Joi.object().keys({
 exports.getAdSenseSchema = Joi.object().keys({
   host: Joi.string().required(),
 });
+
+exports.getParentHostSchema = Joi.object().keys({
+  host: Joi.string().required(),
+});

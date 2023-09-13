@@ -3738,6 +3738,39 @@
         }
       }
     },
+    "/api/sites/parent-host": {
+      "get": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "Get parent host by host",
+        "description": "Get parent host by host",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "host",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+                "properties": {
+                   "result": {
+                     "type": "string"
+                   }
+                }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
