@@ -6,8 +6,7 @@ const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
 const options = { allowUnknown: true, stripUnknown: true };
 
 exports.availableCheck = Joi.object().keys({
-  name: Joi.string().pattern(SITE_NAME_REGEX).invalid('www').min(1)
-    .required(),
+  name: Joi.string().pattern(SITE_NAME_REGEX).invalid('www').min(1),
   parentId: Joi.string().required(),
   host: Joi.string(),
 }).or('host', 'name').options(options);
@@ -22,7 +21,7 @@ exports.getApps = Joi.object().keys({
 
 exports.createApp = Joi.object().keys({
   owner: Joi.string().required(),
-  name: Joi.string().regex(/[a-z,0-9]+$\b/).required(),
+  name: Joi.string().regex(/[a-z,0-9]+$\b/),
   parentId: Joi.string().required(),
   host: Joi.string(),
 }).or('name', 'host').options(options);
