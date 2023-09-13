@@ -111,6 +111,14 @@ exports.getWebsitePayments = async ({
   };
 };
 
+exports.getParentHost = async ({ host }) => {
+  const { result, error } = await App.findOne({
+    host,
+  });
+  if (error) return { error };
+  return { result: result?.parentHost ?? '' };
+};
+
 exports.getPaymentsTable = (payments) => {
   let payable = 0;
   payments = _.map(payments, (payment) => {
