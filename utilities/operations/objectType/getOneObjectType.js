@@ -28,7 +28,7 @@ const getWobjWithFilters = async ({
   objectType, filter, limit = 30, skip = 0, sort = 'weight', nsfw, app,
 }) => {
   const aggregationPipeline = [];
-  const social = checkForSocialSite(app?.host ?? '');
+  const social = checkForSocialSite(app?.parentHost ?? '');
 
   if (!validateInput({ filter, sort })) {
     return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
