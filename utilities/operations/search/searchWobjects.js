@@ -24,7 +24,7 @@ const searchWobjects = async (data) => {
   addRequestDetails(data);
 
   if (appInfo.forExtended || appInfo.forSites) {
-    const social = checkForSocialSite(appInfo?.app?.host ?? '');
+    const social = checkForSocialSite(appInfo?.app?.parentHost ?? '');
 
     if (social) return socialSearch({ ...data, ...appInfo });
     return sitesWobjectSearch({ ...data, ...appInfo });
@@ -321,7 +321,7 @@ const matchSocialPipe = ({
   if (!counters) {
     pipeline.push(...[{ $skip: skip || 0 }, { $limit: limit + 1 }]);
   }
-  if (userLinks.length) {
+  if (userLinks.length && !addHashtag) {
     const and = deselect.length
       ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
       : [{ author_permlink: { $in: userLinks } }];

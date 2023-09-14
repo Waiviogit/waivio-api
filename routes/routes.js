@@ -40,6 +40,8 @@ sitesRoutes.route('/sites')
   .get(sitesController.getUserApps)
   .post(sitesController.firstLoad)
   .delete(sitesController.delete);
+sitesRoutes.route('/sites/parent-host')
+  .get(sitesController.getParentHost);
 sitesRoutes.route('/sites/info')
   .get(sitesController.info);
 sitesRoutes.route('/sites/getParents')
@@ -48,6 +50,8 @@ sitesRoutes.route('/sites/create')
   .put(sitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
   .get(sitesController.availableCheck);
+sitesRoutes.route('/sites/check-ns')
+  .get(sitesController.checkNs);
 sitesRoutes.route('/sites/configuration')
   .get(sitesController.configurationsList)
   .post(sitesController.saveConfigurations);

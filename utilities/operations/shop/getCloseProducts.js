@@ -68,7 +68,7 @@ const getRelated = async ({
 
   const response = [];
 
-  const social = checkForSocialSite(app.host);
+  const social = checkForSocialSite(app?.parentHost ?? '');
   const authorities = [app.owner, ...app.authority];
 
   const { wobjects: relatedObjects = [] } = await Wobj.fromAggregation([
@@ -140,7 +140,7 @@ const getSimilar = async ({
 }) => {
   const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
 
-  const social = checkForSocialSite(app.host);
+  const social = checkForSocialSite(app?.parentHost ?? '');
   const authorities = [app.owner, ...app.authority];
 
   const objectsForResponse = [];
