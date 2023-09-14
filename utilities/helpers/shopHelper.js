@@ -117,7 +117,7 @@ const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
 
 const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
   const authority = [];
-  const social = checkForSocialSite(app?.host ?? '');
+  const social = checkForSocialSite(app?.parentHost ?? '');
   if (social) {
     authority.push(...[app.owner, ...app.authority]);
   }
@@ -355,7 +355,7 @@ const getMoreTagsForCategory = ({
 const getUserFilter = async ({
   userName, app,
 }) => {
-  const social = sitesHelper.checkForSocialSite(app?.host ?? '');
+  const social = sitesHelper.checkForSocialSite(app?.parentHost ?? '');
   const isMainObject = app?.configuration?.shopSettings?.value === userName;
 
   const users = social && isMainObject
