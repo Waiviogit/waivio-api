@@ -160,11 +160,10 @@ exports.getWebsiteData = (payments, site) => {
     status: site.status,
     name: site.name,
     host: site.host,
-    parent: site.host.replace(`${site.name}.`, ''),
+    parent: site?.parentHost ?? '',
     averageDau: lastWriteOff.length
       ? Math.trunc(_.meanBy(lastWriteOff, (writeOff) => writeOff.countUsers))
       : 0,
-    parentHost: site?.parentHost ?? '',
   };
 };
 
