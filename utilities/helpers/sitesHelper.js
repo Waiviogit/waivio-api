@@ -164,6 +164,7 @@ exports.getWebsiteData = (payments, site) => {
     averageDau: lastWriteOff.length
       ? Math.trunc(_.meanBy(lastWriteOff, (writeOff) => writeOff.countUsers))
       : 0,
+    parentHost: site?.parentHost ?? '',
   };
 };
 
