@@ -121,6 +121,8 @@ exports.FIRST_LOAD_FIELDS = [
   'language',
   'status',
   'host',
+  'facebookAuthId',
+  'googleAuthId',
 ];
 
 exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
