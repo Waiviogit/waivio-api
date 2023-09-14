@@ -24,7 +24,7 @@ const searchWobjects = async (data) => {
   addRequestDetails(data);
 
   if (appInfo.forExtended || appInfo.forSites) {
-    const social = checkForSocialSite(appInfo?.app?.host ?? '');
+    const social = checkForSocialSite(appInfo?.app?.parentHost ?? '');
 
     if (social) return socialSearch({ ...data, ...appInfo });
     return sitesWobjectSearch({ ...data, ...appInfo });
