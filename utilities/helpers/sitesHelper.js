@@ -369,5 +369,5 @@ exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.inclu
 
 exports.getAdSense = async ({ host }) => {
   const { result } = await App.findOne({ host });
-  return _.get(result, 'adSense', { code: '', level: '' });
+  return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
 };
