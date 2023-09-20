@@ -12,6 +12,7 @@ const { Schema } = mongoose;
 const AdSense = new Schema({
   code: { type: String },
   level: { type: String },
+  txtFile: { type: String },
 }, { _id: false });
 
 const topUsersSchema = new Schema({
@@ -158,8 +159,6 @@ const AppSchema = new Schema({
   prefetches: { type: [String] },
   objectControl: { type: Boolean, default: false },
   adSense: { type: AdSense, default: () => ({}) },
-  facebookAuthId: { type: String, default: '' },
-  googleAuthId: { type: String, default: '' },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {
