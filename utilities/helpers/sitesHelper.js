@@ -279,8 +279,6 @@ exports.getSettings = async (host) => {
     currency,
     language,
     objectControl,
-    facebookAuthId = '',
-    googleAuthId = '',
   } = app;
 
   return {
@@ -293,8 +291,6 @@ exports.getSettings = async (host) => {
       currency,
       language,
       objectControl,
-      facebookAuthId,
-      googleAuthId,
     },
   };
 };
