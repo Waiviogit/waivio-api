@@ -39,10 +39,10 @@ exports.checkNs = async ({ host }) => {
     const nServers = await dns.resolveNs(host);
     const [ns1, ns2] = nServers;
     const cloudflareNs = ns1.endsWith('cloudflare.com') && ns2.endsWith('cloudflare.com');
-    if (!cloudflareNs) return { error: { status: 400, message: 'NS servers are not cloudflare' } };
+    if (!cloudflareNs) return { error: { status: 400, message: 'DNS are not cloudflare' } };
     return { result: true };
   } catch (error) {
-    return { error: { status: 500, message: 'Something went wrong' } };
+    return { error: { status: 400, message: 'Can\'t resolve DNS, make sure the domain has DNS configured' } };
   }
 };
 
