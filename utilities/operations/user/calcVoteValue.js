@@ -125,7 +125,7 @@ exports.checkUserWhiteList = async ({
 
   return {
     result: !!result,
-    minWeight: roundToEven(minWeight),
+    minWeight: Math.min(roundToEven(minWeight) + 20, 10000),
   };
 };
 
