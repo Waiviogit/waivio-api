@@ -62,6 +62,10 @@
     {
       "name": "shop",
       "description": "shop"
+    },
+    {
+      "name": "draft",
+      "description": "draft"
     }
   ],
   "schemes": [

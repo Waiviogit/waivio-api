@@ -4,15 +4,13 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw, commentDraft,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
-const { getPageDraft } = require('../utilities/operations/user/getPageDraft');
-const { createOrUpdateDraft } = require('../utilities/operations/user/createOrUpdatePageDraft');
 const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 
 const index = async (req, res, next) => {
@@ -493,72 +491,6 @@ const getGuestBalance = async (req, res, next) => {
   next();
 };
 
-const createOrUpdatePageDraft = async (req, res, next) => {
-  const value = validators.validate({
-    user: req.params.userName,
-    authorPermlink: req.body.authorPermlink,
-    body: req.body.body,
-  }, validators.user.createOrUpdatePageDraftSchema, next);
-  if (!value) return;
-
-  const { error: authError } = await authorise(value.user);
-  if (authError) return next(authError);
-
-  const { draft, error } = await createOrUpdateDraft(value);
-  if (error) return next(error);
-
-  res.result = { status: 200, json: draft };
-  next();
-};
-
-const getOnePageDraft = async (req, res, next) => {
-  const value = validators.validate({
-    user: req.params.userName,
-    authorPermlink: req.query.authorPermlink,
-  }, validators.user.getOnePageDraftSchema, next);
-  if (!value) return;
-
-  const { error: authError } = await authorise(value.user);
-  if (authError) return next(authError);
-
-  const { draft, error } = await getPageDraft(value.user, value.authorPermlink);
-  if (error) return next(error);
-
-  res.result = { status: 200, json: draft };
-  next();
-};
-
-const createOrUpdateCommentDraft = async (req, res, next) => {
-  const value = validators.validate({
-    user: req.params.userName,
-    ...req.body,
-  }, validators.user.createOrUpdateCommentDraftSchema, next);
-  if (!value) return;
-
-  const { error: authError } = await authorise(value.user);
-  if (authError) return next(authError);
-
-  const { result, error } = await commentDraft.createOrUpdateDraft(value);
-  if (error) return next(error);
-
-  res.result = { status: 200, json: result };
-  next();
-};
-
-const getOneCommentDraft = async (req, res, next) => {
-  const value = validators.validate({
-    user: req.params.userName,
-    ...req.query.authorPermlink,
-  }, validators.user.getOneCommentDraftSchema, next);
-  if (!value) return;
-
-  const { result, error } = await commentDraft.getDraft(value);
-  if (error) return next(error);
-
-  res.result = { status: 200, json: result };
-  next();
-};
-
 const guestWithdrawHive = async (req, res, next) => {
   const value = validators.validate(
     req.body,
@@ -667,8 +599,6 @@ module.exports = {
   getAdvancedReport,
   getGuestWallet,
   getGuestBalance,
-  createOrUpdatePageDraft,
-  getOnePageDraft,
   blogTags,
   getWaivVote,
   checkObjectWhiteList,
@@ -677,6 +607,4 @@ module.exports = {
   guestWithdrawHiveRange,
   getAffiliate,
   getMinReject,
-  createOrUpdateCommentDraft,
-  getOneCommentDraft,
 };

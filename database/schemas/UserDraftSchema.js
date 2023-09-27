@@ -5,7 +5,7 @@ const { Schema } = mongoose;
 const UserDraftSchema = new Schema({
   title: { type: String },
   draftId: { type: String, index: true },
-  author: { type: String },
+  author: { type: String, index: true },
   beneficiary: { type: Boolean, default: true },
   upvote: { type: Boolean },
   isUpdating: { type: Boolean },
@@ -19,7 +19,7 @@ const UserDraftSchema = new Schema({
   reward: { type: String },
 }, { timestamps: true, versionKey: false });
 
-UserDraftSchema.index({ user: 1, author: 1, permlink: 1 }, { unique: true });
+UserDraftSchema.index({ author: 1, draftId: 1 }, { unique: true });
 
 const UserDraftModel = mongoose.model('user_draft', UserDraftSchema);
 

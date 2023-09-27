@@ -10,6 +10,7 @@ exports.vipTickets = require('./vipTicketsValidator');
 exports.hive = require('./hiveValidator');
 exports.departments = require('./departments');
 exports.shop = require('./shop');
+exports.draft = require('./draft');
 
 exports.validate = (data, schema, next) => {
   const result = schema.validate(data, { abortEarly: false });
