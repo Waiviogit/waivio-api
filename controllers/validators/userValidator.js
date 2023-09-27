@@ -278,6 +278,19 @@ exports.getOnePageDraftSchema = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
 
+exports.createOrUpdateCommentDraftSchema = Joi.object().keys({
+  user: Joi.string().required(),
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+  body: Joi.string().default(''),
+});
+
+exports.getOneCommentDraftSchema = Joi.object().keys({
+  user: Joi.string().required(),
+  author: Joi.string().required(),
+  permlink: Joi.string().required(),
+});
+
 exports.guestWithdrawHiveSchema = Joi.object().keys({
   amount: Joi.number().greater(0).required(),
   address: Joi.string().required(),

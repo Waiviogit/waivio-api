@@ -23,5 +23,6 @@ moduleExports.getBlog = require('./getBlog');
 moduleExports.getBlogTags = require('./getBlogTags');
 moduleExports.guestWalletOperations = require('./guestWalletOperations');
 moduleExports.guestHiveWithdraw = require('./guestHiveWithdraw');
+moduleExports.commentDraft = require('./commentDraft');
 
 module.exports = moduleExports;

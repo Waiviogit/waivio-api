@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw, commentDraft,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -528,6 +528,37 @@ const getOnePageDraft = async (req, res, next) => {
   next();
 };
 
+const createOrUpdateCommentDraft = async (req, res, next) => {
+  const value = validators.validate({
+    user: req.params.userName,
+    ...req.body,
+  }, validators.user.createOrUpdateCommentDraftSchema, next);
+  if (!value) return;
+
+  const { error: authError } = await authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await commentDraft.createOrUpdateDraft(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getOneCommentDraft = async (req, res, next) => {
+  const value = validators.validate({
+    user: req.params.userName,
+    ...req.query.authorPermlink,
+  }, validators.user.getOneCommentDraftSchema, next);
+  if (!value) return;
+
+  const { result, error } = await commentDraft.getDraft(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const guestWithdrawHive = async (req, res, next) => {
   const value = validators.validate(
     req.body,
@@ -646,4 +677,6 @@ module.exports = {
   guestWithdrawHiveRange,
   getAffiliate,
   getMinReject,
+  createOrUpdateCommentDraft,
+  getOneCommentDraft,
 };
