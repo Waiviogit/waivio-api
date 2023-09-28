@@ -60,6 +60,8 @@ models.AppAffiliate = require('./schemas/AppAffiliateSchema');
 models.SponsorsUpvote = require('./schemas/SponsorsUpvoteSchema');
 models.UserShopDeselect = require('./schemas/UserShopDeselectSchema');
 models.WithdrawFunds = require('./schemas/WithdrawFundsSchema');
+models.UserCommentDraft = require('./schemas/UserCommentDraftSchema');
+models.UserDraft = require('./schemas/UserDraftSchema');
 
 module.exports = {
   Mongoose: mongoose,
