@@ -541,6 +541,8 @@ const getLinkToPageLoad = (obj) => {
       return `/object/${obj.author_permlink}/newsfeed`;
     case OBJECT_TYPES.SHOP:
       return `/object/${obj.author_permlink}/shop`;
+    case OBJECT_TYPES.WEB_PAGE:
+      return `/object/${obj.author_permlink}/webpage`;
     default:
       return `/object/${obj.author_permlink}`;
   }
