@@ -62,6 +62,7 @@ exports.FIELDS_NAMES = {
   AFFILIATE_GEO_AREA: 'affiliateGeoArea',
   AFFILIATE_URL_TEMPLATE: 'affiliateUrlTemplate',
   AFFILIATE_CODE: 'affiliateCode',
+  WEB_PAGE: 'webpage',
 };
 
 exports.LIST_TYPES = {
@@ -99,6 +100,7 @@ exports.OBJECT_TYPES = {
   NEWS_FEED: 'newsfeed',
   SHOP: 'shop',
   AFFILIATE: 'affiliate',
+  WEB_PAGE: 'webpage',
 };
 
 exports.ADMIN_ROLES = {
