@@ -32,9 +32,6 @@ exports.getOnePageDraft = async (req, res, next) => {
   );
   if (!value) return;
 
-  const { error: authError } = await authorise(value.user);
-  if (authError) return next(authError);
-
   const { draft, error } = await wobjectDraft.getDraft(value.user, value.authorPermlink);
   if (error) return next(error);
 

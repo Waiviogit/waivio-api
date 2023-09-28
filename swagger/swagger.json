@@ -80,6 +80,13 @@
         "produces" : [ "application/json" ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "params",
             "in": "body",
             "required": true,
@@ -145,6 +152,13 @@
         "description" : "delete draft",
         "produces" : [ "application/json" ],
         "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "params",
             "in": "body",
@@ -241,6 +255,13 @@
         "produces" : [ "application/json" ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
             "name": "user",
             "in": "body",
             "required": true,
@@ -308,6 +329,13 @@
         "description" : "create/update draft",
         "produces" : [ "application/json" ],
         "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "user",
             "in": "body",
