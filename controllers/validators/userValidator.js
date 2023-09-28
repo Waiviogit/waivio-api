@@ -267,17 +267,6 @@ exports.guestBalance = Joi.object().keys({
   symbol: Joi.string().required(),
 });
 
-exports.createOrUpdatePageDraftSchema = Joi.object().keys({
-  user: Joi.string().required(),
-  authorPermlink: Joi.string().required(),
-  body: Joi.string().default(''),
-});
-
-exports.getOnePageDraftSchema = Joi.object().keys({
-  user: Joi.string().required(),
-  authorPermlink: Joi.string().required(),
-});
-
 exports.guestWithdrawHiveSchema = Joi.object().keys({
   amount: Joi.number().greater(0).required(),
   address: Joi.string().required(),

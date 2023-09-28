@@ -37,5 +37,7 @@ moduleExports.AppAffiliate = require('./AppAffiliateModel');
 moduleExports.SponsorsUpvote = require('./SponsorsUpvoteModel');
 moduleExports.userShopDeselectModel = require('./userShopDeselectModel');
 moduleExports.withdrawFundsModel = require('./withdrawFundsModel');
+moduleExports.UserCommentDraftModel = require('./UserCommentDraftModel');
+moduleExports.UserDraftModel = require('./UserDraftModel');
 
 module.exports = moduleExports;
