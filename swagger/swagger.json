@@ -73,6 +73,167 @@
     "http"
   ],
   "paths": {
+    "/api/draft/post": {
+      "post": {
+        "tags" : [ "draft" ],
+        "description" : "create/update draft",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/postDraft"
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/postDraft"
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags" : [ "draft" ],
+        "description" : "get draft",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name": "author",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "draftId",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "$ref": "#/definitions/postDraft"
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags" : [ "draft" ],
+        "description" : "delete draft",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "draftId": {
+                  "type": "string"
+                },
+                "author": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "acknowledged": {
+                  "type": "boolean"
+                },
+                "deletedCount": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/draft/posts": {
+      "get": {
+        "tags" : [ "draft" ],
+        "description" : "get draft",
+        "produces" : [ "application/json" ],
+        "parameters": [
+          {
+            "name": "author",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/postDraft"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/shop/departments" : {
       "post" : {
         "tags" : [ "shop" ],
@@ -8512,7 +8673,88 @@
     }
   },
   "definitions": {
-      "delegation_response_200": {
+    "postDraft": {
+      "type": "object",
+      "properties": {
+        "_id": {
+          "type": "string"
+        },
+        "draftId": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "beneficiary": {
+          "type": "boolean"
+        },
+        "isUpdating": {
+          "type": "boolean"
+        },
+        "upvote": {
+          "type": "boolean"
+        },
+        "body": {
+          "type": "string"
+        },
+        "originalBody": {
+          "type": "string"
+        },
+        "jsonMetadata": {
+          "type": "object"
+        },
+        "lastUpdated": {
+          "type": "number"
+        },
+        "parentAuthor": {
+          "type": "string"
+        },
+        "parentPermlink": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        },
+        "reward": {
+          "type": "string"
+        }
+      }
+    },
+    "objectDraft": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "authorPermlink": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "commentDraft": {
+      "type": "object",
+      "properties": {
+        "user": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        }
+      }
+    },
+    "delegation_response_200": {
         "type": "array",
         "items": {
           "type": "object",
