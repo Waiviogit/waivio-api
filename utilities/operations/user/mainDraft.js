@@ -63,6 +63,7 @@ exports.getDrafts = async ({
   const { result, error } = await UserDraftModel.find({
     filter: { author },
     options: {
+      sort: { lastUpdated: -1 },
       skip,
       limit: limit + 1,
     },

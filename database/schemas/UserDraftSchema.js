@@ -19,7 +19,7 @@ const UserDraftSchema = new Schema({
   reward: { type: String },
 }, { timestamps: true, versionKey: false });
 
-UserDraftSchema.index({ author: 1, draftId: 1 }, { unique: true });
+UserDraftSchema.index({ author: 1, draftId: 1, lastUpdated: -1 });
 
 const UserDraftModel = mongoose.model('user_draft', UserDraftSchema);
 
