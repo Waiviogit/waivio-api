@@ -175,6 +175,14 @@ exports.siteInfo = async (host) => {
 };
 
 exports.firstLoad = async ({ app, redirect }) => {
+  if (!app) {
+    return {
+      result: {
+        redirect,
+        aboutObject: {},
+      },
+    };
+  }
   app = await this.aboutObjectFormat(app);
 
   return {
