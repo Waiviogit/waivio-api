@@ -12,6 +12,7 @@ const {
   hiveController,
   departmentController,
   shopController,
+  draftController,
 } = require('controllers');
 
 const apiRoutes = new Router();
@@ -24,6 +25,7 @@ const sitesRoutes = new Router();
 const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
 const shopRoutes = new Router();
+const draftRotes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -34,6 +36,7 @@ apiRoutes.use('/api', sitesRoutes);
 apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
 apiRoutes.use('/api/shop', shopRoutes);
+apiRoutes.use('/api/draft', draftRotes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -253,8 +256,10 @@ userRoutes.route('/user/:userName/last-activity').get(UserController.getLastActi
 userRoutes.route('/user/advanced-report').post(UserController.getAdvancedReport);
 userRoutes.route('/user/:account/guest-wallet').get(UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(UserController.getGuestBalance);
-userRoutes.route('/user/:userName/draft').post(UserController.createOrUpdatePageDraft);
-userRoutes.route('/user/:userName/draft').get(UserController.getOnePageDraft);
+// todo remove
+userRoutes.route('/user/:userName/draft').post(draftController.createOrUpdatePageDraft);
+userRoutes.route('/user/:userName/draft').get(draftController.getOnePageDraft);
+
 userRoutes.route('/user/:userName/affiliate').post(UserController.getAffiliate);
 userRoutes.route('/users/guest-wallet/hive-withdraw').post(UserController.guestWithdrawHive);
 userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(UserController.guestWithdrawHiveEstimates);
@@ -262,10 +267,18 @@ userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(UserController.
 userRoutes.route('/users/min-reject').post(UserController.getMinReject);
 // endregion
 // region Draft
-
-// Deprecated. Used for subscribe button for users who liked the post
-// userRoutes.route('/user/:userName/getFollowingsState')
-//   .get(UserController.followingsState);
+draftRotes.route('/post')
+  .post(draftController.createOrUpdatePostDraft)
+  .get(draftController.getOnePostDraft)
+  .delete(draftController.deleteOnePostDraft);
+draftRotes.route('/posts')
+  .get(draftController.getPostDrafts);
+draftRotes.route('/object')
+  .post(draftController.createOrUpdatePageDraft)
+  .get(draftController.getOnePageDraft);
+draftRotes.route('/comment')
+  .post(draftController.createOrUpdateCommentDraft)
+  .get(draftController.getOneCommentDraft);
 // endregion
 // region Post
 postRoutes.route('/post/:author/:permlink')

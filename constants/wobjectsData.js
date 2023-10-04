@@ -62,6 +62,7 @@ exports.FIELDS_NAMES = {
   AFFILIATE_GEO_AREA: 'affiliateGeoArea',
   AFFILIATE_URL_TEMPLATE: 'affiliateUrlTemplate',
   AFFILIATE_CODE: 'affiliateCode',
+  WEB_PAGE: 'webpage',
 };
 
 exports.LIST_TYPES = {
@@ -99,6 +100,7 @@ exports.OBJECT_TYPES = {
   NEWS_FEED: 'newsfeed',
   SHOP: 'shop',
   AFFILIATE: 'affiliate',
+  WEB_PAGE: 'webpage',
 };
 
 exports.ADMIN_ROLES = {
@@ -251,6 +253,7 @@ exports.REQUIREDFILDS_WOBJ_LIST = [
   this.FIELDS_NAMES.SORT_CUSTOM,
   this.FIELDS_NAMES.PRODUCT_ID,
   this.FIELDS_NAMES.NEWS_FEED,
+  this.FIELDS_NAMES.WEB_PAGE,
   this.FIELDS_NAMES.AUTHORITY,
   this.FIELDS_NAMES.GROUP_ID,
   this.FIELDS_NAMES.MENU_ITEM,
