@@ -3,7 +3,7 @@ const Joi = require('joi');
 exports.createOrUpdatePageDraftSchema = Joi.object().keys({
   user: Joi.string().required(),
   authorPermlink: Joi.string().required(),
-  body: Joi.string().default(''),
+  body: Joi.string().allow('').default(''),
 });
 
 exports.getOnePageDraftSchema = Joi.object().keys({
@@ -33,7 +33,7 @@ exports.createOrUpdateCommentDraftSchema = Joi.object().keys({
   user: Joi.string().required(),
   author: Joi.string().required(),
   permlink: Joi.string().required(),
-  body: Joi.string().default(''),
+  body: Joi.string().allow('').default(''),
 });
 
 exports.getOneCommentDraftSchema = Joi.object().keys({
