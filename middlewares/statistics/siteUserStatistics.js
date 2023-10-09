@@ -9,6 +9,7 @@ const { redisSetter } = require('utilities/redis');
 const { App } = require('models');
 const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
+const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
@@ -23,7 +24,11 @@ exports.saveUserIp = async (req, res, next) => {
       return next();
     }
     const path = host.replace(REPLACE_HOST_WITH_PARENT, '');
-    req.pathToRedirect = `${URL.HTTPS}${path}/rewards/global`;
+
+    req.pathToRedirect = checkForSocialSite(path)
+      ? `${URL.HTTPS}${path}`
+      : `${URL.HTTPS}${path}/rewards/global`;
+
     return next();
   }
   req.appData = result;
