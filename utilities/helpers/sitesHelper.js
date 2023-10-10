@@ -282,6 +282,7 @@ exports.getSettings = async (host) => {
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const {
     googleAnalyticsTag,
+    googleGSCTag = '',
     beneficiary,
     app_commissions,
     currency,
@@ -292,6 +293,7 @@ exports.getSettings = async (host) => {
   return {
     result: {
       googleAnalyticsTag,
+      googleGSCTag,
       beneficiary,
       referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
         ? app_commissions.referral_commission_acc

@@ -3630,6 +3630,7 @@
                   "percent": "number"
                 },
                 "googleAnalyticsTag": "string",
+                "googleGSCTag": "string",
                 "referralCommissionAcc": "string",
                 "currency": "string"
               }
@@ -9104,6 +9105,7 @@
           },
           "host": "van.dining.pp.ua",
           "googleAnalyticsTag": null,
+          "googleGSCTag": null,
           "beneficiary": {
             "account": "waivio",
             "percent": 300
