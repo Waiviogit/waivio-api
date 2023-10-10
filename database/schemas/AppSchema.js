@@ -106,6 +106,7 @@ const AppSchema = new Schema({
   name: { type: String, index: true },
   owner: { type: String, required: true },
   googleAnalyticsTag: { type: String, default: null },
+  googleGSCTag: { type: String, default: null },
   beneficiary: {
     account: { type: String, default: 'waivio' },
     percent: { type: Number, default: 500 },
