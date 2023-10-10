@@ -113,6 +113,7 @@ exports.REQUIRED_FIELDS_UPD_WOBJ = ['host', 'inherited', 'canBeExtended', 'autho
 exports.FIRST_LOAD_FIELDS = [
   'supported_object_types',
   'googleAnalyticsTag',
+  'googleGSCTag',
   'configuration',
   'beneficiary',
   'parentHost',
