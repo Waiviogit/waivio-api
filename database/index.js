@@ -62,6 +62,7 @@ models.UserShopDeselect = require('./schemas/UserShopDeselectSchema');
 models.WithdrawFunds = require('./schemas/WithdrawFundsSchema');
 models.UserCommentDraft = require('./schemas/UserCommentDraftSchema');
 models.UserDraft = require('./schemas/UserDraftSchema');
+models.Threads = require('./schemas/ThreadsSchema');
 
 module.exports = {
   Mongoose: mongoose,
