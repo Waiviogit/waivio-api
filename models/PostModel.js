@@ -76,6 +76,12 @@ exports.getByFollowLists = async ({
     { $sort: { _id: -1 } },
     { $skip: skip },
     { $limit: limit },
+    // we use only 4 objects
+    {
+      $addFields: {
+        wobjects: { $slice: ['$wobjects', 4] },
+      },
+    },
     {
       $lookup: {
         from: 'wobjects',
