@@ -63,12 +63,12 @@ const getFeed = async ({
     // author_permlinks: wobjects,
     // muted: _.map(muted, 'userName'),
   }));
-
-  posts = await postHelper.fillAdditionalInfo({ posts, userName });
-  await wobjectHelper.moderatePosts({ posts, locale, app });
-  await fillPostsSubscriptions({ posts, userName });
-
-  await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
+   //+ 120ms
+   //posts = await postHelper.fillAdditionalInfo({ posts, userName });
+  //await wobjectHelper.moderatePosts({ posts, locale, app });
+ //await fillPostsSubscriptions({ posts, userName });
+  //
+  // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };
 
