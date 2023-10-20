@@ -115,7 +115,7 @@ exports.getByFollowLists = async ({
   try {
     const [posts1, posts2] = await Promise.all([
       PostModel.aggregate(pipe1),
-      PostModel.aggregate(pipe2),
+   //   PostModel.aggregate(pipe2),
     ]);
 
     const posts = [...posts1, ...posts2].sort((a, b) => b._id - a._id);
