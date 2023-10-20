@@ -59,7 +59,7 @@ const getFeed = async ({
   }));
 
   for (const post of posts) {
-    post.fullObjects = _.take(post.fullObjects, 4);
+    post.wobjects = _.take(post.wobjects, 4);
   }
 
   console.time('PostProcess');
