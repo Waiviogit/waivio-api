@@ -67,12 +67,12 @@ exports.getByFollowLists = async ({
   const pipe1 = [
     {
       $match: {
-        author: { $in: users, $nin: muted },
-        ...getBlockedAppCond(),
+        author: { $in: users },
+        // ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-     //   ...(!_.isEmpty(muted) && { 'reblog_to.author': { $nin: muted } }),
+        //       ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        //   ...(!_.isEmpty(muted) && { 'reblog_to.author': { $nin: muted } }),
       },
     },
     { $sort: { _id: -1 } },
@@ -92,11 +92,11 @@ exports.getByFollowLists = async ({
     {
       $match: {
         'wobjects.author_permlink': { $in: authorPermlinks },
-        ...getBlockedAppCond(),
+        //   ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-  //      ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+      //  ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        //      ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
       },
     },
     { $sort: { _id: -1 } },
