@@ -25,28 +25,28 @@ const getFeed = async ({
 
   let posts = [];
   const requestsMongo = await Promise.all([
-  //  User.getOne(name),
+    User.getOne(name),
     Subscriptions.getFollowings({ follower: name, limit: 0 }),
- //   wobjectSubscriptions.getFollowings({ follower: name }),
-  //  hiddenPostModel.getHiddenPosts(userName),
- //   mutedUserModel.find({ condition: { mutedBy: userName } }),
+    wobjectSubscriptions.getFollowings({ follower: name }),
+    hiddenPostModel.getHiddenPosts(userName),
+    mutedUserModel.find({ condition: { mutedBy: userName } }),
   ]);
 
-  // for (const request of requestsMongo) {
-  //   if (_.has(request, 'error')) {
-  //     return { error: { status: 404, message: 'User not found!' } };
-  //   }
-  // }
-  const [ SubscriptionsDb, wobjectSubscriptionsDb, hiddenPostDb, mutedUserDb] = requestsMongo;
-  // const { user } = userDb;
+  for (const request of requestsMongo) {
+    if (_.has(request, 'error')) {
+      return { error: { status: 404, message: 'User not found!' } };
+    }
+  }
+  const [userDb, SubscriptionsDb, wobjectSubscriptionsDb, hiddenPostDb, mutedUserDb] = requestsMongo;
+  const { user } = userDb;
   const { users } = SubscriptionsDb;
-  // const { wobjects } = wobjectSubscriptionsDb;
-  // const { hiddenPosts = [] } = hiddenPostDb;
-  // const { result: muted = [] } = mutedUserDb;
+  const { wobjects } = wobjectSubscriptionsDb;
+  const { hiddenPosts = [] } = hiddenPostDb;
+  const { result: muted = [] } = mutedUserDb;
 
-  // if (!user) {
-  //   return { error: { status: 404, message: 'User not found!' } };
-  // }
+  if (!user) {
+    return { error: { status: 404, message: 'User not found!' } };
+  }
   const { data: filtersData, error: filterError } = await getFiltersData({
     ...filter, forApp, lastId,
   });
@@ -55,19 +55,22 @@ const getFeed = async ({
 
   ({ posts } = await Post.getByFollowLists({
     skip,
-     users,
+    users,
     limit,
     filtersData,
-    // hiddenPosts,
+    hiddenPosts,
     user_languages,
-    // author_permlinks: wobjects,
-    // muted: _.map(muted, 'userName'),
+    author_permlinks: wobjects,
+    muted: _.map(muted, 'userName'),
   }));
-   //+ 120ms
-   //posts = await postHelper.fillAdditionalInfo({ posts, userName });
-  //await wobjectHelper.moderatePosts({ posts, locale, app });
- //await fillPostsSubscriptions({ posts, userName });
-  //
+
+  posts = await postHelper.fillAdditionalInfo({ posts, userName });
+
+  await Promise.all([
+    wobjectHelper.moderatePosts({ posts, locale, app }),
+    fillPostsSubscriptions({ posts, userName }),
+  ]);
+
   // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };

@@ -64,39 +64,15 @@ exports.getByFollowLists = async ({
   skip,
   limit,
 }) => {
-  const pipe1 = [
+  const pipe = [
     {
       $match: {
-        author: { $in: users },
-        // ...getBlockedAppCond(),
+        $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+        ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-        //       ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-        //   ...(!_.isEmpty(muted) && { 'reblog_to.author': { $nin: muted } }),
-      },
-    },
-    { $sort: { _id: -1 } },
-    { $skip: skip },
-    { $limit: limit },
-    // {
-    //   $lookup: {
-    //     from: 'wobjects',
-    //     localField: 'wobjects.author_permlink',
-    //     foreignField: 'author_permlink',
-    //     as: 'fullObjects',
-    //   },
-    // },
-  ];
-
-  const pipe2 = [
-    {
-      $match: {
-        'wobjects.author_permlink': { $in: authorPermlinks },
-        //   ...getBlockedAppCond(),
-        ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
-        ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-      //  ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-        //      ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
       },
     },
     { $sort: { _id: -1 } },
@@ -113,16 +89,11 @@ exports.getByFollowLists = async ({
   ];
 
   try {
-    const [posts1 ] = await Promise.all([
-      PostModel.aggregate(pipe1),
-   //   PostModel.aggregate(pipe2),
-    ]);
-
-    const posts = [...posts1].sort((a, b) => b._id - a._id);
+    const posts = await PostModel.aggregate(pipe);
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
-    return { posts: _.take(posts, limit) };
+    return { posts };
   } catch (error) {
     return { error };
   }
