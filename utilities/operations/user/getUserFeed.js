@@ -20,8 +20,8 @@ const getFeed = async ({
     skip, limit, user_languages, userName, method: 'getFeed',
   });
 
-  // const cache = await getCachedPosts(cacheKey);
-  // if (cache) return { posts: cache };
+  const cache = await getCachedPosts(cacheKey);
+  if (cache) return { posts: cache };
 
   let posts = [];
   const requestsMongo = await Promise.all([
