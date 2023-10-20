@@ -67,11 +67,12 @@ exports.getByFollowLists = async ({
   const pipe1 = [
     {
       $match: {
-        author: { $in: users, $nin: muted, 'reblog_to.author': { $nin: muted } },
+        author: { $in: users, $nin: muted },
         ...getBlockedAppCond(),
         ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        ...(!_.isEmpty(muted) && { 'reblog_to.author': { $nin: muted } }),
       },
     },
     { $sort: { _id: -1 } },
