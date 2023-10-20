@@ -14,14 +14,14 @@ const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
 
 const getFeed = async ({
   // eslint-disable-next-line camelcase
-  name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName, locale, app,
+  name, limit = 20, skip = 0, user_languages, userName, locale, app,
 }) => {
   const cacheKey = getPostCacheKey({
     skip, limit, user_languages, userName, method: 'getFeed',
   });
 
-  const cache = await getCachedPosts(cacheKey);
-  if (cache) return { posts: cache };
+  // const cache = await getCachedPosts(cacheKey);
+  // if (cache) return { posts: cache };
 
   let posts = [];
   const requestsMongo = await Promise.all([
@@ -57,6 +57,10 @@ const getFeed = async ({
     author_permlinks: wobjects,
     muted: _.map(muted, 'userName'),
   }));
+
+  for (const post of posts) {
+    post.fullObjects = _.take(post.fullObjects, 4);
+  }
 
   console.time('PostProcess');
   posts = await postHelper.fillAdditionalInfo({ posts, userName });
