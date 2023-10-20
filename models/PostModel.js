@@ -113,12 +113,12 @@ exports.getByFollowLists = async ({
   ];
 
   try {
-    const [posts1, posts2] = await Promise.all([
+    const [posts1 ] = await Promise.all([
       PostModel.aggregate(pipe1),
    //   PostModel.aggregate(pipe2),
     ]);
 
-    const posts = [...posts1, ...posts2].sort((a, b) => b._id - a._id);
+    const posts = [...posts1].sort((a, b) => b._id - a._id);
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
