@@ -58,7 +58,6 @@ exports.getByFollowLists = async ({
   author_permlinks: authorPermlinks,
   user_languages: userLanguages,
   hiddenPosts = [],
-  filtersData,
   users,
   muted,
   skip,
@@ -69,7 +68,6 @@ exports.getByFollowLists = async ({
       $match: {
         $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
         ...getBlockedAppCond(),
-        ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
         ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
         ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
