@@ -78,14 +78,14 @@ exports.getByFollowLists = async ({
     { $sort: { _id: -1 } },
     { $skip: skip },
     { $limit: limit },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'fullObjects',
-      },
-    },
+    // {
+    //   $lookup: {
+    //     from: 'wobjects',
+    //     localField: 'wobjects.author_permlink',
+    //     foreignField: 'author_permlink',
+    //     as: 'fullObjects',
+    //   },
+    // },
   ];
 
   const pipe2 = [
