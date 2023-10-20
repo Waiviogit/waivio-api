@@ -64,12 +64,14 @@ const getFeed = async ({
     muted: _.map(muted, 'userName'),
   }));
 
-  // posts = await postHelper.fillAdditionalInfo({ posts, userName });
-  //
-  // await Promise.all([
-  //   wobjectHelper.moderatePosts({ posts, locale, app }),
-  //   fillPostsSubscriptions({ posts, userName }),
-  // ]);
+  console.time('Post processing');
+  posts = await postHelper.fillAdditionalInfo({ posts, userName });
+
+  await Promise.all([
+    wobjectHelper.moderatePosts({ posts, locale, app }),
+    fillPostsSubscriptions({ posts, userName }),
+  ]);
+  console.timeEnd('Post processing');
 
   // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
