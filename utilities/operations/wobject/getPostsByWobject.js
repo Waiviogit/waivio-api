@@ -7,6 +7,11 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
+const getRelistedLinks = async (authorPermlink) => {
+  const relisted = await Wobj.findRelistedObjectsByPermlink(authorPermlink);
+  return relisted.map((el) => el?.author_permlink);
+};
+
 module.exports = async (data) => {
   const groupIdPermlinks = [];
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
@@ -59,8 +64,10 @@ module.exports = async (data) => {
 
   const removeFilter = getRemoveFilter(processedObj);
 
+  const relistedLinks = await getRelistedLinks(data.author_permlink);
+
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter,
+    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter, relistedLinks,
   });
 
   if (conditionError) return { error: conditionError };
@@ -97,7 +104,7 @@ module.exports = async (data) => {
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
   author_permlink, user_languages, removeFilter,
-  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks,
+  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks, relistedLinks,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
@@ -119,7 +126,7 @@ const getWobjFeedCondition = async ({
     });
   }
 
-  condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks]) };
+  condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
   return { condition };
 };

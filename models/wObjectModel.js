@@ -161,6 +161,24 @@ const getWobjectsByGroupId = async (groupId) => {
   return result;
 };
 
+const findRelistedObjectsByPermlink = async (authorPermlink) => {
+  const { result } = await findObjects({
+    filter: {
+      status: {
+        $elemMatch: {
+          title: 'relisted',
+          link: authorPermlink,
+        },
+      },
+    },
+    projection: {
+      search: 0,
+    },
+  });
+  if (!result) return [];
+  return result;
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -173,4 +191,5 @@ module.exports = {
   find,
   findObjects,
   getWobjectsByGroupId,
+  findRelistedObjectsByPermlink,
 };
