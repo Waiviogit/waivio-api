@@ -1,4 +1,4 @@
-const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
 const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
@@ -166,7 +166,7 @@ const findRelistedObjectsByPermlink = async (authorPermlink) => {
     filter: {
       status: {
         $elemMatch: {
-          title: 'relisted',
+          title: STATUSES.RELISTED,
           link: authorPermlink,
         },
       },
