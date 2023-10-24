@@ -314,6 +314,31 @@ const getLangByPopularity = (existedLanguages) => {
   return found.lang;
 };
 
+const listItemsPick = ({ listItems, locale }) => {
+  const result = [];
+  const groupedItems = _.groupBy(listItems, 'body');
+  console.log();
+  for (const item in groupedItems) {
+    const ourLocale = groupedItems[item].find((el) => el.locale === locale);
+    if (ourLocale) {
+      result.push(ourLocale);
+      continue;
+    }
+    if (locale !== 'en-US') {
+      const enLocale = groupedItems[item].find((el) => el.locale === 'en-US');
+      if (enLocale) {
+        result.push(enLocale);
+        continue;
+      }
+    }
+    const maxWeightLocale = _.maxBy(groupedItems[item], 'weight');
+
+    result.push(maxWeightLocale);
+  }
+
+  return result;
+};
+
 /**
  * the method sorts the fields by name, then for each individual type checks if there are fields
  * with the requested locale, if there are - processes them if not, requests the English locale
@@ -356,6 +381,11 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
   }, {});
 
   return _.reduce(fieldTypes, (acc, el, index) => {
+    if (index === 'listItem') {
+      const items = listItemsPick({ listItems: el, locale });
+      acc = [...acc, ...items];
+      return acc;
+    }
     const fieldLanguage = _.find(fieldsLanguages, (l) => l.type === index);
     const existedLanguages = _.get(fieldLanguage, 'languages', []);
 
