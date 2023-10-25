@@ -1,7 +1,8 @@
 const {
-  User, Post, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel,
+  User, Post, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel, App,
 } = require('models');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const {
