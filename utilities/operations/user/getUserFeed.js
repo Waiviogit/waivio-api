@@ -1,8 +1,8 @@
 const {
-  User, Post, App, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel,
+  User, Post, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel, App,
 } = require('models');
-const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
+const { getNamespace } = require('cls-hooked');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const {
@@ -47,11 +47,10 @@ const getFeed = async ({
   if (!user) {
     return { error: { status: 404, message: 'User not found!' } };
   }
+
   const { data: filtersData, error: filterError } = await getFiltersData({
     ...filter, forApp, lastId,
   });
-
-  if (filterError) return { error: filterError };
 
   ({ posts } = await Post.getByFollowLists({
     skip,
@@ -65,8 +64,11 @@ const getFeed = async ({
   }));
 
   posts = await postHelper.fillAdditionalInfo({ posts, userName });
-  await wobjectHelper.moderatePosts({ posts, locale, app });
-  await fillPostsSubscriptions({ posts, userName });
+
+  await Promise.all([
+    wobjectHelper.moderatePosts({ posts, locale, app }),
+    fillPostsSubscriptions({ posts, userName }),
+  ]);
 
   await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
