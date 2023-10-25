@@ -164,12 +164,8 @@ const getWobjectsByGroupId = async (groupId) => {
 const findRelistedObjectsByPermlink = async (authorPermlink) => {
   const { result } = await findObjects({
     filter: {
-      status: {
-        $elemMatch: {
-          title: STATUSES.RELISTED,
-          link: authorPermlink,
-        },
-      },
+      'status.title': STATUSES.RELISTED,
+      'status.link': authorPermlink,
     },
     projection: {
       search: 0,
