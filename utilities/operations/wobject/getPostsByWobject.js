@@ -125,7 +125,7 @@ const getWobjFeedCondition = async ({
       condition, wObject, newsPermlink, app, author_permlink, removeFilter,
     });
   }
-
+  console.log('relistedLinks', relistedLinks);
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
   return { condition };
