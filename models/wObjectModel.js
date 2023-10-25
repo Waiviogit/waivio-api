@@ -1,4 +1,4 @@
-const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
 const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
@@ -161,6 +161,20 @@ const getWobjectsByGroupId = async (groupId) => {
   return result;
 };
 
+const findRelistedObjectsByPermlink = async (authorPermlink) => {
+  const { result } = await findObjects({
+    filter: {
+      'status.title': STATUSES.RELISTED,
+      'status.link': authorPermlink,
+    },
+    projection: {
+      search: 0,
+    },
+  });
+  if (!result) return [];
+  return result;
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -173,4 +187,5 @@ module.exports = {
   find,
   findObjects,
   getWobjectsByGroupId,
+  findRelistedObjectsByPermlink,
 };
