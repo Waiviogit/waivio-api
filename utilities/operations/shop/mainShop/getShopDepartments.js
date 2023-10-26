@@ -23,13 +23,13 @@ const makeConditions = ({ name, excluded = [], path = [] }) => {
 
 // we can add host in future for sites
 module.exports = async ({ name, excluded = [], path = [] } = {}) => {
-  const key = `${CACHE_KEY.MAIN_SHOP_DEPARTMENTS}:${getCacheKey({
-    name, path, excluded,
-  })}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { result: [] });
-  }
+  // const key = `${CACHE_KEY.MAIN_SHOP_DEPARTMENTS}:${getCacheKey({
+  //   name, path, excluded,
+  // })}`;
+  // const cache = await getCachedData(key);
+  // if (cache) {
+  //   return jsonHelper.parseJson(cache, { result: [] });
+  // }
 
   const { result: departments, error } = await Department.find(
     {
@@ -39,7 +39,7 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
   );
 
   const { result: uncategorized } = await Wobj
-    .findOne({ $or: [{ departments: [] }, { departments: null }] });
+    .findOne({ departments: { $in: [null, []] } });
 
   if (error) return { error };
   if (_.isEmpty(departments)) return { result: [] };
@@ -65,22 +65,25 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
       [...excluded, name],
       path,
     );
+    const result = shopHelper.omitRelated(
+      shopHelper.orderBySubdirectory(mappedDepartments),
+    );
 
     await setCachedData({
       key,
-      data: { result: shopHelper.orderBySubdirectory(mappedDepartments) },
+      data: { result },
       ttl: TTL_TIME.THIRTY_MINUTES,
     });
-    return {
-      result: shopHelper.orderBySubdirectory(mappedDepartments),
-    };
+    return { result };
   }
 
-  const result = await getDepartmentsOnWobject(departments);
-  const ordered = shopHelper.orderBySubdirectory(result);
-  await setCachedData({
-    key, data: { result: ordered }, ttl: TTL_TIME.THIRTY_MINUTES,
-  });
+  const filtered = await getDepartmentsOnWobject(departments);
+  const result = shopHelper.omitRelated(
+    shopHelper.orderBySubdirectory(filtered),
+  );
+  // await setCachedData({
+  //   key, data: { result }, ttl: TTL_TIME.THIRTY_MINUTES,
+  // });
 
-  return { result: ordered };
+  return { result };
 };

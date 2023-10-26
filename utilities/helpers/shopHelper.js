@@ -236,6 +236,9 @@ const getDefaultGroupStage = () => [
 const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);
 
+const omitRelated = (departments) => departments.map((d) => (
+  { name: d.name, subdirectory: d.subdirectory }));
+
 const getDepartmentsFromObjects = (objects, path) => {
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const departmentsMap = new Map();
@@ -399,4 +402,5 @@ module.exports = {
   getFilteredTagCategories,
   getMoreTagsForCategory,
   getUserFilter,
+  omitRelated,
 };
