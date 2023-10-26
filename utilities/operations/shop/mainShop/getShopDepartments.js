@@ -69,11 +69,11 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
       shopHelper.orderBySubdirectory(mappedDepartments),
     );
 
-    await setCachedData({
-      key,
-      data: { result },
-      ttl: TTL_TIME.THIRTY_MINUTES,
-    });
+    // await setCachedData({
+    //   key,
+    //   data: { result },
+    //   ttl: TTL_TIME.THIRTY_MINUTES,
+    // });
     return { result };
   }
 
