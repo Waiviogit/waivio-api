@@ -52,12 +52,14 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
         subdirectory: false,
       });
     }
-    await setCachedData({
-      key,
-      data: { result: mappedDepartments },
-      ttl: TTL_TIME.THIRTY_MINUTES,
-    });
-    return { result: mappedDepartments };
+    const result = shopHelper.omitRelated(mappedDepartments);
+
+    // await setCachedData({
+    //   key,
+    //   data: { result },
+    //   ttl: TTL_TIME.THIRTY_MINUTES,
+    // });
+    return { result };
   }
   if (name) {
     const mappedDepartments = await mapDepartments(
