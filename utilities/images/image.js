@@ -5,6 +5,7 @@ const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const zlib = require('zlib');
 const _ = require('lodash');
+const heicConvert = require('heic-convert');
 
 class Image {
   constructor() {
@@ -62,6 +63,13 @@ class Image {
     const format = metadata?.format === IMAGES_FORMAT.GIF
       ? IMAGES_FORMAT.GIF
       : IMAGES_FORMAT.WEBP;
+    if (metadata?.format === 'heif') {
+      buffer = await heicConvert({
+        buffer,
+        format: 'JPEG',
+        quality: 1,
+      });
+    }
 
     if (size === IMAGE_SIZE.SMALL) {
       return sharp(buffer).rotate(0).resize(34, 34).toFormat(format)
