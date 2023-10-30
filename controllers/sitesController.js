@@ -404,4 +404,4 @@ exports.getParentHost = async (req, res, next) => {
   const result = await sitesHelper.getParentHost(value);
   res.result = { status: 200, json: result };
   next();
-}
+};
