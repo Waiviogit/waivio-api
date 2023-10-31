@@ -38,13 +38,13 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
     },
   );
 
-  const { result: uncategorized } = await Wobj
-    .findOne({ $or: [{ departments: [] }, { departments: null }] });
-
   if (error) return { error };
   if (_.isEmpty(departments)) return { result: [] };
 
   if (!name) {
+    const { result: uncategorized } = await Wobj
+      .findOne({ departments: { $in: [null, []] } });
+
     const mappedDepartments = await mapDepartments(departments);
     if (uncategorized) {
       mappedDepartments.push({
@@ -52,35 +52,29 @@ module.exports = async ({ name, excluded = [], path = [] } = {}) => {
         subdirectory: false,
       });
     }
-    await setCachedData({
-      key,
-      data: { result: mappedDepartments },
-      ttl: TTL_TIME.THIRTY_MINUTES,
-    });
-    return { result: mappedDepartments };
-  }
-  if (name) {
-    const mappedDepartments = await mapDepartments(
-      await filterDepartments(departments, [...excluded, name], path),
-      [...excluded, name],
-      path,
-    );
+    const result = shopHelper.omitRelated(mappedDepartments);
 
     await setCachedData({
       key,
-      data: { result: shopHelper.orderBySubdirectory(mappedDepartments) },
-      ttl: TTL_TIME.THIRTY_MINUTES,
+      data: { result },
+      ttl: TTL_TIME.ONE_DAY,
     });
-    return {
-      result: shopHelper.orderBySubdirectory(mappedDepartments),
-    };
+    return { result };
   }
 
-  const result = await getDepartmentsOnWobject(departments);
-  const ordered = shopHelper.orderBySubdirectory(result);
+  const mappedDepartments = await mapDepartments(
+    await filterDepartments(departments, [...excluded, name], path),
+    [...excluded, name],
+    path,
+  );
+  const result = shopHelper.omitRelated(
+    shopHelper.orderBySubdirectory(mappedDepartments),
+  );
+
   await setCachedData({
-    key, data: { result: ordered }, ttl: TTL_TIME.THIRTY_MINUTES,
+    key,
+    data: { result },
+    ttl: TTL_TIME.THIRTY_MINUTES,
   });
-
-  return { result: ordered };
+  return { result };
 };
