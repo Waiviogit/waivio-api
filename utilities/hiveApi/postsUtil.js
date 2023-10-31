@@ -120,3 +120,8 @@ exports.getContent = async ({ author, permlink }) => {
     return { error: { message: error.message } };
   }
 };
+
+(async () => {
+  const { result, error } = await this.getContent({ author: 'arcange', permlink: 'hive-finance-20231030-en' });
+  console.log();
+})();
