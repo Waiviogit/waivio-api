@@ -18,6 +18,13 @@ const moment = require('moment');
 const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('./cacheHelper');
+const jsonHelper = require('./jsonHelper');
+const { TTL_TIME } = require('../../constants/common');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -118,10 +125,18 @@ exports.getWebsitePayments = async ({
 };
 
 exports.getParentHost = async ({ host }) => {
+  const key = getCacheKey({ getParentHost: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: '' });
+  }
   const { result, error } = await App.findOne({
     host,
   });
   if (error) return { error };
+  await setCachedData({
+    key, data: { result: result?.parentHost ?? '' }, ttl: TTL_TIME.ONE_DAY,
+  });
   return { result: result?.parentHost ?? '' };
 };
 
