@@ -70,8 +70,11 @@ exports.aggregate = async (pipeline) => {
 exports.updateOne = async (condition, updateData = {}) => {
   try {
     const user = await UserModel
-      .findOneAndUpdate(condition, updateData,
-        { upsert: true, new: true, setDefaultsOnInsert: true })
+      .findOneAndUpdate(
+        condition,
+        updateData,
+        { upsert: true, new: true, setDefaultsOnInsert: true },
+      )
       .select('+user_metadata +privateEmail');
 
     return { user };
@@ -91,7 +94,7 @@ exports.search = async ({
         .find(condition, {
           _id: 0, name: 1, wobjects_weight: 1, followers_count: 1,
         })
-        .sort({ wobjects_weight: -1 })
+        .sort({ wobjects_weight: -1, _id: 1 })
         .skip(skip)
         .limit(limit)
         .lean(),
