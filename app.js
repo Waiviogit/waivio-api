@@ -18,6 +18,7 @@ const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
 const processHelper = require('utilities/helpers/processHelper');
 
 const swaggerDocument = require('./swagger');
+require('./utilities');
 
 const session = createNamespace('request-session');
 const app = express();
