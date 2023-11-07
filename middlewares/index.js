@@ -8,5 +8,6 @@ moduleExports.moderateWobjects = require('./wobject/moderation').moderateWobject
 moduleExports.filterUniqGroupId = require('./wobject/uniqueGroupId/filterUniqueGroupId').filterUniqGroupId;
 moduleExports.checkObjectsFollowings = require('./wobject/checkFollowings').checkObjectsFollowings;
 moduleExports.siteUserStatistics = require('./statistics/siteUserStatistics');
+moduleExports.reqRates = require('./statistics/reqRates');
 
 module.exports = moduleExports;
