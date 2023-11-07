@@ -12,6 +12,7 @@ const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications, filterUniqGroupId,
+  reqRates,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
@@ -64,6 +65,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
+app.use('/', reqRates);
 app.use('/', siteUserStatistics.saveUserIp);
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

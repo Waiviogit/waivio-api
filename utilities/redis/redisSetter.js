@@ -143,6 +143,8 @@ exports.zadd = async ({
 exports.saddAsync = async ({ key, values, client }) => client.saddAsync(key, ...values);
 
 exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.setAsync(key, value);
+
+exports.incr = ({ key, client = mainFeedsCacheClient }) => client.incrAsync(key);
 exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.expireAsync(key, ttl);
 
 exports.addToCache = async ({
