@@ -1,9 +1,10 @@
-const { currencyClient } = require('utilities/hiveApi/hiveClient');
+const { getRegularClient } = require('./clientOptions');
 
 exports.getRewardFund = async () => {
   try {
+    const client = await getRegularClient();
     return {
-      result: await currencyClient.call('condenser_api', 'get_reward_fund', ['post']),
+      result: await client.call('condenser_api', 'get_reward_fund', ['post']),
     };
   } catch (error) {
     return { error };
@@ -12,8 +13,9 @@ exports.getRewardFund = async () => {
 
 exports.getCurrentMedianHistoryPrice = async () => {
   try {
+    const client = await getRegularClient();
     return {
-      result: await currencyClient.call('condenser_api', 'get_current_median_history_price', []),
+      result: await client.call('condenser_api', 'get_current_median_history_price', []),
     };
   } catch (error) {
     return { error };

@@ -1,5 +1,5 @@
 const { PrivateKey, Asset } = require('@hiveio/dhive');
-const { userClient } = require('./hiveClient');
+const { getRegularClient } = require('./clientOptions');
 /**
  * @param from {string}
  * @param to {string}
@@ -12,7 +12,8 @@ exports.transfer = async ({
   from, to, amount, memo = '', activeKey,
 }) => {
   try {
-    const data = await userClient.broadcast.transfer({
+    const client = await getRegularClient();
+    const data = await client.broadcast.transfer({
       from, to, amount: new Asset(amount, 'HIVE'), memo,
     }, PrivateKey.fromString(activeKey));
     return { result: data };
