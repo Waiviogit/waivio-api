@@ -1,12 +1,13 @@
-const { postClient } = require('utilities/hiveApi/hiveClient');
 const _ = require('lodash');
+const { getRegularClient } = require('./clientOptions');
 
 exports.getPostsByCategory = async (data) => {
   try {
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
       return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
     }
-    const posts = await postClient.database.getDiscussions(data.category, {
+    const client = await getRegularClient();
+    const posts = await client.database.getDiscussions(data.category, {
       limit: data.limit || 20,
       tag: data.tag,
       start_author: data.start_author,
@@ -28,7 +29,8 @@ exports.getPostsByCategory = async (data) => {
  */
 exports.getPost = async ({ author, permlink }) => {
   try {
-    const post = await postClient.database.call('get_content', [author, permlink]);
+    const client = await getRegularClient();
+    const post = await client.database.call('get_content', [author, permlink]);
 
     if (post.author) {
       return { post };
@@ -62,7 +64,8 @@ exports.getManyPosts = async (links = []) => {
 // eslint-disable-next-line camelcase
 exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
   try {
-    const comments = await postClient.database.call(
+    const client = await getRegularClient();
+    const comments = await client.database.call(
       'get_discussions_by_comments',
       [{ start_author, start_permlink, limit }],
     );
@@ -75,7 +78,8 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
 
 exports.getCommentsArr = async (permlinks) => {
   try {
-    const comments = await postClient.call(
+    const client = await getRegularClient();
+    const comments = await client.call(
       'database_api',
       'find_comments',
       { comments: permlinks },
@@ -95,7 +99,8 @@ exports.getCommentsArr = async (permlinks) => {
  */
 exports.getPostState = async ({ author, permlink, category }) => {
   try {
-    const result = await postClient.database.call(
+    const client = await getRegularClient();
+    const result = await client.database.call(
       'get_state',
       [`${category}/@${author}/${permlink}`],
     );
@@ -109,7 +114,8 @@ exports.getPostState = async ({ author, permlink, category }) => {
 
 exports.getContent = async ({ author, permlink }) => {
   try {
-    const result = await postClient.database.call(
+    const client = await getRegularClient();
+    const result = await client.database.call(
       'get_content',
       [author, permlink],
     );
