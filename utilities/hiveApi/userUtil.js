@@ -1,17 +1,13 @@
-const { userClient } = require('utilities/hiveApi/hiveClient');
 const _ = require('lodash');
-const { socketHiveClient } = require('../webSocket/hiveSocket');
+const {
+  getHistoryClient,
+  getRegularClient,
+} = require('./clientOptions');
 
 exports.getAccount = async (name) => {
   try {
-    // const result = await socketHiveClient.getAccounts([name]);
-    // if (!_.get(result, 'error')) {
-    //   if (!result[0]) {
-    //     return { error: { status: 404, message: 'User not found!' } };
-    //   }
-    //   return { userData: result[0] };
-    // }
-    const [account] = await userClient.database.getAccounts([name]);
+    const client = await getRegularClient();
+    const [account] = await client.database.getAccounts([name]);
 
     if (!account) {
       return { error: { status: 404, message: 'User not found!' } };
@@ -24,7 +20,8 @@ exports.getAccount = async (name) => {
 
 exports.getFollowingsList = async ({ name, startAccount, limit }) => {
   try {
-    const followings = await userClient.call(
+    const client = await getRegularClient();
+    const followings = await client.call(
       'condenser_api',
       'get_following',
       [name, startAccount, 'blog', limit],
@@ -38,7 +35,8 @@ exports.getFollowingsList = async ({ name, startAccount, limit }) => {
 
 exports.getFollowersList = async ({ name, startAccount, limit }) => {
   try {
-    const followers = await userClient.call(
+    const client = await getRegularClient();
+    const followers = await client.call(
       'condenser_api',
       'get_followers',
       [name, startAccount, 'blog', limit],
@@ -51,7 +49,8 @@ exports.getFollowersList = async ({ name, startAccount, limit }) => {
 
 exports.getFollowCount = async (name) => {
   try {
-    const result = await userClient.call(
+    const client = await getRegularClient();
+    const result = await client.call(
       'condenser_api',
       'get_follow_count',
       [name],
@@ -65,7 +64,8 @@ exports.getFollowCount = async (name) => {
 
 exports.searchUserByName = async ({ name, limit = 20 }) => {
   try {
-    const accounts = await userClient.call('condenser_api', 'get_account_reputations', [name, limit]);
+    const client = await getRegularClient();
+    const accounts = await client.call('condenser_api', 'get_account_reputations', [name, limit]);
 
     return { accounts };
   } catch (error) {
@@ -75,7 +75,8 @@ exports.searchUserByName = async ({ name, limit = 20 }) => {
 
 exports.getDelegations = async (account, cb = (el) => _.get(el, 'delegations', [])) => {
   try {
-    const result = await userClient.call(
+    const client = await getRegularClient();
+    const result = await client.call(
       'database_api',
       'find_vesting_delegations',
       { account },
@@ -89,7 +90,8 @@ exports.getDelegations = async (account, cb = (el) => _.get(el, 'delegations', [
 
 exports.getDelegationExpirations = async (account, cb = (el) => _.get(el, 'delegations', [])) => {
   try {
-    const result = await userClient.call(
+    const client = await getRegularClient();
+    const result = await client.call(
       'database_api',
       'find_vesting_delegation_expirations',
       { account },
@@ -103,11 +105,8 @@ exports.getDelegationExpirations = async (account, cb = (el) => _.get(el, 'deleg
 
 exports.getAccountHistory = async (name, id, limit) => {
   try {
-    // const result = await socketHiveClient.getAccountHistory({ name, id, limit });
-    // if (!_.get(result, 'error')) {
-    //   return { result };
-    // }
-    const hiveResp = await userClient.database.getAccountHistory(
+    const client = await getHistoryClient();
+    const hiveResp = await client.database.getAccountHistory(
       name,
       id,
       limit,
