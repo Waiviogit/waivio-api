@@ -19,7 +19,6 @@ const processHelper = require('utilities/helpers/processHelper');
 
 const swaggerDocument = require('./swagger');
 require('./utilities');
-require('./utilities/hiveApi/clientOptions');
 
 const session = createNamespace('request-session');
 const app = express();
