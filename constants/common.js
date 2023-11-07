@@ -123,6 +123,7 @@ exports.REDIS_KEYS = {
     ENGINE_BLOCKCHAIN: 'test:engine:blockchain',
     ENGINE_CONTRACTS: 'test:engine:contracts',
   },
+  REQUESTS_RATE: 'requests:api:',
 };
 
 exports.LANGUAGES = ['en-US',
