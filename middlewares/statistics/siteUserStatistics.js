@@ -10,14 +10,36 @@ const { App } = require('models');
 const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('../../utilities/helpers/cacheHelper');
+const jsonHelper = require('../../utilities/helpers/jsonHelper');
+const { TTL_TIME } = require('../../constants/common');
+
+const getAppForStatistic = async (host) => {
+  const key = getCacheKey({ getAppForStatistic: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, null);
+  }
+
+  const { result } = await App.findOne({ host });
+
+  await setCachedData({
+    key, data: result, ttl: TTL_TIME.ONE_MINUTE,
+  });
+
+  return result;
+};
 
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
   const ip = getIpFromHeaders(req);
-  const { result, error } = await App.findOne({ host });
+  const result = await getAppForStatistic(host);
 
-  if (error) return next(error);
   if (!result) {
     if (!host) {
       req.pathToRedirect = `${URL.HTTPS}${config.appHost}`;

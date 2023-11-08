@@ -101,6 +101,7 @@ exports.CACHE_KEY = {
 };
 
 exports.TTL_TIME = {
+  ONE_MINUTE: 60,
   THIRTY_MINUTES: 1800,
   ONE_DAY: 86400,
   SEVEN_DAYS: 86400 * 7,
