@@ -65,22 +65,29 @@ const getReqRates = async (req, res, next) => {
     end: -1,
   });
 
-  const urlChunk = _.chunk(urls, 2);
-  const timeChunk = _.chunk(timing, 2);
+  // const urlChunk = _.chunk(urls, 2);
+  // const timeChunk = _.chunk(timing, 2);
+  //
+  // const result = _.chain(urlChunk).map((el) => {
+  //   const time = _.find(timeChunk, (t) => t[0] === el[0]);
+  //
+  //   return {
+  //     url: el[0],
+  //     requestTimes: Number(el[1]),
+  //     avgTime: Number(time[1]) / Number(el[1]),
+  //   };
+  // })
+  //   .orderBy(['requestTimes', 'avgTime'], ['desc', 'desc'])
+  //   .value();
 
-  const result = _.chain(urlChunk).map((el) => {
-    const time = _.find(timeChunk, (t) => t[0] === el[0]);
+  res.result = {
+    status: 200,
+    json: {
+      urls,
+      timing,
 
-    return {
-      url: el[0],
-      requestTimes: Number(el[1]),
-      avgTime: Number(time[1]) / Number(el[1]),
-    };
-  })
-    .orderBy(['requestTimes', 'avgTime'], ['desc', 'desc'])
-    .value();
-
-  res.result = { status: 200, json: result };
+    },
+  };
   next();
 };
 
