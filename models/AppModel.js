@@ -1,3 +1,10 @@
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('../utilities/helpers/cacheHelper');
+const jsonHelper = require('../utilities/helpers/jsonHelper');
+const { TTL_TIME } = require('../constants/common');
 const { App } = require('database').models;
 
 const getOne = async ({ host, bots }) => {
@@ -98,6 +105,22 @@ const create = async (condition) => {
   }
 };
 
+const getAppFromCache = async (host) => {
+  const key = getCacheKey({ getAppFromCache: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, null);
+  }
+
+  const { result } = await findOne({ host });
+
+  await setCachedData({
+    key, data: result, ttl: TTL_TIME.ONE_MINUTE,
+  });
+
+  return result;
+};
+
 module.exports = {
   getOne,
   aggregate,
@@ -109,4 +132,5 @@ module.exports = {
   create,
   findWithPopulate,
   findOneAndUpdate,
+  getAppFromCache,
 };
