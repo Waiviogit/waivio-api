@@ -1,13 +1,30 @@
 const _ = require('lodash');
 const { App, Wobj } = require('models');
 const { sitesHelper } = require('utilities/helpers');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
+const { TTL_TIME } = require('../../../constants/common');
 
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
 exports.getConfigurationsList = async (host) => {
+  const key = getCacheKey({ getConfigurationsList: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: '' });
+  }
+
   let { result } = await App.findOne({ host });
   if (!result) return { error: { status: 404, message: 'App not Found!' } };
   result = await sitesHelper.aboutObjectFormat(result);
+
+  await setCachedData({
+    key, data: { result: _.get(result, 'configuration') }, ttl: TTL_TIME.ONE_MINUTE,
+  });
   return { result: _.get(result, 'configuration') };
 };
 
@@ -32,14 +49,12 @@ exports.saveConfigurations = async (params) => {
     if (!result) return { error: { status: 422, message: 'Configuration validation failed, aboutObject not exist' } };
   }
 
-  const { result: updatedApp, error: updateError } = await App.findOneAndUpdate(
-    { _id: app._id }, {
-      configuration: {
-        ...app.configuration,
-        ...params.configuration,
-      },
+  const { result: updatedApp, error: updateError } = await App.findOneAndUpdate({ _id: app._id }, {
+    configuration: {
+      ...app.configuration,
+      ...params.configuration,
     },
-  );
+  });
   if (updateError) return { error: updateError };
 
   const result = await sitesHelper.aboutObjectFormat(updatedApp);
