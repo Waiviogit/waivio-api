@@ -53,6 +53,13 @@ const hashtags = async (req, res, next) => {
 };
 
 const getReqRates = async (req, res, next) => {
+  const key = req?.query?.key;
+
+  if (key !== process.env.REQ_TIME_KEY) {
+    res.status(401).send();
+    return;
+  }
+
   try {
     const urls = await redisGetter.zrange({
       key: REDIS_KEYS.REQUESTS_BY_URL,
