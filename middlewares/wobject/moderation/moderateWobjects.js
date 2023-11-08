@@ -25,9 +25,9 @@ exports.moderate = async (req, res, next) => {
     return;
   }
 
-  const { result: app, error: getAppErr } = await getApp();
+  const app = await getApp();
 
-  if (getAppErr || !app) {
+  if (!app) {
     next();
     return;
   }
@@ -117,7 +117,7 @@ const getApp = async () => {
   if (!host) {
     host = config.appHost;
   }
-  return App.findOne({ host });
+  return App.getAppFromCache(host);
 };
 
 const newValidationArray = async ({
