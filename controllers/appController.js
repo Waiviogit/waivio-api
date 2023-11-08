@@ -53,37 +53,53 @@ const hashtags = async (req, res, next) => {
 };
 
 const getReqRates = async (req, res, next) => {
-  const urls = await redisGetter.zrange({
-    key: REDIS_KEYS.REQUESTS_BY_URL,
-    start: 0,
-    end: -1,
-  });
+  try {
+    const urls = await redisGetter.zrange({
+      key: REDIS_KEYS.REQUESTS_BY_URL,
+      start: 0,
+      end: -1,
+    });
 
-  const timing = await redisGetter.zrange({
-    key: REDIS_KEYS.REQUESTS_TIME,
-    start: 0,
-    end: -1,
-  });
+    const timing = await redisGetter.zrange({
+      key: REDIS_KEYS.REQUESTS_TIME,
+      start: 0,
+      end: -1,
+    });
 
-  const urlChunk = _.chunk(urls, 2);
-  const timeChunk = _.chunk(timing, 2);
+    const urlChunk = _.chunk(urls, 2);
+    const timeChunk = _.chunk(timing, 2);
 
-  const result = _.chain(urlChunk).map((el) => {
-    const time = _.find(timeChunk, (t) => t[0] === el[0]);
+    const result = _.chain(urlChunk)
+      .map((el) => {
+        const time = _.find(timeChunk, (t) => t[0] === el[0]);
 
-    return {
-      url: el[0],
-      requestTimes: Number(el[1]),
-      avgTime: Number(time[1]) / Number(el[1]),
+        if (el[0] && el[1] && time && time[0] && time[1]) {
+          return {
+            url: el[0],
+            requestTimes: Number(el[1]),
+            avgTime: Number(time[1]) / Number(el[1]),
+          };
+        }
+
+        return null; // Handle the case where data is missing
+      })
+      .filter((el) => el !== null) // Remove null values
+      .orderBy(['requestTimes', 'avgTime'], ['desc', 'desc'])
+      .value();
+
+    res.result = {
+      status: 200,
+      json: result,
     };
-  })
-    .orderBy(['requestTimes', 'avgTime'], ['desc', 'desc'])
-    .value();
+  } catch (error) {
+    // Handle any errors that occur during the asynchronous operations
+    console.error(error);
+    res.result = {
+      status: 500,
+      error: 'Internal Server Error',
+    };
+  }
 
-  res.result = {
-    status: 200,
-    json: result,
-  };
   next();
 };
 
