@@ -117,3 +117,7 @@ exports.sismember = async ({
 }) => client.sismemberAsync(key, member);
 
 exports.keys = ({ key, client = mainFeedsCacheClient }) => client.keysAsync(key);
+
+exports.zrange = async ({
+  key, start, end, client = importUserClient,
+}) => client.zrangeAsync(key, start, end, 'WITHSCORES');
