@@ -13,7 +13,7 @@ exports.getUserLastActivity = async (name) => {
   }
 
   if (user.lastActivity) {
-    return { lastActivity: user.lastActivity };
+    return { lastActivity: new Date(user.lastActivity).toISOString().slice(0, 19) };
   }
 
   const { result, error } = await getAccountHistory(name, -1, 1000);
@@ -26,7 +26,7 @@ exports.getUserLastActivity = async (name) => {
 
   const lastActivity = findLastActivity(_.map(result, (el) => el[1]), name);
 
-  await User.updateOne({ name }, { lastActivity: new Date() });
+  await User.updateOne({ name }, { lastActivity: new Date(lastActivity) });
 
   return { lastActivity };
 };
