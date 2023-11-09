@@ -33,10 +33,9 @@ const checkUserBell = async ({ result, follower, path }) => {
     condition: {
       following: result[path],
       follower,
-      bell: true,
     },
   });
-  result.bell = !!subscription;
+  result.bell = !!subscription?.bell;
 };
 
 const checkWobjectBell = async ({ result, follower, path }) => {
@@ -44,8 +43,7 @@ const checkWobjectBell = async ({ result, follower, path }) => {
     condition: {
       following: result[path],
       follower,
-      bell: true,
     },
   });
-  result.bell = !!subscription;
+  result.bell = !!subscription?.bell;
 };
