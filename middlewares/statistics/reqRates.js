@@ -5,7 +5,7 @@ const {
   TTL_TIME,
 } = require('../../constants/common');
 
-const reqRates = async (req, res, next) => {
+const incrRate = async (req, res, next) => {
   const currentMinute = new Date().getMinutes();
 
   const key = `${REDIS_KEYS.REQUESTS_RATE}${currentMinute}`;
@@ -15,4 +15,33 @@ const reqRates = async (req, res, next) => {
   next();
 };
 
-module.exports = reqRates;
+const reqTimeMonitor = async (req, res, next) => {
+  const start = Date.now();
+
+  const member = req?.route?.path;
+
+  await redisSetter.zincrby({
+    key: REDIS_KEYS.REQUESTS_BY_URL,
+    client: importUserClient,
+    member,
+    increment: 1,
+  });
+
+  res.on('finish', async () => {
+    const duration = Date.now() - start;
+
+    await redisSetter.zincrby({
+      key: REDIS_KEYS.REQUESTS_TIME,
+      client: importUserClient,
+      member,
+      increment: duration,
+    });
+  });
+
+  next();
+};
+
+module.exports = {
+  incrRate,
+  reqTimeMonitor,
+};

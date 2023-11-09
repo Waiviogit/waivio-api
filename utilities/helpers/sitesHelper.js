@@ -293,6 +293,12 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
+  const key = getCacheKey({ getSiteSettings: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { result: '' });
+  }
+
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const {
@@ -305,19 +311,23 @@ exports.getSettings = async (host) => {
     objectControl,
   } = app;
 
-  return {
-    result: {
-      googleAnalyticsTag,
-      googleGSCTag,
-      beneficiary,
-      referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
-        ? app_commissions.referral_commission_acc
-        : app.owner,
-      currency,
-      language,
-      objectControl,
-    },
+  const result = {
+    googleAnalyticsTag,
+    googleGSCTag,
+    beneficiary,
+    referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
+      ? app_commissions.referral_commission_acc
+      : app.owner,
+    currency,
+    language,
+    objectControl,
   };
+
+  await setCachedData({
+    key, data: { result }, ttl: TTL_TIME.ONE_MINUTE,
+  });
+
+  return { result };
 };
 
 exports.aboutObjectFormat = async (app) => {
@@ -393,6 +403,18 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
+  const key = getCacheKey({ getAdSense: host });
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });
+  }
+
   const { result } = await App.findOne({ host });
-  return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
+  const response = _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
+
+  await setCachedData({
+    key, data: response, ttl: TTL_TIME.ONE_MINUTE,
+  });
+
+  return response;
 };

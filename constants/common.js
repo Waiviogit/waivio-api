@@ -101,6 +101,7 @@ exports.CACHE_KEY = {
 };
 
 exports.TTL_TIME = {
+  ONE_MINUTE: 60,
   THIRTY_MINUTES: 1800,
   ONE_DAY: 86400,
   SEVEN_DAYS: 86400 * 7,
@@ -124,6 +125,8 @@ exports.REDIS_KEYS = {
     ENGINE_CONTRACTS: 'test:engine:contracts',
   },
   REQUESTS_RATE: 'requests:api:',
+  REQUESTS_TIME: 'requests:time:api',
+  REQUESTS_BY_URL: 'requests:url:api',
 };
 
 exports.LANGUAGES = ['en-US',

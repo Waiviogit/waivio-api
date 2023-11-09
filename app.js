@@ -65,7 +65,7 @@ app.use((req, res, next) => {
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
-app.use('/', reqRates);
+app.use('/', reqRates.incrRate);
 app.use('/', siteUserStatistics.saveUserIp);
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));

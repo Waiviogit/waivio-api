@@ -15,9 +15,8 @@ exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
   const host = session.get('host');
   const ip = getIpFromHeaders(req);
-  const { result, error } = await App.findOne({ host });
+  const result = await App.getAppFromCache(host);
 
-  if (error) return next(error);
   if (!result) {
     if (!host) {
       req.pathToRedirect = `${URL.HTTPS}${config.appHost}`;
