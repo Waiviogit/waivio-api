@@ -7371,7 +7371,7 @@
         }
       }
     },
-    "/api/wobject/{authorPermlink}/list-item-locales/:itemLink": {
+    "/api/wobject/{authorPermlink}/list-item-locales/{itemLink}": {
       "get": {
         "tags": [
           "wobject"
