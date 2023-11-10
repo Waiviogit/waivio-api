@@ -1,13 +1,49 @@
+/* eslint-disable camelcase */
 const UserWobjects = require('models/UserWobjects');
 const _ = require('lodash');
 
 const makePipeline = ({
-  // eslint-disable-next-line camelcase
   name, skip, limit, object_types, exclude_object_types,
 }) => {
-  const pipeline = [
+  if (object_types || exclude_object_types) {
+    return [
+      { $match: { user_name: name, weight: { $gt: 0 } } },
+      { $sort: { weight: -1 } },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'author_permlink',
+          foreignField: 'author_permlink',
+          as: 'wobject',
+        },
+      },
+      { $unwind: '$wobject' },
+      { $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } } },
+      { $skip: skip },
+      { $limit: limit + 1 },
+      {
+        $addFields: {
+          'wobject.user_weight': '$weight',
+        },
+      },
+      { $replaceRoot: { newRoot: '$wobject' } },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'parent',
+          foreignField: 'author_permlink',
+          as: 'parent',
+        },
+      },
+      { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
+    ];
+  }
+
+  return [
     { $match: { user_name: name, weight: { $gt: 0 } } },
     { $sort: { weight: -1 } },
+    { $skip: skip },
+    { $limit: limit + 1 },
     {
       $lookup: {
         from: 'wobjects',
@@ -17,8 +53,6 @@ const makePipeline = ({
       },
     },
     { $unwind: '$wobject' },
-    { $skip: skip },
-    { $limit: limit + 1 },
     {
       $addFields: {
         'wobject.user_weight': '$weight',
@@ -35,15 +69,6 @@ const makePipeline = ({
     },
     { $addFields: { parent: { $ifNull: [{ $arrayElemAt: ['$parent', 0] }, ''] } } },
   ];
-
-  // eslint-disable-next-line camelcase
-  if (object_types || exclude_object_types) {
-    pipeline.splice(4, 0, {
-      // eslint-disable-next-line camelcase
-      $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } },
-    });
-  }
-  return pipeline;
 };
 
 // eslint-disable-next-line camelcase

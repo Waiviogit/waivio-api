@@ -18,5 +18,6 @@ moduleExports.getWobjectAuthorities = require('./getWobjectAuthorities');
 moduleExports.getByOptionsCategory = require('./getByOptionsCategory');
 moduleExports.getByGroupId = require('./getByGroupId');
 moduleExports.recountListItems = require('./recountListItems');
+moduleExports.getListItemLocales = require('./getListItemLocales');
 
 module.exports = moduleExports;

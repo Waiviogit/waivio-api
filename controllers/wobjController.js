@@ -3,7 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities, getByGroupId, recountListItems,
+  getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -430,6 +430,13 @@ const getAuthorities = async (req, res, next) => {
   next();
 };
 
+const getListItemsLocales = async (req, res, next) => {
+  const result = await getListItemLocales(req.params);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getWobjectsByGroupId = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body, userName: req.headers.follower },
@@ -532,4 +539,5 @@ module.exports = {
   getListLinks,
   getListDepartments,
   searchDefault,
+  getListItemsLocales,
 };
