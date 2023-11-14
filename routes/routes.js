@@ -173,6 +173,8 @@ wobjRoutes.route('/wobject/:authorPermlink/newsfeed')
   .post(reqTimeMonitor, WobjController.newsfeed);
 wobjRoutes.route('/wobject/:authorPermlink/authority-fields')
   .get(reqTimeMonitor, WobjController.getAuthorities);
+wobjRoutes.route('/wobject/:authorPermlink/list-item-locales/:itemLink')
+  .get(reqTimeMonitor, WobjController.getListItemsLocales);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(reqTimeMonitor, WobjController.getMapObjectExperts);
