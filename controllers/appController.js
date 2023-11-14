@@ -6,6 +6,7 @@ const config = require('config');
 const redisGetter = require('utilities/redis/redisGetter');
 const _ = require('lodash');
 const { REDIS_KEYS } = require('../constants/common');
+const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 
 const show = async (req, res, next) => {
   const data = {
@@ -14,12 +15,16 @@ const show = async (req, res, next) => {
   data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
   const session = getNamespace('request-session');
   data.host = session.get('host') || config.appHost;
-  const { app, error } = await App.getOne(data);
+  const {
+    app,
+    error,
+  } = await App.getOne(data);
 
   if (error) {
     return next(error);
   }
-  res.status(200).json(app);
+  res.status(200)
+    .json(app);
 };
 
 const experts = async (req, res, next) => {
@@ -31,10 +36,14 @@ const experts = async (req, res, next) => {
 
   if (!value) return;
 
-  const { users, error } = await AppOperations.experts.get(value);
+  const {
+    users,
+    error,
+  } = await AppOperations.experts.get(value);
 
   if (error) return next(error);
-  res.status(200).json(users);
+  res.status(200)
+    .json(users);
 };
 
 const hashtags = async (req, res, next) => {
@@ -45,10 +54,20 @@ const hashtags = async (req, res, next) => {
   );
   if (!value) return;
 
-  const { wobjects, hasMore, error } = await AppOperations.hashtags(value);
+  const {
+    wobjects,
+    hasMore,
+    error,
+  } = await AppOperations.hashtags(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: { wobjects, hasMore } };
+  res.result = {
+    status: 200,
+    json: {
+      wobjects,
+      hasMore,
+    },
+  };
   next();
 };
 
@@ -56,19 +75,21 @@ const getReqRates = async (req, res, next) => {
   const key = req?.query?.key;
 
   if (key !== process.env.REQ_TIME_KEY) {
-    res.status(401).send();
+    res.status(401)
+      .send();
     return;
   }
+  const date = req?.query?.date || getCurrentDateString();
 
   try {
     const urls = await redisGetter.zrange({
-      key: REDIS_KEYS.REQUESTS_BY_URL,
+      key: `${REDIS_KEYS.REQUESTS_BY_URL}:${date}`,
       start: 0,
       end: -1,
     });
 
     const timing = await redisGetter.zrange({
-      key: REDIS_KEYS.REQUESTS_TIME,
+      key: `${REDIS_KEYS.REQUESTS_TIME}:${date}`,
       start: 0,
       end: -1,
     });
@@ -111,5 +132,8 @@ const getReqRates = async (req, res, next) => {
 };
 
 module.exports = {
-  show, experts, hashtags, getReqRates,
+  show,
+  experts,
+  hashtags,
+  getReqRates,
 };
