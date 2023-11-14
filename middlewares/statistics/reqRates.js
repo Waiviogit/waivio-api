@@ -4,6 +4,7 @@ const {
   REDIS_KEYS,
   TTL_TIME,
 } = require('../../constants/common');
+const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
 
 const incrRate = async (req, res, next) => {
   const currentMinute = new Date().getMinutes();
@@ -21,20 +22,30 @@ const reqTimeMonitor = async (req, res, next) => {
   const member = req?.route?.path;
 
   await redisSetter.zincrby({
-    key: REDIS_KEYS.REQUESTS_BY_URL,
+    key: `${REDIS_KEYS.REQUESTS_BY_URL}:${getCurrentDateString()}`,
     client: importUserClient,
     member,
     increment: 1,
+  });
+  await redisSetter.expire({
+    key: `${REDIS_KEYS.REQUESTS_BY_URL}:${getCurrentDateString()}`,
+    client: importUserClient,
+    ttl: TTL_TIME.THIRTY_DAYS,
   });
 
   res.on('finish', async () => {
     const duration = Date.now() - start;
 
     await redisSetter.zincrby({
-      key: REDIS_KEYS.REQUESTS_TIME,
+      key: `${REDIS_KEYS.REQUESTS_TIME}:${getCurrentDateString()}`,
       client: importUserClient,
       member,
       increment: duration,
+    });
+    await redisSetter.expire({
+      key: `${REDIS_KEYS.REQUESTS_TIME}:${getCurrentDateString()}`,
+      client: importUserClient,
+      ttl: TTL_TIME.THIRTY_DAYS,
     });
   });
 
