@@ -150,8 +150,9 @@ const addDataToFields = ({
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
-      vote.timestamp = vote._id.getTimestamp()
-        .valueOf();
+      vote.timestamp = vote._id
+        ? vote._id.getTimestamp().valueOf()
+        : Date.now();
       if (vote.voter === owner) {
         vote.owner = true;
         ownerVote = vote;
