@@ -150,8 +150,9 @@ const addDataToFields = ({
     }
     let adminVote, administrativeVote, ownershipVote, ownerVote;
     _.map(field.active_votes, (vote) => {
-      vote.timestamp = vote._id.getTimestamp()
-        .valueOf();
+      vote.timestamp = vote._id
+        ? vote._id.getTimestamp().valueOf()
+        : Date.now();
       if (vote.voter === owner) {
         vote.owner = true;
         ownerVote = vote;
@@ -298,8 +299,9 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   field.locale === 'auto' ? field.locale = 'en-US' : null;
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
-  if (ownership) {
-    result = result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role'));
+  if (ownership?.length) {
+    result = (result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role')))
+      || (result && _.includes(ownership, field?.creator));
   }
   return result;
 };
@@ -731,7 +733,7 @@ const addOptions = async ({
     });
     Object.assign(
       el,
-      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, !!ownership.length),
+      getFieldsToDisplay(el.fields, locale, filter, el.author_permlink, ownership),
     );
 
     const conditionToAdd = el.groupId
@@ -838,7 +840,7 @@ const processWobjects = async ({
     obj = _.omit(obj, ['map', 'search']);
     obj = {
       ...obj,
-      ...getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, !!ownership.length),
+      ...getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, ownership),
     };
 
     /** Get right count of photos in object in request for only one object */
