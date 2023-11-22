@@ -7,7 +7,10 @@ const URI = process.env.MONGO_URI_WAIVIO
   ? process.env.MONGO_URI_WAIVIO
   : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
-mongoose.connect(URI)
+mongoose.connect(URI, {
+  maxPoolSize: 200,
+  socketTimeoutMS: 60000,
+})
   .then(() => console.log(`${config.db.database} connected`))
   .catch((error) => console.log(error));
 
