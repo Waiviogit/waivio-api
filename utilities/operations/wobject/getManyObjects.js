@@ -48,7 +48,7 @@ const getMany = async (data) => {
   pipeline.push(...[{ $skip: data.skip }, { $limit: data.sample ? 100 : data.limit + 1 }]);
   if (data.sample) pipeline.push({ $sample: { size: 5 } });
   // eslint-disable-next-line prefer-const
-
+  console.log('getManyBeforeFromAggregation');
   console.time('getManyFromAggregation');
   let { wobjects: wObjects = [], error } = await Wobj.fromAggregation(pipeline);
   console.timeEnd('getManyFromAggregation');
