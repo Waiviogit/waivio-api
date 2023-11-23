@@ -19,9 +19,9 @@ const getCondition = (data) => {
   } else if (data.exclude_object_types.length) {
     findParams.object_type = { $nin: data.exclude_object_types };
   }
-  if (data.sample) {
-    findParams['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
-  }
+  // if (data.sample) {
+  //   findParams['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
+  // }
   return findParams;
 };
 
