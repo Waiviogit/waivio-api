@@ -31,7 +31,7 @@ const getMany = async (data) => {
 
   const pipeline = [
     { $match: condition },
-    // { $sort: { weight: -1 } },
+    { $sort: { weight: -1 } },
     {
       $project: {
         default_name: 1,
