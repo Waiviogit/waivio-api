@@ -48,7 +48,10 @@ const getMany = async (data) => {
   pipeline.push(...[{ $skip: data.skip }, { $limit: data.sample ? 100 : data.limit + 1 }]);
   if (data.sample) pipeline.push({ $sample: { size: 5 } });
   // eslint-disable-next-line prefer-const
+
+  console.time('getManyFromAggregation');
   let { wobjects: wObjects = [], error } = await Wobj.fromAggregation(pipeline);
+  console.timeEnd('getManyFromAggregation');
   /** Data sample use for short info about wobject, it must be light request */
   if (data.sample) {
     wObjects = wObjects.map((obj) => {
@@ -76,8 +79,12 @@ const getMany = async (data) => {
       wobj.user_count = wobj.users.length;
     }));
   } // assign top users to each of wobject
+  console.time('getManyUserGetOne');
   const { user } = await User.getOne(data?.userName ?? '', SELECT_USER_CAMPAIGN_SHOP);
+  console.timeEnd('getManyUserGetOne');
+  console.time('getManyaddNewCampaignsToObjects');
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: wObjects });
+  console.timeEnd('getManyaddNewCampaignsToObjects');
 
   return {
     hasMore: wObjects.length > data.limit,
