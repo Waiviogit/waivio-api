@@ -1,4 +1,4 @@
-const { App } = require('models');
+const { App, Post } = require('models');
 const {
   getCacheKey,
   getCachedData,
@@ -7,6 +7,7 @@ const {
 const jsonHelper = require('./jsonHelper');
 const { TTL_TIME } = require('../../constants/common');
 
+const DEFAULT_CANONICAL = 'www.waivio.com';
 const getWobjectCanonicalHost = async ({ owner }) => {
   const { result, error } = await App.findOldestActiveHostByOwner({ owner });
   if (error || !result) return DEFAULT_CANONICAL;
@@ -14,7 +15,6 @@ const getWobjectCanonicalHost = async ({ owner }) => {
   return result.host;
 };
 
-const DEFAULT_CANONICAL = 'www.waivio.com';
 const getWobjectCanonical = async ({ owner }) => {
   const key = getCacheKey({ getWobjectCanonical: owner });
   const cache = await getCachedData(key);
@@ -29,6 +29,30 @@ const getWobjectCanonical = async ({ owner }) => {
   return result;
 };
 
+const getUserCanonical = async ({ name }) => {
+  const { result } = await Post.findOneFirstByAuthor({ author: name });
+  if (!result) {
+    // can cache for one day
+    return {
+      post: false,
+      canonical: DEFAULT_CANONICAL,
+    };
+  }
+
+  const json = jsonHelper.parseJson(result?.json_metadata, {});
+
+  let originalHost = json?.host;
+  if (['waiviodev.com', 'waivio.com'].includes(result.host)) {
+    originalHost = DEFAULT_CANONICAL;
+  }
+
+  return {
+    post: true,
+    canonical: originalHost || DEFAULT_CANONICAL,
+  };
+};
+
 module.exports = {
   getWobjectCanonical,
+  getUserCanonical,
 };
