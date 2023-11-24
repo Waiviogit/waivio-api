@@ -121,6 +121,20 @@ const getAppFromCache = async (host) => {
   return result;
 };
 
+const findOldestActiveHostByOwner = async ({ owner }) => {
+  try {
+    return {
+      result: await App.findOne(
+        { owner, status: 'active' },
+        { host: 1 },
+        { sort: { createdAt: 1 } },
+      ).lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   getOne,
   aggregate,
@@ -133,4 +147,5 @@ module.exports = {
   findWithPopulate,
   findOneAndUpdate,
   getAppFromCache,
+  findOldestActiveHostByOwner,
 };
