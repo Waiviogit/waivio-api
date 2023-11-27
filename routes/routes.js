@@ -264,6 +264,9 @@ userRoutes.route('/user/:userName/draft').post(reqTimeMonitor, draftController.c
 userRoutes.route('/user/:userName/draft').get(reqTimeMonitor, draftController.getOnePageDraft);
 
 userRoutes.route('/user/:userName/affiliate').post(reqTimeMonitor, UserController.getAffiliate);
+userRoutes.route('/user/:userName/favorites').post(reqTimeMonitor, UserController.getFavorites);
+userRoutes.route('/user/:userName/favorites/list').get(reqTimeMonitor, UserController.getFavoritesList);
+
 userRoutes.route('/users/guest-wallet/hive-withdraw').post(reqTimeMonitor, UserController.guestWithdrawHive);
 userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(reqTimeMonitor, UserController.guestWithdrawHiveEstimates);
 userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(reqTimeMonitor, UserController.guestWithdrawHiveRange);
