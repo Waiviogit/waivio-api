@@ -417,6 +417,14 @@ const getSingleFieldsDisplay = (field) => {
   return field.body;
 };
 
+const setWinningFields = ({ id, winningField, winningFields }) => {
+  winningFields[id] = getSingleFieldsDisplay(winningField);
+
+  if (id === FIELDS_NAMES.DESCRIPTION) {
+    winningFields.descriptionCreator = winningField.creator;
+  }
+};
+
 const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   locale = locale === 'auto' ? 'en-US' : locale;
   const winningFields = {};
@@ -445,7 +453,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
       if (result.length) winningFields[newId] = result;
       continue;
     }
-
+    // pick from admin fields
     if (approvedFields.length) {
       const ownerVotes = _.filter(
         approvedFields,
@@ -456,21 +464,26 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
         (field) => field.adminVote.role === ADMIN_ROLES.ADMIN,
       );
       if (ownerVotes.length) {
-        winningFields[id] = getSingleFieldsDisplay(_.maxBy(ownerVotes, 'adminVote.timestamp'));
+        const winningField = _.maxBy(ownerVotes, 'adminVote.timestamp');
+        winningFields[id] = getSingleFieldsDisplay(winningField);
+        setWinningFields({ id, winningFields, winningField });
       } else if (adminVotes.length) {
-        winningFields[id] = getSingleFieldsDisplay(_.maxBy(adminVotes, 'adminVote.timestamp'));
+        const winningField = _.maxBy(adminVotes, 'adminVote.timestamp');
+        setWinningFields({ id, winningFields, winningField });
       } else {
-        winningFields[id] = getSingleFieldsDisplay(_.maxBy(approvedFields, 'adminVote.timestamp'));
+        const winningField = _.maxBy(approvedFields, 'adminVote.timestamp');
+        setWinningFields({ id, winningFields, winningField });
       }
       continue;
     }
-    const heaviestField = _.maxBy(groupedFields[id], (field) => {
+    // pick from heaviest field
+    const winningField = _.maxBy(groupedFields[id], (field) => {
       if (_.get(field, 'adminVote.status') !== 'rejected' && field.weight > 0
         && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
         return field.weight;
       }
     });
-    if (heaviestField) winningFields[id] = getSingleFieldsDisplay(heaviestField);
+    if (winningField) setWinningFields({ id, winningFields, winningField });
   }
   return winningFields;
 };

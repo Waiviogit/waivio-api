@@ -269,6 +269,16 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
   return linksArray;
 };
 
+exports.findOneFirstByAuthor = async ({ author }) => {
+  try {
+    return {
+      result: await PostModel.find({ author }, {}, { sort: { createdAt: 1 } }).lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const getBlockedAppCond = () => {
   try {
     const session = getNamespace('request-session');
