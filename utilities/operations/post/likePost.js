@@ -6,6 +6,8 @@ const moment = require('moment');
 const redisSetter = require('utilities/redis/redisSetter');
 const { ERROR_MESSAGE, REDIS_KEYS } = require('constants/common');
 const { getPostObjects } = require('utilities/helpers/postHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
+const { TOKEN_WAIV } = require('../../../constants/hiveEngine');
 
 module.exports = async (value) => {
   const { hive, waiv, getPost } = await likePostHelper(value);
@@ -47,6 +49,13 @@ module.exports = async (value) => {
   return { post: result };
 };
 
+const checkPostEligibilityWaiv = (post) => {
+  const json = jsonHelper.parseJson(post?.json_metadata);
+  const tags = json?.tags ?? [];
+
+  return tags.some((t) => TOKEN_WAIV.TAGS.includes(t));
+};
+
 const formUpdateData = ({
   post, hive, waiv, weight, voter,
 }) => {
@@ -56,6 +65,10 @@ const formUpdateData = ({
     return processOverWeekLike({
       voteInPost, post, weight, voter,
     });
+  }
+  const eligible = checkPostEligibilityWaiv(post);
+  if (!eligible) {
+    waiv.rshares = 0;
   }
 
   let { net_rshares } = post;
