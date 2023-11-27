@@ -301,7 +301,11 @@ const getOne = async (data) => { // get one wobject by author_permlink
     affiliateCodes,
   });
 
-  wobjectData.canonical = await getWobjectCanonical({ owner: wobjectData.descriptionCreator });
+  wobjectData.canonical = await getWobjectCanonical({
+    owner: wobjectData.descriptionCreator,
+    authorPermlink: data.author_permlink,
+    host: app?.host,
+  });
 
   return { wobjectData };
 };

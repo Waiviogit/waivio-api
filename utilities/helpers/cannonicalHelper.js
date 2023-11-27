@@ -15,8 +15,8 @@ const getWobjectCanonicalHost = async ({ owner }) => {
   return result.host;
 };
 
-const getWobjectCanonical = async ({ owner }) => {
-  const key = getCacheKey({ getWobjectCanonical: owner });
+const getWobjectCanonical = async ({ owner, host, authorPermlink }) => {
+  const key = getCacheKey({ getWobjectCanonical: { owner, host, authorPermlink } });
   const cache = await getCachedData(key);
   if (cache) return jsonHelper.parseJson(cache, DEFAULT_CANONICAL);
 
