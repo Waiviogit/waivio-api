@@ -165,6 +165,5 @@ module.exports = {
   findWithPopulate,
   findOneAndUpdate,
   getAppFromCache,
-  findOldestActiveHostByOwner,
   findOneCanonicalByOwner,
 };
