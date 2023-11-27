@@ -121,14 +121,32 @@ const getAppFromCache = async (host) => {
   return result;
 };
 
-const findOldestActiveHostByOwner = async ({ owner }) => {
+const findOneCanonicalByOwner = async ({ owner }) => {
   try {
+    const result = await App.findOne(
+      {
+        owner,
+        status: 'active',
+        useForCanonical: true,
+      },
+      { host: 1 },
+      { sort: { createdAt: 1 } },
+    )
+      .lean();
+    if (result) return { result };
+
+    const oldestActive = await App.findOne(
+      {
+        owner,
+        status: 'active',
+      },
+      { host: 1 },
+      { sort: { createdAt: 1 } },
+    )
+      .lean();
+
     return {
-      result: await App.findOne(
-        { owner, status: 'active' },
-        { host: 1 },
-        { sort: { createdAt: 1 } },
-      ).lean(),
+      result: oldestActive,
     };
   } catch (error) {
     return { error };
@@ -148,4 +166,5 @@ module.exports = {
   findOneAndUpdate,
   getAppFromCache,
   findOldestActiveHostByOwner,
+  findOneCanonicalByOwner,
 };

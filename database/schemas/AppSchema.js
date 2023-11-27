@@ -104,7 +104,7 @@ const Configuration = new Schema({
 
 const AppSchema = new Schema({
   name: { type: String, index: true },
-  owner: { type: String, required: true },
+  owner: { type: String, required: true, index: true },
   googleAnalyticsTag: { type: String, default: null },
   googleGSCTag: { type: String, default: null },
   beneficiary: {
@@ -159,6 +159,7 @@ const AppSchema = new Schema({
   },
   prefetches: { type: [String] },
   objectControl: { type: Boolean, default: false },
+  useForCanonical: { type: Boolean, default: false },
   adSense: { type: AdSense, default: () => ({}) },
 }, { timestamps: true });
 
