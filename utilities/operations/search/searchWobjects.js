@@ -42,7 +42,11 @@ const socialSearch = async (data) => {
     data.deselect = await userShopDeselectModel.findUsersLinks({ names });
   }
 
-  const { wobjects = [], error } = await Wobj.fromAggregation(matchSocialPipe(data));
+  const { wobjects, error } = await getWobjectsFromAggregation({
+    pipeline: matchSocialPipe(data),
+    string: data.string,
+    object_type: data.object_type,
+  });
 
   if (data.needCounters && !error) {
     return searchWithCounters({
