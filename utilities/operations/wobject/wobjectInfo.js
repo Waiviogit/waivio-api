@@ -307,6 +307,10 @@ const getOne = async (data) => { // get one wobject by author_permlink
     host: app?.host,
   });
 
+  wobjectData.updatesCount = _.sumBy(wobjectData.exposedFields, 'value');
+  delete wobjectData.fields;
+  delete wobjectData.search;
+
   return { wobjectData };
 };
 
