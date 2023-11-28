@@ -6,11 +6,13 @@ const {
 } = require('./cacheHelper');
 const jsonHelper = require('./jsonHelper');
 const { TTL_TIME } = require('../../constants/common');
+const { STATUSES } = require('../../constants/sitesConstants');
 
 const DEFAULT_CANONICAL = 'www.waivio.com';
 const getWobjectCanonicalHost = async ({ owner }) => {
   const { result } = await App.findOneCanonicalByOwner({ owner });
   if (!result) return DEFAULT_CANONICAL;
+  if (result.status !== STATUSES.ACTIVE) return DEFAULT_CANONICAL;
   if (['waiviodev.com', 'waivio.com'].includes(result.host)) return DEFAULT_CANONICAL;
   return result.host;
 };

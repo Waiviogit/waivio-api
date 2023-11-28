@@ -126,10 +126,9 @@ const findOneCanonicalByOwner = async ({ owner }) => {
     const result = await App.findOne(
       {
         owner,
-        status: 'active',
         useForCanonical: true,
       },
-      { host: 1 },
+      { host: 1, status: 1 },
       { sort: { createdAt: 1 } },
     )
       .lean();
@@ -140,7 +139,7 @@ const findOneCanonicalByOwner = async ({ owner }) => {
         owner,
         status: 'active',
       },
-      { host: 1 },
+      { host: 1, status: 1 },
       { sort: { createdAt: 1 } },
     )
       .lean();
