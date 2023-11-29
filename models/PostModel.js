@@ -136,17 +136,17 @@ exports.getByFollowLists = async ({
 
   try {
     const [
-     // posts,
-      post2
+      posts,
+      post2,
     ] = await Promise.all([
-    //  PostModel.aggregate(pipe),
+      PostModel.aggregate(pipe),
       PostModel.aggregate(pipe2),
     ]);
 
     const combinedResult = [
-     // ...posts,
-      ...post2
-      ];
+      ...posts,
+      ...post2,
+    ];
 
     // Sort the combined result by _id in descending order
     combinedResult.sort((a, b) => b._id - a._id);
