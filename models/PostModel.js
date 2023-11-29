@@ -134,73 +134,24 @@ exports.getByFollowLists = async ({
     },
   ];
 
-  const combinedPipe = [
-    {
-      $facet: {
-        feed1: [
-          {
-            $match: {
-              author: { $in: users },
-            },
-          },
-          {
-            $match: {
-              ...getBlockedAppCond(),
-              ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-              ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
-            },
-          },
-          { $sort: { _id: -1 } },
-          { $skip: skip },
-          { $limit: limit },
-        ],
-        feed2: [
-          {
-            $match: {
-              'wobjects.author_permlink': { $in: authorPermlinks },
-              language: { $in: userLanguages },
-              ...getBlockedAppCond(),
-              ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-              // ...(!_.isEmpty(muted) && {
-              //   author: { $nin: muted },
-              //   'reblog_to.author': { $nin: muted },
-              // }),
-            },
-          },
-          { $sort: { _id: -1 } },
-          { $skip: skip },
-          { $limit: limit },
-
-        ],
-      },
-    },
-    {
-      $project: {
-        combinedFeed: { $setUnion: ['$feed1', '$feed2'] },
-      },
-    },
-    { $unwind: '$combinedFeed' },
-    { $replaceRoot: { newRoot: '$combinedFeed' } },
-    { $sort: { _id: -1 } },
-    { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'fullObjects',
-      },
-    },
-    { $skip: skip },
-    { $limit: limit },
-  ];
-
   try {
-    const posts = await PostModel.aggregate(combinedPipe);
-    if (_.isEmpty(posts)) {
+    const [posts, post2] = await Promise.all([
+      PostModel.aggregate(pipe),
+      PostModel.aggregate(pipe2),
+    ]);
+
+    const combinedResult = [...posts, ...post2];
+
+    // Sort the combined result by _id in descending order
+    combinedResult.sort((a, b) => b._id - a._id);
+
+    // Paginate the combined result
+    const paginatedResult = combinedResult.slice(skip, skip + limit);
+
+    if (_.isEmpty(paginatedResult)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
-    return { posts };
+    return { posts: paginatedResult };
   } catch (error) {
     return { error };
   }
