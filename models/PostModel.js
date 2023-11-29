@@ -134,7 +134,6 @@ exports.getByFollowLists = async ({
     },
   ];
 
-
   const combinedPipe = [
     {
       $facet: {
@@ -154,15 +153,6 @@ exports.getByFollowLists = async ({
           { $sort: { _id: -1 } },
           { $skip: skip },
           { $limit: limit },
-          { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
-          {
-            $lookup: {
-              from: 'wobjects',
-              localField: 'wobjects.author_permlink',
-              foreignField: 'author_permlink',
-              as: 'fullObjects',
-            },
-          },
         ],
         feed2: [
           {
@@ -180,15 +170,7 @@ exports.getByFollowLists = async ({
           { $sort: { _id: -1 } },
           { $skip: skip },
           { $limit: limit },
-          { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
-          {
-            $lookup: {
-              from: 'wobjects',
-              localField: 'wobjects.author_permlink',
-              foreignField: 'author_permlink',
-              as: 'fullObjects',
-            },
-          },
+
         ],
       },
     },
@@ -200,6 +182,15 @@ exports.getByFollowLists = async ({
     { $unwind: '$combinedFeed' },
     { $replaceRoot: { newRoot: '$combinedFeed' } },
     { $sort: { _id: -1 } },
+    { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'wobjects.author_permlink',
+        foreignField: 'author_permlink',
+        as: 'fullObjects',
+      },
+    },
     { $skip: skip },
     { $limit: limit },
   ];
