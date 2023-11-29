@@ -76,7 +76,7 @@ exports.getByFollowLists = async ({
         // ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
       },
     },
-    { $sort: { _id: -1 } },
+  //  { $sort: { _id: -1 } },
     { $skip: skip },
     { $limit: limit },
     // we use only 4 objects
