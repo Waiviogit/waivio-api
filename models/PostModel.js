@@ -67,12 +67,13 @@ exports.getByFollowLists = async ({
   const pipe = [
     {
       $match: {
-        $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-        ...getBlockedAppCond(),
-        ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
-        ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-        ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+        author: { $in: users },
+        // $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+        // ...getBlockedAppCond(),
+        //     ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
+        // ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
+        // ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        // ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
       },
     },
     { $sort: { _id: -1 } },
