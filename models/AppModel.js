@@ -121,6 +121,37 @@ const getAppFromCache = async (host) => {
   return result;
 };
 
+const findOneCanonicalByOwner = async ({ owner }) => {
+  try {
+    const result = await App.findOne(
+      {
+        owner,
+        useForCanonical: true,
+      },
+      { host: 1, status: 1 },
+      { sort: { createdAt: 1 } },
+    )
+      .lean();
+    if (result) return { result };
+
+    const oldestActive = await App.findOne(
+      {
+        owner,
+        status: 'active',
+      },
+      { host: 1, status: 1 },
+      { sort: { createdAt: 1 } },
+    )
+      .lean();
+
+    return {
+      result: oldestActive,
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   getOne,
   aggregate,
@@ -133,4 +164,5 @@ module.exports = {
   findWithPopulate,
   findOneAndUpdate,
   getAppFromCache,
+  findOneCanonicalByOwner,
 };
