@@ -64,45 +64,39 @@ exports.getByFollowLists = async ({
   skip,
   limit,
 }) => {
-  // const pipe = [
-  //   {
-  //     $match: {
-  //       author: { $in: users },
-  //       // $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
-  //       // ...getBlockedAppCond(),
-  //       //     ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
-  //       // ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
-  //       // ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-  //       // ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
-  //     },
-  //
-  //   },
-  //   {
-  //     $match: {
-  //       ...getBlockedAppCond(),
-  //       ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-  //       ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
-  //     },
-  //   },
-  //   { $sort: { _id: -1 } },
-  //   { $skip: skip },
-  //   { $limit: limit },
-  //   // we use only 4 objects
-  //   {
-  //     $addFields: {
-  //       wobjects: { $slice: ['$wobjects', 4] },
-  //     },
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'wobjects',
-  //       localField: 'wobjects.author_permlink',
-  //       foreignField: 'author_permlink',
-  //       as: 'fullObjects',
-  //     },
-  //   },
-  // ];
+  const pipe = [
+    {
+      $match: {
+        author: { $in: users },
+      },
+    },
+    {
+      $match: {
+        ...getBlockedAppCond(),
+        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+      },
+    },
+    { $sort: { _id: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+    // we use only 4 objects
+    {
+      $addFields: {
+        wobjects: { $slice: ['$wobjects', 4] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'wobjects.author_permlink',
+        foreignField: 'author_permlink',
+        as: 'fullObjects',
+      },
+    },
+  ];
 
+  // objects works bad with author condition
   const pipe2 = [
     {
       $match: {
@@ -140,8 +134,78 @@ exports.getByFollowLists = async ({
     },
   ];
 
+
+  const combinedPipe = [
+    {
+      $facet: {
+        feed1: [
+          {
+            $match: {
+              author: { $in: users },
+            },
+          },
+          {
+            $match: {
+              ...getBlockedAppCond(),
+              ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+              ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
+            },
+          },
+          { $sort: { _id: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+          { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
+          {
+            $lookup: {
+              from: 'wobjects',
+              localField: 'wobjects.author_permlink',
+              foreignField: 'author_permlink',
+              as: 'fullObjects',
+            },
+          },
+        ],
+        feed2: [
+          {
+            $match: {
+              'wobjects.author_permlink': { $in: authorPermlinks },
+              language: { $in: userLanguages },
+              ...getBlockedAppCond(),
+              ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+              // ...(!_.isEmpty(muted) && {
+              //   author: { $nin: muted },
+              //   'reblog_to.author': { $nin: muted },
+              // }),
+            },
+          },
+          { $sort: { _id: -1 } },
+          { $skip: skip },
+          { $limit: limit },
+          { $addFields: { wobjects: { $slice: ['$wobjects', 4] } } },
+          {
+            $lookup: {
+              from: 'wobjects',
+              localField: 'wobjects.author_permlink',
+              foreignField: 'author_permlink',
+              as: 'fullObjects',
+            },
+          },
+        ],
+      },
+    },
+    {
+      $project: {
+        combinedFeed: { $setUnion: ['$feed1', '$feed2'] },
+      },
+    },
+    { $unwind: '$combinedFeed' },
+    { $replaceRoot: { newRoot: '$combinedFeed' } },
+    { $sort: { _id: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+  ];
+
   try {
-    const posts = await PostModel.aggregate(pipe2);
+    const posts = await PostModel.aggregate(combinedPipe);
     if (_.isEmpty(posts)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
