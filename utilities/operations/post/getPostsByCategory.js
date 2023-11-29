@@ -51,7 +51,6 @@ const makeConditions = ({
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_TRENDING_FEED) },
         author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
-        author: { $nin: IGNORED_AUTHORS },
       };
       sort = { net_rshares: -1 };
       break;
@@ -80,14 +79,14 @@ module.exports = async ({
   let host = session.get('host');
   if (!host) host = config.appHost;
 
-  const cacheKey = getPostCacheKey({
-    category, skip, limit, user_languages, host, userName, method: 'getPostsByCategory',
-  });
-
-  if (category !== 'created') {
-    const cache = await getCachedPosts(cacheKey);
-    if (cache) return { posts: cache };
-  }
+  // const cacheKey = getPostCacheKey({
+  //   category, skip, limit, user_languages, host, userName, method: 'getPostsByCategory',
+  // });
+  //
+  // if (category !== 'created') {
+  //   const cache = await getCachedPosts(cacheKey);
+  //   if (cache) return { posts: cache };
+  // }
 
   // get user blocked posts id
   // get user muted list
@@ -122,8 +121,8 @@ module.exports = async ({
   await wobjectHelper.moderatePosts({ posts, locale, app });
   await fillPostsSubscriptions({ posts, userName });
 
-  if (category !== 'created') {
-    await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
-  }
+  // if (category !== 'created') {
+  //   await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
+  // }
   return { posts };
 };
