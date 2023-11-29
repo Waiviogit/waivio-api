@@ -109,10 +109,10 @@ exports.getByFollowLists = async ({
       $match: {
         ...getBlockedAppCond(),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-        // ...(!_.isEmpty(muted) && {
-        //   author: { $nin: muted },
-        //   'reblog_to.author': { $nin: muted },
-        // }),
+        ...(!_.isEmpty(muted) && {
+          author: { $nin: muted },
+          'reblog_to.author': { $nin: muted },
+        }),
       },
     },
     { $sort: { _id: -1 } },
@@ -135,12 +135,18 @@ exports.getByFollowLists = async ({
   ];
 
   try {
-    const [posts, post2] = await Promise.all([
-      PostModel.aggregate(pipe),
+    const [
+     // posts,
+      post2
+    ] = await Promise.all([
+    //  PostModel.aggregate(pipe),
       PostModel.aggregate(pipe2),
     ]);
 
-    const combinedResult = [...posts, ...post2];
+    const combinedResult = [
+     // ...posts,
+      ...post2
+      ];
 
     // Sort the combined result by _id in descending order
     combinedResult.sort((a, b) => b._id - a._id);
