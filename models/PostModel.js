@@ -115,10 +115,10 @@ exports.getByFollowLists = async ({
       $match: {
         ...getBlockedAppCond(),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
-        ...(!_.isEmpty(muted) && {
-          author: { $nin: muted },
-          'reblog_to.author': { $nin: muted },
-        }),
+        // ...(!_.isEmpty(muted) && {
+        //   author: { $nin: muted },
+        //   'reblog_to.author': { $nin: muted },
+        // }),
       },
     },
     { $sort: { _id: -1 } },
