@@ -62,7 +62,6 @@ PostSchema.index({ author: 1, permlink: 1 }, { unique: true });
 PostSchema.index({ root_author: 1, permlink: 1 }, { unique: true });
 PostSchema.index({ author: 1, language: 1 });
 PostSchema.index({ 'wobjects.author_permlink': 1, _id: 1 });
-PostSchema.index({ _id: 1, author_weight: 1, net_rshares: -1 });
 PostSchema.index({ net_rshares: -1 });
 
 const PostModel = mongoose.model('Post', PostSchema);
