@@ -55,18 +55,18 @@ const makeConditions = ({
       sort = { net_rshares: -1 };
       break;
   }
-  if (!_.isEmpty(languages)) cond.language = { $in: languages };
-  if (!_.isEmpty(hiddenPosts)) {
-    _.get(cond, '_id')
-      ? Object.assign(cond._id, { $nin: hiddenPosts })
-      : cond._id = { $nin: hiddenPosts };
-  }
-  if (!_.isEmpty(muted)) {
-    _.get(cond, 'author')
-      ? Object.assign(cond.author, { $nin: _.union(muted, IGNORED_AUTHORS) })
-      : cond.author = { $nin: muted };
-  }
-  cond.blocked_for_apps = { $nin: [host] };
+  // if (!_.isEmpty(languages)) cond.language = { $in: languages };
+  // if (!_.isEmpty(hiddenPosts)) {
+  //   _.get(cond, '_id')
+  //     ? Object.assign(cond._id, { $nin: hiddenPosts })
+  //     : cond._id = { $nin: hiddenPosts };
+  // }
+  // if (!_.isEmpty(muted)) {
+  //   _.get(cond, 'author')
+  //     ? Object.assign(cond.author, { $nin: _.union(muted, IGNORED_AUTHORS) })
+  //     : cond.author = { $nin: muted };
+  // }
+  // cond.blocked_for_apps = { $nin: [host] };
   return { cond, sort };
 };
 
