@@ -41,7 +41,7 @@ const makeConditions = ({
     case 'hot':
       cond = {
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_HOT_FEED) },
-     //   author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
+        //   author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
       //  reblog_to: null,
       };
       sort = { children: -1 };
@@ -50,7 +50,7 @@ const makeConditions = ({
       cond = {
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_TRENDING_FEED) },
       //  author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
-    //    reblog_to: null,
+        //    reblog_to: null,
       };
       sort = { net_rshares: -1 };
       break;

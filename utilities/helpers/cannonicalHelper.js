@@ -18,15 +18,15 @@ const getWobjectCanonicalHost = async ({ owner }) => {
 };
 
 const getWobjectCanonical = async ({ owner, host, authorPermlink }) => {
-  const key = getCacheKey({ getWobjectCanonical: { owner, host, authorPermlink } });
-  const cache = await getCachedData(key);
-  if (cache) return jsonHelper.parseJson(cache, DEFAULT_CANONICAL);
+  // const key = getCacheKey({ getWobjectCanonical: { owner, host, authorPermlink } });
+  // const cache = await getCachedData(key);
+  // if (cache) return jsonHelper.parseJson(cache, DEFAULT_CANONICAL);
 
   const result = await getWobjectCanonicalHost({ owner });
 
-  await setCachedData({
-    key, data: result, ttl: TTL_TIME.ONE_DAY,
-  });
+  // await setCachedData({
+  //   key, data: result, ttl: TTL_TIME.ONE_DAY,
+  // });
 
   return result;
 };
