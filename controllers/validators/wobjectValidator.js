@@ -64,6 +64,12 @@ exports.postsScheme = Joi.object().keys({
   newsPermlink: Joi.string().default(''),
 });
 
+exports.pinPostsScheme = Joi.object().keys({
+  author_permlink: Joi.string().required(),
+  follower: Joi.string(),
+  locale: Joi.string().valid(...LANGUAGES).default('en-US'),
+});
+
 exports.feedScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),

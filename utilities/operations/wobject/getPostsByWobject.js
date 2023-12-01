@@ -80,13 +80,6 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
-  if (data.skip === 0) {
-    const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));
-    if (!_.isEmpty(pinPosts)) {
-      posts.unshift(..._.map(pinPosts, (el) => ({ ...el, pin: true })));
-    }
-  }
-
   if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
     _.forEach(posts, (p) => {
       if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {

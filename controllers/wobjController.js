@@ -3,7 +3,7 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales,
+  getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, getWobjectPinnedPosts,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -78,6 +78,25 @@ const posts = async (req, res, next) => {
   if (!value) return;
 
   const { posts: wobjectPosts, error } = await getPostsByWobject({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: wobjectPosts };
+  next();
+};
+
+const getPinnedPosts = async (req, res, next) => {
+  const value = validators.validate({
+    author_permlink: req.params.authorPermlink,
+    locale: req.headers.locale,
+    follower: req.headers.follower,
+  }, validators.wobject.pinPostsScheme, next);
+
+  if (!value) return;
+
+  const { posts: wobjectPosts, error } = await getWobjectPinnedPosts({
+    ...value, app: req.appData,
+  });
 
   if (error) return next(error);
 
@@ -543,4 +562,5 @@ module.exports = {
   getListDepartments,
   searchDefault,
   getListItemsLocales,
+  getPinnedPosts,
 };
