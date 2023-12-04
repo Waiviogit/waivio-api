@@ -13,6 +13,7 @@ const {
   departmentController,
   shopController,
   draftController,
+  threadsController,
 } = require('controllers');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
@@ -27,6 +28,7 @@ const ticketsRoutes = new Router();
 const hiveRoutes = new Router();
 const shopRoutes = new Router();
 const draftRotes = new Router();
+const threadRotes = new Router();
 
 apiRoutes.use('/api', wobjRoutes);
 apiRoutes.use('/api', userRoutes);
@@ -38,6 +40,7 @@ apiRoutes.use('/api', ticketsRoutes);
 apiRoutes.use('/api/hive', hiveRoutes);
 apiRoutes.use('/api/shop', shopRoutes);
 apiRoutes.use('/api/draft', draftRotes);
+apiRoutes.use('/api/thread', threadRotes);
 
 // region Sites
 sitesRoutes.route('/sites')
@@ -342,6 +345,15 @@ hiveRoutes.route('/current-median-history')
   .get(reqTimeMonitor, hiveController.getCurrentMedianHistory);
 hiveRoutes.route('/block-num')
   .get(reqTimeMonitor, hiveController.getBlockNum);
+// endregion
+
+// region Threads Routes
+threadRotes.route('/hashtag')
+  .get(threadsController.byHashtag);
+threadRotes.route('/user')
+  .get(threadsController.byUser);
+threadRotes.route('/hashtag/count')
+  .get(threadsController.hashtagsCount);
 // endregion
 
 module.exports = apiRoutes;
