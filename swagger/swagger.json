@@ -66,6 +66,10 @@
     {
       "name": "draft",
       "description": "draft"
+    },
+    {
+      "name": "thread",
+      "description": "thread"
     }
   ],
   "schemes": [
@@ -73,6 +77,152 @@
     "http"
   ],
   "paths": {
+    "/api/thread/hashtag": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get threads by hashtag",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "hashtag",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "enum": ["latest", "oldest"],
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/thread"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/thread/hashtag/count": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get hashtag count",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/hashtagCount"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/thread/user": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get threads by user",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "enum": ["latest", "oldest"],
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/thread"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/draft/post": {
       "post": {
         "tags" : [ "draft" ],
@@ -8882,6 +9032,99 @@
     }
   },
   "definitions": {
+    "hashtagCount": {
+      "type": "object",
+      "properties": {
+        "hashtag": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        }
+      }
+    },
+    "thread": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        },
+        "parent_author": {
+          "type": "string"
+        },
+        "parent_permlink": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "replies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "children": {
+          "type": "number"
+        },
+        "depth": {
+          "type": "number"
+        },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "total_votes" : {
+              "type": "number"
+            }
+          }
+        },
+        "author_reputation": {
+          "type": "number"
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "tickers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mentions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hashtags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "threadstorm": {
+          "type": "boolean"
+        },
+        "net_rshares": {
+          "type": "number"
+        }
+      }
+    },
     "postDraft": {
       "type": "object",
       "properties": {
