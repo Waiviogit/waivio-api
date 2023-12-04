@@ -24,7 +24,10 @@ const {
   setCachedData,
 } = require('./cacheHelper');
 const jsonHelper = require('./jsonHelper');
-const { TTL_TIME } = require('../../constants/common');
+const {
+  TTL_TIME,
+  REDIS_KEYS,
+} = require('../../constants/common');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -405,7 +408,7 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
-  const key = getCacheKey({ getAdSense: host });
+  const key = `${REDIS_KEYS.AD_SENSE}:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });
