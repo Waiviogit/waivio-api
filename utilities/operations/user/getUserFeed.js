@@ -16,12 +16,12 @@ const getFeed = async ({
   // eslint-disable-next-line camelcase
   name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName, locale, app,
 }) => {
-  const cacheKey = getPostCacheKey({
-    skip, limit, user_languages, userName, method: 'getFeed',
-  });
+  // const cacheKey = getPostCacheKey({
+  //   skip, limit, user_languages, userName, method: 'getFeed',
+  // });
 
-  const cache = await getCachedPosts(cacheKey);
-  if (cache) return { posts: cache };
+  // const cache = await getCachedPosts(cacheKey);
+  // if (cache) return { posts: cache };
 
   let posts = [];
   const requestsMongo = await Promise.all([
@@ -70,7 +70,7 @@ const getFeed = async ({
     fillPostsSubscriptions({ posts, userName }),
   ]);
 
-  await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
+  // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };
 
