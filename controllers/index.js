@@ -13,5 +13,6 @@ moduleExports.hiveController = require('./hiveController');
 moduleExports.departmentController = require('./departmentController');
 moduleExports.shopController = require('./shopController');
 moduleExports.draftController = require('./draftController');
+moduleExports.threadsController = require('./threadsController');
 
 module.exports = moduleExports;
