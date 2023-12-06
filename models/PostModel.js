@@ -152,7 +152,7 @@ exports.getByFollowLists = async ({
     combinedResult.sort((a, b) => b._id - a._id);
 
     // Paginate the combined result
-    const paginatedResult = combinedResult.slice(skip, skip + limit);
+    const paginatedResult = _.take(combinedResult, limit);
 
     if (_.isEmpty(paginatedResult)) {
       return { error: { status: 404, message: 'Posts not found!' } };
