@@ -330,7 +330,7 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
 exports.findOneFirstByAuthor = async ({ author }) => {
   try {
     return {
-      result: await PostModel.find({ author }, {}, { sort: { createdAt: 1 } }).lean(),
+      result: await PostModel.findOne({ author }, {}, { sort: { createdAt: 1 } }).lean(),
     };
   } catch (error) {
     return { error };
