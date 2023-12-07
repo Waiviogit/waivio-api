@@ -113,9 +113,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/thread"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/thread"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           },
@@ -153,9 +161,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/hashtagCount"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/hashtagCount"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           },
@@ -206,9 +222,17 @@
           "200" : {
             "description" : "successful operation",
             "schema" : {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/thread"
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/thread"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           },
