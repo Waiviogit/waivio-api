@@ -93,7 +93,7 @@ app.use(Sentry.Handlers.errorHandler({
   shouldHandleError(error) {
     // Capture 500 errors
     if (error.status >= 500) {
-      sendSentryNotification();
+      // sendSentryNotification();
       return true;
     }
     return false;
