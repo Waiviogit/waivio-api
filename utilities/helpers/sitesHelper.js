@@ -309,6 +309,7 @@ exports.getSettings = async (host) => {
   const {
     googleAnalyticsTag,
     googleGSCTag = '',
+    googleEventSnippet = '',
     beneficiary,
     app_commissions,
     currency,
@@ -319,6 +320,7 @@ exports.getSettings = async (host) => {
   const result = {
     googleAnalyticsTag,
     googleGSCTag,
+    googleEventSnippet,
     beneficiary,
     referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
       ? app_commissions.referral_commission_acc
