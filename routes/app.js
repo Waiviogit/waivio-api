@@ -23,6 +23,6 @@ appRoutes.route('/generalSearch')
 appRoutes.route('/waiv/metrics')
   .get(reqTimeMonitor, AppController.waivMainMetrics);
 appRoutes.route('/waiv/swap-history')
-  .get(reqTimeMonitor, AppController.getSwapHistory);
+  .get(reqTimeMonitor, AppController.swapHistory);
 
 module.exports = appRoutes;

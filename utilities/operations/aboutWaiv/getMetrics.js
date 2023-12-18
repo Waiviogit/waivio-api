@@ -108,7 +108,8 @@ const getSwapHistory = async ({ skip, limit }) => {
   const { result } = await EngineAccountHistory.find({
     condition: {
       operation: 'marketpools_swapTokens',
-      $or: [{ symbolIn: 'WAIV' }, { symbolOut: 'SWAP.HIVE' }],
+      symbolIn: { $in: ['WAIV', 'SWAP.HIVE'] },
+      symbolOut: { $in: ['WAIV', 'SWAP.HIVE'] },
     },
     skip,
     limit: limit + 1,
