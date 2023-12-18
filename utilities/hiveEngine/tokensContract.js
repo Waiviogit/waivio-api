@@ -20,3 +20,12 @@ exports.getTokenBalances = async ({ query }) => engineProxy({
     query,
   },
 });
+
+exports.getTokens = async ({ query }) => engineProxy({
+  method: 'findOne',
+  params: {
+    contract: 'tokens',
+    table: 'tokens',
+    query,
+  },
+});

@@ -8664,6 +8664,177 @@
         }
       }
     },
+    "/api/waiv/metrics": {
+      "get": {
+        "tags": [
+          "app"
+        ],
+        "summary": "Get WAIV metrics",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tokensInCirculation": {
+                  "type": "string"
+                },
+                "tokensStaked": {
+                  "type": "string"
+                },
+                "totalMarketCapitalizationUSD": {
+                  "type": "string"
+                },
+                "annualInflation": {
+                  "type": "string"
+                },
+                "totalShares": {
+                  "type": "string"
+                },
+                "availableInMonthUSD": {
+                  "type": "string"
+                },
+                "distributedInMonthUSD": {
+                  "type": "string"
+                },
+                "inflationDistribution": {
+                  "type": "object",
+                  "properties": {
+                    "rewardsPool": {
+                      "type": "string"
+                    },
+                    "developmentFund": {
+                      "type": "string"
+                    },
+                    "liquidityProviders": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "rewardsPool": {
+                  "type": "object",
+                  "properties": {
+                    "authors": {
+                      "type": "string"
+                    },
+                    "curators": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "number"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "tokenPair": {
+                        "type": "string"
+                      },
+                      "shares": {
+                        "type": "string"
+                      },
+                      "timeFactor": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/waiv/swap-history": {
+      "get": {
+        "tags": [
+          "app"
+        ],
+        "summary": "Get WAIV swap history",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Count of users to return(default 10)",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "description": "Count of users to skip, for infinite scroll(default 0)",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "blockNumber": {
+                        "type": "number"
+                      },
+                      "transactionId": {
+                        "type": "string"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "operation": {
+                        "type": "string"
+                      },
+                      "refHiveBlockNumber": {
+                        "type": "number"
+                      },
+                      "symbolOut": {
+                        "type": "string"
+                      },
+                      "symbolIn": {
+                        "type": "string"
+                      },
+                      "symbolOutQuantity": {
+                        "type": "string"
+                      },
+                      "symbolInQuantity": {
+                        "type": "string"
+                      },
+                      "timestamp": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/{userName}/draft": {
       "post": {
         "tags": [
