@@ -2,7 +2,10 @@ const validators = require('./validators');
 const threads = require('../utilities/operations/threads');
 
 const byHashtag = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.threads.byHashtagSchema, next);
+  const value = validators.validate({
+    userName: req.headers.follower,
+    ...req.query,
+  }, validators.threads.byHashtagSchema, next);
   if (!value) return;
   const { result, hasMore, error } = await threads.getThreads.byHashtag(value);
   if (error) return next(error);
@@ -10,7 +13,10 @@ const byHashtag = async (req, res, next) => {
 };
 
 const byUser = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.threads.byUserSchema, next);
+  const value = validators.validate({
+    userName: req.headers.follower,
+    ...req.query,
+  }, validators.threads.byUserSchema, next);
   if (!value) return;
   const { result, hasMore, error } = await threads.getThreads.byUser(value);
   if (error) return next(error);

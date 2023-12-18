@@ -1,4 +1,4 @@
-const { ThreadModel } = require('models');
+const { ThreadModel, mutedUserModel } = require('models');
 const _ = require('lodash');
 
 const getSortOrder = (sort) => (sort === 'latest'
@@ -6,10 +6,15 @@ const getSortOrder = (sort) => (sort === 'latest'
   : { createdAt: 1 });
 
 const byHashtag = async ({
-  hashtag, skip, limit, sort,
+  hashtag, skip, limit, sort, userName,
 }) => {
+  const { result: muted } = await mutedUserModel.find({ condition: { mutedBy: userName } });
+
   const { result } = await ThreadModel.find({
-    filter: { hashtags: hashtag },
+    filter: {
+      hashtags: hashtag,
+      ...(muted.length && { author: { $nin: _.map(muted, 'userName') } }),
+    },
     options: {
       sort: getSortOrder(sort),
       skip,
@@ -24,10 +29,14 @@ const byHashtag = async ({
 };
 
 const byUser = async ({
-  user, skip, limit, sort,
+  user, skip, limit, sort, userName,
 }) => {
+  const { result: muted } = await mutedUserModel.find({ condition: { mutedBy: userName } });
   const { result } = await ThreadModel.find({
-    filter: { mentions: user },
+    filter: {
+      mentions: user,
+      ...(muted.length && { author: { $nin: _.map(muted, 'userName') } }),
+    },
     options: {
       sort: getSortOrder(sort),
       skip,

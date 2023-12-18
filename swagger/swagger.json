@@ -84,6 +84,12 @@
         "produces" : [ "application/json" ],
         "parameters" : [
           {
+            "name": "follower",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
             "name": "skip",
             "in": "query",
             "required": false,
@@ -192,6 +198,12 @@
         "description" : "get threads by user",
         "produces" : [ "application/json" ],
         "parameters" : [
+          {
+            "name": "follower",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
           {
             "name": "skip",
             "in": "query",

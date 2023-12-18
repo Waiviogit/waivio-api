@@ -5,6 +5,7 @@ exports.byHashtagSchema = Joi.object().keys({
   sort: Joi.string().valid('latest', 'oldest').default('latest'),
   skip: Joi.number().integer().min(0).default(0),
   limit: Joi.number().integer().min(1).default(50),
+  userName: Joi.string(),
 });
 
 exports.byUserSchema = Joi.object().keys({
@@ -12,6 +13,7 @@ exports.byUserSchema = Joi.object().keys({
   sort: Joi.string().valid('latest', 'oldest').default('latest'),
   skip: Joi.number().integer().min(0).default(0),
   limit: Joi.number().integer().min(1).default(50),
+  userName: Joi.string(),
 });
 
 exports.hashtagCountSchema = Joi.object().keys({
