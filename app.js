@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const nocache = require('nocache');
 const { createNamespace } = require('cls-hooked');
-const { routes } = require('routes');
+const routes = require('routes');
 const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
