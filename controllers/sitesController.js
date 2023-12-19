@@ -141,8 +141,8 @@ exports.report = async (req, res, next) => {
   const value = validators.validate(req.query, validators.sites.report, next);
   if (!value) return;
 
-  // const { error: authError } = await authoriseUser.authorise(value.userName);
-  // if (authError) return next(authError);
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
 
   const {
     payments, ownerAppNames, dataForPayments, error,
