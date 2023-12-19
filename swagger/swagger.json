@@ -3260,6 +3260,14 @@
             "type": "string"
           },
           {
+            "name": "currency",
+            "in": "query",
+            "description": "currency",
+            "required": false,
+            "type": "string",
+            "enum": ["USD", "CAD", "EUR", "AUD", "MXN", "GBP", "JPY", "CNY","RUB", "UAH", "CHF"]
+          },
+          {
             "name": "access-token",
             "in": "header",
             "description": "access-token",
@@ -9728,14 +9736,16 @@
               "createdAt": "2020-10-01T12:42:35.519Z",
               "amount": 1,
               "type": "writeOff",
-              "countUsers": 2
+              "countUsers": 2,
+              "currencyRate": 1
             },
             {
               "userName": "olegvladim",
               "balance": 100,
               "createdAt": "2020-10-01T09:42:35.519Z",
               "amount": 100,
-              "type": "transfer"
+              "type": "transfer",
+              "currencyRate": 1
             }
           ],
           "ownerAppNames": [
