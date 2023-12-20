@@ -4,7 +4,7 @@ services:
   waivio-api-1:
     container_name: waivio-api-1
     build: .
-    command: npm run start
+    command: node --inspect=0.0.0.0:9229 --max-old-space-size=400 ./bin/www
     restart: always
     network_mode: host
     logging:
