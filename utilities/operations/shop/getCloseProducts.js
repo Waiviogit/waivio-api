@@ -1,6 +1,6 @@
 const { Wobj, User, Department } = require('models');
 const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST,
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST, OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
@@ -9,7 +9,6 @@ const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
-const { OBJECT_TYPES } = require('../../../constants/wobjectsData');
 
 const getDepartments = async ({ authorPermlink, app, locale }) => {
   const emptyDepartments = {
