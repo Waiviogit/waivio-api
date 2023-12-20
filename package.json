@@ -46,7 +46,7 @@
     "jpeg-autorotate": "^8.0.1",
     "lodash": "^4.17.15",
     "moment": "^2.29.4",
-    "mongoose": "^7.0.0",
+    "mongoose": "^8.0.3",
     "mongoose-lean-virtuals": "^0.3.4",
     "morgan": "~1.9.0",
     "nocache": "^3.0.4",
