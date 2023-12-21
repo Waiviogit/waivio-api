@@ -55,7 +55,6 @@ PostSchema.virtual('fullObjects', {
   justOne: false,
 });
 
-PostSchema.plugin(mongooseLeanVirtuals);
 
 PostSchema.index({ author: 1, permlink: 1 }, { unique: true });
 PostSchema.index({ root_author: 1, permlink: 1 }, { unique: true });
