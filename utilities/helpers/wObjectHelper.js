@@ -789,161 +789,161 @@ const processWobjects = async ({
   reqUserName,
   affiliateCodes = [],
 }) => {
-  const filteredWobj = [];
-  if (!_.isArray(wobjects)) return filteredWobj;
-  let parents = [];
-  const parentPermlinks = _.chain(wobjects)
-    .map('parent')
-    .compact()
-    .uniq()
-    .value();
-  if (parentPermlinks.length) {
-    ({ result: parents } = await Wobj.find(
-      { author_permlink: { $in: parentPermlinks } },
-      { search: 0, departments: 0 },
-    ));
-  }
-  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
-
-  /** Get waivio admins and owner */
-  const waivioAdmins = await getWaivioAdminsAndOwner();
-  const { owner, admins } = getOwnerAndAdmins(app);
-  const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
-
-  // means that owner want's all objects on sites behave like ownership objects
-  const objectControl = !!app?.objectControl;
-  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
-  const extraAuthority = userShop
-    ? app?.configuration?.shopSettings?.value
-    : app?.owner;
-
-  for (let obj of wobjects) {
-    let exposedFields = [];
-    obj.parent = '';
-    if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
-
-    /** Get app admins, wobj administrators, which was approved by app owner(creator) */
-    const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
-    const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
-
-    if (objectControl
-      && (!_.isEmpty(administrative)
-        || !_.isEmpty(ownership)
-        || _.get(obj, 'authority.administrative', []).includes(extraAuthority)
-        || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
-      )
-    ) {
-      ownership.push(extraAuthority, ...admins);
-    }
-
-    /** If flag hiveData exists - fill in wobj fields with hive data */
-    if (hiveData) {
-      const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
-      exposedFields = getExposedFields(objectType, obj.fields);
-    }
-
-    obj.fields = addDataToFields({
-      isOwnershipObj: !!ownership.length,
-      fields: _.compact(obj.fields),
-      filter: fields,
-      admins,
-      ownership,
-      administrative,
-      owner,
-      blacklist,
-    });
-    /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
-    obj = _.omit(obj, ['map', 'search']);
-    obj = {
-      ...obj,
-      ...getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, ownership),
-    };
-
-    /** Get right count of photos in object in request for only one object */
-    if (!fields) {
-      obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
-      obj.photos_count = _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []).length;
-      obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
-      if (obj.avatar) {
-        obj.preview_gallery.unshift({
-          ...findFieldByBody(obj.fields, obj.avatar),
-          id: obj.author_permlink,
-        });
-      }
-      if (obj.options || obj.groupId) {
-        obj.options = obj.groupId
-          ? await addOptions({
-            object: obj,
-            ownership,
-            admins,
-            administrative,
-            owner,
-            blacklist,
-            locale,
-          })
-          : groupOptions(obj.options, obj);
-      }
-    }
-
-    if ((obj.options || obj.groupId) && _.includes(fields, FIELDS_NAMES.OPTIONS)) {
-      obj.options = obj.groupId
-        ? await addOptions({
-          object: obj,
-          ownership,
-          admins,
-          administrative,
-          owner,
-          blacklist,
-          locale,
-        })
-        : groupOptions(obj.options, obj);
-    }
-
-    if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
-    if (obj.newsFilter) {
-      obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
-    }
-    if (_.isString(obj.parent)) {
-      const parent = _.find(parents, { author_permlink: obj.parent });
-      obj.parent = await getParentInfo({
-        locale,
-        app,
-        parent,
-      });
-    }
-    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      if (affiliateCodes.length) {
-        obj.affiliateLinks = makeAffiliateLinks({
-          affiliateCodes,
-          productIds: obj.productId,
-          countryCode,
-        });
-      }
-      if (!obj?.affiliateLinks?.length) {
-        const affiliateLinks = formAffiliateLinks({
-          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
-        });
-        if (!_.isEmpty(affiliateLinks)) {
-          obj.affiliateLinks = affiliateLinks;
-          obj.website = null;
-        }
-      }
-    }
-    if (obj.departments && typeof obj.departments[0] === 'string') {
-      obj.departments = null;
-    }
-    obj.defaultShowLink = getLinkToPageLoad(obj);
-    obj.exposedFields = exposedFields;
-    obj.authority = _.find(
-      obj.authority,
-      (a) => a.creator === reqUserName && a.body === 'administrative',
-    );
-    if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
-    if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
-    filteredWobj.push(obj);
-  }
-  if (!returnArray) return filteredWobj[0];
-  return filteredWobj;
+  // const filteredWobj = [];
+  // if (!_.isArray(wobjects)) return filteredWobj;
+  // let parents = [];
+  // const parentPermlinks = _.chain(wobjects)
+  //   .map('parent')
+  //   .compact()
+  //   .uniq()
+  //   .value();
+  // if (parentPermlinks.length) {
+  //   ({ result: parents } = await Wobj.find(
+  //     { author_permlink: { $in: parentPermlinks } },
+  //     { search: 0, departments: 0 },
+  //   ));
+  // }
+  // const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
+  //
+  // /** Get waivio admins and owner */
+  // const waivioAdmins = await getWaivioAdminsAndOwner();
+  // const { owner, admins } = getOwnerAndAdmins(app);
+  // const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
+  //
+  // // means that owner want's all objects on sites behave like ownership objects
+  // const objectControl = !!app?.objectControl;
+  // const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  // const extraAuthority = userShop
+  //   ? app?.configuration?.shopSettings?.value
+  //   : app?.owner;
+  //
+  // for (let obj of wobjects) {
+  //   let exposedFields = [];
+  //   obj.parent = '';
+  //   if (obj.newsFilter) obj = _.omit(obj, ['newsFilter']);
+  //
+  //   /** Get app admins, wobj administrators, which was approved by app owner(creator) */
+  //   const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
+  //   const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
+  //
+  //   if (objectControl
+  //     && (!_.isEmpty(administrative)
+  //       || !_.isEmpty(ownership)
+  //       || _.get(obj, 'authority.administrative', []).includes(extraAuthority)
+  //       || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
+  //     )
+  //   ) {
+  //     ownership.push(extraAuthority, ...admins);
+  //   }
+  //
+  //   /** If flag hiveData exists - fill in wobj fields with hive data */
+  //   if (hiveData) {
+  //     const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
+  //     exposedFields = getExposedFields(objectType, obj.fields);
+  //   }
+  //
+  //   obj.fields = addDataToFields({
+  //     isOwnershipObj: !!ownership.length,
+  //     fields: _.compact(obj.fields),
+  //     filter: fields,
+  //     admins,
+  //     ownership,
+  //     administrative,
+  //     owner,
+  //     blacklist,
+  //   });
+  //   /** Omit map, because wobject has field map, temp solution? maybe field map in wobj not need */
+  //   obj = _.omit(obj, ['map', 'search']);
+  //   obj = {
+  //     ...obj,
+  //     ...getFieldsToDisplay(obj.fields, locale, fields, obj.author_permlink, ownership),
+  //   };
+  //
+  //   /** Get right count of photos in object in request for only one object */
+  //   if (!fields) {
+  //     obj.albums_count = _.get(obj, FIELDS_NAMES.GALLERY_ALBUM, []).length;
+  //     obj.photos_count = _.get(obj, FIELDS_NAMES.GALLERY_ITEM, []).length;
+  //     obj.preview_gallery = _.orderBy(_.get(obj, FIELDS_NAMES.GALLERY_ITEM, []), ['weight'], ['desc']);
+  //     if (obj.avatar) {
+  //       obj.preview_gallery.unshift({
+  //         ...findFieldByBody(obj.fields, obj.avatar),
+  //         id: obj.author_permlink,
+  //       });
+  //     }
+  //     if (obj.options || obj.groupId) {
+  //       obj.options = obj.groupId
+  //         ? await addOptions({
+  //           object: obj,
+  //           ownership,
+  //           admins,
+  //           administrative,
+  //           owner,
+  //           blacklist,
+  //           locale,
+  //         })
+  //         : groupOptions(obj.options, obj);
+  //     }
+  //   }
+  //
+  //   if ((obj.options || obj.groupId) && _.includes(fields, FIELDS_NAMES.OPTIONS)) {
+  //     obj.options = obj.groupId
+  //       ? await addOptions({
+  //         object: obj,
+  //         ownership,
+  //         admins,
+  //         administrative,
+  //         owner,
+  //         blacklist,
+  //         locale,
+  //       })
+  //       : groupOptions(obj.options, obj);
+  //   }
+  //
+  //   if (obj.sortCustom) obj.sortCustom = JSON.parse(obj.sortCustom);
+  //   if (obj.newsFilter) {
+  //     obj.newsFilter = _.map(obj.newsFilter, (item) => _.pick(item, ['title', 'permlink', 'name']));
+  //   }
+  //   if (_.isString(obj.parent)) {
+  //     const parent = _.find(parents, { author_permlink: obj.parent });
+  //     obj.parent = await getParentInfo({
+  //       locale,
+  //       app,
+  //       parent,
+  //     });
+  //   }
+  //   if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
+  //     if (affiliateCodes.length) {
+  //       obj.affiliateLinks = makeAffiliateLinks({
+  //         affiliateCodes,
+  //         productIds: obj.productId,
+  //         countryCode,
+  //       });
+  //     }
+  //     if (!obj?.affiliateLinks?.length) {
+  //       const affiliateLinks = formAffiliateLinks({
+  //         affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
+  //       });
+  //       if (!_.isEmpty(affiliateLinks)) {
+  //         obj.affiliateLinks = affiliateLinks;
+  //         obj.website = null;
+  //       }
+  //     }
+  //   }
+  //   if (obj.departments && typeof obj.departments[0] === 'string') {
+  //     obj.departments = null;
+  //   }
+  //   obj.defaultShowLink = getLinkToPageLoad(obj);
+  //   obj.exposedFields = exposedFields;
+  //   obj.authority = _.find(
+  //     obj.authority,
+  //     (a) => a.creator === reqUserName && a.body === 'administrative',
+  //   );
+  //   if (!hiveData) obj = _.omit(obj, ['fields', 'latest_posts', 'last_posts_counts_by_hours', 'tagCategories', 'children']);
+  //   if (_.has(obj, FIELDS_NAMES.TAG_CATEGORY)) obj.topTags = getTopTags(obj, topTagsLimit);
+  //   filteredWobj.push(obj);
+  // }
+  if (!returnArray) return wobjects[0];
+  return wobjects;
 };
 
 const getCurrentNames = async (names) => {
