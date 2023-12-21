@@ -45,7 +45,10 @@ exports.requirementFilters = async (campaign, user) => {
 
 exports.campaignFilter = async (campaigns, user, app) => {
   const validCampaigns = [];
-  const { result: wobjects, error } = await Wobj.find({ author_permlink: { $in: _.map(campaigns, 'requiredObject') } });
+  const { result: wobjects, error } = await Wobj.find(
+    { author_permlink: { $in: _.map(campaigns, 'requiredObject') } },
+    { search: 0, departments: 0 },
+  );
   if (error) return;
   await Promise.all(campaigns.map(async (campaign) => {
     if (this.campaignValidation(campaign)) {

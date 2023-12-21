@@ -8,7 +8,10 @@ module.exports = async ({
 }) => {
   const wobjects = [];
   const appInfo = await searchHelper.getAppInfo({ app });
-  const { result: wobj, error: wobjErr } = await Wobj.findOne({ author_permlink: authorPermlink });
+  const { result: wobj, error: wobjErr } = await Wobj.findOne(
+    { author_permlink: authorPermlink },
+    { map: 1, object_type: 1 },
+  );
   if (wobjErr || !wobj) return { wobjects };
 
   const coordinates = _.get(wobj, 'map.coordinates');

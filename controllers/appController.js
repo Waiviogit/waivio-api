@@ -1,4 +1,5 @@
 const { app: AppOperations } = require('utilities/operations');
+const getMetrics = require('utilities/operations/aboutWaiv/getMetrics');
 const validators = require('controllers/validators');
 const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
@@ -131,9 +132,27 @@ const getReqRates = async (req, res, next) => {
   next();
 };
 
+const waivMainMetrics = async (req, res, next) => {
+  const result = await getMetrics.getMainMetrics();
+
+  res.status(200).json(result);
+};
+
+const swapHistory = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.app.swapHistory, next);
+
+  if (!value) return;
+
+  const result = await getMetrics.getSwapHistory(value);
+
+  res.status(200).json(result);
+};
+
 module.exports = {
   show,
   experts,
   hashtags,
   getReqRates,
+  waivMainMetrics,
+  swapHistory,
 };
