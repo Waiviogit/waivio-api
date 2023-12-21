@@ -206,10 +206,13 @@ const getListItems = async (wobject, data, app) => {
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
 
-  let { result: wobjects } = await Wobj.find({
-    author_permlink: { $in: _.map(fields, 'body') },
-    'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  });
+  let { result: wobjects } = await Wobj.find(
+    {
+      author_permlink: { $in: _.map(fields, 'body') },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+    { search: 0, departments: 0 },
+  );
 
   if (!fields) return { wobjects: [] };
 

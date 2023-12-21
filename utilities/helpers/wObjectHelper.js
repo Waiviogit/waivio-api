@@ -798,7 +798,10 @@ const processWobjects = async ({
     .uniq()
     .value();
   if (parentPermlinks.length) {
-    ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
+    ({ result: parents } = await Wobj.find(
+      { author_permlink: { $in: parentPermlinks } },
+      { search: 0, departments: 0 },
+    ));
   }
   const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
