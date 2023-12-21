@@ -1,4 +1,4 @@
-const uuid = require('uuid/v4');
+const uuid = require('uuid').v4;
 const formidable = require('formidable');
 const fsp = require('fs/promises');
 const axios = require('axios');
