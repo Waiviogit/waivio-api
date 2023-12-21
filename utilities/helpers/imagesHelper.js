@@ -1,6 +1,6 @@
 const uuid = require('uuid/v4');
 const formidable = require('formidable');
-const fs = require('fs');
+const fsp = require('fs/promises');
 const axios = require('axios');
 const jo = require('jpeg-autorotate');
 
@@ -24,14 +24,14 @@ const prepareImage = async (req) => {
     });
   });
   let base64 = null;
-
-  if (blobImage) {
+  const [persistentFile] = blobImage;
+  if (persistentFile) {
     const options = { quality: 70 };
     try {
-      const { buffer } = await jo.rotate(blobImage.path, options);
+      const { buffer } = await jo.rotate(persistentFile.filepath, options);
       base64 = buffer;
     } catch (error) {
-      const data = fs.readFileSync(blobImage.path);
+      const data = await fsp.readFile(persistentFile.filepath);
       base64 = data.toString('base64');
     }
   } else if (imageUrl) {
