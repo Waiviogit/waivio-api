@@ -1,14 +1,17 @@
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
-const WObjectModel = require('database').models.WObject;
+const { client } = require('database/native');
 
 const _ = require('lodash');
+
+const db = client.db('waivio');
+const WObjectModel = db.collection('wobjects');
 
 const getOne = async (authorPermlink, objectType, unavailable) => {
   try {
     const matchStage = { author_permlink: authorPermlink };
     if (unavailable) matchStage['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
     if (objectType) matchStage.object_type = objectType;
-    const wObject = await WObjectModel.findOne(matchStage, { search: 0, departments: 0 }).lean();
+    const wObject = await WObjectModel.findOne(matchStage, { search: 0, departments: 0 });
 
     if (!wObject) {
       return { error: { status: 404, message: 'wobject not found' } };
@@ -21,7 +24,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 
 const fromAggregation = async (pipeline) => {
   try {
-    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true);
+    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true).toArray();
 
     if (!wobjects || _.isEmpty(wobjects)) {
       return { error: { status: 404, message: 'Wobjects not found!' } };
@@ -35,7 +38,7 @@ const fromAggregation = async (pipeline) => {
 // eslint-disable-next-line camelcase
 const isFieldExist = async ({ author_permlink, fieldName }) => {
   try {
-    const wobj = await WObjectModel.findOne({ author_permlink, 'fields.name': fieldName }).lean();
+    const wobj = await WObjectModel.findOne({ author_permlink, 'fields.name': fieldName });
 
     return !!wobj;
   } catch (error) {
@@ -49,7 +52,7 @@ const getByField = async ({ fieldName, fieldBody }) => {
       'fields.name': fieldName,
       'fields.body': fieldBody,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    }).lean();
+    }).toArray();
 
     if (_.isEmpty(wobjects)) return { error: { status: 404, message: 'Wobjects not found!' } };
     return { wobjects };
@@ -64,7 +67,7 @@ const getWobjectsRefs = async () => {
     return {
       wobjects: await WObjectModel.aggregate([
         { $project: { _id: 0, author_permlink: 1, author: 1 } },
-      ]),
+      ]).toArray(),
     };
   } catch (error) {
     return { error };
@@ -80,7 +83,7 @@ const getFieldsRefs = async (authorPermlink) => {
         { $unwind: '$fields' },
         { $addFields: { field_author: '$fields.author', field_permlink: '$fields.permlink' } },
         { $project: { _id: 0, field_author: 1, field_permlink: 1 } },
-      ]),
+      ]).toArray(),
     };
   } catch (error) {
     return { error };
@@ -93,7 +96,7 @@ const findOne = async (
   sort,
 ) => {
   try {
-    return { result: await WObjectModel.findOne(condition, select).sort(sort).lean() };
+    return { result: await WObjectModel.findOne(condition, select, { sort }) };
   } catch (error) {
     return { error };
   }
@@ -108,12 +111,8 @@ const find = async (
 ) => {
   try {
     return {
-      result: await WObjectModel
-        .find(condition, select)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
+      result: await WObjectModel.find(condition, select, { sort, skip, limit }).toArray(),
+
     };
   } catch (error) {
     return { error };
@@ -126,7 +125,7 @@ const findObjects = async ({
   options = {},
 }) => {
   try {
-    return { result: await WObjectModel.find(filter, projection, options).lean() };
+    return { result: await WObjectModel.find(filter, projection, options).toArray() };
   } catch (error) {
     return { error };
   }
@@ -148,7 +147,7 @@ const countWobjectsByArea = async ({
         },
       };
       if (!_.isEmpty(crucialWobjects)) matchCond.$match.author_permlink = { $in: crucialWobjects };
-      const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]);
+      const wobject = await WObjectModel.aggregate([matchCond, { $count: 'count' }]).toArray();
       return { ...city, counter: _.get(wobject[0], 'count', 0) };
     }));
     return { result };
