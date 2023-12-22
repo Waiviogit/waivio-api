@@ -40,4 +40,17 @@ services:
         max-size: '10m'
     env_file:
       - .third.env
+  waivio-api-4:
+    container_name: waivio-api-4
+    build: .
+    command: npm run start
+    restart: always
+    network_mode: host
+    logging:
+      driver: 'json-file'
+      options:
+        max-file: '5'
+        max-size: '10m'
+    env_file:
+      - .forth.env
 
