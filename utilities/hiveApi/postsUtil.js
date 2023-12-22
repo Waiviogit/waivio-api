@@ -6,15 +6,18 @@ exports.getPostsByCategory = async (data) => {
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
       return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
     }
-    const client = await getRegularClient();
-    const posts = await client.database.getDiscussions(data.category, {
-      limit: data.limit || 20,
-      tag: data.tag,
-      start_author: data.start_author,
-      start_permlink: data.start_permlink,
-    });
-
-    return { posts };
+    return {
+      posts: [],
+    };
+    // const client = await getRegularClient();
+    // const posts = await client.database.getDiscussions(data.category, {
+    //   limit: data.limit || 20,
+    //   tag: data.tag,
+    //   start_author: data.start_author,
+    //   start_permlink: data.start_permlink,
+    // });
+    //
+    // return { posts };
   } catch (error) {
     return { error };
   }
@@ -29,29 +32,30 @@ exports.getPostsByCategory = async (data) => {
  */
 exports.getPost = async ({ author, permlink }) => {
   try {
-    const client = await getRegularClient();
-    const post = await client.database.call('get_content', [author, permlink]);
-
-    if (post.author) {
-      return { post };
-    }
-    return { error: { message: 'Post not found!', status: 404 } };
+    return { post: {} };
+    // const client = await getRegularClient();
+    // const post = await client.database.call('get_content', [author, permlink]);
+    //
+    // if (post.author) {
+    //   return { post };
+    // }
+    // return { error: { message: 'Post not found!', status: 404 } };
   } catch (e) {
     return { error: { message: 'Post not found!', status: 404 } };
   }
 };
 
-exports.getManyPosts = async (links = []) => {
-  const posts = await Promise.all(links.map(async (link) => {
-    const { post, error } = await this.getPost(
-      { author: _.get(link, 'author'), permlink: _.get(link, 'permlink') },
-    );
-
-    if (post && !error) return post;
-  }));
-
-  return { posts: _.compact(posts) };
-};
+exports.getManyPosts = async (links = []) => ({ posts: [] })
+// const posts = await Promise.all(links.map(async (link) => {
+//   const { post, error } = await this.getPost(
+//     { author: _.get(link, 'author'), permlink: _.get(link, 'permlink') },
+//   );
+//
+//   if (post && !error) return post;
+// }));
+//
+// return { posts: _.compact(posts) };
+;
 
 /**
  * Get comments authored by specified STEEM user
@@ -64,13 +68,14 @@ exports.getManyPosts = async (links = []) => {
 // eslint-disable-next-line camelcase
 exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
   try {
-    const client = await getRegularClient();
-    const comments = await client.database.call(
-      'get_discussions_by_comments',
-      [{ start_author, start_permlink, limit }],
-    );
-
-    return { comments };
+    return { comments: [] };
+    // const client = await getRegularClient();
+    // const comments = await client.database.call(
+    //   'get_discussions_by_comments',
+    //   [{ start_author, start_permlink, limit }],
+    // );
+    //
+    // return { comments };
   } catch (error) {
     return { error };
   }
@@ -78,16 +83,17 @@ exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
 
 exports.getCommentsArr = async (permlinks) => {
   try {
-    const client = await getRegularClient();
-    const comments = await client.call(
-      'database_api',
-      'find_comments',
-      { comments: permlinks },
-    );
-
-    if (!comments) return { comments: [] };
-
-    return comments;
+    return [];
+    // const client = await getRegularClient();
+    // const comments = await client.call(
+    //   'database_api',
+    //   'find_comments',
+    //   { comments: permlinks },
+    // );
+    //
+    // if (!comments) return { comments: [] };
+    //
+    // return comments;
   } catch (error) {
     return { error };
   }
@@ -99,14 +105,14 @@ exports.getCommentsArr = async (permlinks) => {
  */
 exports.getPostState = async ({ author, permlink, category }) => {
   try {
-    const client = await getRegularClient();
-    const result = await client.database.call(
-      'get_state',
-      [`${category}/@${author}/${permlink}`],
-    );
-    if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+    // const client = await getRegularClient();
+    // const result = await client.database.call(
+    //   'get_state',
+    //   [`${category}/@${author}/${permlink}`],
+    // );
+    // if (!result || result.error) return { error: { message: _.get(result, 'error') } };
 
-    return { result };
+    return { result: {} };
   } catch (error) {
     return { error: { message: error.message } };
   }
@@ -114,14 +120,14 @@ exports.getPostState = async ({ author, permlink, category }) => {
 
 exports.getContent = async ({ author, permlink }) => {
   try {
-    const client = await getRegularClient();
-    const result = await client.database.call(
-      'get_content',
-      [author, permlink],
-    );
-    if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+    // const client = await getRegularClient();
+    // const result = await client.database.call(
+    //   'get_content',
+    //   [author, permlink],
+    // );
+    // if (!result || result.error) return { error: { message: _.get(result, 'error') } };
 
-    return { result };
+    return { result: {} };
   } catch (error) {
     return { error: { message: error.message } };
   }
