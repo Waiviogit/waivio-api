@@ -5,7 +5,7 @@ const URI = process.env.MONGO_URI_CURRENCIES
   ? process.env.MONGO_URI_CURRENCIES
   : `mongodb://${config.currenciesDB.host}:${config.currenciesDB.port}/${config.currenciesDB.database}`;
 
-const currenciesDb = mongoose.createConnection(URI);
+const currenciesDb = mongoose.createConnection(URI, { serverSelectionTimeoutMS: 5000 });
 currenciesDb.on('error', console.error.bind(console, 'connection error:'));
 currenciesDb.once('open', () => {
   console.log(`${config.currenciesDB.database} connected`);

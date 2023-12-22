@@ -9,7 +9,7 @@ const URI = process.env.MONGO_URI_WAIVIO
 
 mongoose.connect(URI, {
   maxPoolSize: 200,
-  socketTimeoutMS: 60000,
+  serverSelectionTimeoutMS: 5000,
 })
   .then(() => console.log(`${config.db.database} connected`))
   .catch((error) => console.log(error));
