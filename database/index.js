@@ -8,6 +8,7 @@ const URI = process.env.MONGO_URI_WAIVIO
   : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
 
 mongoose.connect(URI, {
+  minPoolSize: 100,
   maxPoolSize: 200,
   serverSelectionTimeoutMS: 5000,
 })
