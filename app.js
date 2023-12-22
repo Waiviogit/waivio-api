@@ -69,10 +69,10 @@ app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // fill posts by some additional information(author wobj.weight, or wobjects info)
-app.use('/', fillPostAdditionalInfo.fill);
+// app.use('/', fillPostAdditionalInfo.fill);
 
 // Moderate wobjects depend on app moderators before send
-app.use('/', moderateWobjects.moderate);
+// app.use('/', moderateWobjects.moderate);
 
 // Check users for followers for some routes
 app.use('/', checkUserFollowers.check);
@@ -85,7 +85,7 @@ app.use('/', checkBellNotifications.check);
 
 // Check objects for followings for some routes
 app.use('/', checkObjectsFollowings.check);
-app.use('/', filterUniqGroupId);
+// app.use('/', filterUniqGroupId);
 
 app.use(Sentry.Handlers.errorHandler({
   shouldHandleError(error) {

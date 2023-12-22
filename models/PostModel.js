@@ -11,14 +11,14 @@ exports.getAllPosts = async (data) => {
       { $sort: { _id: -1 } },
       { $skip: data.skip },
       { $limit: data.limit },
-      {
-        $lookup: {
-          from: 'wobjects',
-          localField: 'wobjects.author_permlink',
-          foreignField: 'author_permlink',
-          as: 'fullObjects',
-        },
-      },
+      // {
+      //   $lookup: {
+      //     from: 'wobjects',
+      //     localField: 'wobjects.author_permlink',
+      //     foreignField: 'author_permlink',
+      //     as: 'fullObjects',
+      //   },
+      // },
     ];
     if (data.filter) {
       if (data.filter.byApp) {
@@ -81,19 +81,19 @@ exports.getByFollowLists = async ({
     { $skip: skip },
     { $limit: limit },
     // we use only 4 objects
-    {
-      $addFields: {
-        wobjects: { $slice: ['$wobjects', 4] },
-      },
-    },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'fullObjects',
-      },
-    },
+    // {
+    //   $addFields: {
+    //     wobjects: { $slice: ['$wobjects', 4] },
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'wobjects',
+    //     localField: 'wobjects.author_permlink',
+    //     foreignField: 'author_permlink',
+    //     as: 'fullObjects',
+    //   },
+    // },
   ];
 
   // objects works bad with author condition
@@ -119,19 +119,19 @@ exports.getByFollowLists = async ({
     { $skip: skip },
     { $limit: limit },
     // we use only 4 objects
-    {
-      $addFields: {
-        wobjects: { $slice: ['$wobjects', 4] },
-      },
-    },
-    {
-      $lookup: {
-        from: 'wobjects',
-        localField: 'wobjects.author_permlink',
-        foreignField: 'author_permlink',
-        as: 'fullObjects',
-      },
-    },
+    // {
+    //   $addFields: {
+    //     wobjects: { $slice: ['$wobjects', 4] },
+    //   },
+    // },
+    // {
+    //   $lookup: {
+    //     from: 'wobjects',
+    //     localField: 'wobjects.author_permlink',
+    //     foreignField: 'author_permlink',
+    //     as: 'fullObjects',
+    //   },
+    // },
   ];
 
   try {
@@ -193,7 +193,7 @@ exports.getBlog = async ({
       posts: await PostModel
         .find({ author: name, ...getBlockedAppCond(), ...additionalCond })
         .sort({ _id: -1 }).skip(skip).limit(limit)
-        .populate({ path: 'fullObjects', select: '-latest_posts' })
+        // .populate({ path: 'fullObjects', select: '-latest_posts' })
         .lean(),
     };
   } catch (error) {
@@ -206,7 +206,9 @@ exports.getOne = async ({ author, permlink, root_author }) => {
   try {
     const cond = author ? { author, permlink } : { root_author, permlink };
 
-    return { post: await PostModel.findOne(cond).populate({ path: 'fullObjects', select: '-latest_posts' }).lean() };
+    return { post: await PostModel.findOne(cond)
+        // .populate({ path: 'fullObjects', select: '-latest_posts' })
+        .lean() };
   } catch (error) {
     return { error };
   }
@@ -260,7 +262,7 @@ exports.getManyPosts = async (postsRefs) => {
     return {
       posts: await PostModel
         .find({ $or: [...postsRefs], ...getBlockedAppCond() })
-        .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
+        // .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
         .lean(),
     };
   } catch (error) {
@@ -284,7 +286,7 @@ exports.getWobjectPosts = async ({
       .find(condition)
       .sort({ _id: -1 })
       .limit(limit)
-      .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name status' })
+      // .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name status' })
       .lean();
 
     if (!lastId) postsQuery.skip(skip);
