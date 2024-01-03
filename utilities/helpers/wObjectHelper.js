@@ -20,6 +20,7 @@ const UserWobjects = require('models/UserWobjects');
 const {
   DEVICE,
   LANGUAGES_POPULARITY,
+  TTL_TIME,
 } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
@@ -40,7 +41,6 @@ const {
   getCachedData,
   setCachedData,
 } = require('./cacheHelper');
-const { TTL_TIME } = require('../../constants/common');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
