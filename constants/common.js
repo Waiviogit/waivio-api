@@ -211,3 +211,5 @@ exports.GUEST_WALLET_TYPE = Object.freeze({
   TRANSFER: 'tokens_transfer',
   WITHDRAW: 'guest_withdraw',
 });
+
+exports.AGGREGATION_MAX_TIME = 15000;
