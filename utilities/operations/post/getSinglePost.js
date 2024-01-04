@@ -52,6 +52,7 @@ const getPost = async ({
   if (dbError) return { error: dbError };
 
   const post = _.get(dbPosts, '[0]');
+  if (!post) return { post: null };
   /** Not return post which was downvoted by moderator */
   if (_.includes(_.get(post, 'blocked_for_apps', []), host)) {
     return { error: { status: 404, message: 'Post not found!' } };
@@ -63,24 +64,24 @@ const getPost = async ({
     return { error: { status: 404, message: 'Post not found!' } };
   }
 
-  const { post: steemPost } = await postsUtil.getPost(
-    { author: post ? post.root_author || post.author : author, permlink },
-  );
-
-  if (!steemPost || steemPost.parent_author) return { post: null };
-
-  let resultPost = steemPost;
+  // const { post: steemPost } = await postsUtil.getPost(
+  //   { author: post ? post.root_author || post.author : author, permlink },
+  // );
+  //
+  // if (!steemPost || steemPost.parent_author) return { post: null };
+  //
+  // let resultPost = steemPost;
   const wobjsResult = await getPostObjects(_.get(post, 'wobjects'));
+  //
+  post.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
+  post.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
+  //
+  // resultPost = await mergePostData(resultPost, post);
+  //
+  // // if post requested with guest name as author -> return post with guest name as author
+  // resultPost.author = author;
 
-  resultPost.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
-  resultPost.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
-
-  resultPost = await mergePostData(resultPost, post);
-
-  // if post requested with guest name as author -> return post with guest name as author
-  resultPost.author = author;
-
-  return { post: resultPost };
+  return { post };
 };
 
 const getComment = async ({ author, permlink, app }) => {
