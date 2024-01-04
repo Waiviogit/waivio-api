@@ -1,4 +1,5 @@
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
+const { AGGREGATION_MAX_TIME } = require('constants/common');
 const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
@@ -21,7 +22,9 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 
 const fromAggregation = async (pipeline) => {
   try {
-    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true);
+    const wobjects = await WObjectModel.aggregate([...pipeline])
+      .option({ maxTimeMS: AGGREGATION_MAX_TIME })
+      .allowDiskUse(true);
 
     if (!wobjects || _.isEmpty(wobjects)) {
       return { error: { status: 404, message: 'Wobjects not found!' } };
