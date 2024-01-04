@@ -138,7 +138,9 @@ exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
 
 exports.zadd = async ({
   key, now, keyValue, client = processedPostClient,
-}) => client.ZADD(key, now, keyValue);
+}) => client.ZADD(key, {
+  score: now, value: keyValue,
+});
 
 exports.saddAsync = async ({ key, values, client }) => client.sadd(key, ...values);
 
