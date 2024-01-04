@@ -52,6 +52,7 @@ const getPost = async ({
   if (dbError) return { error: dbError };
 
   const post = _.get(dbPosts, '[0]');
+  if (!post) return { post: null };
   /** Not return post which was downvoted by moderator */
   if (_.includes(_.get(post, 'blocked_for_apps', []), host)) {
     return { error: { status: 404, message: 'Post not found!' } };
