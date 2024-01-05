@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -12,6 +12,7 @@ const validators = require('controllers/validators');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
+const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -567,6 +568,37 @@ const getMinReject = async (req, res, next) => {
   next();
 };
 
+const getFavoritesList = async (req, res, next) => {
+  const { result, error } = await favorites.getUserFavoritesList(req.params);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getFavorites = async (req, res, next) => {
+  const value = validators.validate({
+    ...req.params,
+    ...req.body,
+    follower: req.headers.follower,
+    locale: req.headers.locale,
+  }, validators.user.getFavoritesSchema, next);
+  if (!value) return;
+
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { result, hasMore, error } = await favorites.getFavorites({
+    ...value,
+    app: req.appData,
+    countryCode,
+  });
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result, hasMore } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -607,4 +639,6 @@ module.exports = {
   guestWithdrawHiveRange,
   getAffiliate,
   getMinReject,
+  getFavoritesList,
+  getFavorites,
 };
