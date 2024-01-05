@@ -128,6 +128,7 @@ exports.REDIS_KEYS = {
   REQUESTS_RATE: 'requests:api:',
   REQUESTS_TIME: 'requests:time:api',
   REQUESTS_BY_URL: 'requests:url:api',
+  AD_SENSE: 'ad_sense_cache',
 };
 
 exports.LANGUAGES = ['en-US',
@@ -210,3 +211,5 @@ exports.GUEST_WALLET_TYPE = Object.freeze({
   TRANSFER: 'tokens_transfer',
   WITHDRAW: 'guest_withdraw',
 });
+
+exports.AGGREGATION_MAX_TIME = 15000;

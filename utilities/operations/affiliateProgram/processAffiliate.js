@@ -9,6 +9,12 @@ const {
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const config = require('config');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('../../helpers/cacheHelper');
+const { TTL_TIME } = require('../../../constants/common');
 
 const affiliateScheme = Joi.object().keys({
   affiliateButton: Joi.string().required(),
@@ -197,17 +203,27 @@ const processUserAffiliate = async ({
 };
 
 const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
+  const key = getCacheKey({ processAppAffiliate: { host: app?.host, locale } });
+  const cache = await getCachedData(key);
+  if (cache) return jsonHelper.parseJson(cache, []);
+
   const { wobjects: result, error } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
   );
 
   if (error && app?.owner && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
     // return user personal codes if the site doesn't have its own
-    return processUserAffiliate({
+    const response = await processUserAffiliate({
       app,
       locale,
       creator: app?.owner,
     });
+
+    await setCachedData({
+      key, data: response, ttl: TTL_TIME.ONE_DAY,
+    });
+
+    return response;
   }
 
   if (error) return [];
@@ -225,9 +241,15 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
     }
   }
 
-  return processObjectsToAffiliateArray({
+  const response = await processObjectsToAffiliateArray({
     wobjects: result, app, locale,
   });
+
+  await setCachedData({
+    key, data: response, ttl: TTL_TIME.ONE_DAY,
+  });
+
+  return response;
 };
 
 module.exports = {

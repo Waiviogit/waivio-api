@@ -22,6 +22,7 @@ module.exports = async ({ links, app, locale }) => {
         author_permlink: o.author_permlink,
         avatar: o.avatar,
         defaultShowLink: o.defaultShowLink,
+        default_name: o.default_name,
       }),
     ),
   };

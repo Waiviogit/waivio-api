@@ -13,6 +13,8 @@ const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper'
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
+const wobjectHelper = require('../../helpers/wObjectHelper');
+const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -204,10 +206,13 @@ const getListItems = async (wobject, data, app) => {
     app,
   }))[FIELDS_NAMES.LIST_ITEM];
 
-  let { result: wobjects } = await Wobj.find({
-    author_permlink: { $in: _.map(fields, 'body') },
-    'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  });
+  let { result: wobjects } = await Wobj.find(
+    {
+      author_permlink: { $in: _.map(fields, 'body') },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    },
+    { search: 0, departments: 0 },
+  );
 
   if (!fields) return { wobjects: [] };
 
@@ -283,7 +288,33 @@ const getOne = async (data) => { // get one wobject by author_permlink
     if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
 
-  return { wobjectData: wObject };
+  const affiliateCodes = await processAppAffiliate({
+    app,
+    locale: data.locale,
+  });
+
+  const wobjectData = await wobjectHelper.processWobjects({
+    wobjects: [wObject],
+    app,
+    hiveData: true,
+    returnArray: false,
+    locale: data.locale,
+    countryCode: data.countryCode,
+    reqUserName: data.user,
+    affiliateCodes,
+  });
+
+  wobjectData.canonical = await getWobjectCanonical({
+    owner: wobjectData.descriptionCreator,
+    authorPermlink: data.author_permlink,
+    host: app?.host,
+  });
+
+  wobjectData.updatesCount = _.sumBy(wobjectData.exposedFields, 'value');
+  delete wobjectData.fields;
+  delete wobjectData.search;
+
+  return { wobjectData };
 };
 
 module.exports = {

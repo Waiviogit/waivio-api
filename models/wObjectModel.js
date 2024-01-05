@@ -1,4 +1,5 @@
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
+const { AGGREGATION_MAX_TIME } = require('constants/common');
 const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
@@ -8,7 +9,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
     const matchStage = { author_permlink: authorPermlink };
     if (unavailable) matchStage['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
     if (objectType) matchStage.object_type = objectType;
-    const wObject = await WObjectModel.findOne(matchStage).lean();
+    const wObject = await WObjectModel.findOne(matchStage, { search: 0, departments: 0 }).lean();
 
     if (!wObject) {
       return { error: { status: 404, message: 'wobject not found' } };
@@ -21,7 +22,9 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 
 const fromAggregation = async (pipeline) => {
   try {
-    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true);
+    const wobjects = await WObjectModel.aggregate([...pipeline])
+      .option({ maxTimeMS: AGGREGATION_MAX_TIME })
+      .allowDiskUse(true);
 
     if (!wobjects || _.isEmpty(wobjects)) {
       return { error: { status: 404, message: 'Wobjects not found!' } };
@@ -87,7 +90,11 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
-const findOne = async (condition, select = {}, sort) => {
+const findOne = async (
+  condition,
+  select = { search: 0, departments: 0 },
+  sort,
+) => {
   try {
     return { result: await WObjectModel.findOne(condition, select).sort(sort).lean() };
   } catch (error) {
@@ -95,7 +102,13 @@ const findOne = async (condition, select = {}, sort) => {
   }
 };
 
-const find = async (condition, select, sort = {}, skip = 0, limit) => {
+const find = async (
+  condition,
+  select,
+  sort = {},
+  skip = 0,
+  limit,
+) => {
   try {
     return {
       result: await WObjectModel
@@ -110,7 +123,11 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
   }
 };
 
-const findObjects = async ({ filter, projection = {}, options = {} }) => {
+const findObjects = async ({
+  filter,
+  projection = { search: 0, departments: 0 },
+  options = {},
+}) => {
   try {
     return { result: await WObjectModel.find(filter, projection, options).lean() };
   } catch (error) {

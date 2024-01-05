@@ -66,6 +66,10 @@
     {
       "name": "draft",
       "description": "draft"
+    },
+    {
+      "name": "thread",
+      "description": "thread"
     }
   ],
   "schemes": [
@@ -73,6 +77,188 @@
     "http"
   ],
   "paths": {
+    "/api/thread/hashtag": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get threads by hashtag",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "follower",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "hashtag",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "enum": ["latest", "oldest"],
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/thread"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/thread/hashtag/count": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get hashtag count",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/hashtagCount"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/thread/user": {
+      "get" : {
+        "tags" : [ "thread" ],
+        "description" : "get threads by user",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "follower",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "user",
+            "in": "query",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "sort",
+            "in": "query",
+            "required": true,
+            "enum": ["latest", "oldest"],
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/thread"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/draft/post": {
       "post": {
         "tags" : [ "draft" ],
@@ -3072,6 +3258,14 @@
             "description": "name of authorised user",
             "required": true,
             "type": "string"
+          },
+          {
+            "name": "currency",
+            "in": "query",
+            "description": "currency",
+            "required": false,
+            "type": "string",
+            "enum": ["USD", "CAD", "EUR", "AUD", "MXN", "GBP", "JPY", "CNY","RUB", "UAH", "CHF"]
           },
           {
             "name": "access-token",
@@ -8490,6 +8684,177 @@
         }
       }
     },
+    "/api/waiv/metrics": {
+      "get": {
+        "tags": [
+          "app"
+        ],
+        "summary": "Get WAIV metrics",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "tokensInCirculation": {
+                  "type": "string"
+                },
+                "tokensStaked": {
+                  "type": "string"
+                },
+                "totalMarketCapitalizationUSD": {
+                  "type": "string"
+                },
+                "annualInflation": {
+                  "type": "string"
+                },
+                "totalShares": {
+                  "type": "string"
+                },
+                "availableInMonthUSD": {
+                  "type": "string"
+                },
+                "distributedInMonthUSD": {
+                  "type": "string"
+                },
+                "inflationDistribution": {
+                  "type": "object",
+                  "properties": {
+                    "rewardsPool": {
+                      "type": "string"
+                    },
+                    "developmentFund": {
+                      "type": "string"
+                    },
+                    "liquidityProviders": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "rewardsPool": {
+                  "type": "object",
+                  "properties": {
+                    "authors": {
+                      "type": "string"
+                    },
+                    "curators": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "positions": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "number"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "tokenPair": {
+                        "type": "string"
+                      },
+                      "shares": {
+                        "type": "string"
+                      },
+                      "timeFactor": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/waiv/swap-history": {
+      "get": {
+        "tags": [
+          "app"
+        ],
+        "summary": "Get WAIV swap history",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Count of users to return(default 10)",
+            "required": false,
+            "type": "number"
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "description": "Count of users to skip, for infinite scroll(default 0)",
+            "required": false,
+            "type": "number"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "_id": {
+                        "type": "string"
+                      },
+                      "blockNumber": {
+                        "type": "number"
+                      },
+                      "transactionId": {
+                        "type": "string"
+                      },
+                      "account": {
+                        "type": "string"
+                      },
+                      "operation": {
+                        "type": "string"
+                      },
+                      "refHiveBlockNumber": {
+                        "type": "number"
+                      },
+                      "symbolOut": {
+                        "type": "string"
+                      },
+                      "symbolIn": {
+                        "type": "string"
+                      },
+                      "symbolOutQuantity": {
+                        "type": "string"
+                      },
+                      "symbolInQuantity": {
+                        "type": "string"
+                      },
+                      "timestamp": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/{userName}/draft": {
       "post": {
         "tags": [
@@ -8987,6 +9352,99 @@
     }
   },
   "definitions": {
+    "hashtagCount": {
+      "type": "object",
+      "properties": {
+        "hashtag": {
+          "type": "string"
+        },
+        "count": {
+          "type": "number"
+        }
+      }
+    },
+    "thread": {
+      "type": "object",
+      "properties": {
+        "author": {
+          "type": "string"
+        },
+        "permlink": {
+          "type": "string"
+        },
+        "parent_author": {
+          "type": "string"
+        },
+        "parent_permlink": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "replies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "children": {
+          "type": "number"
+        },
+        "depth": {
+          "type": "number"
+        },
+        "stats": {
+          "type": "object",
+          "properties": {
+            "total_votes" : {
+              "type": "number"
+            }
+          }
+        },
+        "author_reputation": {
+          "type": "number"
+        },
+        "deleted": {
+          "type": "boolean"
+        },
+        "tickers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mentions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "hashtags": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "images": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "threadstorm": {
+          "type": "boolean"
+        },
+        "net_rshares": {
+          "type": "number"
+        }
+      }
+    },
     "postDraft": {
       "type": "object",
       "properties": {
@@ -9383,14 +9841,16 @@
               "createdAt": "2020-10-01T12:42:35.519Z",
               "amount": 1,
               "type": "writeOff",
-              "countUsers": 2
+              "countUsers": 2,
+              "currencyRate": 1
             },
             {
               "userName": "olegvladim",
               "balance": 100,
               "createdAt": "2020-10-01T09:42:35.519Z",
               "amount": 100,
-              "type": "transfer"
+              "type": "transfer",
+              "currencyRate": 1
             }
           ],
           "ownerAppNames": [

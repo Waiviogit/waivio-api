@@ -35,6 +35,14 @@ exports.getManagePage = async ({ userName }) => {
     websites.push(sitesHelper.getWebsiteData(payments, site));
   }
 
+  if (websites.length) {
+    const canonical = websites.find((el) => !!el.useForCanonical);
+    if (!canonical) {
+      const firstActive = _.minBy(websites, 'createdAt');
+      firstActive.useForCanonical = true;
+    }
+  }
+
   accountBalance.avgDau = _.sumBy(websites, (site) => site.averageDau) || 0;
 
   accountBalance.dailyCost = getDailyCost(websites).toNumber();

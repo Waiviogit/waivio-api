@@ -1,5 +1,22 @@
-const moduleExports = {};
+const { Router } = require('express');
 
-moduleExports.routes = require('./routes');
+const routes = [
+  { route: require('./wobject') },
+  { route: require('./user') },
+  { route: require('./post') },
+  { route: require('./app') },
+  { route: require('./objectType') },
+  { route: require('./site') },
+  { route: require('./vipTicket') },
+  { route: require('./department') },
+  { route: require('./hive') },
+  { route: require('./shop') },
+  { route: require('./draft') },
+  { route: require('./thread') },
+];
 
-module.exports = moduleExports;
+const apiRoutes = new Router();
+
+routes.forEach(({ route }) => { apiRoutes.use('/api', route); });
+
+module.exports = apiRoutes;

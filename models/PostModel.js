@@ -67,10 +67,12 @@ exports.getByFollowLists = async ({
   const pipe = [
     {
       $match: {
-        $or: [{ author: { $in: users } }, { 'wobjects.author_permlink': { $in: authorPermlinks } }],
+        author: { $in: users },
+      },
+    },
+    {
+      $match: {
         ...getBlockedAppCond(),
-        ...(_.get(filtersData, 'require_wobjects') && { 'wobjects.author_permlink': { $in: [...filtersData.require_wobjects] } }),
-        ...(!_.isEmpty(authorPermlinks) && { language: { $in: userLanguages } }),
         ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
         ...(!_.isEmpty(muted) && { author: { $nin: muted }, 'reblog_to.author': { $nin: muted } }),
       },
@@ -94,12 +96,68 @@ exports.getByFollowLists = async ({
     },
   ];
 
+  // objects works bad with author condition
+  const pipe2 = [
+    {
+      $match: {
+        'wobjects.author_permlink': { $in: authorPermlinks },
+        language: { $in: userLanguages },
+
+      },
+    },
+    {
+      $match: {
+        ...getBlockedAppCond(),
+        ...(!_.isEmpty(hiddenPosts) && { _id: { $nin: hiddenPosts } }),
+        ...(!_.isEmpty(muted) && {
+          author: { $nin: muted },
+          'reblog_to.author': { $nin: muted },
+        }),
+      },
+    },
+    { $sort: { _id: -1 } },
+    { $skip: skip },
+    { $limit: limit },
+    // we use only 4 objects
+    {
+      $addFields: {
+        wobjects: { $slice: ['$wobjects', 4] },
+      },
+    },
+    {
+      $lookup: {
+        from: 'wobjects',
+        localField: 'wobjects.author_permlink',
+        foreignField: 'author_permlink',
+        as: 'fullObjects',
+      },
+    },
+  ];
+
   try {
-    const posts = await PostModel.aggregate(pipe);
-    if (_.isEmpty(posts)) {
+    const [
+      posts,
+      post2,
+    ] = await Promise.all([
+      PostModel.aggregate(pipe),
+      PostModel.aggregate(pipe2),
+    ]);
+
+    const combinedResult = [
+      ...posts,
+      ...post2,
+    ];
+
+    // Sort the combined result by _id in descending order
+    combinedResult.sort((a, b) => b._id - a._id);
+
+    // Paginate the combined result
+    const paginatedResult = _.take(combinedResult, limit);
+
+    if (_.isEmpty(paginatedResult)) {
       return { error: { status: 404, message: 'Posts not found!' } };
     }
-    return { posts };
+    return { posts: paginatedResult };
   } catch (error) {
     return { error };
   }
@@ -267,6 +325,16 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
     );
   }
   return linksArray;
+};
+
+exports.findOneFirstByAuthor = async ({ author }) => {
+  try {
+    return {
+      result: await PostModel.findOne({ author }, {}, { sort: { createdAt: 1 } }).lean(),
+    };
+  } catch (error) {
+    return { error };
+  }
 };
 
 const getBlockedAppCond = () => {

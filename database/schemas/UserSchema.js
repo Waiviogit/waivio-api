@@ -126,6 +126,7 @@ const UserSchema = new Schema({
   },
   referral: { type: [ReferralsSchema], default: [] },
   lastActivity: { type: Date, index: true },
+  canonical: { type: String },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });

@@ -2,6 +2,7 @@ const Joi = require('joi');
 const { MAIN_OBJECT_TYPES, AFFILIATE_TYPE, COUNTRY_CODES } = require('constants/wobjectsData');
 const { customJoi } = require('controllers/validators/customSchema');
 const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
+const { SUPPORTED_CURRENCIES } = require('constants/common');
 
 const options = { allowUnknown: true, stripUnknown: true };
 
@@ -39,6 +40,7 @@ exports.report = Joi.object().keys({
   }),
   userName: Joi.string().required(),
   host: Joi.string(),
+  currency: Joi.string().valid(...Object.values(SUPPORTED_CURRENCIES)),
 }).options(options);
 
 // eslint-disable-next-line no-multi-assign

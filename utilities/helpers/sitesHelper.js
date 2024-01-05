@@ -24,7 +24,10 @@ const {
   setCachedData,
 } = require('./cacheHelper');
 const jsonHelper = require('./jsonHelper');
-const { TTL_TIME } = require('../../constants/common');
+const {
+  TTL_TIME,
+  REDIS_KEYS,
+} = require('../../constants/common');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -176,6 +179,8 @@ exports.getWebsiteData = (payments, site) => {
     name: site.name,
     host: site.host,
     parent: site?.parentHost ?? '',
+    createdAt: site.createdAt,
+    useForCanonical: !!site.useForCanonical,
     averageDau: lastWriteOff.length
       ? Math.trunc(_.meanBy(lastWriteOff, (writeOff) => writeOff.countUsers))
       : 0,
@@ -304,6 +309,7 @@ exports.getSettings = async (host) => {
   const {
     googleAnalyticsTag,
     googleGSCTag = '',
+    googleEventSnippet = '',
     beneficiary,
     app_commissions,
     currency,
@@ -314,6 +320,7 @@ exports.getSettings = async (host) => {
   const result = {
     googleAnalyticsTag,
     googleGSCTag,
+    googleEventSnippet,
     beneficiary,
     referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
       ? app_commissions.referral_commission_acc
@@ -403,7 +410,7 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
-  const key = getCacheKey({ getAdSense: host });
+  const key = `${REDIS_KEYS.AD_SENSE}:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });

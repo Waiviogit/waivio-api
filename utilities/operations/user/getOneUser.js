@@ -2,6 +2,7 @@ const { startImportUser } = require('utilities/operations/user/importSteemUserBa
 const { Subscriptions, mutedUserModel, User } = require('models');
 
 const _ = require('lodash');
+const { getUserCanonical } = require('../../helpers/cannonicalHelper');
 
 const getOne = async ({
   name, with_followings: withFollowings, app, userName,
@@ -28,6 +29,12 @@ const getOne = async ({
     condition:
       { $or: [{ userName: user.name, mutedForApps: _.get(app, 'host') }, { mutedBy: userName, userName: name }] },
   });
+
+  if (!user.canonical) {
+    const { canonical, post } = await getUserCanonical({ name: user.name });
+    user.canonical = canonical;
+    if (post) await User.updateOne({ name: user.name }, { canonical });
+  }
 
   return {
     userData: Object.assign(user, {

@@ -12,6 +12,7 @@ const {
 } = require('utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields } = require('../utilities/operations/wobject/getFields');
+const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -52,7 +53,9 @@ const show = async (req, res, next) => {
 
   const ip = await getIpFromHeaders(req);
 
-  const { wobjectData, error } = await wobjectInfo.getOne({ ...value, ip });
+  const countryCode = await getCountryCodeFromIp(ip);
+
+  const { wobjectData, error } = await wobjectInfo.getOne({ ...value, ip, countryCode });
 
   if (error) return next(error);
 
