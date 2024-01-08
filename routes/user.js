@@ -34,6 +34,10 @@ userRoutes.route('/user/:userName/expertise-counters')
   .get(reqTimeMonitor, UserController.userObjectsSharesCount);
 userRoutes.route('/user/:userName/get_post_filters')
   .get(reqTimeMonitor, UserController.postFilters);
+userRoutes.route('/user/:userName/favorites').post(reqTimeMonitor, UserController.getFavorites);
+userRoutes.route('/user/:userName/favorites/list').get(reqTimeMonitor, UserController.getFavoritesList);
+
+
 userRoutes.route('/users/search')
   .get(reqTimeMonitor, UserController.searchUsers);
 userRoutes.route('/user/:userName/userMetadata')

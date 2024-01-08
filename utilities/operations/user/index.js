@@ -26,5 +26,6 @@ moduleExports.guestHiveWithdraw = require('./guestHiveWithdraw');
 moduleExports.commentDraft = require('./commentDraft');
 moduleExports.mainDraft = require('./mainDraft');
 moduleExports.wobjectDraft = require('./wobjectDraft');
+moduleExports.favorites = require('./favorites');
 
 module.exports = moduleExports;

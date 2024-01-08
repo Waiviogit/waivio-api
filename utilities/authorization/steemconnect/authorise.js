@@ -1,4 +1,22 @@
-const sc2 = require('sc2-sdk');
+const axios = require('axios');
+
+const authoriseRequest = async (token) => {
+  try {
+    const response = await axios.get(
+      'https://hivesigner.com/api/me',
+      {
+        headers: {
+          Authorization: token,
+        },
+        timeout: 5000,
+      },
+    );
+
+    return response?.data?._id;
+  } catch (error) {
+    return '';
+  }
+};
 
 /**
  * Authorise user using token of steemconnect
@@ -8,17 +26,8 @@ const sc2 = require('sc2-sdk');
  */
 exports.authoriseUser = async (token = '', username = '') => {
   if (!token || token === '') return false;
-  const api = sc2.Initialize({
-    baseURL: 'https://hivesigner.com',
-    accessToken: token,
-  });
-  let user;
 
-  try {
-    user = await api.me();
-  } catch (error) {
-    return false;
-  }
+  const user = await authoriseRequest(token);
 
-  return user._id === username;
+  return user === username;
 };

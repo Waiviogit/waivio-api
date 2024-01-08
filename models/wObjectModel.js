@@ -192,6 +192,53 @@ const findRelistedObjectsByPermlink = async (authorPermlink) => {
   return result;
 };
 
+const getFavoritesListByUsername = async ({ userName }) => {
+  try {
+    const result = await WObjectModel.aggregate(
+      [
+        {
+          $match: {
+            'authority.administrative': userName,
+          },
+        },
+        {
+          $group: {
+            _id: null,
+            objectTypes: { $addToSet: '$object_type' },
+          },
+        },
+      ],
+    );
+    return {
+      result: result[0]?.objectTypes ?? [],
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const getFavoritesByUsername = async ({
+  userName, skip, limit, objectType,
+}) => {
+  try {
+    const result = await WObjectModel.find(
+      {
+        'authority.administrative': userName,
+        ...(objectType && { object_type: objectType }),
+      },
+      {},
+      {
+        sort: { weight: -1 },
+        skip,
+        limit,
+      },
+    ).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -205,4 +252,6 @@ module.exports = {
   findObjects,
   getWobjectsByGroupId,
   findRelistedObjectsByPermlink,
+  getFavoritesListByUsername,
+  getFavoritesByUsername,
 };
