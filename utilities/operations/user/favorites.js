@@ -19,7 +19,7 @@ const objectTypesOrder = [
   'widget',
   'webpage',
   'shop',
-  'affiliate program',
+  'affiliate',
   'restaurant',
   'dish',
   'drink',
@@ -38,6 +38,8 @@ const objectTypesOrder = [
   'motel',
   'resort',
   'b&b',
+  'car',
+  'test',
 ];
 
 const orderMap = new Map(objectTypesOrder.map((value, index) => [value, index]));
