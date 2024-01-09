@@ -199,6 +199,7 @@ const getFavoritesListByUsername = async ({ userName }) => {
         {
           $match: {
             'authority.administrative': userName,
+            'status.title': { $nin: REMOVE_OBJ_STATUSES },
           },
         },
         {
@@ -225,6 +226,7 @@ const getFavoritesByUsername = async ({
       {
         'authority.administrative': userName,
         ...(objectType && { object_type: objectType }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
       {},
       {
