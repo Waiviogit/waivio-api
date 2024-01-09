@@ -1,21 +1,22 @@
 const {
   ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE, IMAGES_FORMAT,
 } = require('constants/common');
-const AWS = require('aws-sdk');
 const sharp = require('sharp');
 const zlib = require('zlib');
 const _ = require('lodash');
 const heicConvert = require('heic-convert');
+const AWS = require('@aws-sdk/client-s3');
 
 class Image {
   constructor() {
-    const spacesEndpoint = new AWS.Endpoint(process.env.AWS_ENDPOINT);
-
     this._s3 = new AWS.S3({
-      endpoint: spacesEndpoint,
-      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      params: AWSS3_IMAGE_PARAMS,
+      forcePathStyle: false,
+      endpoint: 'https://nyc3.digitaloceanspaces.com',
+      region: 'nyc3',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
     });
   }
 
@@ -26,17 +27,20 @@ class Image {
         const buffer = Buffer.from(base64, 'base64');
         const body = await this.resizeImage({ buffer, size });
         const gzip = await gzipPromised(body);
+        const key = `${fileName}${size}`;
 
-        return new Promise((resolve) => {
-          this._s3.upload({ ContentEncoding: 'gzip', Body: gzip, Key: `${fileName}${size}` }, (err, data) => {
-            if (err) {
-              if (err.statusCode === 503) resolve({ error: ERROR_MESSAGE.UNAVAILABLE });
-              resolve({ error: `${ERROR_MESSAGE.UPLOAD_IMAGE}:${err}` });
-            } if (data) {
-              resolve({ imageUrl: data.Location });
-            }
-          });
+        const uploadedObject = await this._s3.putObject({
+          ...AWSS3_IMAGE_PARAMS,
+          ContentEncoding: 'gzip',
+          Body: gzip,
+          Key: `${fileName}${size}`,
         });
+
+        if (uploadedObject?.$metadata?.httpStatusCode !== 200) {
+          return { error: `${ERROR_MESSAGE.UPLOAD_IMAGE}` };
+        }
+
+        return { imageUrl: `https://waivio.nyc3.digitaloceanspaces.com/${key}` };
       } catch (error) {
         return { error };
       }
