@@ -78,9 +78,14 @@ const fillUpdates = async ({
     owner,
     blacklist,
   });
+  let comments = [];
 
-  const { comments } = await postsUtil.getCommentsArr(formatUpdatesForRequest(limitedUpdates));
-  await engineOperations.addWAIVToCommentsArray(comments);
+  // try catch because noroutine module
+  try {
+    ({ comments } = await postsUtil.getCommentsArr(formatUpdatesForRequest(limitedUpdates)));
+    await engineOperations.addWAIVToCommentsArray(comments);
+  } catch (error) {}
+
   for (const update of filtered) {
     const comment = _.find(
       comments,
