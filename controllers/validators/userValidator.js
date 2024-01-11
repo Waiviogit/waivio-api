@@ -295,3 +295,12 @@ exports.minRejectSchema = Joi.object().keys({
   permlink: Joi.string().required(),
   authorPermlink: Joi.string().required(),
 });
+
+exports.getFavoritesSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  follower: Joi.string(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  objectType: Joi.string(),
+  locale: Joi.string().valid(...LANGUAGES).default('auto'),
+});

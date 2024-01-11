@@ -9244,6 +9244,111 @@
           }
         }
       }
+    },
+    "/api/user/{userName}/favorites" : {
+      "post": {
+        "tags": ["user"],
+        "summary": "get favorite objects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of authorized user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "locale",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "objectType": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/wobjectonlist"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422":  {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/favorites/list": {
+      "get": {
+        "tags": ["user"],
+        "summary": "get favorite objects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          }
+          ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "422":  {
+            "description": "Validation error"
+          }
+        }
+      }
     }
   },
   "definitions": {
