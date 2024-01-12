@@ -19,7 +19,6 @@ const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
 const {
-  getCacheKey,
   getCachedData,
   setCachedData,
 } = require('./cacheHelper');
@@ -128,7 +127,7 @@ exports.getWebsitePayments = async ({
 };
 
 exports.getParentHost = async ({ host }) => {
-  const key = getCacheKey({ getParentHost: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getParentHost:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { result: '' });
@@ -298,7 +297,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
-  const key = getCacheKey({ getSiteSettings: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getSiteSettings:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { result: '' });
@@ -338,6 +337,12 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
+  const key = `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { });
+  }
+
   const aboutObject = app?.configuration?.aboutObject;
   const defaultHashtag = app?.configuration?.defaultHashtag;
   const { result: wobjects } = await Wobj
@@ -355,6 +360,10 @@ exports.aboutObjectFormat = async (app) => {
   if (defaultHashtagProcessed) {
     app.configuration.defaultHashtag = _.pick(defaultHashtagProcessed, PICK_FIELDS_ABOUT_OBJ);
   }
+
+  await setCachedData({
+    key, data: app, ttl: TTL_TIME.TEN_MINUTES,
+  });
 
   return app;
 };

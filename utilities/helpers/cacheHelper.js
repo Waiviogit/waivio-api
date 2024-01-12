@@ -38,8 +38,7 @@ exports.setCachedData = async ({
   data,
   ttl,
 }) => {
-  await redisSetter.set({
-    key, value: JSON.stringify(data),
+  await redisSetter.setEx({
+    key, value: JSON.stringify(data), ttl,
   });
-  await redisSetter.expire({ key, ttl });
 };
