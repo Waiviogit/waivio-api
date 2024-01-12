@@ -10,11 +10,10 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const config = require('config');
 const {
-  getCacheKey,
   getCachedData,
   setCachedData,
 } = require('../../helpers/cacheHelper');
-const { TTL_TIME } = require('../../../constants/common');
+const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
 
 const affiliateScheme = Joi.object().keys({
   affiliateButton: Joi.string().required(),
@@ -203,7 +202,8 @@ const processUserAffiliate = async ({
 };
 
 const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
-  const key = getCacheKey({ processAppAffiliate: { host: app?.host, locale } });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:processAppAffiliate:${app?.host}${locale}`
+
   const cache = await getCachedData(key);
   if (cache) return jsonHelper.parseJson(cache, []);
 
