@@ -1,10 +1,9 @@
 const {
-  getCacheKey,
   getCachedData,
   setCachedData,
 } = require('../utilities/helpers/cacheHelper');
 const jsonHelper = require('../utilities/helpers/jsonHelper');
-const { TTL_TIME } = require('../constants/common');
+const { TTL_TIME, REDIS_KEYS } = require('../constants/common');
 const { App } = require('database').models;
 
 const getOne = async ({ host, bots }) => {
@@ -106,7 +105,7 @@ const create = async (condition) => {
 };
 
 const getAppFromCache = async (host) => {
-  const key = getCacheKey({ getAppFromCache: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getAppFromCache:${host}`
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, null);

@@ -146,6 +146,10 @@ exports.saddAsync = async ({ key, values, client }) => client.sadd(key, ...value
 
 exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.SET(key, value);
 
+exports.setEx = ({
+  key, ttl, value, client = mainFeedsCacheClient,
+}) => client.SET(key, value, { EX: ttl });
+
 exports.incr = ({ key, client = mainFeedsCacheClient }) => client.INCR(key);
 
 exports.zincrby = ({
@@ -153,10 +157,3 @@ exports.zincrby = ({
 }) => client.ZINCRBY(key, increment, member);
 
 exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.EXPIRE(key, ttl);
-
-exports.addToCache = async ({
-  key, ttl = 60, data, client = mainFeedsCacheClient,
-}) => {
-  await this.set({ key, value: JSON.stringify(data), client });
-  await this.expire({ key, ttl, client });
-};

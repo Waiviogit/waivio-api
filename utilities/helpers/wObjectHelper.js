@@ -21,6 +21,7 @@ const {
   DEVICE,
   LANGUAGES_POPULARITY,
   TTL_TIME,
+  REDIS_KEYS,
 } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
@@ -45,7 +46,7 @@ const {
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
 const getBlacklist = async (admins) => {
-  const key = getCacheKey({ getBlacklist: admins });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getBlacklist:${getCacheKey({ getBlacklist: admins })}`;
   const cache = await getCachedData(key);
   if (cache) return jsonHelper.parseJson(cache, []);
 
