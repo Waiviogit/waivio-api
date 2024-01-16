@@ -2,47 +2,12 @@ const { Wobj } = require('models');
 const _ = require('lodash');
 const { processUserAffiliate } = require('../affiliateProgram/processAffiliate');
 const wObjectHelper = require('../../helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST } = require('../../../constants/wobjectsData');
+const { REQUIREDFILDS_WOBJ_LIST, FAVORITES_OBJECT_TYPES } = require('../../../constants/wobjectsData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { User } = require('../../../models');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 
-const objectTypesOrder = [
-  'list',
-  'page',
-  'product',
-  'book',
-  'business',
-  'person',
-  'hashtag',
-  'newsfeed',
-  'widget',
-  'webpage',
-  'shop',
-  'affiliate',
-  'restaurant',
-  'dish',
-  'drink',
-  'service',
-  'place',
-  'company',
-  'organization',
-  'app',
-  'crypto',
-  'indices',
-  'commodity',
-  'currency',
-  'stocks',
-  'currencies',
-  'hotel',
-  'motel',
-  'resort',
-  'b&b',
-  'car',
-  'test',
-];
-
-const orderMap = new Map(objectTypesOrder.map((value, index) => [value, index]));
+const orderMap = new Map(FAVORITES_OBJECT_TYPES.map((value, index) => [value, index]));
 
 const sortArrayBasedOnOrder = (arrayToSort) => (
   arrayToSort.slice().sort((a, b) => orderMap.get(a) - orderMap.get(b)));
