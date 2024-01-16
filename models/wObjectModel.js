@@ -201,14 +201,13 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
       object_type: { $in: FAVORITES_OBJECT_TYPES },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     };
-    const filter = specialCondition?.$or?.length
-      ? { $or: [...specialCondition.$or, defaultFilter] }
-      : { ...defaultFilter, ...specialCondition };
 
-    const result = await WObjectModel.aggregate(
+    const reqTwoTimes = !_.isEmpty(specialCondition);
+
+    const requestsArr = [WObjectModel.aggregate(
       [
         {
-          $match: filter,
+          $match: defaultFilter,
         },
         {
           $group: {
@@ -217,9 +216,28 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
           },
         },
       ],
-    );
+    )];
+
+    if (reqTwoTimes) {
+      requestsArr.push(WObjectModel.aggregate(
+        [
+          {
+            $match: specialCondition,
+          },
+          {
+            $group: {
+              _id: null,
+              objectTypes: { $addToSet: '$object_type' },
+            },
+          },
+        ],
+      ));
+    }
+
+    const result = await Promise.all(requestsArr);
+
     return {
-      result: result[0]?.objectTypes ?? [],
+      result: _.uniq(_.flatten(_.map(result, (r) => r[0]?.objectTypes ?? []))),
     };
   } catch (error) {
     return { error };
