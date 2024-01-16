@@ -64,6 +64,7 @@ const UserMetadataSchema = new Schema({
       enum: Object.values(SUPPORTED_CURRENCIES),
       default: SUPPORTED_CURRENCIES.USD,
     },
+    hideFavoriteObjects: { type: Boolean },
     shop: { type: ShopSchema },
   },
   bookmarks: { type: [String], default: [] },

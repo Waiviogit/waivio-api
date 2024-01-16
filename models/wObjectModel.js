@@ -194,16 +194,20 @@ const findRelistedObjectsByPermlink = async (authorPermlink) => {
   return result;
 };
 
-const getFavoritesListByUsername = async ({ userName }) => {
+const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
   try {
-    const result = await WObjectModel.aggregate(
+    const defaultFilter = {
+      'authority.administrative': userName,
+      object_type: { $in: FAVORITES_OBJECT_TYPES },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    };
+
+    const reqTwoTimes = !_.isEmpty(specialCondition);
+
+    const requestsArr = [WObjectModel.aggregate(
       [
         {
-          $match: {
-            'authority.administrative': userName,
-            object_type: { $in: FAVORITES_OBJECT_TYPES },
-            'status.title': { $nin: REMOVE_OBJ_STATUSES },
-          },
+          $match: defaultFilter,
         },
         {
           $group: {
@@ -212,9 +216,28 @@ const getFavoritesListByUsername = async ({ userName }) => {
           },
         },
       ],
-    );
+    )];
+
+    if (reqTwoTimes) {
+      requestsArr.push(WObjectModel.aggregate(
+        [
+          {
+            $match: specialCondition,
+          },
+          {
+            $group: {
+              _id: null,
+              objectTypes: { $addToSet: '$object_type' },
+            },
+          },
+        ],
+      ));
+    }
+
+    const result = await Promise.all(requestsArr);
+
     return {
-      result: result[0]?.objectTypes ?? [],
+      result: _.uniq(_.flatten(_.map(result, (r) => r[0]?.objectTypes ?? []))),
     };
   } catch (error) {
     return { error };
@@ -222,15 +245,23 @@ const getFavoritesListByUsername = async ({ userName }) => {
 };
 
 const getFavoritesByUsername = async ({
-  userName, skip, limit, objectType,
+  userName, skip, limit, objectType, specialCondition,
 }) => {
   try {
-    const result = await WObjectModel.find(
-      {
-        'authority.administrative': userName,
+    const defaultFilter = {
+      'authority.administrative': userName,
+    };
+    const filter = specialCondition?.$or?.length
+      ? {
+        $or: [...specialCondition.$or, defaultFilter],
         ...(objectType && { object_type: objectType }),
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      },
+        ...(specialCondition.author_permlink && { author_permlink: specialCondition.author_permlink }),
+      }
+      : { ...defaultFilter, ...specialCondition };
+
+    const result = await WObjectModel.find(
+      filter,
       {},
       {
         sort: { weight: -1 },
