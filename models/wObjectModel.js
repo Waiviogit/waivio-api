@@ -1,4 +1,6 @@
-const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
+const {
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES, FAVORITES_OBJECT_TYPES,
+} = require('constants/wobjectsData');
 const { AGGREGATION_MAX_TIME } = require('constants/common');
 const WObjectModel = require('database').models.WObject;
 
@@ -199,6 +201,7 @@ const getFavoritesListByUsername = async ({ userName }) => {
         {
           $match: {
             'authority.administrative': userName,
+            object_type: { $in: FAVORITES_OBJECT_TYPES },
             'status.title': { $nin: REMOVE_OBJ_STATUSES },
           },
         },
