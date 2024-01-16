@@ -194,16 +194,21 @@ const findRelistedObjectsByPermlink = async (authorPermlink) => {
   return result;
 };
 
-const getFavoritesListByUsername = async ({ userName }) => {
+const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
   try {
+    const defaultFilter = {
+      'authority.administrative': userName,
+      object_type: { $in: FAVORITES_OBJECT_TYPES },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    };
+    const filter = specialCondition?.$or?.length
+      ? { $or: [...specialCondition.$or, defaultFilter] }
+      : { ...defaultFilter, ...specialCondition };
+
     const result = await WObjectModel.aggregate(
       [
         {
-          $match: {
-            'authority.administrative': userName,
-            object_type: { $in: FAVORITES_OBJECT_TYPES },
-            'status.title': { $nin: REMOVE_OBJ_STATUSES },
-          },
+          $match: filter,
         },
         {
           $group: {
@@ -222,15 +227,20 @@ const getFavoritesListByUsername = async ({ userName }) => {
 };
 
 const getFavoritesByUsername = async ({
-  userName, skip, limit, objectType,
+  userName, skip, limit, objectType, specialCondition,
 }) => {
   try {
+    const defaultFilter = {
+      'authority.administrative': userName,
+      ...(objectType && { object_type: objectType }),
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    };
+    const filter = specialCondition?.$or?.length
+      ? { $or: [...specialCondition.$or, defaultFilter] }
+      : { ...defaultFilter, ...specialCondition };
+
     const result = await WObjectModel.find(
-      {
-        'authority.administrative': userName,
-        ...(objectType && { object_type: objectType }),
-        'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      },
+      filter,
       {},
       {
         sort: { weight: -1 },

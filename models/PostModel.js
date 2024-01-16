@@ -2,7 +2,7 @@ const PostModel = require('database').models.Post;
 const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
 const _ = require('lodash');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -318,6 +318,31 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
         .filter(
           (wobject) => _.includes(
             [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK],
+            wobject.object_type,
+          ),
+        )
+        .map((wobject) => wobject.author_permlink),
+    );
+  }
+  return linksArray;
+};
+
+exports.getFavoritesLinksFromPosts = async ({ userName }) => {
+  const { result } = await this.find({
+    filter: {
+      author: userName,
+      'wobjects.object_type': { $in: FAVORITES_OBJECT_TYPES },
+    },
+    projection: { wobjects: 1 },
+  });
+
+  const linksArray = [];
+  for (const resultElement of result) {
+    linksArray.push(
+      ...resultElement.wobjects
+        .filter(
+          (wobject) => _.includes(
+            FAVORITES_OBJECT_TYPES,
             wobject.object_type,
           ),
         )
