@@ -250,11 +250,14 @@ const getFavoritesByUsername = async ({
   try {
     const defaultFilter = {
       'authority.administrative': userName,
-      ...(objectType && { object_type: objectType }),
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
     };
     const filter = specialCondition?.$or?.length
-      ? { $or: [...specialCondition.$or, defaultFilter] }
+      ? {
+        $or: [...specialCondition.$or, defaultFilter],
+        ...(objectType && { object_type: objectType }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...(specialCondition.author_permlink && { author_permlink: specialCondition.author_permlink }),
+      }
       : { ...defaultFilter, ...specialCondition };
 
     const result = await WObjectModel.find(
