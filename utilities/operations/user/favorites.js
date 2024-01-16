@@ -1,19 +1,44 @@
-const { Wobj } = require('models');
+const { Wobj, User, Post } = require('models');
 const _ = require('lodash');
 const { processUserAffiliate } = require('../affiliateProgram/processAffiliate');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST, FAVORITES_OBJECT_TYPES } = require('../../../constants/wobjectsData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
-const { User } = require('../../../models');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
+const { userShopDeselectModel } = require('../../../models');
 
 const orderMap = new Map(FAVORITES_OBJECT_TYPES.map((value, index) => [value, index]));
 
 const sortArrayBasedOnOrder = (arrayToSort) => (
   arrayToSort.slice().sort((a, b) => orderMap.get(a) - orderMap.get(b)));
 
+const getConditionObjectsFromPosts = async ({ userName }) => {
+  const dbObjects = await Promise.all([
+    User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP),
+    Post.getFavoritesLinksFromPosts({ userName }),
+    userShopDeselectModel.findUsersLinks({ userName }),
+  ]);
+
+  const [
+    userResp,
+    wobjectsFromPosts,
+    deselect,
+  ] = dbObjects;
+
+  const hideLinkedObjects = _.get(userResp, 'user.user_metadata.settings.hideFavoriteObjects', false);
+
+  return {
+    ...(!_.isEmpty(deselect) && { author_permlink: { $nin: deselect } }),
+    ...(!_.isEmpty(wobjectsFromPosts)
+      && !hideLinkedObjects
+      && { $or: [{ author_permlink: { $in: wobjectsFromPosts } }] }),
+  };
+};
+
 const getUserFavoritesList = async ({ userName }) => {
-  const { result, error } = await Wobj.getFavoritesListByUsername({ userName });
+  const specialCondition = await getConditionObjectsFromPosts({ userName });
+
+  const { result, error } = await Wobj.getFavoritesListByUsername({ userName, specialCondition });
   if (error) return { error };
 
   const sortedArr = sortArrayBasedOnOrder(result);
@@ -24,8 +49,10 @@ const getUserFavoritesList = async ({ userName }) => {
 const getFavorites = async ({
   userName, skip, limit, objectType, app, locale, countryCode, follower,
 }) => {
+  const specialCondition = await getConditionObjectsFromPosts({ userName });
+
   const { result, error } = await Wobj.getFavoritesByUsername({
-    userName, skip, limit: limit + 1, objectType,
+    userName, skip, limit: limit + 1, objectType, specialCondition,
   });
 
   if (error || !result.length) {
