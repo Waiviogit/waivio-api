@@ -43,8 +43,13 @@ const getUserCanonical = async ({ name }) => {
   const json = jsonHelper.parseJson(result?.json_metadata, {});
 
   let originalHost = json?.host;
-  if (['waiviodev.com', 'waivio.com'].includes(result.host)) {
+
+  if (/(waiviodev\.com|waivio\.com|localhost)/.test(originalHost)) {
     originalHost = DEFAULT_CANONICAL;
+  }
+
+  if (/(http\:\/\/|https\:\/\/)/.test(originalHost)) {
+    originalHost = originalHost.replace(/(http\:\/\/|https\:\/\/)/, '');
   }
 
   return {
