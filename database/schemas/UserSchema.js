@@ -38,6 +38,7 @@ const UserNotificationsSchema = new Schema({
   claimReward: { type: Boolean, default: false },
   objectUpdates: { type: Boolean, default: false },
   objectGroupId: { type: Boolean, default: false },
+  threadAuthorFollower: { type: Boolean, default: false },
 }, { _id: false });
 
 const UserMetadataSchema = new Schema({
