@@ -202,7 +202,7 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     };
 
-    const reqTwoTimes = !_.isEmpty(specialCondition);
+    const reqTwoTimes = !_.isEmpty(specialCondition?.$or);
 
     const requestsArr = [WObjectModel.aggregate(
       [
