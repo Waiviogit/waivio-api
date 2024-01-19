@@ -202,7 +202,7 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     };
 
-    const reqTwoTimes = !_.isEmpty(specialCondition);
+    const reqTwoTimes = !_.isEmpty(specialCondition?.$or);
 
     const requestsArr = [WObjectModel.aggregate(
       [
@@ -258,7 +258,12 @@ const getFavoritesByUsername = async ({
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
         ...(specialCondition.author_permlink && { author_permlink: specialCondition.author_permlink }),
       }
-      : { ...defaultFilter, ...specialCondition };
+      : {
+        ...defaultFilter,
+        ...specialCondition,
+        ...(objectType && { object_type: objectType }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      };
 
     const result = await WObjectModel.find(
       filter,

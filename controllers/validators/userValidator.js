@@ -95,6 +95,7 @@ exports.updateMetadataSchema = Joi.object().keys({
       shop: Joi.object().keys({
         hideLinkedObjects: Joi.boolean().default(false),
       }),
+      hideFavoriteObjects: Joi.boolean().default(false),
       exitPageSetting: Joi.boolean().default(false),
       locale: Joi.string().valid(...LANGUAGES).default('auto'),
       postLocales: Joi.array().items(Joi.string().valid(...LANGUAGES)).default([]),
@@ -130,6 +131,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         claimReward: Joi.boolean().default(false),
         objectUpdates: Joi.boolean().default(false),
         objectGroupId: Joi.boolean().default(false),
+        threadAuthorFollower: Joi.boolean().default(false),
       }),
     }),
     drafts: Joi.array().items(Joi.object().keys({
