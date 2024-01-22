@@ -108,6 +108,7 @@ const AppSchema = new Schema({
   googleAnalyticsTag: { type: String, default: null },
   googleGSCTag: { type: String, default: null },
   googleEventSnippet: { type: String, default: null },
+  googleAdsConfig: { type: String, default: null },
   beneficiary: {
     account: { type: String, default: 'waivio' },
     percent: { type: Number, default: 500 },
