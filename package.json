@@ -39,6 +39,7 @@
     "formidable": "^3.5.1",
     "franc-min": "^6.0.0",
     "heic-convert": "^1.2.4",
+    "isbot": "^4.4.0",
     "joi": "^17.6.0",
     "jpeg-autorotate": "^8.0.1",
     "lodash": "^4.17.15",

@@ -157,3 +157,16 @@ exports.zincrby = ({
 }) => client.ZINCRBY(key, increment, member);
 
 exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.EXPIRE(key, ttl);
+
+exports.zincrbyExpire = async ({
+  key, increment, member, ttl, client = appUsersStatistics,
+}) => {
+  try {
+    await client.multi()
+      .ZINCRBY(key, increment, member)
+      .EXPIRE(key, ttl)
+      .exec();
+  } catch (error) {
+    console.log(error.message);
+  }
+};
