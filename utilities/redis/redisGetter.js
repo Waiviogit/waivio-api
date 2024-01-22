@@ -117,6 +117,6 @@ exports.sismember = async ({
 
 exports.keys = ({ key, client = mainFeedsCacheClient }) => client.KEYS(key);
 
-exports.zrange = async ({
+exports.zrangeWithScores = async ({
   key, start, end, client = importUserClient,
-}) => client.ZRANGE(key, start, end, 'WITHSCORES');
+}) => client.ZRANGE_WITHSCORES(key, start, end);

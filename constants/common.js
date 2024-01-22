@@ -132,6 +132,7 @@ exports.REDIS_KEYS = {
   AD_SENSE: 'ad_sense_cache',
   ENGINE_RATE: 'engine_rate',
   API_RES_CACHE: 'api_res_cache',
+  API_VISIT_STATISTIC: 'api_visit_statistic',
 };
 
 exports.LANGUAGES = ['en-US',
