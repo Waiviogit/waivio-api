@@ -58,6 +58,7 @@ app.use((req, res, next) => {
 
   session.set('host', appHost || config.appHost);
   session.set('access-token', req.headers['access-token']);
+  session.set('hive-auth', req.headers['hive-auth']);
   session.set('waivio-auth', req.headers['waivio-auth'] === 'true');
   session.set('device', device);
   next();

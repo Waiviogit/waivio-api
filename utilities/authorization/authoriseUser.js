@@ -1,6 +1,7 @@
 const { getNamespace } = require('cls-hooked');
 const authoriseSteemconnect = require('./steemconnect/authorise');
 const waivioAuthorise = require('./waivioAuth/authorise');
+const hiveAuthorise = require('./hiveAuth/authorise');
 
 /**
  * Authorise particular user with "access-token" from session(if it exist)
@@ -13,12 +14,17 @@ const waivioAuthorise = require('./waivioAuth/authorise');
 exports.authorise = async (username) => {
   const session = getNamespace('request-session');
   const accessToken = session.get('access-token');
+  const hiveAuth = session.get('hive-auth');
   const isWaivioAuth = session.get('waivio-auth');
   let isValidToken;
 
   if (isWaivioAuth) {
     isValidToken = await waivioAuthorise.authorise(username, accessToken);
-  } else {
+  }
+  if (hiveAuth) {
+    isValidToken = hiveAuthorise.authorise({ token: hiveAuth, username });
+  }
+  if (accessToken) {
     isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
   }
 

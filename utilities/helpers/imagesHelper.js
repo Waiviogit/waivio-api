@@ -7,7 +7,7 @@ const jo = require('jpeg-autorotate');
 const prepareImage = async (req) => {
   const form = new formidable.IncomingForm();
   const {
-    blobImage = [], imageUrl, type, userName, size,
+    blobImage, imageUrl, type, userName, size,
   } = await new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {
@@ -15,23 +15,23 @@ const prepareImage = async (req) => {
         return;
       }
       resolve({
-        blobImage: files.file,
-        imageUrl: fields.imageUrl,
-        type: fields.type,
-        userName: fields.userName,
-        size: fields.size || '',
+        blobImage: files?.file?.[0],
+        imageUrl: fields?.imageUrl?.[0],
+        type: fields?.type?.[0],
+        userName: fields?.userName?.[0],
+        size: fields?.size?.[0] || '',
       });
     });
   });
   let base64 = null;
-  const [persistentFile] = blobImage;
-  if (persistentFile) {
+
+  if (blobImage) {
     const options = { quality: 70 };
     try {
-      const { buffer } = await jo.rotate(persistentFile.filepath, options);
+      const { buffer } = await jo.rotate(blobImage.filepath, options);
       base64 = buffer;
     } catch (error) {
-      const data = await fsp.readFile(persistentFile.filepath);
+      const data = await fsp.readFile(blobImage.filepath);
       base64 = data.toString('base64');
     }
   } else if (imageUrl) {
