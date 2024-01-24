@@ -22,7 +22,7 @@ exports.authorise = async (username) => {
     isValidToken = await waivioAuthorise.authorise(username, accessToken);
   }
   if (hiveAuth) {
-    isValidToken = hiveAuthorise.authorise({ token: hiveAuth, username });
+    isValidToken = hiveAuthorise.authorise({ token: accessToken, username });
   }
   if (accessToken) {
     isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
