@@ -170,3 +170,14 @@ exports.zincrbyExpire = async ({
     console.log(error.message);
   }
 };
+
+exports.incrExpire = async ({ key, ttl, client = importUserClient }) => {
+  try {
+    await client.multi()
+      .INCR(key)
+      .EXPIRE(key, ttl)
+      .exec();
+  } catch (error) {
+    console.log(error.message);
+  }
+};
