@@ -24,7 +24,7 @@ exports.authorise = async (username) => {
   if (hiveAuth) {
     isValidToken = hiveAuthorise.authorise({ token: accessToken, username });
   }
-  if (accessToken) {
+  if (accessToken && !hiveAuth) {
     isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
   }
 

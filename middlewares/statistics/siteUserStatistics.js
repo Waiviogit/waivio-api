@@ -14,13 +14,16 @@ const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
 
 const setSiteActiveUser = async ({ userAgent, host, ip }) => {
-  await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
   const bot = isbot(userAgent);
   const key = `${REDIS_KEYS.API_VISIT_STATISTIC}:${getCurrentDateString()}:${host}:${bot ? 'bot' : 'user'}`;
 
   await redisSetter.zincrbyExpire({
     key, ttl: TTL_TIME.THIRTY_DAYS, member: ip, increment: 1,
   });
+
+  if (bot) return;
+
+  await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
 };
 
 exports.saveUserIp = async (req, res, next) => {
