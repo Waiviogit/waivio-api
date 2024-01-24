@@ -133,6 +133,8 @@ exports.REDIS_KEYS = {
   ENGINE_RATE: 'engine_rate',
   API_RES_CACHE: 'api_res_cache',
   API_VISIT_STATISTIC: 'api_visit_statistic',
+  API_RATE_LIMIT_BOTS: 'api_rate_limit_bots',
+  API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
 };
 
 exports.LANGUAGES = ['en-US',

@@ -12,7 +12,7 @@ const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
   checkUserFollowings, checkObjectsFollowings, checkBellNotifications, filterUniqGroupId,
-  reqRates,
+  reqRates, botRateLimit,
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
@@ -31,6 +31,8 @@ app.use((req, res, next) => {
 });
 app.use(cors());
 app.use(morgan(':date[iso] :method :url :status :response-time ms - :res[content-length]'));
+
+app.use(botRateLimit);
 
 Sentry.init({
   environment: process.env.NODE_ENV,
