@@ -9,5 +9,6 @@ moduleExports.filterUniqGroupId = require('./wobject/uniqueGroupId/filterUniqueG
 moduleExports.checkObjectsFollowings = require('./wobject/checkFollowings').checkObjectsFollowings;
 moduleExports.siteUserStatistics = require('./statistics/siteUserStatistics');
 moduleExports.reqRates = require('./statistics/reqRates');
+moduleExports.botRateLimit = require('./rate-limit/botRateLimit');
 
 module.exports = moduleExports;
