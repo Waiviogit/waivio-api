@@ -51,6 +51,7 @@ class Image {
   getWidth(metadata) {
     const defaultWidthH = 1920;
     const defaultWidthV = 1080;
+    if (metadata?.format === 'svg') return defaultWidthH;
     if (!metadata?.width) return defaultWidthH;
     const { width, height } = metadata;
     const horizontal = width > height;
@@ -87,7 +88,8 @@ class Image {
       const width = _.get(metadata, 'width', defaultScale);
       const height = _.get(metadata, 'height', defaultScale);
 
-      const resizePx = width > height ? width : height;
+      let resizePx = width > height ? width : height;
+      if (metadata?.format === 'svg') resizePx = 1024;
 
       return sharp(buffer).rotate(0).resize(resizePx, resizePx, {
         fit: 'contain',
