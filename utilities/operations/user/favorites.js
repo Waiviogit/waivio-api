@@ -2,7 +2,10 @@ const { Wobj, User, Post } = require('models');
 const _ = require('lodash');
 const { processUserAffiliate } = require('../affiliateProgram/processAffiliate');
 const wObjectHelper = require('../../helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST, FAVORITES_OBJECT_TYPES } = require('../../../constants/wobjectsData');
+const {
+  REQUIREDFILDS_WOBJ_LIST, FAVORITES_OBJECT_TYPES,
+  REMOVE_OBJ_STATUSES,
+} = require('../../../constants/wobjectsData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { userShopDeselectModel } = require('../../../models');
@@ -32,6 +35,7 @@ const getConditionObjectsFromPosts = async ({ userName }) => {
     ...(!_.isEmpty(wobjectsFromPosts)
       && !hideLinkedObjects
       && { $or: [{ author_permlink: { $in: wobjectsFromPosts } }] }),
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
   };
 };
 
