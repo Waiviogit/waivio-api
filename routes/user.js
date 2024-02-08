@@ -8,6 +8,8 @@ userRoutes.route('/users')
   .get(reqTimeMonitor, UserController.index);
 userRoutes.route('/user/:userName')
   .get(reqTimeMonitor, UserController.show);
+userRoutes.route('/user/:userName/hive-exist')
+  .get(reqTimeMonitor, UserController.hiveUserExist);
 userRoutes.route('/user/:userName/delegation')
   .get(reqTimeMonitor, UserController.showDelegation);
 userRoutes.route('/user/getUsersData')

@@ -27,5 +27,6 @@ moduleExports.commentDraft = require('./commentDraft');
 moduleExports.mainDraft = require('./mainDraft');
 moduleExports.wobjectDraft = require('./wobjectDraft');
 moduleExports.favorites = require('./favorites');
+moduleExports.userExist = require('./userExist');
 
 module.exports = moduleExports;
