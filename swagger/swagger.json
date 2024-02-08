@@ -9349,6 +9349,40 @@
           }
         }
       }
+    },
+    "/api/user/{userName}/hive-exist": {
+      "get": {
+        "tags": ["user"],
+        "summary": "check if hive user exists",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422":  {
+            "description": "Validation error"
+          }
+        }
+      }
     }
   },
   "definitions": {

@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -599,6 +599,13 @@ const getFavorites = async (req, res, next) => {
   next();
 };
 
+const hiveUserExist = async (req, res, next) => {
+  const json = await userExist.hiveUserExist(req.params);
+
+  res.result = { status: 200, json };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -641,4 +648,5 @@ module.exports = {
   getMinReject,
   getFavoritesList,
   getFavorites,
+  hiveUserExist,
 };
