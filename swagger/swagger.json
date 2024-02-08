@@ -4652,6 +4652,39 @@
         }
       }
     },
+    "/api/user/{userName}/guest-mana": {
+      "get": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Get guest user mana in percent",
+        "description": "Return wallet history",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{username}/setState": {
       "get": {
         "tags": [
