@@ -211,8 +211,8 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
         },
         {
           $group: {
-            _id: null,
-            objectTypes: { $addToSet: '$object_type' },
+            _id: '$object_type',
+            count: { $sum: 1 },
           },
         },
       ],
@@ -226,8 +226,8 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
           },
           {
             $group: {
-              _id: null,
-              objectTypes: { $addToSet: '$object_type' },
+              _id: '$object_type',
+              count: { $sum: 1 },
             },
           },
         ],
@@ -235,9 +235,18 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
     }
 
     const result = await Promise.all(requestsArr);
+    const arrayOfObjects = _.flatten(result);
+    const addSameKeys = Object.entries(arrayOfObjects.reduce((acc, obj) => {
+      if (acc[obj._id]) {
+        acc[obj._id] += obj.count;
+      }
+      acc[obj._id] = obj.count;
+
+      return acc;
+    }, {})).map(([key, value]) => ({ _id: key, count: value }));
 
     return {
-      result: _.uniq(_.flatten(_.map(result, (r) => r[0]?.objectTypes ?? []))),
+      result: addSameKeys,
     };
   } catch (error) {
     return { error };
