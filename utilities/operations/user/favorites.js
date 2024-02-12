@@ -45,7 +45,10 @@ const getUserFavoritesList = async ({ userName }) => {
   const { result, error } = await Wobj.getFavoritesListByUsername({ userName, specialCondition });
   if (error) return { error };
 
-  const sortedArr = sortArrayBasedOnOrder(result);
+  const sortedArr = _.chain(result)
+    .orderBy(['count'], ['desc'])
+    .map((el) => el._id)
+    .value();
 
   return { result: sortedArr };
 };
