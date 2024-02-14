@@ -269,6 +269,10 @@ exports.guestBalance = Joi.object().keys({
   symbol: Joi.string().required(),
 });
 
+exports.guestMana = Joi.object().keys({
+  account: Joi.string().required(),
+});
+
 exports.guestWithdrawHiveSchema = Joi.object().keys({
   amount: Joi.number().greater(0).required(),
   address: Joi.string().required(),

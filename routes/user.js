@@ -70,6 +70,7 @@ userRoutes.route('/user/:userName/last-activity').get(reqTimeMonitor, UserContro
 userRoutes.route('/user/advanced-report').post(reqTimeMonitor, UserController.getAdvancedReport);
 userRoutes.route('/user/:account/guest-wallet').get(reqTimeMonitor, UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(reqTimeMonitor, UserController.getGuestBalance);
+userRoutes.route('/user/:account/guest-mana').get(reqTimeMonitor, UserController.getGuestMana);
 // todo remove
 userRoutes.route('/user/:userName/draft').post(reqTimeMonitor, draftController.createOrUpdatePageDraft);
 userRoutes.route('/user/:userName/draft').get(reqTimeMonitor, draftController.getOnePageDraft);

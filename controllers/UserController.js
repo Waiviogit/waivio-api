@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -492,6 +492,15 @@ const getGuestBalance = async (req, res, next) => {
   next();
 };
 
+const getGuestMana = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.user.guestMana, next);
+  if (!value) return;
+  const json = await guestMana.getCurrentManaPercent(value);
+
+  res.result = { status: 200, json };
+  next();
+};
+
 const guestWithdrawHive = async (req, res, next) => {
   const value = validators.validate(
     req.body,
@@ -649,4 +658,5 @@ module.exports = {
   getFavoritesList,
   getFavorites,
   hiveUserExist,
+  getGuestMana,
 };
