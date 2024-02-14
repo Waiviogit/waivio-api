@@ -416,7 +416,6 @@ exports.FAVORITES_OBJECT_TYPES = [
   'page',
   'business',
   'person',
-  'hashtag',
   'newsfeed',
   'widget',
   'webpage',
