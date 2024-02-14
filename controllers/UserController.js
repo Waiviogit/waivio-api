@@ -493,7 +493,7 @@ const getGuestBalance = async (req, res, next) => {
 };
 
 const getGuestMana = async (req, res, next) => {
-  const value = validators.validate(req.query, validators.user.guestMana, next);
+  const value = validators.validate(req.params, validators.user.guestMana, next);
   if (!value) return;
   const json = await guestMana.getCurrentManaPercent(value);
 
