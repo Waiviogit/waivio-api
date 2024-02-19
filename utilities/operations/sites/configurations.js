@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const { App, Wobj } = require('models');
 const { sitesHelper } = require('utilities/helpers');
+const redisSetter = require('utilities/redis/redisSetter');
+const { mainFeedsCacheClient } = require('utilities/redis/redis');
 const {
   getCachedData,
   setCachedData,
@@ -55,6 +57,15 @@ exports.saveConfigurations = async (params) => {
     },
   });
   if (updateError) return { error: updateError };
+
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:getConfigurationsList:${app.host}`,
+    client: mainFeedsCacheClient,
+  });
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`,
+    client: mainFeedsCacheClient,
+  });
 
   const result = await sitesHelper.aboutObjectFormat(updatedApp);
   return { result: _.get(result, 'configuration') };
