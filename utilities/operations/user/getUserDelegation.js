@@ -2,9 +2,9 @@ const { getDelegators } = require('utilities/requests/getDelegationsRequests');
 const { getDelegations, getDelegationExpirations } = require('utilities/hiveApi/userUtil');
 const _ = require('lodash');
 
-module.exports = async ({ account }) => {
+const getUserDelegation = async ({ account }) => {
   const requests = await Promise.all([
-    await getDelegators(account),
+    // await getDelegators(account),
     await getDelegations(account),
     await getDelegationExpirations(account),
   ]);
@@ -12,7 +12,9 @@ module.exports = async ({ account }) => {
     if (_.has(request, 'error')) return ({ error: request.error });
   }
 
-  const [delegatorsResult, delegationsResult, expirationResult] = requests;
+  const delegatorsResult = [];
+
+  const [delegationsResult, expirationResult] = requests;
 
   const received = _.filter(
     _.map(delegatorsResult, (el) => ({
@@ -36,3 +38,5 @@ module.exports = async ({ account }) => {
 
   return { result: { received, delegated, expirations } };
 };
+
+module.exports = getUserDelegation;
