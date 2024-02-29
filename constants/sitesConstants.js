@@ -1,6 +1,7 @@
 exports.redisStatisticsKey = 'siteUsers';
 exports.SITE_NAME_REGEX = /^[a-z,0-9]+$/;
 exports.TRANSFER_ID = 'websitesPayment';
+exports.TRANSFER_GUEST_ID = 'websitesPaymentGuest';
 
 exports.STATUSES = {
   ACTIVE: 'active',
@@ -58,6 +59,7 @@ exports.FEE = {
   perUser: 0.005,
   account: 'waivio.web',
   id: JSON.stringify({ id: this.TRANSFER_ID }),
+  idGuest: JSON.stringify({ id: this.TRANSFER_GUEST_ID }),
   perInactive: 0.2,
 };
 
