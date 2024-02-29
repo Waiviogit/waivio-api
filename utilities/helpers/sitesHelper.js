@@ -165,7 +165,11 @@ exports.getPaymentsData = async () => {
   const { user } = await User.getOne(FEE.account, {
     alias: 1, json_metadata: 1, posting_json_metadata: 1, name: 1,
   });
-  return { user, memo: FEE.id };
+  return {
+    user,
+    memo: FEE.id,
+    guestMemo: FEE.idGuest,
+  };
 };
 
 exports.getWebsiteData = (payments, site) => {
