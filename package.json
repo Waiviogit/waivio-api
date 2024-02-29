@@ -22,7 +22,6 @@
     "addDataToCampaignPosts": "NODE_PATH=. node utilities/tasks/addDataToCampaignPosts/run.js",
     "updateListAvatars": "NODE_PATH=. node utilities/tasks/updateListAvatars/run.js",
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
-    "addDelegations": " node utilities/tasks/addDelegations/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
   },
   "dependencies": {

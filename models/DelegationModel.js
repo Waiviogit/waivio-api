@@ -9,25 +9,6 @@ const find = async ({ filter, projection, options }) => {
   }
 };
 
-const updateOne = async ({ filter, update, options }) => {
-  try {
-    const result = await Delegation.updateOne(filter, update, options);
-    return { result };
-  } catch (error) {
-    return { error };
-  }
-};
-
-const createOne = async (delegation) => {
-  const { delegator, delegatee } = delegation;
-  const { result, error } = await updateOne({
-    filter: { delegatee, delegator },
-    update: delegation,
-    options: { upsert: true },
-  });
-  return { result, error };
-};
-
 const findDelegationsFrom = async (delegator) => {
   const { result } = await find({
     filter: { delegator },
@@ -45,7 +26,6 @@ const findDelegationsTo = async (delegatee) => {
 };
 
 module.exports = {
-  createOne,
   findDelegationsFrom,
   findDelegationsTo,
 };
