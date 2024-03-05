@@ -42,6 +42,8 @@ wobjRoutes.route('/wobject/:authorPermlink/authority-fields')
   .get(reqTimeMonitor, WobjController.getAuthorities);
 wobjRoutes.route('/wobject/:authorPermlink/list-item-locales/:itemLink')
   .get(reqTimeMonitor, WobjController.getListItemsLocales);
+wobjRoutes.route('/wobject/:authorPermlink/map')
+  .post(reqTimeMonitor, WobjController.getObjectsOnMap);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(reqTimeMonitor, WobjController.getMapObjectExperts);

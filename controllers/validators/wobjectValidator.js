@@ -249,6 +249,15 @@ exports.wobjectsListDepartmentsScheme = Joi.object().keys({
   scanEmbedded: Joi.boolean().default(true),
 });
 
+exports.wobjectAdvancedMapScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  follower: Joi.string(),
+  box: boxScheme.required(),
+  locale: Joi.string().default('en-US'),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(1).default(10),
+});
+
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });

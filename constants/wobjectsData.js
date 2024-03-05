@@ -63,6 +63,11 @@ exports.FIELDS_NAMES = {
   AFFILIATE_URL_TEMPLATE: 'affiliateUrlTemplate',
   AFFILIATE_CODE: 'affiliateCode',
   WEB_PAGE: 'webpage',
+  MAP_RECTANGLES: 'mapRectangles',
+  MAP_OBJECT_TYPES: 'mapObjectTypes',
+  MAP_OBJECT_TAGS: 'mapObjectTags',
+  MAP_MOBILE_VIEW: 'mapMobileView',
+  MAP_DESKTOP_VIEW: 'mapDesktopView ',
 };
 
 exports.LIST_TYPES = {
@@ -101,6 +106,7 @@ exports.OBJECT_TYPES = {
   SHOP: 'shop',
   AFFILIATE: 'affiliate',
   WEB_PAGE: 'webpage',
+  MAP: 'map',
 };
 
 exports.ADMIN_ROLES = {
@@ -117,6 +123,12 @@ exports.VOTE_STATUSES = {
 
 exports.FULL_SINGLE_FIELDS = [
   this.FIELDS_NAMES.NEWS_FEED,
+];
+
+exports.MAP_OBJECT_SEARCH_FIELDS = [
+  this.FIELDS_NAMES.MAP_RECTANGLES,
+  this.FIELDS_NAMES.MAP_OBJECT_TYPES,
+  this.FIELDS_NAMES.MAP_OBJECT_TAGS,
 ];
 
 exports.AFFILIATE_FIELDS = [
