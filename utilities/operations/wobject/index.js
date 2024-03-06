@@ -19,5 +19,6 @@ moduleExports.getByOptionsCategory = require('./getByOptionsCategory');
 moduleExports.getByGroupId = require('./getByGroupId');
 moduleExports.recountListItems = require('./recountListItems');
 moduleExports.getListItemLocales = require('./getListItemLocales');
+moduleExports.getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
 
 module.exports = moduleExports;
