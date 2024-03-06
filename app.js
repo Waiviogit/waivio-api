@@ -7,7 +7,7 @@ const swaggerUi = require('swagger-ui-express');
 const bodyParser = require('body-parser');
 const nocache = require('nocache');
 const { createNamespace } = require('cls-hooked');
-const { routes } = require('routes');
+const routes = require('routes');
 const config = require('config');
 const {
   moderateWobjects, checkUserFollowers, fillPostAdditionalInfo, siteUserStatistics,
@@ -16,7 +16,6 @@ const {
 } = require('middlewares');
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { REPLACE_ORIGIN, REPLACE_REFERER } = require('constants/regExp');
-const processHelper = require('utilities/helpers/processHelper');
 
 const swaggerDocument = require('./swagger');
 require('./utilities');
@@ -59,9 +58,9 @@ app.use((req, res, next) => {
 
   session.set('host', appHost || config.appHost);
   session.set('access-token', req.headers['access-token']);
+  session.set('hive-auth', req.headers['hive-auth'] === 'true');
   session.set('waivio-auth', req.headers['waivio-auth'] === 'true');
   session.set('device', device);
-  session.set('reqInfo', { timeStart: process.hrtime(), utl: req.url, method: req.method });
   next();
 });
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
@@ -93,7 +92,7 @@ app.use(Sentry.Handlers.errorHandler({
   shouldHandleError(error) {
     // Capture 500 errors
     if (error.status >= 500) {
-      sendSentryNotification();
+      // sendSentryNotification();
       return true;
     }
     return false;
@@ -103,9 +102,6 @@ app.use(Sentry.Handlers.errorHandler({
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
-  res.on('close', () => {
-    processHelper.responseOnClose({ session });
-  });
   res.status(res.result.status || 200).json(res.result.json);
 });
 

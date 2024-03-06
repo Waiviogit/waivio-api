@@ -20,6 +20,8 @@ const UserWobjects = require('models/UserWobjects');
 const {
   DEVICE,
   LANGUAGES_POPULARITY,
+  TTL_TIME,
+  REDIS_KEYS,
 } = require('constants/common');
 const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
@@ -35,10 +37,19 @@ const {
   getAppAffiliateCodes,
 } = require('./affiliateHelper');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
+const {
+  getCacheKey,
+  getCachedData,
+  setCachedData,
+} = require('./cacheHelper');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
 const getBlacklist = async (admins) => {
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getBlacklist:${getCacheKey({ getBlacklist: admins })}`;
+  const cache = await getCachedData(key);
+  if (cache) return jsonHelper.parseJson(cache, []);
+
   let followList = [];
   let resultBlacklist = [];
   if (_.isEmpty(admins)) return resultBlacklist;
@@ -68,7 +79,13 @@ const getBlacklist = async (admins) => {
     resultBlacklist = _.union(resultBlacklist, el.blackList);
   });
 
-  return _.difference(resultBlacklist, admins);
+  const result = _.difference(resultBlacklist, admins);
+
+  await setCachedData({
+    key, data: result, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
+
+  return result;
 };
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
@@ -798,7 +815,10 @@ const processWobjects = async ({
     .uniq()
     .value();
   if (parentPermlinks.length) {
-    ({ result: parents } = await Wobj.find({ author_permlink: { $in: parentPermlinks } }));
+    ({ result: parents } = await Wobj.find(
+      { author_permlink: { $in: parentPermlinks } },
+      { search: 0, departments: 0 },
+    ));
   }
   const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 

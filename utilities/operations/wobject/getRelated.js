@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const uuid = require('uuid/v4');
+const uuid = require('uuid').v4;
 const { relatedAlbum } = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');

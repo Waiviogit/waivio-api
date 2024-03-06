@@ -1,4 +1,7 @@
-const { FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES } = require('constants/wobjectsData');
+const {
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES, FAVORITES_OBJECT_TYPES,
+} = require('constants/wobjectsData');
+const { AGGREGATION_MAX_TIME } = require('constants/common');
 const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
@@ -8,7 +11,7 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
     const matchStage = { author_permlink: authorPermlink };
     if (unavailable) matchStage['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
     if (objectType) matchStage.object_type = objectType;
-    const wObject = await WObjectModel.findOne(matchStage).lean();
+    const wObject = await WObjectModel.findOne(matchStage, { search: 0, departments: 0 }).lean();
 
     if (!wObject) {
       return { error: { status: 404, message: 'wobject not found' } };
@@ -21,7 +24,9 @@ const getOne = async (authorPermlink, objectType, unavailable) => {
 
 const fromAggregation = async (pipeline) => {
   try {
-    const wobjects = await WObjectModel.aggregate([...pipeline]).allowDiskUse(true);
+    const wobjects = await WObjectModel.aggregate([...pipeline])
+      .option({ maxTimeMS: AGGREGATION_MAX_TIME })
+      .allowDiskUse(true);
 
     if (!wobjects || _.isEmpty(wobjects)) {
       return { error: { status: 404, message: 'Wobjects not found!' } };
@@ -87,7 +92,11 @@ const getFieldsRefs = async (authorPermlink) => {
   }
 };
 
-const findOne = async (condition, select = {}, sort) => {
+const findOne = async (
+  condition,
+  select = { search: 0, departments: 0 },
+  sort,
+) => {
   try {
     return { result: await WObjectModel.findOne(condition, select).sort(sort).lean() };
   } catch (error) {
@@ -95,7 +104,13 @@ const findOne = async (condition, select = {}, sort) => {
   }
 };
 
-const find = async (condition, select, sort = {}, skip = 0, limit) => {
+const find = async (
+  condition,
+  select,
+  sort = {},
+  skip = 0,
+  limit,
+) => {
   try {
     return {
       result: await WObjectModel
@@ -110,7 +125,11 @@ const find = async (condition, select, sort = {}, skip = 0, limit) => {
   }
 };
 
-const findObjects = async ({ filter, projection = {}, options = {} }) => {
+const findObjects = async ({
+  filter,
+  projection = { search: 0, departments: 0 },
+  options = {},
+}) => {
   try {
     return { result: await WObjectModel.find(filter, projection, options).lean() };
   } catch (error) {
@@ -175,6 +194,101 @@ const findRelistedObjectsByPermlink = async (authorPermlink) => {
   return result;
 };
 
+const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
+  try {
+    const defaultFilter = {
+      'authority.administrative': userName,
+      object_type: { $in: FAVORITES_OBJECT_TYPES },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    };
+
+    const reqTwoTimes = !_.isEmpty(specialCondition?.$or);
+
+    const requestsArr = [WObjectModel.aggregate(
+      [
+        {
+          $match: defaultFilter,
+        },
+        {
+          $group: {
+            _id: '$object_type',
+            count: { $sum: 1 },
+          },
+        },
+      ],
+    )];
+
+    if (reqTwoTimes) {
+      requestsArr.push(WObjectModel.aggregate(
+        [
+          {
+            $match: specialCondition,
+          },
+          {
+            $group: {
+              _id: '$object_type',
+              count: { $sum: 1 },
+            },
+          },
+        ],
+      ));
+    }
+
+    const result = await Promise.all(requestsArr);
+    const arrayOfObjects = _.flatten(result);
+    const addSameKeys = Object.entries(arrayOfObjects.reduce((acc, obj) => {
+      if (acc[obj._id]) {
+        acc[obj._id] += obj.count;
+      }
+      acc[obj._id] = obj.count;
+
+      return acc;
+    }, {})).map(([key, value]) => ({ _id: key, count: value }));
+
+    return {
+      result: addSameKeys,
+    };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const getFavoritesByUsername = async ({
+  userName, skip, limit, objectType, specialCondition,
+}) => {
+  try {
+    const defaultFilter = {
+      'authority.administrative': userName,
+    };
+    const filter = specialCondition?.$or?.length
+      ? {
+        $or: [...specialCondition.$or, defaultFilter],
+        ...(objectType && { object_type: objectType }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...(specialCondition.author_permlink && { author_permlink: specialCondition.author_permlink }),
+      }
+      : {
+        ...defaultFilter,
+        ...specialCondition,
+        ...(objectType && { object_type: objectType }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      };
+
+    const result = await WObjectModel.find(
+      filter,
+      {},
+      {
+        sort: { weight: -1 },
+        skip,
+        limit,
+      },
+    ).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -188,4 +302,6 @@ module.exports = {
   findObjects,
   getWobjectsByGroupId,
   findRelistedObjectsByPermlink,
+  getFavoritesListByUsername,
+  getFavoritesByUsername,
 };

@@ -1,6 +1,6 @@
 const { Wobj, User, Department } = require('models');
 const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST,
+  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST, OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
@@ -14,9 +14,13 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
   const emptyDepartments = {
     departments: [],
     related: [],
+    similar: [],
   };
   const { result, error } = await Wobj
-    .findOne({ author_permlink: authorPermlink });
+    .findOne({
+      author_permlink: authorPermlink,
+      object_type: { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+    });
   if (!result || error) return emptyDepartments;
 
   const object = await wObjectHelper.processWobjects({
@@ -65,6 +69,8 @@ const getRelated = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
   const { departments, related } = await getDepartments({ authorPermlink, app, locale });
+
+  if (_.isEmpty(departments) && _.isEmpty(related)) return { wobjects: [], hasMore: false };
 
   const response = [];
 
@@ -139,6 +145,8 @@ const getSimilar = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
   const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
+
+  if (_.isEmpty(departments) && _.isEmpty(similar)) return { wobjects: [], hasMore: false };
 
   const social = checkForSocialSite(app?.parentHost ?? '');
   const authorities = [app.owner, ...app.authority];

@@ -1,4 +1,5 @@
 const { app: AppOperations } = require('utilities/operations');
+const getMetrics = require('utilities/operations/aboutWaiv/getMetrics');
 const validators = require('controllers/validators');
 const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
@@ -82,30 +83,27 @@ const getReqRates = async (req, res, next) => {
   const date = req?.query?.date || getCurrentDateString();
 
   try {
-    const urls = await redisGetter.zrange({
+    const urls = await redisGetter.zrangeWithScores({
       key: `${REDIS_KEYS.REQUESTS_BY_URL}:${date}`,
       start: 0,
       end: -1,
     });
 
-    const timing = await redisGetter.zrange({
+    const timing = await redisGetter.zrangeWithScores({
       key: `${REDIS_KEYS.REQUESTS_TIME}:${date}`,
       start: 0,
       end: -1,
     });
 
-    const urlChunk = _.chunk(urls, 2);
-    const timeChunk = _.chunk(timing, 2);
-
-    const result = _.chain(urlChunk)
+    const result = _.chain(urls)
       .map((el) => {
-        const time = _.find(timeChunk, (t) => t[0] === el[0]);
+        const time = _.find(timing, (t) => t?.value === el?.value);
 
-        if (el[0] && el[1] && time && time[0] && time[1]) {
+        if (el.value && el.score && time && time.value && time.score) {
           return {
-            url: el[0],
-            requestTimes: Number(el[1]),
-            avgTime: Number(time[1]) / Number(el[1]),
+            url: el.value,
+            requestTimes: Number(el.score),
+            avgTime: Number(time.score) / Number(el.score),
           };
         }
 
@@ -131,9 +129,27 @@ const getReqRates = async (req, res, next) => {
   next();
 };
 
+const waivMainMetrics = async (req, res, next) => {
+  const result = await getMetrics.getMainMetrics();
+
+  res.status(200).json(result);
+};
+
+const swapHistory = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.app.swapHistory, next);
+
+  if (!value) return;
+
+  const result = await getMetrics.getSwapHistory(value);
+
+  res.status(200).json(result);
+};
+
 module.exports = {
   show,
   experts,
   hashtags,
   getReqRates,
+  waivMainMetrics,
+  swapHistory,
 };

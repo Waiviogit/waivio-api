@@ -95,6 +95,7 @@ exports.updateMetadataSchema = Joi.object().keys({
       shop: Joi.object().keys({
         hideLinkedObjects: Joi.boolean().default(false),
       }),
+      hideFavoriteObjects: Joi.boolean().default(false),
       exitPageSetting: Joi.boolean().default(false),
       locale: Joi.string().valid(...LANGUAGES).default('auto'),
       postLocales: Joi.array().items(Joi.string().valid(...LANGUAGES)).default([]),
@@ -130,6 +131,7 @@ exports.updateMetadataSchema = Joi.object().keys({
         claimReward: Joi.boolean().default(false),
         objectUpdates: Joi.boolean().default(false),
         objectGroupId: Joi.boolean().default(false),
+        threadAuthorFollower: Joi.boolean().default(false),
       }),
     }),
     drafts: Joi.array().items(Joi.object().keys({
@@ -267,6 +269,10 @@ exports.guestBalance = Joi.object().keys({
   symbol: Joi.string().required(),
 });
 
+exports.guestMana = Joi.object().keys({
+  account: Joi.string().required(),
+});
+
 exports.guestWithdrawHiveSchema = Joi.object().keys({
   amount: Joi.number().greater(0).required(),
   address: Joi.string().required(),
@@ -294,4 +300,13 @@ exports.minRejectSchema = Joi.object().keys({
   author: Joi.string().required(),
   permlink: Joi.string().required(),
   authorPermlink: Joi.string().required(),
+});
+
+exports.getFavoritesSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  follower: Joi.string(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  objectType: Joi.string(),
+  locale: Joi.string().valid(...LANGUAGES).default('auto'),
 });

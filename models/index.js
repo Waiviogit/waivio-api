@@ -39,5 +39,7 @@ moduleExports.userShopDeselectModel = require('./userShopDeselectModel');
 moduleExports.withdrawFundsModel = require('./withdrawFundsModel');
 moduleExports.UserCommentDraftModel = require('./UserCommentDraftModel');
 moduleExports.UserDraftModel = require('./UserDraftModel');
+moduleExports.ThreadModel = require('./ThreadModel');
+moduleExports.GuestManaModel = require('./GuestManaModel');
 
 module.exports = moduleExports;

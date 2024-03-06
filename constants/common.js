@@ -102,6 +102,7 @@ exports.CACHE_KEY = {
 
 exports.TTL_TIME = {
   ONE_MINUTE: 60,
+  TEN_MINUTES: 60 * 10,
   THIRTY_MINUTES: 1800,
   ONE_DAY: 86400,
   SEVEN_DAYS: 86400 * 7,
@@ -128,6 +129,12 @@ exports.REDIS_KEYS = {
   REQUESTS_RATE: 'requests:api:',
   REQUESTS_TIME: 'requests:time:api',
   REQUESTS_BY_URL: 'requests:url:api',
+  AD_SENSE: 'ad_sense_cache',
+  ENGINE_RATE: 'engine_rate',
+  API_RES_CACHE: 'api_res_cache',
+  API_VISIT_STATISTIC: 'api_visit_statistic',
+  API_RATE_LIMIT_BOTS: 'api_rate_limit_bots',
+  API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
 };
 
 exports.LANGUAGES = ['en-US',
@@ -210,3 +217,5 @@ exports.GUEST_WALLET_TYPE = Object.freeze({
   TRANSFER: 'tokens_transfer',
   WITHDRAW: 'guest_withdraw',
 });
+
+exports.AGGREGATION_MAX_TIME = 15000;

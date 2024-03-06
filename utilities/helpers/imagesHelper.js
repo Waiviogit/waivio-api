@@ -1,6 +1,6 @@
-const uuid = require('uuid/v4');
+const uuid = require('uuid').v4;
 const formidable = require('formidable');
-const fs = require('fs');
+const fsp = require('fs/promises');
 const axios = require('axios');
 const jo = require('jpeg-autorotate');
 
@@ -15,11 +15,11 @@ const prepareImage = async (req) => {
         return;
       }
       resolve({
-        blobImage: files.file,
-        imageUrl: fields.imageUrl,
-        type: fields.type,
-        userName: fields.userName,
-        size: fields.size || '',
+        blobImage: files?.file?.[0],
+        imageUrl: fields?.imageUrl?.[0],
+        type: fields?.type?.[0],
+        userName: fields?.userName?.[0],
+        size: fields?.size?.[0] || '',
       });
     });
   });
@@ -28,10 +28,10 @@ const prepareImage = async (req) => {
   if (blobImage) {
     const options = { quality: 70 };
     try {
-      const { buffer } = await jo.rotate(blobImage.path, options);
+      const { buffer } = await jo.rotate(blobImage.filepath, options);
       base64 = buffer;
     } catch (error) {
-      const data = fs.readFileSync(blobImage.path);
+      const data = await fsp.readFile(blobImage.filepath);
       base64 = data.toString('base64');
     }
   } else if (imageUrl) {

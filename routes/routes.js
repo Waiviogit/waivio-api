@@ -145,8 +145,6 @@ wobjRoutes.route('/wobject/:authorPermlink')
   .get(reqTimeMonitor, WobjController.show);
 wobjRoutes.route('/wobject/:authorPermlink/posts')
   .post(reqTimeMonitor, WobjController.posts);
-wobjRoutes.route('/wobject/:authorPermlink/pin')
-  .get(reqTimeMonitor, WobjController.getPinnedPosts);
 wobjRoutes.route('/wobject/:authorPermlink/followers')
   .post(reqTimeMonitor, WobjController.followers);
 wobjRoutes.route('/wobject/:authorPermlink/gallery')

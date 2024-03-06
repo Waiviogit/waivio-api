@@ -12,19 +12,19 @@ const {
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
 
-exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.saddAsync(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
+exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.SADD(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
 
 /**
  * Set active users to redis for collect statistics and invoicing
  */
-exports.addSiteActiveUser = async (key, ip) => appUsersStatistics.saddAsync(key, ip);
+exports.addSiteActiveUser = async (key, ip) => appUsersStatistics.SADD(key, ip);
 
 /**
  * Add user name to namespace of currently importing users
  * @param userName {String}
  * @returns {Promise<void>}
  */
-exports.addImportedUser = async (userName) => importUserClient.setAsync(`import_user:${userName}`, new Date().toISOString());
+exports.addImportedUser = async (userName) => importUserClient.SET(`import_user:${userName}`, new Date().toISOString());
 
 /**
  * Add user name to namespace of currently importing users
@@ -32,13 +32,13 @@ exports.addImportedUser = async (userName) => importUserClient.setAsync(`import_
  * @param errorMessage {String}
  * @returns {Promise<void>}
  */
-exports.setImportedUserError = async (userName, errorMessage) => importUserClient.setAsync(`import_user_error:${userName}`, errorMessage);
+exports.setImportedUserError = async (userName, errorMessage) => importUserClient.SET(`import_user_error:${userName}`, errorMessage);
 
 /**
  * @param key {String}
  * @param client {}
  */
-exports.deleteKey = async ({ key, client = importUserClient }) => client.delAsync(key);
+exports.deleteKey = async ({ key, client = importUserClient }) => client.DEL(key);
 
 /**
  * Update list of TRENDING feed cache for specified locale
@@ -51,14 +51,14 @@ exports.updateTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache({ prefix: TREND_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.RPUSH([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 exports.updateFilteredTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale) || !ids.length) return;
   await clearFeedLocaleCache({ prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.RPUSH([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
@@ -72,7 +72,7 @@ exports.updateHotLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache({ prefix: HOT_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.rpushAsync([`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.RPUSH([`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
@@ -94,7 +94,7 @@ async function clearFeedLocaleCache({ app, prefix, locale }) {
   else {
     keys = LANGUAGES.map((lang) => `${keyTemplate}:${lang}`);
   }
-  return mainFeedsCacheClient.del(...keys);
+  return mainFeedsCacheClient.DEL(...keys);
 }
 
 function validateUpdateNewsCache(ids, locale) {
@@ -113,24 +113,24 @@ function validateUpdateNewsCache(ids, locale) {
   return true;
 }
 
-exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zaddAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
-exports.incrementTag = async ({ categoryName, tag, objectType }) => tagCategoriesClient.zincrbyAsync(`${FIELDS_NAMES.TAG_CATEGORY}:${objectType}:${categoryName}`, 1, tag);
-exports.incrementDepartmentTag = async ({ categoryName, tag, department }) => tagCategoriesClient.zincrbyAsync(`${FIELDS_NAMES.DEPARTMENTS}:${department}:${categoryName}`, 1, tag);
+exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.ZADD(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
+exports.incrementTag = async ({ categoryName, tag, objectType }) => tagCategoriesClient.ZINCRBY(`${FIELDS_NAMES.TAG_CATEGORY}:${objectType}:${categoryName}`, 1, tag);
+exports.incrementDepartmentTag = async ({ categoryName, tag, department }) => tagCategoriesClient.ZINCRBY(`${FIELDS_NAMES.DEPARTMENTS}:${department}:${categoryName}`, 1, tag);
 
 exports.incrementWebsitesSuspended = async ({ key, expire }) => {
-  const counter = await appUsersStatistics.incrAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`);
-  await appUsersStatistics.expireAsync(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
+  const counter = await appUsersStatistics.INCR(`${WEBSITE_SUSPENDED_COUNT}:${key}`);
+  await appUsersStatistics.EXPIRE(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
   return counter;
 };
 
 exports.importUserClientHMSet = async ({ key, data, expire }) => {
-  await importUserClient.hmsetAsync(key, data);
-  await importUserClient.expireAsync(key, expire);
+  await importUserClient.HSET(key, data);
+  await importUserClient.EXPIRE(key, expire);
 };
 
 exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
   try {
-    return { result: await client.hmsetAsync(key, data) };
+    return { result: await client.HSET(key, data) };
   } catch (error) {
     return { error };
   }
@@ -138,23 +138,46 @@ exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
 
 exports.zadd = async ({
   key, now, keyValue, client = processedPostClient,
-}) => client.zaddAsync(key, now, keyValue);
+}) => client.ZADD(key, {
+  score: now, value: keyValue,
+});
 
-exports.saddAsync = async ({ key, values, client }) => client.saddAsync(key, ...values);
+exports.saddAsync = async ({ key, values, client }) => client.sadd(key, ...values);
 
-exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.setAsync(key, value);
+exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.SET(key, value);
 
-exports.incr = ({ key, client = mainFeedsCacheClient }) => client.incrAsync(key);
+exports.setEx = ({
+  key, ttl, value, client = mainFeedsCacheClient,
+}) => client.SET(key, value, { EX: ttl });
+
+exports.incr = ({ key, client = mainFeedsCacheClient }) => client.INCR(key);
 
 exports.zincrby = ({
   key, increment, member, client = mainFeedsCacheClient,
-}) => client.zincrbyAsync(key, increment, member);
+}) => client.ZINCRBY(key, increment, member);
 
-exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.expireAsync(key, ttl);
+exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.EXPIRE(key, ttl);
 
-exports.addToCache = async ({
-  key, ttl = 60, data, client = mainFeedsCacheClient,
+exports.zincrbyExpire = async ({
+  key, increment, member, ttl, client = appUsersStatistics,
 }) => {
-  await this.set({ key, value: JSON.stringify(data), client });
-  await this.expire({ key, ttl, client });
+  try {
+    await client.multi()
+      .ZINCRBY(key, increment, member)
+      .EXPIRE(key, ttl)
+      .exec();
+  } catch (error) {
+    console.log(error.message);
+  }
+};
+
+exports.incrExpire = async ({ key, ttl, client = importUserClient }) => {
+  try {
+    await client.multi()
+      .INCR(key)
+      .EXPIRE(key, ttl)
+      .exec();
+  } catch (error) {
+    console.log(error.message);
+  }
 };

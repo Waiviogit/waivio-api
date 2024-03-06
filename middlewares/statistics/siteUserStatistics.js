@@ -1,8 +1,9 @@
 const _ = require('lodash');
 const { INACTIVE_STATUSES, redisStatisticsKey } = require('constants/sitesConstants');
 const {
-  RESPONSE_STATUS, ERROR_MESSAGE, REQ_METHOD, URL,
+  RESPONSE_STATUS, ERROR_MESSAGE, REQ_METHOD, URL, REDIS_KEYS, TTL_TIME,
 } = require('constants/common');
+const { isbot } = require('isbot');
 const { getNamespace } = require('cls-hooked');
 const config = require('config');
 const { redisSetter } = require('utilities/redis');
@@ -10,6 +11,20 @@ const { App } = require('models');
 const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
+const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
+
+const setSiteActiveUser = async ({ userAgent, host, ip }) => {
+  const bot = isbot(userAgent);
+  const key = `${REDIS_KEYS.API_VISIT_STATISTIC}:${getCurrentDateString()}:${host}:${bot ? 'bot' : 'user'}`;
+
+  await redisSetter.zincrbyExpire({
+    key, ttl: TTL_TIME.THIRTY_DAYS, member: ip, increment: 1,
+  });
+
+  if (bot) return;
+
+  await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
+};
 
 exports.saveUserIp = async (req, res, next) => {
   const session = getNamespace('request-session');
@@ -45,6 +60,6 @@ exports.saveUserIp = async (req, res, next) => {
   }
 
   if (!ip) return next();
-  await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
+  await setSiteActiveUser({ host, ip, userAgent: req.get('User-Agent') });
   next();
 };

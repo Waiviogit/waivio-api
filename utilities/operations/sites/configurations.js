@@ -1,18 +1,19 @@
 const _ = require('lodash');
 const { App, Wobj } = require('models');
 const { sitesHelper } = require('utilities/helpers');
+const redisSetter = require('utilities/redis/redisSetter');
+const { mainFeedsCacheClient } = require('utilities/redis/redis');
 const {
-  getCacheKey,
   getCachedData,
   setCachedData,
 } = require('../../helpers/cacheHelper');
 const jsonHelper = require('../../helpers/jsonHelper');
-const { TTL_TIME } = require('../../../constants/common');
+const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
 
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
 exports.getConfigurationsList = async (host) => {
-  const key = getCacheKey({ getConfigurationsList: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getConfigurationsList:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { result: '' });
@@ -56,6 +57,15 @@ exports.saveConfigurations = async (params) => {
     },
   });
   if (updateError) return { error: updateError };
+
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:getConfigurationsList:${app.host}`,
+    client: mainFeedsCacheClient,
+  });
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`,
+    client: mainFeedsCacheClient,
+  });
 
   const result = await sitesHelper.aboutObjectFormat(updatedApp);
   return { result: _.get(result, 'configuration') };

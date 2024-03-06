@@ -19,12 +19,14 @@ const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
 const {
-  getCacheKey,
   getCachedData,
   setCachedData,
 } = require('./cacheHelper');
 const jsonHelper = require('./jsonHelper');
-const { TTL_TIME } = require('../../constants/common');
+const {
+  TTL_TIME,
+  REDIS_KEYS,
+} = require('../../constants/common');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -125,7 +127,7 @@ exports.getWebsitePayments = async ({
 };
 
 exports.getParentHost = async ({ host }) => {
-  const key = getCacheKey({ getParentHost: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getParentHost:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { result: '' });
@@ -163,7 +165,11 @@ exports.getPaymentsData = async () => {
   const { user } = await User.getOne(FEE.account, {
     alias: 1, json_metadata: 1, posting_json_metadata: 1, name: 1,
   });
-  return { user, memo: FEE.id };
+  return {
+    user,
+    memo: FEE.id,
+    guestMemo: FEE.idGuest,
+  };
 };
 
 exports.getWebsiteData = (payments, site) => {
@@ -295,7 +301,7 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
-  const key = getCacheKey({ getSiteSettings: host });
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getSiteSettings:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { result: '' });
@@ -306,6 +312,8 @@ exports.getSettings = async (host) => {
   const {
     googleAnalyticsTag,
     googleGSCTag = '',
+    googleEventSnippet = '',
+    googleAdsConfig = '',
     beneficiary,
     app_commissions,
     currency,
@@ -316,6 +324,8 @@ exports.getSettings = async (host) => {
   const result = {
     googleAnalyticsTag,
     googleGSCTag,
+    googleEventSnippet,
+    googleAdsConfig,
     beneficiary,
     referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
       ? app_commissions.referral_commission_acc
@@ -333,6 +343,12 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
+  const key = `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, { });
+  }
+
   const aboutObject = app?.configuration?.aboutObject;
   const defaultHashtag = app?.configuration?.defaultHashtag;
   const { result: wobjects } = await Wobj
@@ -350,6 +366,10 @@ exports.aboutObjectFormat = async (app) => {
   if (defaultHashtagProcessed) {
     app.configuration.defaultHashtag = _.pick(defaultHashtagProcessed, PICK_FIELDS_ABOUT_OBJ);
   }
+
+  await setCachedData({
+    key, data: app, ttl: TTL_TIME.TEN_MINUTES,
+  });
 
   return app;
 };
@@ -405,7 +425,7 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
-  const key = getCacheKey({ getAdSense: host });
+  const key = `${REDIS_KEYS.AD_SENSE}:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });
