@@ -56,7 +56,11 @@ const getWobjectPinnedPosts = async ({
     app,
   });
 
-  const { posts } = await Post.getManyPosts(getPinFilter(processedObj, pinnedLinksCurrentUser));
+  const filter = getPinFilter(processedObj, pinnedLinksCurrentUser);
+
+  if (!filter.length) return { posts: [] };
+
+  const { posts } = await Post.getManyPosts(filter);
 
   posts.forEach((p) => {
     p.currentUserPin = pinnedLinksCurrentUser.includes(`${p.author}/${p.permlink}`);
