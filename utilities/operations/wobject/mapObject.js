@@ -12,7 +12,7 @@ const { parseJson } = require('../../helpers/jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 const { setFilterByDistance } = require('../../helpers/geoHelper');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
-const { getAllListPermlinks } = require('./wobjectInfo');
+const { getAllObjectsInList } = require('./wobjectInfo');
 
 const adjustRectangles = (rectangles, clientArea) => rectangles.map((rectangle) => {
   const [bottomLeft, topRight] = rectangle;
@@ -107,14 +107,14 @@ const getObjectsFromAdvancedMap = async ({
   // if (social) authority.push(...[app.owner, ...app.authority]);
 
   if (objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) {
-    const { result: objectLinks } = await getAllListPermlinks({
+    const objectLinks = await getAllObjectsInList({
       authorPermlink: objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST],
       app,
       scanEmbedded: true,
     });
 
     if (objectLinks.length) {
-      andCondition.push({ author_permlink: { $in: objectLinks } });
+      andCondition.push({ author_permlink: { $in: _.uniq(objectLinks) } });
     }
   }
 

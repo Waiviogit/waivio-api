@@ -121,6 +121,52 @@ const getAllObjectsInList = async ({
   return result;
 };
 
+const getAllObjectsInListForImport = async ({
+  authorPermlink, handledItems = [], app, scanEmbedded,
+}) => {
+  const { result: wobject, error } = await Wobj.findOne({
+    author_permlink: authorPermlink,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+  });
+  if (error || !wobject) return handledItems;
+
+  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)
+    && wobject.metaGroupId) {
+    const { result } = await Wobj.findObjects({
+      filter: {
+        author_permlink: { $ne: wobject.author_permlink },
+        metaGroupId: wobject.metaGroupId,
+      },
+      projection: { author_permlink: 1 },
+    });
+    if (result.length)handledItems.push(...result.map((el) => el.author_permlink));
+  }
+  if (wobject.object_type === OBJECT_TYPES.LIST) {
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    if (_.isEmpty(listWobjects)) return handledItems;
+
+    for (const item of listWobjects) {
+      // condition for exit from looping
+      if (!handledItems.includes(item)) {
+        handledItems.push(item);
+        if (scanEmbedded) {
+          await getAllObjectsInListForImport({
+            authorPermlink: item, handledItems, app, recursive: true, scanEmbedded,
+          });
+        }
+      }
+    }
+  }
+  return handledItems;
+};
+
 const getListDepartments = async ({
   authorPermlink, handledItems = [], app, scanEmbedded, departments = [], listItems = [],
 }) => {
@@ -188,7 +234,7 @@ const getListDepartments = async ({
 
 const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   const handledItems = [authorPermlink];
-  const result = await getAllObjectsInList({
+  const result = await getAllObjectsInListForImport({
     authorPermlink, app, handledItems, scanEmbedded,
   });
   return { result: _.uniq(result) };
@@ -339,4 +385,5 @@ module.exports = {
   getItemsCount,
   getAllListPermlinks,
   getListDepartments,
+  getAllObjectsInList,
 };
