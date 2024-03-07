@@ -15,6 +15,7 @@ const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
+const redis = require('../../redis/redis');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -59,8 +60,8 @@ const getItemsCount = async ({
 };
 
 // scanEmbedded
-const getAllObjectsInList2 = async ({
-  authorPermlink, app,
+const getAllObjectsInList = async ({
+  authorPermlink, app, scanEmbedded,
 }) => {
   const result = [authorPermlink];
   const queue = [authorPermlink];
@@ -89,21 +90,22 @@ const getAllObjectsInList2 = async ({
 
     const { result: listFromDb } = await Wobj.find(
       { author_permlink: { $in: listWobjects } },
-      { object_type: 1, author_permlink: 1 },
+      { object_type: 1, author_permlink: 1, metaGroupId: 1 },
     );
 
     for (const item of listFromDb) {
+      if (result.includes(item.author_permlink)) continue;
+
       if (item.object_type === OBJECT_TYPES.LIST && !processedLists.has(item.author_permlink)) {
         queue.push(item.author_permlink);
         result.push(item.author_permlink);
         continue;
       }
       if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(item.object_type)
-        && wobject.metaGroupId) {
+        && item.metaGroupId) {
         const { result: metaIdClones } = await Wobj.findObjects({
           filter: {
-            author_permlink: { $ne: wobject.author_permlink },
-            metaGroupId: wobject.metaGroupId,
+            metaGroupId: item.metaGroupId,
           },
           projection: { author_permlink: 1 },
         });
@@ -113,58 +115,11 @@ const getAllObjectsInList2 = async ({
       }
       result.push(item.author_permlink);
     }
+    if (!scanEmbedded) break;
   }
 
   return result;
 };
-
-const getAllObjectsInList = async ({
-  authorPermlink, handledItems = [], app, scanEmbedded,
-}) => {
-  const { result: wobject, error } = await Wobj.findOne({
-    author_permlink: authorPermlink,
-    'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  });
-  if (error || !wobject) return handledItems;
-
-  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)
-    && wobject.metaGroupId) {
-    const { result } = await Wobj.findObjects({
-      filter: {
-        author_permlink: { $ne: wobject.author_permlink },
-        metaGroupId: wobject.metaGroupId,
-      },
-      projection: { author_permlink: 1 },
-    });
-    if (result.length)handledItems.push(...result.map((el) => el.author_permlink));
-  }
-  if (wobject.object_type === OBJECT_TYPES.LIST) {
-    const wobj = await wObjectHelper.processWobjects({
-      wobjects: [wobject],
-      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
-      app,
-      returnArray: false,
-    });
-    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
-
-    if (_.isEmpty(listWobjects)) return handledItems;
-
-    for (const item of listWobjects) {
-      // condition for exit from looping
-      if (!handledItems.includes(item)) {
-        handledItems.push(item);
-        if (scanEmbedded) {
-          await getAllObjectsInList({
-            authorPermlink: item, handledItems, app, recursive: true, scanEmbedded,
-          });
-        }
-      }
-    }
-  }
-  return handledItems;
-};
-
-
 
 const getListDepartments = async ({
   authorPermlink, handledItems = [], app, scanEmbedded, departments = [], listItems = [],
