@@ -9,11 +9,11 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
 
 const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
-  const filteredPinBody = processedObj.pin
+  const filteredPinBody = (processedObj?.pin ?? [])
     .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
     .map((el) => el.body);
 
-  const othersPin = processedObj.pin
+  const othersPin = (processedObj?.pin ?? [])
     .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
     .sort(wObjectHelper.arrayFieldsSpecialSort)
     .slice(0, 5)
