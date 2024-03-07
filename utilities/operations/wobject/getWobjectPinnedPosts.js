@@ -9,11 +9,11 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const _ = require('lodash');
 
 const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
-  const filteredPinBody = processedObj.pin
+  const filteredPinBody = (processedObj?.pin ?? [])
     .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
     .map((el) => el.body);
 
-  const othersPin = processedObj.pin
+  const othersPin = (processedObj?.pin ?? [])
     .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
     .sort(wObjectHelper.arrayFieldsSpecialSort)
     .slice(0, 5)
@@ -56,7 +56,11 @@ const getWobjectPinnedPosts = async ({
     app,
   });
 
-  const { posts } = await Post.getManyPosts(getPinFilter(processedObj, pinnedLinksCurrentUser));
+  const filter = getPinFilter(processedObj, pinnedLinksCurrentUser);
+
+  if (!filter.length) return { posts: [] };
+
+  const { posts } = await Post.getManyPosts(filter);
 
   posts.forEach((p) => {
     p.currentUserPin = pinnedLinksCurrentUser.includes(`${p.author}/${p.permlink}`);
