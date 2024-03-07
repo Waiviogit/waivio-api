@@ -10,17 +10,19 @@ const {
 } = require('constants/sitesConstants');
 
 exports.dailyDebt = async (timeout = 200) => {
-  const { result: apps, error } = await App.find({
-    inherited: true,
-    status: { $in: [STATUSES.INACTIVE, STATUSES.PENDING, STATUSES.ACTIVE] },
-  },
-  {},
-  {
-    host: 1,
-    parent: 1,
-    owner: 1,
-    status: 1,
-  });
+  const { result: apps, error } = await App.find(
+    {
+      inherited: true,
+      status: { $in: [STATUSES.INACTIVE, STATUSES.PENDING, STATUSES.ACTIVE] },
+    },
+    {},
+    {
+      host: 1,
+      parent: 1,
+      owner: 1,
+      status: 1,
+    },
+  );
   if (error) return sendError(error);
   for (const app of apps) {
     if (!await this.checkForTestSites(app.parent)) continue;
@@ -36,8 +38,11 @@ exports.dailyDebt = async (timeout = 200) => {
       countUsers,
       host: app.host,
     };
-    const { error: createError } = await objectBotRequests.sendCustomJson(data,
-      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false);
+    const { error: createError } = await objectBotRequests.sendCustomJson(
+      data,
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+      false,
+    );
     if (createError) {
       console.error(`Request for create invoice for host ${data.host} 
       with amount ${data.amount}, daily users: ${data.countUsers} failed!`);
@@ -66,16 +71,18 @@ exports.checkForTestSites = async (parent) => {
 };
 
 exports.dailySuspendedDebt = async (timeout = 200) => {
-  const { result: apps, error } = await App.find({
-    inherited: true, status: STATUSES.SUSPENDED,
-  },
-  {},
-  {
-    host: 1,
-    parent: 1,
-    owner: 1,
-    status: 1,
-  });
+  const { result: apps, error } = await App.find(
+    {
+      inherited: true, status: STATUSES.SUSPENDED,
+    },
+    {},
+    {
+      host: 1,
+      parent: 1,
+      owner: 1,
+      status: 1,
+    },
+  );
   if (error) return sendError(error);
   for (const app of apps) {
     if (!await this.checkForTestSites(app.parent)) continue;
@@ -90,7 +97,8 @@ exports.dailySuspendedDebt = async (timeout = 200) => {
 
     const { error: createError } = await objectBotRequests.sendCustomJson(
       data,
-      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`, false,
+      `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+      false,
     );
     if (createError) {
       console.error(`Request for create invoice for suspended host ${data.host} 
