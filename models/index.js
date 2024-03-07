@@ -41,5 +41,6 @@ moduleExports.UserCommentDraftModel = require('./UserCommentDraftModel');
 moduleExports.UserDraftModel = require('./UserDraftModel');
 moduleExports.ThreadModel = require('./ThreadModel');
 moduleExports.GuestManaModel = require('./GuestManaModel');
+moduleExports.DelegationModel = require('./DelegationModel');
 
 module.exports = moduleExports;

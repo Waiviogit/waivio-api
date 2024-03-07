@@ -2,7 +2,7 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
@@ -80,13 +80,6 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
-  if (data.skip === 0) {
-    const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));
-    if (!_.isEmpty(pinPosts)) {
-      posts.unshift(..._.map(pinPosts, (el) => ({ ...el, pin: true })));
-    }
-  }
-
   if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
     _.forEach(posts, (p) => {
       if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
@@ -118,7 +111,10 @@ const getWobjFeedCondition = async ({
       : condition._id = { $nin: hiddenPosts };
   }
   if (!_.isEmpty(muted)) condition.author = { $nin: muted };
-  if (!_.isEmpty(user_languages)) condition.language = { $in: user_languages };
+  // show posts with user languages only with hashtags type
+  if (!_.isEmpty(user_languages) && wObject.object_type === OBJECT_TYPES.HASHTAG) {
+    condition.language = { $in: user_languages };
+  }
 
   if (newsPermlink) {
     return getNewsFilterCondition({

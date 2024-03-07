@@ -6741,6 +6741,51 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/pin": {
+      "get": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return posts for specified wobject",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "locale",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return posts",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject/{authorPermlink}/newsfeed": {
       "post": {
         "tags": [
