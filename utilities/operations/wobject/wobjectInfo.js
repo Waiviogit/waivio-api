@@ -58,6 +58,66 @@ const getItemsCount = async ({
   return count;
 };
 
+// scanEmbedded
+const getAllObjectsInList2 = async ({
+  authorPermlink, app,
+}) => {
+  const result = [authorPermlink];
+  const queue = [authorPermlink];
+  const processedLists = new Set();
+
+  while (queue.length > 0) {
+    const currentList = queue.shift();
+    processedLists.add(currentList);
+
+    const { result: wobject, error } = await Wobj.findOne({
+      author_permlink: currentList,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    });
+
+    if (error || !wobject) continue;
+    if (wobject.object_type !== OBJECT_TYPES.LIST) continue;
+
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    const { result: listFromDb } = await Wobj.find(
+      { author_permlink: { $in: listWobjects } },
+      { object_type: 1, author_permlink: 1 },
+    );
+
+    for (const item of listFromDb) {
+      if (item.object_type === OBJECT_TYPES.LIST && !processedLists.has(item.author_permlink)) {
+        queue.push(item.author_permlink);
+        result.push(item.author_permlink);
+        continue;
+      }
+      if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(item.object_type)
+        && wobject.metaGroupId) {
+        const { result: metaIdClones } = await Wobj.findObjects({
+          filter: {
+            author_permlink: { $ne: wobject.author_permlink },
+            metaGroupId: wobject.metaGroupId,
+          },
+          projection: { author_permlink: 1 },
+        });
+
+        if (metaIdClones.length)result.push(...metaIdClones.map((el) => el.author_permlink));
+        continue;
+      }
+      result.push(item.author_permlink);
+    }
+  }
+
+  return result;
+};
+
 const getAllObjectsInList = async ({
   authorPermlink, handledItems = [], app, scanEmbedded,
 }) => {
@@ -103,6 +163,8 @@ const getAllObjectsInList = async ({
   }
   return handledItems;
 };
+
+
 
 const getListDepartments = async ({
   authorPermlink, handledItems = [], app, scanEmbedded, departments = [], listItems = [],

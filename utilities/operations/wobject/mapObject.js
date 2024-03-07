@@ -12,6 +12,7 @@ const { parseJson } = require('../../helpers/jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 const { setFilterByDistance } = require('../../helpers/geoHelper');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
+const { getAllListPermlinks } = require('./wobjectInfo');
 
 const adjustRectangles = (rectangles, clientArea) => rectangles.map((rectangle) => {
   const [bottomLeft, topRight] = rectangle;
@@ -75,6 +76,7 @@ const getObjectsFromAdvancedMap = async ({
   if (!objectWithMap[FIELDS_NAMES.MAP_RECTANGLES]
     && !objectWithMap[FIELDS_NAMES.MAP_OBJECT_TAGS]
     && !objectWithMap[FIELDS_NAMES.MAP_OBJECT_TYPES]
+    && !objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]
   ) return emptyResp;
 
   const boxCoordinates = parseJson(objectWithMap[FIELDS_NAMES.MAP_RECTANGLES], null);
@@ -103,6 +105,17 @@ const getObjectsFromAdvancedMap = async ({
   const authority = [];
   const social = checkForSocialSite(app?.parentHost ?? '');
   if (social) authority.push(...[app.owner, ...app.authority]);
+
+  if (objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) {
+    const { result: objectLinks } = await getAllListPermlinks({
+      authorPermlink: objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST],
+      app,
+      scanEmbedded: true,
+    });
+    if (objectLinks.length) {
+      andCondition.push({ author_permlink: { $in: objectLinks } });
+    }
+  }
 
   const { wobjects } = await Wobj.fromAggregation([
     {

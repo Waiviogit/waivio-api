@@ -67,7 +67,8 @@ exports.FIELDS_NAMES = {
   MAP_OBJECT_TYPES: 'mapObjectTypes',
   MAP_OBJECT_TAGS: 'mapObjectTags',
   MAP_MOBILE_VIEW: 'mapMobileView',
-  MAP_DESKTOP_VIEW: 'mapDesktopView ',
+  MAP_DESKTOP_VIEW: 'mapDesktopView',
+  MAP_OBJECTS_LIST: 'mapObjectsList',
 };
 
 exports.LIST_TYPES = {
@@ -129,6 +130,7 @@ exports.MAP_OBJECT_SEARCH_FIELDS = [
   this.FIELDS_NAMES.MAP_RECTANGLES,
   this.FIELDS_NAMES.MAP_OBJECT_TYPES,
   this.FIELDS_NAMES.MAP_OBJECT_TAGS,
+  this.FIELDS_NAMES.MAP_OBJECTS_LIST,
 ];
 
 exports.AFFILIATE_FIELDS = [
