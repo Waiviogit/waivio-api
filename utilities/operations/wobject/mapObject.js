@@ -102,9 +102,9 @@ const getObjectsFromAdvancedMap = async ({
     });
   }
 
-  const authority = [];
-  const social = checkForSocialSite(app?.parentHost ?? '');
-  if (social) authority.push(...[app.owner, ...app.authority]);
+  // const authority = [];
+  // const social = checkForSocialSite(app?.parentHost ?? '');
+  // if (social) authority.push(...[app.owner, ...app.authority]);
 
   if (objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) {
     const { result: objectLinks } = await getAllListPermlinks({
@@ -112,6 +112,7 @@ const getObjectsFromAdvancedMap = async ({
       app,
       scanEmbedded: true,
     });
+
     if (objectLinks.length) {
       andCondition.push({ author_permlink: { $in: objectLinks } });
     }
@@ -122,7 +123,7 @@ const getObjectsFromAdvancedMap = async ({
       $match: {
         $and: andCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        ...(authority.length && { 'authority.administrative': { $in: authority } }),
+        // ...(authority.length && { 'authority.administrative': { $in: authority } }),
       },
     },
     { $sort: { activeCampaignsCount: -1, weight: -1 } },
