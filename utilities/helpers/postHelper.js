@@ -41,6 +41,7 @@ const getPostObjects = async (wobjects) => {
   if (Array.isArray(wobjects) && !_.isEmpty(wobjects)) {
     const { result: wObjectsData } = await Wobj.find({ author_permlink: { $in: _.map(wobjects, 'author_permlink') } }, {
       author: 1,
+      authority: 1,
       fields: 1,
       author_permlink: 1,
       weight: 1,
