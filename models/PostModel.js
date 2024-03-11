@@ -260,7 +260,7 @@ exports.getManyPosts = async (postsRefs) => {
     return {
       posts: await PostModel
         .find({ $or: [...postsRefs], ...getBlockedAppCond() })
-        .populate({ path: 'fullObjects', select: 'author parent fields weight author_permlink object_type default_name' })
+        .populate({ path: 'fullObjects', select: 'author authority parent fields weight author_permlink object_type default_name' })
         .lean(),
     };
   } catch (error) {
@@ -284,7 +284,7 @@ exports.getWobjectPosts = async ({
       .find(condition)
       .sort({ _id: -1 })
       .limit(limit)
-      .populate({ path: 'fullObjects', select: 'author parent fields weight author_permlink object_type default_name status' })
+      .populate({ path: 'fullObjects', select: 'author authority parent fields weight author_permlink object_type default_name status' })
       .lean();
 
     if (!lastId) postsQuery.skip(skip);
