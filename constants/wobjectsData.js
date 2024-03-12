@@ -69,6 +69,7 @@ exports.FIELDS_NAMES = {
   MAP_MOBILE_VIEW: 'mapMobileView',
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
+  WALLET_ADDRESS: 'walletAddress',
 };
 
 exports.LIST_TYPES = {
