@@ -5,36 +5,7 @@ const {
 } = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
-
 const _ = require('lodash');
-
-const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
-  const filteredPinBody = (processedObj?.pin ?? [])
-    .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
-    .map((el) => el.body);
-
-  const processedCurrentUser = (processedObj?.pin ?? [])
-    .filter((el) => pinnedLinksCurrentUser.includes(el.body))
-    .map((el) => el.body);
-
-  const othersPin = (processedObj?.pin ?? [])
-    .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
-    .sort(wObjectHelper.arrayFieldsSpecialSort)
-    .slice(0, 5)
-    .map((el) => el.body);
-
-  const resultLinks = [...processedCurrentUser, ...othersPin];
-
-
-
-  return resultLinks.map((link) => {
-    const [author, permlink] = link.split('/');
-    return {
-      author,
-      permlink,
-    };
-  });
-};
 
 const getWobjectPinnedPosts = async ({
   follower,
@@ -56,13 +27,9 @@ const getWobjectPinnedPosts = async ({
     app,
   });
 
-  const pinnedLinksCurrentUser = _
-    .chain(wObject.fields)
-    .filter((f) => f.name === FIELDS_NAMES.PIN && f.creator === follower)
-    .map((el) => el.body)
-    .value();
-
-  const filter = getPinFilter(processedObj, pinnedLinksCurrentUser);
+  const pinnedLinksCurrentUser = wObjectHelper
+    .getCurrentUserPins({ object: wObject, userName: follower });
+  const filter = wObjectHelper.getPinFilter(processedObj, pinnedLinksCurrentUser);
 
   if (!filter.length) return { posts: [] };
 

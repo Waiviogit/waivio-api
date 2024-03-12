@@ -62,7 +62,16 @@ module.exports = async (data) => {
     groupIdPermlinks.push(...links);
   }
 
-  const removeFilter = getRemoveFilter(processedObj);
+  const pinnedLinksCurrentUser = wObjectHelper
+    .getCurrentUserPins({ object: wObject, userName: data.userName });
+
+  const removeFilter = [
+    ...wObjectHelper.getPinFilter(processedObj, pinnedLinksCurrentUser),
+    ..._.map(processedObj.remove, (el) => {
+      const [author, permlink] = el.split('/');
+      return { author, permlink };
+    }),
+  ];
 
   const relistedLinks = await getRelistedLinks(data.author_permlink);
 
@@ -190,15 +199,3 @@ const getNewsFilterCondition = ({
 
   return { condition };
 };
-
-const getRemoveFilter = (processedObj) => _.chain([
-  ...(processedObj.remove || []),
-  ..._.map(processedObj.pin, 'body'),
-])
-  .compact()
-  .uniq()
-  .map((el) => {
-    const [author, permlink] = el.split('/');
-    return { author, permlink };
-  })
-  .value();

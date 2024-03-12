@@ -1001,6 +1001,37 @@ const moderatePosts = async ({
   }));
 };
 
+const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
+  const filteredPinBody = (processedObj?.pin ?? [])
+    .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
+    .map((el) => el.body);
+
+  const processedCurrentUser = (processedObj?.pin ?? [])
+    .filter((el) => pinnedLinksCurrentUser.includes(el.body))
+    .map((el) => el.body);
+
+  const othersPin = (processedObj?.pin ?? [])
+    .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
+    .sort(arrayFieldsSpecialSort)
+    .slice(0, 5)
+    .map((el) => el.body);
+
+  const resultLinks = [...processedCurrentUser, ...othersPin];
+
+  return resultLinks.map((link) => {
+    const [author, permlink] = link.split('/');
+    return {
+      author,
+      permlink,
+    };
+  });
+};
+const getCurrentUserPins = ({ object, userName }) => _
+  .chain(object.fields)
+  .filter((f) => f.name === FIELDS_NAMES.PIN && f.creator === userName)
+  .map((el) => el.body)
+  .value();
+
 module.exports = {
   getUserSharesInWobj,
   getLinkToPageLoad,
@@ -1015,4 +1046,6 @@ module.exports = {
   arrayFieldsSpecialSort,
   getBlacklist,
   findFieldByBody,
+  getPinFilter,
+  getCurrentUserPins,
 };
