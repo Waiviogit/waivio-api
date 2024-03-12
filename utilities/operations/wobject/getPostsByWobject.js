@@ -91,6 +91,14 @@ module.exports = async (data) => {
 
   if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
     _.forEach(posts, (p) => {
+      const pinnedInFeed = _.find(
+        processedObj.pin,
+        (pin) => pin.body === `${p.author}/${p.permlink}`,
+      );
+      if (pinnedInFeed) {
+        p.pin = true;
+      }
+
       if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
         p.hasPinUpdate = true;
       }
