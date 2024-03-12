@@ -20,5 +20,6 @@ moduleExports.getByGroupId = require('./getByGroupId');
 moduleExports.recountListItems = require('./recountListItems');
 moduleExports.getListItemLocales = require('./getListItemLocales');
 moduleExports.getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
+moduleExports.mapObject = require('./mapObject');
 
 module.exports = moduleExports;

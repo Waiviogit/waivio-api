@@ -3,7 +3,8 @@ const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
-  getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, getWobjectPinnedPosts,
+  getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
+  getWobjectPinnedPosts,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -532,6 +533,30 @@ const getListDepartments = async (req, res, next) => {
   next();
 };
 
+const getObjectsOnMap = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      locale: req.headers.locale,
+      authorPermlink: req.params.authorPermlink,
+      follower: req.headers.follower,
+    },
+    validators.wobject.wobjectAdvancedMapScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, error } = await mapObject.getObjectsFromAdvancedMap({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -563,4 +588,5 @@ module.exports = {
   searchDefault,
   getListItemsLocales,
   getPinnedPosts,
+  getObjectsOnMap,
 };

@@ -19,10 +19,12 @@ const {
 } = require('constants/wobjectsData');
 const { getNamespace } = require('cls-hooked');
 const { DEVICE } = require('constants/common');
+const redis = require('../../../utilities/redis/redis');
 
 describe('On wobjectHelper', async () => {
   let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
   beforeEach(async () => {
+    await redis.setupRedisConnections();
     await dropDatabase();
     objectType = await ObjectTypeFactory.Create(
       { exposedFields: _.difference(Object.values(FIELDS_NAMES), [FIELDS_NAMES.PRICE]) },
@@ -1941,6 +1943,92 @@ describe('On wobjectHelper', async () => {
     it('should includes  feature', async () => {
       const feature = result[fieldName].find((f) => f.body === body);
       expect(feature).not.to.be.undefined;
+    });
+  });
+
+  describe('On MAP_RECTANGLES field', async () => {
+    const fieldName = FIELDS_NAMES.MAP_RECTANGLES;
+    const body = JSON.stringify([{ topPoint: [-98.233, 48.224], bottomPoint: [-91.233, 44.224] }]);
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.MAP,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  MAP_RECTANGLES', async () => {
+      const advancedMap = result[fieldName];
+      expect(advancedMap).to.be.eq(body);
+    });
+  });
+
+  describe('On MAP_OBJECT_TYPES, MAP_OBJECT_TAGS  field', async () => {
+    const fieldName = _.sample([FIELDS_NAMES.MAP_OBJECT_TYPES, FIELDS_NAMES.MAP_OBJECT_TAGS]);
+    const body = JSON.stringify([faker.random.string()]);
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.MAP,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  MAP_OBJECT_TYPES, MAP_OBJECT_TAGS', async () => {
+      const advancedMap = result[fieldName];
+      expect(advancedMap).to.be.eq(body);
+    });
+  });
+
+  describe('On MAP_DESKTOP_VIEW, MAP_MOBILE_VIEW  field', async () => {
+    const fieldName = _.sample([FIELDS_NAMES.MAP_DESKTOP_VIEW, FIELDS_NAMES.MAP_MOBILE_VIEW]);
+    const body = JSON.stringify({
+      topPoint: [-98.233, 48.224],
+      bottomPoint: [-91.233, 44.224],
+      center: [-91.233, 44.224],
+      zoom: 8,
+    });
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.MAP,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  MAP_DESKTOP_VIEW, MAP_MOBILE_VIEW ', async () => {
+      const advancedMap = result[fieldName];
+      expect(advancedMap).to.be.eq(body);
     });
   });
 });

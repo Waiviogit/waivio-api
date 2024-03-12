@@ -15,6 +15,7 @@ const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
+const redis = require('../../redis/redis');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -58,7 +59,69 @@ const getItemsCount = async ({
   return count;
 };
 
+// scanEmbedded
 const getAllObjectsInList = async ({
+  authorPermlink, app, scanEmbedded,
+}) => {
+  const result = [authorPermlink];
+  const queue = [authorPermlink];
+  const processedLists = new Set();
+
+  while (queue.length > 0) {
+    const currentList = queue.shift();
+    processedLists.add(currentList);
+
+    const { result: wobject, error } = await Wobj.findOne({
+      author_permlink: currentList,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    });
+
+    if (error || !wobject) continue;
+    if (wobject.object_type !== OBJECT_TYPES.LIST) continue;
+
+    const wobj = await wObjectHelper.processWobjects({
+      wobjects: [wobject],
+      fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
+      app,
+      returnArray: false,
+    });
+
+    const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
+
+    const { result: listFromDb } = await Wobj.find(
+      { author_permlink: { $in: listWobjects } },
+      { object_type: 1, author_permlink: 1, metaGroupId: 1 },
+    );
+
+    for (const item of listFromDb) {
+      if (result.includes(item.author_permlink)) continue;
+
+      if (item.object_type === OBJECT_TYPES.LIST && !processedLists.has(item.author_permlink)) {
+        queue.push(item.author_permlink);
+        result.push(item.author_permlink);
+        continue;
+      }
+      if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(item.object_type)
+        && item.metaGroupId) {
+        const { result: metaIdClones } = await Wobj.findObjects({
+          filter: {
+            metaGroupId: item.metaGroupId,
+          },
+          projection: { author_permlink: 1 },
+        });
+
+        if (metaIdClones.length)result.push(...metaIdClones.map((el) => el.author_permlink));
+        continue;
+      }
+      result.push(item.author_permlink);
+    }
+    if (!scanEmbedded) break;
+  }
+
+  return result;
+};
+
+const getAllObjectsInListForImport = async ({
   authorPermlink, handledItems = [], app, scanEmbedded,
 }) => {
   const { result: wobject, error } = await Wobj.findOne({
@@ -94,7 +157,7 @@ const getAllObjectsInList = async ({
       if (!handledItems.includes(item)) {
         handledItems.push(item);
         if (scanEmbedded) {
-          await getAllObjectsInList({
+          await getAllObjectsInListForImport({
             authorPermlink: item, handledItems, app, recursive: true, scanEmbedded,
           });
         }
@@ -171,7 +234,7 @@ const getListDepartments = async ({
 
 const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   const handledItems = [authorPermlink];
-  const result = await getAllObjectsInList({
+  const result = await getAllObjectsInListForImport({
     authorPermlink, app, handledItems, scanEmbedded,
   });
   return { result: _.uniq(result) };
@@ -322,4 +385,5 @@ module.exports = {
   getItemsCount,
   getAllListPermlinks,
   getListDepartments,
+  getAllObjectsInList,
 };

@@ -7681,6 +7681,73 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/map": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return objects from object_type map",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following in wobjects",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Read locale of user(default en-EN)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box": {
+                  "$ref": "#/definitions/box_params"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/wobject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/post/{author}/{permlink}": {
       "get": {
         "tags": [
