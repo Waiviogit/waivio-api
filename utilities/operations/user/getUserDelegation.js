@@ -2,6 +2,8 @@ const { getDelegationExpirations } = require('utilities/hiveApi/userUtil');
 const { DelegationModel } = require('models');
 const _ = require('lodash');
 
+const formatDecimalVestingShares = (number) => (+(number / 1e6).toFixed(6));
+
 const getUserDelegation = async ({ account }) => {
   const requests = await Promise.all([
     DelegationModel.findDelegationsTo(account),
@@ -26,7 +28,7 @@ const getUserDelegation = async ({ account }) => {
 
   const expirations = _.map(expirationResult, (el) => ({
     ...el,
-    vesting_shares: +el.vesting_shares.amount,
+    vesting_shares: formatDecimalVestingShares(+el.vesting_shares.amount),
   }));
 
   return { result: { received, delegated, expirations } };
