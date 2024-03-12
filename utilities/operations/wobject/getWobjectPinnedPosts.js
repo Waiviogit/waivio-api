@@ -24,6 +24,8 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
 
   const resultLinks = [...processedCurrentUser, ...othersPin];
 
+  console.log('resultLinks', resultLinks);
+
   return resultLinks.map((link) => {
     const [author, permlink] = link.split('/');
     return {
