@@ -13,13 +13,16 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
     .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
     .map((el) => el.body);
 
+  const processedCurrentUser = (processedObj?.pin ?? [])
+    .filter((el) => pinnedLinksCurrentUser.includes(el.body));
+
   const othersPin = (processedObj?.pin ?? [])
     .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
     .sort(wObjectHelper.arrayFieldsSpecialSort)
     .slice(0, 5)
     .map((el) => el.body);
 
-  const resultLinks = [...pinnedLinksCurrentUser, ...othersPin];
+  const resultLinks = [...processedCurrentUser, ...othersPin];
 
   return resultLinks.map((link) => {
     const [author, permlink] = link.split('/');
@@ -42,12 +45,6 @@ const getWobjectPinnedPosts = async ({
   } = await Wobj.getOne(author_permlink);
   if (wobjError) return { error: wobjError };
 
-  const pinnedLinksCurrentUser = _
-    .chain(wObject.fields)
-    .filter((f) => f.name === FIELDS_NAMES.PIN && f.creator === follower)
-    .map((el) => el.body)
-    .value();
-
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
     locale,
@@ -56,18 +53,31 @@ const getWobjectPinnedPosts = async ({
     app,
   });
 
+  const pinnedLinksCurrentUser = _
+    .chain(wObject.fields)
+    .filter((f) => f.name === FIELDS_NAMES.PIN && f.creator === follower)
+    .map((el) => el.body)
+    .value();
+
   const filter = getPinFilter(processedObj, pinnedLinksCurrentUser);
 
   if (!filter.length) return { posts: [] };
 
   const { posts } = await Post.getManyPosts(filter);
 
-  posts.forEach((p) => {
-    p.currentUserPin = pinnedLinksCurrentUser.includes(`${p.author}/${p.permlink}`);
-  });
-  posts.sort((a, b) => b.currentUserPin - a.currentUserPin);
+  for (const post of posts) {
+    post.currentUserPin = pinnedLinksCurrentUser.includes(`${post.author}/${post.permlink}`);
+    const field = _.find(
+      (processedObj?.pin ?? []),
+      (f) => f.body === `${post.author}/${post.permlink}`,
+    );
 
-  return { posts };
+    post.sortingWeight = (field?.weightWAIV ?? 0) + (field?.weight ?? 0);
+  }
+
+  const sortedPosts = _.orderBy(posts, ['currentUserPin', 'sortingWeight'], ['desc', 'desc']);
+
+  return { posts: sortedPosts };
 };
 
 module.exports = getWobjectPinnedPosts;
