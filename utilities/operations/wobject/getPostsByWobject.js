@@ -193,7 +193,7 @@ const getNewsFilterCondition = ({
 
 const getRemoveFilter = (processedObj) => _.chain([
   ...(processedObj.remove || []),
-  ..._.map(getPinFilter(processedObj), (el) => `${el.author}/${el.permlink}`),
+  ..._.map(processedObj.pin, 'body'),
 ])
   .compact()
   .uniq()
@@ -202,17 +202,3 @@ const getRemoveFilter = (processedObj) => _.chain([
     return { author, permlink };
   })
   .value();
-
-const getPinFilter = (processedObj) => {
-  const filteredPinBody = _.difference(_.map(processedObj.pin, 'body'), processedObj.remove);
-
-  return _.chain(processedObj.pin)
-    .filter((el) => _.includes(filteredPinBody, el.body))
-    .sort(wObjectHelper.arrayFieldsSpecialSort)
-    .take(3)
-    .map((el) => {
-      const [author, permlink] = el.body.split('/');
-      return { author, permlink };
-    })
-    .value();
-};
