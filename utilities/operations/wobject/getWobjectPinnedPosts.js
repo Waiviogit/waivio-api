@@ -14,7 +14,8 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
     .map((el) => el.body);
 
   const processedCurrentUser = (processedObj?.pin ?? [])
-    .filter((el) => pinnedLinksCurrentUser.includes(el.body));
+    .filter((el) => pinnedLinksCurrentUser.includes(el.body))
+    .map((el) => el.body);
 
   const othersPin = (processedObj?.pin ?? [])
     .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
@@ -23,6 +24,8 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
     .map((el) => el.body);
 
   const resultLinks = [...processedCurrentUser, ...othersPin];
+
+
 
   return resultLinks.map((link) => {
     const [author, permlink] = link.split('/');
