@@ -25,7 +25,7 @@ exports.schema = [
   },
   {
     path: '/wobject/:authorPermlink/pin',
-    method: 'POST',
+    method: 'GET',
     case: 4,
     wobjects_path: 'wobjects',
   },

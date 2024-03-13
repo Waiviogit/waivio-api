@@ -1027,8 +1027,7 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
 const getCurrentUserPins = ({ object, userName }) => _
   .chain(object.fields)
   .filter(
-    (f) => (f.name === FIELDS_NAMES.PIN && f.creator === userName)
-      || (!!(f.active_votes ?? []).find((v) => v.voter === userName)
+    (f) => (!!(f.active_votes ?? []).find((v) => v.voter === userName && v.percent > 0)
         && f.name === FIELDS_NAMES.PIN),
   )
   .map((el) => el.body)
