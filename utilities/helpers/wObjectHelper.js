@@ -1006,9 +1006,7 @@ const getPinFilter = (processedObj, pinnedLinksCurrentUser) => {
     .filter((el) => !(processedObj?.remove ?? []).includes(el.body))
     .map((el) => el.body);
 
-  const processedCurrentUser = (processedObj?.pin ?? [])
-    .filter((el) => pinnedLinksCurrentUser.includes(el.body))
-    .map((el) => el.body);
+  const processedCurrentUser = filteredPinBody.filter((el) => pinnedLinksCurrentUser.includes(el));
 
   const othersPin = (processedObj?.pin ?? [])
     .filter((el) => filteredPinBody.includes(el.body) && !pinnedLinksCurrentUser.includes(el.body))
