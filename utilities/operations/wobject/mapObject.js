@@ -1,18 +1,25 @@
 const { Wobj } = require('models');
 const {
-  OBJECT_TYPES, FIELDS_NAMES, REQUIREDFILDS_WOBJ_LIST, MAP_OBJECT_SEARCH_FIELDS,
+  OBJECT_TYPES,
+  FIELDS_NAMES,
+  REQUIREDFILDS_WOBJ_LIST,
+  MAP_OBJECT_SEARCH_FIELDS,
+  REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
-const { ERROR_OBJ } = require('constants/common');
+const { ERROR_OBJ, REDIS_KEYS, TTL_TIME } = require('constants/common');
 const _ = require('lodash');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { User } = require('../../../models');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { parseJson } = require('../../helpers/jsonHelper');
-const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 const { setFilterByDistance } = require('../../helpers/geoHelper');
-const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { getAllObjectsInList } = require('./wobjectInfo');
+const {
+  getCachedData,
+  setCachedData,
+} = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const adjustRectangles = (rectangles, clientArea) => rectangles.map((rectangle) => {
   const [bottomLeft, topRight] = rectangle;
@@ -30,6 +37,34 @@ const adjustRectangles = (rectangles, clientArea) => rectangles.map((rectangle) 
 
   return [[x1, y1], [x2, y2]];
 }).filter((rectangle) => rectangle !== null); // Filter out null values
+
+const getCachedListsByHost = async ({ authorPermlink, app }) => {
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getCachedListsByHost:${app.host}:${authorPermlink}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    getAllObjectsInList({
+      authorPermlink,
+      app,
+      scanEmbedded: true,
+    }).then((data) => setCachedData({
+      key, data, ttl: TTL_TIME.THIRTY_DAYS,
+    }));
+
+    return jsonHelper.parseJson(cache, []);
+  }
+
+  const objectLinks = await getAllObjectsInList({
+    authorPermlink,
+    app,
+    scanEmbedded: true,
+  });
+
+  await setCachedData({
+    key, data: objectLinks, ttl: TTL_TIME.THIRTY_DAYS,
+  });
+
+  return objectLinks;
+};
 
 const makeMapCondition = ({ clientBox, boxCoordinates }) => {
   const clientCoordinates = [clientBox.bottomPoint, clientBox.topPoint];
@@ -107,10 +142,9 @@ const getObjectsFromAdvancedMap = async ({
   // if (social) authority.push(...[app.owner, ...app.authority]);
 
   if (objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) {
-    const objectLinks = await getAllObjectsInList({
+    const objectLinks = await getCachedListsByHost({
       authorPermlink: objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST],
       app,
-      scanEmbedded: true,
     });
 
     if (objectLinks.length) {
