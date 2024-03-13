@@ -267,3 +267,10 @@ exports.wobjectAdvancedMapScheme = Joi.object().keys({
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
+
+exports.getRawField = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  name: Joi.string().required(),
+  locale: Joi.string().default('en-US'),
+  body: Joi.string().required(),
+});
