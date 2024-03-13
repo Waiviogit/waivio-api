@@ -12,7 +12,7 @@ const {
   getIpFromHeaders,
 } = require('utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
-const { getFields } = require('../utilities/operations/wobject/getFields');
+const { getFields, getOneField } = require('../utilities/operations/wobject/getFields');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 
 const index = async (req, res, next) => {
@@ -557,6 +557,26 @@ const getObjectsOnMap = async (req, res, next) => {
   next();
 };
 
+const getRawField = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      authorPermlink: req.params.authorPermlink,
+      locale: req.headers.locale,
+    },
+    validators.wobject.getRawField,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, error } = await getOneField(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -589,4 +609,5 @@ module.exports = {
   getListItemsLocales,
   getPinnedPosts,
   getObjectsOnMap,
+  getRawField,
 };
