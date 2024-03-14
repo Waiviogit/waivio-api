@@ -67,6 +67,7 @@ models.UserCommentDraft = require('./schemas/UserCommentDraftSchema');
 models.UserDraft = require('./schemas/UserDraftSchema');
 models.Threads = require('./schemas/ThreadsSchema');
 models.GuestMana = require('./schemas/GuestManaSchema');
+models.Delegation = require('./schemas/DelegationSchema');
 
 module.exports = {
   Mongoose: mongoose,

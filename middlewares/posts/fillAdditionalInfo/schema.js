@@ -6,6 +6,11 @@ exports.schema = [
     case: 1,
   },
   {
+    path: '/wobject/:authorPermlink/pin',
+    method: 'GET',
+    case: 1,
+  },
+  {
     path: '/wobjects/map/last-post',
     method: 'POST',
     case: 4,

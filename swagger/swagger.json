@@ -6741,6 +6741,51 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/pin": {
+      "get": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return posts for specified wobject",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "locale",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return posts",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject/{authorPermlink}/newsfeed": {
       "post": {
         "tags": [
@@ -7632,6 +7677,126 @@
                 "type": "string"
               }
             }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/map": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return objects from object_type map",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [{
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following in wobjects",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Read locale of user(default en-EN)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "box": {
+                  "$ref": "#/definitions/box_params"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/wobject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/raw-field": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return objects from object_type map",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Read locale of user(default en-EN)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "body": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/raw_field"
+            }
+          },
+          "404": {
+            "description": "Not Found"
           }
         }
       }
@@ -10110,6 +10275,38 @@
             "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
             "approvePercent": 100,
             "createdAt": 1557088930000
+          }
+        }
+      },
+      "raw_field": {
+        "type": "object",
+        "properties": {
+          "weight": {
+            "type": "number"
+          },
+          "body": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "active_votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/post_active_votes"
+            }
           }
         }
       },

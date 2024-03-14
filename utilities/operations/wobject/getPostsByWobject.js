@@ -62,7 +62,16 @@ module.exports = async (data) => {
     groupIdPermlinks.push(...links);
   }
 
-  const removeFilter = getRemoveFilter(processedObj);
+  const pinnedLinksCurrentUser = wObjectHelper
+    .getCurrentUserPins({ object: wObject, userName: data.userName });
+
+  const removeFilter = [
+    ...wObjectHelper.getPinFilter(processedObj, pinnedLinksCurrentUser),
+    ..._.map(processedObj.remove, (el) => {
+      const [author, permlink] = el.split('/');
+      return { author, permlink };
+    }),
+  ];
 
   const relistedLinks = await getRelistedLinks(data.author_permlink);
 
@@ -80,15 +89,16 @@ module.exports = async (data) => {
   });
   if (error) return { error };
 
-  if (data.skip === 0) {
-    const { posts: pinPosts } = await Post.getManyPosts(getPinFilter(processedObj));
-    if (!_.isEmpty(pinPosts)) {
-      posts.unshift(..._.map(pinPosts, (el) => ({ ...el, pin: true })));
-    }
-  }
-
   if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
     _.forEach(posts, (p) => {
+      const pinnedInFeed = _.find(
+        processedObj.pin,
+        (pin) => pin.body === `${p.author}/${p.permlink}`,
+      );
+      if (pinnedInFeed) {
+        p.pin = true;
+      }
+
       if (_.includes(pinnedLinks, `${p.author}/${p.permlink}`)) {
         p.hasPinUpdate = true;
       }
@@ -196,30 +206,4 @@ const getNewsFilterCondition = ({
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
 
   return { condition };
-};
-
-const getRemoveFilter = (processedObj) => _.chain([
-  ...(processedObj.remove || []),
-  ..._.map(getPinFilter(processedObj), (el) => `${el.author}/${el.permlink}`),
-])
-  .compact()
-  .uniq()
-  .map((el) => {
-    const [author, permlink] = el.split('/');
-    return { author, permlink };
-  })
-  .value();
-
-const getPinFilter = (processedObj) => {
-  const filteredPinBody = _.difference(_.map(processedObj.pin, 'body'), processedObj.remove);
-
-  return _.chain(processedObj.pin)
-    .filter((el) => _.includes(filteredPinBody, el.body))
-    .sort(wObjectHelper.arrayFieldsSpecialSort)
-    .take(3)
-    .map((el) => {
-      const [author, permlink] = el.body.split('/');
-      return { author, permlink };
-    })
-    .value();
 };

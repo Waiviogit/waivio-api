@@ -4,37 +4,29 @@ const engineOperations = require('utilities/hiveEngine/engineOperations');
 const { getWaivioAdminsAndOwner } = require('utilities/helpers/getWaivioAdminsAndOwnerHelper');
 const { getBlacklist, getWobjectFields, calculateApprovePercent } = require('utilities/helpers/wObjectHelper');
 const ObjectTypeModel = require('models/ObjectTypeModel');
+const wObjectModel = require('models/wObjectModel');
 const {
   FIELDS_NAMES, LIST_TYPES,
 } = require('constants/wobjectsData');
 const { postsUtil } = require('utilities/hiveApi');
+const { ERROR_OBJ } = require('constants/common');
 
-exports.getFields = async ({
-  authorPermlink, skip, limit, type, locale, sort, app,
+const getOneField = async ({
+  authorPermlink, body, name, locale = 'en-US',
 }) => {
-  const { wobject, error } = await getWobjectFields(authorPermlink);
-  if (error) return { error };
+  const { result } = await wObjectModel.findOne(
+    {
+      author_permlink: authorPermlink,
+      fields: { $elemMatch: { body, name, locale } },
+    },
+    {
+      'fields.$': 1,
+    },
+  );
 
-  const { objectType } = await ObjectTypeModel.getOne({ name: wobject.object_type });
-  const exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
-  const updates = filterExposedFields({
-    fields: wobject.fields,
-    exposedFields,
-    type,
-    locale,
-  });
-  const limitedUpdates = _.chain(updates)
-    .orderBy([sort], ['desc'])
-    .slice(skip, skip + limit)
-    .value();
+  if (!result || !result?.fields?.length) return { error: ERROR_OBJ.NOT_FOUND };
 
-  const fields = await fillUpdates({
-    limitedUpdates,
-    wobject,
-    app,
-  });
-
-  return { fields, hasMore: updates.length > skip + limit };
+  return { result: result.fields[0] };
 };
 
 const filterExposedFields = ({
@@ -105,3 +97,36 @@ const fillUpdates = async ({
 
 const formatUpdatesForRequest = (updates) => (
   _.map(updates, (update) => [update.author, update.permlink]));
+
+const getFields = async ({
+  authorPermlink, skip, limit, type, locale, sort, app,
+}) => {
+  const { wobject, error } = await getWobjectFields(authorPermlink);
+  if (error) return { error };
+
+  const { objectType } = await ObjectTypeModel.getOne({ name: wobject.object_type });
+  const exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
+  const updates = filterExposedFields({
+    fields: wobject.fields,
+    exposedFields,
+    type,
+    locale,
+  });
+  const limitedUpdates = _.chain(updates)
+    .orderBy([sort], ['desc'])
+    .slice(skip, skip + limit)
+    .value();
+
+  const fields = await fillUpdates({
+    limitedUpdates,
+    wobject,
+    app,
+  });
+
+  return { fields, hasMore: updates.length > skip + limit };
+};
+
+module.exports = {
+  getFields,
+  getOneField,
+};

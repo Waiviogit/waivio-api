@@ -64,6 +64,12 @@ exports.postsScheme = Joi.object().keys({
   newsPermlink: Joi.string().default(''),
 });
 
+exports.pinPostsScheme = Joi.object().keys({
+  author_permlink: Joi.string().required(),
+  follower: Joi.string(),
+  locale: Joi.string().valid(...LANGUAGES).default('en-US'),
+});
+
 exports.feedScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).max(100)
     .default(30),
@@ -249,6 +255,22 @@ exports.wobjectsListDepartmentsScheme = Joi.object().keys({
   scanEmbedded: Joi.boolean().default(true),
 });
 
+exports.wobjectAdvancedMapScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  follower: Joi.string(),
+  box: boxScheme.required(),
+  locale: Joi.string().default('en-US'),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(1).default(10),
+});
+
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
+});
+
+exports.getRawField = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  name: Joi.string().required(),
+  locale: Joi.string().default('en-US'),
+  body: Joi.string().required(),
 });
