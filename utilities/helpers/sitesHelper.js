@@ -191,10 +191,33 @@ exports.getWebsiteData = (payments, site) => {
 };
 
 exports.siteInfo = async (host) => {
-  const { result: app } = await App.findOne({ host, inherited: true });
-  if (!app) return { error: { status: 404, message: 'App not found!' } };
+  const key = `${REDIS_KEYS.API_RES_CACHE}:siteInfo:${host}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    return jsonHelper.parseJson(cache, {});
+  }
 
-  return { result: _.pick(app, ['status']) };
+  const { result: app } = await App.findOne({ host, inherited: true });
+  if (!app) {
+    const resp = { error: { status: 404, message: 'App not found!' } };
+    await setCachedData({
+      key, data: resp, ttl: TTL_TIME.THIRTY_MINUTES,
+    });
+
+    return resp;
+  }
+
+  const resp = {
+    result: {
+      status: app.status,
+      parentHost: app.parentHost,
+    },
+  };
+  await setCachedData({
+    key, data: resp, ttl: TTL_TIME.THIRTY_MINUTES,
+  });
+
+  return resp;
 };
 
 exports.firstLoad = async ({ app, redirect }) => {

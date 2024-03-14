@@ -47,17 +47,17 @@ exports.saveUserIp = async (req, res, next) => {
   }
   req.appData = result;
 
-  if (_.includes(INACTIVE_STATUSES, result.status)) {
-    const { origin, referer } = req.headers;
-    const { result: parent } = await App.findOne({ _id: result.parent });
-    if (req.method !== REQ_METHOD.POST || req.url !== `${URL.API}${URL.SITES}`) {
-      return res
-        .status(RESPONSE_STATUS.FORBIDDEN)
-        .send({ message: ERROR_MESSAGE.WEBSITE_UNAVAILABLE });
-    }
-    req.pathToRedirect = `${URL.HTTPS}${_.get(parent, 'host', config.appHost)}${referer.replace(origin, '')}`;
-    return next();
-  }
+  // if (_.includes(INACTIVE_STATUSES, result.status)) {
+  //   const { origin, referer } = req.headers;
+  //   const { result: parent } = await App.findOne({ _id: result.parent });
+  //   if (req.method !== REQ_METHOD.POST || req.url !== `${URL.API}${URL.SITES}`) {
+  //     return res
+  //       .status(RESPONSE_STATUS.FORBIDDEN)
+  //       .send({ message: ERROR_MESSAGE.WEBSITE_UNAVAILABLE });
+  //   }
+  //   req.pathToRedirect = `${URL.HTTPS}${_.get(parent, 'host', config.appHost)}${referer.replace(origin, '')}`;
+  //   return next();
+  // }
 
   if (!ip) return next();
   await setSiteActiveUser({ host, ip, userAgent: req.get('User-Agent') });
