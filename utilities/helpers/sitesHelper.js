@@ -220,11 +220,10 @@ exports.siteInfo = async (host) => {
   return resp;
 };
 
-exports.firstLoad = async ({ app, redirect }) => {
+exports.firstLoad = async ({ app }) => {
   if (!app) {
     return {
       result: {
-        redirect,
         aboutObject: {},
       },
     };
@@ -234,7 +233,6 @@ exports.firstLoad = async ({ app, redirect }) => {
   return {
     result: {
       ..._.pick(app, FIRST_LOAD_FIELDS),
-      redirect,
       administrators: [app.owner, ...app.admins],
     },
   };
