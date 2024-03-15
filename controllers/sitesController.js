@@ -258,7 +258,7 @@ exports.getMapCoordinates = async (req, res, next) => {
 
 exports.firstLoad = async (req, res, next) => {
   const { result, error } = await sitesHelper
-    .firstLoad({ app: req.appData, redirect: req.pathToRedirect || '' });
+    .firstLoad({ app: req.appData });
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
