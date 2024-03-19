@@ -105,7 +105,7 @@ const create = async (condition) => {
 };
 
 const getAppFromCache = async (host) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:getAppFromCache:${host}`
+  const key = `${REDIS_KEYS.API_RES_CACHE}:getAppFromCache:${host}`;
   const cache = await getCachedData(key);
   if (cache) {
     return jsonHelper.parseJson(cache, null);
