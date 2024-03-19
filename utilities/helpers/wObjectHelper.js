@@ -272,6 +272,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.ADD_ON:
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
+      case FIELDS_NAMES.WALLET_ADDRESS:
         if (arrayFieldPush({
           filter,
           field,
