@@ -69,6 +69,7 @@ exports.FIELDS_NAMES = {
   MAP_MOBILE_VIEW: 'mapMobileView',
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
+  WALLET_ADDRESS: 'walletAddress',
 };
 
 exports.LIST_TYPES = {
@@ -170,6 +171,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.SIMILAR,
   this.FIELDS_NAMES.AFFILIATE_GEO_AREA,
   this.FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
+  this.FIELDS_NAMES.WALLET_ADDRESS,
 ];
 
 exports.REQUIREDFIELDS = [

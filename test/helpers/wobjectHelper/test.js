@@ -2031,4 +2031,36 @@ describe('On wobjectHelper', async () => {
       expect(advancedMap).to.be.eq(body);
     });
   });
+
+  describe('On WALLET_ADDRESS  field', async () => {
+    const fieldName = FIELDS_NAMES.WALLET_ADDRESS;
+
+    const body = JSON.stringify({
+      title: faker.random.string(),
+      symbol: faker.random.string(),
+      address: faker.random.string(),
+    });
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BUSINESS,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  WALLET_ADDRESS ', async () => {
+      const walletAddress = result[fieldName][0];
+      expect(walletAddress.body).to.be.eq(body);
+    });
+  });
 });
