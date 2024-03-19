@@ -201,7 +201,7 @@ exports.siteInfo = async (host) => {
   if (!app) {
     const resp = { error: { status: 404, message: 'App not found!' } };
     await setCachedData({
-      key, data: resp, ttl: TTL_TIME.THIRTY_MINUTES,
+      key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
     });
 
     return resp;
@@ -214,7 +214,7 @@ exports.siteInfo = async (host) => {
     },
   };
   await setCachedData({
-    key, data: resp, ttl: TTL_TIME.THIRTY_MINUTES,
+    key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
   });
 
   return resp;
