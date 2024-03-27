@@ -27,7 +27,7 @@ const {
 } = require('utilities/redis');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const currenciesRequests = require('utilities/requests/currenciesRequests');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 const BigNumber = require('bignumber.js');
 
 /**
