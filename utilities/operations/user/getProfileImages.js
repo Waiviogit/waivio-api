@@ -8,13 +8,8 @@ const getProfileImages = async ({ names }) => {
   });
 
   return usersData.map((el) => {
-    if (el.profile_image) {
-      return { name: el.name, image: el.profile_image };
-    }
     const json = jsonHelper.parseJson(el.posting_json_metadata);
-
     const image = json?.profile?.profile_image ?? '';
-
     return { name: el.name, image };
   });
 };
