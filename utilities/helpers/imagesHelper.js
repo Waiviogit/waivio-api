@@ -1,8 +1,8 @@
-const uuid = require('uuid').v4;
 const formidable = require('formidable');
-const fsp = require('fs/promises');
+const fsp = require('node:fs/promises');
 const axios = require('axios');
 const jo = require('jpeg-autorotate');
+const crypto = require('node:crypto');
 
 const prepareImage = async (req) => {
   const form = new formidable.IncomingForm();
@@ -47,7 +47,7 @@ const generateFileName = async ({ type, userName }) => {
     case 'avatar':
       return `avatar/${userName}`;
     default:
-      return `${Math.round(new Date() / 1000)}_${uuid()}`;
+      return `${Math.round(new Date() / 1000)}_${crypto.randomUUID()}`;
   }
 };
 
