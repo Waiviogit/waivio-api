@@ -1,11 +1,11 @@
 const _ = require('lodash');
-const uuid = require('uuid').v4;
 const { relatedAlbum } = require('models');
 const { FIELDS_NAMES } = require('constants/wobjectsData');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const {
   Wobj,
 } = require('models');
+const crypto = require('crypto');
 
 const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
   .compact()
@@ -73,7 +73,7 @@ module.exports = async ({
         .slice(0, limit)
         .forEach((el) => {
           const [creator] = el.postAuthorPermlink.split('_');
-          el.permlink = uuid();
+          el.permlink = crypto.randomUUID();
           el.id = `${el.id}-related`;
           el.creator = creator;
         })
