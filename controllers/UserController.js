@@ -5,6 +5,7 @@ const {
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
   guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana,
+  getProfileImages,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
@@ -615,6 +616,16 @@ const hiveUserExist = async (req, res, next) => {
   next();
 };
 
+const getAvatars = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.user.getAvatarsSchema, next);
+  if (!value) return;
+
+  const result = await getProfileImages(value);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -659,4 +670,5 @@ module.exports = {
   getFavorites,
   hiveUserExist,
   getGuestMana,
+  getAvatars,
 };

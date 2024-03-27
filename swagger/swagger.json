@@ -9393,6 +9393,57 @@
         }
       }
     },
+    "/api/users/avatar" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "description" : "get users avatar",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name" : "params",
+            "in" : "body",
+            "required" : true,
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "names" : {
+                  "type" : "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type" : "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "image": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/{userName}/affiliate": {
       "post": {
         "tags": [
