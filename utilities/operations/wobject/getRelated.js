@@ -5,7 +5,7 @@ const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const {
   Wobj,
 } = require('models');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
   .compact()

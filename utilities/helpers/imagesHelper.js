@@ -1,8 +1,8 @@
 const formidable = require('formidable');
-const fsp = require('fs/promises');
+const fsp = require('node:fs/promises');
 const axios = require('axios');
 const jo = require('jpeg-autorotate');
-const crypto = require('crypto');
+const crypto = require('node:crypto');
 
 const prepareImage = async (req) => {
   const form = new formidable.IncomingForm();
