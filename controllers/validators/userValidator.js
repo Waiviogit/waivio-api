@@ -310,3 +310,7 @@ exports.getFavoritesSchema = Joi.object().keys({
   objectType: Joi.string(),
   locale: Joi.string().valid(...LANGUAGES).default('auto'),
 });
+
+exports.getAvatarsSchema = Joi.object().keys({
+  names: Joi.array().items(Joi.string()).min(1).max(30),
+});

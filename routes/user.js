@@ -80,5 +80,6 @@ userRoutes.route('/users/guest-wallet/hive-withdraw').post(reqTimeMonitor, UserC
 userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(reqTimeMonitor, UserController.guestWithdrawHiveEstimates);
 userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(reqTimeMonitor, UserController.guestWithdrawHiveRange);
 userRoutes.route('/users/min-reject').post(reqTimeMonitor, UserController.getMinReject);
+userRoutes.route('/users/avatar').post(reqTimeMonitor, UserController.getAvatars);
 
 module.exports = userRoutes;
