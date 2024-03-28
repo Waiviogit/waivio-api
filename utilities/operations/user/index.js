@@ -29,5 +29,6 @@ moduleExports.wobjectDraft = require('./wobjectDraft');
 moduleExports.favorites = require('./favorites');
 moduleExports.userExist = require('./userExist');
 moduleExports.guestMana = require('./guestMana');
+moduleExports.getProfileImages = require('./getProfileImages');
 
 module.exports = moduleExports;
