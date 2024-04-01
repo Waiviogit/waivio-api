@@ -118,7 +118,10 @@ const getObjectsFromAdvancedMap = async ({
   const tags = parseJson(objectWithMap[FIELDS_NAMES.MAP_OBJECT_TAGS], null);
   const objectTypes = parseJson(objectWithMap[FIELDS_NAMES.MAP_OBJECT_TYPES], null);
 
-  if (!boxCoordinates && !tags && !objectTypes) return emptyResp;
+  if (!boxCoordinates
+    && !tags
+    && !objectTypes
+    && !objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) return emptyResp;
 
   const mapCondition = makeMapCondition({ clientBox: box, boxCoordinates });
 
