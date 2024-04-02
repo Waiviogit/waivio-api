@@ -2063,4 +2063,32 @@ describe('On wobjectHelper', async () => {
       expect(walletAddress.body).to.be.eq(body);
     });
   });
+
+  describe('On ADMIN_ASSIGNED  field', async () => {
+    const fieldName = FIELDS_NAMES.ADMIN_ASSIGNED;
+
+    const body = faker.random.string();
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BUSINESS,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  ADMIN_ASSIGNED ', async () => {
+      const walletAddress = result[fieldName][0];
+      expect(walletAddress.body).to.be.eq(body);
+    });
+  });
 });
