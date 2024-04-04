@@ -2064,8 +2064,8 @@ describe('On wobjectHelper', async () => {
     });
   });
 
-  describe('On ADMIN_ASSIGNED  field', async () => {
-    const fieldName = FIELDS_NAMES.ADMIN_ASSIGNED;
+  describe('On DELEGATION  field', async () => {
+    const fieldName = FIELDS_NAMES.DELEGATION;
 
     const body = faker.random.string();
     let obj, result;
@@ -2086,7 +2086,7 @@ describe('On wobjectHelper', async () => {
       });
     });
 
-    it('should eq  ADMIN_ASSIGNED ', async () => {
+    it('should eq  DELEGATION ', async () => {
       const walletAddress = result[fieldName][0];
       expect(walletAddress.body).to.be.eq(body);
     });

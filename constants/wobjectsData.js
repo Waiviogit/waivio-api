@@ -70,7 +70,7 @@ exports.FIELDS_NAMES = {
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
-  ADMIN_ASSIGNED: 'adminAssigned',
+  DELEGATION: 'delegation',
 };
 
 exports.LIST_TYPES = {
@@ -173,7 +173,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.AFFILIATE_GEO_AREA,
   this.FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
   this.FIELDS_NAMES.WALLET_ADDRESS,
-  this.FIELDS_NAMES.ADMIN_ASSIGNED,
+  this.FIELDS_NAMES.DELEGATION,
 ];
 
 exports.REQUIREDFIELDS = [

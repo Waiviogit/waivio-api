@@ -273,7 +273,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
       case FIELDS_NAMES.WALLET_ADDRESS:
-      case FIELDS_NAMES.ADMIN_ASSIGNED:
+      case FIELDS_NAMES.DELEGATION:
         if (arrayFieldPush({
           filter,
           field,
@@ -796,7 +796,7 @@ const getOwnerAndAdmins = (app) => {
   return { owner, admins };
 };
 
-const filterAssignedAdmin = (admins, field) => field.name === FIELDS_NAMES.ADMIN_ASSIGNED
+const filterAssignedAdmin = (admins, field) => field.name === FIELDS_NAMES.DELEGATION
   && admins.includes(field.creator);
 
 const getAssignedAdmins = ({
@@ -813,7 +813,7 @@ const getAssignedAdmins = ({
   fields = addDataToFields({
     isOwnershipObj: !!ownership.length,
     fields,
-    filter: [FIELDS_NAMES.ADMIN_ASSIGNED],
+    filter: [FIELDS_NAMES.DELEGATION],
     admins,
     ownership,
     administrative,
@@ -824,14 +824,14 @@ const getAssignedAdmins = ({
   const processed = getFieldsToDisplay(
     fields,
     'en-US',
-    [FIELDS_NAMES.ADMIN_ASSIGNED],
+    [FIELDS_NAMES.DELEGATION],
     object.author_permlink,
     ownership,
   );
 
-  if (!processed[FIELDS_NAMES.ADMIN_ASSIGNED]) return [];
+  if (!processed[FIELDS_NAMES.DELEGATION]) return [];
 
-  return processed[FIELDS_NAMES.ADMIN_ASSIGNED].map((el) => el.body);
+  return processed[FIELDS_NAMES.DELEGATION].map((el) => el.body);
 };
 
 /** Parse wobjects to get its winning */
