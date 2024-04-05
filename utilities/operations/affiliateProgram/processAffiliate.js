@@ -51,7 +51,7 @@ const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
 
 const makeFilterAppCondition = (app) => {
   const regex = app
-    ? `\\["${app.host.replace(/\./g, '\\.')}`
+    ? `(\\["${app.host.replace(/\./g, '\\.')}|\\["www\.${app.host.replace(/\./g, '\\.')})`
     : `\\["${config.appHost.replace(/\./g, '\\.')}`;
 
   const match = {
@@ -202,7 +202,7 @@ const processUserAffiliate = async ({
 };
 
 const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:processAppAffiliate:${app?.host}${locale}`
+  const key = `${REDIS_KEYS.API_RES_CACHE}:processAppAffiliate:${app?.host}${locale}`;
 
   const cache = await getCachedData(key);
   if (cache) return jsonHelper.parseJson(cache, []);
