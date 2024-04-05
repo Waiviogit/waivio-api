@@ -56,7 +56,12 @@ const show = async (req, res, next) => {
 
   const countryCode = await getCountryCodeFromIp(ip);
 
-  const { wobjectData, error } = await wobjectInfo.getOne({ ...value, ip, countryCode });
+  const { wobjectData, error } = await wobjectInfo.getOne({
+    ...value,
+    ip,
+    countryCode,
+    app: req.appData,
+  });
 
   if (error) return next(error);
 
