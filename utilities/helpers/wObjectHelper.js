@@ -606,6 +606,8 @@ const getLinkToPageLoad = (obj) => {
       return `/object/${obj.author_permlink}/shop`;
     case OBJECT_TYPES.WEB_PAGE:
       return `/object/${obj.author_permlink}/webpage`;
+    case OBJECT_TYPES.MAP:
+      return `/object/${obj.author_permlink}/map`;
     default:
       return `/object/${obj.author_permlink}`;
   }
