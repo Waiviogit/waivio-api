@@ -337,12 +337,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
   const { count } = await wobjectSubscriptions.getFollowersCount(wObject.author_permlink);
   wObject.followers_count = count || 0;
 
-  let app;
-  if (data.appName) {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
-    ({ result: app } = await App.findOne({ host }));
-  }
+  const { app } = data;
 
   // format listItems field
   const keyName = wObject.object_type.toLowerCase() === OBJECT_TYPES.LIST ? 'listItems' : 'menuItems';
