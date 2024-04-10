@@ -13,7 +13,7 @@ const {
 } = require('utilities/helpers/cacheHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
-const getPipe = ({ condition, excluded }) => [
+const getPipe = ({ condition, excluded = [] }) => [
   {
     $match: condition,
   },
