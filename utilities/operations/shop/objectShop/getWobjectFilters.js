@@ -45,20 +45,26 @@ const getMoreTagFilters = async ({
 const getObjectFilters = async ({
   authorPermlink, app, path,
 }) => {
-  const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
-  if (error) return { error };
-
-  const objects = await getObjects({ authorPermlink, app, path });
-
-  const tagCategoryFilters = shopHelper
-    .getFilteredTagCategories({ objects, tagCategories });
-
   return {
     result: {
       rating: SHOP_ITEM_RATINGS,
-      tagCategoryFilters,
+      tagCategoryFilters: [],
     },
   };
+  // const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
+  // if (error) return { error };
+  //
+  // const objects = await getObjects({ authorPermlink, app, path });
+  //
+  // const tagCategoryFilters = shopHelper
+  //   .getFilteredTagCategories({ objects, tagCategories });
+  //
+  // return {
+  //   result: {
+  //     rating: SHOP_ITEM_RATINGS,
+  //     tagCategoryFilters,
+  //   },
+  // };
 };
 
 module.exports = {
