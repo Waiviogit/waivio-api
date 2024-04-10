@@ -13,7 +13,7 @@ const {
 } = require('utilities/helpers/cacheHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
-const getPipe = (condition) => [
+const getPipe = ({ condition, excluded }) => [
   {
     $match: condition,
   },
@@ -34,10 +34,11 @@ const getPipe = (condition) => [
       path: '$departments',
     },
   },
+  ...excluded.length && { departments: { $nin: excluded } },
   {
     $group: {
       _id: '$departments',
-      metaGroupIds: { $addToSet: '$_id' },
+      //   metaGroupIds: { $addToSet: '$_id' },
       objectsCount: { $sum: 1 },
       related: { $addToSet: '$related' },
     },
@@ -45,7 +46,7 @@ const getPipe = (condition) => [
   {
     $project: {
       name: '$_id',
-      metaGroupIds: 1,
+      // metaGroupIds: 1,
       objectsCount: 1,
       related: {
         $reduce: {
@@ -78,7 +79,12 @@ const getWobjectDepartments = async ({
 
   if (_.isEmpty(wobjectFilter)) return emptyResult;
   // or we can group in aggregation
-  const { wobjects: result } = await Wobj.fromAggregation(getPipe(wobjectFilter));
+
+  // excluded to pipe
+  const { wobjects: result } = await Wobj.fromAggregation(getPipe({
+    condition: wobjectFilter,
+    excluded,
+  }));
 
   // const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
   // const groupedResult = _.groupBy(result, 'metaGroupId');
