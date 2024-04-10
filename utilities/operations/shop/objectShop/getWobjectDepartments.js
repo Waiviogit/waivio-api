@@ -13,51 +13,59 @@ const {
 } = require('utilities/helpers/cacheHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
-const getPipe = ({ condition, excluded = [] }) => [
-  {
-    $match: condition,
-  },
-  {
-    $unwind: {
-      path: '$departments',
+const getPipe = ({ condition, excluded = [] }) => {
+  const pipeline = [
+    {
+      $match: condition,
     },
-  },
-  {
-    $group: {
-      _id: '$metaGroupId',
-      departments: { $addToSet: '$departments' },
-      related: { $addToSet: '$departments' },
+    {
+      $unwind: {
+        path: '$departments',
+      },
     },
-  },
-  {
-    $unwind: {
-      path: '$departments',
+    {
+      $group: {
+        _id: '$metaGroupId',
+        departments: { $addToSet: '$departments' },
+        related: { $addToSet: '$departments' },
+      },
     },
-  },
-  ...excluded.length && { departments: { $nin: excluded } },
-  {
-    $group: {
-      _id: '$departments',
-      //   metaGroupIds: { $addToSet: '$_id' },
-      objectsCount: { $sum: 1 },
-      related: { $addToSet: '$related' },
+    {
+      $unwind: {
+        path: '$departments',
+      },
     },
-  },
-  {
-    $project: {
-      name: '$_id',
-      // metaGroupIds: 1,
-      objectsCount: 1,
-      related: {
-        $reduce: {
-          input: '$related',
-          initialValue: [],
-          in: { $setUnion: ['$$value', '$$this'] },
+    {
+      $group: {
+        _id: '$departments',
+        //   metaGroupIds: { $addToSet: '$_id' },
+        objectsCount: { $sum: 1 },
+        related: { $addToSet: '$related' },
+      },
+    },
+    {
+      $project: {
+        name: '$_id',
+        // metaGroupIds: 1,
+        objectsCount: 1,
+        related: {
+          $reduce: {
+            input: '$related',
+            initialValue: [],
+            in: { $setUnion: ['$$value', '$$this'] },
+          },
         },
       },
     },
-  },
-];
+  ];
+
+  // Conditionally add the excluded pipeline stage
+  if (excluded.length > 0) {
+    pipeline.splice(3, 0, { $match: { departments: { $nin: excluded } } });
+  }
+
+  return pipeline;
+};
 
 const getWobjectDepartments = async ({
   authorPermlink, app, name, excluded, wobjectFilter, path,
