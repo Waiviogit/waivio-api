@@ -334,23 +334,36 @@ const getLangByPopularity = (existedLanguages) => {
   return found.lang;
 };
 
-const listItemsPick = ({ listItems, locale }) => {
+const listItemsPick = ({ listItems, locale, index }) => {
   const result = [];
-  const groupedItems = _.groupBy(listItems, 'body');
+  const groupedItems = index === FIELDS_NAMES.LIST_ITEM
+    ? _.groupBy(listItems, 'body')
+    : _.groupBy(listItems.map((el) => {
+      const parsedLink = jsonHelper.parseJson(el.body);
+      const groupField = parsedLink?.linkToObject || parsedLink?.linkToWeb;
+      return {
+        ...el,
+        groupField,
+      };
+    }), 'groupField');
+
   for (const item in groupedItems) {
-    const ourLocale = groupedItems[item].find((el) => el.locale === locale);
+    const ourLocale = groupedItems[item]
+      .find((el) => arrayFieldPush({ field: el }) && el.locale === locale);
     if (ourLocale) {
       result.push(ourLocale);
       continue;
     }
     if (locale !== 'en-US') {
-      const enLocale = groupedItems[item].find((el) => el.locale === 'en-US');
+      const enLocale = groupedItems[item]
+        .find((el) => arrayFieldPush({ field: el }) && el.locale === 'en-US');
       if (enLocale) {
         result.push(enLocale);
         continue;
       }
     }
-    const maxWeightLocale = _.maxBy(groupedItems[item], 'weight');
+    const maxWeightLocale = _.maxBy(groupedItems[item]
+      .filter((el) => arrayFieldPush({ field: el })), 'weight');
 
     result.push(maxWeightLocale);
   }
@@ -401,7 +414,7 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
 
   return _.reduce(fieldTypes, (acc, el, index) => {
     if ([FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM].includes(index)) {
-      const items = listItemsPick({ listItems: el, locale });
+      const items = listItemsPick({ listItems: el, locale, index });
       acc = [...acc, ...items];
       return acc;
     }
