@@ -340,7 +340,8 @@ const listItemsPick = ({ listItems, locale, index }) => {
     ? _.groupBy(listItems, 'body')
     : _.groupBy(listItems.map((el) => {
       const parsedLink = jsonHelper.parseJson(el.body);
-      const groupField = parsedLink?.linkToObject || parsedLink?.linkToWeb;
+      const groupField = `${parsedLink?.linkToObject}${parsedLink?.style}`
+        || `${parsedLink?.linkToWeb}${parsedLink?.style}`;
       return {
         ...el,
         groupField,
