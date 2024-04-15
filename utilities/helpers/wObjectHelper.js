@@ -364,8 +364,7 @@ const listItemsPick = ({ listItems, locale, index }) => {
     }
     const maxWeightLocale = _.maxBy(groupedItems[item]
       .filter((el) => arrayFieldPush({ field: el })), 'weight');
-
-    result.push(maxWeightLocale);
+    if (maxWeightLocale) result.push(maxWeightLocale);
   }
 
   return result;
@@ -464,6 +463,7 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
+  console.log();
   for (const id of Object.keys(groupedFields)) {
     const approvedFields = _.filter(
       groupedFields[id],
