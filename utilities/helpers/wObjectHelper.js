@@ -463,7 +463,6 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
   if (!filteredFields.length) return {};
 
   const groupedFields = _.groupBy(filteredFields, 'name');
-  console.log();
   for (const id of Object.keys(groupedFields)) {
     const approvedFields = _.filter(
       groupedFields[id],
