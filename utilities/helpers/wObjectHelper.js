@@ -334,26 +334,38 @@ const getLangByPopularity = (existedLanguages) => {
   return found.lang;
 };
 
-const listItemsPick = ({ listItems, locale }) => {
+const listItemsPick = ({ listItems, locale, index }) => {
   const result = [];
-  const groupedItems = _.groupBy(listItems, 'body');
-  console.log();
+  const groupedItems = index === FIELDS_NAMES.LIST_ITEM
+    ? _.groupBy(listItems, 'body')
+    : _.groupBy(listItems.map((el) => {
+      const parsedLink = jsonHelper.parseJson(el.body);
+      const groupField = `${parsedLink?.linkToObject}${parsedLink?.style}`
+        || `${parsedLink?.linkToWeb}${parsedLink?.style}`;
+      return {
+        ...el,
+        groupField,
+      };
+    }), 'groupField');
+
   for (const item in groupedItems) {
-    const ourLocale = groupedItems[item].find((el) => el.locale === locale);
+    const ourLocale = groupedItems[item]
+      .find((el) => arrayFieldPush({ field: el }) && el.locale === locale);
     if (ourLocale) {
       result.push(ourLocale);
       continue;
     }
     if (locale !== 'en-US') {
-      const enLocale = groupedItems[item].find((el) => el.locale === 'en-US');
+      const enLocale = groupedItems[item]
+        .find((el) => arrayFieldPush({ field: el }) && el.locale === 'en-US');
       if (enLocale) {
         result.push(enLocale);
         continue;
       }
     }
-    const maxWeightLocale = _.maxBy(groupedItems[item], 'weight');
-
-    result.push(maxWeightLocale);
+    const maxWeightLocale = _.maxBy(groupedItems[item]
+      .filter((el) => arrayFieldPush({ field: el })), 'weight');
+    if (maxWeightLocale) result.push(maxWeightLocale);
   }
 
   return result;
@@ -401,11 +413,12 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
   }, {});
 
   return _.reduce(fieldTypes, (acc, el, index) => {
-    if (index === 'listItem') {
-      const items = listItemsPick({ listItems: el, locale });
+    if ([FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM].includes(index)) {
+      const items = listItemsPick({ listItems: el, locale, index });
       acc = [...acc, ...items];
       return acc;
     }
+
     const fieldLanguage = _.find(fieldsLanguages, (l) => l.type === index);
     const existedLanguages = _.get(fieldLanguage, 'languages', []);
 
