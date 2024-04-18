@@ -64,4 +64,6 @@ env/
 # next.js build output
 .next
 
+lib.index
+
 package-lock.json
