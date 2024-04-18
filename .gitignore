@@ -63,7 +63,7 @@ env/
 *.env
 # next.js build output
 .next
-
+#vector storage
 lib.index
 
 package-lock.json
