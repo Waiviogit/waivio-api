@@ -1,0 +1,1533 @@
+Lesson 1:
+
+For more details give a link to https://www.waivio.com/object/oal-about-waivio/page
+What is Waivio?
+Waivio is a social media platform where you can earn crypto rewards for your posts.
+Waivio is built on the decentralized social blockchain Hive. Your account, content, funds,
+and social connections are all recorded on the Hive blockchain, and this information cannot
+be changed or deleted by any other party.
+
+For the first time, you have true control over your social profile, and you can safely develop your social presence without the threat of being censored or losing access to your audience.
+Waivio makes it easy to access and use this advanced technology of Hive blockchain, along with many other services and applications that make up the vast Hive ecosystem.
+
+Let's talk about rewards.
+In contrast to social media companies, users on Hive are the primary beneficiaries of their efforts, and even small content creators are rewarded for their work.
+
+There are three ways how you can earn on Waivio:
+
+1. Author
+After you create a post, you have seven days to collect as many likes (upvotes) as possible. These likes will determine the earnings for your post.
+
+In traditional social media, each user has 1 vote. But on the decentralized social network, the value of each vote is determined by the amount of staked (powered up) tokens that user has. The more staked tokens, the higher the vote value.
+
+Because of that - it is better to get a single upvote from a user with a large stake (whale) than to collect many likes from small accounts (plankton). For this reason, building a reputation and social connections on Hive is a good investment of your time.
+
+Not to mention that Posts in the trending section may receive hundreds of dollars in rewards.
+
+At the end of day 7, the reward for the post will be finalized. Half of this amount will be paid to the author of the post and the other half to the curators.
+
+
+2. Curator
+ You can also collect rewards for just upvoting posts on Waivio!
+
+The value of your vote is determined by your stake. Let's imagine that the value of your vote is $0.10. Half of your vote value ($0.05) goes to the author, and another half (approximately $0.05) goes to you.
+
+The number of votes that you can cast per day is limited. You may think of it as a laser gun, which requires recharging after the use. Every time you make a 100% upvote, your voting power drops by 2%. It recharges at the rate of 20% per day. Therefore, you can give 10 upvotes per day in a sustainable way.
+
+Rewards to authors and curators are paid from inflation. This means that you don't lose tokens when you upvote posts. On the contrary, you increase your stake when you discover and upvote great content on Waivio!
+
+
+3. Sponsored Rewards
+These rewards are announced on the Hive blockchain by sponsors.
+
+You can collect these rewards by completing tasks, such as sharing an opinion about a specific product, book or place, or sharing a couple of photos of a dish from a restaurant or featuring sponsored products in a post, photo or video.
+
+This is a unique feature available only on Waivio in the Earn section.
+
+Are you ready to get started?
+1) Start on Waivio by signing into the platform.
+
+(If you already have a Hive account, use the HiveSigner and your keys to sign in. If you are new to Hive, sign in with Google or Facebook to use the platform immediately with a guest account.)
+
+2) To earn rewards, sign in to your account and go to the "Earn" section.
+You will find global and local rewards here. Global rewards can be claimed by writing a review about a sponsored product, and local rewards are claimable in specific locations. Each reward will have different requirements and values, so make sure to check the details before completing the task
+
+My Favorite Coffee Mug
+Let’s earn the first $5.00 reward by sharing two or more photos of your favorite coffee mug. This welcome campaign is sponsored by Waivio and can be claimed by new users.
+
+1) To find the reward, search for "coffee mug" in the search bar and select "My Favorite Coffee Mug" from the search results.
+
+2) To earn the reward click on the "Submit photos" button
+3) Check the requirements and continue.
+
+4) The required links will be automatically inserted into the post, so all you need to do is add the two photos of the mug and share a short story about why you like this particular one. If you decide to take the photos later, your reward will be reserved for 7 days so you can finish your post at any convenient time for you. You can find all active reservations in the "Reserved rewards" of the Earn section.
+
+5) Finally, publish your review on the Hive blockchain.
+
+
+After you publish your post, it will appear on your blog page. You can see the rewards you have earned, including the value of eligible sponsored rewards, which will be shown right away. Earnings from likes will accumulate for the next 7 days.
+
+
+All sponsored rewards are paid in WAIV tokens, while upvotes on posts and comments are paid out in both WAIV and HIVE (the base token of the blockchain).
+
+Cashing out rewards
+To convert your WAIV or HIVE earnings into Bitcoin, Litecoin, or Ethereum, simply follow these steps:
+
+1) In the Waivio wallet, select the WAIV or HIVE tab.
+
+2) Choose the destination cryptocurrency, such as Litecoin.
+3) On the Withdraw screen:
+
+     1. Enter the amount you want to send,
+     2. Enter or scan the address of your Litecoin wallet, where the converted funds will be sent.
+     3. Confirm the withdrawal to start the conversion process.
+
+The same process can be used to pay at stores that accept cryptocurrency payments in BTC, LTC, ETH, or to withdraw your earnings using a Bitcoin ATM.
+
+
+You have now learned the basics of Waivio and can explore the platform further.
+
+
+With a guest account, you can collect author and sponsor rewards but not curator rewards. To access all the features of the Hive decentralized social network, you will need to create a Hive account. Follow the link below to learn how to set up a Hive account and unlock all the benefits of the platform.
+
+
+In conclusion, joining Waivio can be a great way to earn rewards, build connections, and learn about the latest developments in web 3 technology.
+
+By putting in time and effort into building a social presence and making connections on the decentralized, censorship-resistant social network, you can take control of your online presence and experience, and make a valuable investment in your future.
+
+Lesson 2:
+
+For more details give a link to https://www.waivio.com/object/owg-best-practices-for-managing-hive-private-keys-on-multiple-devices/page
+
+In this tutorial, you will learn how to save and manage your Hive password and private keys safely and efficiently on multiple devices.
+
+Overview:
+INTRODUCTION to Hive Keys and Password Manager
+PART 1. PASSWORD MANAGER
+
+Create a password manager account.
+
+Log in to Bitwarden with your credentials
+
+Install Bitwarden on multiple devices
+
+PART 2. HIVE ACCOUNT
+
+Create a HIVE username
+
+Understand the function of different private keys
+
+Save the password and all the private keys as a secure note
+
+Save Active and Posting keys as logins for easy access.
+
+Print out the webpage with the password and private keys
+
+Finalize creation of Hive Account
+
+PART 3. LOGIN TO THE HIVE APP (WAIVIO)
+
+Sign in to Waivio
+
+Create an easy to remember password with Hivesigner
+
+Consequent logins from the same device
+
+Login from other devices
+
+Introduction
+On centralized social networks such as Facebook, LinkedIn, or Twitter, when we forget our password, we can easily restore it with our email. However, there is no "forgot password" procedure on decentralized networks. No one can restore an account for you because you have complete control of your account and funds. Therefore, if you lose your password, you will forever lose access to the account and all the funds in it.
+Moreover, on Hive, there is one password and four additional private keys that you need to save and use. Each password is a long string of letters and numbers, which is impossible to remember and takes a long time to type up by hand. Thus, it is important to have easy and secure access to these private keys on multiple devices, so you can quickly log in to the Hive platform from any of your devices.
+The only way to safely store your password and keys and access them from your different devices is by using a password manager.
+
+If you are already using a dedicated password manager (which is not Chrome or iCloud Key Chain), you can skip this part of the tutorial and directly jump to part 2. HIVE ACCOUNT.
+
+PART 1. Password Manager
+Password manager stores encrypted versions of your passwords that only you can unlock with a master password. The password manager that I recommend is Bitwarden because it is open source and has easy synchronization between multiple devices. Moreover, Bitwarden has many other features available for free.
+
+1. Create a password manager account.
+Go to https://bitwarden.com-> Get started -> fill out your email address. Then create a master password that you will remember. Then click Submit -> Your Bitwarden account is created.
+2. Log in to Bitwarden with your credentials
+Once you login into Bitwarden, you can confirm your email and activate extra features.
+
+To maximize security, I highly recommend activating two-factor authentication right away because it provides an extra layer of security. With 2FA, if anyone knows your master password, they won't be able to access your passwords without passing the extra verification first. Go to Settings -> Two-Step Login-> choose 2FA method
+OPTIONAL. Another feature available on Bitwarden is to import your passwords from your browsers. Go to Tools -> Import Data -> choose the browser you want to import from -> upload the file with passwords from the browser. You can read a detailed tutorial on this here.
+
+3. Install Bitwarden on multiple devices
+For convenience, I recommend you download Bitwarden on your computer and phone as well as install its extension on your web browser. Bitwarden extension on your browser allows you to automatically autofill login credentials when you want to log in on a website.
+
+Go to https://bitwarden.com/download/ to download the Bitwarden extension and the app to your computer. Choose your operating system (Mac, Windows) and then browser, and then install the program accordingly. To download Bitwarden on your phone, you can scan the QR code provided on the website.
+Now you are ready to use the password manager.
+
+PART 2. HIVE ACCOUNT
+1. Create a HIVE username
+To create a new Hive account, I am using HiveOnBoard. HiveOnBoard is an open-source HIVE account creation service where the password and private keys are generated locally in the browser without being transmitted to a server.
+
+Create a username that you want to use on the platform. Dots can be used in usernames on Hive. Then agree to the terms of service to continue.
+2. Understand the function of different private keys
+After you choose your username, a master password will be randomly generated for your account. You will see your password and four additional private keys.
+The posting key gives you access to all social actions, such as posting and commenting on Waivio and other Hive platforms, following friends, giving upvotes, claiming rewards, etc.
+The active key gives you access to all the social actions and additionally to all the wallet actions, such as making and confirming financial transactions.
+The owner key gives you access to all the social and wallet actions and additionally allows you to recover or change all the other keys. This key is important.
+The memo key is used for decrypting private messages. It's not commonly used.
+The master password is a seed phrase, which can be used to generate all the private keys. It is the most important of all because you can recover all the private keys from your account. Keep it safe as a backup for the account.
+3: Save the password and all the private keys as a secure note
+We will save the password and keys in a secure note as a backup. The secure note will be a secondary copy of our keys in Bitwarden.
+
+Go to the Bitwarden app on your computer-> choose Secure Note -> click Add (+) -> under the name, write "Hive Wallet" -> copy and paste the password and private keys to the notes section (make sure it is complete) -> click Save
+This secure note will be added to your password manager account.
+4: Save Active and Posting keys as logins for easy access.
+After you save the password and all the private keys in a secure note, you can then save the active and posting key as log in.
+
+Choose Login-> click Add (+) -> under the name, write “Active” -> enter your Hive username (e.g. “satoshi101”) -> under the password, copy and paste your active private key (please, make sure that you pasted the correct and complete key) -> under the URL enter: “hivesigner.com” -> click Save.
+The "Active" key Login will be added to your password manager account.
+
+Similarly, add the posting key:
+Choose Login-> click Add (+) -> under the name, write “Posting” -> enter your Hive username (e.g. “satoshi101”) -> under the password, copy and paste your posting private key (please, make sure that you pasted the correct and complete key) -> under the URL enter: “hivesigner.com” -> click Save.
+
+Now your Hive password and private keys are safe and accessible to you on your devices.
+
+5. Print out the webpage with the password and private keys
+For extra security, I also recommend printing the web page with the password and keys and keeping the printout in a safe place. Don't download the backup because if you click on the "Download backup" button, the file will be recorded on your hard drive as an unprotected text file, and that is not secure because other programs have access to downloaded files.
+
+6. Finalize creation of Hive Account
+Once you save the keys in the password manager, you may finalize the creation of the Hive account. Read the declaration carefully and confirm it -> click Create Hive Account
+
+Well done! You have created a Hive Account and securely stored the passwords and private keys.
+
+
+PART 3. LOGIN TO THE HIVE APP (WAIVIO)
+1. Sign in to Waivio
+Now let's use our new Hive account for the first time
+Go to www.waivio.com -> click Sign in
+-> select HiveSigner
+Click on Bitwarden extension -> click on "Active," -> your username and active key will be automatically filled out -> click Continue
+
+2. Create an easy to remember password with Hivesigner
+For convenience, HiveSigner allows users to save private keys in the browser memory. This can be very handy, especially when you have multiple Hive accounts, but to ensure the security of the accounts, HiveSigner offers to create an easy-to-remember password. This is another layer of protection for your keys.
+This password is for your convenience only, and it's okay if you lose or forget this password because you can easily reset it. If you want, you can also generate a password in Bitwarden.
+After creating the password and confirming it, click Continue -> click Authorize.
+Now you have logged into your account!
+
+
+3. Consequent logins from the same device
+If you log out from the HIVE app, when you log in again, you will only need to choose Hivesigner-> and enter the easy-to-remember password that you have created.
+
+4. Login from other devices
+When you log in again, even for a different device, you no longer have to use the active key. You can use your posting key if you do not intend to make money transfers on that device.
+
+Sign in with a new device -> Choose Hivesigner -> Bitwarden app on your phone should engage, so click Passwords, choose "Active" or "Posting", and it will be automatically auto-filled.
+
+Then Click Continue-> you can create the same HiveSigner password as on your computer -> Click Continue.
+
+Congratulations! Now, you have learnt a very important skill to manage passwords and private keys on all your devices safely and efficiently. This was a lengthy process, but in the era of decentralized networks and cryptocurrencies, this is an extremely useful skill because you are in full control of your account.
+
+
+Lesson 3:
+
+For more details give a link to https://www.waivio.com/object/cww-customizing-your-hive-profile/page
+
+Now, that you created your Hive account and signed in for the first time, let's customize your profile on Waivio and publish your first post on the Hive social blockchain.
+
+First, Sign in to Waivio with your Hive account. Upon logging in, you'll notice that your profile lacks a logo or any personalization. You also probably don’t have any activity on your feed, as you are not following anyone yet. But before we proceed with customizing your profile, it's important to set up notifications to ensure you receive critical announcements, this enhances the security of your account.
+
+Navigate to Tools and click on @WaivioNotificationsBot https://t.me/WaivioNotificationsBot
+It will direct you to a Telegram bot. Click on "Send Message", which will then redirect you to a telegram chat. If you don't have Telegram, you can install it with this link: https://desktop.telegram.org/
+
+In the Telegram chat, click start and then enter your Hive username; for example, I will enter mine - cleobaby. You will be all set to receive important notifications. If you have multiple Hive accounts, you can add all of them to the same bot chat.
+Next, we can configure the notifications you wish to receive; the default ones include LIKES, REBLOGS, REPLIES, MENTIONS, FOLLOW, STATUS CHANGED, ACTIVATION CAMPAIGN, and all the wallet transactions; you can turn these notifications ON or OFF.
+
+Also there are security alerts such as outgoing transfers, withdrawals and so on - these are always on to ensure the safety of your account.
+
+2. Edit Profile
+Next, let's set up your profile. On the side menu, choose "Edit Profile." Here, you can change your name, add "about me, information " add your country, or email if you want—but keep in mind that this information will be public, so don't include anything sensitive like your home address.
+
+Then, add your website—for example, if you are a shop owner, you can add your link here. I have a CleoBaby social shop, so I will add my link; if you want to learn how to create a beautiful shop yourself in under 10 minutes, check out this tutorial.
+Next, let's upload your avatar. Click “Upload” and choose an image from your computer. Then, let's also add a cover image.
+
+You can also add your social network accounts, such as Facebook, Twitter, LinkedIn, YouTube, Instagram, GitHub, and even your public Bitcoin and Ethereum wallet addresses.
+
+Finally, let's also add a signature. This functions the same as the email signature—whenever you make a comment on a post or reply to a comment, it will automatically be added. For example, shop owners can add their link here.
+
+3. Settings
+Let's move on to Settings. Here, you can choose an interface language for navigating Waivio.
+
+You can also select content languages—this determines what posts will be shown in your thread. For example, the default one is English but if you also add Spanish, you will see posts in both English and Spanish.
+
+Next, select the currency you prefer for viewing your rewards and earnings.
+
+Then, you have an option to turn on or off NSFW (Not Safe for Work) posts.
+
+You can also choose to turn on the night mode. There are a few other more advanced settings too.
+
+Voting Power (Mana)
+Now, let's discuss voting power (mana). When you possess WAIV and HIVE power, you gain voting power, which can be used to upvote posts and comments. Casting a vote on other users' posts reduces your voting power, meaning each vote decreases your voting power. However, this reduction is temporary, as your voting power recharges by 20% each day.
+
+By actively participating in the community through voting and curating posts, you earn curation rewards proportional to your vote value. For more details, please check the "About Waivio" https://www.waivio.com/object/cww-customizing-your-hive-profile/page#oal-about-waivio video.
+
+Using the slider, you can choose the percentage of your vote allocation.
+If you select 100%, each time you vote on a post, your vote value will decrease by 2%. For example, if your vote value is $1, after a one 100% vote, it will be $0.98. But if you choose 1% - it will be $0.998.
+
+Thus, you can sustainably make 10 votes of 100%, 20 votes of 50%, or 100 votes of 1% daily.
+
+I don't recommend choosing lower than 50% unless you curate a lot of posts. Remember, your vote value recharges every day by 20%, so if you make 10 votes of 100% a day (and your vote value falls from $1 to 80 cents), the next day your vote will recharge back to $1.
+
+If you prefer to adjust the percentage allocation for each post individually, ensure that the "enable slider" option is activated. Otherwise, you can "disable slider", and your chosen percentage will be applied every time you vote.
+
+When you have made changes to the settings, make sure to click Save.
+
+4. Affiliate Codes
+The next section is "Affiliate codes". Here you can add your affiliate codes for your profile shop. You can add products to your profile shop by marking them with a heart. If you specify your affiliate codes, you can earn commissions when people make purchases originating from your shop. To add an affiliate code, simply search for your affiliate program, such as Amazon.com, and enter your code.
+
+This affiliate code will be automatically applied to all Amazon products in your shop. For more details, please check out the "Shops in User Profiles" tutorial.
+
+5. Feed
+To stay updated with news and useful content about Waivio make sure to follow @Waivio and @social.gifts if you're starting a social shopping venture. There's a wealth of engaging content on Hive waiting for you to explore. You can begin by searching hashtags related to your interests, such as "photography." From there, you can follow the hashtag itself or check out the "Experts section" to discover users who frequently post content on this topic.
+6. First Post
+Now, let's write your first post—perhaps introduce yourself. To write your first post, click the write post icon.
+Add a title and your story, and add a hashtag #introduceyourself (keep in mind that you can only use this hashtag once).
+
+Click Ready to Publish, check the legal notice and click Publish.
+
+That’s it. You've successfully customized your profile and you are ready to engage with the Hive Social Blockchain community. Welcome aboard!
+
+Follow @Waivio @social.gifts for more updates.
+
+Lesson 4:
+
+For more details give a link to https://www.waivio.com/object/axy-your-waivio-wallet/page
+
+In this tutorial, you will explore the Wallet section of Waivio and receive a step-by-step guide on how to deposit funds into your Waivio account.
+
+You will learn how to deposit funds on Waivio to kickstart your social shop, understand the differences between liquid WAIV, WAIV Power, and HIVE Power, and discover how to swap, delegate, and withdraw cryptocurrencies.
+
+Overview:
+1. Wallet Overview: WAIV, HIVE, Hive Engine.
+
+2. Wallet Management:
+
+     - Transferring Funds;
+
+     - Powering Up;
+
+     - Powering Down;
+
+     - Managing Delegations;
+
+     - Executing Token Swaps;
+
+     - Making Deposits;
+
+     - Processing Withdrawals.
+
+3. A Step-by-Step Walkthrough to Depositing Funds.
+
+WAIV Wallet
+The first section here is "WAIV" assets. These include liquid WAIV and WAIV Power.
+
+Liquid WAIV is the main currency on Waivio. You can use it to pay for social shopping website hosting, buy VIP tickets for new HIVE accounts, and other services.
+WAIV Power is your voting power on Waivio. You need it to vote on posts and comments, which enhances your presence and authority. WAIV Power is also needed for creating objects and importing products for your social shop.
+You will also receive rewards for your posts and reviews in liquid WAIV tokens.
+To convert liquid WAIV to WAIV Power, click "Power up," and staking is done instantly.
+
+To convert WAIV Power to liquid WAIV, click "Power down." Keep in mind, powering down takes 4 weeks, with funds released every week in equal amounts.
+
+HIVE Wallet
+Now, let's look at the "HIVE" assets. Here you will find liquid HIVE, HIVE Power (HP), and HIVE-backed dollars (HBD).
+
+HIVE is the main token on the Hive blockchain, and having HIVE Power (specifically Resource Credits) is essential for doing anything on the blockchain, from sending payments to writing posts.
+
+You might receive Hive Power and Hive-Backed Dollars as rewards for your posts. If you are interested in learning more about the rewards, check out the About Waivio video https://www.waivio.com/object/axy-your-waivio-wallet/page#6vcmab-tutorials/oal-about-waivio.
+
+To convert liquid Hive to Hive Power, click "Power up," and it happens instantly.
+
+To convert Hive Power to liquid Hive, click “Power down.” For Hive Power, powering down takes 13 weeks, with funds being released weekly.
+
+Hive Engine Wallet
+Here, you will find all the other tokens available on the Hive blockchain. This includes wrapped tokens such as swap.BTC and swap.ETH, as well as various other tokens used within the Hive ecosystem.
+
+Rebalancing
+There's also a Rebalancing section, which is a strategy to grow your crypto holdings. To learn more, make sure to check out our comprehensive article on it https://www.waivio.com/object/wxu-rebalancing-introduction/page.
+2. Wallet Management
+Next, on the right panel, you'll find:
+
+Transfer
+Use this if you want to send crypto to another Hive user.
+
+Power up
+Here, you can power up not only liquid WAIV or liquid HIVE but also other tokens you have on the Hive blockchain.
+
+Power down
+Here, you can power down not just Waiv POWER or HIVE POWER but also other powered-up tokens you own.
+
+Manage Delegations
+Here, you can lend your WAIV Power, HIVE Power, and more powered-up tokens to other Hive users. Choose the token you want to delegate, then a user, and an amount.
+The delegation happens instantly.
+If you decide to undelegate, click edit.
+It's important to note that it will take 7 days for the funds to be returned to your account.
+After you've delegated tokens, the delegated amount will be displayed as a negative balance in parenthesis, next to the respective token. You can click on it to view more details.
+Swap Tokens
+This is for converting one token into another (such as swap.BTC to WAIV or swap.HIVE to swap.LTC).
+
+You can also conveniently swap any token into liquid WAIV in the Hive Engine section by clicking “Swap to WAIV” next to the appropriate token.
+Deposit
+This is for depositing funds (e.g., BTC) into your wallet.
+
+Withdraw
+This is to withdraw funds and transfer it to other wallets and blockchains, such as back to your Bitcoin wallet.
+
+You can also do this conveniently in the Hive Engine section by clicking the dropdown menu next to the desired token and selecting "Withdraw to ___."
+3. A Step-by-Step Walkthrough to Depositing Funds
+Now Let me walk you through the entire process of depositing funds on Waivio.
+
+To deposit funds on Waivio, you'll need some cryptocurrency. Here, is the list of cryptocurrencies you can deposit:
+
+BLURT (BLURT), Bitcoin (BTC), Bitcoin Cash (BCH), Dogecoin (DOGE), HBD (HBD), Litecoin (LTC), SAVVA (SAVVA), SBD (SBD), STEEM (STEEM), SwiftCash (SWIFT), TELOS (TLOS)
+
+The most up-to-date list is available in the "Deposit" window.
+
+If you don't have anything on the list, you can easily buy it on exchanges. Users in the US and Europe might consider using Coinbase.com, while Canadian users may prefer Newton.co.
+
+
+Click on "Deposit" (located on the side panel in Wallet), Choose the cryptocurrency you wish to deposit. In this example, Bitcoin will be used, but you can use any cryptocurrency from the list.
+
+After selecting BTC, you'll see a BTC wallet address and a QR code.
+
+For example, in the image below is my BTC deposit address on the Hive Engine.
+Copy & Paste the wallet address or scan the QR code to send funds; I recommend first testing it out with 10 dollars. You can monitor the transaction on a blockchain explorer. After the transaction is successful, you can send more funds.
+
+
+To kickstart your social shop on Waivio, I recommend depositing around $400.
+
+Once the transaction is complete, you'll see your funds in the swap.BTC wallet in the "Hive Engine" section. With just one click on the "SWAP to WAIV" button, you can convert your BTC holdings into liquid WAIV tokens.
+To make the most of the platform, I recommend a ratio of 1 liquid WAIV to 2 WAIV Power and a little bit of Hive Power. Since you already have liquid WAIV, getting WAIV Power and HIVE Power from it is straightforward.
+To convert liquid WAIV to WAIV Power, go to the WAIV section and click "Power Up." Choose the amount you want to power up (suggested amount: $250) and click continue.
+For example, with a $250 investment, you will have a vote value of approximately $0.006, and you would be able to import around 15 products per day.
+
+To convert liquid WAIV to Hive, click on the dropdown menu and choose "Withdraw to HIVE", select the amount (suggested amount: $50).
+And now let's go to the Hive section, here you will see your liquid Hive. If not, then wait a little bit, it might take a few minutes for this transaction to complete, and the funds to appear in your wallet.
+
+Click "Power Up" to convert liquid Hive to Hive Power.
+Now, you're all set and can start using Waivio and the Hive Blockchain to its fullest, whether it's writing posts, sending funds, participating in sponsored rewards, building your social shop, and much more. For example, you can already begin building your dream social shop by importing a few products with the Waivio Extension and adding funds to run your social shop.
+
+Lesson 5:
+For more details give a link to https://www.waivio.com/object/jpv-accumulating-knowledge-on-hive/page
+
+Knowledge Accumulation in Web 3.0
+
+In this tutorial, you will discover the process of how knowledge is accumulated on the Hive blockchain, and also learn how to use the Waivio https://www.waivio.com/ platform for participating and gaining benefits from this knowledge.
+
+Overview:
+1. What is an object on Hive Blockchain
+2. How to create an object with Waivio
+3. Adding details to the object
+4. Consensus
+5. Multiple versions of objects
+6. Accumulation of knowledge
+
+PART 1. What is an object on Hive Blockchain
+We are all accustomed to using hashtags on social media; for example, we can include if we post about a camping trip. But what if we want to talk about a specific brand of a camping tent, a certain hiking trail, a food recipe, a specific destination, a product, or a business?
+
+On the decentralized platform Hive, users can create a social record on the blockchain called an object, and later they can reference this object from their posts and comments.
+Each object will get its dedicated page which collects all the posts that have referenced it. This object will even have its own photo gallery.
+
+
+Besides posts and photos, users can also add other relevant information to the object, such as an avatar, description, address, price, ratings, tags, etc. This list of additional fields depends on the type of object. For example, if this is a product, we can add a price to it and a link to a website where we can purchase it. If this is a business, we can add its address and a phone number.
+
+PART 2. How to create an object with Waivio
+When you write a post on Waivio, on the right panel, you will see "create new object" and a list of different types of objects that you can create. Here, you can add a new hashtag, a business, a location, a product, a place, a list, a page and etc. For example, I will create a business object for Cypress Mountain https://www.waivio.com/object/trq-cypress-mountain.
+Write the name of the object; in my case, I will write "Cypress Mountain" and click "Confirm".
+When you create an object, a unique ID and a corresponding URL will be created for it on the Hive blockchain. Once the object is created, the link to it will be automatically added to your post.
+
+The next time you write about an object, such as Cypress Mountain, you don't need to create a new object; you can just type "#cypress mountain", and you will see it in the recommendation pop-up.
+If you see someone else's post about your object, you can add your object in the comments, and this post will be linked to your object.
+When you go on the object's page, in the review section, you will see your post and the posts of others where Cypress Mountain has been referenced.
+This way, anyone can reference Cypress Mountain, and more information will be collected about it.
+Now you can add some extra details to the object.
+
+PART 3. Adding details to the object
+Let's start by adding an avatar image to the object. Go to the Edit section. Click on the + button next to the "Avatar".
+Upload the image and click Submit.
+Once you submit, you will see a pop-up saying that you successfully added the avatar, and in the Updates section you will see a small record saying that an avatar has been added by you.
+Similarly, when you add a phone number and click submit, another update will be created. In this record, you can also see approve and reject buttons. When you add a phone number, you automatically approve this new update.
+If you made a mistake in this phone number, you could click the reject button, and this phone number will not show up on the Cypress Mountain object front page.
+In this way, you can add an address, description, tags and other information to the Cypress Mountain object. Every time you make a new update, a new record will appear in the updates section.
+
+As you can see, an object (such as our Cypress Mountain) is a unique identity on the blockchain. Every object is made up of many short records posted on the blockchain. Anytime you add, delete or modify anything about the object, an update is created that reflects this event.
+
+For every update, there is a choice to approve or reject it. When you add new information to the object, for example, you add a phone number; you automatically approve the update. If you want to modify it, you can make a new record and reject the older record.
+
+However, because Hive is a decentralized platform, it's not only you who can modify, approve, and reject the updates for the object, but anyone else on Hive can do that.
+Part 4. Consensus
+On Hive, anyone can contribute to the object; for example, someone can add a new avatar image of Cypress Mountain. But whether it will be shown or not is decided by the community.
+
+When new information is added to the object, all the users who previously have contributed to this object or referenced it will be notified about the proposed change, and then they can either approve or reject the update.
+
+The value of each vote depends (1) on their combined voting power (which is determined by the amount of staked HIVE and WAIV tokens), (2) and on accumulated expertise in that specific object. This way, users who have contributed to the object in the past will have an advantage.
+For example, when someone has proposed to change the avatar image of Cypress Mountain, I can reject it. My reject vote value is higher than the approve vote value of the other user because I have higher expertise in this object. As a result, the avatar proposed by the other user will not be shown on the object's front page.
+Part 5. Multiple versions of objects
+However, it's not about who's update wins and will be shown on the object's front page. No, in fact, multiple versions of the object can exist simultaneously.
+
+For example, my avatar shows that Cypress Mountain is great for winter sports, but the other user wants to show Cypress Mountain during the summertime. And we are both correct, and we both can use and portray the same object in the way each of us wants on our own platforms.
+Let's say I have a website dedicated to winter sports, my administrators, and I can approve the avatar that shows Cypress Mountain in the winter. Similarly, if the other user has a website dedicated to summer sports, he can use the summer version that he added to the object.
+On your website, your admins can approve the updates that you want your website visitors to see, and your vote and the votes of people you trust will be final. You and your admins have full control of what information is displayed on your website.
+
+Part 6. Accumulation of knowledge
+When multiple users and projects contribute information to the blockchain, it becomes public knowledge. And it can now be used and enhanced by others as well.
+
+You may think of the Hive blockchain as open cloud storage, where you can access not just user profiles, their connections, and posts but also information about businesses, products, places of interest, hiking trails, recipes and any other type of object that you might want to create.
+
+Some of this information may be posted by individual users, and some will be posted by teams building apps on Hive, but once this information is published on the Hive blockchain, it becomes easily accessible to other users and projects, allowing them to collectively contribute and achieve economies of scale well beyond their original scope.
+For example, for a winter sports website, you can collect and submit detailed information about your local ski resorts. However, you don't need to do this work for global ski resorts because you can take and index existing information about these resorts from the Hive blockchain. These resorts may already have reviews, images, prices and locations. This allows you to have hundreds of global resort listings on your website without requiring you to input all of it yourself because this information was already collected by the community and is present on the blockchain.
+The same approach can be used by many other projects, such as travel and adventure guides with maps of hotels, attractions, and restaurants and their ratings, or e-commerce sites with product listings and their reviews, educational projects, etc.
+Every time you add a post, a review, a photo, or a description of an object, you help the community to accumulate information about this object. In this way, through the effort of the whole community, a lot of knowledge is acquired for millions of objects. This has an immense value because this knowledge is accessible to anyone and allows you to build complex projects and businesses in a snap.
+
+Now you know a powerful tool to realize your ideas and projects and help the Hive community to expand knowledge.
+
+
+Lesson 6:
+For more details give a link to https://www.waivio.com/object/gyg-how-to-add-a-product-to-hive/page
+In this tutorial video, you will learn how to add a specific product to the Hive Blockchain using Waivio, and create awesome product pages, such as this camping chair https://www.waivio.com/object/gec-cliq-camping-chair---most-funded-portable-chair-in-crowdfunding-history-bottle-sized-compact-outdoor-chair-sets-up-in-5-seconds-supports-300lbs-aircraft-grade-aluminum.
+
+You will learn how to:
+
+- create a new product page
+- fill out all the relevant information such as price, options, department, description, tags, website, weight, dimensions, manufacturer, brand, merchant, features, and product ID
+
+- combine product variants together by groupID
+
+👉If you're looking to add multiple products, I suggest you to watch an upcoming tutorial for importing.
+Link to microphone product page made in the tutorial: https://www.waivio.com/object/ice-shure-mv7-silver
+
+Tutorial
+1. Creating a Product Page
+Before adding a product, it's always a good practice to make sure it doesn't exist already on the Hive Blockchain. Simply enter the name of the product in the search bar on Waivio. As an example, let's use a product that I like and always use: Shure MV7 Podcast microphone.
+If there are no search results for that name we can safely add a new one. To do that, go to "New Post"> under "Create New Object" choose "Product"> write the name of the product and press "Confirm"
+***It may take a few moments for the blockchain to be updated and for the new product to appear in the search results.
+
+
+The product page comes with the default profile image that we will change later. All the relevant ratings and tags are also automatically added, including quality and value. To add new information to the product's profile, let's switch to the editing mode:
+
+2. Fill Out Relevant Information
+1. PRICE: Write the current price of the product.
+
+2. OPTIONS CATEGORY: This is an important field to fill out because it helps customers choose between different variations of the same product. In the options category, specify the attribute that is distinct for each variant (for example, colour), then write a value for this product variant (for example, silver). The option category is case sensitive, so make sure you spell it the same for every product variant.
+3. DEPARTMENT FIELD: This is where we can classify the product into a specific departments. List all the relevant departments for the product. In my case, I will put in Audio Equipment and Microphones.
+4. NAME: No changes
+5. DESCRIPTION: We write a brief description of the product
+
+6. TAGS: In the tag field, we can input relevant tags that describe the product. For the Shure MOTIV MV7 Podcast Microphone, some relevant tags would be a #podcast and #audio.
+
+7. WEIGHT FIELD: In the weight field, we can input the weight of the product (such as, 1.05 kg).
+8. DIMENSIONS FIELD: In the dimensions field, we can add the dimensions of the product (such as, 10.92 x 31.24 x 12.7 cm); don't forget the units.
+9. MANUFACTURER: Let's now add the manufacturer – you can search to see if the manufacturer you want to add already exists; if not, simply add the name of the manufacturer as a text.
+
+Similarly, let's add the 10. BRAND and the 11. MERCHANT.
+
+12. FEATURES: In the features field, we can write any distinctive features of the master product. Similar to Amazon, where you can compare products by features, this field will allow us to compare this product with other similar products.
+
+13. PRODUCT ID:
+
+1. The product ID field is where we can add a unique identifier for this product. For Amazon, enter the ASIN number; you can find it in the product details section on Amazon.
+
+Usually, the product has the same ASIN number regardless of whether it's sold on U.S., German, Canadian or any other Amazon website, but sometimes it does vary. In that case, we will need to input a specific website (such as amazon.ca or amazon.fr) and then add the corresponding ASIN number.
+
+If it doesn’t exist on a specific amazon website, you can put, NONE.
+
+2. Similarly, we can also add a Walmart number for this product.
+
+When you enter the correct Amazon or Walmart product number, a button will be generated automatically. And when you click on it, you will be taken directly to the product page on the respective website.
+
+3. We can also add other relevant product ID numbers.
+
+14. GROUP ID: see below**
+15. AVATAR: You can add avatar by uploading the image or pasting the URL link
+16. TITLE: Add a title to your product
+
+17. GALLERY IMAGES: Add some galleyry images for your product (such as images of the product from different perspectives, angles and/or settings )
+
+
+💪Now we added our product with all the relevant information.
+
+If your product comes in different colours or any other options, you will need to create separate product pages for each of the variants. In order to group the variants together into a “master” product, we will need to assign the same GROUP ID to each variant. If you are assigning the group ID manually, you can name it after the product, for example, (shure _mv7).
+
+Once we add the common group ID to all the product variants, they will be grouped together into a “master” product on a new page. The option value that was specified on every product variant, in my case, it was microphone colours, will be combined together in an interactive menu. When we hover over the colour, we can see the avatar and price of the product change. When we click on the specific colour (such as silver) – it will take us to the product page for the silver microphone we have just created together.
+
+And that's it. We have successfully added a product to the Hive Blockchain on Waivio and grouped it together with other variants into a “master” product. As you can see, adding a product takes quite a lot of time, so if you need to add many products, it will be challenging to do manually.
+That's why in the next tutorial, I will show you how to import many products at the same time.
+
+See you in the next tutorial!
+
+Lesson 7:
+
+For more details give a link to https://www.waivio.com/object/kda-waivio-chrome-extension-tutorial/page
+
+A Step-by-Step Guide to Monetizing Your Knowledge (Part 2)
+Waivio Chrome extension is a powerful tool, which allows you to add Amazon products to the Hive blockchain with just a couple of clicks.
+
+It also enables you to add product reviews effortlessly. For advanced users, this extension offers a wealth of useful features.
+
+This extension streamlines the process of adding products and their reviews, saving you time and effort.
+
+Summary:
+Part 1. Extension Setup
+
+    Step 1: Add extension
+
+    Step 2: Authorization
+
+    Step 3: Check the Funds
+
+Part 2. "Upload to Waivio" - Import Products in One Click
+
+Part 3. Adding Reviews
+
+Part 4. Advanced Import
+
+    Step 1: Scan for ASINS
+
+    Step 2: Create XLXS
+
+    Step 3: Copy to Clipboard
+
+    Step 4: Create JSON
+
+Part 5. The New Versions of the Extension
+Part 1: Extension Setup
+Before adding products with extensions, you need to set up a few things:
+
+1. Add extension
+The first thing you will need to do is add the extension to your browser.
+
+Sign to Waivio. Head to "Tools", and under Data Management – click on "Chrome Extension". Download the .zip file, and once it's downloaded, unzip it.
+Next, open your browser (any Chromium-based one like Google Chrome, Brave, or Edge). Here is shown the setup with Chrome, as it's a more popular browser, but the setup will be very similar on other browsers as well.
+
+Go to (1) Settings -> (2) Extensions -> (3) Enable the "Developer mode"
+(4) Click "Load unpacked" -> (5) and choose the unzipped folder that we've downloaded -> (6) Click "Select"
+Pin the extension to keep it visible in your browser.
+2. Authorization
+Next, in a new tab, open Waivio, sign in if you haven't already, go to "Tools", and under "Data Management", click on "Data Import".
+
+Here give authorization to the import bot by clicking "Authorize now", and then "Authorize". You only need to do this once.
+3. Check the Funds
+Finally, ensure that you have both WAIV Power and HIVE Power, as each update requires an upvote equivalent to $0.001. You can find more information about these requirements in Step 3 of the tutorial, How to Import Products on Hive https://www.waivio.com/object/kda-waivio-chrome-extension-tutorial/page#uiy-how-to-import-products-on-hive.
+
+Now our setup is complete.
+
+Part 2: "Upload to Waivio" - Import products in One Click
+Open the product you want on Amazon, click on the extension and click "Upload to Waivio".
+
+If a notification pops up asking you to use a different URL format, simply click "Ok". The page will then automatically reload with the new URL format. This step might be necessary to display the departments related to that product.
+
+Click, "Upload to Wavio", one more time – and you should see the notification "Import successfully started by, and your username."
+You can check the import progress in "Data Import". Once it's done – you can review the product page and edit it if necessary. The imported products will automatically appear in the shop in your profile.
+ If you're importing multiple products, it's advisable to save the ASIN numbers for each product. This practice will simplify the process of adding them to custom lists at a later stage. Product lists featuring custom avatars can significantly enhance the user experience on social shopping websites.
+
+Part 3: Adding Reviews
+You can further enhance product pages by adding video reviews where people demonstrate how to use the product or compare it to similar ones. YouTube users often encourage the sharing of their videos on other websites.
+
+The Waivio extension simplifies the process of adding shareable YouTube video reviews to product pages on Hive.
+
+Let's open the product we just imported in a new tab.
+
+Click on "Reviews" -> and "Write a new review".
+
+Let's search this product on YouTube. If you find a video review for your product – click on the extension "Create Post Draft". This will generate a post draft based on the video using chatGPT. It will include a title, a short summary, and hashtags.
+You can copy the post draft – and paste it into your review post.
+
+You can make some quick changes to improve the post:
+
+- Use the generated video title as the post title
+
+- Use the plus button to insert the youtube video – this way it will be better integrated into your post
+
+- Check the hashtags - you may want to simplify some lengthy hashtags or add other relevant hashtags to make your post more discoverable.
+
+When you are ready, click "Ready to Publish", then "Publish”.
+
+Now the product will be supplemented with video reviews, further assisting potential buyers in understanding the product better.
+
+Part 4: Advanced Import
+For advanced users who import products in bulk, the extension offers additional helpful features. Let's explore them:
+
+1. "Scan for ASINS"
+If you want to get ASINs of multiple products from Amazon, you can use the "Scan for ASINS" feature.
+
+Simply search for a specific product category, like, "baby onesies". Then you can sort by "Average customer review" or "Bestselling", to get top-rated products on the first page. Click "Scan for ASINS" – a text file will be generated – save it. The text file will list all the ASINS numbers found on that Amazon page except those already present on the Hive blockchain. The extension filters out products that are already available on Hive to prevent duplication.
+You can repeat this process for the ASINs on Amazon's second page and so on.
+
+Similarly, you can get product ASINs for products in broader categories. For example, if you choose "Best Sellers" and then "Best Sellers in Home," you'll get the ASINs of the best-selling products in the Home category.
+
+Next, you can use Datafinity to generate a JSON file and import the products in bulk onto the Hive blockchain – to learn more about the import process with Datafinity, check out How to Import Products on Hive https://www.waivio.com/object/kda-waivio-chrome-extension-tutorial/page#uiy-how-to-import-products-on-hive.
+Go to Product Data -> API -> copy the ASINS from the text file and paste it in the field -> click "Download" -> Choose "JSON" as the format -> "Confirm Download". Once the file is prepared – click "Download All".
+
+You can upload this file – in the "Data Import" section in Waivio.
+
+Please note that some items from the ASIN list might be missing from the Datafinity database, but you can search these products on Amazon by their ASIN number and easily import them with the "Upload to Waivio" feature.
+
+2. Create XLXS
+If you prefer working with a spreadsheet for adding products, you can use "Create XLXS" to generate a new spreadsheet with all the fields filled about the product.
+
+To learn how to import products from a spreadsheet, see the tutorial How to Export Products from Spreadsheet https://www.waivio.com/object/kda-waivio-chrome-extension-tutorial/page#ehd-how-to-export-products-from-spreadsheet.
+3. Copy to clipboard
+If you already have a spreadsheet and just want to copy the information about this specific product, use the "Copy to Clipboard" feature. Paste it into your Excel or Google Docs file.
+From Google Docs, you can easily create a JSON file, which can then be imported into the Data Import section in Waivio. This is explained in more detail in How to Export Products from Spreadsheet tutorial https://www.waivio.com/object/kda-waivio-chrome-extension-tutorial/page#ehd-how-to-export-products-from-spreadsheet.
+
+4. Create JSON
+Finally, the "Create JSON" feature enables you to create a JSON file for an Amazon product.
+You can import this JSON file in the "Data Import" section in Waivio.
+
+Part 4. The new version of the extension
+As the Waivio Chrome extension evolves, newer versions may become available. You can easily download these updates in the Chrome extension section. I recommend disabling or removing the previous version from the browser before adding the new one to avoid any conflicts.
+
+Final Remarks 😉
+With the Waivio Chrome extension, adding products and reviews to the Hive blockchain becomes a seamless and efficient process. Whether you are managing a small online shop or dealing with a large number of imports, this extension provides valuable tools to enhance your experience on the Hive blockchain. Enjoy building your social shops!
+
+Lesson 8:
+For more details give a link to https://www.waivio.com/object/uiy-how-to-import-products-on-hive/page
+
+Adding products to the blockchain manually can be time-consuming, especially if you need to add multiple items. Luckily, Waivio offers a data import feature that allows you to import many products all at once. Waivio supports import in JSON format (see the supported format here: https://developer.datafiniti.co/docs/product-data-schema)
+This format is used by Datafinity, which is one of the largest databases with hundreds of millions of products that are regularly updated.
+
+
+And in this tutorial, I will show you how to use Datafinity to find and export product information in the JSON format. You can also use any other service that allows data export in the compatible format. In the next tutorial, I will also show you how to use your own spreadsheet to export your product data in this format.
+
+
+Supplementary Tutorials:
+How to Add a Product: https://www.waivio.com/object/uiy-how-to-import-products-on-hive/page#tmu-business-3-0/uxp-social-gifts/gyg-how-to-add-a-product-to-hive
+Authority Level: https://www.waivio.com/object/uiy-how-to-import-products-on-hive/page#tmu-business-3-0/mqk-dining-gifts/vjf-create-your-dining-gifts-business
+
+Let's dive in
+Step 1: Find and export your product with Datafinity
+To find your product on Datafinity, click on the "Product" tab and use filters to search for your product. As an example, I will be using a yoga block that comes in many colors.
+
+If you're looking for a specific product, the easiest way to find it is by using its ASIN number. You can find the ASIN number under additional information on the Amazon page of the respective product.
+
+Copy the ASIN number, paste it into the Datafinity "asins filter", and click "Search". Datafinity will display all the matching product records. It may have multiple records for the same product.
+
+To download the file, click on "Download", and simply choose JSON as the format. In the "Number of Records" field, enter the same number as the "Total matching records". If there are multiple records for the same product, Waivio will handle them and extract only the relevant information.
+
+
+If our product comes in other colors - we can download all the variant products at once. To do this: switch to the JSON view for the product we found and use the browser's find function (Ctrl+F on Windows or Command+F on Mac) to search for "parent ASIN". Copy this value.
+Then go to "Add Filter", select "Features", and then choose "value". Paste the parent ASIN that we found, and click "Search". Datafinity will now display all the product variants in different colors.
+Click on "Download", again select the JSON format, enter the total number of records, and confirm the download. Save the JSON file on your computer.
+Step 2: Authorize data import on Waivio
+Now we can go to Waivio. Navigate to "Tools". Under "Data Management", click on "Data Import".
+You will need to authorize a bot to make upvotes on your behalf for the product updates. To do that click on "Authorize Now" and follow the steps to authorize the bot. You will always be able to revoke the authorization at any time.
+
+Step 3. Ensure you have enough WAIV and Hive power
+Next, you will need to ensure that you have enough WAIV and HIVE power
+
+WAIV Power
+When you import products on Hive, each piece of information, such as the product description, product ID, and avatar, will be added as a separate update. The bot will take care of creating all these updates and upvoting them for you. Each upvote is equivalent to $0.001 in WAIV power.
+
+Therefore, you will need enough WAIV power to perform this action on the blockchain. For example, if I go to my wallet, I have WAIV Power tokens with a value of approximately $440, this gives me Waiv power of $0.01.
+It may seem that I have enough only for ten updates, but this is not correct - I actually have enough for hundreds of updates. Let me show you the math:
+
+When I give a full upvote, I only use 2% of my vote power; to give a tiny upvote worth $0.001 with my vote power of $0.01, I just need to use 10% of a full upvote ($0.001/$0.01 x 100% = 10%).
+
+Every time I make the upvote equivalent to $0.001, my vote power will just drop by a fraction of a percent. After one update, my vote power will drop by 0.2% and result in a new vote power of $0.00998, even after 100 updates, my vote power will still be high - $0.008.
+You can set up your threshold beyond which you don’t want your vote power to drop. By default, the voting power threshold is set to 30%, meaning that import will stop when your voting power is below 30%.
+Your voting power recharges every day by 20%, so with this threshold, it will take around four days to restore your power.
+
+The absolute minimum is when your vote power reaches $0.001; with this vote power you can no longer make $0.001 upvotes.
+
+HIVE Power
+In addition to Waiv Power, you'll also need to have enough Resource Credits (RC). HIVE Resource Credits are credits given to your account based on how much HivePower you have, and they are used up whenever you record something on the blockchain, such as upvotes, posts, and comments.
+During the import, the bot will create product updates and upvote them for you, but you still need to have enough resource credits so that the bot can record these upvotes on the blockchain.
+The bot is designed to use as few RC as possible. Without the bot, you would need significantly more credits to add a product.
+
+If your RC falls below 10%, the import process will slow down. To be safe, I would recommend to have a ratio of approximately 4:1 (400 Waiv Power to 100 Hive Power).
+
+By the way, by importing products, you are not losing any WAIV or HIVE tokens; it’s actually the opposite; you will gain WAIV tokens from the upvotes on the product’s updates.
+
+Step 4: Upload the JSON file
+Now we can proceed to the import. Click on "Upload New File". Select (1)"product". Upload the (2) JSON file you downloaded from Datafinity.
+The product description on Amazon may not always be great, so you can check the box next to "optimize description with chatGPT". This will rewrite the product's description with the help of chatGPT.
+
+Next, you need to choose the appropriate (3) authority level (Ownership or Administrative). If you will be curating the product and don't want anyone else to add any information to the product, I recommend choosing ownership; otherwise, choose administrative (check this tutorial).
+
+Click "Confirm" when you are done.
+
+Step 5: Import
+Once you've uploaded the JSON file, the import process will start automatically. You will see the information about your import, such as the number of objects that you are importing, the total number of updates that will be required, and how many updates and objects have already been posted.
+*Remember to reload the page to see the progress.
+
+If the import stops, it's likely because you've reached your WAIV power threshold or used all the HIVE resource credits. But don't worry, the import process will resume once your power gets recharged. You can also pause the import process yourself by unchecking the "active" box.
+
+If you are importing many JSON files, you can prioritize certain objects by leaving only the priority items active. This will help you to import priority items first.
+
+Step 6: Check the published products
+Once the import is complete, your products will be published on Hive blockchain and you can search them on Waivio. It's always a good idea to double-check the product page to make sure all the information is accurate and complete. If you notice something is missing, you can easily add it manually (see the tutorial here https://www.waivio.com/object/uiy-how-to-import-products-on-hive/page#tmu-business-3-0/uxp-social-gifts/gyg-how-to-add-a-product-to-hive).
+Now, we have successfully imported multiple products to the Hive Blockchain with Waivio. This method saves you time and effort, and you can import hundreds of products easily. Now that you know how to use this import feature on Waivio, you can take your business to the next level by adding more products to the blockchain.
+
+Lesson 9:
+
+For more details give a link to https://www.waivio.com/object/ehd-how-to-export-products-from-spreadsheet/page
+
+In this tutorial, I'm will show how you can use your own spreadsheet to
+export products in JSON format, so that it's easy to import them to Hive Blockchain with Waivio.
+
+Resources:
+
+ - Google Template https://docs.google.com/spreadsheets/d/1Z-8Hz8xGU45A7nKeMJWFsKGzx5WT5oat7SSLqFLGsSU/edit#gid=1467600029
+
+ - Script Code https://github.com/Waiviogit/waivio/wiki/Export-template-script-from-Google-Sheets-to-JSON
+
+ - Full tutorial you can find here https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON#set-up
+
+ Set up
+ 1. Create or open table in Google Sheets https://drive.google.com/
+
+ 2. Click on Extensions tab in top menu
+
+ 3. Click on Apps Script
+
+ 4. Add name (for example, Export JSON)
+
+ 5. Delete existing code
+
+ 6. Copy script code from https://github.com/Waiviogit/waivio/wiki/Export-template-script-from-Google-Sheets-to-JSON
+
+ 7. Insert code in script editor
+ 8. Click on Save project button
+ 9. Come back to your table and refresh page
+
+ 10. Now, you should have new tab in top menu.
+
+ If the new tab does not appear. Refresh page one more time or you can try to return to the script, add some comment(// comment), save again, return to the table and refresh page. Usually, when the page loads, the new tab appears later.
+ Add template to Google Sheets
+ Open google template with fields and copy to your table.
+
+ You need to freeze the first row (View -> Freeze -> 1 row). This is important as this is the name of the fields to be exported.
+ Permission
+ 1st time after clicking on "Export JSON for this sheet" you need to give permission to the script.
+
+ 1. Click Export JSON
+
+ 2. Click Export JSON for this sheet
+ 3. You will see Authorization Required modal window
+
+ 4. Click Continue
+
+ 5. Complete authorization and give permission
+
+ 6. Click Export JSON one more time
+
+ 7. You should see notification Running script and modal window with json
+ Exported JSON
+ "Exported JSON" modal window has:
+
+ direct link to download the file, leads to your google drive;
+
+ json - that was created by script.
+
+ Every time when script is running, file is created on your Google Drive. Even if you edit the same table, every time file will be created. So, don't forget to delete unnecessary files from your Google Drive that were created in this way.
+ Table fields
+ 1st line of the table - these are the names of the fields, each next is a separate object:
+
+ 2nd - object #1
+
+ 3rd - object #2
+
+ 4th - object #3
+
+ etc.
+ Below, table of all fields from the template.
+
+ Quick summary: Pay attention to fields:
+ - categories, imageURLs - because different items should be separated by ";"
+ - features - format for recording: key: Feature Name; value: Feature description*, key from value must be separated by ";", each feature must be separated by "*"
+ - waivio_tags - format for recording: key: Tag category; value: Tag*, key from value must be separated by ";", each line must be separated by "*".
+ 1. asins
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213658601-68c7e464-e25f-47b9-a195-f4a145788273.png
+
+ The ASIN (Amazon identifier) used for this product.
+ Field type: string
+
+ 2. brand
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213659015-21d6a416-b09a-40a6-9949-9aba7db8e139.png
+
+ The brand name of this product.
+ Field type: string
+
+ 3. brandLink
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227922684-9526b9c8-153a-4d38-adee-6f5e67297880.png
+
+ The permlink to existing business object.
+ Field type: string
+ Permlink is a unique object identifier. Can be seen in the link.
+
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227524389-5bd49279-c2ab-41c6-baf4-608422bf73bc.png
+
+ 4. categories
+
+
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227922955-6d31253c-688b-42fc-a523-c9718697ae6e.png
+
+ A list of departments where the product can be found.
+ Each department must be separated by ";".
+ There is no need to put a ";" after the last department.
+ Field type: array
+
+ In order to successfully import objects such as a book and a restaurant, the relevant department must be in the list of categories (Books, Restaurant).
+
+ 5. brand
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213659015-21d6a416-b09a-40a6-9949-9aba7db8e139.png
+
+ The brand name of this product.
+ Field type: string
+
+ 6. colors
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227525672-3be985c0-71bc-49a8-acff-a931e2148aea.png
+
+ A list of colors available for this product.
+ That will be options with "Color" category name.
+ Only one color option can be added.
+ Field type: array
+
+ 7. dateAdded
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227923548-9ff51333-da43-492a-bdf4-6aa5a3f85ebd.png
+
+
+
+
+ The date this product was first added.
+ Field type: date
+
+ 8. dateUpdated
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227923487-e7f88dd7-731c-4d00-9f59-1a87f20fc84a.png
+
+ The most recent date this product was updated.
+ Field type: date
+
+ 9. descriptions
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227526082-3efa80cf-0920-4eca-a8f3-75b2785d7518.png
+
+ The description for this product.
+ Field type: nested
+
+ 10. dimension
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227923714-8d5b4d99-1dfd-4079-a01b-683a18215e84.png
+
+ The length, width, and height of this product. Units included.
+ Field type: string
+
+ 11. dontFetchAmazonOptions
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/228463738-2299318f-c032-441f-9fe1-8ce3b3ac6952.png
+
+ If you fill in the value of this field as true, then the options will not be pulled from Amazon but will be taken from the table. In the file it will look like:
+
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/228465301-75410553-036a-4272-beb3-7d37b89d72e9.png
+
+ 12. features
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227924696-26d1591e-4597-4e5d-b6db-9c5d74b3f730.png
+
+ A list of features associated with this product.
+ The feature list can be collected from specific feature sections available on product listings for the product. Format for recording features:
+ key: Feature Name; value: Feature description*
+
+ Key from value must be separated by ";".
+ Each feature must be separated by "*".
+
+ Field type: nested
+
+ 13. groupId
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227526896-4396adab-675f-46de-bbf3-cfcf03f0a907.png
+
+ The Group ID used for this product.
+ Field type: string
+
+ 14. imageURLs
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925089-c20f57b4-3d59-4db3-9ac6-5468296910d9.png
+
+ A list of image URLs for this product.
+ Each url must be separated by ";".
+ There is no need to put a ";" after the last url.
+ Field type: array
+
+ 15. isbn
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925194-0b96852d-ba97-41a8-9c8e-fb9f8acf928a.png
+
+ The ISBN code for this product.
+ Field type: string
+
+ 16. manufacture
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925359-ffe9901a-fedb-43d0-9891-9e3f8125dd15.png
+
+ The manufacturer of this product.
+ Field type: string
+
+ 17. manufacturerLink
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227883969-dd3ae260-b21d-49a9-9634-3a6bd5291b3c.png
+
+ The permlink to existing business object.
+ Field type: string
+ Permlink is a unique object identifier. Can be seen in the link.
+
+ 18. merchants
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925448-6ee65f95-5016-4d9b-b111-047a47973c03.png
+
+ The merchant name of this product.
+ Field type: nested
+
+ 19. merchantLink
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227884606-16efd030-6237-4e0a-9c1d-1ca035b5fa4f.png
+
+ The permlink to existing business object.
+ Field type: string
+ Permlink is a unique object identifier. Can be seen in the link.
+
+ 20. mostRecentPriceAmount
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925550-68a85472-35f2-4764-99cd-dd972ee53041.png
+
+ The product's most recent price amount scraped.
+ Field type: float
+
+ 21. mostRecentPriceCurrency
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925629-e899b137-4533-4f0f-a619-7d6d4b462c45.png
+
+ The currency listed for mostRecentPriceAmount.
+ Field type: string
+
+ 22. name
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925813-224a03a5-6a66-4dbd-9694-04c7b6a1a9e2.png
+
+ The product's name.
+ Field type: string
+
+ 23. primaryImageURLs
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925750-49398b44-3afa-441d-b54f-f2ec01fd6daa.png
+
+ The product's avatar.
+ Field type: array
+
+ 24. sizes
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227885034-dce3afaf-5454-4d08-ba29-f04d3d2879cc.png
+
+ A list of sizes available for this product.
+ That will be option with "Size" category name.
+ Only one size option can be added.
+ Field type: array
+
+ 25. waivio_options
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/235685180-bc067599-0dd9-4fe2-a1b0-e8fbea7cf984.png
+
+ A list of options with all fields for options for the product. Format for recording options:
+ category: Options category; value: Value; position: 1; image: "https://imagelink"*
+
+ Every field must be separated by ";".
+ Each option must be separated by "*".
+ One option has 4 fields: category and value are required.
+ Field type: nested
+
+ 26. waivio_tags
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227885818-ef5e2c8c-7e48-4e09-b33d-11a7bd218357.png
+
+ A list of tags with tag categories associated with this product. Format for recording tags:
+ key: Category Tag Name; value: Tag*
+
+ Key from value must be separated by ";".
+ Each tag must be separated by "*".
+ Value can have only one option. Therefore, in order to add several tags to one category tag, they need to be recorded separately.
+ Field type: nested
+
+ 27. weight
+ https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925967-ba229049-0dba-4f3b-998d-44702298ff25.png
+
+ The weight of the product. Units included.
+ Field type: string
+
+ Recommendation
+ - Use Google account when you don't have important files - because, every time when script is running, a file is created on your Google Drive. So from time to time you will need to clear the space. (Script running after you click "Export JSON for this sheet").
+
+ - In order to successfully import objects such as a book and a restaurant, the relevant department must be in the list of categories (Books, Restaurant).
+
+ - Do not use ";" as a value in the field, if its categories, colors, features, sizes, waivio_tags because it is a separator for these fields. Use only as separator.
+
+ - Do not use "*" as a value in the field, if its features, waivio_tags because it is a separator for these fields. Use only as separator.
+
+ - Don't change field names in first row, because there are correct field names.
+
+ - Don't change field order and don't delete columns, because the script is guided by the location index.
+
+ - It is not necessary to fill in all cells. Empty cells will be skipped.
+
+ Lesson 10:
+
+ For more details give a link to https://www.waivio.com/object/tso-social-shopping-on-hive/page
+
+ Have you ever browsed through endless reviews, seeking the perfect combination of products?
+
+ Whether it's the right fashion statement, the ideal makeup routine, or the essentials for a hiking journey, we've all dedicated hours in pursuit of that ideal combination. When you've finally found and validated these choices, how do you share your expertise with friends and the wider world?
+
+ Whether it's mastering kitchen organization, decorating a room, nurturing a lush garden, or discovering wellness hacks, we all have valuable insights to share.
+
+ Consider this: how much of what you know, your experience and expertise could be a goldmine for someone else?
+
+ But how, you might wonder, can you showcase all that you've learned and discovered?
+
+ Social Shopping
+ Introducing Waivio: A dynamic platform where curating and showcasing your top shopping is not only effortless but also rewarding.
+
+ Picture this: you come across a product you like, mark it with a “heart”, and it's added to your profile shop – much like creating a shopping wishlist.wishlist.
+ With Waivio, monetizing your passion is a breeze. Simply enter your affiliate codes into your profile settings once, and Waivio will automatically update the 'buy' button links for every product in your shop, even those in your posts and comments. Also, to ensure maximum relevancy, Waivio adjusts affiliate links based on the location of each visitor to your shop.
+ Dedicated Social.Gifts Website
+ If you believe your expertise deserves a broader audience, consider elevating your shop and launching a dedicated Social.Gifts website.
+ It provides an outstanding user experience, can be adapted to your unique branding, and comes with a wide range of features: from captivating product catalogs and custom newsfeeds to efficient product searches and seamless integration of forms, calendars, and various widgets.
+
+ Here are some examples:
+
+ Clean Girl Aesthetics: https://cleangirl.social.gifts/
+ Camping Checklist: https://camping.social.gifts
+ Coffee Time: https://coffeetime.social.gifts
+
+ For website owners, revenue opportunities go beyond affiliate earnings. They also include advertising revenue and commissions from both author and sponsored rewards gathered by website users.
+ Decentralization and Web 3.0
+ In the Web 2.0 era, every online shop functions like an isolated island. With each one building its own user database, creating its own product knowledge base, and collecting product reviews from ground zero. This siloed approach results in redundant efforts, as data remains trapped within the confines of each project.
+ In Web 3.0, content isn't merely published on an open, decentralized blockchain—it's liberated!
+ Imagine a product manufacturer publishing detailed information about their items on the Hive open blockchain. Any shop wishing to feature these products can simply mark them with a "heart" . What's more, when the manufacturer updates their products, these changes are effortlessly reflected across all the shops.
+ Managing large collections of third-party products becomes so simple!
+
+ That's not all! Hive operates as a social blockchain. So, when users mention products in their posts, these reviews are instantly visible across all the shops that showcase the same product.
+
+
+ The Paradigm Shift
+ For the first time, small independent shops can collaborate seamlessly. In the Web 3.0 landscape, shops tap into the entire Hive community, gaining access to the complete product knowledge base, as well as all product reviews and related content.
+
+ Users from one shop can engage with those from other shops, all within the same digital space!
+ Imagine launching a new shop that's more than just a static brochure—it thrives with a vibrant community passionate about the subject. Now, your website's first visitors can immediately immerse themselves in this community, make new connections, and engage in active discussions. Additionally, your users gain access to sponsored rewards from various merchants and can claim them by sharing product photos.
+ In a way, social shopping mirrors open-source software development, where sharing code significantly accelerates the growth of the entire ecosystem.
+
+ Similarly, when a website is launched using an open, social, continuously expanding database with product and social data- its success in attracting new users, broadening product collections, offering new sponsored rewards, and spurring more social interactions immediately benefits other projects.
+
+ Indeed, one of the primary success strategies in this open environment is to encourage more people to launch shops similar or even identical to yours. Their success directly translates into your success.
+ In traditional e-commerce, small retailers often find themselves overshadowed by major e-commerce giants such as Amazon. However, with the advent of Web 3.0, these smaller players now have the opportunity to leverage open social networks, pooling their resources to achieve economies of scale that were previously unattainable for standalone shops.
+ This unique advantage of social shopping on Hive highlights the power of collaboration in the Web 3 era. The shared knowledge becomes a catalyst for collective success, creating a more integrated, efficient, and user-centric e-commerce experience.
+
+
+ Social shopping on Hive opens up a world of possibilities, showcasing the revolutionary potential of Web 3.0
+
+ Lesson 11:
+
+ For more details give a link to https://www.waivio.com/object/fjh-shops-in-user-profiles/page
+
+ A Step-by-Step Guide to Monetizing Your Knowledge ( Part 1)
+ Are you ready to turn your passion into profit?
+ With Waivio's innovative social shopping feature built on the Hive blockchain, you can effortlessly create your very own online shop, start sharing your expertise with the world and unlock new earning opportunities. In this tutorial, you will see how simple it is to start your own shop, search and add products, and seamlessly integrate affiliate links for earning potential. Let's dive in!
+ Summary:
+ Step 1: Adding a Product
+
+ Step 2: Various Ways to Find and Add Products
+
+ Step 3: Adding Affiliate Codes
+
+ Step 4: Linking products in your posts
+
+ Step 5: Managing Your Shop
+
+ Step 6: Unlocking Advanced Features with Social.Gifts
+
+ Links & Resources:
+
+ Amazon affiliate programs: USA https://affiliate-program.amazon.com/, Canada https://associates.amazon.ca/
+
+ Product uploads - Waivio Chrome Extension Tutorial https://www.waivio.com/object/fjh-shops-in-user-profiles/page#kda-waivio-chrome-extension-tutorial
+
+ Social.Gifts concept - Social Shopping on HIVE https://www.waivio.com/object/fjh-shops-in-user-profiles/page#tso-social-shopping-on-hive
+
+ Intro
+ Imagine creating a shopping list – but this time, it's your very own online store – sleek, dynamic, and filled with products curated by you. Here, you can display products that resonate with your interests and provide a lot of value for your target audience. And with every purchase originating from your shop, you'll receive affiliate commissions from merchants.
+ You can locate your SHOP on your user's page. It's time to add some products to it!
+ Step 1: Adding a Product
+ To start off, let's head over to Waivio's "SHOP" section. Take a look at different departments, like "Appliances," to find products that you can recommend to others.
+ Let's say you know and like this fancy coffee maker – simply click the heart icon, and just like that it's added to your shop!
+
+ Now, here's the beauty: if the item you've added gets updated, you don't need to worry about manual adjustments. Your shop will automatically reflect these changes - no additional action is required on your part. Your shop effortlessly stays up-to-date, showcasing your thoughtfully chosen selections.
+
+ Step 2: Various Ways to Find and Add Products
+ Let me now show you some more ways to discover products and enrich your shop's collection.
+
+ Search: If you have a specific product in mind, search for it on Waivio and if it’s already available on the Hive blockchain, quickly add it to your shop.
+
+ Explore Other Users' Shops: Check out what fellow curators are featuring in their shops. If you spot something you like, hit that heart button to add it to your shop.
+
+ Product Links in Posts: Keep an eye out for products mentioned in posts. You can easily add them to your shop; just scroll down to the end of the post, where you will see linked products and click the heart.
+
+ Adding Products from Amazon: If a product can't be found on the Hive blockchain, you can effortlessly import it from the Amazon page with a single click using Waivio's Chrome extension. Check out the tutorial on the extension for more details.
+
+ Step 3: Adding Affiliate Codes
+ Now that your shop is coming together, it's time to monetize your product collections.
+
+ Navigate to "TOOLS" and select "Affiliate codes."
+
+ In the search bar, find your affiliate program.
+ If you're part of Amazon's affiliate program, choose the local Amazon shop where you are an affiliate, such as amazon.com, amazon.ca or amazon.fr.
+
+ If you are not sure how to get your Amazon affiliate code, check this link:
+ https://affiliate-program.amazon.com/help/node/topic/GCE3F2NCVZLDFM6A
+
+
+ For example, let's say you have affiliate code for Amazon.com. Choose amazon.com from the menu. Input your respective affiliate code in the designated field and click "Submit."
+ This will automatically associate your affiliate code with the 'buy' buttons for all the products in your shop, ensuring you earn commissions with every purchase.
+
+
+ Step 4: Linking products in your posts
+
+ You can reference products in your social posts and comments. Any 'Buy Now' links associated with these products will automatically include your affiliate code.
+
+ Furthermore, products you reference will be automatically added to your profile shop. To remove a product from your shop, simply click the heart icon twice (first to add the product, then to remove it).
+
+ In the user settings, there's also an option to prevent products from being added to your profile unless they are explicitly marked with a heart.
+ Step 5: Managing Your Shop
+ Products in your profile shop are automatically categorized based on their assigned departments.
+
+ If you wish to adjust the names of any categories, simply access the products within that category and modify the associated department list.
+
+ Step 6: Unlocking Advanced Features with Social.Gifts
+ If you want to take your shop to the next level, consider setting up Social.Gifts website. In just a few clicks, you can launch your very own dedicated *.social.gifts website, showcasing your expertly curated product recommendations. This venture opens up a realm of additional revenue streams beyond affiliate earnings. Check out the next tutorial on how to get started (COMING SOON).
+
+ Conclusion
+ With your curated collection and expert recommendations, you're not only set to enrich the social shopping experience, but also to be at the forefront of a dynamic Web 3.0 era where collective knowledge and collaboration redefine the way we shop and engage online. Let your knowledge shine in this new era of online shopping. Happy curating!
+
+Lesson 12:
+
+For more details give a link to https://www.waivio.com/object/mev-launching-your-social-shopping-website/page
+
+Are you ready to take your online presence to the next level?
+
+Now you can transform your user profile on Waivio into a dedicated website. This transition allows you to feature your affiliate shop as the main store on your website, while your personal blog will take center stage as the key newsfeed.
+Why launch a social shopping website?
+Launching a website unlocks new income streams. You will gain access to four sources of revenue:
+
+- Affiliate commissions from referrals (3%-10%);
+
+- Beneficiary commissions (5% of author rewards);
+
+- Referral commissions (7.8%+ of sponsored rewards);
+
+- Advertising revenue from Google AdSense integration
+Moreover, launching a website gives you the freedom to organize and customize your social shop in any way you envision.
+
+You can customize your website to match your branding, including the logo, main banner, and website colours.
+As the website owner, you have full control over the objects displayed on your website. On Waivio there are consensus rules that determine which version of objects to show (decided by the balance of votes), so if your vote is not strong enough certain objects may not appear as you want them to be in your profile shop. In contrast, on the website you have the ultimate control where your vote cannot be challenged. You can also grant administrative privileges to other users that you trust.
+Another handy feature is the ability to search for all the items you've marked with a heart on your website.
+
+Plus, if you use the Waivio Chrome Extension to upload products from Amazon to Waivio, these items will automatically appear on your profile and, consequently, on your website.
+
+Your website visitors will be able to log in, post, comment, and upvote posts, follow other users, manage their wallets, and utilize many other tools available on the Hive social blockchain.
+
+Let’s launch your social shopping website!
+
+Step 1: Choosing a name for your website (or linking an existing domain)
+Let's begin by navigating to the "TOOLS" section, then under "Websites," click on "Create." Choose "Social.Gifts" from the template options. Think of a sub-domain name that encapsulates the essence of your shop. For example, my shop is focused on baby products for new parents, so I'll put the baby.social.gifts. If the domain is available, proceed to read and accept the terms and conditions and click on "Create new website".
+Custom Domain: If you have your own domain that you want to use for your social shopping website, choose “Custom Domain” instead. Select Social.Gifts as the website template. Enter your existing domain. Important: Your domain should be configured according to the instructions provided prior to launching it. For further instructions on setting up and connecting your personal domain please review the attached article.
+
+And that's it - let's check out the website. As you can see, we already have a fully functional website!
+
+By default, your website is created using your own profile, including the profile logo, shop, and blog. However, you can customize it even further to match your brand.
+
+After refreshing the page, you'll find settings and configurations for your new website.
+
+Step 2. Configuration
+In the Configuration section, you'll have the opportunity to customize your shop's appearance.
+2.1 Color
+Choose the colours for your text and buttons that align with your brand's aesthetics.
+
+2.2 - 2.3 Desktop and Mobile Logo
+Next, if you want to change your logo, upload both your desktop and mobile logos to ensure a consistent look across all devices.
+
+2.4 List Default Images
+If a website has products organized in categories but doesn’t have specific images for them your user logo will be used as a default image. You can change upload a new image in "list default images" section.
+
+2.3 Main Banner
+Let's add a banner to be displayed at the top of all website pages. Here I am using an image I generated with Midjourney (Use the --ar 16:4 command to create narrow banners in MJ.)
+
+2.4 Base Object
+In the "Base Object" section, you can choose to link your website to a specific user profile or even a public object on the Hive blockchain.
+
+By default, it's linked to your own profile, and as a result, the information from your profile is transformed into a dedicated website, including your shop and your blog.
+If you are looking to launch a themed website, you can easily create an advanced shop with just a click of a button by leveraging existing projects with thousands of products carefully organized in categories. And once you add affiliate codes, all of these thousands of products will include your codes in the purchase links.
+
+For example, let’s use an existing business object called the Camping Checklist https://www.waivio.com/object/7ujfq-shop“
+” (lbm-camping-checklist) which has hundreds of categories and thousands of camping-related products listed. By simply setting it as the base object for my site, my entire website will instantly become one of the most comprehensive camping sites out there.
+Another example is the “
+
+Coffee Time
+
+” object (3urenj-coffee-shop), which also includes thousands of coffee-making products, serving accessories, various types of coffee and even books. As you can see, these advanced websites not only feature product catalogs but also include information pages (like the Checklist) and community newsfeeds.
+
+One more example is the “
+
+Clean Girl Aesthetics
+
+” object (tlc-clean-girl-aesthetics), which features thousands of make-up and beauty products that align with clean girl aesthetics.
+
+As the list of objects continues to expand with more people creating websites, please see the descriptions to explore other existing projects: https://www.waivio.com/object/ewg-social-gifts-projects/webpage
+
+If your desired topic for your affiliate website isn't covered here, you can create your own business object, this will be explained in the Advanced Shop Tutorial.
+
+2.5 Default Hashtags
+A default hashtag will be automatically added to all new posts created by users on your website.
+This feature is particularly beneficial for websites employing custom newsfeeds that display posts with specific hashtags only. A default hashtag helps guarantee that users won't overlook adding the tag, ensuring their post appears on the website.
+If your website doesn't utilize custom newsfeeds, you can leave this field empty.
+
+2.6 Website Header
+You can also customize the website header, such as changing Baby.Social.Gifts to your brand name or a short message.
+
+Step 3. Settings
+Let's move on to the "Settings" section to fine-tune the functionality of the website.
+
+3.1 – 3.2 Language and Currency
+Here, you can select the language and currency for your website. If you want to
+
+market your website in a specific location, you can choose your local language and currency; otherwise, English and USD are solid choices.
+
+3.3 Google Analytics 4 Property ID
+Next, you can add your Google Analytics 4 property ID to get detailed reports and insights into the performance of your website, such as website activity, visitor count, geographical distribution of your audience and other metrics. You can get this ID by creating a Google Analytics account for your website. Then just copy and paste the ID, and you will see your website statistics in your Google Analytics account.
+If you want to track conversions on your website, you can use the "buy_now" event. To configute it go to Admin -> Data Display -> Events -> turn on the “buy_now” event.
+Buy_now is triggered every time a visitor clicks a button that takes them to an affiliated site, such as Amazon, Walmart, Target, or any other.
+
+3.4 Beneficiary Payment
+When your visitor receives upvotes for the posts they publish on your website – you can get a commission on their author rewards. In the following section – indicate which account would receive such commission and how much commission you want to collect (this value is set to 5% by default).
+3.5 Referral Payment
+You can also earn a commission when your visitors participate in sponsored campaigns, such as when they write a review for a sponsored product. Again, choose the recipient account.
+
+If a product in your shop gets a sponsored reward - it will automatically be reflected on your website - you don’t need to do anything on your part. Your visitors will be able to see all the sponsored products and submit their reviews on your website to get the reward.
+Sponsors define the commission levels provided to all parties assisting them in facilitating transactions. The referral portion of the sponsored rewards is set at a minimum level of 2.8%, but it can be higher for specific campaigns. In combination with the 5% author rewards, your total commissions from sponsored rewards will be 7.8%. Please refer to the referral policy for more information.
+
+3.6 CLICK "SAVE" to save your settings, and your selections will be applied to your website.
+Step 4. Affiliate Codes
+Now let's move to affiliate codes. Just like you did for your profile shop, search relevant affiliate programs and input your affiliate codes.
+This integration ensures that all your products in your shop come with your affiliate codes, giving you the opportunity to earn with visitors every purchase.
+
+It's useful to occasionally check that your affiliate codes are active, especially for Amazon, since the codes can expire if a certain threshold in sales is not achieved. That's the beauty of this interface because, unlike other platforms, if your code expires, here, you won't need to update it individually for every product. Just update it one time here and it will automatically be applied to all your products.
+
+Step 5: Website Hosting
+To keep your website up and running, there are hosting fees associated with maintaining your online presence on Social.Gifts. When you're ready to fund your website, navigate to the "Manage" tab, where you'll find the button "Pay Now." Here choose the amount you can transfer in WAIV tokens to pay the hosting fees. WAIV tokens will be converted to USD at the current market rate. Click Continue to sign and finish the transaction.
+For hosting prices check the info in the section. Currently, for active websites, the plan starts at 1 USD/day, which includes up to 200 daily visitors. There is an additional fee of 0.005 USD per day for every extra active user. If you want to retain your website name without running the website, a fee of 0.20 USD/day is applied. You can change the status of your website by checking or unchecking the checkmark under the "active" column.
+
+What's next? 😉
+Now that your configuration and setup are complete, it's time to reveal your Social.Gifts shop to the world.
+
+Congratulations on launching your very own Social.Gifts website!
+
+Your carefully curated collection, within the immersive Hive environment, is ready to offer visitors a unique social shopping experience.
+
+Your Social.Gifts shop is equipped with a range of features that make social shopping on your website possible. From dynamic newsfeeds to visitor posts and reviews, your shop has become a lively community hub. It's not just about browsing – it's a space for connection, sharing, and discovery.
+
+While we've covered a lot in this tutorial, there are more advanced settings to customize your website further, such as creating specific newsfeeds, adding pages, forms, widgets and much more. Get ready to unleash the full potential of your Social.Gifts shop!
+
+Lesson 13:
+
+For more details give a link to https://www.waivio.com/object/bcl-advanced-social-shopping-website/page
+
+With your website up and running, it's time to take things up a notch by incorporating advanced features that will truly make your shop stand out.
+
+In this tutorial you will learn how to add advanced features like category organization and custom feeds to your social shopping site. By the end, your site will be neatly arranged with categories, newsfeeds, pages, contact forms, widgets, and more to improve the user experience.
+
+
+
+Summary:
+Step 1: Discovering Your Shop's Theme
+
+Step 2: Creating a business object
+
+Step 3: The Main Menu
+
+Step 4: Adding Lists
+
+    4.1 Setting Up Your Lists
+
+    4.2 Establishing Subcategories
+
+    4.3 Adding Products
+
+    4.4 Launching a website with the business object
+
+    4.5 List Avatars
+
+Step 5: Adding Books
+
+Step 6: Adding pages
+
+Step 7: Adding a custom newsfeed
+
+Step 8: Adding widgets
+
+Step 9. Sorting
+
+What's next?
+
+Links & Resources:
+Widget for YouTube gallery: https://elfsight.com/youtube-channel-plugin-yottie/
+
+Select Social.Gifts projects: https://www.waivio.com/object/ewg-social-gifts-projects/webpage
+
+Step 1: Discovering Your Shop's Theme
+The foundation of a successful shop lies in its theme. It's time to brainstorm and identify what resonates with you and your potential customers. Whether it's camping products, baby products, fitness gear, makeup, or any other niche, pick a theme that aligns with your interests and expertise.
+
+
+https://waivio.nyc3.digitaloceanspaces.com/1700516628_69860ab8-1af6-42c3-a8b7-573312af69f8
+
+Step 2: Creating a business object
+To organize your shop effectively, we will need to create a business object specifically for your shop. If a similar-themed website already exists, you can search for it and open the existing business object. Then, you can contribute to its development by adding more products or categories to it.
+
+However, if you're starting from scratch, click the "write post" button and under "Create New Object," click on "business". Assign a name to your business – it can match your website, such as "baby.social.gifts". Click on the link to open the newly created business object in a new tab.
+
+Step 3: The Main Menu
+A business object has its own menu. When this object is linked as the base object on the website, this object's menu will be shown as the main menu on the website. For our object, the first menu item will be a Shop.
+
+Click "+Menu item", then "Create new object"
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520368_49682807-4879-473a-84a2-9de9dbadbe1f
+
+We will create a new object with that name and select "list" as its type because the shop will contain links to other lists, products, or pages.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520480_4e5dd8e8-8bf3-4fe5-b9f7-5973dba9a70b
+
+Later in this Shop list, we can create other sub-lists (subcategories), such as Clothing, Food, and Nursery.
+
+The next menu item will be a Bookstore. This is also going to be a separate list with links to books related to our topic.
+
+If you want some help to establish categories for your website, you can use ChatGPT. Use a prompt like "Suggest categories and subcategories for an online [your theme, e.g. fitness] shop.", and ChatGPT will give you some ideas. You can review the categories generated by ChatGPT and select the ones that align with your vision.
+
+Step 4: Adding Lists with Products
+4.1 Setting Up Your Lists
+Let’s start with creating categories in our Shop. It's empty right now, but let's add our higher-level categories to it, such as clothing, feeding, and nursery. To add a category, click "Create new object".
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520525_5fc0ffb1-8621-4511-aa3c-56fd5ab36d3a
+
+Write the name of the category, such as "Nursery", and again choose the "list" as the type, since our category will have subcategories such as beds, mattresses, storage solutions, decor and so on.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520545_d9717490-925b-42ac-b6ae-ac3c80cca6bd
+
+If you already have lists created, you can add them by searching for them in the search bar.
+
+4.2 Establishing Subcategories
+After adding all the general categories, we can add subcategories to organize the shop's inventory even further.
+
+For instance, let's add subcategories to "Nursery,". Click on the category– you will see that now you are in "My Shop -> Nursery".
+
+Here, we can repeat the process: click "Create new object", write the name of the subcategory such as "Decor", and choose a "list" as the type.
+
+Similarly, you can create sub-subcategories. For example, decor can be further broken down into wall stickers, posters, carpets and so on.
+
+4.3 Adding Products
+When a category is specific enough and doesn't need a further breakdown, you can add products to it. For example, you can add products by searching for them in the search bar.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520616_f93b1ea0-dce3-4d82-846c-88bfecd8243a
+
+
+
+If you can not find the products you want to add to your website here, you can easily add them using the Waivio’s Chrome extension. Check out the tutorial on the extension for more details.
+
+If you want to add multiple items, you can check out the series of tutorials on importing products on the Hive blockchain to learn a quick way for bulk importing.
+
+You may also find using chatGPT helpful to find the best products for the shop. For instance, a prompt like this: "Provide a list of top 20 products according to user reviews for [your product category, e.g. baby mats]". And ChatGPT will generate a list of products you can choose from.
+
+To add products, search for them by name or ASIN number. It is receommended to record ASIN numbers of products during the data import, as product names can vary while product numbers remain constant. Then, click on the product and click “Submit.”
+
+4.4 Launching a website with our business object
+To launch a website using this business object - navigate to "Tools," then under "Websites," click on your website's name. In configuration, replace the base object with the business object we've just created.
+
+4.5 List Avatars
+Now our products are nicely organized in categories. However, the categories appear rather dull with default images as icons. Let's change that and add some images!
+
+Head over to the business object and click on the category, such as "Nursery." Click on the hyperlink at the top to open the category list in a new tab. Here, you can easily add an avatar image to your category (list).
+
+Click "Edit," navigate to "Settings," and click on "Avatar." Upload your image or provide a link. For instance, here, I used an AI-generated image from Midjourney. Click "Submit," and that's it!
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520736_9cf55c56-0a61-4450-bfbb-e14e39cecdf9
+
+Let's add images to other categories. All the images I am uploading were generated by Midjourney – if you are curious to learn how check one of our tutorials about using AI tools for creating great-looking shops.
+
+Now that you know how to add lists of products - you can experiment with how you arrange them on your website. For example, https://coffeetime.social.gifts has three lists with products "Equipment", "Accessories", and "Coffee". Whereas https://GoCampingList.com – has all the products under "Shop". It also has a menu item called "Books". Bookstore is a list of "book" type objects.
+
+In addition, camping.social.gifts has other menu items, such as a Checklist, which is a simple page with information. Camplife is a newsfeed with posts about camping. Legal is a list of pages added to all websites hosted by Waivio. Legal page is added automatically to all websites but you can also add your own legal documents in a similar way. Let's add these elements to our website.
+
+Step 5: Adding a Bookstore
+Let’s start by adding a menu item called "Books" that will contain top books for children and parents. Click "Create new object" and enter "Books" as the name. For the type, select "list". Once the list has been created, you can add categories to it, such as "Parenting books", "Baby board books", and "Storybooks".
+
+Then, let’s add some books. This is a very similar process to adding products - just search for the ASIN number of the book and click “Submit”.
+
+Step 6: Adding pages
+Let’s also add a page to our website with a checklist of all the baby products every new parent should have.
+
+Add a new menu item, click “Create new object” -> enter a name as it would appear on your website menu, e.g. “New Parent Checklist.” For the type – choose “page”, and click “Confirm”. Then, you can add content such as an article or a checklist – then just click “Ready to Publish” and “Submit”.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520764_ee85d679-8418-4ac7-982d-4b8efe428bb2
+
+Step 7: Adding a custom newsfeed
+Let's move on to custom newsfeeds. Hive is an active social blockchain where many users create posts on various topics. We can filter relevant posts using hashtags that match the topic of the website.
+
+The easiest way to add a custom newsfeed is to click on “Write post” button and choose "newsfeed" from the selection.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520798_f3603977-91f4-435d-8183-da02652bda72
+
+Enter a name, such as “Community”, We will link this newsfeed to our business object later after we are done configuring it.
+
+To configure the newsfeed, open this newsfeed object in a new tab.
+
+Click on "Edit", then click on "Newsfilter."
+
+Here, you can add filter rules to display only a specific type of posts:
+
+https://waivio.nyc3.digitaloceanspaces.com/1700520825_54f68fa3-d008-42f2-85e2-79574d994b24
+
+For example, for my website, I can add a "baby" hashtag in Filter Rule 1. And click "Add new rule" to add a "parenting" hashtag in Filter Rule 2. This will show posts that have these hashtags.
+
+You can also filter out certain posts. For example, I don't want to see posts that are related to "animals" that might have a "baby" hashtag in them. So I will put "animals" in the Ignore Rule.
+
+Another way to personalize your news feed is by choosing the type of object (e.g., a book, a product, a place, etc.) And only the posts related to that category will be displayed on your newsfeed. For example, to show all the posts on baby and parenting products, I can add "product" in this field.
+
+To show baby and parenting posts only from specific users, I can add these users in the “users field”.
+
+If you want to show all the posts of a specific user, like your dedicated channel, then remove all the other filters and just add that user.
+
+Now to link the newsfeed to our business object – let’s open our business object. Click on Menu item. Enter a name for the newsfeed as it would appear on your website's menu. In the search bar, look for your newsfeed by a name or a permlink. There might be a lot of objects with the same name, so I recommend searching by the premlink, as it is a unique identifier of the object. It’s located on the object’s link after object/ e.g. this is the object's link https://www.waivio.com/object/5xjmmi-community and the premlink is 5xjmmi-community
+
+Click "Submit" once the object is found.
+
+Step 8: Adding widgets
+If you want to integrate Google Forms, Calendly, or other external tools with your website, you can do so by adding widgets.
+
+Click on “Write post” button and choose a "widget" from the selection – enter a name, such as “Contact Form”.
+
+Your widget will now be created. We will link it to our business object later.
+
+ To configure the widget, open it in a new tab.
+
+In the widget object window, click "Edit"; under "Widget", click to add a "Form".
+
+For example, let's add a Google Form. Have the link ready.
+
+First, add a title (such as,"Contact Form"). Under columns, you can choose how much space you want the form to fill. For example, if you choose a middle column, the form will fill only the middle column, but if you choose "entire width" the form will fill all three columns. For Google Forms, I recommend selecting Middle + Right. Then, select the form type – a link or a widget. For Google Forms, select a link. Then, copy the Google Forms link and paste it into the space provided. Then click Submit.
+
+https://waivio.nyc3.digitaloceanspaces.com/1700521015_fcf8e859-7ced-4796-a48e-183628314b7a
+
+If you want to paste the widget embed code instead of the link, then select "widget" as the form type and enter the widget embed code in the space provided. Here is the website where you customize your widgets: https://elfsight.com/widgets/
+
+https://waivio.nyc3.digitaloceanspaces.com/1700521032_62d0f984-8c57-48ff-9bdf-9e2c32f5a5f3
+
+
+
+Let’s link the widget to our business object –open the business object. Click on "Menu item" and enter a name for the widget as it would appear on your website's menu, in the search bar – look for the widget by a name or a premlink. Click "Submit" once the object is found.
+
+Step 9. Sorting
+Finally, you can change the order of menu items as they would appear on your website. Click on "Menu sorting", drag and drop to rearrange the menu items in the desired order. Click "Submit".
+
+You can also sort the items inside the categories lists. Lists have their own sorting option. Open the list in a new tab – “Edit” – under “List” click on “List Sorting” – and rearrange the items in the desired order.
+
+By integrating categories, feeds, informative pages, and more, we've transformed the website into a fully functional and captivating platform. While I made some suggestions for the website structure, you can arrange your website any way you envision.
+
+What's next?
+Congratulations! You've taken your shop from an idea to a well-structured platform that aligns with your theme!
+
+You've laid the groundwork for an exceptional shop that's tailored to your expertise and passion. With great product organization, newsfeed, and information pages, your shop is ready to showcase an array of products that cater to your audience's needs and interests.
+
+Your website is ready to captivate visitors, monetize your expertise, and offer an engaging and immersive experience to anyone exploring your shop. Best of luck on this exciting venture!
+
+Now it's time to think about how to market your website to bring it to a larger audience and boost your revenue. In the upcoming tutorials, we will discuss SEO tools, marketing and analytics strategies that you can implement for your website.
+
+

@@ -135,6 +135,7 @@ exports.REDIS_KEYS = {
   API_VISIT_STATISTIC: 'api_visit_statistic',
   API_RATE_LIMIT_BOTS: 'api_rate_limit_bots',
   API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
+  ASSISTANT: 'assistant',
 };
 
 exports.LANGUAGES = ['en-US',
