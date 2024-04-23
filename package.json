@@ -22,7 +22,9 @@
     "addDataToCampaignPosts": "NODE_PATH=. node utilities/tasks/addDataToCampaignPosts/run.js",
     "updateListAvatars": "NODE_PATH=. node utilities/tasks/updateListAvatars/run.js",
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
-    "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha"
+    "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha",
+    "addVectors": "node utilities/operations/assistant/migration/up.js",
+    "removeVectors": "node utilities/operations/assistant/migration/down.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.485.0",
@@ -36,6 +38,7 @@
     "axios": "^1.6.2",
     "bignumber.js": "^9.0.1",
     "body-parser": "^1.18.3",
+    "chromadb": "^1.8.1",
     "cls-hooked": "^4.2.2",
     "cors": "^2.8.4",
     "cron": "^2.0.0",
@@ -44,7 +47,6 @@
     "formidable": "^3.5.1",
     "franc-min": "^6.0.0",
     "heic-convert": "^1.2.4",
-    "hnswlib-node": "^1.4.2",
     "isbot": "^4.4.0",
     "joi": "^17.6.0",
     "jpeg-autorotate": "^8.0.1",

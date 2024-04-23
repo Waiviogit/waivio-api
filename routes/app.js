@@ -27,5 +27,7 @@ appRoutes.route('/waiv/swap-history')
 
 appRoutes.route('/assistant')
   .post(reqTimeMonitor, AppController.assistant);
+appRoutes.route('/assistant/history/:id')
+  .get(reqTimeMonitor, AppController.assistantHistory);
 
 module.exports = appRoutes;

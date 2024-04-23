@@ -157,6 +157,17 @@ const assistant = async (req, res, next) => {
   res.status(200).json({ result });
 };
 
+const assistantHistory = async (req, res, next) => {
+  const value = validators.validate(req.params, validators.app.assistantHistoryScheme, next);
+
+  if (!value) return;
+
+  const { result, error } = await assitant.getHistory(value);
+  if (error) return next(error);
+
+  res.status(200).json({ result });
+};
+
 module.exports = {
   show,
   experts,
@@ -165,4 +176,5 @@ module.exports = {
   waivMainMetrics,
   swapHistory,
   assistant,
+  assistantHistory,
 };
