@@ -21,3 +21,7 @@ exports.assistantScheme = Joi.object().keys({
   question: Joi.string().required(),
   id: Joi.string().required(),
 });
+
+exports.assistantHistoryScheme = Joi.object().keys({
+  id: Joi.string().required(),
+});
