@@ -2,7 +2,8 @@ const fsp = require('fs/promises');
 const path = require('path');
 const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 const { OpenAIEmbeddings } = require('@langchain/openai');
-const { Chroma } = require('@langchain/community/vectorstores/chroma');
+const { WeaviateStore } = require('@langchain/weaviate');
+const { default: weaviate } = require('weaviate-ts-client');
 
 const txtFilename = 'lib';
 const txtPath = path.join(__dirname, `${txtFilename}.txt`);
@@ -15,14 +16,20 @@ const up = async () => {
     // Split the input text into documents
     const docs = await textSplitter.createDocuments([text]);
 
-    await Chroma.fromDocuments(docs, new OpenAIEmbeddings(), {
-      collectionName: process.env.CHROMA_ASSISTANT_COLLECTION,
-      url: process.env.CHROMA_CONNECTION_STRING,
-      collectionMetadata: {
-        'hnsw:space': 'cosine',
-      },
+    const client = weaviate.client({
+      scheme: 'http',
+      host: process.env.WEAVIATE_CONNECTION_STRING,
     });
 
+    await WeaviateStore.fromDocuments(
+      docs,
+      new OpenAIEmbeddings(),
+      {
+        client,
+        indexName: process.env.WEAVIATE_ASSISTANT_INDEX,
+        textKey: 'pageContent',
+      },
+    );
     console.log('Vectors Created');
   } catch (error) {
     console.error(error);

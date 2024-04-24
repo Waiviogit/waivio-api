@@ -1,16 +1,16 @@
-const { OpenAIEmbeddings } = require('@langchain/openai');
-const { Chroma } = require('@langchain/community/vectorstores/chroma');
+const { default: weaviate } = require('weaviate-ts-client');
 
 const down = async () => {
   try {
-    const embeddings = new OpenAIEmbeddings();
-    const vectorStore = new Chroma(embeddings, {
-      collectionName: process.env.CHROMA_ASSISTANT_COLLECTION,
-      url: process.env.CHROMA_CONNECTION_STRING,
+    const client = weaviate.client({
+      scheme: 'http',
+      host: process.env.WEAVIATE_CONNECTION_STRING,
     });
 
-    await vectorStore.delete({ filter: {} });
-    console.log('Vectors Deleted');
+    await client.schema
+      .classDeleter()
+      .withClassName(process.env.WEAVIATE_ASSISTANT_INDEX)
+      .do();
   } catch (error) {
     console.error(error);
   }

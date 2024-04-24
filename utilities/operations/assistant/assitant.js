@@ -6,8 +6,9 @@ const { RunnablePassthrough, RunnableSequence } = require('@langchain/core/runna
 const { StringOutputParser } = require('@langchain/core/output_parsers');
 const { formatDocumentsAsString } = require('langchain/util/document');
 const { OpenAI, OpenAIEmbeddings } = require('@langchain/openai');
-const { Chroma } = require('@langchain/community/vectorstores/chroma');
 const crypto = require('node:crypto');
+const { WeaviateStore } = require('@langchain/weaviate');
+const { default: weaviate } = require('weaviate-ts-client');
 
 const contextualizeQSystemPrompt = `Given a chat history and the latest user question
 which might reference context in the chat history, formulate a standalone question
@@ -52,13 +53,18 @@ let vStore = null;
 
 const getVStore = async () => {
   if (vStore) return vStore;
-  vStore = await Chroma.fromExistingCollection(
-    new OpenAIEmbeddings(),
-    {
-      collectionName: process.env.CHROMA_ASSISTANT_COLLECTION,
-      url: process.env.CHROMA_CONNECTION_STRING,
-    },
-  );
+
+  const client = weaviate.client({
+    scheme: 'http',
+    host: process.env.WEAVIATE_CONNECTION_STRING,
+  });
+
+  // Create a store for an existing index
+  vStore = await WeaviateStore.fromExistingIndex(new OpenAIEmbeddings(), {
+    client,
+    indexName: process.env.WEAVIATE_ASSISTANT_INDEX,
+    textKey: 'pageContent',
+  });
 
   return vStore;
 };
