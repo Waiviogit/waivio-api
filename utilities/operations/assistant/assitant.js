@@ -1,6 +1,4 @@
 /* eslint-disable camelcase */
-const fsp = require('fs/promises');
-const path = require('path');
 const { TTL_TIME, REDIS_KEYS } = require('constants/common');
 const { RedisChatMessageHistory } = require('@langchain/redis');
 const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts');
@@ -8,12 +6,9 @@ const { RunnablePassthrough, RunnableSequence } = require('@langchain/core/runna
 const { StringOutputParser } = require('@langchain/core/output_parsers');
 const { formatDocumentsAsString } = require('langchain/util/document');
 const { OpenAI, OpenAIEmbeddings } = require('@langchain/openai');
-const { HNSWLib } = require('@langchain/community/vectorstores/hnswlib');
-const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
-
-const txtFilename = 'lib';
-const txtPath = path.join(__dirname, `${txtFilename}.txt`);
-const VECTOR_STORE_PATH = path.join(__dirname, `${txtFilename}.index`);
+const crypto = require('node:crypto');
+const { WeaviateStore } = require('@langchain/weaviate');
+const { default: weaviate } = require('weaviate-ts-client');
 
 const contextualizeQSystemPrompt = `Given a chat history and the latest user question
 which might reference context in the chat history, formulate a standalone question
@@ -54,39 +49,29 @@ const contextualizedQuestion = (input) => {
   return input.question;
 };
 
-const checkCache = async (pathToCache) => {
-  try {
-    await fsp.access(pathToCache);
-    return true;
-  } catch (error) {
-    return false;
-  }
-};
+let vStore = null;
 
-const getVectorStore = async () => {
-  const cachedVector = await checkCache(VECTOR_STORE_PATH);
-  if (cachedVector) {
-    // If the vector store file exists, load it into memory
-    return HNSWLib.load(VECTOR_STORE_PATH, new OpenAIEmbeddings());
-  }
-  // If the vector store file doesn't exist, create it
-  // Read the input text file
-  const text = await fsp.readFile(txtPath, 'utf8');
-  // Create a RecursiveCharacterTextSplitter with a specified chunk size
-  const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
-  // Split the input text into documents
-  const docs = await textSplitter.createDocuments([text]);
-  // Create a new vector store from the documents using OpenAIEmbeddings
-  const vectorStore = await HNSWLib.fromDocuments(docs, new OpenAIEmbeddings());
-  // Save the vector store to a file
-  await vectorStore.save(VECTOR_STORE_PATH);
+const getVStore = async () => {
+  if (vStore) return vStore;
 
-  return vectorStore;
+  const client = weaviate.client({
+    scheme: 'http',
+    host: process.env.WEAVIATE_CONNECTION_STRING,
+  });
+
+  // Create a store for an existing index
+  vStore = await WeaviateStore.fromExistingIndex(new OpenAIEmbeddings(), {
+    client,
+    indexName: process.env.WEAVIATE_ASSISTANT_INDEX,
+    textKey: 'pageContent',
+  });
+
+  return vStore;
 };
 
 const runWithEmbeddings = async ({ question, id }) => {
   try {
-    const vectorStore = await getVectorStore();
+    const vectorStore = await getVStore();
 
     const chatHistory = new RedisChatMessageHistory({
       sessionId: `${REDIS_KEYS.API_RES_CACHE}:${REDIS_KEYS.ASSISTANT}:${id}`,
@@ -122,6 +107,31 @@ const runWithEmbeddings = async ({ question, id }) => {
   }
 };
 
+const getHistory = async ({ id }) => {
+  try {
+    const chatHistory = new RedisChatMessageHistory({
+      sessionId: `${REDIS_KEYS.API_RES_CACHE}:${REDIS_KEYS.ASSISTANT}:${id}`,
+      sessionTTL: TTL_TIME.TEN_MINUTES,
+      config: {
+        url: process.env.REDIS_URL || 'redis://localhost:6379',
+      },
+    });
+
+    const history = await chatHistory.getMessages();
+
+    const result = history.map((el) => ({
+      id: crypto.randomUUID(),
+      text: el?.content,
+      role: el._getType(),
+    }));
+
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   runWithEmbeddings,
+  getHistory,
 };
