@@ -8,6 +8,7 @@ const redisGetter = require('utilities/redis/redisGetter');
 const _ = require('lodash');
 const { REDIS_KEYS } = require('../constants/common');
 const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
+const assitant = require('../utilities/operations/assistant/assitant');
 
 const show = async (req, res, next) => {
   const data = {
@@ -145,6 +146,28 @@ const swapHistory = async (req, res, next) => {
   res.status(200).json(result);
 };
 
+const assistant = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.app.assistantScheme, next);
+
+  if (!value) return;
+
+  const { result, error } = await assitant.runWithEmbeddings(value);
+  if (error) return next(error);
+
+  res.status(200).json({ result });
+};
+
+const assistantHistory = async (req, res, next) => {
+  const value = validators.validate(req.params, validators.app.assistantHistoryScheme, next);
+
+  if (!value) return;
+
+  const { result, error } = await assitant.getHistory(value);
+  if (error) return next(error);
+
+  res.status(200).json({ result });
+};
+
 module.exports = {
   show,
   experts,
@@ -152,4 +175,6 @@ module.exports = {
   getReqRates,
   waivMainMetrics,
   swapHistory,
+  assistant,
+  assistantHistory,
 };
