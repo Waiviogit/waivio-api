@@ -73,15 +73,6 @@ exports.getWalletAdvancedReport = async ({
 
   await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
 
-  const result = {
-    wallet: resultWallet,
-    accounts: resAccounts,
-    hasMore,
-    ...depositWithdrawals,
-  };
-
-  await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
-
   return {
     result: {
       wallet: resultWallet,
