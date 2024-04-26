@@ -313,10 +313,12 @@ const getFilteredTagCategories = ({ tags, tagCategories }) => {
   for (const category of tagCategories) {
     const categoryTags = tags.find((el) => el.tagCategory === category);
 
+    const tagsArr = _.take(categoryTags?.tags, 3);
+
     tagCategoryFilters.push({
       tagCategory: category,
-      tags: categoryTags?.tags ?? [],
-      hasMore: false,
+      tags: tagsArr,
+      hasMore: categoryTags?.tags?.length > tagsArr.length,
     });
   }
 
@@ -324,13 +326,17 @@ const getFilteredTagCategories = ({ tags, tagCategories }) => {
 };
 
 const getMoreTagsForCategory = ({
-  objects, tagCategory, skip, limit,
+  objects, skip, limit,
 }) => {
   const tagCategories = objects[0];
 
+  const tags = _.slice(tagCategories?.tags, skip, skip + limit);
+
+  const hasMore = tagCategories?.tags?.length > tags?.length ?? 0 + skip;
+
   return {
-    tags: tagCategories?.tags ?? [],
-    hasMore: false,
+    tags,
+    hasMore,
   };
 };
 
