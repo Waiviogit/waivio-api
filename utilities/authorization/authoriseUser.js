@@ -19,7 +19,7 @@ const authoriseResponse = (valid, username) => {
     return { isValid: true };
   }
 
-  return { error: { status: 401, message: 'Token not valid!' } };
+  return { error: { status: 401, message: 'The Waivio authorization token is invalid!' } };
 };
 
 exports.authorise = async (username) => {
@@ -40,5 +40,5 @@ exports.authorise = async (username) => {
     const isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
     return authoriseResponse(isValidToken, username);
   }
-  return { error: { status: 401, message: 'Token not valid!' } };
+  return { error: { status: 401, message: 'The Waivio authorization token is invalid' } };
 };
