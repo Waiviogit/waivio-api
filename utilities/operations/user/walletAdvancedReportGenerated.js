@@ -16,6 +16,7 @@ const generateReport = async ({
 }) => {
   let hasMore = true;
   do {
+
     const { result, error } = await getWalletAdvancedReport({
       accounts, startDate, endDate, filterAccounts, user, currency, symbol, limit: 50,
     });
@@ -32,8 +33,8 @@ const generateReport = async ({
 
     hasMore = result.hasMore;
     accounts = result.accounts;
-    /// same trx
-    endDate = moment(result.wallet[result.wallet.length - 1].timestamp).toDate();
+    // /// same trx
+    // endDate = moment(result.wallet[result.wallet.length - 1].timestamp).toDate();
 
     const docs = result.wallet.map((el) => ({
       ..._.omit(el, '_id'),

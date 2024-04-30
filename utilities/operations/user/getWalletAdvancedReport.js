@@ -19,9 +19,9 @@ const jsonHelper = require('../../helpers/jsonHelper');
 exports.getWalletAdvancedReport = async ({
   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
 }) => {
-  const key = getCacheKey({
-    accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
-  });
+  // const key = getCacheKey({
+  //   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
+  // });
 
   // const cache = await getCachedData(key);
   // if (cache) return jsonHelper.parseJson(cache, {});
@@ -29,6 +29,7 @@ exports.getWalletAdvancedReport = async ({
   accounts = await addWalletDataToAccounts({
     filterAccounts, startDate, accounts, endDate, limit, symbol,
   });
+
   const error = _.find(accounts, (account) => account.error);
   if (error) return { error };
 
@@ -61,12 +62,9 @@ exports.getWalletAdvancedReport = async ({
   })), []);
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
+
   const hasMore = usersJointArr.length > resultWallet.length
     || _.some(accounts, (acc) => !!acc.hasMore);
-
-  if(!hasMore) {
-    console.log();
-  }
 
   const result = {
     wallet: resultWallet,
@@ -75,16 +73,9 @@ exports.getWalletAdvancedReport = async ({
     ...depositWithdrawals,
   };
 
-  await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
+  //  await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
 
-  return {
-    result: {
-      wallet: resultWallet,
-      accounts: resAccounts,
-      hasMore,
-      ...depositWithdrawals,
-    },
-  };
+  return { result };
 };
 
 const addWalletDataToAccounts = async ({
@@ -96,6 +87,7 @@ const addWalletDataToAccounts = async ({
     startDate,
     endDate,
     symbol,
+    offset: account.offset || 0,
   });
   if (error) return { error };
 
@@ -111,13 +103,6 @@ const addWalletDataToAccounts = async ({
   if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  if (account.lastId) {
-    const updateSkip = account.wallet.indexOf(_.find(
-      account.wallet,
-      (obj) => obj._id.toString() === account.lastId,
-    )) + 1;
-    account.wallet = account.wallet.slice(updateSkip - 1);
-  }
   account.hasMore = account.wallet.length > limit;
 
   _.forEach(account.wallet, (el) => {
@@ -131,10 +116,12 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, types, endDate, startDate, symbol,
+  userName, types, endDate, startDate, symbol, offset,
 }) => {
   const batchSize = 1000;
   const walletOperations = [];
+
+  //
   const { response, error } = await accountHistory({
     timestampEnd: moment(endDate).unix(),
     timestampStart: moment(startDate).unix(),
@@ -142,6 +129,7 @@ const getWalletData = async ({
     account: userName,
     ops: types.toString(),
     limit: batchSize,
+    offset,
   });
   if (error) return { error };
 
@@ -348,9 +336,14 @@ const accumulateAcc = ({ resultArray, account, acc }) => {
   );
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
 
-  account.lastId = _.isEmpty(filterWallet)
+  const accLastId = _.isEmpty(filterWallet)
     ? lastId
     : _.get(filterWallet, '[0]._id');
+
+  const offset = _.findIndex(account.wallet, { _id: accLastId });
+
+  account.offset = account.offset ? account.offset + (offset || 0) : offset || 0;
+
   acc.push(_.omit(account, ['wallet', 'hasMore']));
 
   return acc;

@@ -4,7 +4,7 @@ const { Schema } = mongoose;
 
 const Accounts = new Schema({
   name: { type: String },
-  lastId: { type: String },
+  offset: { type: Number },
 }, { _id: false });
 
 const EngineAdvancedReportStatusSchema = new Schema({
