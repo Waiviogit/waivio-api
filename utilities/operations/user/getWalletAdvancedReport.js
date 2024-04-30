@@ -23,8 +23,8 @@ exports.getWalletAdvancedReport = async ({
     accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
   });
 
-  const cache = await getCachedData(key);
-  if (cache) return jsonHelper.parseJson(cache, {});
+  // const cache = await getCachedData(key);
+  // if (cache) return jsonHelper.parseJson(cache, {});
 
   accounts = await addWalletDataToAccounts({
     filterAccounts, startDate, accounts, endDate, limit, symbol,
@@ -63,6 +63,10 @@ exports.getWalletAdvancedReport = async ({
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
   const hasMore = usersJointArr.length > resultWallet.length
     || _.some(accounts, (acc) => !!acc.hasMore);
+
+  if(!hasMore) {
+    console.log();
+  }
 
   const result = {
     wallet: resultWallet,

@@ -257,6 +257,21 @@ exports.advancedWalletSchema = Joi.object().keys({
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
 });
 
+exports.advancedWalletGenerateSchema = Joi.object().keys({
+  accounts: Joi.array().items(Joi.object().keys({
+    name: Joi.string().required(),
+    lastId: Joi.string().default(''),
+  })).single().min(1)
+    .required(),
+  endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
+  startDate: Joi.date().timestamp('unix').default(moment.utc().subtract(10, 'year').toDate()).less(Joi.ref('endDate')),
+  filterAccounts: Joi.array().items(Joi.string()).min(1).required(),
+  user: Joi.string().default(''),
+  currency: Joi.string()
+    .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
+  symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
+});
+
 exports.guestWallet = Joi.object().keys({
   account: Joi.string().required(),
   symbol: Joi.string().required(),

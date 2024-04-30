@@ -85,6 +85,10 @@ exports.SUPPORTED_CURRENCIES = {
   CHF: 'CHF',
 };
 
+exports.ADVANCED_REPORT_SYMBOLS = [
+  'WAIV',
+];
+
 exports.CURSOR_TIMEOUT = 60000;
 exports.WARNING_REQ_TIME = 30000;
 exports.REQUEST_TIMEOUT = 15000;
