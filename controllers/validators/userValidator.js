@@ -244,8 +244,8 @@ exports.putGeo = Joi.object().keys({
 exports.advancedWalletSchema = Joi.object().keys({
   accounts: Joi.array().items(Joi.object().keys({
     name: Joi.string().required(),
-    lastId: Joi.string().default(''),
-    offset: Joi.string().default(0),
+    lastId: Joi.string().default('').allow(''),
+    offset: Joi.number().default(0),
   })).single().min(1)
     .required(),
   endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
