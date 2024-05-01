@@ -132,14 +132,14 @@ const fieldToInc = {
   default: '',
 };
 
-const selectDeselectRecord = async ({ trxId, reportId, user }) => {
+const selectDeselectRecord = async ({ _id, reportId, user }) => {
   const { result } = await EngineAdvancedReportStatusModel.findOne({
     filter: { user, reportId },
   });
   if (!result) return { error: ERROR_OBJ.NOT_FOUND };
 
   const { result: record } = await EngineAdvancedReportModel.findOne({
-    filter: { _id: trxId, reportId },
+    filter: { _id, reportId },
   });
 
   const incAmount = record[result.currency];
@@ -148,23 +148,25 @@ const selectDeselectRecord = async ({ trxId, reportId, user }) => {
   const field = fieldToInc[record.withdrawDeposit] || fieldToInc.default;
 
   if (!field) {
-    await EngineAdvancedReportModel.updateOne({
-      filter: { _id: trxId, reportId },
+    const { result: updated } = await EngineAdvancedReportModel.findOneAndUpdate({
+      filter: { _id, reportId },
       update: { checked },
+      options: { new: true },
     });
-    return { result: 'ok' };
+    return { result: updated };
   }
-
-  await EngineAdvancedReportModel.updateOne({
-    filter: { _id: trxId, reportId },
-    update: { checked },
-  });
 
   await EngineAdvancedReportStatusModel.updateOne({
     filter: { user, reportId },
     update: { $inc: { [field]: checked ? -incAmount : incAmount } },
   });
-  return { result: 'ok' };
+
+  const { result: updated } = await EngineAdvancedReportModel.findOneAndUpdate({
+    filter: { _id, reportId },
+    update: { checked },
+    options: { new: true },
+  });
+  return { result: updated };
 };
 
 module.exports = {

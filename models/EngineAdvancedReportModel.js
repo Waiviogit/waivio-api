@@ -36,9 +36,19 @@ const findOne = async ({ filter, projection, options }) => {
   }
 };
 
+const findOneAndUpdate = async ({ filter, update, options }) => {
+  try {
+    const result = await EngineAdvancedReport.findOneAndUpdate(filter, update, options).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   insertMany,
   find,
   updateOne,
   findOne,
+  findOneAndUpdate,
 };

@@ -281,7 +281,7 @@ exports.getGeneratedReportSchema = Joi.object().keys({
 
 exports.selectDeselectRecordSchema = Joi.object().keys({
   reportId: Joi.string().required(),
-  trxId: Joi.string().required(),
+  _id: Joi.string().required(),
   user: Joi.string().required(),
 });
 

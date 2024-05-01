@@ -6060,38 +6060,211 @@
           "200": {
             "description": "ok",
             "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/progress": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get tasks in progress",
+        "description": "get tasks in progress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/history": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get completed tasks",
+        "description": "get completed tasks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/record": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "exclude/include record in report",
+        "description": "exclude/include record in report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                },
+                "reportId": {
+                  "type": "string"
+                },
+                "_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportWallet"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/report": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "shows generated report",
+        "description": "shows generated report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
               "type": "object",
               "properties": {
                 "wallet": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/definitions/engineReportWallet"
-                  }
-                },
-                "accounts": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "example": "blauser"
-                      },
-                      "lastId": {
-                        "type": "string",
-                        "example": "627d9aa9a72924295ebcff0e"
-                      }
-                    }
-                  }
+                  "$ref": "#/definitions/engineReportWallet"
                 },
                 "hasMore": {
                   "type": "boolean"
-                },
-                "deposits": {
-                  "type": "number"
-                },
-                "withdrawals": {
-                  "type": "number"
                 }
               }
             }
@@ -12587,6 +12760,9 @@
         },
         "blockNumber": {
           "type": "number"
+        },
+        "checked": {
+          "type": "boolean"
         }
       }
     },
