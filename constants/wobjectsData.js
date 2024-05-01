@@ -424,8 +424,8 @@ exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
 exports.WHITE_LIST_KEY = 'white_list_import';
 
 exports.VOTE_COST = {
-  USUAL: 0.001,
-  FOR_WHITE_LIST: 0.0001,
+  USUAL: 0.0001,
+  FOR_WHITE_LIST: 0.00001,
 };
 
 exports.FAVORITES_OBJECT_TYPES = [
