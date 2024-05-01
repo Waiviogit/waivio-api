@@ -343,7 +343,8 @@ const accumulateAcc = ({ resultArray, account, acc }) => {
     ? lastId
     : _.get(filterWallet, '[0]._id');
 
-  const offset = ((_.findIndex(account.wallet, { _id: accLastId }) || 0) + 1);
+  const index = _.findIndex(account.wallet, { _id: accLastId }) || 0;
+  const offset = index === -1 ? 0 : index + 1;
 
   account.offset = account.offset ? account.offset + offset : offset;
 
