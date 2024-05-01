@@ -8,7 +8,7 @@ const Accounts = new Schema({
 }, { _id: false });
 
 const EngineAdvancedReportStatusSchema = new Schema({
-  reportId: { type: String, unique: true },
+  reportId: { type: String, unique: true, index: true },
   user: { type: String, index: true },
   currency: { type: String },
   startDate: { type: Date },
@@ -16,7 +16,7 @@ const EngineAdvancedReportStatusSchema = new Schema({
   filterAccounts: { type: [String] },
   accounts: { type: [Accounts] },
   deposits: { type: mongoose.Schema.Types.Decimal128, default: 0 },
-  withdrawals: { type: mongoose.Schema.Types.Decimal128, default: 0  },
+  withdrawals: { type: mongoose.Schema.Types.Decimal128, default: 0 },
   status: { type: String },
 });
 

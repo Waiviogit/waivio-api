@@ -18,7 +18,27 @@ const updateOne = async ({ filter, update, options }) => {
   }
 };
 
+const findOne = async ({ filter, projection, options }) => {
+  try {
+    const result = await EngineAdvancedReportStatus.findOne(filter, projection, options).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const find = async ({ filter, projection, options }) => {
+  try {
+    const result = await EngineAdvancedReportStatus.find(filter, projection, options).lean();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   create,
   updateOne,
+  findOne,
+  find,
 };

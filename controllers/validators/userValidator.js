@@ -267,7 +267,7 @@ exports.advancedWalletGenerateSchema = Joi.object().keys({
   endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
   startDate: Joi.date().timestamp('unix').default(moment.utc().subtract(10, 'year').toDate()).less(Joi.ref('endDate')),
   filterAccounts: Joi.array().items(Joi.string()).min(1).required(),
-  user: Joi.string().default(''),
+  user: Joi.string().required(),
   currency: Joi.string()
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
