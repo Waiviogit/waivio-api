@@ -87,6 +87,7 @@ const addWalletDataToAccounts = async ({
     startDate,
     endDate,
     symbol,
+    limit,
     offset: account.offset || 0,
   });
   if (error) return { error };
@@ -116,9 +117,8 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, types, endDate, startDate, symbol, offset,
+  userName, types, endDate, startDate, symbol, offset, limit,
 }) => {
-  const batchSize = 1000;
   const walletOperations = [];
 
   //
@@ -128,7 +128,7 @@ const getWalletData = async ({
     symbol,
     account: userName,
     ops: types.toString(),
-    limit: batchSize,
+    limit: limit + 1,
     offset,
   });
   if (error) return { error };
