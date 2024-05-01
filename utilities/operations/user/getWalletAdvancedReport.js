@@ -63,7 +63,7 @@ exports.getWalletAdvancedReport = async ({
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
 
-  const hasMore = usersJointArr.length < resultWallet.length
+  const hasMore = usersJointArr.length >= resultWallet.length
     || _.some(accounts, (acc) => !!acc.hasMore);
 
   const result = {
@@ -104,7 +104,7 @@ const addWalletDataToAccounts = async ({
   if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  account.hasMore = account.wallet.length < limit;
+  account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
