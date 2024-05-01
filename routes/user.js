@@ -69,6 +69,10 @@ userRoutes.route('/user/:userName/last-activity').get(reqTimeMonitor, UserContro
 userRoutes.route('/user/advanced-report').post(reqTimeMonitor, UserController.getAdvancedReport);
 
 userRoutes.route('/user/advanced-report/generated').post(reqTimeMonitor, UserController.generateAdvancedReport);
+userRoutes.route('/user/advanced-report/generated/progress').post(reqTimeMonitor, UserController.reportsInProgress);
+userRoutes.route('/user/advanced-report/generated/history').post(reqTimeMonitor, UserController.reportsHistory);
+userRoutes.route('/user/advanced-report/generated/record').post(reqTimeMonitor, UserController.selectDeselectRecord);
+userRoutes.route('/user/advanced-report/generated/report').post(reqTimeMonitor, UserController.getGeneratedReport);
 
 userRoutes.route('/user/:account/guest-wallet').get(reqTimeMonitor, UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(reqTimeMonitor, UserController.getGuestBalance);

@@ -273,6 +273,26 @@ exports.advancedWalletGenerateSchema = Joi.object().keys({
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
 });
 
+exports.getGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).default(500),
+});
+
+exports.selectDeselectRecordSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  trxId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.reportsHistorySchema = Joi.object().keys({
+  user: Joi.string().required(),
+});
+
+exports.reportsInProgressSchema = Joi.object().keys({
+  user: Joi.string().required(),
+});
+
 exports.guestWallet = Joi.object().keys({
   account: Joi.string().required(),
   symbol: Joi.string().required(),

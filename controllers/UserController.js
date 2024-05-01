@@ -475,7 +475,6 @@ const getAdvancedReport = async (req, res, next) => {
   next();
 };
 
-
 const generateAdvancedReport = async (req, res, next) => {
   const value = validators.validate(
     { ...req.body },
@@ -485,6 +484,66 @@ const generateAdvancedReport = async (req, res, next) => {
   if (!value) return;
 
   const { result, error } = await generatedReport.generateReportTask(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const reportsInProgress = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.reportsInProgressSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getInProgress(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const reportsHistory = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.reportsHistorySchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getHistory(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const selectDeselectRecord = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.selectDeselectRecordSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.selectDeselectRecord(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.getGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getGeneratedReport(value);
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -688,5 +747,9 @@ module.exports = {
   hiveUserExist,
   getGuestMana,
   getAvatars,
-  generateAdvancedReport
+  generateAdvancedReport,
+  reportsInProgress,
+  reportsHistory,
+  selectDeselectRecord,
+  getGeneratedReport,
 };
