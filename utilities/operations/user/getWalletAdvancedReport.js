@@ -104,7 +104,7 @@ const addWalletDataToAccounts = async ({
   if (dbError) return { error: dbError };
 
   account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  account.hasMore = account.wallet.length === limit;
+  account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
