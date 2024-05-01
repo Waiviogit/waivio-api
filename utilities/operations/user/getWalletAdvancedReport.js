@@ -63,7 +63,7 @@ exports.getWalletAdvancedReport = async ({
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
 
-  const hasMore = usersJointArr.length > resultWallet.length
+  const hasMore = resultWallet.length >= limit
     || _.some(accounts, (acc) => !!acc.hasMore);
 
   const result = {
@@ -87,6 +87,7 @@ const addWalletDataToAccounts = async ({
     startDate,
     endDate,
     symbol,
+    limit,
     offset: account.offset || 0,
   });
   if (error) return { error };
@@ -102,8 +103,11 @@ const addWalletDataToAccounts = async ({
   });
   if (dbError) return { error: dbError };
 
-  account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  account.hasMore = account.wallet.length > limit;
+  account.wallet = wallet;
+  if (account.wallet.length < limit) {
+    account.wallet.push(...result);
+  }
+  account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
@@ -116,19 +120,16 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, types, endDate, startDate, symbol, offset,
+  userName, types, endDate, startDate, symbol, offset, limit,
 }) => {
-  const batchSize = 1000;
   const walletOperations = [];
-
-  //
   const { response, error } = await accountHistory({
     timestampEnd: moment(endDate).unix(),
     timestampStart: moment(startDate).unix(),
     symbol,
     account: userName,
     ops: types.toString(),
-    limit: batchSize,
+    limit,
     offset,
   });
   if (error) return { error };
@@ -329,20 +330,19 @@ const calcWalletRecordRate = ({
 };
 
 const accumulateAcc = ({ resultArray, account, acc }) => {
-  const lastId = _.get(_.last(account.wallet), '_id', '');
   const filterWallet = _.filter(
     account.wallet,
     (record) => !_.some(resultArray, (result) => _.isEqual(result, record)),
   );
+
+  // total records in result array by account
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
 
-  const accLastId = _.isEmpty(filterWallet)
-    ? lastId
-    : _.get(filterWallet, '[0]._id');
+  const accountRecords = _.filter(resultArray, (el) => el.account === account.name);
 
-  const offset = _.findIndex(account.wallet, { _id: accLastId });
+  const offset = accountRecords.length;
 
-  account.offset = account.offset ? account.offset + (offset || 0) : offset || 0;
+  account.offset = account.offset ? account.offset + offset : offset;
 
   acc.push(_.omit(account, ['wallet', 'hasMore']));
 
