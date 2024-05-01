@@ -63,7 +63,7 @@ exports.getWalletAdvancedReport = async ({
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
 
-  const hasMore = usersJointArr.length > resultWallet.length
+  const hasMore = usersJointArr.length < resultWallet.length
     || _.some(accounts, (acc) => !!acc.hasMore);
 
   const result = {
