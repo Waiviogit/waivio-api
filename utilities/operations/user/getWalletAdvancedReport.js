@@ -63,7 +63,7 @@ exports.getWalletAdvancedReport = async ({
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
 
-  const hasMore = usersJointArr.length >= resultWallet.length
+  const hasMore = resultWallet.length >= limit
     || _.some(accounts, (acc) => !!acc.hasMore);
 
   const result = {
@@ -103,7 +103,10 @@ const addWalletDataToAccounts = async ({
   });
   if (dbError) return { error: dbError };
 
-  account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
+  account.wallet = wallet;
+  if (account.wallet.length < limit) {
+    account.wallet.push(...result);
+  }
   account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
@@ -340,9 +343,9 @@ const accumulateAcc = ({ resultArray, account, acc }) => {
     ? lastId
     : _.get(filterWallet, '[0]._id');
 
-  const offset = _.findIndex(account.wallet, { _id: accLastId });
+  const offset = ((_.findIndex(account.wallet, { _id: accLastId }) || 0) + 1);
 
-  account.offset = account.offset ? account.offset + (offset || 0) : offset || 0;
+  account.offset = account.offset ? account.offset + offset : offset;
 
   acc.push(_.omit(account, ['wallet', 'hasMore']));
 
