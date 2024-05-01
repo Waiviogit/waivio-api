@@ -332,19 +332,17 @@ const calcWalletRecordRate = ({
 };
 
 const accumulateAcc = ({ resultArray, account, acc }) => {
-  const lastId = _.get(_.last(account.wallet), '_id', '');
   const filterWallet = _.filter(
     account.wallet,
     (record) => !_.some(resultArray, (result) => _.isEqual(result, record)),
   );
+
+  // total records in result array by account
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
 
-  const accLastId = _.isEmpty(filterWallet)
-    ? lastId
-    : _.get(filterWallet, '[0]._id');
+  const accountRecords = _.filter(resultArray, (el) => el.account === account.name);
 
-  const index = _.findIndex(account.wallet, { _id: accLastId }) || 0;
-  const offset = index === -1 ? 0 : index + 1;
+  const offset = accountRecords.length;
 
   account.offset = account.offset ? account.offset + offset : offset;
 
