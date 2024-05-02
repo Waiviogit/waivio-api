@@ -6048,6 +6048,19 @@
         ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
             "name": "params",
             "in": "body",
             "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
@@ -6185,6 +6198,19 @@
         ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
             "name": "params",
             "in": "body",
             "schema": {
@@ -6295,6 +6321,19 @@
         ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
             "name": "params",
             "in": "body",
             "schema": {
@@ -6343,6 +6382,19 @@
         ],
         "parameters": [
           {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
             "name": "params",
             "in": "body",
             "schema": {
@@ -6390,6 +6442,19 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
           {
             "name": "params",
             "in": "body",

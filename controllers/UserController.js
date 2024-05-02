@@ -10,6 +10,7 @@ const {
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
+const authoriseUser = require('utilities/authorization/authoriseUser');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 const generatedReport = require('../utilities/operations/user/walletAdvancedReportGenerated');
@@ -477,11 +478,14 @@ const getAdvancedReport = async (req, res, next) => {
 
 const generateAdvancedReport = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.advancedWalletGenerateSchema,
     next,
   );
   if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
 
   const { result, error } = await generatedReport.generateReportTask(value);
   if (error) return next(error);
@@ -492,7 +496,7 @@ const generateAdvancedReport = async (req, res, next) => {
 
 const reportsInProgress = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.reportsInProgressSchema,
     next,
   );
@@ -507,7 +511,7 @@ const reportsInProgress = async (req, res, next) => {
 
 const reportsHistory = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.reportsHistorySchema,
     next,
   );
@@ -522,11 +526,14 @@ const reportsHistory = async (req, res, next) => {
 
 const selectDeselectRecord = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.selectDeselectRecordSchema,
     next,
   );
   if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
 
   const { result, error } = await generatedReport.selectDeselectRecord(value);
   if (error) return next(error);
@@ -537,7 +544,7 @@ const selectDeselectRecord = async (req, res, next) => {
 
 const getGeneratedReport = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.getGeneratedReportSchema,
     next,
   );
@@ -552,11 +559,14 @@ const getGeneratedReport = async (req, res, next) => {
 
 const resumeGeneratedReport = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.resumeGeneratedReportSchema,
     next,
   );
   if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
 
   const { result, error } = await generatedReport.resumeGeneration(value);
   if (error) return next(error);
@@ -567,11 +577,14 @@ const resumeGeneratedReport = async (req, res, next) => {
 
 const stopGeneratedReport = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.stopGeneratedReportSchema,
     next,
   );
   if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
 
   const { result, error } = await generatedReport.stopGeneration(value);
   if (error) return next(error);
@@ -582,11 +595,14 @@ const stopGeneratedReport = async (req, res, next) => {
 
 const pauseGeneratedReport = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.body },
+    req.body,
     validators.user.pauseGeneratedReportSchema,
     next,
   );
   if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
 
   const { result, error } = await generatedReport.pauseGeneration(value);
   if (error) return next(error);
