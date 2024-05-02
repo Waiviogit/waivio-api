@@ -279,6 +279,21 @@ exports.getGeneratedReportSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).default(500),
 });
 
+exports.resumeGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.stopGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.pauseGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
 exports.selectDeselectRecordSchema = Joi.object().keys({
   reportId: Joi.string().required(),
   _id: Joi.string().required(),

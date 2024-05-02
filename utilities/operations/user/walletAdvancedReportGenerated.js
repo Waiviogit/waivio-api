@@ -8,6 +8,37 @@ const GENERATE_STATUS = {
   IN_PROGRESS: 'IN_PROGRESS',
   COMPLETED: 'COMPLETED',
   ERRORED: 'ERRORED',
+  STOPPED: 'STOPPED',
+  PAUSED: 'PAUSED',
+};
+
+const ACTIVE_STATUSES = [
+  GENERATE_STATUS.IN_PROGRESS,
+  GENERATE_STATUS.ERRORED,
+  GENERATE_STATUS.PAUSED,
+];
+
+const HISTORY_STATUSES = [
+  GENERATE_STATUS.COMPLETED,
+  GENERATE_STATUS.STOPPED,
+];
+
+const checkGenerationForStop = async ({ reportId }) => {
+  const { result } = await EngineAdvancedReportStatusModel.findOne({
+    filter: { reportId, status: GENERATE_STATUS.STOPPED },
+    projection: { reportId: 1 },
+  });
+
+  return !!result;
+};
+
+const checkGenerationForPause = async ({ reportId }) => {
+  const { result } = await EngineAdvancedReportStatusModel.findOne({
+    filter: { reportId, status: GENERATE_STATUS.PAUSED },
+    projection: { reportId: 1 },
+  });
+
+  return !!result;
 };
 
 const generateReport = async ({
@@ -15,6 +46,13 @@ const generateReport = async ({
 }) => {
   let hasMore = true;
   do {
+    const [stop, pause] = await Promise.all([
+      checkGenerationForStop({ reportId }),
+      checkGenerationForPause({ reportId }),
+    ]);
+
+    if (stop || pause) break;
+
     const { result, error } = await getWalletAdvancedReport({
       accounts, startDate, endDate, filterAccounts, user, currency, symbol, limit: 500,
     });
@@ -111,7 +149,7 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
 
 const getInProgress = async ({ user }) => {
   const { result } = await EngineAdvancedReportStatusModel.findOne({
-    filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
+    filter: { user, status: ACTIVE_STATUSES },
   });
 
   return { result };
@@ -119,7 +157,7 @@ const getInProgress = async ({ user }) => {
 
 const getHistory = async ({ user }) => {
   const { result } = await EngineAdvancedReportStatusModel.findOne({
-    filter: { user, status: { $in: [GENERATE_STATUS.COMPLETED, GENERATE_STATUS.ERRORED] } },
+    filter: { user, status: { $in: HISTORY_STATUSES } },
     options: { sort: { _id: -1 } },
   });
 
@@ -169,10 +207,57 @@ const selectDeselectRecord = async ({ _id, reportId, user }) => {
   return { result: updated };
 };
 
+const resumeGeneration = async ({ reportId, user }) => {
+  const { result: inProgress } = await EngineAdvancedReportStatusModel.findOne({
+    filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
+  });
+  if (inProgress) {
+    return { error: { status: 422, message: 'Нou can only generate one report at a time' } };
+  }
+
+  const { result: resume } = await EngineAdvancedReportStatusModel.findOne({
+    filter: { user, reportId, status: { $in: [GENERATE_STATUS.ERRORED, GENERATE_STATUS.PAUSED] } },
+  });
+
+  if (!resume) return { error: ERROR_OBJ.NOT_FOUND };
+  generateReport(resume);
+
+  const { result: updated } = await EngineAdvancedReportStatusModel.findOneAndUpdate({
+    filter: { user, reportId },
+    update: { status: GENERATE_STATUS.IN_PROGRESS },
+    options: { new: true },
+  });
+
+  return { result: updated };
+};
+
+const stopGeneration = async ({ reportId, user }) => {
+  const { result: updated } = await EngineAdvancedReportStatusModel.findOneAndUpdate({
+    filter: { user, reportId, status: ACTIVE_STATUSES },
+    update: { status: GENERATE_STATUS.STOPPED },
+    options: { new: true },
+  });
+
+  return { result: updated };
+};
+
+const pauseGeneration = async ({ reportId, user }) => {
+  const { result: updated } = await EngineAdvancedReportStatusModel.findOneAndUpdate({
+    filter: { user, reportId, status: GENERATE_STATUS.IN_PROGRESS },
+    update: { status: GENERATE_STATUS.PAUSED },
+    options: { new: true },
+  });
+
+  return { result: updated };
+};
+
 module.exports = {
   generateReportTask,
   getGeneratedReport,
   getInProgress,
   getHistory,
   selectDeselectRecord,
+  stopGeneration,
+  pauseGeneration,
+  resumeGeneration,
 };

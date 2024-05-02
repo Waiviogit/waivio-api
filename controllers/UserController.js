@@ -550,6 +550,51 @@ const getGeneratedReport = async (req, res, next) => {
   next();
 };
 
+const resumeGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.resumeGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.resumeGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const stopGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.stopGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.stopGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const pauseGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.pauseGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.pauseGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getGuestWallet = async (req, res, next) => {
   const value = validators.validate({ ...req.query, ...req.params }, validators.user.guestWallet, next);
   if (!value) return;
@@ -752,4 +797,7 @@ module.exports = {
   reportsHistory,
   selectDeselectRecord,
   getGeneratedReport,
+  resumeGeneratedReport,
+  stopGeneratedReport,
+  pauseGeneratedReport,
 };
