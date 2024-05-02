@@ -18,7 +18,7 @@ const EngineAdvancedReportStatusSchema = new Schema({
   deposits: { type: mongoose.Schema.Types.Decimal128, default: 0 },
   withdrawals: { type: mongoose.Schema.Types.Decimal128, default: 0 },
   status: { type: String },
-});
+}, { versionKey: false });
 
 module.exports = mongoose.model(
   'engine_advanced_report_status',

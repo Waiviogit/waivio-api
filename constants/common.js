@@ -142,6 +142,11 @@ exports.REDIS_KEYS = {
   ASSISTANT: 'assistant',
 };
 
+exports.SERVICE_NOTIFICATION_TYPES = {
+  UPDATE_IMPORT: 'updateImport',
+  UPDATE_REPORT: 'updateReport',
+};
+
 exports.LANGUAGES = ['en-US',
   'id-ID',
   'ms-MY',

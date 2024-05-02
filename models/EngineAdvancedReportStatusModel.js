@@ -45,10 +45,20 @@ const find = async ({ filter, projection, options }) => {
   }
 };
 
+const aggregate = async (pipeline) => {
+  try {
+    const result = await EngineAdvancedReportStatus.aggregate(pipeline);
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   create,
   updateOne,
   findOne,
   find,
   findOneAndUpdate,
+  aggregate,
 };

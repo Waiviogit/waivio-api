@@ -37,7 +37,7 @@ const EngineAdvancedReportSchema = new Schema({
   checked: { type: Boolean },
   ...availableRateFields,
   ...availableSymbolRateFields,
-});
+}, { versionKey: false });
 
 const EngineAdvancedReportModel = mongoose.model('engine_advanced_report', EngineAdvancedReportSchema, 'engine_advanced_report');
 

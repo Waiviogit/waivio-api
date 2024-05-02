@@ -1,7 +1,8 @@
 const { EngineAdvancedReportModel, EngineAdvancedReportStatusModel } = require('models');
 const _ = require('lodash');
 const crypto = require('crypto');
-const { ERROR_OBJ } = require('constants/common');
+const { ERROR_OBJ, SERVICE_NOTIFICATION_TYPES } = require('constants/common');
+const notificationsHelper = require('utilities/helpers/notificationsHelper');
 const { getWalletAdvancedReport } = require('./getWalletAdvancedReport');
 
 const GENERATE_STATUS = {
@@ -87,7 +88,10 @@ const generateReport = async ({
       },
     });
 
-    // todo redis push notification
+    notificationsHelper.sendServiceNotification({
+      id: SERVICE_NOTIFICATION_TYPES.UPDATE_REPORT,
+      data: { account: user },
+    });
   } while (hasMore);
 };
 
@@ -148,18 +152,47 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
 };
 
 const getInProgress = async ({ user }) => {
-  const { result } = await EngineAdvancedReportStatusModel.findOne({
-    filter: { user, status: ACTIVE_STATUSES },
-  });
+  const { result } = await EngineAdvancedReportStatusModel.aggregate(
+    [
+      {
+        $match: { user, status: { $in: ACTIVE_STATUSES } },
+      },
+      {
+        $addFields: {
+          deposits: { $toString: '$deposits' },
+          withdrawals: { $toString: '$withdrawals' },
+        },
+      },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
+    ],
+  );
 
   return { result };
 };
 
 const getHistory = async ({ user }) => {
-  const { result } = await EngineAdvancedReportStatusModel.findOne({
-    filter: { user, status: { $in: HISTORY_STATUSES } },
-    options: { sort: { _id: -1 } },
-  });
+  const { result } = await EngineAdvancedReportStatusModel.aggregate(
+    [
+      {
+        $match: { user, status: { $in: HISTORY_STATUSES } },
+      },
+      {
+        $addFields: {
+          deposits: { $toString: '$deposits' },
+          withdrawals: { $toString: '$withdrawals' },
+        },
+      },
+      {
+        $sort: {
+          _id: -1,
+        },
+      },
+    ],
+  );
 
   return { result };
 };
@@ -220,13 +253,13 @@ const resumeGeneration = async ({ reportId, user }) => {
   });
 
   if (!resume) return { error: ERROR_OBJ.NOT_FOUND };
-  generateReport(resume);
-
   const { result: updated } = await EngineAdvancedReportStatusModel.findOneAndUpdate({
     filter: { user, reportId },
     update: { status: GENERATE_STATUS.IN_PROGRESS },
     options: { new: true },
   });
+
+  generateReport(resume);
 
   return { result: updated };
 };
