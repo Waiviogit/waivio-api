@@ -39,7 +39,6 @@ userRoutes.route('/user/:userName/get_post_filters')
 userRoutes.route('/user/:userName/favorites').post(reqTimeMonitor, UserController.getFavorites);
 userRoutes.route('/user/:userName/favorites/list').get(reqTimeMonitor, UserController.getFavoritesList);
 
-
 userRoutes.route('/users/search')
   .get(reqTimeMonitor, UserController.searchUsers);
 userRoutes.route('/user/:userName/userMetadata')
@@ -68,6 +67,16 @@ userRoutes.route('/user/:userName/creation-date')
   .get(reqTimeMonitor, UserController.getCreationDate);
 userRoutes.route('/user/:userName/last-activity').get(reqTimeMonitor, UserController.getLastActivity);
 userRoutes.route('/user/advanced-report').post(reqTimeMonitor, UserController.getAdvancedReport);
+
+userRoutes.route('/user/advanced-report/generated').post(reqTimeMonitor, UserController.generateAdvancedReport);
+userRoutes.route('/user/advanced-report/generated/progress').post(reqTimeMonitor, UserController.reportsInProgress);
+userRoutes.route('/user/advanced-report/generated/history').post(reqTimeMonitor, UserController.reportsHistory);
+userRoutes.route('/user/advanced-report/generated/record').post(reqTimeMonitor, UserController.selectDeselectRecord);
+userRoutes.route('/user/advanced-report/generated/report').post(reqTimeMonitor, UserController.getGeneratedReport);
+userRoutes.route('/user/advanced-report/generated/resume').post(reqTimeMonitor, UserController.resumeGeneratedReport);
+userRoutes.route('/user/advanced-report/generated/stop').post(reqTimeMonitor, UserController.stopGeneratedReport);
+userRoutes.route('/user/advanced-report/generated/pause').post(reqTimeMonitor, UserController.pauseGeneratedReport);
+
 userRoutes.route('/user/:account/guest-wallet').get(reqTimeMonitor, UserController.getGuestWallet);
 userRoutes.route('/user/:account/guest-balance').get(reqTimeMonitor, UserController.getGuestBalance);
 userRoutes.route('/user/:account/guest-mana').get(reqTimeMonitor, UserController.getGuestMana);

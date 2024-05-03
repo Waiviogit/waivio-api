@@ -258,6 +258,56 @@ exports.advancedWalletSchema = Joi.object().keys({
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
 });
 
+exports.advancedWalletGenerateSchema = Joi.object().keys({
+  accounts: Joi.array().items(Joi.object().keys({
+    name: Joi.string().required(),
+    lastId: Joi.string().default(''),
+  })).single().min(1)
+    .required(),
+  endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
+  startDate: Joi.date().timestamp('unix').default(moment.utc().subtract(10, 'year').toDate()).less(Joi.ref('endDate')),
+  filterAccounts: Joi.array().items(Joi.string()).min(1).required(),
+  user: Joi.string().required(),
+  currency: Joi.string()
+    .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
+  symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
+});
+
+exports.getGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).default(500),
+});
+
+exports.resumeGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.stopGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.pauseGeneratedReportSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.selectDeselectRecordSchema = Joi.object().keys({
+  reportId: Joi.string().required(),
+  _id: Joi.string().required(),
+  user: Joi.string().required(),
+});
+
+exports.reportsHistorySchema = Joi.object().keys({
+  user: Joi.string().required(),
+});
+
+exports.reportsInProgressSchema = Joi.object().keys({
+  user: Joi.string().required(),
+});
+
 exports.guestWallet = Joi.object().keys({
   account: Joi.string().required(),
   symbol: Joi.string().required(),
