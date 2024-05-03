@@ -68,6 +68,8 @@ models.UserDraft = require('./schemas/UserDraftSchema');
 models.Threads = require('./schemas/ThreadsSchema');
 models.GuestMana = require('./schemas/GuestManaSchema');
 models.Delegation = require('./schemas/DelegationSchema');
+models.EngineAdvancedReport = require('./schemas/EngineAdvancedReportSchema');
+models.EngineAdvancedReportStatus = require('./schemas/EngineAdvancedReportStatusSchema');
 
 module.exports = {
   Mongoose: mongoose,
