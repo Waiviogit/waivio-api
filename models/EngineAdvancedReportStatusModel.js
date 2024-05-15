@@ -54,6 +54,15 @@ const aggregate = async (pipeline) => {
   }
 };
 
+const countDocuments = async ({ filter, options }) => {
+  try {
+    const result = await EngineAdvancedReportStatus.countDocuments(filter, options);
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   create,
   updateOne,
@@ -61,4 +70,5 @@ module.exports = {
   find,
   findOneAndUpdate,
   aggregate,
+  countDocuments,
 };

@@ -98,11 +98,12 @@ const generateReport = async ({
 const generateReportTask = async ({
   accounts, startDate, endDate, filterAccounts, user, currency, symbol,
 }) => {
-  const { result: inProgress } = await EngineAdvancedReportStatusModel.findOne({
+  const { result: inProgress } = await EngineAdvancedReportStatusModel.countDocuments({
     filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
   });
-  if (inProgress) {
-    return { error: { status: 422, message: 'Нou can only generate one report at a time' } };
+
+  if (inProgress >= 12) {
+    return { error: { status: 422, message: 'You can only generate 12 reports at a time' } };
   }
 
   const reportId = crypto.randomUUID();
@@ -241,11 +242,11 @@ const selectDeselectRecord = async ({ _id, reportId, user }) => {
 };
 
 const resumeGeneration = async ({ reportId, user }) => {
-  const { result: inProgress } = await EngineAdvancedReportStatusModel.findOne({
+  const { result: inProgress } = await EngineAdvancedReportStatusModel.countDocuments({
     filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
   });
-  if (inProgress) {
-    return { error: { status: 422, message: 'Нou can only generate one report at a time' } };
+  if (inProgress >= 12) {
+    return { error: { status: 422, message: 'You can only generate 12 reports at a time' } };
   }
 
   const { result: resume } = await EngineAdvancedReportStatusModel.findOne({
