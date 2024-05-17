@@ -233,7 +233,7 @@ const getObjectsFromAdvancedMap = async ({
     objectLinksCondition,
   })));
 
-  const wobjects = _.flatten(responses);
+  const wobjects = _.compact(_.flatten(responses));
 
   await campaignsV2Helper.addNewCampaignsToObjects({
     user,
