@@ -247,7 +247,7 @@ const getObjectsFromAdvancedMap = async ({
   });
 
   const processed = await wObjectHelper.processWobjects({
-    wobjects: _.take(filtered, 200),
+    wobjects: _.take(filtered, 400),
     fields: REQUIREDFILDS_WOBJ_LIST,
     reqUserName: follower,
     app,
