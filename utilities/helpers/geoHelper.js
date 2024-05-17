@@ -30,6 +30,7 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
 };
 
 exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
+  return wobjects;
   if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
   const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
     ? 50
