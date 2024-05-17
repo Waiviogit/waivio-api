@@ -30,7 +30,6 @@ exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {
 };
 
 exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
-  return wobjects;
   if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
   const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
     ? 50
@@ -49,6 +48,11 @@ exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
           wobjects[j].map.coordinates,
         );
         const cond1 = distance < minDistanceBetweenObjects;
+        if (cond1) {
+          console.log('minDistanceBetweenObjects', minDistanceBetweenObjects);
+          console.log(displayDiagonalDistance, divideBy);
+        }
+
         const cond2 = wobjects[i].weight >= wobjects[j].weight;
         const cond3 = !_.has(wobjects[j], 'campaigns');
         const cond4 = _.has(wobjects[i], 'campaigns') && _.has(wobjects[j], 'campaigns');
