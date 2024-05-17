@@ -33,7 +33,7 @@ exports.setFilterByDistance = ({ mapMarkers, wobjects = [], box }) => {
   if (!mapMarkers || _.isEmpty(box) || _.isEmpty(wobjects)) return wobjects;
   const divideBy = getNamespace('request-session').get('device') === DEVICE.MOBILE
     ? 50
-    : 350;
+    : 500;
 
   const displayDiagonalDistance = distanceInMBetweenEarthCoordinates(box.bottomPoint, box.topPoint);
   if (displayDiagonalDistance < 1000) return wobjects;
