@@ -10,8 +10,10 @@ const {
 const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
+const authoriseUser = require('utilities/authorization/authoriseUser');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
+const generatedReport = require('../utilities/operations/user/walletAdvancedReportGenerated');
 const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 
@@ -474,6 +476,141 @@ const getAdvancedReport = async (req, res, next) => {
   next();
 };
 
+const generateAdvancedReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.advancedWalletGenerateSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await generatedReport.generateReportTask(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const reportsInProgress = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.reportsInProgressSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getInProgress(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const reportsHistory = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.reportsHistorySchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getHistory(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const selectDeselectRecord = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.selectDeselectRecordSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await generatedReport.selectDeselectRecord(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const getGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.getGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await generatedReport.getGeneratedReport(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const resumeGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.resumeGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await generatedReport.resumeGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const stopGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.stopGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await generatedReport.stopGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
+const pauseGeneratedReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.pauseGeneratedReportSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.user);
+  if (authError) return next(authError);
+
+  const { result, error } = await generatedReport.pauseGeneration(value);
+  if (error) return next(error);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getGuestWallet = async (req, res, next) => {
   const value = validators.validate({ ...req.query, ...req.params }, validators.user.guestWallet, next);
   if (!value) return;
@@ -671,4 +808,12 @@ module.exports = {
   hiveUserExist,
   getGuestMana,
   getAvatars,
+  generateAdvancedReport,
+  reportsInProgress,
+  reportsHistory,
+  selectDeselectRecord,
+  getGeneratedReport,
+  resumeGeneratedReport,
+  stopGeneratedReport,
+  pauseGeneratedReport,
 };

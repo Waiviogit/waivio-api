@@ -123,8 +123,6 @@ const getWalletData = async ({
   userName, types, endDate, startDate, symbol, offset, limit,
 }) => {
   const walletOperations = [];
-
-  //
   const { response, error } = await accountHistory({
     timestampEnd: moment(endDate).unix(),
     timestampStart: moment(startDate).unix(),
