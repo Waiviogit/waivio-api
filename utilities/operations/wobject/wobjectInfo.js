@@ -240,6 +240,13 @@ const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   return { result: _.uniq(result) };
 };
 
+const getListsForAuthority = async ({ authorPermlink, scanEmbedded, app }) => {
+  const result = await getAllObjectsInList({
+    authorPermlink, scanEmbedded, app,
+  });
+  return { result: _.uniq(result) };
+};
+
 const getListItems = async (wobject, data, app) => {
   const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
 
@@ -381,4 +388,5 @@ module.exports = {
   getAllListPermlinks,
   getListDepartments,
   getAllObjectsInList,
+  getListsForAuthority,
 };
