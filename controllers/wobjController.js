@@ -518,6 +518,26 @@ const getListLinks = async (req, res, next) => {
   next();
 };
 
+const getListLinksAuthority = async (req, res, next) => {
+  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+//  if (!validKey) return next();
+  const value = validators.validate(
+    req.body,
+    validators.wobject.wobjectsRecountListItemsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result } = await wobjectInfo.getListsForAuthority({
+    ...value,
+    app: req.appData,
+  });
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getListDepartments = async (req, res, next) => {
   // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
 //  if (!validKey) return next();
@@ -615,4 +635,5 @@ module.exports = {
   getPinnedPosts,
   getObjectsOnMap,
   getRawField,
+  getListLinksAuthority,
 };
