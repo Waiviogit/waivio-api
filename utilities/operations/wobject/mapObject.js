@@ -92,9 +92,60 @@ const makeMapCondition = ({ clientBox, boxCoordinates }) => {
   };
 };
 
+const calculateBoxCenters = (topPoint, bottomPoint) => {
+  const topCenter = [(topPoint[0] + bottomPoint[0]) / 2, topPoint[1]];
+  const bottomCenter = [(topPoint[0] + bottomPoint[0]) / 2, bottomPoint[1]];
+  const rightCenter = [topPoint[0], (topPoint[1] + bottomPoint[1]) / 2];
+  const leftCenter = [bottomPoint[0], (topPoint[1] + bottomPoint[1]) / 2];
+  const center = [(topPoint[0] + bottomPoint[0]) / 2, (topPoint[1] + bottomPoint[1]) / 2];
+  const bottomRight = [topPoint[0], bottomPoint[1]];
+  const topLeft = [bottomPoint[0], topPoint[1]];
+
+  return {
+    center,
+    topCenter,
+    bottomCenter,
+    leftCenter,
+    rightCenter,
+    bottomRight,
+    topLeft,
+  };
+};
+
+const objectsRequest = async ({
+  box, typesCondition, tagsCondition, objectLinksCondition, boxCoordinates,
+}) => {
+  const andCondition = [];
+
+  const mapCondition = makeMapCondition({ clientBox: box, boxCoordinates });
+
+  andCondition.push(mapCondition);
+  if (typesCondition) andCondition.push(typesCondition);
+  if (tagsCondition) andCondition.push(tagsCondition);
+  if (objectLinksCondition) andCondition.push(objectLinksCondition);
+
+  const { wobjects } = await Wobj.fromAggregation([
+    {
+      $match: {
+        $and: andCondition,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        // ...(authority.length && { 'authority.administrative': { $in: authority } }),
+      },
+    },
+    { $sort: { activeCampaignsCount: -1, weight: -1 } },
+    {
+      $limit: 100,
+    },
+  ]);
+
+  return wobjects;
+};
+
 const getObjectsFromAdvancedMap = async ({
   authorPermlink, app, locale, follower, box, skip = 0, limit,
 }) => {
+  let typesCondition, tagsCondition, objectLinksCondition;
+
   const emptyResp = { result: [] };
   const { wObject } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.MAP);
   if (!wObject) return { error: ERROR_OBJ.NOT_FOUND };
@@ -123,21 +174,17 @@ const getObjectsFromAdvancedMap = async ({
     && !objectTypes
     && !objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) return emptyResp;
 
-  const mapCondition = makeMapCondition({ clientBox: box, boxCoordinates });
-
-  const andCondition = [mapCondition];
-
-  if (objectTypes?.length) andCondition.push({ object_type: { $in: objectTypes } });
+  if (objectTypes?.length) typesCondition = { object_type: { $in: objectTypes } };
 
   if (tags?.length) {
-    andCondition.push({
+    tagsCondition = {
       fields: {
         $elemMatch: {
           name: FIELDS_NAMES.CATEGORY_ITEM,
           body: { $in: tags },
         },
       },
-    });
+    };
   }
 
   // const authority = [];
@@ -151,30 +198,43 @@ const getObjectsFromAdvancedMap = async ({
     });
 
     if (objectLinks.length) {
-      andCondition.push({ author_permlink: { $in: _.uniq(objectLinks) } });
+      objectLinksCondition = { author_permlink: { $in: _.uniq(objectLinks) } };
     }
   }
 
-  const { wobjects } = await Wobj.fromAggregation([
-    {
-      $match: {
-        $and: andCondition,
-        'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        // ...(authority.length && { 'authority.administrative': { $in: authority } }),
-      },
-    },
-    { $sort: { activeCampaignsCount: -1, weight: -1 } },
-    {
-      $skip: skip,
-    },
-    {
-      $limit: 250,
-    },
-  ]);
+  const additionalCoords = calculateBoxCenters(box.topPoint, box.bottomPoint);
 
-  if (!wobjects) return emptyResp;
+  const arrayOfCoordinates = [
+    {
+      topPoint: additionalCoords.center,
+      bottomPoint: box.bottomPoint,
+    },
+    {
+      topPoint: additionalCoords.topCenter,
+      bottomPoint: additionalCoords.leftCenter,
+    },
+    {
+      topPoint: additionalCoords.rightCenter,
+      bottomPoint: additionalCoords.bottomCenter,
+    },
+    {
+      topPoint: box.topPoint,
+      bottomPoint: additionalCoords.center,
+    },
+  ];
 
   const { user } = await User.getOne(follower, SELECT_USER_CAMPAIGN_SHOP);
+
+  const responses = await Promise.all(arrayOfCoordinates.map((el) => objectsRequest({
+    box: el,
+    boxCoordinates,
+    typesCondition,
+    tagsCondition,
+    objectLinksCondition,
+  })));
+
+  const wobjects = _.compact(_.flatten(responses));
+
   await campaignsV2Helper.addNewCampaignsToObjects({
     user,
     wobjects,
@@ -187,7 +247,7 @@ const getObjectsFromAdvancedMap = async ({
   });
 
   const processed = await wObjectHelper.processWobjects({
-    wobjects: _.take(filtered, limit),
+    wobjects: _.take(filtered, 400),
     fields: REQUIREDFILDS_WOBJ_LIST,
     reqUserName: follower,
     app,
