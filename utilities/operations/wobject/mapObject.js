@@ -5,6 +5,7 @@ const {
   REQUIREDFILDS_WOBJ_LIST,
   MAP_OBJECT_SEARCH_FIELDS,
   REMOVE_OBJ_STATUSES,
+  MAP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const { ERROR_OBJ, REDIS_KEYS, TTL_TIME } = require('constants/common');
 const _ = require('lodash');
@@ -129,6 +130,7 @@ const objectsRequest = async ({
       $match: {
         $and: andCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        object_type: { $in: MAP_OBJECT_TYPES },
         // ...(authority.length && { 'authority.administrative': { $in: authority } }),
       },
     },
