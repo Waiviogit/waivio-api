@@ -125,7 +125,13 @@ const generateReportTask = async ({
     accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId,
   });
 
-  return { result };
+  return {
+    result: {
+      ...result,
+      deposits: '0',
+      withdrawals: '0',
+    },
+  };
 };
 
 const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
