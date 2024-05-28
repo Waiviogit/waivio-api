@@ -240,6 +240,13 @@ const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   return { result: _.uniq(result) };
 };
 
+const getListsForAuthority = async ({ authorPermlink, scanEmbedded, app }) => {
+  const result = await getAllObjectsInList({
+    authorPermlink, scanEmbedded, app,
+  });
+  return { result: _.uniq(result) };
+};
+
 const getListItems = async (wobject, data, app) => {
   const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
 
@@ -337,12 +344,7 @@ const getOne = async (data) => { // get one wobject by author_permlink
   const { count } = await wobjectSubscriptions.getFollowersCount(wObject.author_permlink);
   wObject.followers_count = count || 0;
 
-  let app;
-  if (data.appName) {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
-    ({ result: app } = await App.findOne({ host }));
-  }
+  const { app } = data;
 
   // format listItems field
   const keyName = wObject.object_type.toLowerCase() === OBJECT_TYPES.LIST ? 'listItems' : 'menuItems';
@@ -386,4 +388,5 @@ module.exports = {
   getAllListPermlinks,
   getListDepartments,
   getAllObjectsInList,
+  getListsForAuthority,
 };

@@ -5978,55 +5978,7 @@
             "in": "body",
             "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
             "schema": {
-              "type": "object",
-              "properties": {
-                "accounts": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "example": "blauser"
-                      },
-                      "lastId": {
-                        "type": "string",
-                        "example": "627d9aa9a72924295ebcff0e"
-                      }
-                    }
-                  }
-                },
-                "filterAccounts": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "example": "blaster"
-                  }
-                },
-                "startDate": {
-                  "type": "number",
-                  "example": 1619816400
-                },
-                "endDate": {
-                  "type": "number",
-                  "example": 1621857636
-                },
-                "limit": {
-                  "type": "number"
-                },
-                "user": {
-                  "type": "string",
-                  "example": "blauser"
-                },
-                "currency": {
-                  "type": "string",
-                  "example": "UAH"
-                },
-                "symbol": {
-                  "type": "string",
-                  "example": "WAIV"
-                }
-              }
+              "$ref": "#/definitions/advancedReportParams"
             }
           }
         ],
@@ -6039,7 +5991,7 @@
                 "wallet": {
                   "type": "array",
                   "items": {
-                    "type": "object"
+                    "$ref": "#/definitions/engineReportWallet"
                   }
                 },
                 "accounts": {
@@ -6068,6 +6020,462 @@
                   "type": "number"
                 }
               }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "create new report task",
+        "description": "create new report task",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
+            "schema": {
+              "$ref": "#/definitions/advancedReportParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/progress": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get tasks in progress",
+        "description": "get tasks in progress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/history": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get completed tasks",
+        "description": "get completed tasks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/record": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "exclude/include record in report",
+        "description": "exclude/include record in report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                },
+                "reportId": {
+                  "type": "string"
+                },
+                "_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportWallet"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/report": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "shows generated report",
+        "description": "shows generated report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "wallet": {
+                  "$ref": "#/definitions/engineReportWallet"
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/resume": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "resume report",
+        "description": "resume report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/stop": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "stop report",
+        "description": "stop report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/pause": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "pause report",
+        "description": "pause report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
             }
           },
           "422": {
@@ -9046,6 +9454,95 @@
                 },
                 "hasMore": {
                   "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assistant": {
+      "post": {
+        "tags": [
+          "app"
+        ],
+        "summary": "prompt to assistant",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "question": {
+                  "type": "string"
+                },
+                "id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/assistant/history/{id}": {
+      "get": {
+        "tags": [
+          "app"
+        ],
+        "summary": "prompt to assistant",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "chat id",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      },
+                      "text": {
+                        "type": "string"
+                      },
+                      "role": {
+                        "type": "string"
+                      }
+                    }
+                  }
                 }
               }
             }
@@ -12394,6 +12891,127 @@
           "type": "string"
         },
         "affiliateCode": {
+          "type": "string"
+        }
+      }
+    },
+    "advancedReportParams": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "blauser"
+              },
+              "lastId": {
+                "type": "string",
+                "example": "627d9aa9a72924295ebcff0e"
+              }
+            }
+          }
+        },
+        "filterAccounts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "blaster"
+          }
+        },
+        "startDate": {
+          "type": "number",
+          "example": 1619816400
+        },
+        "endDate": {
+          "type": "number",
+          "example": 1621857636
+        },
+        "limit": {
+          "type": "number"
+        },
+        "user": {
+          "type": "string",
+          "example": "blauser"
+        },
+        "currency": {
+          "type": "string",
+          "example": "UAH"
+        },
+        "symbol": {
+          "type": "string",
+          "example": "WAIV"
+        }
+      }
+    },
+    "engineReportWallet": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        } ,
+        "operation": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        },
+        "blockNumber": {
+          "type": "number"
+        },
+        "checked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "engineReportStatus": {
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        } ,
+        "currency": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string"
+        },
+        "endDate": {
+          "type": "string"
+        },
+        "filterAccounts": {
+          "type": "array",
+          "items": {
+            "type":"string"
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type":"string"
+          }
+        },
+        "deposits": {
+          "type": "string"
+        } ,
+        "withdrawals": {
+          "type": "string"
+        } ,
+        "status": {
           "type": "string"
         }
       }

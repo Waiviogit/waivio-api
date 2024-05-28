@@ -1736,7 +1736,6 @@ describe('On wobjectHelper', async () => {
     });
 
     it('should body be the same', async () => {
-      console.log();
       expect(body).to.be.eq(result.widget);
     });
   });
@@ -1767,7 +1766,6 @@ describe('On wobjectHelper', async () => {
     });
 
     it('should body be the same', async () => {
-      console.log();
       expect(body).to.be.eq(result.newsFeed.body);
     });
   });

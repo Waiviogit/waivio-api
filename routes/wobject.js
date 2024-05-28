@@ -66,6 +66,8 @@ wobjRoutes.route('/wobjects/list-item-process')
   .post(reqTimeMonitor, WobjController.recountList);
 wobjRoutes.route('/wobjects/list-item-links')
   .post(reqTimeMonitor, WobjController.getListLinks);
+wobjRoutes.route('/wobjects/list-item-links/authority')
+  .post(reqTimeMonitor, WobjController.getListLinksAuthority);
 wobjRoutes.route('/wobjects/list-item-departments')
   .post(reqTimeMonitor, WobjController.getListDepartments);
 wobjRoutes.route('/wobjects/search-default')

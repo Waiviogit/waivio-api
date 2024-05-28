@@ -278,7 +278,7 @@ const getFavoritesByUsername = async ({
       filter,
       {},
       {
-        sort: { weight: -1 },
+        sort: { weight: -1, _id: 1 },
         skip,
         limit,
       },

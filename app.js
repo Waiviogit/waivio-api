@@ -56,6 +56,12 @@ app.use((req, res, next) => {
     ? appHost = origin.replace(REPLACE_ORIGIN, '')
     : appHost = referer && referer.replace(REPLACE_REFERER, '');
 
+  // for requests from SSR
+  const serverHost = req.headers['app-host'];
+  if (serverHost) {
+    appHost = serverHost.replace(REPLACE_ORIGIN, '');
+  }
+
   session.set('host', appHost || config.appHost);
   session.set('access-token', req.headers['access-token']);
   session.set('hive-auth', req.headers['hive-auth'] === 'true');

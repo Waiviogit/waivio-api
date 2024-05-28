@@ -42,5 +42,7 @@ moduleExports.UserDraftModel = require('./UserDraftModel');
 moduleExports.ThreadModel = require('./ThreadModel');
 moduleExports.GuestManaModel = require('./GuestManaModel');
 moduleExports.DelegationModel = require('./DelegationModel');
+moduleExports.EngineAdvancedReportModel = require('./EngineAdvancedReportModel');
+moduleExports.EngineAdvancedReportStatusModel = require('./EngineAdvancedReportStatusModel');
 
 module.exports = moduleExports;

@@ -5,18 +5,31 @@ const {
   EngineAccountHistory, CurrenciesRate, WalletExemptions, HiveEngineRate,
 } = require('models');
 const BigNumber = require('bignumber.js');
-const { SUPPORTED_CURRENCIES } = require('../../../constants/common');
+const {
+  SUPPORTED_CURRENCIES,
+  TTL_TIME,
+} = require('../../../constants/common');
 const { ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP } = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
+const { getCachedData, getCacheKey, setCachedData } = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 exports.getWalletAdvancedReport = async ({
   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
 }) => {
+  // const key = getCacheKey({
+  //   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
+  // });
+
+  // const cache = await getCachedData(key);
+  // if (cache) return jsonHelper.parseJson(cache, {});
+
   accounts = await addWalletDataToAccounts({
     filterAccounts, startDate, accounts, endDate, limit, symbol,
   });
+
   const error = _.find(accounts, (account) => account.error);
   if (error) return { error };
 
@@ -49,17 +62,20 @@ exports.getWalletAdvancedReport = async ({
   })), []);
 
   const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
-  const hasMore = usersJointArr.length > resultWallet.length
-        || _.some(accounts, (acc) => !!acc.hasMore);
 
-  return {
-    result: {
-      wallet: resultWallet,
-      accounts: resAccounts,
-      hasMore,
-      ...depositWithdrawals,
-    },
+  const hasMore = resultWallet.length >= limit
+    || _.some(accounts, (acc) => !!acc.hasMore);
+
+  const result = {
+    wallet: resultWallet,
+    accounts: resAccounts,
+    hasMore,
+    ...depositWithdrawals,
   };
+
+  //  await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
+
+  return { result };
 };
 
 const addWalletDataToAccounts = async ({
@@ -71,6 +87,8 @@ const addWalletDataToAccounts = async ({
     startDate,
     endDate,
     symbol,
+    limit,
+    offset: account.offset || 0,
   });
   if (error) return { error };
 
@@ -85,15 +103,11 @@ const addWalletDataToAccounts = async ({
   });
   if (dbError) return { error: dbError };
 
-  account.wallet = _.orderBy([...wallet, ...result], ['timestamp', '_id'], ['desc', 'desc']);
-  if (account.lastId) {
-    const updateSkip = account.wallet.indexOf(_.find(
-      account.wallet,
-      (obj) => obj._id.toString() === account.lastId,
-    )) + 1;
-    account.wallet = account.wallet.slice(updateSkip - 1);
+  account.wallet = wallet;
+  if (account.wallet.length < limit) {
+    account.wallet.push(...result);
   }
-  account.hasMore = account.wallet.length > limit;
+  account.hasMore = account.wallet.length >= limit;
 
   _.forEach(account.wallet, (el) => {
     el.withdrawDeposit = withdrawDeposit({
@@ -106,9 +120,8 @@ const addWalletDataToAccounts = async ({
 }));
 
 const getWalletData = async ({
-  userName, types, endDate, startDate, symbol,
+  userName, types, endDate, startDate, symbol, offset, limit,
 }) => {
-  const batchSize = 1000;
   const walletOperations = [];
   const { response, error } = await accountHistory({
     timestampEnd: moment(endDate).unix(),
@@ -116,7 +129,8 @@ const getWalletData = async ({
     symbol,
     account: userName,
     ops: types.toString(),
-    limit: batchSize,
+    limit,
+    offset,
   });
   if (error) return { error };
 
@@ -316,16 +330,20 @@ const calcWalletRecordRate = ({
 };
 
 const accumulateAcc = ({ resultArray, account, acc }) => {
-  const lastId = _.get(_.last(account.wallet), '_id', '');
   const filterWallet = _.filter(
     account.wallet,
     (record) => !_.some(resultArray, (result) => _.isEqual(result, record)),
   );
+
+  // total records in result array by account
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
 
-  account.lastId = _.isEmpty(filterWallet)
-    ? lastId
-    : _.get(filterWallet, '[0]._id');
+  const accountRecords = _.filter(resultArray, (el) => el.account === account.name);
+
+  const offset = accountRecords.length;
+
+  account.offset = account.offset ? account.offset + offset : offset;
+
   acc.push(_.omit(account, ['wallet', 'hasMore']));
 
   return acc;
