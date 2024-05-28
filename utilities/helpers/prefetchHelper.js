@@ -5,9 +5,12 @@ const {
 } = require('utilities/helpers/imagesHelper');
 
 exports.parseImage = async (data) => {
+  const base64 = await base64ByUrl(data.image);
+  const fileName = generateFileName({ base64 });
+
   const { imageUrl, error } = await image.uploadInS3(
-    await base64ByUrl(data.image),
-    await generateFileName({}),
+    base64,
+    fileName,
   );
   if (error) return { error: { status: 406, message: 'Error download image to S3' } };
   return imageUrl;
