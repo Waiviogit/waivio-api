@@ -273,6 +273,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
       case FIELDS_NAMES.WALLET_ADDRESS:
+      case FIELDS_NAMES.DELEGATION:
         if (arrayFieldPush({
           filter,
           field,
@@ -809,6 +810,45 @@ const getOwnerAndAdmins = (app) => {
 
   return { owner, admins };
 };
+
+const filterAssignedAdmin = (admins, field) => field.name === FIELDS_NAMES.DELEGATION
+  && admins.includes(field.creator);
+
+const getAssignedAdmins = ({
+  admins = [],
+  owner,
+  object,
+  ownership,
+  administrative,
+  blacklist,
+}) => {
+  let fields = object?.fields?.filter((f) => filterAssignedAdmin([...admins, owner], f));
+  if (!fields.length) return [];
+
+  fields = addDataToFields({
+    isOwnershipObj: !!ownership.length,
+    fields,
+    filter: [FIELDS_NAMES.DELEGATION],
+    admins,
+    ownership,
+    administrative,
+    owner,
+    blacklist,
+  });
+
+  const processed = getFieldsToDisplay(
+    fields,
+    'en-US',
+    [FIELDS_NAMES.DELEGATION],
+    object.author_permlink,
+    ownership,
+  );
+
+  if (!processed[FIELDS_NAMES.DELEGATION]) return [];
+
+  return processed[FIELDS_NAMES.DELEGATION].map((el) => el.body);
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects,
@@ -842,7 +882,6 @@ const processWobjects = async ({
   const waivioAdmins = await getWaivioAdminsAndOwner();
   const { owner, admins } = getOwnerAndAdmins(app);
   const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
-
   // means that owner want's all objects on sites behave like ownership objects
   const objectControl = !!app?.objectControl;
   const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
@@ -859,6 +898,12 @@ const processWobjects = async ({
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
 
+    // get admins that can be assigned by owner or other admins
+    const assignedAdmins = getAssignedAdmins({
+      admins, ownership, administrative, owner, blacklist, object: obj,
+    });
+    const objectAdmins = [...admins, ...assignedAdmins];
+
     if (objectControl
       && (!_.isEmpty(administrative)
         || !_.isEmpty(ownership)
@@ -866,11 +911,12 @@ const processWobjects = async ({
         || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
       )
     ) {
-      ownership.push(extraAuthority, ...admins);
+      ownership.push(extraAuthority, ...objectAdmins);
     }
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
+      // only if 1 object processed no need to refactor before for of
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = getExposedFields(objectType, obj.fields);
     }
@@ -879,7 +925,7 @@ const processWobjects = async ({
       isOwnershipObj: !!ownership.length,
       fields: _.compact(obj.fields),
       filter: fields,
-      admins,
+      admins: objectAdmins,
       ownership,
       administrative,
       owner,
@@ -908,7 +954,7 @@ const processWobjects = async ({
           ? await addOptions({
             object: obj,
             ownership,
-            admins,
+            admins: objectAdmins,
             administrative,
             owner,
             blacklist,
@@ -923,7 +969,7 @@ const processWobjects = async ({
         ? await addOptions({
           object: obj,
           ownership,
-          admins,
+          admins: objectAdmins,
           administrative,
           owner,
           blacklist,
