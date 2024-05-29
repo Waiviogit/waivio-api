@@ -3,6 +3,7 @@ const _ = require('lodash');
 const crypto = require('crypto');
 const { ERROR_OBJ, SERVICE_NOTIFICATION_TYPES } = require('constants/common');
 const notificationsHelper = require('utilities/helpers/notificationsHelper');
+const BigNumber = require('bignumber.js');
 const { getWalletAdvancedReport } = require('./getWalletAdvancedReport');
 
 const GENERATE_STATUS = {
@@ -154,6 +155,9 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
     result: {
       wallet: _.take(report, limit),
       hasMore: report.length > limit,
+      deposits: BigNumber(result.deposits).toString(),
+      withdrawals: BigNumber(result.withdrawals).toString(),
+      currency: result.currency,
     },
   };
 };
