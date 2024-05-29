@@ -2061,4 +2061,32 @@ describe('On wobjectHelper', async () => {
       expect(walletAddress.body).to.be.eq(body);
     });
   });
+
+  describe('On DELEGATION  field', async () => {
+    const fieldName = FIELDS_NAMES.DELEGATION;
+
+    const body = faker.random.string();
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.BUSINESS,
+        name: fieldName,
+        body,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should eq  DELEGATION ', async () => {
+      const walletAddress = result[fieldName][0];
+      expect(walletAddress.body).to.be.eq(body);
+    });
+  });
 });

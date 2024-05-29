@@ -3,7 +3,7 @@ const { EngineAdvancedReportStatus } = require('database').models;
 const create = async (doc) => {
   try {
     const result = await EngineAdvancedReportStatus.create(doc);
-    return { result };
+    return { result: result.toObject() };
   } catch (error) {
     return { error };
   }
