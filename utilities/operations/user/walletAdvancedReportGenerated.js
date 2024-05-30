@@ -81,6 +81,7 @@ const generateReport = async ({
     await EngineAdvancedReportStatusModel.updateOne({
       filter: { reportId, user },
       update: {
+        accounts,
         $inc: {
           deposits: result.deposits ?? 0,
           withdrawals: result.withdrawals ?? 0,
