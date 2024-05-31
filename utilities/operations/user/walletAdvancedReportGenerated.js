@@ -91,7 +91,9 @@ const generateReport = async ({
     });
 
     notificationsHelper.sendServiceNotification({
-      id: SERVICE_NOTIFICATION_TYPES.UPDATE_REPORT,
+      id: hasMore
+        ? SERVICE_NOTIFICATION_TYPES.UPDATE_REPORT
+        : SERVICE_NOTIFICATION_TYPES.FINISH_REPORT,
       data: { account: user },
     });
   } while (hasMore);
