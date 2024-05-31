@@ -145,6 +145,7 @@ exports.REDIS_KEYS = {
 exports.SERVICE_NOTIFICATION_TYPES = {
   UPDATE_IMPORT: 'updateImport',
   UPDATE_REPORT: 'updateReport',
+  FINISH_REPORT: 'finishReport',
 };
 
 exports.LANGUAGES = ['en-US',
