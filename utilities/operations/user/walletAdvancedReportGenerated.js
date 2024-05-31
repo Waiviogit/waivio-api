@@ -159,6 +159,7 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
       deposits: BigNumber(result.deposits).toString(),
       withdrawals: BigNumber(result.withdrawals).toString(),
       currency: result.currency,
+      filterAccounts: result.filterAccounts,
     },
   };
 };
