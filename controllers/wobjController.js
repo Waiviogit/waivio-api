@@ -582,6 +582,30 @@ const getObjectsOnMap = async (req, res, next) => {
   next();
 };
 
+const getObjectsLinksOnMap = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      locale: req.headers.locale,
+      authorPermlink: req.params.authorPermlink,
+      follower: req.headers.follower,
+    },
+    validators.wobject.wobjectAdvancedMapListScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, hasMore, error } = await mapObject.getObjectLinksFromAdvancedMap({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result, hasMore } };
+  next();
+};
+
 const getRawField = async (req, res, next) => {
   const value = validators.validate(
     {
@@ -636,4 +660,5 @@ module.exports = {
   getObjectsOnMap,
   getRawField,
   getListLinksAuthority,
+  getObjectsLinksOnMap,
 };
