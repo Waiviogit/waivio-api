@@ -19,7 +19,7 @@ const availableSymbolRateFields = ADVANCED_REPORT_SYMBOLS.reduce((acc, el) => ({
 }), {});
 
 const EngineAdvancedReportSchema = new Schema({
-  reportId: { type: String },
+  reportId: { type: String, index: true },
   refHiveBlockNumber: { type: Number },
   blockNumber: { type: Number },
   account: { type: String },
@@ -34,6 +34,8 @@ const EngineAdvancedReportSchema = new Schema({
   symbol: { type: String },
   tokenState: { type: String },
   withdrawDeposit: { type: String },
+  authorperm: { type: String },
+  memo: { type: String },
   checked: { type: Boolean },
   ...availableRateFields,
   ...availableSymbolRateFields,
