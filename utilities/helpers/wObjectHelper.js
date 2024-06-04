@@ -823,7 +823,7 @@ const getAssignedAdmins = ({
   blacklist,
 }) => {
   let fields = object?.fields?.filter((f) => filterAssignedAdmin([...admins, owner], f));
-  if (!fields.length) return [];
+  if (!fields?.length) return [];
 
   fields = addDataToFields({
     isOwnershipObj: !!ownership.length,

@@ -81,6 +81,7 @@ const generateReport = async ({
     await EngineAdvancedReportStatusModel.updateOne({
       filter: { reportId, user },
       update: {
+        accounts,
         $inc: {
           deposits: result.deposits ?? 0,
           withdrawals: result.withdrawals ?? 0,
@@ -90,7 +91,9 @@ const generateReport = async ({
     });
 
     notificationsHelper.sendServiceNotification({
-      id: SERVICE_NOTIFICATION_TYPES.UPDATE_REPORT,
+      id: hasMore
+        ? SERVICE_NOTIFICATION_TYPES.UPDATE_REPORT
+        : SERVICE_NOTIFICATION_TYPES.FINISH_REPORT,
       data: { account: user },
     });
   } while (hasMore);
@@ -158,6 +161,7 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
       deposits: BigNumber(result.deposits).toString(),
       withdrawals: BigNumber(result.withdrawals).toString(),
       currency: result.currency,
+      filterAccounts: result.filterAccounts,
     },
   };
 };
