@@ -216,7 +216,7 @@ const getObjectLinksFromAdvancedMap = async ({
     && !typesCondition
     && !objectLinksCondition) return emptyResp;
 
-  const rectangles = boxCoordinates.map((el) => [el.bottomPoint, el.topPoint]);
+  const rectangles = _.map(boxCoordinates, (el) => [el.bottomPoint, el.topPoint]);
 
   const mapCondition = rectangles?.length
     ? {
@@ -260,7 +260,7 @@ const getObjectLinksFromAdvancedMap = async ({
 
   return {
     result: _.take(_.map(wobjects, (el) => el.author_permlink), limit),
-    hasMore: wobjects.length > limit,
+    hasMore: wobjects?.length > limit,
   };
 };
 
