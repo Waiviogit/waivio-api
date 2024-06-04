@@ -114,7 +114,7 @@ const calculateBoxCenters = (topPoint, bottomPoint) => {
 };
 
 const objectsRequest = async ({
-  box, typesCondition, tagsCondition, objectLinksCondition, boxCoordinates,
+  box, typesCondition, tagsCondition, objectLinksCondition, boxCoordinates, limit, skip = 0,
 }) => {
   const andCondition = [];
 
@@ -136,19 +136,21 @@ const objectsRequest = async ({
     },
     { $sort: { activeCampaignsCount: -1, weight: -1 } },
     {
-      $limit: 100,
+      $skip: skip,
+    },
+    {
+      $limit: limit,
     },
   ]);
 
   return wobjects;
 };
 
-const getObjectsFromAdvancedMap = async ({
-  authorPermlink, app, locale, follower, box, skip = 0, limit,
+const getMapObjectCondition = async ({
+  app, follower, locale, authorPermlink,
 }) => {
   let typesCondition, tagsCondition, objectLinksCondition;
 
-  const emptyResp = { result: [] };
   const { wObject } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.MAP);
   if (!wObject) return { error: ERROR_OBJ.NOT_FOUND };
 
@@ -161,20 +163,9 @@ const getObjectsFromAdvancedMap = async ({
     returnArray: false,
   });
 
-  if (!objectWithMap[FIELDS_NAMES.MAP_RECTANGLES]
-    && !objectWithMap[FIELDS_NAMES.MAP_OBJECT_TAGS]
-    && !objectWithMap[FIELDS_NAMES.MAP_OBJECT_TYPES]
-    && !objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]
-  ) return emptyResp;
-
   const boxCoordinates = parseJson(objectWithMap[FIELDS_NAMES.MAP_RECTANGLES], null);
   const tags = parseJson(objectWithMap[FIELDS_NAMES.MAP_OBJECT_TAGS], null);
   const objectTypes = parseJson(objectWithMap[FIELDS_NAMES.MAP_OBJECT_TYPES], null);
-
-  if (!boxCoordinates
-    && !tags
-    && !objectTypes
-    && !objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) return emptyResp;
 
   if (objectTypes?.length) typesCondition = { object_type: { $in: objectTypes } };
 
@@ -189,10 +180,6 @@ const getObjectsFromAdvancedMap = async ({
     };
   }
 
-  // const authority = [];
-  // const social = checkForSocialSite(app?.parentHost ?? '');
-  // if (social) authority.push(...[app.owner, ...app.authority]);
-
   if (objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST]) {
     const objectLinks = await getCachedListsByHost({
       authorPermlink: objectWithMap[FIELDS_NAMES.MAP_OBJECTS_LIST],
@@ -203,6 +190,98 @@ const getObjectsFromAdvancedMap = async ({
       objectLinksCondition = { author_permlink: { $in: _.uniq(objectLinks) } };
     }
   }
+
+  return {
+    objectLinksCondition, tagsCondition, typesCondition, boxCoordinates,
+  };
+};
+
+const getObjectLinksFromAdvancedMap = async ({
+  authorPermlink, app, locale, follower, skip = 0, limit,
+}) => {
+  const emptyResp = { result: [], hasMore: false };
+  const andCondition = [];
+
+  const {
+    objectLinksCondition,
+    tagsCondition,
+    typesCondition,
+    boxCoordinates,
+  } = await getMapObjectCondition({
+    app, follower, locale, authorPermlink,
+  });
+
+  if (!boxCoordinates
+    && !tagsCondition
+    && !typesCondition
+    && !objectLinksCondition) return emptyResp;
+
+  const rectangles = boxCoordinates.map((el) => [el.bottomPoint, el.topPoint]);
+
+  const mapCondition = rectangles?.length
+    ? {
+      $or: rectangles.map((el) => ({
+        map: {
+          $geoWithin: {
+            $box: el,
+          },
+        },
+      })),
+    }
+    : { map: { $exists: true } };
+
+  andCondition.push(mapCondition);
+  if (typesCondition) andCondition.push(typesCondition);
+  if (tagsCondition) andCondition.push(tagsCondition);
+  if (objectLinksCondition) andCondition.push(objectLinksCondition);
+
+  const { wobjects } = await Wobj.fromAggregation([
+    {
+      $match: {
+        $and: andCondition,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        object_type: { $in: MAP_OBJECT_TYPES },
+        // ...(authority.length && { 'authority.administrative': { $in: authority } }),
+      },
+    },
+    { $sort: { _id: -1 } },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit + 1,
+    },
+    {
+      $project: {
+        author_permlink: 1,
+      },
+    },
+  ]);
+
+  return {
+    result: _.take(_.map(wobjects, (el) => el.author_permlink), limit),
+    hasMore: wobjects.length > limit,
+  };
+};
+
+const getObjectsFromAdvancedMap = async ({
+  authorPermlink, app, locale, follower, box, skip = 0, limit,
+}) => {
+  const emptyResp = { result: [] };
+
+  const {
+    objectLinksCondition,
+    tagsCondition,
+    typesCondition,
+    boxCoordinates,
+  } = await getMapObjectCondition({
+    app, follower, locale, authorPermlink,
+  });
+
+  if (!boxCoordinates
+    && !tagsCondition
+    && !typesCondition
+    && !objectLinksCondition) return emptyResp;
 
   const additionalCoords = calculateBoxCenters(box.topPoint, box.bottomPoint);
 
@@ -233,6 +312,7 @@ const getObjectsFromAdvancedMap = async ({
     typesCondition,
     tagsCondition,
     objectLinksCondition,
+    limit: 100,
   })));
 
   const wobjects = _.compact(_.flatten(responses));
@@ -263,4 +343,5 @@ const getObjectsFromAdvancedMap = async ({
 
 module.exports = {
   getObjectsFromAdvancedMap,
+  getObjectLinksFromAdvancedMap,
 };
