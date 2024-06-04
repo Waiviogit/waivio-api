@@ -34,6 +34,8 @@ const EngineAdvancedReportSchema = new Schema({
   symbol: { type: String },
   tokenState: { type: String },
   withdrawDeposit: { type: String },
+  authorperm: { type: String },
+  memo: { type: String },
   checked: { type: Boolean },
   ...availableRateFields,
   ...availableSymbolRateFields,
