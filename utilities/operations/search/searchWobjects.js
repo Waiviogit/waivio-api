@@ -71,6 +71,7 @@ const defaultWobjectSearch = async (data) => {
     pipeline: makePipeline(data),
     string: data.string,
     object_type: data.object_type,
+    onlyObjectTypes: data.onlyObjectTypes,
   });
 
   if (data.needCounters && !error) {
@@ -130,9 +131,11 @@ const getSiteWobjects = async (data) => {
   });
 };
 
-const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => {
+const getWobjectsFromAggregation = async ({
+  pipeline, string, object_type, onlyObjectTypes,
+}) => {
   const { wobjects = [], error } = await Wobj.fromAggregation(pipeline);
-  const { wObject } = await Wobj.getOne(string, object_type, true);
+  const { wObject } = await Wobj.getOne(string, object_type, true, onlyObjectTypes);
 
   if (wObject && wobjects.length) {
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
