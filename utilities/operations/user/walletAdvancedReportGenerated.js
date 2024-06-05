@@ -276,7 +276,13 @@ const resumeGeneration = async ({ reportId, user }) => {
 
   generateReport(resume);
 
-  return { result: updated };
+  return {
+    result: {
+      ...updated,
+      deposits: BigNumber(updated.deposits).toString(),
+      withdrawals: BigNumber(updated.withdrawals).toString(),
+    },
+  };
 };
 
 const stopGeneration = async ({ reportId, user }) => {
@@ -286,7 +292,13 @@ const stopGeneration = async ({ reportId, user }) => {
     options: { new: true },
   });
 
-  return { result: updated };
+  return {
+    result: {
+      ...updated,
+      deposits: BigNumber(updated.deposits).toString(),
+      withdrawals: BigNumber(updated.withdrawals).toString(),
+    },
+  };
 };
 
 const pauseGeneration = async ({ reportId, user }) => {
@@ -296,7 +308,13 @@ const pauseGeneration = async ({ reportId, user }) => {
     options: { new: true },
   });
 
-  return { result: updated };
+  return {
+    result: {
+      ...updated,
+      deposits: BigNumber(updated.deposits).toString(),
+      withdrawals: BigNumber(updated.withdrawals).toString(),
+    },
+  };
 };
 
 module.exports = {
