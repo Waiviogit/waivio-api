@@ -217,6 +217,9 @@ const makePipeline = ({
       { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
     );
   } else pipeline.push({ $sort: { weight: -1 } });
+  if (onlyObjectTypes?.length) {
+    pipeline.push({ $match: { object_type: { $in: onlyObjectTypes } } });
+  }
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
   return pipeline;
