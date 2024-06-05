@@ -116,6 +116,7 @@ exports.searchScheme = Joi.object().keys({
   box: boxScheme,
   addHashtag: Joi.boolean().default(false),
   mapMarkers: Joi.boolean().default(false),
+  onlyObjectTypes: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.galleryScheme = Joi.object().keys({
