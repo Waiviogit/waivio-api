@@ -12084,6 +12084,12 @@
           },
           "mapMarkers": {
             "type": "boolean"
+          },
+          "onlyObjectTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },

@@ -228,7 +228,7 @@ const getObjectLinksFromAdvancedMap = async ({
         },
       })),
     }
-    : { map: { $exists: true } };
+    : { map: { $exists: true, $ne: null } };
 
   andCondition.push(mapCondition);
   if (typesCondition) andCondition.push(typesCondition);
