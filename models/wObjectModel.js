@@ -6,11 +6,12 @@ const WObjectModel = require('database').models.WObject;
 
 const _ = require('lodash');
 
-const getOne = async (authorPermlink, objectType, unavailable) => {
+const getOne = async (authorPermlink, objectType, unavailable, onlyObjectTypes) => {
   try {
     const matchStage = { author_permlink: authorPermlink };
     if (unavailable) matchStage['status.title'] = { $nin: REMOVE_OBJ_STATUSES };
     if (objectType) matchStage.object_type = objectType;
+    if (onlyObjectTypes?.length) matchStage.object_type = { $in: onlyObjectTypes };
     const wObject = await WObjectModel.findOne(matchStage, { search: 0, departments: 0 }).lean();
 
     if (!wObject) {
