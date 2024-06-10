@@ -10796,30 +10796,40 @@
       },
       "wobject": {
         "type": "object",
+        "required": ["author_permlink", "default_name", "creator", "author"],
         "properties": {
-          "author_permlink": {
-            "type": "string"
-          },
-          "weight": {
-            "type": "number"
-          },
           "app": {
             "type": "string"
           },
           "community": {
             "type": "string"
           },
-          "parents": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_name": {
+            "type": "string"
           },
-          "propositions": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
+          "is_posting_open": {
+            "type": "boolean"
+          },
+          "is_extending_open": {
+            "type": "boolean"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "author_permlink": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "parent": {
+            "type": "object"
+          },
+          "status": {
+            "type": "object"
           },
           "children": {
             "type": "array",
@@ -10827,69 +10837,157 @@
               "type": "string"
             }
           },
-          "followers_count": {
-            "type": "integer"
+          "authority": {
+            "$ref": "#/definitions/wobjField"
           },
-          "users": {
+          "status": {
+            "type": "object"
+          },
+          "propositions": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjectonlist_users"
-            }
-          },
-          "fields": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/apiuseruserNamefollowing_objects_fields"
-            }
-          },
-          "moderators": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "admins": {
-            "type": "array",
-            "items": {
-              "type": "string"
+              "type": "object"
             }
           },
           "updatesCount": {
             "type": "number",
             "example": 21
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "background": {
+            "type": "string"
+          },
+          "defaultShowLink": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "array",
+            "items": {
+              "items": {
+                "$ref": "#/definitions/wobjField"
+              }
+            }
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tagCategory": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "galleryAlbum": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "galleryItem": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "delegation": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "walletAddress": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "similar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "addOn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "pin": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/wobjField"
+            }
+          },
+          "remove": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
       "wobjField": {
         "type": "object",
-        "example": {
-          "toDisplay": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
-          "field": {
-            "weight": 1,
-            "locale": "en-US",
-            "_id": "5ccf4aa2d0555b20e12b26bc",
-            "creator": "diningguide",
-            "author": "jkl65",
-            "permlink": "diningguide-1v9z8t55y33",
-            "name": "avatar",
-            "body": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
-            "active_votes": [
-              {
-                "_id": "5ccf4aa5d0555b20e12b2a81",
-                "voter": "diningguide",
-                "weight": 1,
-                "rshares_weight": 0,
-                "percent": 100
-              }
-            ],
-            "children": 0,
-            "total_payout_value": "0.000 HBD",
-            "pending_payout_value": "0.000 HBD",
-            "curator_payout_value": "0.000 HBD",
-            "cashout_time": "1969-12-31T23:59:59",
-            "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
-            "approvePercent": 100,
-            "createdAt": 1557088930000
+        "properties": {
+          "weight": {
+            "type": "number"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "children": {
+            "type": "number"
+          },
+          "approvePercent": {
+            "type": "number"
+          },
+          "active_votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/post_active_votes"
+            }
+          },
+          "items":{
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/raw_field"
+            }
           }
         }
       },
