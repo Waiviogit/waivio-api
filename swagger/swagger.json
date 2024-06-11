@@ -17,7 +17,7 @@
     },
     {
       "name": "wobject",
-      "description": "Info about waivio objects"
+      "description": "Info about waivio objects.\n A full description of possible keys with parameters can be found at \n https://github.com/Waiviogit/objects-bot/blob/master/docs/DetailsObjectFields.md"
     },
     {
       "name": "post",
@@ -7019,6 +7019,7 @@
           "wobject"
         ],
         "summary": "Return info about specified waivio object",
+        "description": "A full description of possible keys with parameters can be found at https://github.com/Waiviogit/objects-bot/blob/master/docs/DetailsObjectFields.md",
         "produces": [
           "application/json"
         ],
@@ -10828,9 +10829,6 @@
           "parent": {
             "type": "object"
           },
-          "status": {
-            "type": "object"
-          },
           "children": {
             "type": "array",
             "items": {
@@ -10838,7 +10836,7 @@
             }
           },
           "authority": {
-            "$ref": "#/definitions/wobjField"
+            "type": "object"
           },
           "status": {
             "type": "object"
@@ -10871,9 +10869,7 @@
           "rating": {
             "type": "array",
             "items": {
-              "items": {
-                "$ref": "#/definitions/wobjField"
-              }
+              "type": "object"
             }
           },
           "ratings": {
@@ -10885,62 +10881,101 @@
           "tagCategory": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "galleryAlbum": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "galleryItem": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "delegation": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "walletAddress": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "similar": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "addOn": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "related": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "pin": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjField"
+              "type": "object"
             }
           },
           "remove": {
             "type": "array",
             "items": {
-              "type": "string"
+              "type": "object"
             }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "groupId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "productId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "companyId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "options": {
+            "type": "object"
           }
         }
       },
