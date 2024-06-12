@@ -21,3 +21,14 @@ exports.getCurrentMedianHistoryPrice = async () => {
     return { error };
   }
 };
+
+exports.getDynamicGlobalProperties = async () => {
+  try {
+    const client = await getRegularClient();
+    return {
+      result: await client.call('condenser_api', 'get_dynamic_global_properties', []),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

@@ -137,7 +137,7 @@ const getWobjectsFromAggregation = async ({
   const { wobjects = [], error } = await Wobj.fromAggregation(pipeline);
   const { wObject } = await Wobj.getOne(string, object_type, true, onlyObjectTypes);
 
-  if (wObject && wobjects.length) {
+  if (wObject) {
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wObject);
   }
