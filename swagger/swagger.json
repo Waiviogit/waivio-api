@@ -2215,6 +2215,25 @@
         }
       }
     },
+    "/api/hive/global-properties": {
+      "get": {
+        "tags": [
+          "hive"
+        ],
+        "description": "Return get_dynamic_global_properties",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object"
+            }
+          }
+        }
+      }
+    },
     "/api/vip-tickets": {
       "get": {
         "tags": [
