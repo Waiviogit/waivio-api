@@ -13,6 +13,60 @@ const {
 } = require('utilities/helpers/cacheHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 
+const getPipe = ({ condition, excluded = [] }) => {
+  const pipeline = [
+    {
+      $match: condition,
+    },
+    {
+      $unwind: {
+        path: '$departments',
+      },
+    },
+    {
+      $group: {
+        _id: '$metaGroupId',
+        departments: { $addToSet: '$departments' },
+        related: { $addToSet: '$departments' },
+      },
+    },
+    {
+      $unwind: {
+        path: '$departments',
+      },
+    },
+    {
+      $group: {
+        _id: '$departments',
+        //   metaGroupIds: { $addToSet: '$_id' },
+        objectsCount: { $sum: 1 },
+        related: { $addToSet: '$related' },
+      },
+    },
+    {
+      $project: {
+        name: '$_id',
+        // metaGroupIds: 1,
+        objectsCount: 1,
+        related: {
+          $reduce: {
+            input: '$related',
+            initialValue: [],
+            in: { $setUnion: ['$$value', '$$this'] },
+          },
+        },
+      },
+    },
+  ];
+
+  // Conditionally add the excluded pipeline stage
+  if (excluded.length > 0) {
+    pipeline.splice(3, 0, { $match: { departments: { $nin: excluded } } });
+  }
+
+  return pipeline;
+};
+
 const getWobjectDepartments = async ({
   authorPermlink, app, name, excluded, wobjectFilter, path,
 }) => {
@@ -33,30 +87,37 @@ const getWobjectDepartments = async ({
 
   if (_.isEmpty(wobjectFilter)) return emptyResult;
   // or we can group in aggregation
-  const { result } = await Wobj.findObjects({
-    filter: wobjectFilter,
-    projection: { departments: 1, metaGroupId: 1 },
-  });
 
-  const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
-  const groupedResult = _.groupBy(result, 'metaGroupId');
-
-  const allDepartments = shopHelper.getDepartmentsFromObjects(groupedResult, path);
-
-  const filteredDepartments = name && name !== OTHERS_DEPARTMENT
-    ? shopHelper.secondaryFilterDepartment({
-      allDepartments, name, excluded, path,
-    })
-    : shopHelper.mainFilterDepartment(allDepartments);
-
-  const mappedDepartments = shopHelper.subdirectoryMap({
-    filteredDepartments,
-    allDepartments: groupedResult,
+  // excluded to pipe
+  const { wobjects: result } = await Wobj.fromAggregation(getPipe({
+    condition: wobjectFilter,
     excluded,
-    path,
-  });
+  }));
 
-  const orderedDepartments = shopHelper.orderBySubdirectory(mappedDepartments);
+  // const uncategorized = _.filter(result, (r) => _.isEmpty(r.departments));
+  // const groupedResult = _.groupBy(result, 'metaGroupId');
+  //
+  // const allDepartments = shopHelper.getDepartmentsFromObjects(groupedResult, path);
+
+  // const filteredDepartments = name && name !== OTHERS_DEPARTMENT
+  //   ? shopHelper.secondaryFilterDepartment({
+  //     allDepartments, name, excluded, path,
+  //   })
+  //   : shopHelper.mainFilterDepartment(allDepartments);
+  //
+  // const mappedDepartments = shopHelper.subdirectoryMap({
+  //   filteredDepartments,
+  //   allDepartments: groupedResult,
+  //   excluded,
+  //   path,
+  // });
+
+  const mapped = result.map((el) => ({
+    ...el,
+    subdirectory: el.objectsCount > 20,
+  }));
+
+  const orderedDepartments = shopHelper.orderBySubdirectory(mapped);
 
   if (orderedDepartments.length > 20 && !name) {
     orderedDepartments.splice(20, orderedDepartments.length);
@@ -70,12 +131,12 @@ const getWobjectDepartments = async ({
     orderedDepartments.splice(0, 20);
   }
 
-  if (!name && uncategorized.length) {
-    orderedDepartments.push({
-      name: UNCATEGORIZED_DEPARTMENT,
-      subdirectory: false,
-    });
-  }
+  // if (!name && uncategorized.length) {
+  //   orderedDepartments.push({
+  //     name: UNCATEGORIZED_DEPARTMENT,
+  //     subdirectory: false,
+  //   });
+  // }
 
   await setCachedData({
     key, data: { result: orderedDepartments }, ttl: TTL_TIME.THIRTY_MINUTES,
