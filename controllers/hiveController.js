@@ -27,3 +27,10 @@ exports.getBlockNum = async (req, res, next) => {
   res.result = { status: 200, json: { blockNum } };
   next();
 };
+
+exports.getGlobalProperties = async (req, res, next) => {
+  const { result, error } = await getCachedCurrency.getGlobalProperties();
+  if (error) return next(error);
+  res.result = { status: 200, json: result };
+  next();
+};
