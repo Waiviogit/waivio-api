@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { WobjController } = require('controllers');
+const WobjController = require('controllers/wobjController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const wobjRoutes = new Router();
