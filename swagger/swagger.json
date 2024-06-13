@@ -6641,10 +6641,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -6678,10 +6678,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -6729,10 +6729,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -6765,6 +6765,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "params",
@@ -6820,6 +6827,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "required": true,
@@ -6863,6 +6877,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "required": true,
@@ -6902,6 +6923,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
           {
             "name": "Origin",
             "in": "header",
@@ -6947,10 +6975,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7011,6 +7039,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "name": "authorPermlink",
             "in": "path",
             "description": "wobject which field need to return",
@@ -7044,17 +7079,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "app",
-            "in": "header",
-            "description": "Specify app to enable waivio-wobject moderation",
-            "required": false,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7077,25 +7105,6 @@
             "description": "Read locale of user(default en-EN)",
             "required": false,
             "type": "string"
-          },
-          {
-            "name": "listCounters",
-            "in": "query",
-            "description": "add listItems or menuItems to response",
-            "default": false,
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "required_fields",
-            "in": "query",
-            "description": "Additional fields which (not includes in REQUIRED FIELDS on waivio) to return with wobject",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
           }
         ],
         "responses": {
@@ -7119,10 +7128,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7180,6 +7189,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "name": "locale",
             "in": "header",
             "description": "locale",
@@ -7225,10 +7241,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7286,10 +7302,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7343,6 +7359,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",
@@ -7423,10 +7446,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7476,10 +7499,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7521,10 +7544,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7605,10 +7628,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7665,10 +7688,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7723,10 +7746,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7778,6 +7801,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "description": "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates\n **addHashtag** - boolean - if true add hashtag on wobj search(for sites)",
@@ -7819,10 +7849,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7867,10 +7897,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -7912,10 +7942,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -8001,10 +8031,10 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
             "type": "string"
           },
           {
@@ -8049,6 +8079,13 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "name": "authorPermlink",
             "in": "path",
             "description": "author_permlink of specified wobject",
@@ -8081,6 +8118,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",
@@ -8118,7 +8162,15 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [{
+        "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
             "name": "follower",
             "in": "header",
             "description": "Name of user to check for following in wobjects",
@@ -8185,7 +8237,15 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [{
+        "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
+          {
           "name": "follower",
           "in": "header",
           "description": "Name of user to check for following in wobjects",
@@ -8253,6 +8313,13 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "default": "social.gifts",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",

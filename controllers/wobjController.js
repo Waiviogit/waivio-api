@@ -43,11 +43,9 @@ const index = async (req, res, next) => {
 // flag - Temporary solution
 const show = async (req, res, next) => {
   const value = validators.validate({
-    author_permlink: req.params.authorPermlink,
+    authorPermlink: req.params.authorPermlink,
     locale: req.headers.locale,
-    listCounters: req.query.listCounters,
-    user: req.query.user,
-    appName: req.headers.app,
+    ...req.query,
   }, validators.wobject.showSchema, next);
 
   if (!value) return;
