@@ -351,7 +351,7 @@ const getOne = async ({
   const keyName = wObject.object_type.toLowerCase() === OBJECT_TYPES.LIST ? 'listItems' : 'menuItems';
   if (_.find(wObject.fields, { name: FIELDS_NAMES.LIST_ITEM })) {
     const { wobjects } = await getListItems({
-      wObject, ip, locale, app, userName: user,
+      wobject: wObject, ip, locale, app, userName: user,
     });
     if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
