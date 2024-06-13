@@ -28,19 +28,20 @@ const setSiteActiveUser = async ({ userAgent, host, ip }) => {
 
 const getHost = (req) => {
   const session = getNamespace('request-session');
+  const originalHost = session.get('host');
 
   let accessHost = req.headers['access-host'];
   if (accessHost) {
     accessHost = accessHost.replace(REPLACE_ORIGIN, '');
     session.set('host', accessHost);
-    return accessHost;
+    return { originalHost, host: accessHost };
   }
 
-  return session.get('host');
+  return { originalHost, host: originalHost };
 };
 
 exports.saveUserIp = async (req, res, next) => {
-  const host = getHost(req);
+  const { host, originalHost } = getHost(req);
   const ip = getIpFromHeaders(req);
 
   const result = await App.getAppFromCache(host);
@@ -60,6 +61,6 @@ exports.saveUserIp = async (req, res, next) => {
   }
   req.appData = result;
   if (!ip) return next();
-  await setSiteActiveUser({ host, ip, userAgent: req.get('User-Agent') });
+  await setSiteActiveUser({ host: originalHost, ip, userAgent: req.get('User-Agent') });
   next();
 };
