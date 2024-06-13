@@ -141,8 +141,9 @@ const getWobjectsFromAggregation = async ({
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wObject);
   }
+  if (!wobjects.length && error) return { error };
 
-  return { wobjects, error };
+  return { wobjects };
 };
 
 const searchWithCounters = async (data) => {
