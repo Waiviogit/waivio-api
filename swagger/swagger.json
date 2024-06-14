@@ -6641,7 +6641,7 @@
         ],
         "parameters": [
           {
-            "name": "He tried to dissuade his friend from making a risky investment in the volatile stock market.",
+            "name": "Access-Host",
             "in": "header",
             "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
