@@ -71,6 +71,7 @@ exports.FIELDS_NAMES = {
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
+  URL: 'url',
 };
 
 exports.LIST_TYPES = {
@@ -110,6 +111,7 @@ exports.OBJECT_TYPES = {
   AFFILIATE: 'affiliate',
   WEB_PAGE: 'webpage',
   MAP: 'map',
+  LINK: 'link',
 };
 
 exports.ADMIN_ROLES = {
