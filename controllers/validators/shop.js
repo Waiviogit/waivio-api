@@ -199,3 +199,10 @@ exports.getSimilarSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(10),
   skip: Joi.number().integer().min(0).default(0),
 });
+
+exports.getAddOnSchema = Joi.object().keys({
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});
