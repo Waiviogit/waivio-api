@@ -155,8 +155,10 @@ const getSimilar = async ({
 
   const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
     {
-      $match: { author_permlink: { $in: similar } },
-      ...(social && { 'authority.administrative': { $in: authorities } }),
+      $match: {
+        author_permlink: { $in: similar },
+        ...(social && { 'authority.administrative': { $in: authorities } }),
+      },
     },
     { $addFields: { __order: { $indexOfArray: [similar, '$author_permlink'] } } },
     { $sort: { __order: 1 } },
@@ -237,7 +239,75 @@ const getSimilar = async ({
   };
 };
 
+const getAddOn = async ({
+  authorPermlink, userName, app, locale, countryCode, skip, limit,
+}) => {
+  const { result, error } = await Wobj
+    .findOne({
+      author_permlink: authorPermlink,
+      object_type: { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+    });
+  if (!result || error) return { wobjects: [], hasMore: false };
+
+  const object = await wObjectHelper.processWobjects({
+    wobjects: [result],
+    fields: [FIELDS_NAMES.ADD_ON],
+    app,
+    returnArray: false,
+    locale,
+  });
+
+  const permlinks = _.map(object?.addOn, 'body');
+
+  const objectsForResponse = [];
+  const social = checkForSocialSite(app?.parentHost ?? '');
+  const authorities = [app.owner, ...app.authority];
+
+  const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
+    {
+      $match: {
+        $or: [
+          { author_permlink: { $in: permlinks } },
+          { fields: { $elemMatch: { name: FIELDS_NAMES.ADD_ON, body: authorPermlink } } },
+        ],
+        ...(social && { 'authority.administrative': { $in: authorities } }),
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      },
+    },
+    { $addFields: { __order: { $indexOfArray: [permlinks, '$author_permlink'] } } },
+    { $sort: { __order: 1 } },
+    { $limit: limit + 1 },
+  ]);
+
+  objectsForResponse.push(...similarObjects.slice(skip, skip + limit + 1));
+
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: objectsForResponse });
+
+  const affiliateCodes = await processAppAffiliate({
+    app,
+    locale,
+  });
+
+  const processed = await wObjectHelper.processWobjects({
+    wobjects: objectsForResponse,
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    app,
+    returnArray: true,
+    locale,
+    countryCode,
+    reqUserName: userName,
+    affiliateCodes,
+  });
+
+  return {
+    wobjects: _.take(processed, limit),
+    hasMore: objectsForResponse.length > limit,
+  };
+};
+
 module.exports = {
   getRelated,
   getSimilar,
+  getAddOn,
 };

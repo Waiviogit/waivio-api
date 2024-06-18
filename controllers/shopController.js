@@ -238,7 +238,7 @@ const getAllReferences = async (req, res, next) => {
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
 
   const { result, error } = await shop.getReference.getAll({
-    ...value, app: req.appData, locale: req.headers.locale, countryCode
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
   });
   if (error) return next(error);
 
@@ -300,6 +300,24 @@ const getSimilar = async (req, res, next) => {
   next();
 };
 
+const getAddon = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, userName: req.headers.follower },
+    validators.shop.getAddOnSchema,
+    next,
+  );
+  if (!value) return;
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
+
+  const { wobjects, hasMore, error } = await shop.getCloseProducts.getAddOn({
+    ...value, app: req.appData, locale: req.headers.locale, countryCode,
+  });
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { wobjects, hasMore } };
+  next();
+};
+
 module.exports = {
   getDepartments,
   getFeed,
@@ -321,4 +339,5 @@ module.exports = {
   getReferencesByType,
   getRelated,
   getSimilar,
+  getAddon,
 };
