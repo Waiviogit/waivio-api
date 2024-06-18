@@ -1789,6 +1789,61 @@
         }
       }
     },
+    "/api/shop/wobject/add-on": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Return list of wobjects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following in wobjects",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Users locale",
+            "required": false,
+            "type": "string",
+            "default": "en-US"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/inline_response_200_12"
+            }
+          }
+        }
+      }
+    },
     "/api/departments": {
       "post": {
         "tags": [
