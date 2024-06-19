@@ -80,7 +80,7 @@ const defaultWobjectSearch = async (data) => {
 
   return {
     wobjects: _.take(wobjects, data.limit),
-    hasMore: wobjects.length > data.limit,
+    hasMore: wobjects?.length > data.limit,
     error,
   };
 };
@@ -141,8 +141,9 @@ const getWobjectsFromAggregation = async ({
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wObject);
   }
+  if (!wobjects?.length && error) return { wobjects, error };
 
-  return { wobjects, error };
+  return { wobjects };
 };
 
 const searchWithCounters = async (data) => {

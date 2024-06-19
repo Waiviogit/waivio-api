@@ -23,11 +23,9 @@ const boxScheme = Joi.object().keys({
 });
 
 exports.showSchema = Joi.object().keys({
-  author_permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
   locale: Joi.string(),
   user: Joi.string(),
-  appName: Joi.string(),
-  listCounters: Joi.boolean().default(false),
 });
 
 exports.indexSchema = Joi.object().keys({

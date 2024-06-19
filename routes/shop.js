@@ -31,5 +31,7 @@ shopRoutes.route('/shop/wobject/related')
   .post(reqTimeMonitor, shopController.getRelated);
 shopRoutes.route('/shop/wobject/similar')
   .post(reqTimeMonitor, shopController.getSimilar);
+shopRoutes.route('/shop/wobject/add-on')
+  .post(reqTimeMonitor, shopController.getAddon);
 
 module.exports = shopRoutes;

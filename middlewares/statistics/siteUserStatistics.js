@@ -11,6 +11,7 @@ const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
+const { REPLACE_ORIGIN } = require('../../constants/regExp');
 
 const setSiteActiveUser = async ({ userAgent, host, ip }) => {
   const bot = isbot(userAgent);
@@ -25,10 +26,24 @@ const setSiteActiveUser = async ({ userAgent, host, ip }) => {
   await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
 };
 
-exports.saveUserIp = async (req, res, next) => {
+const getHost = (req) => {
   const session = getNamespace('request-session');
-  const host = session.get('host');
+  const originalHost = session.get('host');
+
+  let accessHost = req.headers['access-host'];
+  if (accessHost) {
+    accessHost = accessHost.replace(REPLACE_ORIGIN, '');
+    session.set('host', accessHost);
+    return { originalHost, host: accessHost };
+  }
+
+  return { originalHost, host: originalHost };
+};
+
+exports.saveUserIp = async (req, res, next) => {
+  const { host, originalHost } = getHost(req);
   const ip = getIpFromHeaders(req);
+
   const result = await App.getAppFromCache(host);
 
   if (!result) {
@@ -46,6 +61,6 @@ exports.saveUserIp = async (req, res, next) => {
   }
   req.appData = result;
   if (!ip) return next();
-  await setSiteActiveUser({ host, ip, userAgent: req.get('User-Agent') });
+  await setSiteActiveUser({ host: originalHost, ip, userAgent: req.get('User-Agent') });
   next();
 };
