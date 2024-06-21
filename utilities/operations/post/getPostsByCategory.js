@@ -101,18 +101,23 @@ module.exports = async ({
     category, user_languages, host, hiddenPosts, muted: _.map(muted, 'userName'),
   });
 
-  const postsQuery = Post
-    .find(cond)
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
-    .populate({ path: 'fullObjects', select: 'parent fields weight author_permlink object_type default_name' })
-    .lean();
-
   let posts = [];
 
   try {
-    posts = await postsQuery.exec();
+    posts = await Post.aggregate([
+      { $match: cond },
+      { $sort: sort },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'wobjects.author_permlink',
+          foreignField: 'author_permlink',
+          as: 'fullObjects',
+        },
+      },
+    ]);
   } catch (error) {
     return { error };
   }
