@@ -1,5 +1,4 @@
 const mongoose = require('mongoose');
-const mongooseLeanVirtuals = require('mongoose-lean-virtuals');
 
 const { Schema } = mongoose;
 
@@ -38,25 +37,11 @@ const PostSchema = new Schema({
   net_rshares_WAIV: { type: Number },
   total_payout_WAIV: { type: Number },
   pending_payout_value: { type: String },
-}, {
-  toObject: { virtuals: true },
-  toJSON: { virtuals: true },
-  timestamps: true,
-});
+}, { timestamps: true });
 
-// eslint-disable-next-line func-names
-PostSchema.virtual('post_id').get(function () {
-  return this.id;
-});
 
-PostSchema.virtual('fullObjects', {
-  ref: 'wobject',
-  localField: 'wobjects.author_permlink',
-  foreignField: 'author_permlink',
-  justOne: false,
-});
-
-PostSchema.plugin(mongooseLeanVirtuals);
+PostSchema.set('toJSON', { virtuals: false });
+PostSchema.set('toObject', { virtuals: false });
 
 PostSchema.index({ author: 1, permlink: 1 }, { unique: true });
 PostSchema.index({ root_author: 1, permlink: 1 }, { unique: true });

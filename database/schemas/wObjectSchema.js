@@ -67,9 +67,7 @@ const WObjectSchema = new Schema(
     search: { type: [String], default: [] },
     metaGroupId: { type: String, index: true },
   },
-  {
-    toObject: { virtuals: true }, timestamps: true, strict: false,
-  },
+  { timestamps: true, strict: false },
 );
 
 WObjectSchema.index({ map: '2dsphere' });
@@ -82,19 +80,8 @@ WObjectSchema.index({ activeCampaignsCount: -1, weight: -1 });
 WObjectSchema.index({ object_type: -1, weight: -1 });
 WObjectSchema.index({ 'status.title': -1, 'status.link': -1 });
 
-WObjectSchema.virtual('followers', {
-  ref: 'User',
-  localField: 'author_permlink',
-  foreignField: 'objects_follow',
-  justOne: false,
-});
-
-WObjectSchema.virtual('users', {
-  ref: 'User',
-  localField: 'author_permlink',
-  foreignField: 'w_objects.author_permlink',
-  justOne: false,
-});
+WObjectSchema.set('toJSON', { virtuals: false });
+WObjectSchema.set('toObject', { virtuals: false });
 
 const wObjectModel = mongoose.model('wobject', WObjectSchema);
 
