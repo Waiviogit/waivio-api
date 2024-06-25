@@ -121,13 +121,20 @@ const getFromDb = async ({
 }) => {
   try {
     return {
-      posts: await Post
-        .find(cond)
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .populate({ path: 'fullObjects', select: '-latest_posts' })
-        .lean(),
+      posts: await Post.aggregate([
+        { $match: cond },
+        { $sort: sort },
+        { $skip: skip },
+        { $limit: limit },
+        {
+          $lookup: {
+            from: 'wobjects',
+            localField: 'wobjects.author_permlink',
+            foreignField: 'author_permlink',
+            as: 'fullObjects',
+          },
+        },
+      ]),
     };
   } catch (error) {
     return { error };
