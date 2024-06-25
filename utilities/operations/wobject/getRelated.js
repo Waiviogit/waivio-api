@@ -6,6 +6,7 @@ const {
   Wobj,
 } = require('models');
 const crypto = require('node:crypto');
+const { ERROR_OBJ } = require('constants/common');
 
 const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
   .compact()
@@ -20,6 +21,8 @@ module.exports = async ({
   authorPermlink, skip, limit, locale, app,
 }) => {
   const { wObject } = await Wobj.getOne(authorPermlink);
+  if (!wObject) return { error: ERROR_OBJ.NOT_FOUND };
+
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [wObject],
     locale,
