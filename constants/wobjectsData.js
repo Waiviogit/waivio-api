@@ -115,6 +115,7 @@ exports.OBJECT_TYPES = {
   WEB_PAGE: 'webpage',
   MAP: 'map',
   LINK: 'link',
+  RECIPE: 'recipe',
 };
 
 exports.ADMIN_ROLES = {
