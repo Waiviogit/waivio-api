@@ -12,9 +12,8 @@ const shopHelper = require('utilities/helpers/shopHelper');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
-const { processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+const { processUserAffiliate, processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const getUserDepartments = require('./getUserDepartments');
-const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 
 const getUserDepartmentCondition = async ({
   department, path, userName, userFilter, app,
