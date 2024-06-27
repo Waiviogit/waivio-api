@@ -14,6 +14,7 @@ const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const { processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const getUserDepartments = require('./getUserDepartments');
+const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 
 const getUserDepartmentCondition = async ({
   department, path, userName, userFilter, app,
@@ -79,11 +80,17 @@ module.exports = async ({
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;
 
-  const affiliateCodes = await processUserAffiliate({
+  let affiliateCodes = await processUserAffiliate({
     app,
     locale,
     creator: userName,
   });
+  if (!affiliateCodes?.length) {
+    affiliateCodes = await processAppAffiliate({
+      app,
+      locale,
+    });
+  }
 
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(result, limit),
