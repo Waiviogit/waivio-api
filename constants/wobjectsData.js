@@ -72,6 +72,9 @@ exports.FIELDS_NAMES = {
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
   URL: 'url',
+  CALORIES: 'calories',
+  BUDGET: 'budget',
+  COOKING_TIME: 'cookingTime',
 };
 
 exports.LIST_TYPES = {
