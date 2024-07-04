@@ -3,7 +3,9 @@ const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { TOKEN } = require('constants/common');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
@@ -36,7 +38,12 @@ module.exports = async (data) => {
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
     locale: data.locale,
-    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.PIN, FIELDS_NAMES.REMOVE],
+    fields: [
+      FIELDS_NAMES.NEWS_FEED,
+      FIELDS_NAMES.GROUP_ID,
+      FIELDS_NAMES.PIN,
+      FIELDS_NAMES.REMOVE,
+    ],
     returnArray: false,
     app: data.app,
   });
@@ -76,7 +83,14 @@ module.exports = async (data) => {
   const relistedLinks = await getRelistedLinks(data.author_permlink);
 
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter, relistedLinks,
+    ...data,
+    hiddenPosts,
+    muted:
+      _.map(muted, 'userName'),
+    wObject,
+    groupIdPermlinks,
+    removeFilter,
+    relistedLinks,
   });
 
   if (conditionError) return { error: conditionError };
@@ -111,10 +125,53 @@ module.exports = async (data) => {
   return { posts };
 };
 
+const makeConditionForLink = ({ condition, wObject }) => {
+  const urlField = wObject.fields?.find((el) => el.name === FIELDS_NAMES.URL);
+  if (!urlField) return { condition };
+  const { body } = urlField;
+
+  // when body ends with * it means that al path after * is valid, if no * - strict eq
+  const condition2 = {
+    links: body.endsWith('*') ? { $regex: body.slice(0, -1) } : body,
+    ..._.omit(condition, 'wobjects.author_permlink'),
+  };
+
+  return { condition: { $or: [condition, condition2] } };
+};
+
+// here we can either take fields from processed object or get all fields with Hive
+const makeConditionForBusiness = ({ condition, wObject }) => {
+  const hiveWallets = wObject.fields?.reduce((acc, el) => {
+    if (el.name !== FIELDS_NAMES.WALLET_ADDRESS) return acc;
+    const walletObj = jsonHelper.parseJson(el.body);
+    if (!walletObj) return acc;
+    if (![TOKEN.HIVE, TOKEN.HBD].includes(walletObj.symbol)) return acc;
+    acc.push(walletObj.address);
+    return acc;
+  }, []);
+
+  if (!hiveWallets?.length) return { condition };
+  const condition2 = {
+    mentions: { $in: _.uniq(hiveWallets) },
+    ..._.omit(condition, 'wobjects.author_permlink'),
+  };
+
+  return { condition: { $or: [condition, condition2] } };
+};
+
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
-  author_permlink, user_languages, removeFilter,
-  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks, relistedLinks,
+  author_permlink,
+  user_languages,
+  removeFilter,
+  lastId,
+  hiddenPosts,
+  muted,
+  newsPermlink,
+  app,
+  wObject,
+  groupIdPermlinks,
+  relistedLinks,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
@@ -140,6 +197,13 @@ const getWobjFeedCondition = async ({
   }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
+  if (wObject.object_type === OBJECT_TYPES.LINK) {
+    return makeConditionForLink({ condition, wObject });
+  }
+
+  if (wObject.object_type === OBJECT_TYPES.BUSINESS) {
+    return makeConditionForBusiness({ condition, wObject });
+  }
   return { condition };
 };
 
