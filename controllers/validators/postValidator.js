@@ -52,3 +52,11 @@ exports.previewPutScema = Joi.object().keys({
   url: Joi.string().required(),
   urlPreview: Joi.string().required(),
 });
+
+exports.mentionsSchema = Joi.object().keys({
+  account: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).max(50)
+    .default(10),
+  follower: Joi.string(),
+});

@@ -140,6 +140,13 @@ exports.schema = [
     case: 4,
     wobjects_path: 'wobjects',
   },
+  {
+    path: '/posts/mentions',
+    method: 'POST',
+    case: 7,
+    wobjects_path: 'wobjects',
+    array_path: 'posts',
+  },
   // object_type controller
   {
     path: '/objectTypes',
