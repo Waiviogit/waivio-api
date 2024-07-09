@@ -8611,6 +8611,64 @@
         }
       }
     },
+    "/api/posts/mentions": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Return list of posts by authors and permlinks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "user currently logged in",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/post"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/posts/preview-cache": {
       "post": {
         "tags": [

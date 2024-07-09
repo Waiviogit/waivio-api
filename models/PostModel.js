@@ -41,6 +41,30 @@ exports.getAllPosts = async (data) => {
   }
 };
 
+exports.getPostsByCondition = async ({ condition, skip, limit }) => {
+  try {
+    const aggregatePipeline = [
+      { $match: { ...condition, ...getBlockedAppCond() } },
+      { $sort: { _id: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'wobjects.author_permlink',
+          foreignField: 'author_permlink',
+          as: 'fullObjects',
+        },
+      },
+    ];
+    const posts = await PostModel.aggregate(aggregatePipeline);
+
+    return { result: posts };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.aggregate = async (pipeline) => {
   try {
     const posts = await PostModel.aggregate(pipeline);

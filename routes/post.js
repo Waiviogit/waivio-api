@@ -19,5 +19,7 @@ postRoutes.route('/post_comments')
   .get(reqTimeMonitor, PostController.getPostComments);
 postRoutes.route('/post/social-info')
   .get(reqTimeMonitor, PostController.getSocialInfo);
+postRoutes.route('/posts/mentions')
+  .post(reqTimeMonitor, PostController.getPostsByMentions);
 
 module.exports = postRoutes;
