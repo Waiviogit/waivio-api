@@ -1,7 +1,7 @@
 const {
   getPostsByCategory, getSinglePost, getPostComments,
   getManyPosts, getPostSocialInfo, likePost,
-  cachePreview,
+  cachePreview, getPostsByMention,
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
@@ -122,5 +122,26 @@ exports.putPreviewUrl = async (req, res, next) => {
   const json = await cachePreview.putLinks(value);
 
   res.result = { status: 200, json };
+  next();
+};
+
+exports.getPostsByMentions = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      follower: req.headers.follower,
+    },
+
+    validators.post.mentionsSchema,
+    next,
+  );
+
+  if (!value) return;
+
+  const { posts, hasMore, error } = await getPostsByMention({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { posts, hasMore } };
   next();
 };
