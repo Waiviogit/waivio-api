@@ -12,7 +12,7 @@ const CampaignPostsSchema = new Schema({
   reservationPermlink: { type: String },
 });
 
-CampaignPostsSchema.index({ author: 1, permlink: 1 }, { unique: true });
+CampaignPostsSchema.index({ author: 1, permlink: 1, reservationPermlink: 1 }, { unique: true });
 
 const campaignPostsModel = mongoose.model('campaign_posts', CampaignPostsSchema, 'campaign_posts');
 
