@@ -33,6 +33,7 @@ exports.schema = [
     method: 'POST',
     case: 3,
   },
+
   // post controller
   // {
   //   path: '/posts',
@@ -53,5 +54,10 @@ exports.schema = [
     path: '/post/like-post',
     method: 'POST',
     case: 2,
+  },
+  {
+    path: '/posts/mentions',
+    method: 'POST',
+    case: 3,
   },
 ];

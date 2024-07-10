@@ -7,5 +7,6 @@ moduleExports.likePost = require('./likePost');
 moduleExports.getManyPosts = require('./getManyPosts');
 moduleExports.getPostSocialInfo = require('./getPostSocialInfo');
 moduleExports.cachePreview = require('./cachePreview');
+moduleExports.getPostsByMention = require('./getPostsByMention');
 
 module.exports = moduleExports;
