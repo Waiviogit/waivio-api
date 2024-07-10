@@ -43,6 +43,7 @@ module.exports = async (data) => {
       FIELDS_NAMES.GROUP_ID,
       FIELDS_NAMES.PIN,
       FIELDS_NAMES.REMOVE,
+      FIELDS_NAMES.WALLET_ADDRESS,
     ],
     returnArray: false,
     app: data.app,
@@ -91,6 +92,7 @@ module.exports = async (data) => {
     groupIdPermlinks,
     removeFilter,
     relistedLinks,
+    processedObj,
   });
 
   if (conditionError) return { error: conditionError };
@@ -140,9 +142,8 @@ const makeConditionForLink = ({ condition, wObject }) => {
 };
 
 // here we can either take fields from processed object or get all fields with Hive
-const makeConditionForBusiness = ({ condition, wObject }) => {
-  const hiveWallets = wObject.fields?.reduce((acc, el) => {
-    if (el.name !== FIELDS_NAMES.WALLET_ADDRESS) return acc;
+const makeConditionForBusiness = ({ condition, processedObj }) => {
+  const hiveWallets = (processedObj[FIELDS_NAMES.WALLET_ADDRESS] || []).reduce((acc, el) => {
     const walletObj = jsonHelper.parseJson(el.body);
     if (!walletObj) return acc;
     if (![TOKEN.HIVE, TOKEN.HBD].includes(walletObj.symbol)) return acc;
@@ -172,6 +173,7 @@ const getWobjFeedCondition = async ({
   wObject,
   groupIdPermlinks,
   relistedLinks,
+  processedObj,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
@@ -202,7 +204,7 @@ const getWobjFeedCondition = async ({
   }
 
   if (wObject.object_type === OBJECT_TYPES.BUSINESS) {
-    return makeConditionForBusiness({ condition, wObject });
+    return makeConditionForBusiness({ condition, processedObj });
   }
   return { condition };
 };
