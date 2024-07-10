@@ -4,23 +4,9 @@ const { customValidationHelper } = require('utilities/helpers');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
 const Joi = require('joi');
+const { boxScheme } = require('./common');
 
 const options = { allowUnknown: true, stripUnknown: true };
-
-const boxScheme = Joi.object().keys({
-  topPoint: Joi
-    .array()
-    .ordered(
-      Joi.number().min(-180).max(180),
-      Joi.number().min(-90).max(90),
-    ).required(),
-  bottomPoint: Joi
-    .array()
-    .ordered(
-      Joi.number().min(-180).max(180),
-      Joi.number().min(-90).max(90),
-    ).required(),
-});
 
 exports.showSchema = Joi.object().keys({
   authorPermlink: Joi.string().required(),

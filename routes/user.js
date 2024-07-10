@@ -38,6 +38,7 @@ userRoutes.route('/user/:userName/get_post_filters')
   .get(reqTimeMonitor, UserController.postFilters);
 userRoutes.route('/user/:userName/favorites').post(reqTimeMonitor, UserController.getFavorites);
 userRoutes.route('/user/:userName/favorites/list').get(reqTimeMonitor, UserController.getFavoritesList);
+userRoutes.route('/user/:userName/favorites/map').post(reqTimeMonitor, UserController.getFavouritesMap);
 
 userRoutes.route('/users/search')
   .get(reqTimeMonitor, UserController.searchUsers);
