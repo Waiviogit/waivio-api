@@ -371,7 +371,7 @@ exports.getFavoritesMapSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   objectTypes: Joi.array().min(1).required(),
   locale: Joi.string().valid(...LANGUAGES).default('auto'),
-  box: boxScheme,
+  box: boxScheme.required(),
 });
 
 exports.getAvatarsSchema = Joi.object().keys({
