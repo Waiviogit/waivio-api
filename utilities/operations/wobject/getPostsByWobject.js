@@ -134,7 +134,7 @@ const makeConditionForLink = ({ condition, wObject }) => {
 
   // when body ends with * it means that al path after * is valid, if no * - strict eq
   const condition2 = {
-    links: body.endsWith('*') ? { $regex: body.slice(0, -1) } : body,
+    links: body.endsWith('*') ? { $regex: `^${body.slice(0, -1)}` } : body,
     ..._.omit(condition, 'wobjects.author_permlink'),
   };
 
