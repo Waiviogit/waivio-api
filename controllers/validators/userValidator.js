@@ -4,6 +4,8 @@ const { customValidationHelper } = require('utilities/helpers');
 const Joi = require('joi');
 const moment = require('moment');
 const { SUPPORTED_CRYPTO_CURRENCIES, GUEST_COINS_TO_WITHDRAW } = require('../../constants/currencyData');
+const { boxScheme } = require('./common');
+
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
@@ -360,6 +362,16 @@ exports.getFavoritesSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   objectType: Joi.string(),
   locale: Joi.string().valid(...LANGUAGES).default('auto'),
+});
+
+exports.getFavoritesMapSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  follower: Joi.string(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  objectTypes: Joi.array().min(1).required(),
+  locale: Joi.string().valid(...LANGUAGES).default('auto'),
+  box: boxScheme,
 });
 
 exports.getAvatarsSchema = Joi.object().keys({

@@ -746,6 +746,26 @@ const getFavorites = async (req, res, next) => {
   next();
 };
 
+const getFavouritesMap = async (req, res, next) => {
+  const value = validators.validate({
+    ...req.params,
+    ...req.body,
+    follower: req.headers.follower,
+    locale: req.headers.locale,
+  }, validators.user.getFavoritesMapSchema, next);
+  if (!value) return;
+
+  const { result, hasMore, error } = await favorites.getFavoritesMap({
+    ...value,
+    app: req.appData,
+  });
+
+  if (error) return next(error);
+
+  res.result = { status: 200, json: { result, hasMore } };
+  next();
+};
+
 const hiveUserExist = async (req, res, next) => {
   const json = await userExist.hiveUserExist(req.params);
 
@@ -816,4 +836,5 @@ module.exports = {
   resumeGeneratedReport,
   stopGeneratedReport,
   pauseGeneratedReport,
+  getFavouritesMap,
 };
