@@ -72,6 +72,9 @@ exports.FIELDS_NAMES = {
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
   URL: 'url',
+  CALORIES: 'calories',
+  BUDGET: 'budget',
+  COOKING_TIME: 'cookingTime',
 };
 
 exports.LIST_TYPES = {
@@ -112,6 +115,7 @@ exports.OBJECT_TYPES = {
   WEB_PAGE: 'webpage',
   MAP: 'map',
   LINK: 'link',
+  RECIPE: 'recipe',
 };
 
 exports.ADMIN_ROLES = {
