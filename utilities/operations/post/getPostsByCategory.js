@@ -65,7 +65,7 @@ const makeConditions = ({
   }
   if (!_.isEmpty(muted)) {
     _.get(cond, 'author')
-      ? Object.assign(cond.author, { $nin: _.union(muted, IGNORED_AUTHORS) })
+      ? Object.assign(cond.author, { $nin: _.union(muted, [...IGNORED_AUTHORS, ...IGNORED_AUTHORS_HOT]) })
       : cond.author = { $nin: muted };
   }
   cond.blocked_for_apps = { $nin: [host] };
