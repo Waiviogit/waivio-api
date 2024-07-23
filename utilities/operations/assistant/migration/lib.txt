@@ -1709,23 +1709,6 @@ Specify the site's beneficiaries and referrals to receive commissions.
 
 5. About: This section provides the main information about the platform, including tutorials, the whitepaper, and news.
 
-Features of Social Sites Built Using Social.gifts on Waivio
-Social sites created with social.gifts on the Waivio platform offer similar features to those on the main Waivio site, including:
-Creating posts
-Utilizing all profile features and settings
-Running existing campaigns
-Creating objects
-Editing objects (admin-only)
-Restrictions on Social Sites
-
-On these social sites, users cannot:
-Create and customize new sites
-Create and manage campaigns
-Edit objects (unless they are the administrator)
-
-Handling Links with Waivio Domain
-All links with the Waivio domain will work on these sites. If there is a question regarding the sites and the response includes a link, the Waivio domain should be replaced with the site's domain, which will be specified. Instead of "www.waivio", the site's domain will be used.
-
 A common issue with publishing product information on multiple websites from the same record on the open Hive blockchain is that this content will be exactly the same across various sites, and search engines generally do not favor duplicated content. Waivio uses a system of [canonical links](https://www.waivio.com/@waiviolabs/improving-seo-with-canonical-links-for-hosted-websites) on all hosted sites, giving credit to the original source of content, whether it's a user post, profile, or an object.
 
 However, there is now an interesting alternative.
