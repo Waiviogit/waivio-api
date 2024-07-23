@@ -1,7 +1,7 @@
 /* eslint-disable camelcase */
 const {
   IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED,
-  MEDIAN_USER_WAIVIO_RATE,
+  MEDIAN_USER_WAIVIO_RATE, IGNORED_AUTHORS_HOT,
 } = require('constants/postsData');
 const { hiddenPostModel, mutedUserModel } = require('models');
 const { ObjectId } = require('mongoose').Types;
@@ -43,6 +43,7 @@ const makeConditions = ({
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_HOT_FEED) },
         author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
+        author: { $nin: IGNORED_AUTHORS_HOT },
       };
       sort = { children: -1 };
       break;
