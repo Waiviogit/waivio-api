@@ -203,7 +203,7 @@ const getWobjFeedCondition = async ({
     return makeConditionForLink({ condition, wObject });
   }
 
-  if (wObject.object_type === OBJECT_TYPES.BUSINESS) {
+  if ([OBJECT_TYPES.BUSINESS, OBJECT_TYPES.RESTAURANT].includes(wObject.object_type)) {
     return makeConditionForBusiness({ condition, processedObj });
   }
   return { condition };
