@@ -266,6 +266,7 @@ const getNewsFilterCondition = ({
   if (!_.isEmpty(newsFilter.authors)) {
     // posts only includes and objects
     condition.author = { $in: newsFilter.authors };
+    delete condition.reblog_to;
   }
 
   condition.$and = _.compact([firstCond, secondCond]);
