@@ -75,6 +75,7 @@ exports.FIELDS_NAMES = {
   CALORIES: 'calories',
   BUDGET: 'budget',
   COOKING_TIME: 'cookingTime',
+  COST: 'cost',
 };
 
 exports.LIST_TYPES = {
