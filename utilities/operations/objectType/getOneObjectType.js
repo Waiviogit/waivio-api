@@ -116,7 +116,7 @@ const getWobjWithFilters = async ({
   }
 
   aggregationPipeline.push(
-    { $sort: { [sort]: sort !== 'proximity' ? -1 : 1 } },
+    { $sort: { [sort]: sort !== 'proximity' ? -1 : 1, _id: 1 } },
     { $skip: skip },
     { $limit: limit },
   );
