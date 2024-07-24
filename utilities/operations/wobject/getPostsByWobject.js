@@ -2,7 +2,7 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('constants/wobjectsData');
 const { TOKEN } = require('constants/common');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
@@ -203,7 +203,7 @@ const getWobjFeedCondition = async ({
     return makeConditionForLink({ condition, wObject });
   }
 
-  if ([OBJECT_TYPES.BUSINESS, OBJECT_TYPES.RESTAURANT].includes(wObject.object_type)) {
+  if (WALLET_ADDRESS_LINKED_TYPES.includes(wObject.object_type)) {
     return makeConditionForBusiness({ condition, processedObj });
   }
   return { condition };

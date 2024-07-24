@@ -23,7 +23,7 @@ const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
 
 const qaSystemPrompt = `You are an assistant for question-answering tasks.
 Use the following pieces of retrieved context to answer the question.
-If you don't know the answer, just say that you don't know.
+Whenever possible, accompany your answers with a link to relevant articles or lessons
 Keep the answer concise. Don't use "AI:" in answers
 
 {context}`;
