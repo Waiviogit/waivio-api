@@ -119,6 +119,12 @@ exports.OBJECT_TYPES = {
   RECIPE: 'recipe',
 };
 
+exports.WALLET_ADDRESS_LINKED_TYPES = [
+  this.OBJECT_TYPES.BUSINESS,
+  this.OBJECT_TYPES.RESTAURANT,
+  this.OBJECT_TYPES.PERSON,
+];
+
 exports.ADMIN_ROLES = {
   OWNER: 'owner',
   ADMIN: 'admin',
