@@ -72,6 +72,10 @@ exports.FIELDS_NAMES = {
   WALLET_ADDRESS: 'walletAddress',
   DELEGATION: 'delegation',
   URL: 'url',
+  CALORIES: 'calories',
+  BUDGET: 'budget',
+  COOKING_TIME: 'cookingTime',
+  COST: 'cost',
 };
 
 exports.LIST_TYPES = {
@@ -112,7 +116,14 @@ exports.OBJECT_TYPES = {
   WEB_PAGE: 'webpage',
   MAP: 'map',
   LINK: 'link',
+  RECIPE: 'recipe',
 };
+
+exports.WALLET_ADDRESS_LINKED_TYPES = [
+  this.OBJECT_TYPES.BUSINESS,
+  this.OBJECT_TYPES.RESTAURANT,
+  this.OBJECT_TYPES.PERSON,
+];
 
 exports.ADMIN_ROLES = {
   OWNER: 'owner',

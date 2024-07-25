@@ -1650,8 +1650,8 @@ WAIV can be withdrawn to BTC, LTC, ETH, HIVE cryptocurrency, and can be swapped 
 How do I view my transaction history?
 To view your transaction history, go to the Wallet tab. You'll find three separate tabs: WAIV for WAIV token balances and transaction history, HIVE for HIVE and HBD balances and transaction history, and Hive Engine for Hive Engine tokens transaction history. Transaction histories are displayed below the wallet balances on the same tab.
 
-How can I contact a team or support center?
-To contact the team or support center on Waivio, you can visit the URL https://www.waivio.com/object/ylr-waivio/threads and leave a thread. Alternatively, you can click on the "About" tab in the main menu where you'll find general information about the platform. Then, navigate to the "Reviews" tab and click on "Threads". Here, you can leave a message for the team regarding any issues you encounter, bugs, or suggestions.
+How can I contact a team or customer support?
+To contact the team or customer support on Waivio, you can visit the URL https://www.waivio.com/object/ylr-waivio/threads and leave a thread. Alternatively, you can click on the "About" tab in the main menu where you'll find general information about the platform. Then, navigate to the "Reviews" tab and click on "Threads". Here, you can leave a message for the team regarding any issues you encounter, bugs, or suggestions.
 
 __________
 
@@ -1708,4 +1708,3 @@ Specify the site's beneficiaries and referrals to receive commissions.
 - Muted Users: List of muted users. Website moderators can mute users. Posts, comments, and the profile content of muted users are not accessible on the website. The website owner can also mute users, but only the moderator who muted a user can unmute them.
 
 5. About: This section provides the main information about the platform, including tutorials, the whitepaper, and news.
-
