@@ -1,6 +1,6 @@
 exports.APPS_FOR_FEED_CACHE = ['waiviodev.com', 'waivio.com'];
 exports.IGNORED_AUTHORS = ['hbd.funder'];
-exports.IGNORED_AUTHORS_HOT = ['ecency.waves'];
+exports.IGNORED_AUTHORS_HOT = ['ecency.waves', 'leothreads'];
 
 exports.DAYS_FOR_HOT_FEED = 3;
 exports.DAYS_FOR_TRENDING_FEED = 3;
