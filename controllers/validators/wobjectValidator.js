@@ -257,6 +257,10 @@ exports.wobjectAdvancedMapListScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(10),
 });
 
+exports.mapObjectFromObjectLinkScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+});
+
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
