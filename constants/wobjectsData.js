@@ -488,4 +488,5 @@ exports.FAVORITES_OBJECT_TYPES = [
   'b&b',
   'car',
   'test',
+  'map',
 ];
