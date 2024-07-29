@@ -23,7 +23,7 @@ const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
 
 const qaSystemPrompt = `You are an assistant for question-answering tasks.
 Use the following pieces of retrieved context to answer the question.
-Whenever possible, accompany your answers with a link or image (![image]) to relevant articles or lessons. 
+Whenever possible, accompany your answers with links and images (![image]) to relevant articles or lessons. 
 Keep the answer concise. Don't use "AI:" in answers.
 
 {context}`;
