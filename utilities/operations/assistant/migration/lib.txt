@@ -21,7 +21,7 @@ These rewards are announced on the Hive blockchain by sponsors. You can collect 
 ![image](https://waivio.nyc3.digitaloceanspaces.com/1676691741_009f5cfe-407b-4823-901c-98ee3266f20d)
 This is a unique feature available only on Waivio in the Earn section.
 
-Are you ready to get started? 
+Are you ready to get started?
 1) Start on Waivio by signing into the platform. ![image](https://waivio.nyc3.digitaloceanspaces.com/1676691969_266a63ea-08bd-4586-9501-51d18ca77506) (If you already have a Hive account, use the HiveSigner and your keys to sign in. If you are new to Hive, sign in with Google to use the platform immediately with a guest account.)
 2) To earn rewards, sign in to your account and go to the "Earn" section. ![image](https://waivio.nyc3.digitaloceanspaces.com/1676692306_1fc88440-78fe-4772-a2ca-b2fbb32712fa) You will find global and local rewards here. Global rewards can be claimed by writing a review about a sponsored product, and local rewards are claimable in specific locations. Each reward will have different requirements and values, so make sure to check the details before completing the task
 
@@ -43,7 +43,7 @@ To convert your WAIV or HIVE earnings into Bitcoin, Litecoin, or Ethereum, simpl
   1. Enter the amount you want to send,
   2. Enter or scan the address of your Litecoin wallet, where the converted funds will be sent.
   3. Confirm the withdrawal to start the conversion process.
-![image](https://waivio.nyc3.digitaloceanspaces.com/1676692887_8d5fcba7-7c9b-4390-b597-dfee6174852d)  
+![image](https://waivio.nyc3.digitaloceanspaces.com/1676692887_8d5fcba7-7c9b-4390-b597-dfee6174852d)
 The same process can be used to pay at stores that accept cryptocurrency payments in BTC, LTC, ETH, or to withdraw your earnings using a Bitcoin ATM.
 You have now learned the basics of Waivio and can explore the platform further.
 With a guest account, you can collect author and sponsor rewards but not curator rewards. To access all the features of the Hive decentralized social network, you will need to create a Hive account. Follow the link below to learn how to set up a Hive account and unlock all the benefits of the platform.
@@ -146,7 +146,7 @@ Now, that you created your Hive account and signed in for the first time, let's 
 
 1. Notifications
 First, Sign in to Waivio with your Hive account. Upon logging in, you'll notice that your profile lacks a logo or any personalization. You also probably don’t have any activity on your feed, as you are not following anyone yet. But before we proceed with customizing your profile, it's important to set up notifications to ensure you receive critical announcements, this enhances the security of your account.
-Navigate to Tools and click on @WaivioNotificationsBot https://t.me/WaivioNotificationsBot 
+Navigate to Tools and click on @WaivioNotificationsBot https://t.me/WaivioNotificationsBot
 ![image](https://waivio.nyc3.digitaloceanspaces.com/1713154960_3f7935e8-5199-4b25-a5f5-f681b1ffcf35)
 It will direct you to a Telegram bot. Click on "Send Message", which will then redirect you to a telegram chat. If you don't have Telegram, you can install it with this link: https://desktop.telegram.org/ ![image](https://waivio.nyc3.digitaloceanspaces.com/1713155014_b5803675-7304-4944-8ca4-5579af786809)
 In the Telegram chat, click start and then enter your Hive username; for example, I will enter mine - cleobaby. You will be all set to receive important notifications. If you have multiple Hive accounts, you can add all of them to the same bot chat. ![image](https://waivio.nyc3.digitaloceanspaces.com/1713155202_10a15c88-02c8-4bd9-b623-1f6c5cdbb19c)
@@ -367,8 +367,8 @@ The product page comes with the default profile image that we will change later.
   7. WEIGHT FIELD: In the weight field, we can input the weight of the product (such as, 1.05 kg).
   8. DIMENSIONS FIELD: In the dimensions field, we can add the dimensions of the product (such as, 10.92 x 31.24 x 12.7 cm); don't forget the units. ![image](https://waivio.nyc3.digitaloceanspaces.com/1679812651_0342f0b3-3da8-4717-8e5e-d3c663eecfbc)
   9. MANUFACTURER: Let's now add the manufacturer – you can search to see if the manufacturer you want to add already exists; if not, simply add the name of the manufacturer as a text.
-Similarly, let's add the 
-  10. BRAND and the 
+Similarly, let's add the
+  10. BRAND and the
   11. MERCHANT.
   12. FEATURES: In the features field, we can write any distinctive features of the master product. Similar to Amazon, where you can compare products by features, this field will allow us to compare this product with other similar products.
   13. PRODUCT ID:
@@ -548,7 +548,7 @@ Resources:
  - Google Template https://docs.google.com/spreadsheets/d/1Z-8Hz8xGU45A7nKeMJWFsKGzx5WT5oat7SSLqFLGsSU/edit#gid=1467600029
  - Script Code https://github.com/Waiviogit/waivio/wiki/Export-template-script-from-Google-Sheets-to-JSON
  - Full tutorial you can find here https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON#set-up
- 
+
  Set up
  1. Create or open table in Google Sheets https://drive.google.com/
  2. Click on Extensions tab in top menu
@@ -561,11 +561,11 @@ Resources:
  9. Come back to your table and refresh page
  10. Now, you should have new tab in top menu.
  If the new tab does not appear. Refresh page one more time or you can try to return to the script, add some comment(// comment), save again, return to the table and refresh page. Usually, when the page loads, the new tab appears later. ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213702671-14b60de1-f475-4a56-8b15-5431be5b9f3b.png)
- 
+
  Add template to Google Sheets
  Open google template with fields and copy to your table.
  You need to freeze the first row (View -> Freeze -> 1 row). This is important as this is the name of the fields to be exported. ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213704121-e711629f-0e2f-4308-912f-5390145b68d6.png)
- 
+
  Permission
  1st time after clicking on "Export JSON for this sheet" you need to give permission to the script.
  1. Click Export JSON
@@ -575,13 +575,13 @@ Resources:
  5. Complete authorization and give permission
  6. Click Export JSON one more time
  7. You should see notification Running script and modal window with json ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213132930-e4bf4bc1-44fa-4eb1-8e04-02b4f5987fc3.png)
- 
+
  Exported JSON
  "Exported JSON" modal window has:
  direct link to download the file, leads to your google drive;
  json - that was created by script.
  Every time when script is running, file is created on your Google Drive. Even if you edit the same table, every time file will be created. So, don't forget to delete unnecessary files from your Google Drive that were created in this way. ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213723060-33179063-084e-4b90-8c04-3fe04fac3722.png)
- 
+
  Table fields
  1st line of the table - these are the names of the fields, each next is a separate object:
  2nd - object #1
@@ -593,7 +593,7 @@ Resources:
  - categories, imageURLs - because different items should be separated by ";"
  - features - format for recording: key: Feature Name; value: Feature description*, key from value must be separated by ";", each feature must be separated by "*"
  - waivio_tags - format for recording: key: Tag category; value: Tag*, key from value must be separated by ";", each line must be separated by "*".
- 
+
  Fields:
  1. asins
  ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/213658601-68c7e464-e25f-47b9-a195-f4a145788273.png)
@@ -728,7 +728,7 @@ Resources:
  ![image](https://images.hive.blog/0x0/https://user-images.githubusercontent.com/67378322/227925967-ba229049-0dba-4f3b-998d-44702298ff25.png)
  The weight of the product. Units included.
  Field type: string
- 
+
  Recommendation
  - Use Google account when you don't have important files - because, every time when script is running, a file is created on your Google Drive. So from time to time you will need to clear the space. (Script running after you click "Export JSON for this sheet").
  - In order to successfully import objects such as a book and a restaurant, the relevant department must be in the list of categories (Books, Restaurant).
@@ -737,8 +737,8 @@ Resources:
  - Don't change field names in first row, because there are correct field names.
  - Don't change field order and don't delete columns, because the script is guided by the location index.
  - It is not necessary to fill in all cells. Empty cells will be skipped.
- 
- 
+
+
 # Lesson 10: Introduction to Social Shopping on Web 3
  For more details give a link to https://www.waivio.com/object/tso-social-shopping-on-hive/page
  Have you ever browsed through endless reviews, seeking the perfect combination of products?
@@ -746,12 +746,12 @@ Resources:
  Whether it's mastering kitchen organization, decorating a room, nurturing a lush garden, or discovering wellness hacks, we all have valuable insights to share. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692043322_5615c78f-dfd6-41c3-b5b4-f363dbfd9bdc)
  Consider this: how much of what you know, your experience and expertise could be a goldmine for someone else?
  But how, you might wonder, can you showcase all that you've learned and discovered?
- 
+
  Social Shopping
  Introducing Waivio: A dynamic platform where curating and showcasing your top shopping is not only effortless but also rewarding. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042529_52a5a3ac-ddf1-46dc-86c0-2b6ddb394b3f)
  Picture this: you come across a product you like, mark it with a “heart”, and it's added to your profile shop – much like creating a shopping wishlist.wishlist. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042555_9b9ddeb1-6e93-41e0-a548-fb52b0c4e2de)
  With Waivio, monetizing your passion is a breeze. Simply enter your affiliate codes into your profile settings once, and Waivio will automatically update the 'buy' button links for every product in your shop, even those in your posts and comments. Also, to ensure maximum relevancy, Waivio adjusts affiliate links based on the location of each visitor to your shop. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042586_ecf07798-585d-408c-b3c3-b27daeb0fc78)
- 
+
  Dedicated Social.Gifts Website
  If you believe your expertise deserves a broader audience, consider elevating your shop and launching a dedicated Social.Gifts website. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042615_0c5c1988-27fd-43e9-96ed-15d7b7be6872)
  It provides an outstanding user experience, can be adapted to your unique branding, and comes with a wide range of features: from captivating product catalogs and custom newsfeeds to efficient product searches and seamless integration of forms, calendars, and various widgets.
@@ -760,14 +760,14 @@ Resources:
  Camping Checklist: https://camping.social.gifts
  Coffee Time: https://coffeetime.social.gifts
  For website owners, revenue opportunities go beyond affiliate earnings. They also include advertising revenue and commissions from both author and sponsored rewards gathered by website users. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042648_750f0dc8-8347-4919-b6cf-34c37c966aab)
- 
+
  Decentralization and Web 3.0
  In the Web 2.0 era, every online shop functions like an isolated island. With each one building its own user database, creating its own product knowledge base, and collecting product reviews from ground zero. This siloed approach results in redundant efforts, as data remains trapped within the confines of each project. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042672_a22aeca9-9738-4f17-b847-8f4951b102ef)
  In Web 3.0, content isn't merely published on an open, decentralized blockchain—it's liberated! ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042699_61264e6b-003f-4444-945d-9628079a2f78)
  Imagine a product manufacturer publishing detailed information about their items on the Hive open blockchain. Any shop wishing to feature these products can simply mark them with a "heart" . What's more, when the manufacturer updates their products, these changes are effortlessly reflected across all the shops. ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042723_f627cb09-f456-4ec5-9044-4f6f580f134e)
  Managing large collections of third-party products becomes so simple!
  That's not all! Hive operates as a social blockchain. So, when users mention products in their posts, these reviews are instantly visible across all the shops that showcase the same product.
- 
+
  The Paradigm Shift
  For the first time, small independent shops can collaborate seamlessly. In the Web 3.0 landscape, shops tap into the entire Hive community, gaining access to the complete product knowledge base, as well as all product reviews and related content.
  Users from one shop can engage with those from other shops, all within the same digital space! ![image](https://waivio.nyc3.digitaloceanspaces.com/1692042785_049eb14f-d912-4a35-be7b-0fc0723a1e50)
@@ -796,23 +796,23 @@ Resources:
  Amazon affiliate programs: USA https://affiliate-program.amazon.com/, Canada https://associates.amazon.ca/
  Product uploads - Waivio Chrome Extension Tutorial https://www.waivio.com/object/fjh-shops-in-user-profiles/page#kda-waivio-chrome-extension-tutorial
  Social.Gifts concept - Social Shopping on HIVE https://www.waivio.com/object/fjh-shops-in-user-profiles/page#tso-social-shopping-on-hive
- 
+
  Intro
  Imagine creating a shopping list – but this time, it's your very own online store – sleek, dynamic, and filled with products curated by you. Here, you can display products that resonate with your interests and provide a lot of value for your target audience. And with every purchase originating from your shop, you'll receive affiliate commissions from merchants. ![image](https://waivio.nyc3.digitaloceanspaces.com/1697489190_6653e50b-80f7-4ff4-8f58-2640d5debb81)
  You can locate your SHOP on your user's page. It's time to add some products to it! ![image](https://waivio.nyc3.digitaloceanspaces.com/1697489358_db2b4e7d-5f19-485a-970a-7be194cc00d0)
- 
+
  Step 1: Adding a Product
  To start off, let's head over to Waivio's "SHOP" section. Take a look at different departments, like "Appliances," to find products that you can recommend to others. ![image](https://waivio.nyc3.digitaloceanspaces.com/1697490421_7bd9e905-3496-4139-aa15-0c6891fdba62)
  Let's say you know and like this fancy coffee maker – simply click the heart icon, and just like that it's added to your shop!
  Now, here's the beauty: if the item you've added gets updated, you don't need to worry about manual adjustments. Your shop will automatically reflect these changes - no additional action is required on your part. Your shop effortlessly stays up-to-date, showcasing your thoughtfully chosen selections.
- 
+
  Step 2: Various Ways to Find and Add Products
  Let me now show you some more ways to discover products and enrich your shop's collection.
  Search: If you have a specific product in mind, search for it on Waivio and if it’s already available on the Hive blockchain, quickly add it to your shop.
  Explore Other Users' Shops: Check out what fellow curators are featuring in their shops. If you spot something you like, hit that heart button to add it to your shop.
  Product Links in Posts: Keep an eye out for products mentioned in posts. You can easily add them to your shop; just scroll down to the end of the post, where you will see linked products and click the heart.
  Adding Products from Amazon: If a product can't be found on the Hive blockchain, you can effortlessly import it from the Amazon page with a single click using Waivio's Chrome extension. Check out the tutorial on the extension for more details.
- 
+
  Step 3: Adding Affiliate Codes
  Now that your shop is coming together, it's time to monetize your product collections.
  Navigate to "TOOLS" and select "Affiliate codes."
@@ -822,23 +822,23 @@ Resources:
  https://affiliate-program.amazon.com/help/node/topic/GCE3F2NCVZLDFM6A
  For example, let's say you have affiliate code for Amazon.com. Choose amazon.com from the menu. Input your respective affiliate code in the designated field and click "Submit." ![image](https://waivio.nyc3.digitaloceanspaces.com/1697490500_606e7506-50e3-4e1f-8119-5371f102bc01)
  This will automatically associate your affiliate code with the 'buy' buttons for all the products in your shop, ensuring you earn commissions with every purchase.
- 
+
  Step 4: Linking products in your posts
  You can reference products in your social posts and comments. Any 'Buy Now' links associated with these products will automatically include your affiliate code.
  Furthermore, products you reference will be automatically added to your profile shop. To remove a product from your shop, simply click the heart icon twice (first to add the product, then to remove it).
  In the user settings, there's also an option to prevent products from being added to your profile unless they are explicitly marked with a heart. ![image](https://waivio.nyc3.digitaloceanspaces.com/1697490535_6c234bfb-4b58-431c-ac8a-c4143764a674)
- 
+
  Step 5: Managing Your Shop
  Products in your profile shop are automatically categorized based on their assigned departments.
  If you wish to adjust the names of any categories, simply access the products within that category and modify the associated department list.
- 
+
  Step 6: Unlocking Advanced Features with Social.Gifts
  If you want to take your shop to the next level, consider setting up Social.Gifts website. In just a few clicks, you can launch your very own dedicated *.social.gifts website, showcasing your expertly curated product recommendations. This venture opens up a realm of additional revenue streams beyond affiliate earnings. Check out the next tutorial on how to get started (COMING SOON).
- 
+
  Conclusion
  With your curated collection and expert recommendations, you're not only set to enrich the social shopping experience, but also to be at the forefront of a dynamic Web 3.0 era where collective knowledge and collaboration redefine the way we shop and engage online. Let your knowledge shine in this new era of online shopping. Happy curating! ![image](https://waivio.nyc3.digitaloceanspaces.com/1697489001_64f8d08d-eb86-4b68-b6e4-fedfea428507)
- 
- 
+
+
 # Lesson 12: Launching a Social Shopping Website
 For more details give a link to https://www.waivio.com/object/mev-launching-your-social-shopping-website/page
 Are you ready to take your online presence to the next level?
@@ -927,7 +927,7 @@ Now that your configuration and setup are complete, it's time to reveal your Soc
 Congratulations on launching your very own Social.Gifts website!
 Your carefully curated collection, within the immersive Hive environment, is ready to offer visitors a unique social shopping experience.
 Your Social.Gifts shop is equipped with a range of features that make social shopping on your website possible. From dynamic newsfeeds to visitor posts and reviews, your shop has become a lively community hub. It's not just about browsing – it's a space for connection, sharing, and discovery.
-While we've covered a lot in this tutorial, there are more advanced settings to customize your website further, such as creating specific newsfeeds, adding pages, forms, widgets and much more. Get ready to unleash the full potential of your Social.Gifts shop! 
+While we've covered a lot in this tutorial, there are more advanced settings to customize your website further, such as creating specific newsfeeds, adding pages, forms, widgets and much more. Get ready to unleash the full potential of your Social.Gifts shop!
 
 
 # Lesson 13: Building a New Advanced Social Shop
@@ -1052,12 +1052,11 @@ You've laid the groundwork for an exceptional shop that's tailored to your exper
 Your website is ready to captivate visitors, monetize your expertise, and offer an engaging and immersive experience to anyone exploring your shop. Best of luck on this exciting venture!
 Now it's time to think about how to market your website to bring it to a larger audience and boost your revenue. In the upcoming tutorials, we will discuss SEO tools, marketing and analytics strategies that you can implement for your website.
 
-____________________________________
 
 How do I enable two-factor authentication?
 Hive, like other blockchain platforms, operates on a decentralized security model. The security primarily relies on private keys for account access and transactions. If a user's private keys are secure, their account is secure. The inherent security model of blockchain reduces the emphasis on traditional 2FA mechanisms.
 In the blockchain space, users are expected to take personal responsibility for their security. This includes securely storing private keys, using hardware wallets, and following best practices for online security. The emphasis is on user education and responsibility rather than providing additional layers like 2FA.
- 
+
 Are there any fees for using the site?
 Using the site itself is generally free, including basic actions like posting, commenting, and voting. However, there are some functionalities that may require payment. For example, users might need to pay for running a site or purchasing a VIP ticket for enhanced features. Additionally, blockchain network transaction fees may apply when performing operations such as transfers.
 If a user wants their vote to have significant impact and to potentially receive rewards, their voting power should be backed by an amount of WAIV or HIVE tokens, or preferably both. Users should review the terms and conditions of the specific services they use for any applicable fees.
@@ -1119,13 +1118,13 @@ To publish a post on Waivio or related sites, sign in to your account and naviga
 How do I like or comment on a post?
 Users can like posts. To do this, the user should log in, find the post, and click on the like button.
 Users can write comments under posts. To do this, the user should log in, view the posts, find the comment area under the post, enter their comment text, and submit the comment. ![image](https://waivio.nyc3.digitaloceanspaces.com/e8bc13857e245812b126f9e451d9bfaa3a6209fbefcc1dd9a8a781dba18d90bf)
- 
+
 How can I share a post?
 Users can share posts on social media platforms like X and Facebook. To do this, find the post, click on the three dots button on the post, and select "Share to Facebook" or "Share to X." This way, the post can be shared on different platforms. ![image](https://waivio.nyc3.digitaloceanspaces.com/62263c06864ca4e5fb1e54de89bbd76e818cc4003a85d2b1a19e5389b965d5f4)
 
 How do I find friends or contacts on this site?
 To find friends or contacts on this site, users can use the search bar in the header to find users, restaurants, businesses, etc. Users should click on the search field, enter their search query, and the search results will appear.
-On Waivio, there are no private chats, so users cannot chat privately with each other. 
+On Waivio, there are no private chats, so users cannot chat privately with each other.
 ![image](https://waivio.nyc3.digitaloceanspaces.com/eb727fb8c17e59b2d01a6854169ac3699fb64f687cbd4a490c0857f8367fa851)
 
 How do I customize my news feed?
@@ -1230,7 +1229,6 @@ After creating a website, a new section will appear for configuring the website:
 - User avatar: Button to open authorized user profile.
 - Menu: Navigation to My Feed, Earn, Tools, Drafts, Profile, Wallet, Settings, and Logout (button to log out).
 
-_______________
 
 # Authorization & Registration on Waivio and related sites
 To log in to the Waivio platform or related sites, open the website, click the "Sign in" button in the header, and choose the appropriate authentication method. There are three options for authorization: via HiveSigner, HiveAuth, or Google.
