@@ -1058,11 +1058,9 @@ How do I enable two-factor authentication?
 Hive, like other blockchain platforms, operates on a decentralized security model. The security primarily relies on private keys for account access and transactions. If a user's private keys are secure, their account is secure. The inherent security model of blockchain reduces the emphasis on traditional 2FA mechanisms.
 In the blockchain space, users are expected to take personal responsibility for their security. This includes securely storing private keys, using hardware wallets, and following best practices for online security. The emphasis is on user education and responsibility rather than providing additional layers like 2FA.
  
- 
 Are there any fees for using the site?
 Using the site itself is generally free, including basic actions like posting, commenting, and voting. However, there are some functionalities that may require payment. For example, users might need to pay for running a site or purchasing a VIP ticket for enhanced features. Additionally, blockchain network transaction fees may apply when performing operations such as transfers.
 If a user wants their vote to have significant impact and to potentially receive rewards, their voting power should be backed by an amount of WAIV or HIVE tokens, or preferably both. Users should review the terms and conditions of the specific services they use for any applicable fees.
-
 
 How can I report inappropriate content or users?
 Ways to eliminate inappropriate content or users:
@@ -1071,10 +1069,8 @@ Ways to eliminate inappropriate content or users:
 - Mute a user: Users can mute another user by opening the user's profile, clicking on the three-dot menu near the "Follow" button, and selecting "Mute." This allows you to block the user, preventing you from seeing their posts and imposing other restrictions.
 ![image](https://waivio.nyc3.digitaloceanspaces.com/544f20591e4288ee809e1298120992ebd16ba236fbaca1371f10d67a3561f35b)
 
-
 What tokens can I earn?
 User can earn WAIV, HIVE, and various other Hive Engine tokens. Some of these tokens can be swapped to SWAP.LTC, SWAP.BTC, SWAP.ETH. Once swapped, they can be withdrawn to wallets: BTC, LTC, and ETH.
-
 
 What information do I need to provide to sign up?
 To sign up, visit signup.hive.io. There are a few options for creating an account:
@@ -1083,15 +1079,12 @@ To sign up, visit signup.hive.io. There are a few options for creating an accoun
 - VIP ticket: You can buy or use a received VIP ticket for an anonymous account (available on WAIVIO -> Tools -> New accounts page).
 For more details give a link to https://www.waivio.com/object/owg-best-practices-for-managing-hive-private-keys-on-multiple-devices/page
 
-
 What should I do if I forget my password? Or how do I recover a hacked account?
 The recovery account functionality is not available on the Waivio platform. You may consider using other Hive platforms that offer this feature. Generally, account recovery is a complex procedure, and there is no guarantee of success. It is strongly advised to securely store your passwords and keys.
 For more information, please read the post at https://www.waivio.com/@hive.recovery/userguide.
 
-
 How can I change my username?
 In general, users cannot change the username they choose during registration. However, they can add an additional name by navigating to their user profile, clicking on "Edit profile," and updating the "Name" field. ![image](https://waivio.nyc3.digitaloceanspaces.com/f588af866717754703cb18fa704e0640381c0ad88ca14a4cb20aa02e230dfa99)
-
 
 How do I update my profile information?
 Users can update their profile information by navigating to their user profile or Tools in main navigation menu, clicking on "Edit profile" and making changes in the relevant fields, including:
@@ -1108,68 +1101,53 @@ Users can update their profile information by navigating to their user profile o
 ![image](https://waivio.nyc3.digitaloceanspaces.com/ef4b73b8e5011a0432cbec20548dc9559698102b9d9320594d50ebc63c7c573a)
 ![image](https://github.com/user-attachments/assets/ec597353-0582-45be-8a3e-614e5251be14)
 
-
 Can I link my account to other social media platforms?
 Users can link their account to other social media platforms by navigating to their user profile or Tools in main navigation menu, click on "Edit profile," and add links in the relevant fields, such as Facebook, Twitter, LinkedIn, YouTube, Instagram, and GitHub. ![image](https://waivio.nyc3.digitaloceanspaces.com/ef4b73b8e5011a0432cbec20548dc9559698102b9d9320594d50ebc63c7c573a) ![image](https://waivio.nyc3.digitaloceanspaces.com/adf52ee7e98f44fd4d30aaa0685a6be4288970f654fc66ca11b52dabb5337f30)
-
 
 How can I see my login history?
 The user cannot see the login history, but can view all main account activities, such as writing posts, comments, likes, and other actions. To do this, go to the user profile and open the Activity tab. ![image](https://waivio.nyc3.digitaloceanspaces.com/7f46599459c9103efefe3f8eb246fe215177b5b58b9dfe8c4f6d5314a10ad53f)
 
-
 How do I logout from all devices?
-To log out, click the button next to the user icon in the header and select Logout from the menu. ![image](https://waivio.nyc3.digitaloceanspaces.com/9248583a44eecff602a23b32a8e3fc095d57650b6ff4061bffd35821bd1083c1)
-
+To logout, click the button next to the user icon in the header and select Logout from the menu. ![image](https://waivio.nyc3.digitaloceanspaces.com/9248583a44eecff602a23b32a8e3fc095d57650b6ff4061bffd35821bd1083c1)
 
 How do I post content?
 To publish a post on Waivio or related sites, sign in to your account, click the pencil icon in the header, and an editor will open. In the editor, you can add the title and content of your post, hashtags, pictures, videos, etc. When you are ready, click "Ready to publish". A preview of the post will open. Review the post, click the "Legal notice" checkbox, and click "Publish". The post will be published within 3 seconds, the time needed to write the post into a block for the Hive blockchain. ![image](https://waivio.nyc3.digitaloceanspaces.com/d23d5c714587f3b099e684404450f9e2406d1e4ade77e8946958dd9a17f78923) ![image](https://waivio.nyc3.digitaloceanspaces.com/4d5f4ea9b15e9a108af08efb0df6bb51a8628cd034323f1d7006ddddbd5e174e)
 
-
 How do I follow other users?
 To publish a post on Waivio or related sites, sign in to your account and navigate to your user profile or explore other user lists such as experts, followers, and following. Click the "Follow" button to start following a user. To unfollow, simply click the "Unfollow" button. On the user profile page, you can view your list of followers (who follow you) and the users you are following under their corresponding tabs. ![image](https://waivio.nyc3.digitaloceanspaces.com/c032c455d3e751da126c401186ca7b4290b3359d046082c2c2c8724e7f4ca985)
-
 
 How do I like or comment on a post?
 Users can like posts. To do this, the user should log in, find the post, and click on the like button.
 Users can write comments under posts. To do this, the user should log in, view the posts, find the comment area under the post, enter their comment text, and submit the comment. ![image](https://waivio.nyc3.digitaloceanspaces.com/e8bc13857e245812b126f9e451d9bfaa3a6209fbefcc1dd9a8a781dba18d90bf)
  
- 
 How can I share a post?
 Users can share posts on social media platforms like X and Facebook. To do this, find the post, click on the three dots button on the post, and select "Share to Facebook" or "Share to X." This way, the post can be shared on different platforms. ![image](https://waivio.nyc3.digitaloceanspaces.com/62263c06864ca4e5fb1e54de89bbd76e818cc4003a85d2b1a19e5389b965d5f4)
-
 
 How do I find friends or contacts on this site?
 To find friends or contacts on this site, users can use the search bar in the header to find users, restaurants, businesses, etc. Users should click on the search field, enter their search query, and the search results will appear.
 On Waivio, there are no private chats, so users cannot chat privately with each other. 
 ![image](https://waivio.nyc3.digitaloceanspaces.com/eb727fb8c17e59b2d01a6854169ac3699fb64f687cbd4a490c0857f8367fa851)
 
-
 How do I customize my news feed?
 Authorized users have a "My Feed" which shows posts from users and objects they follow. Users can hide unwanted posts and mute undesirable users. ![image](https://waivio.nyc3.digitaloceanspaces.com/2b0dcb0adecc50dce467fdf4a709c243b577599ecba5c58d430ae33ddbbf0d4c)
 
-
 Can I create or join groups?
 No, there is no possibility to join groups or communities.
-
 
 Can I create or join groups?
 No, there is no possibility to join groups or communities. However, users can follow other users and objects. Users can also leave thread messages (short messages) related to users or objects in the Threads tab.
 ![image](https://waivio.nyc3.digitaloceanspaces.com/2ed80cbfa57e5e0de02ff2e277a3cca1f3eef36e62c1b72a612da641bdf6eb72)
 
-
 What are hashtags and how do I use them?
 On the Waivio platform, hashtags serve as objects that gather all posts related to them, in addition to their usual function. ![image](https://waivio.nyc3.digitaloceanspaces.com/663b0f68ea3bac1413c047634479e466d7348cc529ac8f8b9dc0c761b497ccc9)
-
 
 Can I transfer tokens or rewards to my wallet?
 WAIV can be withdrawn to BTC, LTC, ETH, HIVE cryptocurrency, and can be swapped (converted into various other tokens). More information https://www.waivio.com/object/axy-your-waivio-wallet/page
 ![image](https://waivio.nyc3.digitaloceanspaces.com/f9b286f28d6f56b6c8257dab2bf50543c81472cd1a2d0fcb0a53da5f4297bca7)
 
-
 How do I view my transaction history?
 To view your transaction history, go to the Wallet tab. You'll find three separate tabs: WAIV for WAIV token balances and transaction history, HIVE for HIVE and HBD balances and transaction history, and Hive Engine for Hive Engine tokens transaction history. Transaction histories are displayed below the wallet balances on the same tab.
 ![image](https://waivio.nyc3.digitaloceanspaces.com/b98048db9f4714081800db35d10c3806c055ba39f68420c28faf82c628fab931)
-
 
 How can I contact a team or customer support?
 To contact the team or customer support on Waivio, you can visit the URL https://www.waivio.com/object/ylr-waivio/threads and leave a thread. Alternatively, you can click on the "About" tab in the main menu where you'll find general information about the platform. Then, navigate to the "Reviews" tab and click on "Threads". Here, you can leave a message for the team regarding any issues you encounter, bugs, or suggestions.
@@ -1252,6 +1230,7 @@ After creating a website, a new section will appear for configuring the website:
 - User avatar: Button to open authorized user profile.
 - Menu: Navigation to My Feed, Earn, Tools, Drafts, Profile, Wallet, Settings, and Logout (button to log out).
 
+_______________
 
 # Authorization & Registration on Waivio and related sites
 To log in to the Waivio platform or related sites, open the website, click the "Sign in" button in the header, and choose the appropriate authentication method. There are three options for authorization: via HiveSigner, HiveAuth, or Google.
