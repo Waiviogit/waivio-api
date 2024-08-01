@@ -4,7 +4,7 @@ const { HIVE_ENGINE_NODES } = require('constants/hiveEngine');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.engineQuery = async ({
-  hostUrl = 'https://engine.waivio.com',
+  hostUrl,
   method = 'find',
   params,
   endpoint = '/contracts',
@@ -31,7 +31,7 @@ exports.engineQuery = async ({
 };
 
 exports.engineProxy = async ({
-  hostUrl,
+  hostUrl = _.sample(HIVE_ENGINE_NODES),
   method,
   params,
   endpoint,

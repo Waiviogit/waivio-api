@@ -10,7 +10,9 @@ const up = async () => {
     const text = await fsp.readFile(path.join(__dirname, 'lib.txt'), 'utf8');
     const text2 = await fsp.readFile(path.join(__dirname, 'lib2.txt'), 'utf8');
     // Create a RecursiveCharacterTextSplitter with a specified chunk size
-    const textSplitter = new RecursiveCharacterTextSplitter({ chunkSize: 1000 });
+    const textSplitter = new RecursiveCharacterTextSplitter({
+      chunkSize: 2000,
+    });
     // Split the input text into documents
     const docs = await textSplitter.createDocuments([text, text2]);
 
