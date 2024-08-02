@@ -1154,7 +1154,7 @@ To contact the team or customer support on Waivio, you can visit the URL https:/
 
 
 What is the structure of the Waivio platform?
-The structure of the Waivio platform is divided into 5 main categories for logged-in users (My Feed, Earn, Shop, Tools, About):
+The structure of the Waivio platform is divided into 5 categories for logged-in users (My Feed, Earn, Shop, Tools, About):
 1. My Feed: This section includes different selections and feeds of posts, such as:
   - Trending: Posts with the highest rewards. Link to Trending: https://www.waivio.com/trending.
   - Hot: Posts with the largest number of comments. Link to Hot: https://www.waivio.com/hot.
