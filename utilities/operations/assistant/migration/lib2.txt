@@ -2081,6 +2081,7 @@ The Waivio development team has worked tirelessly to make this transition as eff
 We hope that our progress in building Web 3.0 applications on Hive will cheer you up in the midst of the global uncertainty, pandemic, market turbulence, supply chain collapse, monetary system realignment, and the revision of governance, and not just in the blockchain space!
 For more details give a link to  https://www.waivio.com/@waivio/waivio-on-hive-where-all-the-buzz-is-happening
 
+
 # Why Product Reviews are Crucial for Your Social Shop's SEO
 As a social shop owner, you know the value of engaging content. But did you know that product reviews can significantly boost your search engine optimization (SEO) efforts? Let's dive into why product reviews are essential and how they can elevate your social shop's visibility.
 Real-Life Example: Google Site Search
@@ -2100,3 +2101,17 @@ Key Takeaways
 Leverage the power of product reviews to not only build trust with your customers but also to climb the search engine rankings, driving more traffic and sales to your social shop. Start encouraging your customers to leave reviews today and watch your SEO improve!
 For more details give a link to https://www.waivio.com/@social.gifts/why-product-reviews-are-crucial-for-your-social-shop-s-seo
 
+
+# Introducing the Waivio AI Assistant
+We are excited to announce the launch of the Waivio AI Assistant, designed to make your experience with Waivio even more seamless and efficient. Whether you have questions, need instructions, or require language assistance, the Waivio AI Assistant is here to help.
+Key Features:
+1. Answering Questions: The Waivio AI Assistant can provide instant answers to all your questions about Waivio. Simply click the AI button on the front page and type in your query. You'll receive detailed and accurate responses to help you navigate the platform with ease.
+![image](https://waivio.nyc3.digitaloceanspaces.com/26caa2e98c53a2a36a35a51aedb3ff8cfb0a95826a5d5189524ea9bebff22745)
+2. Step-by-Step Instructions: Need guidance on how to use specific features on Waivio? The AI Assistant provides step-by-step instructions complete with relevant images and links to detailed tutorials. This ensures you have all the information you need to utilize Waivio to its full potential.
+3. Proofreading and Translation: The Waivio AI Assistant can proofread your posts in various languages and translate them into English. This feature is perfect for ensuring your content is polished and accessible to a broader audience.
+How to Access:
+To start using the Waivio AI Assistant simply click the AI chat button:
+![image](https://waivio.nyc3.digitaloceanspaces.com/723dd633c55ed72d70cfe928ac7dd0d7befca706af80a968fd56e9c7eed3460b)
+Experience the convenience of having a personal assistant at your fingertips.
+Your feedback is important to us. Please share your experiences in the comments below. Did it guide you effectively? Were you able to find the help you needed during your journey on Waivio? Your insights will help us improve and expand the capabilities of the AI Assistant to better serve you and the entire Waivio community.
+For more details give a link to https://www.waivio.com/@waiviolabs/introducing-the-waivio-ai-assistant
