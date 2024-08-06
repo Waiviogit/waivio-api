@@ -6,7 +6,7 @@ const {
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails, getObjectPermlinksFromUrl } } = require('utilities/operations').search;
+const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails} } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
