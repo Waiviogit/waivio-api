@@ -301,17 +301,17 @@ exports.findByCondition = async (condition, select = {}) => {
 };
 
 exports.getWobjectPosts = async ({
-  condition, limit, lastId, skip,
+  condition, limit, skip,
 }) => {
   try {
     const postsQuery = PostModel
       .find(condition)
       .sort({ _id: -1 })
+      .skip(skip)
       .limit(limit)
       .populate({ path: 'fullObjects', select: 'author authority parent fields weight author_permlink object_type default_name status' })
       .lean();
 
-    if (!lastId) postsQuery.skip(skip);
     return { posts: await postsQuery.exec() };
   } catch (error) {
     return { error };
