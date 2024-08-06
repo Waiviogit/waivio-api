@@ -6,7 +6,7 @@ const {
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails} } = require('utilities/operations').search;
+const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
@@ -624,6 +624,21 @@ const getRawField = async (req, res, next) => {
   next();
 };
 
+const getAuthorPermlinkByIdType = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getAuthorPermlinkByIdType,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await wobjectInfo.getAuthorPermlinkByIdType(value);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -659,4 +674,5 @@ module.exports = {
   getRawField,
   getListLinksAuthority,
   getObjectsLinksOnMap,
+  getAuthorPermlinkByIdType,
 };

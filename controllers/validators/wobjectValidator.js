@@ -267,3 +267,8 @@ exports.getRawField = Joi.object().keys({
   locale: Joi.string().default('en-US'),
   body: Joi.string().required(),
 });
+
+exports.getAuthorPermlinkByIdType = Joi.object().keys({
+  id: Joi.string().required(),
+  idType: Joi.string().required(),
+});
