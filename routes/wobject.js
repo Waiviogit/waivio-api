@@ -74,5 +74,7 @@ wobjRoutes.route('/wobjects/list-item-departments')
   .post(reqTimeMonitor, WobjController.getListDepartments);
 wobjRoutes.route('/wobjects/search-default')
   .post(reqTimeMonitor, WobjController.searchDefault);
+wobjRoutes.route('/wobjects/id-type')
+  .post(reqTimeMonitor, WobjController.getAuthorPermlinkByIdType);
 
 module.exports = wobjRoutes;
