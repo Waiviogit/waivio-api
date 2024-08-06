@@ -1399,3 +1399,222 @@ After enabling Crawler Hints, Cloudflare automatically signals search engines us
 For more detailed information and potential troubleshooting, you can refer to the original documentation:
 - IndexNow (https://www.indexnow.org/)
 - Bing Blogs (https://blogs.bing.com/webmaster/november-2021/Cloudflare-Supports-IndexNow-via-one-click-Integration)
+
+
+# Earn. Global
+## General information
+**Global** - the page displays all campaigns that are listed in the global category. They are not tied to a location.
+(A campaign's belonging to a global is specified when creating a campaign.)
+This page has kind of 2 steps:
+1. feed with primary cards;
+2. feed with secondary cards for the specific primary card (after clicking on "Earn" button).
+By default, after clicking Earn tab in main menu, Global tab is opened. 
+## Feed with primary cards
+The global feed consists of the [primary cards](https://github.com/Waiviogit/waivio/wiki/Primary-card) list.
+![image](https://user-images.githubusercontent.com/67378322/222443298-2fa24af8-db26-4907-97a0-a147a51543fa.png)
+## Breadcrumbs
+**1st step**: title - Global rewards
+**2nd step**: "Eligible rewards" or "All rewards" (depending on the Eligibility checkbox in Filter rewards block) + primary object name.
+Primary object name - not clickable.
+Eligible/All - clickable, way to return to 1st step with primary cards.
+![image](https://user-images.githubusercontent.com/67378322/222450995-61cf38f9-9fe4-4a18-a6a0-1369f48637ff.png)
+![image](https://user-images.githubusercontent.com/67378322/222451057-06cfd2a0-0255-44f3-bde9-362325648892.png)
+## Sorting
+Sorting only for 1st step with primary cards.
+Sorting has text - "Sorted by".
+* Default - consists of 2 sorts: payouts + proximity. This means that first there is sorting by payouts, and if there are objects with the same payout, then sorting by proximity will be added (that is, the object that is closer to the user will be displayed above). By default.
+* Payouts - the meaning of which is to calculate which of the Rewards brings max. profit for the index server. If campaign has completed reviews - quantity completed review * reward * processing fees (commissionAgreement). For zero - reward * processing fees (commissionAgreement).
+* Amount - sort by amount per campaign (max to min).
+* Expiry - sort by campaign expiration date (nearest to farthest).
+* Proximity - closest in distance to the user (from nearest to farthest).
+![image](https://user-images.githubusercontent.com/67378322/222453811-ad8560a8-bc82-4b04-9abe-c8ba43946a60.png)
+## Filters
+Filters availability:
+* Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
+* Rewards for has "reviews" item that is filter by review type.
+* Sponsors - filter by sponsor.
+![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
+## Feed with secondary cards
+After clicking on "Earn (price) ..." all (available) [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card)  associated with the primary are opened. 
+Breadcrumbs (path) are displayed.
+![image](https://user-images.githubusercontent.com/67378322/222453587-3524efcd-6a10-4b69-84e5-9f2c3f005cf5.png)
+## An unauthorized user
+An unauthorized user can also see this page with "all eligibility" filter that is blocked.
+![image](https://user-images.githubusercontent.com/67378322/222661253-8e29c2f5-befc-4640-8397-7803d283e272.png)
+
+
+# Earn. Local
+## General information
+**Local** - the page displays all campaigns that are listed in the local category. They are tied to a location.
+(A campaign's belonging to a local category is specified when creating a campaign.)
+This page has kind of 2 steps:
+1. feed with primary cards;
+2. feed with secondary cards for the specific primary card (after clicking on "Earn" button).
+## Feed with primary cards
+The global feed consists of the [primary cards](https://github.com/Waiviogit/waivio/wiki/Primary-card) list.
+![image](https://user-images.githubusercontent.com/67378322/223223983-2aee83ed-06bc-41db-8f65-9cdc4c6e37bf.png)
+## Breadcrumbs
+**1st step**: title - Local rewards
+**2nd step**: "Eligible rewards" or "All rewards" (depending on the Eligibility checkbox in Filter rewards block) + primary object name.
+Primary object name - not clickable.
+Eligible/All - clickable, way to return to 1st step with primary cards.
+![image](https://user-images.githubusercontent.com/67378322/222450995-61cf38f9-9fe4-4a18-a6a0-1369f48637ff.png)
+![image](https://user-images.githubusercontent.com/67378322/222451057-06cfd2a0-0255-44f3-bde9-362325648892.png)
+## Sorting
+Sorting only for 1st step with primary cards.
+Sorting has text - "Sorted by".
+* Default - consists of 2 sorts: payouts + proximity. This means that first there is sorting by payouts, and if there are objects with the same payout, then sorting by proximity will be added (that is, the object that is closer to the user will be displayed above). By default.
+* Payouts - the meaning of which is to calculate which of the Rewards brings max. profit for the index server. If campaign has completed reviews - quantity completed review * reward * processing fees (commissionAgreement). For zero - reward * processing fees (commissionAgreement).
+* Amount - sort by amount per campaign (max to min).
+* Expiry - sort by campaign expiration date (nearest to farthest).
+* Proximity - closest in distance to the user (from nearest to farthest).
+![image](https://user-images.githubusercontent.com/67378322/222453811-ad8560a8-bc82-4b04-9abe-c8ba43946a60.png)
+## Filters
+Filters availability:
+* Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
+* Rewards for has "reviews" item that is filter by review type.
+* Sponsors - filter by sponsor.
+![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
+## Feed with secondary cards
+After clicking on "Earn (price) ..." all (available) [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card)  associated with the primary are opened. Breadcrumbs (path) are displayed.
+![image](https://user-images.githubusercontent.com/67378322/223224247-2a5f6854-b125-4712-b9f5-1c063cdff45d.png)
+## An unauthorized user
+An unauthorized user can also see this page with "all eligibility" filter that is blocked.
+![image](https://user-images.githubusercontent.com/67378322/223224472-f9a3ff00-3542-44ce-8612-701abe1f2a9c.png)
+## Map
+Map depends on user location. Trying to show appropriate campaign for user location.
+Reward icons are displayed on the map.
+|||
+|--|--|
+|`Map title`|Map|
+|`Search area button`|Search area button, after clicking, campaign list will be corrected by specific map display|
+|`Zoom in button`|map zoom in button|
+|`Zoom out button`|map zoom out button|
+|`Map full-screen mode button`|button to open map in full-screen mode|
+|`User location button`|button to move the map approximately to the user's location|
+![image](https://user-images.githubusercontent.com/67378322/223228008-c0926062-deb4-49ac-b980-a68695fdc1ae.png)
+
+
+# Earn. Reserved
+The campaign cards reserved by the user are displayed (only campaign type 'Review' has the opportunity to reserve them).
+![image](https://user-images.githubusercontent.com/67378322/223233714-238a0520-84b6-428f-8637-56a0fe377ec1.png)
+Campaigns with the status: `active`, `onHold` are displayed.
+## Reserved card
+the reservation card is similar to displaying the secondary card of the object, the difference is in the footer of the object.
+|Element|Description|
+|-------|----------|
+|`Card title`| title "Reward for reviews"|
+|`Earn information`| information about the rewards for the review. How much will the performer of the campaign receive for the review. The price is in dollars.
+|`Username`| username who is the sponsor of the campaign, after clicking - the sponsor page is opened |
+|`Waivio username`| username on waivio, after clicking - the object page is opened|
+|`Avatar`| object avatar. If the object's secondary does not have an avatar, then the parent's avatar is pulled by default. After clicking - the object page is opened |
+|`Primary name`| parent's name. If present, it displays above the object name, in gray letters. After clicking - the object page is opened |
+|`Name`| object name, after clicking - the object page is opened |
+|`Weight`| object weight. А tooltip is displayed on hover "Total payout for all related posts in USD, without bidbots and upvote services" |
+|`Rating`| object rating. There is an opportunity to vote on stars |
+|`Object type`| object type. Not clickable|
+|`Price`| object price. Not clickable|
+|`Tags`| object tags. Display the 2 with the highest weight. Not clickable |
+|`Address`| object address. Not clickable |
+|`Title or description`| if the object has a title, then it is displayed, if there is no title, but there is a description, the description is displayed. If there is no title and description, nothing is displayed. Not clickable |
+|`Heart`|button to add the object to the user's shop|
+|`Period`| text about the number of days of reservation: "Reserved - {number} days left"
+|`Comment button`| button to show / hide comments with a counter
+|`Submit photos`| "Submit photos" button for writing a review. After clicking, the editor opens. Where the title: "Review: {primary object}, {secondary object}" field has already been filled in and links to objects have been added|
+|`Three-dots menu`| three dots button for additional menu. | 
+| | **Menu items** `THREE DOTS`: |
+|`View reservation`| "View reservation" - link to reservation post|
+|`Release reservation`| "Release reservation" - cancellation of the reservation|
+|`Decrease reward`|"Decrease reward" - the user can decrease the reward amount for completing the campaign.|
+| `Follow @sponsorName` | after clicking on the item, the user subscribed to the sponsor or if it is already signed - unsubscribed|
+| `Follow primaryObjectName` | after clicking on the item, the user subscribed to the primary object or if it is already signed - unsubscribed|
+|--------|---------|
+| | `COMMENT_BOX`: |
+|`Comment box`| field for comments. It is an opportunity to correspond between the campaign executor and the sponsor|
+|`User avatar`| user avatar who is the sponsor of the campaign, after clicking - the object page is opened |
+|`Text area`| field for text. When the cursor is in a field, the field is highlighted in orange|
+|`Editor menu` | main editor button to add photos, video etc. |
+|`Send button`| an arrow icon to send a message. Also, the message is displayed after clicking on the Enter |
+## Sorting
+* Default - consists of 2 sorts: payouts + proximity. This means that first there is sorting by payouts, and if there are objects with the same payout, then sorting by proximity will be added (that is, the object that is closer to the user will be displayed above). By default.
+* payouts - the meaning of which is to calculate which of the Rewards brings max. profit for the index server. If campaign has completed reviews - quantity completed review * reward * processing fees (commissionAgreement). For zero - reward * processing fees (commissionAgreement);
+* proximity - for the nearest campaigns;
+* amount - amount of reward;
+* expiry - the expiration date of the campaign.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/48f225c2-53f0-4a9f-9146-ab534721f56c)
+## Map
+There are search by area, map with reward's marks of the location of the campaign (which is indicated on the object page - Map).
+![2021-11-04_16-49](https://user-images.githubusercontent.com/67378322/140335969-da1c7113-f3fa-44d3-9a42-1ab6d5403d88.png)
+## Filters 
+* Rewards for: reviews - review filter;
+* Sponsors - by sponsor.
+![2021-03-15_16-41](https://user-images.githubusercontent.com/67378322/111171122-506ba380-85ad-11eb-9263-405aac4899f4.png)
+Displaying the editor after clicking on "Write review".
+![2021-11-04_16-17](https://user-images.githubusercontent.com/67378322/140330150-8409307d-67d2-44f0-b636-91858096c8db.png)
+> Everything that is displayed on the card, regulated, edited, added to the object page.
+
+
+# Earn. Receivable
+Page that shows the sponsor list and the amount of reward for the campaign execution.
+WAIV token is used to create campaigns and pay.
+Sorting:
+* Amount - by the amount of reward
+* Time - by time
+ Filters:
+* Over 15 days - the sponsor gets stuck in front of the recipient for more than 15 days
+* Over 30 days - the sponsor's congestion in front of the recipient is more than 30 days
+* Over 20 WAIV - the sponsor's mortgage in front of the recipient is more than 20 WAIV
+![image](https://user-images.githubusercontent.com/67378322/223230948-5700ffe0-0160-4b92-b89e-7f273dea853e.png)
+After clicking on the arrow
+![image](https://user-images.githubusercontent.com/67378322/223231018-dc8b0217-e3d7-4ada-834e-c0c871e0b741.png)
+The table opens
+![image](https://user-images.githubusercontent.com/67378322/223231117-0764fae5-0504-4c58-b058-2274caf93a85.png)
+User card:
+|`Sponsor avatar`| link to the sponsor page|
+|`Sponsor username`| link to the sponsor page |
+|`Arrow button`| button to the payment history between the sponsor user and the executor user (open table)|
+|`Amount`| amount of rewards |
+Table where history of actions and transfers between sponsor and selected user is displayed, in chronological order:
+|`Date`| the date of the transfer|
+|`Action`| Transfer from @username to @sponsorname|
+|`Details`| Payment|
+|`Amount`| the amount of remuneration for a specific review|
+|`Balance`| running total |
+
+
+# Earn. History
+The History tab shows not only active reservations, but also the entire history for this user, where the user was as the campaign executor: 
+* released; 
+* expired;
+* completed; 
+* rejected.
+The tab displays secondary cards (Secondary card).
+Cards can be filtered by status and sponsor. And sorting:
+* Reservation - by the date of reservation;  
+* Action (date) - by the date of the last action.
+Filtering by status:
+* Reserved;
+* Completed;
+* Released;
+* Expired;
+* Rejected.
+Filtering by sponsor - displays the sponsors from which the user has booked campaigns.
+Sorting:
+* Reservation - by date of reservation;
+* Action (date) - by the date of the last action.
+Displays the secondaries of the card of objects with which the user came into contact.
+The footer of the card changes to:
+- `STATUS` - displaying campaign status:
+  * Reserved;
+  * Completed;
+  * Released;
+  * Expired;
+  * Rejected.
+- `THREE POINT` - the options for the following actions depend on the campaign status:
+  * View reservation;
+  * Release reservation;
+  * Decrease reward;
+  * Show report;
+  * Open review;
+  * Rejection note.
+![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
