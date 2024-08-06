@@ -10,8 +10,45 @@ const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
 const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
 
+const getObjectPermlinksFromUrl = (link) => {
+  try {
+    const url = new URL(link);
+
+    const objectPath = /^\/object|^\/checklist/.test(url.pathname);
+    const searchParams = /\?breadcrumbs=/.test(url.search);
+    if (!objectPath) return;
+
+    const links = [];
+
+    const parts = url.pathname.split('/');
+    const mainPermlink = parts.length > 3 ? parts[2] : (parts[2] || '');
+    if (mainPermlink) links.push(mainPermlink);
+    if (url?.hash) {
+      const hashObjects = url.hash
+        .replace('#', '')
+        .split('/');
+      if (hashObjects?.length)links.push(...hashObjects);
+    }
+    if (searchParams) {
+      const searchObjects = url.search
+        .replace(/\?breadcrumbs=/, '')
+        .split('/');
+      if (searchObjects?.length)links.push(...searchObjects);
+    }
+
+    return _.compact(_.uniq(links));
+  } catch (error) {
+    return [];
+  }
+};
+
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
+  const linksFromUrl = getObjectPermlinksFromUrl(data.string);
+  if (linksFromUrl?.length) {
+    data.linksFromUrl = linksFromUrl;
+    data.string = '';
+  }
   if (!_.includes(data.string, '@') || !_.includes(data.string, '.')) {
     data.string = data.string.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '').trim();
   }
@@ -180,7 +217,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipelineForRestaurants = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
-  skip, limit, supportedTypes, forSites, tagCategory, map, sort,
+  skip, limit, supportedTypes, forSites, tagCategory, map, sort, linksFromUrl,
 }) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
@@ -192,6 +229,7 @@ const makeSitePipelineForRestaurants = ({
     map,
     box,
     object_type,
+    linksFromUrl,
   })];
   if (forParent) {
     pipeline.push({
@@ -207,9 +245,11 @@ const makeSitePipelineForRestaurants = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes,
+  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes, linksFromUrl,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type, onlyObjectTypes })];
+  const pipeline = [matchSimplePipe({
+    string, object_type, onlyObjectTypes, linksFromUrl,
+  })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push(
       {
@@ -245,10 +285,10 @@ const makeCountPipeline = (data = {}) => {
         counters: true,
       }))
       : pipeline.unshift(...matchSitesPipe({
-        string, crucialWobjects, object_type, supportedTypes, forSites,
+        string, crucialWobjects, object_type, supportedTypes, forSites, linksFromUrl: data.linksFromUrl,
       }));
   } else {
-    pipeline.unshift(matchSimplePipe({ string, object_type }));
+    pipeline.unshift(matchSimplePipe({ string, object_type, linksFromUrl: data.linksFromUrl }));
   }
   return pipeline;
 };
@@ -256,7 +296,7 @@ const makeCountPipeline = (data = {}) => {
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
+  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type, linksFromUrl,
 }) => {
   const pipeline = [];
   if (string) {
@@ -287,9 +327,15 @@ const matchSitesPipe = ({
     $match: {
       object_type: { $in: supportedTypes },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
     },
   };
-  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  if (forSites && !addHashtag) {
+    const permlinks = linksFromUrl?.length
+      ? linksFromUrl.filter((link) => crucialWobjects.includes(link))
+      : crucialWobjects;
+    matchCond.$match.author_permlink = { $in: permlinks };
+  }
   pipeline.push(matchCond);
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
@@ -305,7 +351,7 @@ const matchSitesPipe = ({
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes,
+  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes, linksFromUrl,
 }) => {
   const authorities = [...app.authority];
   userShop
@@ -325,6 +371,7 @@ const matchSocialPipe = ({
         }),
         ...(object_type && { object_type }),
         ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
+        ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
       },
     },
     { $sort: { weight: -1 } },
@@ -346,18 +393,21 @@ const matchSocialPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type, onlyObjectTypes }) => ({
+const matchSimplePipe = ({
+  string, object_type, onlyObjectTypes, linksFromUrl,
+}) => ({
   $match: {
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
     ...(object_type && { object_type }),
     ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
+    ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
     ...(string && { $text: { $search: `\"${string}\"` } }),
   },
 });
 
 const makePipelineForDrinksAndDishes = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers, supportedTypes, forSites, tagCategory,
-  map, sort, skip, limit,
+  map, sort, skip, limit, linksFromUrl,
 }) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
@@ -369,6 +419,7 @@ const makePipelineForDrinksAndDishes = ({
     map,
     box,
     object_type,
+    linksFromUrl,
   })];
   if (forParent) {
     pipeline.push({
