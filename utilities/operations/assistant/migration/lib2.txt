@@ -1,54 +1,54 @@
 # HiveFest 2023: Launching Clean Girl Social Shop on Hive
 Here is a copy of the presentation I delivered at HiveFest 2023, Rosarito, Mexico:
-https://waivio.nyc3.digitaloceanspaces.com/1695874487_297ba7f1-d046-4298-b798-a150db554ebd
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695874487_297ba7f1-d046-4298-b798-a150db554ebd
 Day 2 of HiveFest, my presentation starts at 1 hour 31 minutes: https://www.youtube.com/watch?v=aAGAqMn4CgU
 Today, I'll discuss my personal experience launching the CleanGirl.Social.Gifts website to demonstrate its simplicity. You can choose any theme you're passionate or knowledgeable about and create your social shop.
-https://waivio.nyc3.digitaloceanspaces.com/1695838896_6dbdb8ce-f954-4987-ae1d-a426944d4261
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695838896_6dbdb8ce-f954-4987-ae1d-a426944d4261
  Now, speaking about the Clean Girl Aesthetics, it embodies a contemporary approach to simplicity and elegance, making it versatile and the reason I chose this theme. The website's purpose is to inspire users to replicate this aesthetic in their lives.
-https://waivio.nyc3.digitaloceanspaces.com/1695838949_22c2d039-4db6-48c7-82ac-80882b1bf833
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695838949_22c2d039-4db6-48c7-82ac-80882b1bf833
  During our shop's launch, we initially planned to have a few categories with several hundred items. However, as we progressed, we realized the theme's expansive nature. We now have over 200 categories nearing 3,000 items, with some categories still awaiting products. Rest assured, we're diligently expanding our collection.
-https://waivio.nyc3.digitaloceanspaces.com/1695842181_2ede8bfc-2d9c-428a-bce6-d5809d34b90e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842181_2ede8bfc-2d9c-428a-bce6-d5809d34b90e
  Upon visiting a product page, the layout is user-friendly. It closely mirrors familiar e-commerce platforms like Amazon and Walmart. Features include product titles, galleries, ratings, various options (like size and color), detailed descriptions, and suggestions for similar items. Furthermore, our user reviews are direct posts on Hive.
-https://waivio.nyc3.digitaloceanspaces.com/1695842223_441d0192-e845-4495-94c2-2f14e14b3f40
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842223_441d0192-e845-4495-94c2-2f14e14b3f40
  Leveraging Hive's community spirit, users can use the hashtag #cleangirl, allowing their personal posts to appear on our inspiration page. This feature grants visibility to shoppers and provides another outlet for content sharing.
-https://waivio.nyc3.digitaloceanspaces.com/1695842292_105bdeaa-bb0c-44ab-8bf5-148eb5e9e593
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842292_105bdeaa-bb0c-44ab-8bf5-148eb5e9e593
  Now, let's delve into the behind-the-scenes of our website's creation. With Waivio technology, our backend operations were streamlined. I created a public object on Hive named "Clean Girl Aesthetics" and established categories and subcategories. After linking this public object to my website, the content on Waivio mirrored onto the site. This setup also enables trusted team members to collaborate efficiently.
-https://waivio.nyc3.digitaloceanspaces.com/1695842335_83ccfcdb-154d-45bd-967a-6e65d726bd12
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842335_83ccfcdb-154d-45bd-967a-6e65d726bd12
  Moreover, social shop is already optimized for mobile users. Modern mobile apps with strong user engagement prioritize vibrant images and videos.
-https://waivio.nyc3.digitaloceanspaces.com/1695842365_70758560-5316-4af1-8f9c-256afebafd67
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842365_70758560-5316-4af1-8f9c-256afebafd67
  Make sure to add your affiliate codes. For Amazon, you can even enter codes for different geographies, such as Amazon.com, Amazon.ca, and so on. Affiliate codes will be automatically added to all the products based on the geo-location of the website visitor.
-https://waivio.nyc3.digitaloceanspaces.com/1695842412_acccf3e7-57bd-4d9e-bceb-ee14ed52bc03
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842412_acccf3e7-57bd-4d9e-bceb-ee14ed52bc03
  When managing over 200 categories and thousands of items, a bit of structure is crucial. You might need assistance to ensure smooth navigation. We utilize ChatGPT. You can ask for suggestions such as categories and subcategories for a 'clean girl aesthetic' online shop. You can delve deeper, requesting details on specific items, like high-quality brand cleansers that fit the 'clean girl aesthetic' based on reviews.
 But remember, ChatGPT is just a tool; always apply your own judgment and vision for your site.
-https://waivio.nyc3.digitaloceanspaces.com/1695842448_1317cc1a-ac75-4d32-9d6f-3a8e61930f0e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842448_1317cc1a-ac75-4d32-9d6f-3a8e61930f0e
  Once you've identified products for your site, start by checking Waivio to see if the item already exists. If not, use Amazon and the Waivio Chrome extension. Make sure you're using the latest version for optimal performance. This extension also supports other major online stores, such as Walmart and Sephora.
-https://waivio.nyc3.digitaloceanspaces.com/1695842486_955e41d2-d7b8-40cb-8142-7884330bef8d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842486_955e41d2-d7b8-40cb-8142-7884330bef8d
  This is how the product page appears on the site after the item has been uploaded to Hive. Once the product is published on Hive, users can reference it in their posts. All such posts will then appear as reviews on the product page.
-https://waivio.nyc3.digitaloceanspaces.com/1695842539_1a0d53e1-0323-4eb9-bf4e-efee866c00de
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842539_1a0d53e1-0323-4eb9-bf4e-efee866c00de
  After setting up categories and adding items, focus on the site's visual aesthetics. Although we initially tried using stock photos for all the categories and subcategories in the social shop, finding the right images that matched our theme proved to be challenging. Therefore, we turned to AI solutions like MidJourney.
-https://waivio.nyc3.digitaloceanspaces.com/1695842831_b60a74a6-852e-44e2-84f7-b20b51527b7a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695842831_b60a74a6-852e-44e2-84f7-b20b51527b7a
  When using MidJourney, ensure you have a clear theme and provide a list of specific keywords. For instance, for this project, I specify 'white marble background' to ensure consistency. If you come across an inspiring image elsewhere, include a link in your request. MidJourney takes the suggested image into account while creating unique images.
-https://waivio.nyc3.digitaloceanspaces.com/1695843070_c15685a6-c62a-49d8-99b6-6a3f2f75d110
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695843070_c15685a6-c62a-49d8-99b6-6a3f2f75d110
 This is the blueprint for crafting a social shop, complete with captivating visuals, an extensive product range, and a vibrant community.
-https://waivio.nyc3.digitaloceanspaces.com/1695844124_3796f17b-b413-4af2-bddf-329eba72dc06
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695844124_3796f17b-b413-4af2-bddf-329eba72dc06
  For all the work I've done – the images, the categories, the added items – I'm about to hand it all over to you. In just a few minutes, I'll show you how to replicate the site and take full ownership.
-https://waivio.nyc3.digitaloceanspaces.com/1695844394_ae03faa7-64a4-4972-8e43-e54501c7f0f0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695844394_ae03faa7-64a4-4972-8e43-e54501c7f0f0
  Start by choosing your site's name. For demonstration, I've named it cleanlook.social.gifts. Design your unique logo and the main banner.
-https://waivio.nyc3.digitaloceanspaces.com/1695870072_336315ec-bed7-49f7-8eeb-2ff47b7416ba
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695870072_336315ec-bed7-49f7-8eeb-2ff47b7416ba
  Open Waivio, navigate to Tools > Create Website. Under Website Template, select social.gifts.
 Enter your site's name, like 'cleanlook'.
-https://waivio.nyc3.digitaloceanspaces.com/1695844889_fec15bc7-d051-42b1-a885-09459d667ffe
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695844889_fec15bc7-d051-42b1-a885-09459d667ffe
  Have fun with customization: pick website colors and upload your logo.
-https://waivio.nyc3.digitaloceanspaces.com/1695844957_a9a3937c-b1d7-4dca-b134-2d94c24aa758
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695844957_a9a3937c-b1d7-4dca-b134-2d94c24aa758
  Now, the pivotal step: search for 'Clean Girl Aesthetic' and select it as the Base Object for your website. The entire site's navigation and architecture will stem from this object.
-https://waivio.nyc3.digitaloceanspaces.com/1695844998_fd9d2b46-1dde-42c9-ade8-bad464b2f143
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695844998_fd9d2b46-1dde-42c9-ade8-bad464b2f143
  Do not forget to add your affiliate codes.
-https://waivio.nyc3.digitaloceanspaces.com/1695845091_01e33d91-f298-42d8-9515-3ec349e1fbf0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695845091_01e33d91-f298-42d8-9515-3ec349e1fbf0
  Voilà! The website is now yours, complete with your branding and colors, plus your affiliate codes attached to the thousands of products on the site.
-https://waivio.nyc3.digitaloceanspaces.com/1695870025_99a0bcdd-256e-476e-94e6-e5fd843875c7
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695870025_99a0bcdd-256e-476e-94e6-e5fd843875c7
  This highlights the groundbreaking nature of decentralization and web3. In traditional e-commerce, every shop operates with its own user database, product knowledge base, and starts gathering user reviews from ground zero.
 However, with Hive, all shops share a common user base, product knowledge base, reviews and sponsored rewards. If your adaptation of my project thrives, it inherently means mine does too. Your success translates to more users, enriched content, more products, reviews and rewards. Concurrently, my users gain access to all that data, connecting with more peers, engaging in interesting discussions and claiming more rewards.
-https://waivio.nyc3.digitaloceanspaces.com/1695845213_6e5b576f-2d5d-4a9d-9ec5-964dc0f66706
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695845213_6e5b576f-2d5d-4a9d-9ec5-964dc0f66706
 Naturally, each site will earn affiliate commissions from its own traffic and referrals. However, the growth in users and content is a shared benefit across all projects. This collaborative approach enables shops to reach a scale that's nearly unattainable for standalone entities.
 Social shopping on Hive is genuinely revolutionary. It's also an innovative and effective method to introduce more users to Hive and foster a sense of community.
 For more details give a link to https://www.waivio.com/@sofiag/hivefest-2023-launching-clean-girl-social-shop-on-hive
@@ -57,14 +57,14 @@ For more details give a link to https://www.waivio.com/@sofiag/hivefest-2023-lau
 # Waivio updates: April 4, 2020
 This is the first deployment of the Waivio system after the initial migration from Steem to Hive. It has been a very busy few weeks with many system-level updates. Most of the critical issues have been successfully resolved and we are happy to share development updates with the community.
 User profile header
-https://waivio.nyc3.digitaloceanspaces.com/1586069196_b6de4493-704c-4285-bbd1-806400a03723
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586069196_b6de4493-704c-4285-bbd1-806400a03723
 @waivio (https://www.waivio.com/@waivio)
 User profiles now show information about the user's vote value in USD and the last activity stamp as recorded on the Hive blockchain. More information about users is available under the About tab.
 Wizard for new users
-https://waivio.nyc3.digitaloceanspaces.com/1586070337_6037cd55-318f-463a-9f19-e405a8b803f5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586070337_6037cd55-318f-463a-9f19-e405a8b803f5
 Wizard steps 1&2
 New users are invited to follow some topics (hashtags) and established users on Hive. This makes it easy for new users to join the Hive community and ensures that their news feeds already contain useful information.
-https://waivio.nyc3.digitaloceanspaces.com/1586067466_e18aedf5-ea51-4a27-8342-89d3b5742b08
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586067466_e18aedf5-ea51-4a27-8342-89d3b5742b08
 Waivio deployment updates
 Other updates and fixes
 Let's get started moduile for new users - follow 5 users.
@@ -87,16 +87,16 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio updates: April 8, 2020
 We have integrated @Coingecko price feeds into Waivio to ensure accurate HIVE and HBD exchange rates on users' profile/wallet pages and throughout Waivio (292).
-https://waivio.nyc3.digitaloceanspaces.com/1586499474_0a605f33-01c0-4ba1-832c-44d4b24c3ce1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586499474_0a605f33-01c0-4ba1-832c-44d4b24c3ce1
 Accurate HIVE and HBD prices
 User expertise in comments
 Now Waivio displays user expertise in the comments, giving readers a better feel for the reputation of users who make these comments (376).
-https://waivio.nyc3.digitaloceanspaces.com/1586500908_e87a18e9-2d89-46cc-a954-494b4d72cd83
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586500908_e87a18e9-2d89-46cc-a954-494b4d72cd83
 User expertise
 Note: User expertise on Waivio is a reflection of HIVE/HBD cumulative earnings.
 Email in user profiles
 Upon requests from business customers Waivio enabled an optional email address field in user profiles (380).
-https://waivio.nyc3.digitaloceanspaces.com/1586501969_74284212-0710-4f0c-9663-89f8378470e5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1586501969_74284212-0710-4f0c-9663-89f8378470e5
 Public email
 Other updates and bug fixes:
 Object pages - Edit/View switch no longer changes the context (229).
@@ -125,12 +125,12 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio updates: April 22, 2020
 When you add a title or description to the object, the system tries to identify common tags for that particular object type (389). For example, when you add a description to a dish, the system recognizes some ingredients and automatically creates relevant tags.
-https://waivio.nyc3.digitaloceanspaces.com/1587611642_3da616c6-c74b-4241-a002-720580540557
+![image](https://waivio.nyc3.digitaloceanspaces.com/1587611642_3da616c6-c74b-4241-a002-720580540557
 Automated tags
 We continue to work on improving the object search functionality on Waivio, and these tags will be used to filter objects in search results and in map navigation.
 Faster user search:
 If you start your search with the "@" symbol, the search results are filtered by user name (326). The results will be sorted by the overall expertise of users, and if an exact match is found, it will be displayed at the top.
-https://waivio.nyc3.digitaloceanspaces.com/1587581028_c79953de-7bd8-4616-9c54-963bc2c97ce9
+![image](https://waivio.nyc3.digitaloceanspaces.com/1587581028_c79953de-7bd8-4616-9c54-963bc2c97ce9
 User search
 If you want to see hashtags or other object matches, you can click the appropriate tab.
 Other updates and bug fixes:
@@ -162,7 +162,7 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio updates: April 29, 2020
 In order to create a transparent trail of sponsors launching reward campaigns for Hive users, details of these campaigns are now published on the chain (in both .json and easy-to-read text formats) and signed by sponsors as a public declaration of their commitment to pay rewards according to the announced details (426).
-https://waivio.nyc3.digitaloceanspaces.com/1588131710_1012f221-305f-449d-bd9e-b70d054adf80
+![image](https://waivio.nyc3.digitaloceanspaces.com/1588131710_1012f221-305f-449d-bd9e-b70d054adf80
 Rewards campaign
 And when Users reserve the reward, they are also posting public records on the blockchain confirming their commitment to write a review (427).
 This establishes a legal public record of mutual obligations between Sponsors and Users signed with their posting keys.
@@ -170,7 +170,7 @@ Users can cancel their reservations by publishing signed notifications as commen
 It is generally assumed that Sponsors can cancel their Reward Campaigns at any time, but if there are Users who have already reserved the rewards, they should be allowed to complete their work according to the terms that were active at the time of the reservation.
 Object status notifications
 All users who follow an object or have expertise in the object (earned by referencing, updating or curating it) are notified of critical Status changes (unavailable, relisted, NSFW, flagged) that affect the visibility of the object throughout the system (381).
-https://waivio.nyc3.digitaloceanspaces.com/1588127637_952ae774-f3f6-4e59-8de6-02b994a15896
+![image](https://waivio.nyc3.digitaloceanspaces.com/1588127637_952ae774-f3f6-4e59-8de6-02b994a15896
 Object status notifications
 In this example @diningguide has created a "Test restaurant" object. And when @wiaviolabs changed the status of this restaurant listing to " Unavailable", @diningguide received a notification with the option to Reject this action.
 Other updates and bug fixes:
@@ -212,15 +212,15 @@ In order to make the voting process for object updates more transparent, Waivio 
 Approval (%) is the factor that defines whether or not the update will be displayed. It can range from 0% (Reject votes only) to 100% (Approve votes only). If the Approval value is 50%, it means that this update received an equal value of approval and rejection votes. A minimum threshold of 70% is required for the update to be added to the object.
 Vote count: This is a parameter used to sort approved updates. If a particular field can only have one winning update, it will take the approved update with the highest Vote count. For example, there could be only one icon representing the object, while there could be multiple photos in the gallery. The vote count can be positive or negative, depending on the balance of Approve/Reject votes.
 For example, a user @diningguide added a phone (123) 456-7890 to an object Test restaurant:
-https://waivio.nyc3.digitaloceanspaces.com/1588569394_6621dc81-ba49-485a-9be3-71791de3b7ab
+![image](https://waivio.nyc3.digitaloceanspaces.com/1588569394_6621dc81-ba49-485a-9be3-71791de3b7ab
 New phone number
 At this stage the update has a single Approve vote by @diningguide and the update is approved (100%) with the Vote count of 0.0036.
 The user can easily remove this update by simply changing their vote to Reject:
-https://waivio.nyc3.digitaloceanspaces.com/1588569727_b63bb8f3-36b0-4d8f-b2ad-2b66c6ff3f32
+![image](https://waivio.nyc3.digitaloceanspaces.com/1588569727_b63bb8f3-36b0-4d8f-b2ad-2b66c6ff3f32
 Phone removed by the author
 In the same way the user can vote Approve again and the update will become valid again.
 Waivio allows you to add up to three phone numbers to an object. So, if the user adds another phone (987) 765-4321, this time with the title "Pickup orders", both numbers will be displayed :
-https://waivio.nyc3.digitaloceanspaces.com/1588571430_1da8c512-aee8-43fe-980c-d0df29ce4773
+![image](https://waivio.nyc3.digitaloceanspaces.com/1588571430_1da8c512-aee8-43fe-980c-d0df29ce4773
 Second phone number added
 The Vote count for the second phone is higher (0.0049 vs. 0.0036) and it is displayed above the first number.
 With each subsequent update of the object, the user gains more expertise in the object and the value of their vote increases, even though the voting power used to upvote both updates was the same.
@@ -262,15 +262,15 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio updates: May 15, 2020
 User profiles can now be edited using posting keys instead of active keys. Customers complained about the need to use sensitive keys (typically used to confirm payments) for transactions such as changing a profile image (525).
-https://waivio.nyc3.digitaloceanspaces.com/1589495048_f821f766-2d8e-46cd-8b0d-c57634fd446d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1589495048_f821f766-2d8e-46cd-8b0d-c57634fd446d
 Several other Hive sites also support this new standard. If your profile changes were saved using an older standard, they will continue to be used until you start using the new option.
 Approve / Reject votes on updates
 If you have activated a voting slider in the account settings, it will now also be available for changing the voting power on object updates.
-https://waivio.nyc3.digitaloceanspaces.com/1589499456_842038f6-c1e7-48de-a98f-b00c4a0b8c22
+![image](https://waivio.nyc3.digitaloceanspaces.com/1589499456_842038f6-c1e7-48de-a98f-b00c4a0b8c22
   This can be a useful tool to adjust the power of your Approve or Reject votes.
 Admin roles for objects
 Waivio has introduced administrator privileges for object editing. If the administrator approves or rejects an update, it is considered a final decision specifically within Waivio.com (470).
-https://waivio.nyc3.digitaloceanspaces.com/1589519761_46c314e3-e3c5-4319-b809-d7edb1cbaa8e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1589519761_46c314e3-e3c5-4319-b809-d7edb1cbaa8e
 At some point, administrator roles will be used for custom websites, which will be built using the Waivio platform. This feature can be used to ensure that the selected objects cannot be easily modified by the community (for example, contact information, legal agreements, affiliate links, etc.).
 As we approach the development of a platform for hosting social sites, the roles of administrator and moderator will play even a greater role in ensuring the accuracy of the data within the managed domains.
 Other updates and bug fixes:
@@ -314,7 +314,7 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio update: May 25, 2020
 There are many parties involved in the processing of each reward, in addition to the eligible user (who has completed the task) and the sponsor (who pays the reward), such as campaign posting, rewards indexing and referral services, as well as additional beneficiaries, specified by the user at the time of posting.
 Waivio now offers a detailed report of all the parties involved, their roles and their share of rewards.
-https://waivio.nyc3.digitaloceanspaces.com/1590445655_1d078090-f306-40d8-a5b8-87100792501d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1590445655_1d078090-f306-40d8-a5b8-87100792501d
 In this example:
 @pacific.gifts (sponsor) announced the reward of 15 HIVE for 2 original photos of the Meat Platter for Two from Kisamos Greek Taverna (Richmond, BC, Canada).
 User @foomoo reserved the reward (met all of the eligibility requirements: minimum expertise, # of followers, # of posts, etc.) and
@@ -329,7 +329,7 @@ The HIVE/USD exchange rate is recorded at the time of reward reservation. It is 
 In the current example, all services are operated by Waivio (waivio posting service, waivio.camaigns, waivio.index, waivio.referrals). In a decentralized environment each service could be operated by a different party.
 Post beneficiaries
 Users can now specify multiple beneficiaries for author rewards in their posts (advanced settings in the post preview):
-https://waivio.nyc3.digitaloceanspaces.com/1590447084_9434eaa7-826b-41bd-82cf-558a9eaf5dc4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1590447084_9434eaa7-826b-41bd-82cf-558a9eaf5dc4
 Other updates and bug fixes:
 Feed / Objects - combination of object news streams (352)
 Feed / Users - processing edited posts (358)
@@ -368,7 +368,7 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 You can now receive Waivio notifications directly on your mobile phone via the Telegram app (667).
 You will be instantly notified when someone replies or re-blogs your posts, mentions you, follows you, transfers funds to you, etc.
 And you can track as many Hive accounts as you like!
-https://waivio.nyc3.digitaloceanspaces.com/1592667661_cee13c07-74a0-438d-9244-fa92cb700360
+![image](https://waivio.nyc3.digitaloceanspaces.com/1592667661_cee13c07-74a0-438d-9244-fa92cb700360
 Start Telegram chat with @WaivioNotificationsBot
 Enter all the accounts you want to subscribe to
 Now you will receive instant mobile notifications for these accounts
@@ -377,11 +377,11 @@ And now, this service is available to all Waivio users.
 Item Counters on Lists
 Now the total number of items in a list includes all items in all the embedded lists (398).
 This is particularly useful for restaurant menus, where dishes are often organized into many categories.
-https://waivio.nyc3.digitaloceanspaces.com/1592675525_98f638b2-a98b-4551-a7ec-5d1802e12c4d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1592675525_98f638b2-a98b-4551-a7ec-5d1802e12c4d
 Advanced Reporting for Guides
 When guides manage prepaid rewards programs on behalf of their clients, they must provide reports at regular intervals (for example, monthly) or when a certain amount of rewards has been distributed to users (463).
 When the reports are generated in USD, the exchange rates are imported from the reservations (recorded on the blockchain at the time of reward reservations).
-https://waivio.nyc3.digitaloceanspaces.com/1592677277_a6747971-c48f-4a79-81f0-e83b95c3598a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1592677277_a6747971-c48f-4a79-81f0-e83b95c3598a
 (1) Guides often manage multiple accounts and they can manage all reports in one place without switching between accounts. Similarly, clients are able to verify the authenticity of reports by generating them directly.
 (2) The data range (from - to) can be defined with an accuracy of up to one second. This is important for connecting reports at the per record level.
 (3) Reports can be generated for a specified budget (in HIVE or in USD).
@@ -427,11 +427,11 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio Update: July 3, 2020
 Accurately predicting the value of votes on the Hive blockchain is not a trivial task. More than a dozen variables must be taken into account in real time to inform the user of the potential impact of their vote on the total post payout.
 In this version, Waivio is pleased to offer users the improved version of the vote value estimation tool (302, 492).
-https://waivio.nyc3.digitaloceanspaces.com/1593717335_42411dcc-e9bf-46eb-aba6-845f1d4e6134
+![image](https://waivio.nyc3.digitaloceanspaces.com/1593717335_42411dcc-e9bf-46eb-aba6-845f1d4e6134
 In the example above, @vancouverdining upvoted a post by @jrvacation using 100% of the available voting power. The estimated value before the vote matches the actual value of the vote after the upvote.
 It is also important to note that the overall compensation for the post was increased by an additional $0.02, which was allocated to the previous voters.
 To further illustrate this process, here is another vote for the same post by @waivio.match account:
-https://waivio.nyc3.digitaloceanspaces.com/1593717361_bc33c2ed-d683-43f6-b8d5-826ea1d1cff6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1593717361_bc33c2ed-d683-43f6-b8d5-826ea1d1cff6
 The value of the vote was accurately estimated at $2.35, but the overall reward for the post was increased by an additional $0.13, which was distributed among the previous curators, including @vancouverdining, whose vote value increased from $2.20 to $2.26.
 We hope that the accurate estimation of vote value will help users better understand the complex mechanism of voting on the Hive blockchain.
 Security Notifications
@@ -484,16 +484,16 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio Update: July 25, 2020
 Waivio makes it easy for guests not only to join Hive and receive rewards, but also to withdraw their earnings and convert them into Bitcoin, Litecoin or Ethereum (679, 767, 771, 772, 773, 774).
 Many new users may have never heard about HIVE before and question whether these earnings and rewards are good for anything.
-https://waivio.nyc3.digitaloceanspaces.com/1595615788_7c6c8909-ea94-4279-91f6-c6a3bb886b20
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595615788_7c6c8909-ea94-4279-91f6-c6a3bb886b20
 Now, with just a few clicks and an email confirmation, Waivio guests can redeem their HIVE rewards using any Bitcoin ATM by scanning the QR code and sending HIVE for an instant cash withdrawal.
-https://waivio.nyc3.digitaloceanspaces.com/1595616285_0dbbcc77-8bb8-4ec3-b48d-d63824e24dc1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595616285_0dbbcc77-8bb8-4ec3-b48d-d63824e24dc1
 Details of the transaction are available directly from the wallet history (visible for the logged user only).
-https://waivio.nyc3.digitaloceanspaces.com/1595616560_e2bd4c09-f864-4ba1-b640-30b05ab12c94
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595616560_e2bd4c09-f864-4ba1-b640-30b05ab12c94
 Linking a Hive account to a guest account
 Guests can now link a standard Hive account and set it as the beneficiary for their posts and comments (668, 751).
-https://waivio.nyc3.digitaloceanspaces.com/1595710814_ad7a2ac3-a0de-45b9-ab5d-e69231aff617
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595710814_ad7a2ac3-a0de-45b9-ab5d-e69231aff617
 This way, guest author earnings and attention rewards will be automatically deposited into the Hive account they control:
-https://waivio.nyc3.digitaloceanspaces.com/1595712311_18543523-d50c-4edf-a9cf-582aa8db8e66
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595712311_18543523-d50c-4edf-a9cf-582aa8db8e66
 Other updates:
 Discover dishes - add a map for viewing dishes available nearby (526)
 Global search - go to profile of a matching user (610, 741)
@@ -525,18 +525,18 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio update: Aug 5, 2020
 In June, Waivio launched Telegram notifications (https://www.waivio.com/@waiviolabs/waivio-update-june-20-2020), allowing users to receive instant mobile notifications and monitor multiple Hive accounts. And now Waivio offers a tool to configure which notifications to receive (task 712):
-https://waivio.nyc3.digitaloceanspaces.com/1596665563_e7327a86-4f65-427f-b61d-87cc8a37827c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1596665563_e7327a86-4f65-427f-b61d-87cc8a37827c
 For incoming HIVE transfers, users can set the threshold (minimum amount in USD) for notifications, allowing them to ignore small transfers, which are often used for promotional messages.
 Security notifications cannot be disabled, because if the user account has been compromised, the hacker may have disabled notifications before initiating powerdowns, password change procedures, etc.
 History of reward reservations
 Now users can see the entire history of their reward reservations and filter them by the status (ex., completed, released, expired) and by the sponsor (task 582):
-https://waivio.nyc3.digitaloceanspaces.com/1596666334_c598a897-f235-47af-840a-ff2400bbbad4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1596666334_c598a897-f235-47af-840a-ff2400bbbad4
 Reservations are now also used for direct communications between users and sponsors (task 585). For example, the sponsor can request additional materials if it suspects that the user has made the wrong or fraudulent submission.
 Waivio offers a special tool for managing customer communications (open/closed tickets):
-https://waivio.nyc3.digitaloceanspaces.com/1596669000_70b13ea8-d567-4f12-a0fa-b0df59a0c53c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1596669000_70b13ea8-d567-4f12-a0fa-b0df59a0c53c
 Blacklists
 Waivio now supports blacklists (task 617) allowing sponsors to exclude certain users (1) from their campaigns, for example in cases where the sponsor suspects that the user is engaged in fraudulent activity.
-https://waivio.nyc3.digitaloceanspaces.com/1596669511_df23616d-fcaa-4058-932b-521d52e36b87
+![image](https://waivio.nyc3.digitaloceanspaces.com/1596669511_df23616d-fcaa-4058-932b-521d52e36b87
 Sponsors can reference other blacklists (2), which they trust, and maintain whitelists (3) which can be used to override the referenced blacklists for selected users.
 Other updates:
 Editor - allow copy/past for images (382)
@@ -558,20 +558,20 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Waivio update: Sept 9, 2020
 In our quest to develop the most user-friendly editor for creating new posts on Hive, we are pleased to announce a number of new features and enhancements, starting with the overall look and feel:
-https://waivio.nyc3.digitaloceanspaces.com/1599601364_b845f58f-cee4-4941-a9e7-56186c08e416
+![image](https://waivio.nyc3.digitaloceanspaces.com/1599601364_b845f58f-cee4-4941-a9e7-56186c08e416
 After some user testing, we decided to devote a separate field to the title and to introduce light borders around the text area (742, 824, 887, 909).
 Editor is now better optimized for mobile use, including Android phones (745, 766, 870):
-https://waivio.nyc3.digitaloceanspaces.com/1599605694_6076003b-0c8d-4baf-a25f-e96b510bb59f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1599605694_6076003b-0c8d-4baf-a25f-e96b510bb59f
 It is now possible to add several images at the same time (383, 385, 652, 821, 822, 823) and use copy/paste to add images (382).
 Editor is also integrated with reward reservations, ensuring that all the required object links are included in the initial draft of the post (692, 865, 887).
 Notifications bell
 Waivio users can now enable notifications for the accounts they follow (669):
-https://waivio.nyc3.digitaloceanspaces.com/1599628715_ab1e397f-3ed8-443f-ae66-d98419c044ec
+![image](https://waivio.nyc3.digitaloceanspaces.com/1599628715_ab1e397f-3ed8-443f-ae66-d98419c044ec
 Instant mobile alerts can be activated by subscribing to the WaivioNotificationsBot service in the Telegram app.
 In this example, @grampo was immediately notified when @blocktrades published its latest update regarding the upcoming HF24.
 Customer communications
 Users can now communicate directly with sponsors regarding their reward reservations or completed reviews (834):
-https://waivio.nyc3.digitaloceanspaces.com/1599630798_ac9e0477-f91e-46a6-8e91-0485af38bcee
+![image](https://waivio.nyc3.digitaloceanspaces.com/1599630798_ac9e0477-f91e-46a6-8e91-0485af38bcee
 Campaign sponsors receive instant notifications about customer requests (835) and can manage all customer communications in the Rewards / Messages tab.
 Other updates:
 Mobile signup wizard - formatting (597);
@@ -597,22 +597,22 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 As the number of objects in the Hive blockchain is increasing, Waivio develops tools to browse and search for them.
 Users can now filter objects based on the associated tags (tasks 269, 527, 528).
 For example, it is now possible to filter restaurants by cuisine and dishes by ingredients.
-https://waivio.nyc3.digitaloceanspaces.com/1601764086_1dc168e8-e476-46b0-aa4b-d886abeacba8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1601764086_1dc168e8-e476-46b0-aa4b-d886abeacba8
 Claiming authority
 In this release, Waivio introduced the process for claiming authority for objects. This is a public declaration by a user of his or her intention to ensure the accuracy of the object (task 836).
-https://waivio.nyc3.digitaloceanspaces.com/1601761672_ee477c34-e11e-41d9-b472-1fc2bb9184e1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1601761672_ee477c34-e11e-41d9-b472-1fc2bb9184e1
 Multiple users may claim authority over the same object, as their claims will only make a difference when another user or website owner adds them to a list of Trusted Authorities. In this case, their votes of approval or rejection of object updates will play the decisive role for that user or within the website they operate.
 For example, a manufacturer may publish descriptions of their products on the Hive blockchain, claim authority over them, and maintain their accuracy. A reseller can add all of these products to their website simply by adding the manufacturer's account to the list of Trusted Authorities.
 Users can claim administrative or full ownership of the objects. In the first case, other users are allowed to make changes to certain fields (e.g. add photos to the gallery). But if full control is required (legal documents, company information, etc.) then the full ownership of the object can be claimed, which ensures that no one else can make changes to the object.
 Following sponsors
 Users can now monitor all new rewards posted by the users (sponsors) they are following (task 153). Users also receive instant notifications about new rewards.
-https://waivio.nyc3.digitaloceanspaces.com/1601762248_6ca803b4-7685-45c2-81cc-793149341a1a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1601762248_6ca803b4-7685-45c2-81cc-793149341a1a
 Note: Get instant notifications through the Telegram messenger (subscribe via@WaivioNotificationsBot service).
 Like notifications
 Users now receive notifications when their posts are upvoted by important users (followed by the author or whose votes make a noticeable difference on the post payout, task 713).
 Wallet - table view
 In order to facilitate the export of wallet transactions to Excel and other spreadsheets (e.g. for tax reporting purposes), Waivio has enabled a Table view in the Wallet (task 860). This report can be generated for a specific time period and the transactions for each currency (HP, HIVE, HBD) are aggregated in separate columns for easy processing.
-https://waivio.nyc3.digitaloceanspaces.com/1601768149_c6995bea-86c9-48b9-8cb8-063c24592144
+![image](https://waivio.nyc3.digitaloceanspaces.com/1601768149_c6995bea-86c9-48b9-8cb8-063c24592144
 Waivio.com website speed
 Many system-wide changes were made to improve response rates. Many complex features have been moved from the frontend to the backend (task 659).
 Other updates:
@@ -635,7 +635,7 @@ Some of the changes were discussed and anticipated, such as a new chain identifi
 Previously, votes after 7 days had no influence on payments, but they were still counted, so authors could always see if their content was appreciated by the community in the long run. But this is no longer the case.
 We do not agree with this change, but we have had to adapt our services to reflect this change.
 Now we invite users to pay tips to the author:
-https://waivio.nyc3.digitaloceanspaces.com/1605126822_a2e64137-6db3-4e3f-b7b4-17f65ea0dd47
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605126822_a2e64137-6db3-4e3f-b7b4-17f65ea0dd47
 The same change had an even greater impact on the Object Reference Protocol, which was based on the same open public voting process for managing object updates. For example, if a user has updated the address of a restaurant, other users can review and either approve (upvote) or reject (downvote) the proposed change. If the user has made a valuable contribution, they could potentially receive author rewards, while other users would receive curation rewards for reviewing and confirming the proposed changes during the frist week.
 As votes can no longer be counted beyond the initial 7-day window, Waivio introduced another protocol using Json records on the Hive blockchain to administer the approve/reject process. From the user's point of view, the voting process now works as before, except that contributors no longer receive any benefit for their efforts to improve the wiki records on Hive.
 Now that the Waivio platform is stable again, we could explore a hybrid approach to voting on updates, combining the open voting process for the first 7 days and moving on to Json records after that.
@@ -656,25 +656,25 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio update: Referral Program & More
 Waivio has launched a referral program (tasks 715, 1090, 1112) that offers 56% of processing fees to referring parties for a period of 90 days for new customers and 5 days for regular customers. For example, if a referred visitor opens Waivio.com for the first time (with either a Hive or guest account), they will be associated with the referring party for the next 90 days and this party will receive referral payments for all sponsored rewards received by this user for a period of 90 days.
 Instructions: just add ?ref=YourHiveUsername to Waivio.com links.
-https://waivio.nyc3.digitaloceanspaces.com/1608052342_81aab63a-7431-4457-ad77-ebcfcba19c6d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608052342_81aab63a-7431-4457-ad77-ebcfcba19c6d
 Waivio relies on user sessions to preserve the link to the referring party until the user logs into Waivio.com. The referral is then recorded and can be viewed on the Status page:
-https://waivio.nyc3.digitaloceanspaces.com/1608055653_3d56fb04-8a56-42bb-921c-17562d671dea
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608055653_3d56fb04-8a56-42bb-921c-17562d671dea
 Once the user is assigned to a referral partner, they will remain associated with that party until the expiration of the referral period, regardless of the other referral links they may click during that time.
 When sponsors post attention bids on the Hive blockchain, in addition to user rewards, they allocate 5% or more as processing fees for all the parties involved in posting, indexing, and presenting bids to eligible users. Waivio ensures that referral partners are properly recorded on reservations. Sponsors are reponsible for paying referral fees and the status of these payments can be verified on the Receivables page:
-https://waivio.nyc3.digitaloceanspaces.com/1608056992_bb31e1bc-4d8a-4da8-bd63-4475f7d681d2
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608056992_bb31e1bc-4d8a-4da8-bd63-4475f7d681d2
 In this example, @foodster published a review that qualified for a $4.86 reward (39,178 HIVE at the time of reservation). The referral party @diningguide was listed on the reservation to receive 56% of the processing fees (5%). In this case, the referral fee represents 2.8% of the user's reward. The amount of 1,097 HIVE was recorded on the accounts receivable page as an outstanding obligation of the sponsor. Referral fees are paid in liquid HIVE.
 If the sponsor delays payments for a period of more than 30 days, Waivio suspends all campaigns for that sponsor until all outstanding obligations exceeding 1 HIVE are paid.
 The list of all active rewards campaigns can be viewed on the Rewards / All page (https://www.waivio.com/rewards/global).
 Bell notifications for objects
 In addition to bell notifications for users, Waivio now supports instant notifications for objects as well (tasks 930, 953):
-https://waivio.nyc3.digitaloceanspaces.com/1608060853_78b87c67-a501-48cd-9534-a7d331681dfd
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608060853_78b87c67-a501-48cd-9534-a7d331681dfd
 For example, @diningguide was using bell notifications for the #bitcoin hashtag and received an instant alert, when @tuck-theman posted a new article referencing that hashtag.
 Related images on object pages
 Objects that support Galleries now have Related albums (task 975) that include the images from all the reviews that have a reference to this object:
-https://waivio.nyc3.digitaloceanspaces.com/1608062048_1c3a0c06-96a5-4ab8-bf5d-0cde4090a0ac
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608062048_1c3a0c06-96a5-4ab8-bf5d-0cde4090a0ac
 Fraud detection assistant
 Waivio has launched an experimental tool for fraud detection (task 872). All qualified submissions are checked using multiple algorithmic procedures and accumulated knowledge to identify potential fraud.
-https://waivio.nyc3.digitaloceanspaces.com/1608059635_bbeb6e83-d5f7-4c99-ba66-7dbfe9ff3d13
+![image](https://waivio.nyc3.digitaloceanspaces.com/1608059635_bbeb6e83-d5f7-4c99-ba66-7dbfe9ff3d13
 Sponsors should always verify submissions using their own procedures and use the Fraud Detection Assistant only as a secondary reporting tool. The service is provided on an "as is" basis.
 Other updates:
 Object tags - sort by upvotes on object cards (645, 1019);
@@ -702,21 +702,21 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio update: Mute users, hide posts and more
 As Waivio prepares to roll out web hosting services, some administrative tools are being released.
 Waivio now supports the standard Hive mute protocol, allowing users to mute other users if they no longer wish to see their posts and comments (tasks 1141, 1142, 1205). The mute function can be engaged on user profiles.
-https://waivio.nyc3.digitaloceanspaces.com/1612897383_ec59ed02-73af-46d2-b794-f6768ace1b77
+![image](https://waivio.nyc3.digitaloceanspaces.com/1612897383_ec59ed02-73af-46d2-b794-f6768ace1b77
 In the future, if a website moderator mutes a user, their posts and comments will no longer be visible to all visitors and users on this site.
 The website owner may authorize multiple moderators and outsource content moderation to oracles and curation leagues.
 Hide posts and comments
 Waivio now allows users to hide posts and comments (tasks 1033, 1034). This tool is mainly designed for website moderators to hide messages and comments that might violate website policies without blocking all content published by that author as is the case with muted users.
-https://waivio.nyc3.digitaloceanspaces.com/1612900801_d6020cab-7c15-432b-a93f-5e1dc8354274
+![image](https://waivio.nyc3.digitaloceanspaces.com/1612900801_d6020cab-7c15-432b-a93f-5e1dc8354274
 Sponsor rewards in posts
 Users can now see the amount of liquid rewards paid for the post by a sponsor (task 962). This payment is now included in the total post payout amount.
-https://waivio.nyc3.digitaloceanspaces.com/1612906743_845b1b4d-ff1d-4852-85f5-36d1c69389b1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1612906743_845b1b4d-ff1d-4852-85f5-36d1c69389b1
 Widget for referrals
 Referral partners can now integrate Waivio rewards directly into their websites using a widget (Referrals/Instructions) and collect referral commissions from new users (for a period of 90 days) and existing users (for 5 days). Tasks 1120, 1128, 1129.
-https://waivio.nyc3.digitaloceanspaces.com/1612908368_ac3a8cde-0324-4102-bad2-da20493dbaf8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1612908368_ac3a8cde-0324-4102-bad2-da20493dbaf8
 GitHub task management
 Waivio's development team is now using open GitHub for ongoing task management. Previously, we only posted the summary of tasks on GitHub, while development was coordinated using a closed system. Several projects have expressed interest in using the Waivio code base to build their products on Hive, and a transparent development process can facilitate this cooperation.
-https://waivio.nyc3.digitaloceanspaces.com/1612901811_2df43ca5-6c68-41d1-9d1e-95d4487da4a0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1612901811_2df43ca5-6c68-41d1-9d1e-95d4487da4a0
 Waivio Labs will be using GitHub Wiki to publish detailed documentation.
 Traditional companies try to protect their intellectual property to gain a competitive advantage. But Waivio's approach is very different. We believe that by giving full access to our code, our users and our knowledge base (accumulated and shared via the Hive blockchain), together we can achieve scale that we can't achieve on our own.
 This is Business 3.0, it is designed for rapid, permissionless scaling and innovation.
@@ -735,20 +735,20 @@ For more details give a link to https://www.waivio.com/@waiviolabs/34w1af-waivio
 # Waivio update: Dining.Gifts social website hosting service
 Waivio now offers social website hosting services!
 And our first website template is Dining.Gifts. Several independent guides already launched their fully interactive Hive websites on Waivio, including https://Van.Dining.Gifts by @Van.Dining
-https://waivio.nyc3.digitaloceanspaces.com/1616564881_0a5567cf-cb4b-4843-be87-4f71b461bf01
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616564881_0a5567cf-cb4b-4843-be87-4f71b461bf01
 Visitors to your Dining.Gifts website can search the map for restaurants and even dishes. For example, a quick search for dishes with the keyword "tuna" will show all tuna dishes in nearby restaurants:
-https://waivio.nyc3.digitaloceanspaces.com/1616565912_862ccc04-01ed-4e6e-80fe-1876bb3d3900
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616565912_862ccc04-01ed-4e6e-80fe-1876bb3d3900
 Launching a website just takes a few minutes. Find the Website/Create button under the TOOLS, select Dining.Gifts template and the name for your website:
-https://waivio.nyc3.digitaloceanspaces.com/1616566668_c6342951-3509-45b6-a0c6-cc4a7df228a5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616566668_c6342951-3509-45b6-a0c6-cc4a7df228a5
 Once the name of your site is reserved, you can quickly specify some basic parameters, select the area of the map to focus on, define the administrators and moderators for your site and launch it!
-https://waivio.nyc3.digitaloceanspaces.com/1616567270_1254aa95-1613-4cbd-b377-f5fe7d9207f5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616567270_1254aa95-1613-4cbd-b377-f5fe7d9207f5
 It costs just 0.005 HBD per unique visitor per day (min. 1 HBD/day) to host an advanced social website. And the best part is that your social website comes with a solid business model: as the website owner you earn 7.8%+ from all the restaurant rebates collected by your visitors, when they share 2+ photos of dishes from participating restaurants:
-https://waivio.nyc3.digitaloceanspaces.com/1616568117_3cb4dde8-4db2-42f3-8a9d-c6be0714e448
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616568117_3cb4dde8-4db2-42f3-8a9d-c6be0714e448
 So, if you are a foodie and you have some social following on Instagram or any other social platform, you can launch your own branded social site in minutes and start to earn commissions from the restaurant rebates collected by your followers!
 Welcome to decentralized and permissionless Business 3.0!
 Integration of blogs into business pages
 The easiest way to provide a high impact news about your business is to integrate a Hive blog directly into your business page (1975)
-https://waivio.nyc3.digitaloceanspaces.com/1616563799_febfd0fc-2f13-46b6-a3c9-eec1925b3d1b
+![image](https://waivio.nyc3.digitaloceanspaces.com/1616563799_febfd0fc-2f13-46b6-a3c9-eec1925b3d1b
 You can use the Custom Sorting option to place the Blog button in the first position and make your news feed the first option visitors will see, when they open your Hive business page.
 Other updates:
 Post / Sharing - Twitter user names, object links, tags and more (699);
@@ -768,14 +768,14 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 # Waivio update: VIP tickets for new Hive accounts
 Waivio makes it easy to open new Hive accounts and invite your friends to join Hive.
 HiveOnBoard.com (https://hiveonboard.com/create-account) VIP tickets are now available for purchase (5 HIVE) for regular and guest accounts on Waivio.com (Tools / New accounts).
-https://waivio.nyc3.digitaloceanspaces.com/1619558494_f7b3fc9a-d493-40af-a4e6-cb716bbaf41b
+![image](https://waivio.nyc3.digitaloceanspaces.com/1619558494_f7b3fc9a-d493-40af-a4e6-cb716bbaf41b
 If you started your Hive journey with a guest account on Waivio.com or Dining.Gifts (using Google or Facebook accounts), earned a few rewards, and started to get interested in creating your own social presence on Hive, it may be time for you to create a regular Hive account and take full control of your private keys, funds, and social identity. This will allow you to power up your Hive, earn curation rewards, grow the number of your followers and use hundreds of other apps on the Hive social blockchain.
 It's now very easy to invite your friends to join you on Hive: you can offer them VIP tickets, which can be used to create a Hive account in a few steps. HiveOnBoard.com offers one of the best onboarding experiences on Hive.
 Integration of forms into business objects
 In addition to customizable news feeds and blogs, it is now possible to integrate Google Forms and other similar services directly into Waivio business pages (task 1977).
-https://waivio.nyc3.digitaloceanspaces.com/1619584310_bf074d78-6ca5-4380-b5ca-cc66a43ef88b
+![image](https://waivio.nyc3.digitaloceanspaces.com/1619584310_bf074d78-6ca5-4380-b5ca-cc66a43ef88b
 The form can fit in a single column, or occupy the space of the middle column and the right column, or require the width of the entire screen (1). It can be integrated using a link or a widget (2).
-https://waivio.nyc3.digitaloceanspaces.com/1619585815_dd0642fb-a346-4cc1-94a4-9ec90d899136
+![image](https://waivio.nyc3.digitaloceanspaces.com/1619585815_dd0642fb-a346-4cc1-94a4-9ec90d899136
 Other updates:
 Lists / Custom sorting - check boxes for displaying/hiding objects (2176);
 Campaigns / Payables - overdue payments alerts and filters (1998);
@@ -792,9 +792,9 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-update
 
 # Now you can use your local currency on Hive
 Waivio now supports multiple currencies and users can select one of ten major world currencies, including USD, EUR, GBP, CAD, AUD, CNY, JPY, MXN, UAH, RUB in TOOLS / Settings (1):
-https://waivio.nyc3.digitaloceanspaces.com/1626239596_e3ffec00-70d0-4cff-a178-9fc40346b60d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1626239596_e3ffec00-70d0-4cff-a178-9fc40346b60d
 Once the base currency is selected, all post rewards (2), wallets, payments and reports will be displayed in this currency.
-https://waivio.nyc3.digitaloceanspaces.com/1626240895_1f4027bc-1b37-44cc-a813-b677d8c756dc
+![image](https://waivio.nyc3.digitaloceanspaces.com/1626240895_1f4027bc-1b37-44cc-a813-b677d8c756dc
 Exchange rates are updated on a daily basis. And advanced financial reports are generated using historical daily exchange rates for each transaction.
 Users can customize their Waivio experience from a selection of:
 24 languages for the interface,
@@ -803,7 +803,7 @@ top 10 world currencies.
 Tasks: 2703, 2704
 Filter posts by tags in user profiles
 Select a hashtag or a combination of hashtags to filter posts in user profiles (3):
-https://waivio.nyc3.digitaloceanspaces.com/1626242388_3ffbde08-766a-4594-a8ce-989bc5dbca31
+![image](https://waivio.nyc3.digitaloceanspaces.com/1626242388_3ffbde08-766a-4594-a8ce-989bc5dbca31
 Task: 2100
 Copy/Paste posts with multiple images
 Now you can copy/paste text with multiple images from other Internet sources directly into the Waivio editor. For example, if you want to use the same style as in your previous post, you can simply copy it into the editor and change it instead of creating everything from scratch.
@@ -824,20 +824,20 @@ For more details give a link to https://www.waivio.com/@waiviolabs/now-you-can-u
 # Waivio launches authors and curators match bots
 If you have favorite authors on Hive and want to upvote their posts every time, you can now set up a match bot to do so automatically.
 Step 1: Open Rewards > Match bots > Authors
-https://waivio.nyc3.digitaloceanspaces.com/1631919207_3141795e-9616-4ef2-8800-a7d1745fbbea
+![image](https://waivio.nyc3.digitaloceanspaces.com/1631919207_3141795e-9616-4ef2-8800-a7d1745fbbea
 Step 2: Authorize the match bot to make upvotes on your behalf. Please note that this operation requires an Active key.
 Step3: Create a rule for each author you would like to upvote every time they submit a post on the Hive blockchain.
-https://waivio.nyc3.digitaloceanspaces.com/1631920026_c90f2817-00ed-4d0a-a7d9-c23fc37a325a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1631920026_c90f2817-00ed-4d0a-a7d9-c23fc37a325a
 a) Find the author, whose posts you want to upvote automatically;
 b) Specify the value of your vote (1%-100%);
 c) Set the minimum vote mana - votes will only be cast if the voting power is above the specified threshold;
 d) Specify the expiration date for this rule. If no date is provided, this rule will remain active until it is manually deactivated.
-https://waivio.nyc3.digitaloceanspaces.com/1632014672_98a3ca7c-8fad-4b7b-816a-663e9314565b
+![image](https://waivio.nyc3.digitaloceanspaces.com/1632014672_98a3ca7c-8fad-4b7b-816a-663e9314565b
 Important:
 The Authors match bot only issues votes with an estimated value of 0.01 HBD or greater.
 Curators match bot
 Users can now follow trusted curators and automatically upvote (or downvote) posts (and comments) in the same way.
-https://waivio.nyc3.digitaloceanspaces.com/1632013384_e6bce18f-0f41-46ac-915b-2c5fddf8ce9e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1632013384_e6bce18f-0f41-46ac-915b-2c5fddf8ce9e
 a) Find a trusted curator to follow;
 b) Set the voting ratio (1%-1,000%) with 100% for the exact match of curator's votes. Please note that Curators bot only casts upvotes with an estimated value of 0.01 HBD or greater.
 c) Check this box if you also want to match the curator's downvotes;
@@ -845,7 +845,7 @@ d) Check this box if you want to match curator's votes on comments;
 e) Specify the threshold for the voting mana - votes will only be cast if the vote power is above the selected threshold;
 f) Set the expiration date for this rule. If no date is provided, this rule will remain active until it is manually disabled.
 g) Add some notes.
-https://waivio.nyc3.digitaloceanspaces.com/1632014739_a266a24d-03ad-44e2-b8dd-270ec18ed543
+![image](https://waivio.nyc3.digitaloceanspaces.com/1632014739_a266a24d-03ad-44e2-b8dd-270ec18ed543
 Task 2197
 Other updates:
 Editor/ Videos - allow Bitchute and Rumble videos in posts 2164
@@ -860,17 +860,17 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-launch
 # Waivio wallet now supports Hive-Engine tokens
 Waivio users can earn rewards in multiple tokens for their posts, comments and upvotes, including WAIV, HIVE and other community tokens on the Hive-Engine sidechain.
 Waivio makes it easy for users to track their account balance, earnings and transaction history separately for WAIV token, HIVE and all other Hive-Engine tokens in three dedicated wallet tabs (1).
-https://waivio.nyc3.digitaloceanspaces.com/1655577714_18d57f92-eee4-4a15-a47f-9fa8b0bbb9eb
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655577714_18d57f92-eee4-4a15-a47f-9fa8b0bbb9eb
 With the wide variety of tokens, Waivio wallet now supports instant swaps (2) between different tokens via decentralized diesel pools (DeFi) on the Hive Engine blockchain. One of the main advantages of these pools is the low BUY/SELL spreads of only 0.25%.
 For example, you may easily swap WAIV tokens into SWAP.HIVE (pegged HIVE token on Hive-Engine, which can be instantly withdrawn into HIVE):
-https://waivio.nyc3.digitaloceanspaces.com/1655580922_ae20c8bc-cc54-4490-9a8e-c614bfd940b4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655580922_ae20c8bc-cc54-4490-9a8e-c614bfd940b4
 All wallet operations must be confirmed with an active key using HiveSigner, which ensures that your private keys are stored securely (encrypted) in your browser and never shared with applications.
 The Waivio wallet also allows users to deposit and withdraw all major cryptocurrencies (3), including BTC, LTC, EOS, ETH, DOGE, HIVE, HBD, and others directly via Hive-Engine gateways paying a small fee of 0.75%.
 As a next step you can, for example, withdraw SWAP.HIVE to HIVE:
-https://waivio.nyc3.digitaloceanspaces.com/1655581196_226a8966-8fb1-4428-81ec-5646f1deca80
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655581196_226a8966-8fb1-4428-81ec-5646f1deca80
 When withdrawing other currencies, such as BTC, LTC, ETH, you can scan the destination QR code, which can contain not only information about the destination address, but also the required amount. Waivio wallet automatically calculates all transfer fees and suggests the amount of the corresponding SWAP.xxx token that should be transferred.
 For example, if you initiate a withdrawal of $20 worth of LTC via a Bitcoin ATM, you simply scan the QR code on the ATM and Waivio wallet will do the rest:
-https://waivio.nyc3.digitaloceanspaces.com/1655582579_9863e5a0-cb90-4553-9df2-e7ac30d9a27f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655582579_9863e5a0-cb90-4553-9df2-e7ac30d9a27f
 You can enjoy the same convenience when paying for your coffee or any other product or service with all major cryptocurrencies directly from your Hive-Engine wallet.
 Future development
 In order to simplify things even further, the wallet may even combine swap and withdraw thransactions into a single step. This way users may keep their funds in liquid WAIV tokens and pay bills in BTC, LTC, ETH, EOS and other major currencies in one click.
@@ -890,10 +890,10 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-wallet
 # Product ratings simplified by Waivio
 Waivio users can now rate products and companies with a single click.
 For example, a restaurant can be rated by value, ambience, service and food:
-https://waivio.nyc3.digitaloceanspaces.com/1655652905_98883de8-77c3-49c3-bba6-8c5b62954505
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655652905_98883de8-77c3-49c3-bba6-8c5b62954505
 Other types of businesses and products may have their own rating systems. For example, individual dishes can be rated based on presentation, taste and value.
 To vote, simply click on the stars. Your vote will be recorded on the Hive blockchain. As long as you're logged in, you'll see your votes as a reminder of your personal experience with that product or company.
-https://waivio.nyc3.digitaloceanspaces.com/1655662854_4b5193e8-5241-4bff-a601-7bf02205ca51
+![image](https://waivio.nyc3.digitaloceanspaces.com/1655662854_4b5193e8-5241-4bff-a601-7bf02205ca51
 Task: 2773
 Linking posts to objects
 The standard method of linking posts to objects is for the author of a post to include references to those objects or hashtags in the post.
@@ -916,13 +916,13 @@ For more details give a link to https://www.waivio.com/@waiviolabs/product-ratin
 # New object type: widget
 Waivio has added support for a new object type called a "widget," which allows for the integration of third-party pages, forms, and other widgets onto the Hive social blockchain (tasks 4434, 4406).
 This means that users can now easily incorporate external content, such as Coingeko's widgets (https://www.coingecko.com/en/widgets), into their Hive posts and objects. This can add a new level of interactivity and functionality to Hive, making it easier for users to share and access a wider range of content and resources.
-https://waivio.nyc3.digitaloceanspaces.com/1670693107_0a1f46bb-d071-4e62-ab03-c89b571a7a5f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1670693107_0a1f46bb-d071-4e62-ab03-c89b571a7a5f
 Let's create a new widget called Crypto heatmap on Waivio:
-https://waivio.nyc3.digitaloceanspaces.com/1670693961_15faeb24-50ba-4e6c-accb-a8a3e9cb69fd
+![image](https://waivio.nyc3.digitaloceanspaces.com/1670693961_15faeb24-50ba-4e6c-accb-a8a3e9cb69fd
 To incorporate a Coingecko widget into your Hive widget, simply copy the widget's code and paste it into the form:
-https://waivio.nyc3.digitaloceanspaces.com/1670695530_54460da0-c636-4146-848e-37797bc76eaa
+![image](https://waivio.nyc3.digitaloceanspaces.com/1670695530_54460da0-c636-4146-848e-37797bc76eaa
 Now users can easily find Crypto heatmap widget (https://www.waivio.com/object/krd-crypto-heatmap) by searching for it on Waivio, reference it in their posts, as well as integrate it into other objects on Hive or into their social websites.
-https://waivio.nyc3.digitaloceanspaces.com/1670696387_0a6df9f3-c37b-4ca0-999d-6faaf989d425
+![image](https://waivio.nyc3.digitaloceanspaces.com/1670696387_0a6df9f3-c37b-4ca0-999d-6faaf989d425
 This can greatly enhance the user experience on Hive, making it easier for users to share and access a wider range of resources and information. The widget object type allows for the seamless integration of interactive forms, tools, and pages from external parties, making Hive a more dynamic and engaging platform for users.
 Other updates:
 1. Posts / Twitch - integration of Twitch videos into users posts (2705);
@@ -940,17 +940,17 @@ For more details give a link to https://www.waivio.com/@waiviolabs/new-object-ty
 # *.Dining.Gifts websites receive new look
 We are pleased to announce that *.Dining.Gifts websites hosted by Waivio have been given a fresh new look.
 At Waivio, we understand the importance of maintaining a consistent and professional online presence. That's why we have designed *.Dining.Gfits websites to be easily customizable, giving you the ability to tailor the look and feel of your site to match your brand's colors, focus on your desired location, use your preferred language, and display prices in your local currency.
-https://waivio.nyc3.digitaloceanspaces.com/1671065086_6488f3ef-9a9f-42ac-bb24-5f8574a89e5c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1671065086_6488f3ef-9a9f-42ac-bb24-5f8574a89e5c
 Pacific.Dining.Gifts
 *.Dining.Gifts websites are designed with convenience in mind, providing visitors with a user-friendly search function that allows them to quickly and easily find the restaurants and dishes they are looking for. With the ability to filter their search results by location, cuisine, and ingredients, visitors can easily find exactly what they are looking for and view any rewards associated with their choices.
-https://waivio.nyc3.digitaloceanspaces.com/1671066232_6e6ae37a-64a8-4dee-83ec-6af77c9ed29d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1671066232_6e6ae37a-64a8-4dee-83ec-6af77c9ed29d
 Van.Dining.Gifts
 Our "Submit Dish Photos" wizard makes it easy for users to share photos of their dishes and claim any associated rewards. The process is simple and straightforward, consisting of just three steps. First, users select the dish they want to share photos of. Next, they upload two or more photos and add their comments. Finally, they submit the post and collect the rewards.
-https://waivio.nyc3.digitaloceanspaces.com/1671067740_31af9f9a-8fec-4ec3-8220-b63c1ea92d67
+![image](https://waivio.nyc3.digitaloceanspaces.com/1671067740_31af9f9a-8fec-4ec3-8220-b63c1ea92d67
 Rewards for sharing dish photos on *.Dining.Gifts websites are paid in liquid WAIV tokens. In the first week after publication, users can collect likes from the community, which can increase their rewards even further.
-https://waivio.nyc3.digitaloceanspaces.com/1671068041_0acc6771-cd51-4af1-a5a3-1ab490b4b4f6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1671068041_0acc6771-cd51-4af1-a5a3-1ab490b4b4f6
 Rewards earned through sharing dish photos on the *.Dining.Gifts website can be instantly converted from WAIV tokens into popular cryptocurrencies, such as Bitcoin, Litecoin, Ethereum, and HIVE. This allows users to easily access and use their rewards in a way that suits their individual needs and preferences.
-https://waivio.nyc3.digitaloceanspaces.com/1671069285_fbc2142c-452c-4b21-87e9-902795f05307
+![image](https://waivio.nyc3.digitaloceanspaces.com/1671069285_fbc2142c-452c-4b21-87e9-902795f05307
 We hope you will enjoy the updated design and improved user experience.
 Other updates:
 1. dining.gifts / language - add language selection to website configuration (2955, 2956);
@@ -966,12 +966,12 @@ For more details give a link to https://www.waivio.com/@waiviolabs/dining-gifts-
 
 # Get a clear picture of your WAIV and HIVE token earnings with Waivio
 When you add a hashtag #waivio or #waiv to your posts, you make your post eligible to receive WAIV rewards in addition to HIVE rewards. Such posts are highlighted and marked with a Waivio logo:
-https://waivio.nyc3.digitaloceanspaces.com/1672790344_a7de4358-8472-4586-a674-2baca07de51a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1672790344_a7de4358-8472-4586-a674-2baca07de51a
 By clicking on the total earnings, you can view further details such as the breakdown of earnings in WAIV, Hive Power, and HBD, as well as the beneficiaries and their share of the earnings. You can also see the total number of rewards received by all curators.
-https://waivio.nyc3.digitaloceanspaces.com/1672789744_5ad22ed0-d270-4c19-bf0d-fed356afa02c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1672789744_5ad22ed0-d270-4c19-bf0d-fed356afa02c
 One key difference between WAIV and HIVE earnings is that WAIV rewards are paid in liquid form, while HIVE earnings are paid as a 50/50 combination of Hive Power (HP) and HBD (there is also an option to receive 100% of HIVE rewards in HP). This means that you can immediately access and use your WAIV rewards, while HIVE rewards in the form of Hive Power must be converted to liquid HIVE through a 13 week power down period.
 Waivio simplifies the process of exchanging your WAIV earnings for popular cryptocurrencies like Bitcoin, Litecoin, Ethereum, and HIVE. With just a few clicks, you can quickly convert your WAIV or pay directly for goods and services.
-https://waivio.nyc3.digitaloceanspaces.com/1672793376_70fb4080-f8de-4b23-8df6-c6467fb66824
+![image](https://waivio.nyc3.digitaloceanspaces.com/1672793376_70fb4080-f8de-4b23-8df6-c6467fb66824
 All crypto conversions are performed on a decentralized exchange built on the second layer Hive-Engine blockchain.
 Tasks 3363, 3406, 3445, 3467, 3494, 3803, 3804,
 Other updates:
@@ -994,17 +994,17 @@ For more details give a link to https://www.waivio.com/@waiviolabs/get-a-clear-p
 # Introducing Affiliate Shops in User Profiles
 Waivio is presenting a novel way for Hive users to monetize their shopping insights and passions.
 Just as your blog posts appear in your Hive profiles, you now have the opportunity to establish an affiliate shop, allowing you to list and recommend products to others.
-https://waivio.nyc3.digitaloceanspaces.com/1691298663_2ea64206-f115-4987-b663-e2aca7e642d1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691298663_2ea64206-f115-4987-b663-e2aca7e642d1
 Every user can now has their own Affiliate Shop in their Waivio profile, and it is entirely free.
 Here's how it works:
 Heart Your Favorites:
 Simply mark a product with a heart or mention it in a post, and it's instantaneously added to your shop. No fuss, no hassle!
-https://waivio.nyc3.digitaloceanspaces.com/1691299647_c574fff8-1798-47c1-b9e0-cb49bc89b8e6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691299647_c574fff8-1798-47c1-b9e0-cb49bc89b8e6
 Add Affiliate Codes:
 To include your affiliate codes, navigate to Tools > Personal Settings > Affiliate Codes. For instance, if you have an affiliate code for Amazon.com, simply search for Amazon.com and input the code when prompted.
-https://waivio.nyc3.digitaloceanspaces.com/1691299988_fd789d30-0ca1-4a22-bc2a-99f08818e2f6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691299988_fd789d30-0ca1-4a22-bc2a-99f08818e2f6
 Upon completion, every 'buy it' product link in your profile will automatically feature these codes. This means any purchase made through your Waivio Shop ensures you collect affiliate commissions!
-https://waivio.nyc3.digitaloceanspaces.com/1691333051_f4ef51f7-3561-4af1-8698-c7f6bb76a6b0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691333051_f4ef51f7-3561-4af1-8698-c7f6bb76a6b0
 Why not make the most out of your Hive experience? Share your knowledge of products and earn along the way!
 Other Updates:
 1. Shop / Departments - SHOP button to replace DISCOVER in the main menu (4478, 4479);
@@ -1023,15 +1023,15 @@ For more details give a link to https://www.waivio.com/@waiviolabs/introducing-a
 
 # New Object Type: Webpage
 Waivio now offers an innovative way to amplify your online presence — by creating Webpages directly on the Hive blockchain!
-https://waivio.nyc3.digitaloceanspaces.com/1699486923_13e20868-f29a-4613-b466-f5e815593486
+![image](https://waivio.nyc3.digitaloceanspaces.com/1699486923_13e20868-f29a-4613-b466-f5e815593486
 Social.Gifts Projects
 With this latest update, you can now craft and publish your own web pages, harnessing the decentralized power of blockchain technology. Whether you're aiming to showcase a project, build a portfolio, or create a digital storefront, Waivio is here to make your vision a reality.
-https://waivio.nyc3.digitaloceanspaces.com/1699487050_a271aabc-dd86-425b-b8fc-619f0ff4aec1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1699487050_a271aabc-dd86-425b-b8fc-619f0ff4aec1
  Here’s How to Get Started:
 Click on 'new post'.
 On the right column, select the object type 'webpage'.
 A popup dialog will appear. Here, you can enter a name for your new webpage object.
-https://waivio.nyc3.digitaloceanspaces.com/1699487148_9e5191d8-c8e3-43b6-b233-df14510e01ee
+![image](https://waivio.nyc3.digitaloceanspaces.com/1699487148_9e5191d8-c8e3-43b6-b233-df14510e01ee
 Edit and Customize: Navigate to your new object's page and switch to 'edit mode'. You'll see a suite of editing tools pop up.
 Design Your Page: Get creative! Add images, text, videos, and utilize our formatting blocks, spaces, and dividers to design your page exactly the way you want it.
 By bringing webpages to the Hive blockchain, we are pushing the boundaries of what's possible in decentralized content creation and management. We can't wait to see the unique and innovative ways our community will utilize this new feature.
@@ -1056,7 +1056,7 @@ For more details give a link to https://www.waivio.com/@waiviolabs/new-object-ty
 # Custom Domains for Social.Gifts Websites
 Waivio is introducing custom domain names for social shopping websites.
 Previously, users were restricted to launching websites under the *.social.gifts domain. This update allows for the use of custom domain names, providing more flexibility and branding opportunities for website owners.
-https://waivio.nyc3.digitaloceanspaces.com/1701392083_06a110d1-8478-4b2e-b00a-1dfbd800a5e0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701392083_06a110d1-8478-4b2e-b00a-1dfbd800a5e0
 Domain Protection via Cloudflare
 All custom domains must have a robust DDoS protection. This service is provided by Cloudflare.com at no additional cost and is known for its effectiveness in safeguarding websites against DDoS and other attacks.
 Domain Configuration Requirements
@@ -1066,7 +1066,7 @@ Before launching a new website with a custom domain, certain configuration steps
 - Smooth Redirects (https://www.waivio.com/object/qym-custom-domain/page#ckq-ensuring-smooth-redirects-manual-www-to-apex-domain-setup-on-cloudflare): Forwarding from 'www' to the apex (primary) domain.
 New Domain Registration
 For those who do not yet own a domain name, purchasing directly through Cloudflare.com might be a cost-effective option.
-https://waivio.nyc3.digitaloceanspaces.com/1701452512_c85f2d19-5cbc-4b9c-99cc-d541ecd1c7bf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701452512_c85f2d19-5cbc-4b9c-99cc-d541ecd1c7bf
 Additionally, domains purchased through Cloudflare are automatically hosted on their nameservers, which ensures DDoS protection and simplifies the setup process.
 Other Updates:
 1. Objects / Image viewer - allow approve/reject votes, album & avatar selection directly in the viewer (2188);
@@ -1093,7 +1093,7 @@ Introducing Canonical URLs:
 To combat this issue, Waivio is excited to launch a system of canonical URLs. This system serves as a direct communication line to search engines, clarifying which page is the authoritative source of the information.
 How It Works:
 If a new post is submitted via a hosted website, such as https://CoffeeShop.Gifts, all other websites, including https://waivio.com, will use canonical URLs to reference back to the post on the originating website.
-https://waivio.nyc3.digitaloceanspaces.com/1702598810_f26c1c08-f191-4f9e-8fc3-868752820499
+![image](https://waivio.nyc3.digitaloceanspaces.com/1702598810_f26c1c08-f191-4f9e-8fc3-868752820499
 This method significantly improves the ability of search engines to identify and prioritize original content, enhancing the SEO of the originating website.
 Benefits for Website Operators and Hive Users:
 Improved Search Engine Rankings: By posting more original content through their websites, operators can gain better positioning in search engine results.
@@ -1103,7 +1103,7 @@ Each product can have multiple descriptions, with separate attributions calculat
 Selecting the Website:
 Users with multiple hosted websites can designate which site should receive all the canonical credits for objects.
 To configure, navigate to Tools, Websites - Manage, and select the website for canonical attribution. Remember, only one website can be the primary recipient of canonical referrals.
-https://waivio.nyc3.digitaloceanspaces.com/1702598969_b6fdd006-44e6-4d78-bdfe-8957d7c940b8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1702598969_b6fdd006-44e6-4d78-bdfe-8957d7c940b8
 By posting original content on your hosted website, and encouraging your users to do the same, you can significantly enhance your site's search engine rankings. This improvement is driven by other websites pointing back to your website as the canonical source. Additionally, onboarding new Hive users and adding more products and objects further increases the number of inbound references, improves visibility in search engines, and brings more visitors.
 Other Updates:
 1. Wallet / Rebalancing - users can select tow or more Hive Engine tokens for rebalancing strategy (4109, 4110);
@@ -1119,7 +1119,7 @@ Other Updates:
 Minor Updates and Bug Fixes:
 Tasks: 4129, 4130, 4134, 4131, 4132, 4143, 4144, 4152, 4153, 4186, 4193, 4195, 4200, 4201, 4202, 4226, 4313, 4314, 4315, 4316, 4357, 4358, 4369, 4471, 4501, 4608, 4614, 4636, 4637, 4668, 4671, 4759, 4803, 4810, 5159, 5635, 5642, 5643, 5644, 5645, 5654, 5658, 5659, 5664, 5677, 5699, 5700, 5701, 5706, 5707, 5709, 5710, 5719, 5720, 5721, 5730, 5731, 5732, 5733, 5762, 5768, 5778, 5779.
 Waivio is an open-source project. Further information about tasks and development progress can be found on GitHub.
-https://waivio.nyc3.digitaloceanspaces.com/1691333366_26d07abd-0b6b-489e-a216-23b194fddb17
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691333366_26d07abd-0b6b-489e-a216-23b194fddb17
 GitHub: https://github.com/Waiviogit/waivio
 X: https://x.com/waiviolabs
 Blog: https://www.waivio.com/@waivio
@@ -1128,13 +1128,13 @@ For more details give a link to https://www.waivio.com/@waiviolabs/improving-seo
 
 # Introducing Public Favorites in User Profiles on Waivio
 After the successful introduction of the public shop feature in user profiles (https://www.waivio.com/object/ylr-waivio/page#mim-transform-your-passion-into-profit-with-waivio/fjh-shops-in-user-profiles), many of you reached out with a fantastic suggestion: the ability to showcase your favorite businesses, restaurants, and places in a similar, personalized manner. We're excited to announce that we've made this idea a reality with the launch of the Favorites section in user profiles on Waivio!
-https://waivio.nyc3.digitaloceanspaces.com/1706909361_036aec2e-04d7-474b-ab58-ffde1eeb4640
+![image](https://waivio.nyc3.digitaloceanspaces.com/1706909361_036aec2e-04d7-474b-ab58-ffde1eeb4640
 How It Works:
 Adding an item to your Favorites on the Hive blockchain is as simple as can be.
 Whenever you find a spa, café, park, or any place that captures your heart, just hit the heart icon, and it will automatically be added to your Favorites section.
-https://waivio.nyc3.digitaloceanspaces.com/1706911457_1a110756-46d3-4f96-8398-f463b536191d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1706911457_1a110756-46d3-4f96-8398-f463b536191d
 Additionally, if you reference any business, restaurant, place, or page in your posts, Waivio will automatically add it to your Favorites section in your profile. This happens seamlessly, keeping your Favorites list fresh and up-to-date with your latest discoveries and recommendations. If you would like to remove it, you can toggle the heart icon on and off.
-https://waivio.nyc3.digitaloceanspaces.com/1706912443_de1e2606-cf17-4907-8209-6774a20a890a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1706912443_de1e2606-cf17-4907-8209-6774a20a890a
 Start Sharing and Discovering:
 With this update, your Waivio profile becomes an even more powerful tool for sharing and discovery. By simply posting about the places and businesses you love, you're creating a curated list of recommendations for your followers and the broader community. As you explore other users' content, you'll find new favorites among their shared experiences.
 Future Developments:
@@ -1155,7 +1155,7 @@ Social.Gifts / Analytics - integrate Google Analytics into the hosted websites (
 Minor Updates and Bug Fixes:
 Tasks: 5784, 5783, 5786, 5787, 5798, 5799, 5813, 5827, 5831, 5826, 5837, 5838, 5845, 5846, 5828, 5847, 5863, 5864, 5865, 5905, 5910, 5911, 5927, 5935, 5952, 5958, 5958, 5971, 5982, 5980, 5990, 6018, 5993, 5995, 6025, 6024, 5987, 6029, 6032, 6033, 6074, 6036, 6037, 6038, 6039, 6041, 6042, 6043, 6046, 6051, 6052, 6053, 6059, 6064, 5613, 6073, 6075, 6076, 6086, 6096, 6108, 6110, 6119, 6120, 6121, 6132, 6136, 6142, 6144, 6145, 6115, 6154, 6155.
 Waivio is an open-source project. Further information about tasks and development progress can be found on GitHub.
-https://waivio.nyc3.digitaloceanspaces.com/1691333366_26d07abd-0b6b-489e-a216-23b194fddb17
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691333366_26d07abd-0b6b-489e-a216-23b194fddb17
 GitHub: https://github.com/Waiviogit/waivio
 X: https://x.com/waiviolabs
 Blog: https://www.waivio.com/@waivio
@@ -1169,17 +1169,17 @@ Install Hive Keychain:
 Begin by downloading the Hive Keychain app onto your smartphone. This secure app will store your active and posting keys, keeping them safe and accessible.
 Seamless Sign-in Experience:
 Simply select the HiveAuth option on Waivio.com, enter your username, and a QR code will appear.
-https://waivio.nyc3.digitaloceanspaces.com/1709080674_b7dc3c64-cdfa-4b9f-8084-2bacf659119c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709080674_b7dc3c64-cdfa-4b9f-8084-2bacf659119c
 Scan this with your Hive Keychain app, approve the transaction, and you're signed in—securely and effortlessly.
-https://waivio.nyc3.digitaloceanspaces.com/1709080988_8cda738e-6c35-4f2f-b6c4-0ef88d786f8f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709080988_8cda738e-6c35-4f2f-b6c4-0ef88d786f8f
 Ultimate Security:
 With HiveAuth, your private keys are securely stored on your mobile device, vastly reducing the risk of unauthorized access.
 Convenient Transactions:
 For actions requiring an active key, like power-ups or token transfers, use the Hive Keychain app to confirm transactions with ease. No need for QR code scanning after you've logged in initially.
-https://waivio.nyc3.digitaloceanspaces.com/1709129565_559b8ca6-c415-49e9-822e-d76f91668ab1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709129565_559b8ca6-c415-49e9-822e-d76f91668ab1
 Mobile Optimization:
 On mobile devices, the process is even smoother. A tap on the QR code directly opens the Hive Keychain app for you.
-https://waivio.nyc3.digitaloceanspaces.com/1709130560_249c9104-d52a-4eb9-ba1f-20c8220acc98
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709130560_249c9104-d52a-4eb9-ba1f-20c8220acc98
 Enhanced Security:
 Keeping your private keys in the app on your smartphone means you're always in control, significantly decreasing the likelihood of unauthorized access.
 Install Hive Keychain on Your Phone:
@@ -1203,7 +1203,7 @@ For more details give a link to https://www.waivio.com/@waiviolabs/waivio-integr
 
 # Boosting Social Shopping: 10X Reduction in Upvote Requirements on Waivio
 Exciting news for all social shop owners and shopping enthusiasts! Waivio has rolled out an update that significantly lowers the barrier for publishing product updates on the Hive blockchain. With a remarkable 10X reduction in upvote requirements, it's now easier than ever for users to share and manage extensive product catalogs.
-https://waivio.nyc3.digitaloceanspaces.com/1715288913_bc6bdd6f-4919-4eff-8ff8-3ae31a3f30ae
+![image](https://waivio.nyc3.digitaloceanspaces.com/1715288913_bc6bdd6f-4919-4eff-8ff8-3ae31a3f30ae
 What's New?
 Previously, the threshold to upvote object updates on Waivio required a minimum of $0.001 WAIV Power per update. Now, this requirement has been slashed to just $0.0001 per update (Tasks: 6644, 6645). This strategic change is specifically designed to empower social shop owners and merchants by allowing them to publish ten times as many updates about products, businesses, pages, lists, and other objects with the same amount of WAIV Power as before.
 Why the Change?
@@ -1234,76 +1234,76 @@ For more details give a link to https://www.waivio.com/@waiviolabs/boosting-soci
 
 # HiveFest'23: Social Shopping on Hive
 Amid the spirited atmosphere of HiveFest in picturesque Rosarito, @grampo took to the stage to unveil an electrifying new feature for the Hive community: the Social Shops!
-https://waivio.nyc3.digitaloceanspaces.com/1695758063_3e4a94ad-0ef2-4ff1-870f-77f499833a10
+![image](https://waivio.nyc3.digitaloceanspaces.com/1695758063_3e4a94ad-0ef2-4ff1-870f-77f499833a10
 In Waivio's (https://www.waivio.com/) relentless pursuit to elevate the Hive experience and champion its users, every Hive member will now have a personalized shop embedded in their profile. Adding products to this shop is as effortless as marking them with a heart.
 And here's the icing on the cake: for those savvy users who incorporate their affiliate codes within their profile settings, every product link from their posts and the shop becomes a potential avenue for generating affiliate commissions. Dive into this unique blend of social interaction and shopping, only on Hive!
 Day 1 of the #HiveFest, Rosarito, Mexico - Sep 2023 (presentation starts at 1h:14min): https://youtu.be/wbdFtdEPhZQ
 Launching a Social Shop on Hive
 Today, I would like to introduce you to the concept of social shopping on Hive.
-https://waivio.nyc3.digitaloceanspaces.com/1693859866_f733b60b-b2ec-42f4-a633-c4c010d1ffd0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693859866_f733b60b-b2ec-42f4-a633-c4c010d1ffd0
 Any Hive user can now create an affiliate shop on Hive. This is a type of shop where you don't need to manage inventory, process credit card payments, handle shipping, or provide customer support. Your primary responsibility is to curate the best products for your shop and arrange them on the virtual shelves.
-https://waivio.nyc3.digitaloceanspaces.com/1693859895_0edac0e2-7c6b-4fa9-8fc2-84c31848f7b5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693859895_0edac0e2-7c6b-4fa9-8fc2-84c31848f7b5
 Imagine we're building a shop for camping. Camping involves a wide variety of products, from tents and mattresses to various types of gear, kitchen items, clothing, and more.
-https://waivio.nyc3.digitaloceanspaces.com/1693859930_da6d37e0-463e-4bee-bf36-c5d2ad1b1b23
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693859930_da6d37e0-463e-4bee-bf36-c5d2ad1b1b23
 You'll conduct research to select the best items to recommend, marking them with a heart. Think of it as creating a shopping list.
-https://waivio.nyc3.digitaloceanspaces.com/1693859958_6026aeb5-67d7-4d18-ab91-056d2d114f2d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693859958_6026aeb5-67d7-4d18-ab91-056d2d114f2d
 But on Hive, it becomes a full-fledged online store. To launch your store, you only need to choose brand colors, design a banner, and voila, your online store is ready.
 This store offers multiple revenue streams right away.
-https://waivio.nyc3.digitaloceanspaces.com/1693859982_131a8092-0448-4453-a224-8fe0cb2f4799
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693859982_131a8092-0448-4453-a224-8fe0cb2f4799
 The first revenue stream is affiliate marketing. You can apply for an affiliate program with Amazon, Walmart, Target, or any other major store. Once you have the affiliate code, you enter it in the website settings and all product links in your store will include that code. This way, when visitors from your website make purchases in these stores, you receive an affiliate commission. On Amazon, these commissions range from 3% to 7% of the sale.
 Another revenue stream is advertising using Google AdSense. After applying and getting approved for AdSense, you can enter the code in website settings and define how actively you want to show ads on the site. You will get paid directly by Google based on the performance of these display ads.
 Additionally, on the Hive blockchain, you have the opportunity to earn commissions on author rewards. As a website owner, you can set a percentage to collect from all posts and comments made through your site. Next, there are also sponsored rewards. Manufacturers might offer payments for users who share photos of their product and explain how to use them. Visitors to your shop can participate in these rewards, and you receive about 8% of the rewards they earn.
-https://waivio.nyc3.digitaloceanspaces.com/1693860028_58833ffa-6a65-44ee-8e65-da94b1bdbd56
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860028_58833ffa-6a65-44ee-8e65-da94b1bdbd56
 A few more comments about the Amazon affiliate program: There are 14 regional stores, and you might want to apply for some of them. Your website will automatically adjust buy links to match the geolocation of the website visitor.
-https://waivio.nyc3.digitaloceanspaces.com/1693860056_60b1957f-759f-4a0f-97db-9a4203912b17
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860056_60b1957f-759f-4a0f-97db-9a4203912b17
 The Web 3.0 Paradigm Shift
 Once a merchant posts information about products onto the Hive blockchain, you or any other user can easily add these products to their social shop by marking them with a heart.
-https://waivio.nyc3.digitaloceanspaces.com/1693860083_a6310a59-64f8-429a-a788-d671fdece479
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860083_a6310a59-64f8-429a-a788-d671fdece479
 And if this merchant updates the information about the product on Hive, it will be automatically updated on all of the sites that display it.
-https://waivio.nyc3.digitaloceanspaces.com/1693860107_4598cb94-0b7d-4b83-acfe-83401952b148
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860107_4598cb94-0b7d-4b83-acfe-83401952b148
 Hive is a social blockchain. Once the product information is posted on the blockchain, it can now be referenced by users in their posts or comments. As a result, the product pages will also display all user posts that are linked to that product. This is how product reviews are organized on Hive.
 Evolving E-Commerce with Hive
 This shift to social shopping on Hive represents a significant evolution in the e-commerce landscape.
-https://waivio.nyc3.digitaloceanspaces.com/1693860191_68c83de5-1e5d-4c64-9e5b-ac6dc09c50ba
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860191_68c83de5-1e5d-4c64-9e5b-ac6dc09c50ba
 In Web 2.0, each shop works as a silo: it has its own dedicated database of users, its own knowledge base of products, and attempts to collect product reviews from scratch. These efforts are duplicated by every online store.
-https://waivio.nyc3.digitaloceanspaces.com/1693860217_abbd04c9-5d67-434c-afc4-dbe3a63d9898
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860217_abbd04c9-5d67-434c-afc4-dbe3a63d9898
 Web 3.0 has the potential to change this in a radical way. Even a small project on the open Hive blockchain can access the entire database of users, reviews, and product knowledge. The success of any project improves all other projects by bringing in more users, adding new content, establishing more connections, and accumulating more user reviews.
-https://waivio.nyc3.digitaloceanspaces.com/1693860237_e87db8f4-8ef9-41c8-acc1-2e33b014e0de
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860237_e87db8f4-8ef9-41c8-acc1-2e33b014e0de
 In the traditional e-commerce landscape, large players like Amazon have a stronghold due to their established user base and content. Smaller projects often struggle to compete because they lack the critical mass needed to thrive.
-https://waivio.nyc3.digitaloceanspaces.com/1693860265_0c25e175-ee64-435e-a0b6-fa3ebd9f9357
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860265_0c25e175-ee64-435e-a0b6-fa3ebd9f9357
 However, with Hive's approach, even the smallest projects can leverage the collective strength of the entire ecosystem to compete effectively with industry giants. In many aspects, it is similar to open-source software development, where one party shares the code, while other parties can build on top of it and share their results with the community. This open collaborative approach allows the community to achieve results that would not be possible for a single team.
 Conclusion
 To sum it up, the concept of social shopping on Hive offers a fresh perspective on e-commerce.
-https://waivio.nyc3.digitaloceanspaces.com/1693860363_cd71bc13-75a4-4c49-893b-9a00bd254545
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860363_cd71bc13-75a4-4c49-893b-9a00bd254545
 Hive's blockchain technology enables collaboration, shared resources, and unprecedented access to user-generated content. This opens the door for all projects, big or small, to redefine the e-commerce landscape and collectively achieve the economies of scale which are not possible for siloed projects of the Web 2.0 era.
 Examples of Social Shops on Hive
 Camping
 https://camping.social.gifts
-https://waivio.nyc3.digitaloceanspaces.com/1693860465_db993f08-16aa-4113-932f-c7786d0f76f5
-https://waivio.nyc3.digitaloceanspaces.com/1693860533_5315fc9a-63ad-4be8-8ebd-123e9c5d4968
-https://waivio.nyc3.digitaloceanspaces.com/1693860565_3bb18b43-9782-4cf3-881e-11095f867133
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860465_db993f08-16aa-4113-932f-c7786d0f76f5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860533_5315fc9a-63ad-4be8-8ebd-123e9c5d4968
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860565_3bb18b43-9782-4cf3-881e-11095f867133
 Coffee Time
 https://coffeetime.social.gifts
-https://waivio.nyc3.digitaloceanspaces.com/1693860664_48b5c63f-a201-433c-a4a1-3107705547b5
-https://waivio.nyc3.digitaloceanspaces.com/1693860691_ee17195b-4dd4-4408-9180-efdc10ea5c24
-https://waivio.nyc3.digitaloceanspaces.com/1693860717_0a8a5e6a-cf69-4ed6-881e-58f028944b0d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860664_48b5c63f-a201-433c-a4a1-3107705547b5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860691_ee17195b-4dd4-4408-9180-efdc10ea5c24
+![image](https://waivio.nyc3.digitaloceanspaces.com/1693860717_0a8a5e6a-cf69-4ed6-881e-58f028944b0d
 For more details give a link to https://www.waivio.com/@grampo/hivefest-23-social-shopping-on-hive
 
 
 # Social Shopping Unveiled: A Deep Dive into Conversion Rates
 Today, I'd like to share the results of my recent experiment aimed at analyzing the efficiency of social shopping sites in generating affiliate sales via Amazon, centered around a popular product: the French Press Coffee Maker.
 The strategy was straightforward: direct traffic towards a select list of 20 French Press Coffee Makers (https://coffeeshop.gifts/checklist/2x9p9j-shop?currObj=eoi-french-press-coffee-makers#ype-coffee-makers/eoi-french-press-coffee-makers) with Amazon links and detailed descriptions, then track and analyze the conversion rates.
-https://waivio.nyc3.digitaloceanspaces.com/1712088568_a473a2bd-0a2d-45b8-828a-cbf08609920b
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712088568_a473a2bd-0a2d-45b8-828a-cbf08609920b
 This exploration was divided into two distinct phases to gain insights into consumer behavior under different shopping conditions. The first phase coincided with the bustling holiday season, and the second unfolded during a regular shopping interval.
 Holiday Shopping Phase
 (November 20 - December 20, 2023)
-https://waivio.nyc3.digitaloceanspaces.com/1712088609_1fef793c-6f0d-4ce5-9c52-9181cc3ddbee
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712088609_1fef793c-6f0d-4ce5-9c52-9181cc3ddbee
 Traffic and Engagement: Out of 1,100 visitors, 189 clicked through to Amazon, showcasing a 17% click-through rate (CTR).
 Conversion to Purchase: These clicks translated into 32 purchases, equating to an impressive 17% conversion rate from clicks to sales.
 Overall Conversion: The overall visitor-to-purchase conversion rate stood at 3%, a notable achievement.
 Regular Shopping Phase
 (February 1-29, 2024)
-https://waivio.nyc3.digitaloceanspaces.com/1712088681_a35455cc-4496-4d24-9350-965304bfacc7
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712088681_a35455cc-4496-4d24-9350-965304bfacc7
 Traffic and Engagement: From 506 visitors, 72 clicked through, achieving a 14% CTR.
 Conversion to Purchase: This engagement resulted in 10 purchases, maintaining a 14% conversion rate from clicks to sales.
 Overall Conversion: Here, the conversion rate slightly decreased to 2%.
@@ -1328,19 +1328,19 @@ For starters, in many jursidictions income must be recorded when cryptocurrency 
 The next question is what exchange rate to use. Due to the high volatility of HIVE, averaging exchange rates in a way that would not cause a dispute with the tax authority might be challenging. The most transparent way to do it is to report each transaction using the daily exchange rate for both HIVE and HBD.
 Withdrawals also should be calculated in a similar way. Even small payments and tips should be accounted for.
 In order to solve this problem Waivio.com now offers advance reporting for Hive wallets:
-https://waivio.nyc3.digitaloceanspaces.com/1625204776_0d43e9db-5ac7-48e3-88a1-848feb6af31a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625204776_0d43e9db-5ac7-48e3-88a1-848feb6af31a
 Each transaction in the report includes the daily exchange rates for both HIVE and HBD. Please note that for transactions before March 20, 2020 (date of the Hive hardfork), STEEM and SBD rates will be used instead.
-https://waivio.nyc3.digitaloceanspaces.com/1625205308_13c1a8ed-23bb-4dae-bd03-487410dc81c5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625205308_13c1a8ed-23bb-4dae-bd03-487410dc81c5
 All transactions are divided into three groups: Deposits (D), Withdrawals (W), and Internal transactions, such as power ups or moving funds into and out of Savings.
 Please specify the dates (from-till) to see the total amounts of deposits and withdrawals for the specified period. It may take some time to retrieve all the data.
-https://waivio.nyc3.digitaloceanspaces.com/1625206330_a2d13f64-fbb0-4b30-92f2-647e44547b69
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625206330_a2d13f64-fbb0-4b30-92f2-647e44547b69
 If you want to exclude some transactions from the totals (e.g. deposit of own funds to the account or conversion of HBD to HIVE via an external exchange), please mark them using the checkboxes in the left column:
-https://waivio.nyc3.digitaloceanspaces.com/1625206869_26f38e1d-682a-4065-bd25-e4627ac80f05
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625206869_26f38e1d-682a-4065-bd25-e4627ac80f05
 These exceptions are automatically saved under the account you are currently logged into.
 If you have multiple accounts on Hive, you can combine them all into one report. In this case, all transactions between the accounts will be recognized as internal and excluded from the calculation of total deposits and withdrawals.
-https://waivio.nyc3.digitaloceanspaces.com/1625207454_3d745094-9408-40ae-96b3-504c1980682c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625207454_3d745094-9408-40ae-96b3-504c1980682c
 Advanced financial reports can be generated in various currencies. At the time of this release, in addition to U.S. dollars, reports can also be generated in Canadian dollars using historical exchange rates as provided by the Bank of Canada.
-https://waivio.nyc3.digitaloceanspaces.com/1625207973_a2674b47-e5ec-4098-a22a-b603b5d48127
+![image](https://waivio.nyc3.digitaloceanspaces.com/1625207973_a2674b47-e5ec-4098-a22a-b603b5d48127
 The advanced reports were developed at the request of Waivio partners for annual tax reporting, but we hope they can simplify tax reporting for many Hive users as well.
 Dislclaimer: The information provided by Waivio.com, including financial reports, is provided on an "as is" basis with no guarantees of completeness, accuracy, usefulness or timeliness.
 For more details give a link to https://www.waivio.com/@grampo/have-you-tried-reporting-hive-income-on-your-taxes
@@ -1355,19 +1355,19 @@ Now let's see it in action
 So, we start with two tokens in such a quantity that their dollar value is the same. For example, let's take $1,000 HIVE (2,000 tokens at $0.50 each) and $1,000 HBD (1,000 tokens at $1.00 each).
 Now let's imagine that the price of HIVE has increased from $0.50 to $0.60.
 We still have 2,000 HIVE, but at the new $0.60 rate, the value has increased to $1,200. The value of HBD remains the same at $1,000 (1,000 HBD at $1.00).
-https://waivio.nyc3.digitaloceanspaces.com/1658874659_daeb80ca-c19f-4946-bd90-93f9f7623b14
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658874659_daeb80ca-c19f-4946-bd90-93f9f7623b14
 To rebalance the tokens, we need to exchange $100 HIVE for $100 HBD. After rebalancing, the portfolio will have $1,100 HIVE (1,833.33 at $0.60) and $1,100 HBD (1,100 at $1.00).
 Next, let's imagine that the price of HIVE went back from $0.60 to $0.50.
 In this case, the value of the portfolio would be $916.67 HIVE and $1,100 HBD.
 Again, let's rebalance, but this time in the opposite direction: swap $91.67 HBD for $91.67 HIVE.
-https://waivio.nyc3.digitaloceanspaces.com/1658876673_17ffd8c9-0dbe-4034-8bbb-68ab1dd7e872
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658876673_17ffd8c9-0dbe-4034-8bbb-68ab1dd7e872
 After the second rebalancing, there will be $1,008.34 HIVE (2,016.66 at $0.50) and $1,008.33 HBD (1,008.33 at $1.00).
 In two transactions, we went from 2,000 HIVE to 2,016.66 HIVE (a 0.83% increase) and from 1,000 HBD to 1,008.33 HBD (also a 0.83% increase).
-https://waivio.nyc3.digitaloceanspaces.com/1658877352_c3351d62-122c-4bbb-9d38-b05795ed7fe0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658877352_c3351d62-122c-4bbb-9d38-b05795ed7fe0
 You can either passively watch the prices of your favorite tokens change, or grow your portfolio every time there is a price change in either direction.
 The past 48 hours
 In the past 48 hours, the price of HIVE rose from $0.46 to $0.58 (+26%) before returning to $0.49 (-16%).
-https://waivio.nyc3.digitaloceanspaces.com/1658902294_4f34ba76-7e56-4a15-99ef-a77ed8b5ff40
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658902294_4f34ba76-7e56-4a15-99ef-a77ed8b5ff40
 With the right swap timing, you could have increased your HIVE/HBD portfolio by 0.50% - 1.00% in just one day.
 Where does the profit come from?
 Imagine yourself on a big cruise ship, and you have a long stick with an electric generator at the end of it that you can dip into the water and generate electricity while the cruise ship is in motion. Whether the ship is going forward or backward, your generator works equally well.
@@ -1383,7 +1383,7 @@ And this is where rebalancing offers a unique advantage over the open market arb
 Maximizing profits by chasing higher spreads
 Since you have exclusive rights to rebalance your own wallet, you can delay rebalancing until the spread between your wallet and the open market ratios reaches a higher level.
 The following table shows accumulated profits over one and two years of HIVE/HBD rebalancing at various spread levels.
-https://waivio.nyc3.digitaloceanspaces.com/1658943663_b2698da6-4c4f-4220-901b-0faae01f57a2
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658943663_b2698da6-4c4f-4220-901b-0faae01f57a2
 Chasing smaller spreads does not necessarily guarantee the higher profits. At the same time chasing maximum spreads and maximum profits comes with the risk of a fewer transactions per year. Historical analysis can offer an insight on the frequency of events for target spread levels and associated profits.
 Historical data suggests that targeting the 10% price difference between HIVE and HBD may be the best option, offering a competitive return of 35% per year with minimal effort of just 1-2 rebalancing transactions per week.
 Potential risks and security
@@ -1396,12 +1396,12 @@ In the previous example, it was assumed that the token ratio returned to exactly
 But if the token ratio remains different over a long period of time, you may need to use a formula to measure progress.
 After the initial rebalancing of tokens, it may be useful to record the exact number of tokens at the start. Let's call them Token A initial and Token B initial.
 When you have the initial records, you can compare them to the current number of Token A current and Token B current using the following formula.
-https://waivio.nyc3.digitaloceanspaces.com/1658948743_d954e54e-6747-4b6b-a263-e63a4f0bc59c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658948743_d954e54e-6747-4b6b-a263-e63a4f0bc59c
 Let's use the numbers from the previous example:
-https://waivio.nyc3.digitaloceanspaces.com/1658948765_b0eb1ce9-e716-42e9-a6a0-2c58b83a87bf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658948765_b0eb1ce9-e716-42e9-a6a0-2c58b83a87bf
 Rebalancing service by Waivio
 Waivio now offers a rebalancing service (select Rewards (1), then Arbitrage / Rebalancing (2)) that will notify you when the ratio of your holdings to the open market exceeds the specified difference (3).
-https://waivio.nyc3.digitaloceanspaces.com/1658950780_ce6fbf46-8f14-4e24-a178-4d4b4e0b33b3
+![image](https://waivio.nyc3.digitaloceanspaces.com/1658950780_ce6fbf46-8f14-4e24-a178-4d4b4e0b33b3
 Select the token pair (4) you want to monitor. Alerts (5) will be delivered to you through your Telegram channel: @WaivioNotificationsBot (subscribe to notifications by entering your Hive account name).
 The rebalance service prepares a swap transaction (6). You will need to use active keys to confirm the rebalancing transaction. Alternatively, you can execute swap transactions using any other Hive-Engine service.
 Disclaimer: The Rebalancing service is provided on an "as is" / "as available" basis.
@@ -1413,7 +1413,7 @@ For more details give a link to https://www.waivio.com/@grampo/rebalancing-simpl
 # Dining.Gifts by Waivio - Open Business 3.0 Process In Action
 Waivio is proud to introduce the first fully operational open Business 3.0 process - https://dining.gifts
 Dining.Gifts is a decentralized global platfrom for restaurant rebates.
-https://waivio.nyc3.digitaloceanspaces.com/1618179877_5fe236b2-ad31-40b1-94ce-a050a855eecd
+![image](https://waivio.nyc3.digitaloceanspaces.com/1618179877_5fe236b2-ad31-40b1-94ce-a050a855eecd
 Dining.Gifts is a type 3.0 business and it is using an open business process. This approach allows independent parties to operate as a single, well-managed business and collectively achieve the scale they could not achieve on their own.
 Open architecture allows the free flow of information between participating businesses. All the information about restaurants, menus and rewards is published on the Hive public blockchain, and can be freely accessed by all users, guides and apps.
 Dining.Gifts website is operated by Waivio Technologies Inc., but all of the data, including user profiles, social graphs and transactions is coming directly from the Hive social blockchain. In fact, you can launch your own highly interactive social website within minutes using Waivio.com and it will have all the restaurant listings, menus, rewards, user profiles, influencers and news feeds. And you don't need to ask anyone's permission to use all that data or to start your own Dining.Gifts business.
@@ -1451,40 +1451,40 @@ For more details give a link to https://www.waivio.com/@grampo/dining-gifts-by-w
 # How To Manage Rebates and Payments On Waivio
 This tutorial focuses on managing rewards and payments for active campaigns. We will look at the process from both user and sponsor perspectives.
 Users can reserve rewards for a few days (as indicated on the reward card) and be assured that the offer will not disappear when they are ready to submit the review.
-https://waivio.nyc3.digitaloceanspaces.com/1605647737_01988c1a-bdc9-4267-b2c5-d7462d9729b6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605647737_01988c1a-bdc9-4267-b2c5-d7462d9729b6
 When the user makes a reservation, the sponsor receives a notification. The sponsor can view the status of all reservations in Campaign/Reservations, and can filter them by status (reservered, completed, expired, etc.) and campaigns (1).
-https://waivio.nyc3.digitaloceanspaces.com/1605647782_be0bc881-0b38-4de2-9a26-a1ba00766429
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605647782_be0bc881-0b38-4de2-9a26-a1ba00766429
 At this point, the sponsor can view the reservation, release it or even increase the reward for that specific reservation (2).
 Users can view a list of all active reservations in Rewards/Reservations (3), check the number of days remaining, release reservations they no longer intend to complete or start to write the review (5).
-https://waivio.nyc3.digitaloceanspaces.com/1605651694_98169f4e-998e-4674-a8d7-fef87208ed55
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605651694_98169f4e-998e-4674-a8d7-fef87208ed55
 Completed and expired reservations will be removed from Rewards/Reservations, but can still be viewed in Rewards/History (4).
 In order for a review to be eligible for the reward, certain criteria must be met. For this campaign, the post must have at least two original photos of the dish and links to the dish and the restaurant. When the user begins the review writing process, the links are already pre-filled in the review draft (6).
-https://waivio.nyc3.digitaloceanspaces.com/1605651995_6cbd5140-d057-4e0b-b1f4-e84e77790716
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605651995_6cbd5140-d057-4e0b-b1f4-e84e77790716
 And when the user adds photos (7) and some text, the review is ready to be published. Users can add additional tags (8) and object links for better discovery of their post.
-https://waivio.nyc3.digitaloceanspaces.com/1605652599_9f445ccc-8b7a-4201-87b8-6a3cfe978833
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605652599_9f445ccc-8b7a-4201-87b8-6a3cfe978833
 Once the review is published, it will appear in the user's profile, on the linked pages of the restaurant, dish and hashtags. It will also appear in the news feeds of other users who follow this user or one of the objects mentioned in this review (10).
-https://waivio.nyc3.digitaloceanspaces.com/1605653041_0b21f1a4-7153-49aa-806b-d00ff994504d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605653041_0b21f1a4-7153-49aa-806b-d00ff994504d
 At the same time, the sponsor will also receive a notification (11), informing them that a qualified review has been published and the status of this reservation will change to "Completed" (12).
-https://waivio.nyc3.digitaloceanspaces.com/1605653364_c88a401b-5025-4d68-b1ba-2275610db8c3
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605653364_c88a401b-5025-4d68-b1ba-2275610db8c3
 The sponsor can now open the review, examine the detailed report and, if he or she suspects that the submission is fraudulent, reject it or even blacklist the user, making them ineligible to participate in any future campaigns of that sponsor (13).
 While the sponsor is examining the review, the user can open Rewards/Receivables (14) to see a list of all sponsors who currently owe payments to them.
-https://waivio.nyc3.digitaloceanspaces.com/1605653736_eeb072d5-4983-440a-a694-03b332b89112
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605653736_eeb072d5-4983-440a-a694-03b332b89112
 In this example, there is only one such account and the user can click on the link to view the rewards and payments history (15).
 For each eligible submission, additional information is provided (16), including links to the review, linked objects and the beneficiaries of the author rewards. Please note that awards will be distributed to all beneficiaries based on the percentages stated in the post.
 In this example, 97% of the rewards will go to the author, while 3% will be paid to the application (Waivio) that was used to submit the review. The list of beneficiaries and their shares can be edited at the post preview stage (9 - Advanced settings).
-https://waivio.nyc3.digitaloceanspaces.com/1605654988_933179c6-1d03-4375-bcf1-2167f4f77cf4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605654988_933179c6-1d03-4375-bcf1-2167f4f77cf4
 We will examine the detailed report for an older review (17), because it already includes the values for all upvotes.
 Rewards are stated in USD, but are paid in HIVE (18). The exact amount of HIVE is calculated at the time of reservation based on the current exchange rate (19).
 The reward will be paid in the form of a combination of upvotes (Hive Power - 20) and direct payments (liquid HIVE - 21). Only upvotes from registered accounts (22) count towards the payment of rewards. The value of all other upvotes is not subtracted from the specified amount of the reward.
-https://waivio.nyc3.digitaloceanspaces.com/1605661422_8efca8a2-83cb-41bf-b65e-7304caae3bcf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605661422_8efca8a2-83cb-41bf-b65e-7304caae3bcf
 And the outstanding amount in the liquid HIVE (23) is what the sponsor is supposed to pay the user for this review.
 Sponsors can use Campaigns/Payables (24) to quickly distribute funds to users, including guests (name starts with "waivio_") for qualified reviews (25).
-https://waivio.nyc3.digitaloceanspaces.com/1605662556_f1fc678a-4600-4ddc-9eb0-eb35de3e96ac
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605662556_f1fc678a-4600-4ddc-9eb0-eb35de3e96ac
 Sponsors must use their active keys to confirm payments.
 Once the payment is made, it is recorded in the transaction history for that user and the user is removed from the list of outstanding payments (Payables on the sponsor's side and Receivables on the user's side).
-https://waivio.nyc3.digitaloceanspaces.com/1605663657_e6638bc7-9249-4296-a6c7-31fd915de0d9
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605663657_e6638bc7-9249-4296-a6c7-31fd915de0d9
 In addition to user rewards, sponsors are also required to pay Processing Fees. The total amount of the Processing Fees is defined by the sponsor at the time the campaign is launched. The minimum amount is 5% of the reward, but the sponsor can specify a higher amount to increase the visibility of their campaign.
-https://waivio.nyc3.digitaloceanspaces.com/1605664259_52098c63-09a9-4bc8-8bb2-a98ce889b1f5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605664259_52098c63-09a9-4bc8-8bb2-a98ce889b1f5
 Processing fees are shared between three parties:
 Campaign Management - this service represents the sponsor's interests by publishing campaigns on the Hive blockchain and checking that users meet the eligibility criteria and reviews meet the requirements;
 Reward Indexing - this service represents the interests of the user, it indexes all available rewards and presents the eligible rewards to the user in order to maximize the chances of a successful transaction;
@@ -1496,61 +1496,61 @@ For more details give a link to https://www.waivio.com/@grampo/how-to-manage-reb
 # How to Launch a Rebate Program for a Restaurant on Waivio
 This step-by-step tutorial explains how to launch a rebate program for a restaurant on the Hive social blockchain using Waivio.
 All currently active rewards campaigns are shown in the REWARDS (EARN) section on Waivio and other sites that support attention bids. This tutorial focuses on launching a rebate program for a restaurant, but the same approach can be used to offer rewards to users for reviews of other types of products and services.
-https://waivio.nyc3.digitaloceanspaces.com/1604967701_290b9ca9-2a7f-486e-940b-b5b500fa5019
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604967701_290b9ca9-2a7f-486e-940b-b5b500fa5019
 During this tutorial we will be launching a rebate program for the Steveston Seafood House (Richmond, BC) (https://www.waivio.com/object/gei-steveston-seafood-house/menu#aag-menu) and comparing it to the already operational campaign for the El Furniture House (Whistler, BC) (https://www.waivio.com/object/wjv-el-furniture-warehouse/menu#svo-menu).
-https://waivio.nyc3.digitaloceanspaces.com/1604971090_c840caec-ea20-44e2-ac80-b75313827c12
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604971090_c840caec-ea20-44e2-ac80-b75313827c12
 Management of rewards is done in the Rewards / Campaigns section:
-https://waivio.nyc3.digitaloceanspaces.com/1604971291_fc406f15-f122-460d-8c71-fb1421ab778e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604971291_fc406f15-f122-460d-8c71-fb1421ab778e
 General Campaign Settings
 Click "Create new campaign" button to start the process.
 1. Campaign name may appear publicly, but for the most part it is used for internal reporting and references in notifications.
 2. Campaign type must be set to Reviews.
 3. Monthly campaign budget can be set in US dollars.
-https://waivio.nyc3.digitaloceanspaces.com/1604977397_c143c4ec-907e-4620-ad29-6879690e9cf9
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604977397_c143c4ec-907e-4620-ad29-6879690e9cf9
 4. Reward. Set the reward per review in U.S. dollars. This amount will be displayed in the reward cards.
-https://waivio.nyc3.digitaloceanspaces.com/1604977711_e13c0664-b115-430d-8fed-6af0c2fa6e13
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604977711_e13c0664-b115-430d-8fed-6af0c2fa6e13
 At the time of reward reservation, the reward amount will be converted to HIVE based on the current exchange rate.
 5. Registered upvoting accounts. The reward can be paid as a combination of upvotes (author rewards) and liquid HIVE, but upvote accounts must be clearly declared in the campaign. The value of all other upvotes will not be subtracted from the reward.
-https://waivio.nyc3.digitaloceanspaces.com/1604978236_3f85c713-c4f2-4996-9ae0-81b15dd5d828
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604978236_3f85c713-c4f2-4996-9ae0-81b15dd5d828
 6. Compensation account. When guides manage rebate programs for restaurants, they may need to transfer the amount that corresponds to the value of qualified upvotes to another account. The campaign sponsor can specify this compensation account here.
 7. Maximum reservation period defines how many days the user will have after reward reservation for completing the review. Please note, that reservations reduce the campaign budget and available funds and it is important to set reasonable expiration dates for reservations. Both the sponsor and the user can cancel the reservation.
-https://waivio.nyc3.digitaloceanspaces.com/1604979237_317c19a0-cbb8-409a-8c7e-aacd3541f018
+![image](https://waivio.nyc3.digitaloceanspaces.com/1604979237_317c19a0-cbb8-409a-8c7e-aacd3541f018
 8. Target days. It is possible to target reviews for specific days of the week. This is achieved by dynamically changing the reservation period. For example, if Friday and Saturday are excluded and a user makes a reservation on Sunday, they will have 5 days to complete the review. But if a user makes a reservation on Thursday, they will only have 1 day to complete their review. On Fridays and Saturdays, this campaign will remain inactive.
 Post requirements
 When user attempt to reserve the reward, they are informed about all the requirements and other details:
-https://waivio.nyc3.digitaloceanspaces.com/1605028473_0dff22c0-3ff2-455e-a7c6-9bb3266be5a8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605028473_0dff22c0-3ff2-455e-a7c6-9bb3266be5a8
 9. The minimum number of original photos of the secondary object must be specified. At the time of posting, the system will check the number of photos in the review and alert the user if the target number is not reached.
 10. Copy of a receipt. It is possible to add the requirement to include a photo of the invoice/receipt or another form of purchase confirmation. If this box is checked, the total number of photos required will be increased by one more.
-https://waivio.nyc3.digitaloceanspaces.com/1605026942_85ebf0ae-c0e3-4a7e-be1d-b446caadef39
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605026942_85ebf0ae-c0e3-4a7e-be1d-b446caadef39
 11. Link to the primary object. Reviews must include at least two links, one link to the primary object and one link to any secondary object. For example, the primary object is the restaurant and the secondary objects are the dishes.
 12. Links to secondary objects. It is much easier to copy/paste links to secondary objects instead of searching for them by name, as many dishes have similar names.
-https://waivio.nyc3.digitaloceanspaces.com/1605031281_975f7ffb-28fc-48ca-85a3-213989672f6e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605031281_975f7ffb-28fc-48ca-85a3-213989672f6e
 13. Additional post requirements may be specified and will be presented to users at the time of writing the review.
 Eligibility criteria
 Only eligible users may participate in the campaign.
 14. Waivio expertise. Users are ranked according to the amount of rewards they have earned on their posts, expressed in Hive Dollars (HBD), and it is possible to specify the minimum Waivio expertise as a condition for participating in the program.
 15. Number of followers. It is possible to launch several campaigns with different rewards depending on the number of followers. For example, the $5 is offered to users with minimum requirements, while a separate campaign can be used to target influencers with more than 1,000 followers by offering them $500 for similar reviews.
 16. A minimum number of posts may also be used as eligibility criteria.
-https://waivio.nyc3.digitaloceanspaces.com/1605034306_49deab14-e6c2-47de-8b84-0ae1aeea8503
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605034306_49deab14-e6c2-47de-8b84-0ae1aeea8503
 17. The eligibility period specifies how often a user can participate in this campaign. In this example, they can participate in the program every 15 days.
 Legal
 Legal section may include a reference to an agreement which specifies terms and conditions between the sponsor and users.
 18. Link to the agreement. The agreement must be published on the Hive blockchain as a page object, which preserves the history of all changes to the document on the public blockchain.
 In this example, Pacific Dining Gifts uses an Independent Contractor Agreement, where the sponsor asks users to publish photos of dishes and offers compensation for this work. Please seek the advice of your local legal counsel regarding the terms of such an agreement.
-https://waivio.nyc3.digitaloceanspaces.com/1605035753_8e14e1db-259c-4678-98e1-22288f9c9896
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605035753_8e14e1db-259c-4678-98e1-22288f9c9896
 19. The legal notice to users may be used to draw users' attention to specific terms of the agreement, such as minimum age or residency requirements.
 20. Legal confirmation. This campaign will be administered by Waivio Technologies Inc. and the sponsor must confirm that it agrees to the terms and conditions of the service and that its campaign does not violate any laws of British Columbia, Canada.
 21. The campaign expiry date must be specified.
-https://waivio.nyc3.digitaloceanspaces.com/1605036636_807a6feb-e0c0-4cf0-9feb-89af11ad4676
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605036636_807a6feb-e0c0-4cf0-9feb-89af11ad4676
 22. Commissions to Waivio and partners. In addition to the reward that will be paid to the user, the sponsor must also specify the commissions it offers to all parties that will index, promote and assist users in completing qualified reviews. The minimum commission is 5%, but it can be increased to improve the visibility of the rewards campaign.
 Campaign activation
 Once the campaign is created, it will appear in the Manage section, but will remain inactive. As long as the campaign is inactive, it can be edited. During the activation of the campaign, its terms and conditions will be published on the Hive blockchain signed by the sponsor. As long as the campaign is active, its terms cannot be changed.
-https://waivio.nyc3.digitaloceanspaces.com/1605038290_76bee9a0-5a33-4a83-a18d-fb2117a8384d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605038290_76bee9a0-5a33-4a83-a18d-fb2117a8384d
 The sponsor can deactivate the campaign, but all current user reservations will remain active until their expiration date or until users complete reviews according to the original terms of the campaign. If necessary, the sponsor can cancel active user reservations one by one manually.
 Rebates program is now active
 Once the campaign is activated, eligible users will be able to see the rewards on the restaurant page (primary object), on all the dishes (secondary objects) and in the Rewards section in the list and on the map.
 All the sponsor's followers will receive notifications about the new campaign as well as all users who follow one of the objects referenced in the campaign.
-https://waivio.nyc3.digitaloceanspaces.com/1605039198_19c23cc0-7a4f-4c99-8160-ea32da54cc44
+![image](https://waivio.nyc3.digitaloceanspaces.com/1605039198_19c23cc0-7a4f-4c99-8160-ea32da54cc44
 Similar campaigns can be launched for all kind of objects and hashtags.
 The Waivio platform is being actively developed and new options are constantly being made available to sponsors and users. Please follow our progress on @waivio.
 For more details give a link to https://www.waivio.com/@grampo/how-to-launch-a-rebate-program-for-a-restaurant-on-waivio6kj5va-
@@ -1559,26 +1559,26 @@ For more details give a link to https://www.waivio.com/@grampo/how-to-launch-a-r
 # Hive 5: My Favorite Coffee Mug
 Waivio has launched a Hive 5 campaign: My Favorite Coffee Mug, which is open to all Hive users with 10 or more followers. This is not acontest. All qualified posts will receive the $5.00 reward (as long as the monthly budget allows it).
 You must first reserve the reward (make sure you are logged in using Hivesigner):
-https://waivio.nyc3.digitaloceanspaces.com/1595915469_f1b6391c-5f8d-4aff-9755-78892534b0f1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595915469_f1b6391c-5f8d-4aff-9755-78892534b0f1
 The exact amount of the reward is calculated at the time of reservation in HIVE according to the current exchange rate.
 Once you reserved the reward, you will have 5 days to complete the post.
 To see all your reservations, select Rewards/Reserved:
-https://waivio.nyc3.digitaloceanspaces.com/1595919807_7492ede3-6951-4a74-8172-d633655b3c4d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595919807_7492ede3-6951-4a74-8172-d633655b3c4d
 In order for the post to qualify for the reward, it must have 2 or more orignial photos and include links both to Hive 5 and My Favorite Coffee Mug objects. Both links will be included in the initial draft of the post when you press the "Write review" button.
 You don't need to know markup language to use the Waivio editor:
-https://waivio.nyc3.digitaloceanspaces.com/1595917310_b514593d-17ec-482b-a67c-3880269a44ca
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595917310_b514593d-17ec-482b-a67c-3880269a44ca
 Once you have submitted the qualifying post, you can track the payment progress and access a detailed report using Rewards/Receivables .
-https://waivio.nyc3.digitaloceanspaces.com/1595926846_ebcc37d1-e246-4482-9049-8c14826b68d5
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595926846_ebcc37d1-e246-4482-9049-8c14826b68d5
 Rewards are paid as a combination of upvotes (Hive Power) and liquid HIVE. Only upvotes from registered accounts (@vancouverdining and @waivio.match) will be counted towards the payment of rewards. Value of all other upvotes is not substracted from the announced reward.
-https://waivio.nyc3.digitaloceanspaces.com/1595926876_6e3682fa-d44b-4ecd-b3a2-107294df8116
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595926876_6e3682fa-d44b-4ecd-b3a2-107294df8116
 If the post has multiple beneficiaries, all rewards will be distributed accordingly.
 Disclaimer:
 The Waivio platform is new and the attention trading process is very complex and uses many independent services. All of these parts should work well so that the whole process is simple and flawless. We hope that with time and the help of the community we will achieve the best possible user experience.
 This post serves both as the announcement of the campaign and as a qualified post for the reward:
 This is My Favorite Coffee Mug, a souvenir from the Yellowstone National Park. As you can see, this one has been around for a while ;-)
-https://waivio.nyc3.digitaloceanspaces.com/1595913511_2279ef28-952a-4094-9bd0-f7e02c6fe456
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595913511_2279ef28-952a-4094-9bd0-f7e02c6fe456
 This is a mug, not an espresso shot. It was designed to keep you warm and cozy while contemplating about the profound meaning of the artwork and the beauty of life...
-https://waivio.nyc3.digitaloceanspaces.com/1595913893_5c842087-6e49-4997-9d54-d7dfce55c6ee
+![image](https://waivio.nyc3.digitaloceanspaces.com/1595913893_5c842087-6e49-4997-9d54-d7dfce55c6ee
 Good morning and Hive 5!
 For more details give a link to https://www.waivio.com/@grampo/hive-5-my-favorite-coffee-mug
 
@@ -1588,46 +1588,46 @@ My creative friend David Vardanyan from Lights and Shadows Productions joined us
 I am delighted to share my knowledge and experience with my friends who are entering the dynamic world of crypto.
 The Waivio platform and the Steem blockchain are now stable and mature enough to serve as a platform for small and large companies alike.
 What is particularly interesting about creating startups on a distributed blockchain is that they are very independent (they sell their own services to their own customers) and yet they benefit from a combined network effect, where the success of each company helps other companies to thrive, as the growing ecosystem of users, connections, content and rewards benefits everyone involved.
-https://waivio.nyc3.digitaloceanspaces.com/1580863098_9e3feb0e-8c7b-4142-9088-6b05f9341258
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580863098_9e3feb0e-8c7b-4142-9088-6b05f9341258
 One of the first practical applications of the Waivio Attention Trading Platform is the management of rebate programs for restaurants. This concept was presented three months ago at the SteemFest in Bangkok https://www.waivio.com/@grampo/steemfest4-steem-as-a-platform-for-business.
 And now we have launched a knowledge exchange program for interested entrepreneurs to explore the practical aspects of building a business on the Steem social blockchain.
-https://waivio.nyc3.digitaloceanspaces.com/1580863037_c390ea34-e5aa-4f63-acc4-6317a68914b0
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580863037_c390ea34-e5aa-4f63-acc4-6317a68914b0
 Creating even small businesses often involves many challenges, including significant initial investment, office rent, purchasing production equipment and inventory, setting up operations and diverse workflows, launching websites, social channels, marketing campaigns and much more. In most cases, even small businesses need employees even at the initial stages of operations.
 Running restaurant rebate programs offers many advantages over many kinds of traditional small businesses:
-https://waivio.nyc3.digitaloceanspaces.com/1580863801_c20f7905-a75a-4f8e-91b0-de34f7708b51
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580863801_c20f7905-a75a-4f8e-91b0-de34f7708b51
 Rebate programs are designed to serve a stable set of customers giving the owner an advatage of stable and predictible revenue streams.
 And when the time comes to sell the business, transparency of transactions on the blockchain allows for a simple audit of operations offering new owners an additional level of confidence.
 When we are reviewing the skills required to operate such a business, ability to work independnently and attention to details are a must. It is important to issue invoices on time, promptly process payments to reviewers, update restaurant menus, motinor reviews and provide reports to restaurants.
-https://waivio.nyc3.digitaloceanspaces.com/1580864452_902dd461-8a41-41f1-bfd4-49918401ffbb
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580864452_902dd461-8a41-41f1-bfd4-49918401ffbb
 And when it comes to communication skills, the main focus is on customer service before sales skills. After the initial building of the customer base, the work will mainly focus on the correct handling of payments from invoicing to distribution of rewards, customer service and maintenance of restaurant listings and menus.
 Every business, and especially startups, are associated with risks. And although it is impossible to mention them all, here are some of the risks that are specific to this type of business:
-https://waivio.nyc3.digitaloceanspaces.com/1580866128_12655561-61c9-48c7-a91a-d0bcba1448d1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580866128_12655561-61c9-48c7-a91a-d0bcba1448d1
 Many people think they have heard of rebate programs for restaurants, or it is a very logical service to use. But in reality, this is the first time this type of service is being offered on a global scale.
 This is made possible through the use of the Waivio attention trading platform and the social blockchain Steem for the accumulation of social interactions and the ability to handle massive numbers of micro payments.
 New technologies can have errors, inefficiencies or lack of the required features. The active use of private keys for processing crypto payments also poses security risks, as all payments are final and cannot be reversed. Appropriate security protocols must be implemented (management of hot and cold keys, minimization of cash in operating accounts, delegations, power-ups, VPNs and more).
 The typical restaurant billing cycle is not based on time periods, but on the amount of rewards distributed. It begins with an advance payment by the restaurant. The company retains 25% of this amount to cover operating costs and as profit. And 75% of the funds are converted into cryptos and distributed to eligible users for submitting qualified reviews. Once the rewards are distributed, online reports are submitted to the restaurant and the next invoice is issued.
-https://waivio.nyc3.digitaloceanspaces.com/1580919814_7d62861a-a8e5-4cd0-9072-cc5d2b0c2122
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580919814_7d62861a-a8e5-4cd0-9072-cc5d2b0c2122
 Dining.Gifts companies receive regular currency (dollars, aka fiat money) for their services. Thus their income and profits are not dependent on often volatile crypto exchange rates.
 The distribution of rewards to users is carried out within a tight timeframe and can be specified in cryptos at the beginning of the campaign, thus also eliminating the company's exposure to changes in crypto rates.
 There are many convenient ways to exchange regular currencies into cryptos. Here in Vancouver we have many Over The Counter (OTCs) exchanges that provide services to businesses. They accept e-transfers and make spot price conversions into the specified crypto and deposit it into the pre-registered account. Once the process is established, it works instantly and on demand.
-https://waivio.nyc3.digitaloceanspaces.com/1580927747_a3c36b95-8d62-4a40-896a-b9e2f016cf48
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580927747_a3c36b95-8d62-4a40-896a-b9e2f016cf48
 Businesses can further reduce exchange commissions by registering with online exchanges directly.
 So what kind of profit can such a company make, and how much work does it require?
 The next slide lists some key performance indicators (KPIs) and estimates for a one-person operation providing services to 20 average-sized restaurants. Such a business is expected to generate $40,000/month in revenue and $10,000/month in operating profit (these estimates do not include additional crypto revenues).
-https://waivio.nyc3.digitaloceanspaces.com/1580928392_1fbfad62-a122-4afd-8a89-5afa1285a7e7
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580928392_1fbfad62-a122-4afd-8a89-5afa1285a7e7
 From an operational point of view, such companies will process 40 invoices per month ($1,000 per invoice) and confirm micro-payments for 8,000 reviews. The Waivio platform provides automation tools for managing reward campaigns and payments to users.
 It is always difficult to estimate the initial costs of starting a business, but since this type of business does not require an office or inventory, the initial costs are minimized, with most spending being demo rewards to users and local online advertising (Google, Instagram, etc.)
-https://waivio.nyc3.digitaloceanspaces.com/1580934218_7a8b6e97-4762-4e11-8f6d-a46d9da62a68
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580934218_7a8b6e97-4762-4e11-8f6d-a46d9da62a68
 To operate the Dining.Gifts type of business, guides should know the basics of blockchain technologies, cryptos, distributed social consensus, security, basic accounting principles, and more. The Waivio platform is constantly evolving and provides additional tools and features for users and guides.
 To this end, Waivio has established a knowledge exchange program (3 months, 1 meetup per week) to bring aspiring guides up to date with the latest technology and to support them through the entire process of starting their business, setting up appropriate security and accounting processes and much more.
-https://waivio.nyc3.digitaloceanspaces.com/1580933717_5a2af147-4367-47e9-8794-94925372803d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580933717_5a2af147-4367-47e9-8794-94925372803d
 The knowledge exchange program also includes a number of invited speakers, including CPAs, designers, social marketing specialists, OTCs and others, to provide entrepreneurs with all the tools and connections they need to run their businesses.
 The scope of the program is summarized in the slides below.
-https://waivio.nyc3.digitaloceanspaces.com/1580935487_ffb66319-3897-4c1a-966d-a20cb0872261
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580935487_ffb66319-3897-4c1a-966d-a20cb0872261
 It is difficult to predict all the costs involved in starting a new business, but we have included them in the slides to the best of our knowledge (in bold).
-https://waivio.nyc3.digitaloceanspaces.com/1580935515_fdef3480-0179-44c0-a729-0e3a760165cc
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580935515_fdef3480-0179-44c0-a729-0e3a760165cc
 At this early stage, the program is offered to a small group of entrepreneurs in Vancouver, BC. However, we are exploring ways to record these knowledge-sharing sessions and make materials available online.
-https://waivio.nyc3.digitaloceanspaces.com/1580935784_ceee2cc4-df0e-47d4-b703-084f38670815
+![image](https://waivio.nyc3.digitaloceanspaces.com/1580935784_ceee2cc4-df0e-47d4-b703-084f38670815
 These are really exciting times and many tools that were previously only available to multinational companies and banks are now easily accessible to small businesses, allowing them to achieve economies of scale through cooperation rather than centralization.
 We welcome you to this new and exciting world!
 For more details give a link to https://www.waivio.com/@grampo/launching-businesses-on-the-steem-blockchain
@@ -1636,25 +1636,25 @@ For more details give a link to https://www.waivio.com/@grampo/launching-busines
 # Waivio: Domain Expertise
 In this video, we explore what domain expertise is and how it differs from reputation score on Steem.
 A user's domain expertise is the total sum of author and curation rewards accumulated by the user over a period of time:
-https://waivio.nyc3.digitaloceanspaces.com/1574536921_a753989c-2145-4b71-89be-cb54d902b35c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1574536921_a753989c-2145-4b71-89be-cb54d902b35c
 User domin expertise
 Note: Currently, the domain expertise is being calculated since the public launch of Waivio.com in June 2019. In the future, we plan to index the entire history of Steem blockchain.
 Author rewards are proportionally allocated to the hashtags and object references made by users in their posts:
-https://waivio.nyc3.digitaloceanspaces.com/1574537375_9ca51133-8145-45eb-be02-9d1506af05d4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1574537375_9ca51133-8145-45eb-be02-9d1506af05d4
 Calculating the domain expertise
 Curation rewards are also taken into account. Thus, if a user upvotes a post that has links to some hashtags, that user will begin to build expertise in those hashtags as well.
 The domain expertise accumulated by users can be found on their profiles on Waivio:
-https://waivio.nyc3.digitaloceanspaces.com/1574540746_47ce54ff-8e0a-4b89-bcb7-68b8ef0a9a76
+![image](https://waivio.nyc3.digitaloceanspaces.com/1574540746_47ce54ff-8e0a-4b89-bcb7-68b8ef0a9a76
 Domain expertise of users
 The combined domain expertise of a user is equal to the sum of their expertise in all the different hashtags they have referenced in their own posts or indirectly upvoted.
 For example, based on Steem blockchain records, we can estimate that for @detlev #beersaturday is twice as important as #travel. 😃
 In a similar way, each hashtag on Steem now has the list of associated experts:
-https://waivio.nyc3.digitaloceanspaces.com/1574541098_2ea7c908-30ed-4259-9dc8-0484f566455
+![image](https://waivio.nyc3.digitaloceanspaces.com/1574541098_2ea7c908-30ed-4259-9dc8-0484f566455
 Hashtag experts
 Looks like @meesterboom has more expertise in #beer than @detlev! And @rollie1212 is already in the top 10!
 As you can see, the domain expertise differs from the standard reputation score on Steem in many unique ways and it allows a much more granular analysis of users' interests.
 Finally, the domain expertise can also be calculated for the hashtags themselves and it makes it easy to evaluate which topics are important for the Steem community overall:
-https://waivio.nyc3.digitaloceanspaces.com/1574541839_f3b99af2-0811-444c-8505-c27d617d78a8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1574541839_f3b99af2-0811-444c-8505-c27d617d78a8
 Discover hashtags
 We invite you to explore and browse hashtags on Waivio as well as check your own domain expertise on your your Waivio profile.
 Please do not hesitate to ask questions, post comments and suggestions.
@@ -1674,13 +1674,13 @@ social.gifts. Choose social.gifts business template from the dropdown menu.
 Choose a name that you want for your shop. If the domain is available, proceed
 to read and accept the terms and conditions and click on "Create new
 website".
-https://waivio.nyc3.digitaloceanspaces.com/1709270540_aca9241d-ccda-4f32-bf4d-b9c65ebd3c40
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270540_aca9241d-ccda-4f32-bf4d-b9c65ebd3c40
 Now Let’s customize our new website.
 Step 2. Configuration
 In the Configuration section, you'll have the opportunity
 to customize your shop's appearance, such as text and button colors, logo,
 name, and more.
-https://waivio.nyc3.digitaloceanspaces.com/1709270572_fdfd9b26-2ff1-4480-8e36-83b039ed0e48
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270572_fdfd9b26-2ff1-4480-8e36-83b039ed0e48
 2.1 Logo
 First, Let’s upload both your desktop and mobile logos to ensure consistent brand
 representation across all devices.
@@ -1691,46 +1691,46 @@ all your website pages.
 Next, In the "Base Object", you can join one of various existing projects tailored to different themes and niches. These are essentially already operational shops that you can use to kickstart your own social shop. Various existing projects can be found on the Social.Gifts Projects page https://www.waivio.com/object/ewg-social-gifts-projects/webpage.
 These shops come with thousands of carefully curated products organized into categories, a community newsfeed, information pages and many other features.
 For example, let's say you're passionate about beauty products. You can join the "CleanGirlAesthetics" project, which features hundreds of categories and thousands of beauty-related products.
-https://waivio.nyc3.digitaloceanspaces.com/1709270707_195c93f3-fac4-4277-8954-93c5afec932f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270707_195c93f3-fac4-4277-8954-93c5afec932f
 With just one click, your website will transform into a comprehensive beauty destination, complete with a community newsfeed where users can interact and share their favourite products.
 Let’s try another example: “Coffee Time” project.Your shop now includes thousands of coffee-making products, serving accessories, books, and various types of coffee. In the newsfeed, you will have coffee-related posts and reviews.
-https://waivio.nyc3.digitaloceanspaces.com/1709270943_db24daeb-1f72-4eee-bd3d-3d6ffe2cc05f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270943_db24daeb-1f72-4eee-bd3d-3d6ffe2cc05f
 In a similar way, you can launch other shops according to your interests and preferences. Check out the existing projects on the Social.Gifts Projects page https://www.waivio.com/object/ewg-social-gifts-projects/webpage.
 If none of the existing projects match your vision, you can always start a new project. We have tutorials to guide you through the process, or you can book a one-on-one session with one of our coaches. Or, you can also order a website custom-made to your specifications.
 Step 3. Affiliate Codes
 Now let's move on to affiliate codes. If it’s your first time creating an affiliate link, let’s create one together for Amazon.com.
 Let’s go to Amazon Associates - Amazon’s affiliate marketing program https://affiliate-program.amazon.com/home. Click sign up, and enter your credentials. Provide basic information, e.g., your name, shipping address. Next, attach a link to your newly created website. Next, you will be prompted to answer a few questions about the shop. After you complete it, you will get your code instantly.
 Now let’s add your code. On Waivio, search for amazon.com -> paste your affiliate link here and click Submit.
-https://waivio.nyc3.digitaloceanspaces.com/1709270744_c994be3f-0356-4d7b-87bb-e07bfde93cab
-https://waivio.nyc3.digitaloceanspaces.com/1709270827_e8e706a2-d21d-4b45-8fb8-5e5138f61d89
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270744_c994be3f-0356-4d7b-87bb-e07bfde93cab
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270827_e8e706a2-d21d-4b45-8fb8-5e5138f61d89
 All your products in your shop will be updated with your affiliate code instantly, giving you the opportunity to earn from every purchase your visitors make. You can also add local affiliate links, such as amazon.ca or amazon.com.au ensuring that you earn commissions regardless of where your visitors are located. Your shop will automatically detect visitors' geolocation, and seamlessly direct them to the appropriate Amazon website, where your affiliate link is activated.
-https://waivio.nyc3.digitaloceanspaces.com/1709270840_f29a787e-384f-4ab9-9f16-e53dde813a7d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270840_f29a787e-384f-4ab9-9f16-e53dde813a7d
 It's useful to occasionally check that your affiliate codes are active, especially for Amazon, since the codes can expire if a certain sales threshold is not achieved. That's the beauty of this interface because, unlike other platforms, if your code expires, here, you don’t need to update every product individually. Just update it once here and it will automatically be applied to all your products.
 Step 4. Administrators
 Next let’s add Administrators and Authorities.
 For every social.gifts project you would see a list of users, each has a specific function to perform.
 For example, administrators is a list of users whom you trust to keep product information current. These could be the manufacturers themselves or community members dedicated to keeping product details up-to-date.
-https://waivio.nyc3.digitaloceanspaces.com/1709270874_20188b1e-4069-4cda-99db-62676660642a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270874_20188b1e-4069-4cda-99db-62676660642a
 To add administrators, review the list of suggested admins for your project, then copy the admin user and paste it into the administrators section.
 Step 5. Authorities
 Authorities have a unique role, marking products for discovery in website searches, including similar and related products, and prioritizing them in the sitemap for external search engine indexing. Unlike administrators, who may be involved in multiple projects, authorities typically focus on a specific project.
-https://waivio.nyc3.digitaloceanspaces.com/1709270886_81b845da-4134-47c2-9c34-96c5490468c4
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270886_81b845da-4134-47c2-9c34-96c5490468c4
 To add authority - copy the authority user for your chosen project and paste it into the authorities section.
 Step 6: Website Hosting
 To keep your website up and running, there are hosting fees associated with maintaining your social shop. When you're ready to fund your website, navigate to the "Manage" tab, where you'll find the button "Pay Now." Here you can transfer WAIV tokens to pay the hosting fees. WAIV tokens will be converted to USD at the current market rate.
-https://waivio.nyc3.digitaloceanspaces.com/1709270918_8a22c7fa-0a7f-48e6-a346-97b3abc61fc9
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270918_8a22c7fa-0a7f-48e6-a346-97b3abc61fc9
 For hosting prices, check the section here. Currently, for active websites, the plan starts at 1USD/day, conditions apply.
 Your Shop
 Now Let’s check out our shop. In less then 10 minutes we launched a sophisticated branded social shopping website with hundreds of categories and thousands of products all with proper affiliate links. This site has an online community of like-minded people posting on a regular basis, and your visitors can join them, participate in discussions and even claim sponsored rewards by sharing product photos.
 What makes this possible?
 It’s only possible to build a website like this with such ease because it uses a collaborative effort and Web 3.0 infrastructure.
 Typically, creating online stores requires starting from scratch: you must build your own user database, establish a product knowledge base, and collect user reviews. Each store functions as an isolated island, beginning to build its community from the ground up.
-https://waivio.nyc3.digitaloceanspaces.com/1709270961_71d9b28c-6905-43ce-b4be-0941492f70eb
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270961_71d9b28c-6905-43ce-b4be-0941492f70eb
 In contrast, in Web 3.0, your shop taps into the entire community, gaining access to the existing product knowledge base, as well as all product reviews and related content.
-https://waivio.nyc3.digitaloceanspaces.com/1709270975_434652e7-d6b6-44e4-96fb-6bbd5b62bb2a
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709270975_434652e7-d6b6-44e4-96fb-6bbd5b62bb2a
 The more people like you who open similar shops, the better your shop becomes—with more products to explore, more reviews to read, more rewards to claim, more like-minded individuals to connect with, and significantly more opportunities for your shop to grow.
-https://waivio.nyc3.digitaloceanspaces.com/1709271004_3ebf8471-46de-4ebe-9201-aeb9e837d9cf
-https://waivio.nyc3.digitaloceanspaces.com/1709271057_0e7675f1-d7fe-4439-9d7f-7d9fdfe98f3d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709271004_3ebf8471-46de-4ebe-9201-aeb9e837d9cf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1709271057_0e7675f1-d7fe-4439-9d7f-7d9fdfe98f3d
 Welcome to the Web3 era of social shopping, where a multitude of projects come together to achieve success and economies of scale that are not possible for standalone projects.
 Follow @social.gifts for more updates https://www.waivio.com/@social.gifts
 Learn more about Waivio https://www.waivio.com/object/ylr-waivio/page#mim-transform-your-passion-into-profit-with-waivio
@@ -1750,25 +1750,25 @@ Write a Review ⭐⭐⭐⭐⭐
 Learn more about Waivio & follow my channel 😉
 1. Verify if the Restaurant is Already Listed
 Before adding a restaurant, simply enter the name of the restaurant in the search bar on Waivio to check whether it already exists on HIVE. If no search results appear for this restaurant you can create a new listing.
-https://waivio.nyc3.digitaloceanspaces.com/1644978752_6abbde34-8396-4bcc-8750-26123d25cf46
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644978752_6abbde34-8396-4bcc-8750-26123d25cf46
 2. Create a New Restaurant Listing
 Once you have confirmed that the listing does not exist, create a new one: write post > restaurant > write the name of the restaurant > confirm.
-https://waivio.nyc3.digitaloceanspaces.com/1644997135_5195660f-b9b7-4f13-8c19-88b9834eebc2
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644997135_5195660f-b9b7-4f13-8c19-88b9834eebc2
 It may take a few moments for the blockchain to be updated and for the new restaurant to appear in the search results.
-https://waivio.nyc3.digitaloceanspaces.com/1644997667_6f727ac7-1b3a-4f60-aec7-586ed7893a92
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644997667_6f727ac7-1b3a-4f60-aec7-586ed7893a92
 Once the listing is created, the restaurant will have a unique URL associated with it that allows you to refer to it in your reviews and posts. The restaurant will also have its own page with restaurant's info that we will add next and with the relevant ratings (Ambience, Food, Service and Value) that are automatically added.
 3. Add Details to the Restaurant's Listing
 To add information to the listing, switch to the Editing mode:
-https://waivio.nyc3.digitaloceanspaces.com/1644997695_8c1d4186-cbea-496a-9384-ebb84ffc701c
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644997695_8c1d4186-cbea-496a-9384-ebb84ffc701c
 In a series of steps, enter data for each relevant field accordingly:
-https://waivio.nyc3.digitaloceanspaces.com/1644998310_6212ad35-034a-4d92-ae72-33ec9a0e8cfe
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644998310_6212ad35-034a-4d92-ae72-33ec9a0e8cfe
 Good service for Map Coordinates lookup - https://latitude.to/
 In case of a mistake, go to Updates, locate the entry, and select Reject:
-https://waivio.nyc3.digitaloceanspaces.com/1644998390_7c4c2ac8-e6a7-44e4-89f5-f84aabc36601
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644998390_7c4c2ac8-e6a7-44e4-89f5-f84aabc36601
 Adding new information and making changes to a blockchain can take a few moments. To see what the listing looks like, simply reload the page (it will automatically switch from Edit mode to View mode).
 4. Write a Review
 After you finish adding all the details about the restaurant, you can write the first review and give your ratings to the restaurant.
-https://waivio.nyc3.digitaloceanspaces.com/1644998455_b5213b96-37eb-4d3e-aa2e-e774ba99c0e8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1644998455_b5213b96-37eb-4d3e-aa2e-e774ba99c0e8
 All reviews will be automatically collected under the Review tab of the listing.
 This is how the community's knowledge and experience can now be accumulated on the HIVE social blockchain!
 If you like what Waivio does and if you think it is beneficial to the HIVE ecosystem, please support Waivio.
@@ -1777,12 +1777,12 @@ For more details give a link to https://www.waivio.com/@cryptodive/how-to-add-a-
 
 # Social.Gifts: Object Editing by Admins
 When a user with admin privileges logs in to a *.Social.Gifts website, they will now see an 'Edit' button on product pages.
-https://waivio.nyc3.digitaloceanspaces.com/1690612916_726d3eaa-d187-4c4b-8c49-6b68c7bc62ef
+![image](https://waivio.nyc3.digitaloceanspaces.com/1690612916_726d3eaa-d187-4c4b-8c49-6b68c7bc62ef
 Website owners and registered admins no longer need to visit Waivio.com to make small edits to products.
-https://waivio.nyc3.digitaloceanspaces.com/1690613174_9f5320c1-37a8-4600-84b3-6bf3ea8ac06d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1690613174_9f5320c1-37a8-4600-84b3-6bf3ea8ac06d
 A vote on an object update by an authorized admin carries decisive weight on a specific website. However, on another website or on Waivio.com, that user's vote might not hold the same influence, leading to the same product appearing differently across various platforms.
 This is why it's important to be able to edit objects within the context of a specific *.Social.Gifts website.
-https://waivio.nyc3.digitaloceanspaces.com/1690613992_3c83e691-aab3-4bb6-a232-a52467a3fabf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1690613992_3c83e691-aab3-4bb6-a232-a52467a3fabf
 In the 'Updates' section of an object, updates approved by the website owner or admin are prominently highlighted.
 For more details give a link to https://www.waivio.com/@social.gifts/social-gifts-object-editing-by-admins
 
@@ -1790,37 +1790,37 @@ For more details give a link to https://www.waivio.com/@social.gifts/social-gift
 # Social.Gifts: Leveling the Field – Granting Admins Equal Edit Rights with Website Owners
 By default, website owners on *.Social.Gifts hold a greater voting authority compared to any administrators they may have added via the 'Settings'. This additional authority is designed to provide website owners with the final say on all object updates within their sites.
 However, there's a flip side to this power. Specifically, it prevents administrators from making corrections to products imported by the website owners.
-https://waivio.nyc3.digitaloceanspaces.com/1690657040_6590ec19-45f4-4be9-8302-4a9921c65b77
+![image](https://waivio.nyc3.digitaloceanspaces.com/1690657040_6590ec19-45f4-4be9-8302-4a9921c65b77
 We've listened to your feedback, and introduced a new feature that allows website owners to add themselves to the list of admins, thereby equalizing their vote with other admins. As a result, admins can override updates made by website owners when necessary.
-https://waivio.nyc3.digitaloceanspaces.com/1690657272_6adaae76-ce26-4d31-b31b-12562819e164
+![image](https://waivio.nyc3.digitaloceanspaces.com/1690657272_6adaae76-ce26-4d31-b31b-12562819e164
 If you wish to return to your superior voting status, simply remove your name from the list of admins.
 For more details give a link to https://www.waivio.com/@social.gifts/social-gifts-leveling-the-field-granting-admins-equal-edit-rights-with-website-owners
 
 
 # Introducing the Claim Authority Tool
 Website owners on *.Social.Gifts have full control over product searches on their individual websites. Search results include only the objects specifically claimed by the website owner or approved authorities.
-https://waivio.nyc3.digitaloceanspaces.com/1691448303_488afaa7-0806-4bb4-9e15-ea4de1060551
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691448303_488afaa7-0806-4bb4-9e15-ea4de1060551
 If a team of admins is actively adding products to various lists throughout the website, these products won't appear in search results until they have been properly claimed by the owner. Simply adding all admins as authorities won't solve this issue, as admins might be involved in multiple projects. Including all of their products in search results could lead to a clutter of irrelevant products appearing.
 For small numbers of products, website owners can claim each product one-by-one. However, this approach becomes challenging when dealing with a large number of products.
 Introducing the Claim Authority Tool
 Waivio is proud to offer an efficient solution – the Claim Authority Tool, now available in the TOOLS / Data Management section.
-https://waivio.nyc3.digitaloceanspaces.com/1691448593_ad3428f8-1c16-44b1-8a9d-4a51db6080ef
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691448593_ad3428f8-1c16-44b1-8a9d-4a51db6080ef
 Simply enter the top-level list, and this tool will assist you in claiming authority for all products referenced in embedded lists, including all product options.
-https://waivio.nyc3.digitaloceanspaces.com/1691449221_ae688a13-2e65-45ab-b5ed-17c3bd4281dc
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691449221_ae688a13-2e65-45ab-b5ed-17c3bd4281dc
 By doing so, you ensure that only relevant products appear in the search results on your website.
-https://waivio.nyc3.digitaloceanspaces.com/1691449530_147816d5-befc-4a4e-8e4f-a991126df23f
+![image](https://waivio.nyc3.digitaloceanspaces.com/1691449530_147816d5-befc-4a4e-8e4f-a991126df23f
 This tool significantly eases the task of managing product search on your *.Social.Gifts website, ensuring the best possible user experience.
 For more details give a link to https://www.waivio.com/@social.gifts/introducing-the-claim-authority-tool
 
 
 # Social.Gifts: Titles and Descriptions for Categories
 In an effort to enhance visual appeal, informational value, and search engine optimization (SEO), social shopping sites are now incorporating titles and descriptions into their product categories and sub-categories.
-https://waivio.nyc3.digitaloceanspaces.com/1697297277_29ee6a56-bb3e-4b41-9611-ea65845c157e
+![image](https://waivio.nyc3.digitaloceanspaces.com/1697297277_29ee6a56-bb3e-4b41-9611-ea65845c157e
 The process of adding titles and descriptions to categories (lists) is similar to that of adding avatars.
 First, navigate to the category you wish to enhance with a title and description.
 Then, open it in a new tab. It's crucial to open the list in a separate tab to make changes to that list.
 Once in Edit mode, you can add an avatar, title, and description to the list.
-https://waivio.nyc3.digitaloceanspaces.com/1697297336_c3b10c90-7e18-4917-9012-b757481d0b88
+![image](https://waivio.nyc3.digitaloceanspaces.com/1697297336_c3b10c90-7e18-4917-9012-b757481d0b88
 When designing titles and descriptions for categories, it may be beneficial to incorporate search terms and keyword combinations that individuals are likely to use when seeking resources related to your website's topic. Numerous tutorials are available online about SEO optimization of web pages for search engines.
 For more details give a link to https://www.waivio.com/@social.gifts/social-gifts-titles-and-descriptions-for-categories
 
@@ -1828,11 +1828,11 @@ For more details give a link to https://www.waivio.com/@social.gifts/social-gift
 # Update: Waivio Chrome Extension v1.2.3
 The latest update to the Waivio Chrome Extension (version 1.2.3) introduces support for product imports from Walmart.com and Sephora.com to the Hive blockchain. Just open the product page, click the extension, and choose 'Upload to Waivio.'
 Walmart.com - offering a wide variety of affordably-priced goods from electronics and clothing to groceries and home essentials.
-https://waivio.nyc3.digitaloceanspaces.com/1697742582_8e36007e-f0f3-428c-abad-a2b209b747d7
+![image](https://waivio.nyc3.digitaloceanspaces.com/1697742582_8e36007e-f0f3-428c-abad-a2b209b747d7
 Sephora.com - Sephora.com is a premier online cosmetics and beauty retailer, offering an extensive array of makeup, skincare, haircare, and fragrance products from a multitude of high-end brands.
-https://waivio.nyc3.digitaloceanspaces.com/1697747656_3d5d01c9-c6a1-4036-9ff5-0e58b54b5d06
+![image](https://waivio.nyc3.digitaloceanspaces.com/1697747656_3d5d01c9-c6a1-4036-9ff5-0e58b54b5d06
 Additionally, both stores feature affiliate programs. After obtaining affiliate codes from them, you can input these in your user profile settings. For those managing a *.Social.Gifts website, you can add these affiliate codes directly into the website settings as well.
-https://waivio.nyc3.digitaloceanspaces.com/1697747806_d3f7aeed-e595-483f-a600-46c2ebd39b20
+![image](https://waivio.nyc3.digitaloceanspaces.com/1697747806_d3f7aeed-e595-483f-a600-46c2ebd39b20
 The most recent update of the Extension includes a fix for creating post drafts for YouTube videos. This improvement addresses recent changes made by YouTube in the display of transcripts on their pages.
 For more details give a link to https://www.waivio.com/@social.gifts/update-waivio-chrome-extension-v1-2-3
 
@@ -1841,10 +1841,10 @@ For more details give a link to https://www.waivio.com/@social.gifts/update-waiv
 We're pleased to inform that sitemap.xml files have been implemented across all *.Social.Gifts domains. Find an example at https://coffeeshop.gifts/sitemap.xml.
 Sitemaps are crucial for search engine optimization (SEO), ensuring that product and category pages are accurately indexed and more readily accessible to users via Google search.
 For example, after adding the sitemap link to the Google Search Console, we noticed a spike in the indexing of CoffeeShop.Gifts webpages by the search engine.
-https://waivio.nyc3.digitaloceanspaces.com/1698095338_4130768c-43a1-40b3-8cac-5c44794558d7
+![image](https://waivio.nyc3.digitaloceanspaces.com/1698095338_4130768c-43a1-40b3-8cac-5c44794558d7
 To initiate the indexing of your sitemap, first access the Google Search Console. For first-time users, the Console requires a one-time verification process to authenticate website ownership. The process is relatively straightforward if your domain is registered through CloudFlare.com or GoDaddy.com.
 Once in the Console, navigate to the 'Sitemaps' tab. Here, you can add your sitemap by entering the URL: https://yoursite.name/sitemap.xml.
-https://waivio.nyc3.digitaloceanspaces.com/1698098091_f762ebaa-f230-4460-8850-78c03997a188
+![image](https://waivio.nyc3.digitaloceanspaces.com/1698098091_f762ebaa-f230-4460-8850-78c03997a188
 This integration reinforces our continuous commitment to enhancing the search engine visibility of *.Social.Gifts websites. We welcome and value insights from our community on further SEO improvements for our websites.
 For more details give a link to https://www.waivio.com/@social.gifts/sitemaps-now-integrated-into-all-social-gifts-websites
 
@@ -1852,14 +1852,14 @@ For more details give a link to https://www.waivio.com/@social.gifts/sitemaps-no
 # Introducing Complete Admin Control for Social.Gifts Websites
 Every website has unique needs. Some prefer community-driven content, while others opt for post-moderation by admins.
 Now, the 'Object editing by users' option in the Social.Gifts website settings allows you to further strengthen your control over site content. With this option, you can ensure that only content approved by your administrators appears on your website.
-https://waivio.nyc3.digitaloceanspaces.com/1700231012_938089fa-d9b7-4ac6-8de9-96cbc66a0aab
+![image](https://waivio.nyc3.digitaloceanspaces.com/1700231012_938089fa-d9b7-4ac6-8de9-96cbc66a0aab
 To activate:
 Click 'Tools'.
 Go to 'Settings' for the selected website.
 Enable the 'Object editing by users' option.
 With this new feature, you retain full control over the objects displayed on your website (like lists, products, pages, etc.), ensuring that everything published aligns with your vision and standards.
 Alternatively, if you prefer full control over specific objects but want to allow the community to make changes and add new information to others, your admins can claim 'Authority: Ownership' for these specific objects.
-https://waivio.nyc3.digitaloceanspaces.com/1700248547_2b9dfbcb-638a-42c9-9063-bedeafc0cfd1
+![image](https://waivio.nyc3.digitaloceanspaces.com/1700248547_2b9dfbcb-638a-42c9-9063-bedeafc0cfd1
 To claim full authority over an object:
 Open Object, swithc to Edit mode.
 Click + on Authority field.
@@ -1872,10 +1872,10 @@ For more details give a link to https://www.waivio.com/@social.gifts/introducing
 
 # Enhance User Engagement on Your Website with Comment Signatures
 We're excited to introduce a new feature that enables you to add custom signatures to your comments. This tool is particularly beneficial for enhancing interaction within the topical community feeds on your site.
-https://waivio.nyc3.digitaloceanspaces.com/1701309695_1f579c37-e3c4-4e00-a22a-b2e3e6991bf3
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701309695_1f579c37-e3c4-4e00-a22a-b2e3e6991bf3
 Customizable Signatures:
 You now have the capability to create a signature in your profile, which will automatically appear in all your comments. This signature can include a link to your website along with a brief tagline, offering a consistent presence in discussions.
-https://waivio.nyc3.digitaloceanspaces.com/1701310210_63c63cc8-ec9d-4049-81b5-9f254f914c3d
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701310210_63c63cc8-ec9d-4049-81b5-9f254f914c3d
 Engagement in Community Feeds:
 Community feeds are dynamic environments for discussion and sharing experiences. With your custom signature, you can subtly highlight your website while engaging in these conversations. This approach allows you to connect authentically with users, maintaining visibility for your website in a non-intrusive manner.
 For more details give a link to https://www.waivio.com/@social.gifts/enhance-user-engagement-on-your-website-with-comment-signatures
@@ -1887,11 +1887,11 @@ Google Search Console
 https://www.google.com/webmasters/tools/home
 - Use DNS TXT record to verify website ownership. This method is recommended as it doesn’t require adding extra code to your site.
 - Once verified, submit your sitemap (https://coffeeshop.gifts/sitemap.xml). This can be done under the Indexing/Sitemaps section in Google Search Console.
-https://waivio.nyc3.digitaloceanspaces.com/1701585882_52d042fb-5949-4707-934f-cb51f6f76737
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701585882_52d042fb-5949-4707-934f-cb51f6f76737
 Bing Webmaster Tools
 https://www.bing.com/webmaster/tools
 - Import your site from Google Search Console to Bing Webmaster Tools, making the setup process easier.
-https://waivio.nyc3.digitaloceanspaces.com/1701585663_95f34c50-eff3-4440-a666-c2280f4d3d08
+![image](https://waivio.nyc3.digitaloceanspaces.com/1701585663_95f34c50-eff3-4440-a666-c2280f4d3d08
 - Submit your sitemap in Bing Webmaster Tools, which will also cover Yahoo, as they use Bing's index.
 DuckDuckGo
 DuckDuckGo does not require direct submission. It automatically indexes the web using over 400 sources, including Bing. Therefore, submitting your site to Bing also helps with DuckDuckGo indexing.
@@ -1947,9 +1947,9 @@ One product on the Hive blockchain can actually have multiple names, titles, des
 However, the website owner's vote holds decisive power within the information space of their own website. If the owner approves a different version of the product description, that version will be displayed on their website, even if another description was selected as the overall winner in the general consensus.
 This means the same product can be presented differently on Waivio and the hosted site, making it possible to present to users and search engines unique versions of the same product.
 Descriptions Bot can automatically rewrite descriptions for all products referenced in a chain of lists, starting from the top list and including all other embedded lists. Descriptions Bot uses ChatGPT to rewrite names and descriptions of all the products, as well as titles and descriptions of all the lists themselves. This way, you can effortlessly ensure that your website presents unique content for indexing by search engines.
-https://waivio.nyc3.digitaloceanspaces.com/1704514691_6a7cec4f-538b-4ce1-8aac-ef6f36768c10
+![image](https://waivio.nyc3.digitaloceanspaces.com/1704514691_6a7cec4f-538b-4ce1-8aac-ef6f36768c10
 To initiate the Descriptions Bot, open Tools (1) and select Descriptions Bot (2) in the Data Management section. If this is the first time you are using Descriptions Bot, you will need to authorize it (3). Once authorized, you can click on Rewrite Descriptions (4), specify the list, and begin the process.
-https://waivio.nyc3.digitaloceanspaces.com/1704515210_3a18477c-80e2-471c-8940-8eeb08fee444
+![image](https://waivio.nyc3.digitaloceanspaces.com/1704515210_3a18477c-80e2-471c-8940-8eeb08fee444
 Please note that each update (revised description, title, or name) requires a minimum upvote of at least $0.01 value in WAIV tokens. You can specify the minimum voting power (30% is the default value). Once the VP on your account falls below that value, or if the voting power is below $0.01, the process will slow down, waiting for the voting power to restore (it automatically restores at the rate of 20% per day).
 You may launch this bot for multiple lists simultaneously. Progress will be monitored in a table. Jobs can be paused or resumed at any moment by changing the job status in the 'Active' column. Completed jobs will then be transferred to the history table.
 Descriptions Bot allows website owners to effortlessly improve their search engine rankings with original content, making their site content more discoverable in search engines.
@@ -1959,13 +1959,13 @@ For more details give a link to https://www.waivio.com/@social.gifts/description
 # Waivio Chrome Extension Update: Google Maps and OpenStreetMap Integration
 Waivio's Chrome Extension (v 1.4.0) now integrates directly with Google Maps and OpenStreetMap, enabling users to upload information about businesses, restaurants, and cafes onto the Hive blockchain. This enhancement streamlines how users discover, share, and engage with their favorite places.
 Upload from Mapping Services in One Click:
-https://waivio.nyc3.digitaloceanspaces.com/1708721178_6e986cc3-fa10-4666-a0b5-8c5220cc63c6
+![image](https://waivio.nyc3.digitaloceanspaces.com/1708721178_6e986cc3-fa10-4666-a0b5-8c5220cc63c6
 Add listings from Google Maps and OpenStreetMap to Waivio effortlessly with a single click through the Chrome Extension.
 Integration with User Profiles:
-https://waivio.nyc3.digitaloceanspaces.com/1708721490_ce9dbba2-05d0-4efd-ac8c-90e5eab31245
+![image](https://waivio.nyc3.digitaloceanspaces.com/1708721490_ce9dbba2-05d0-4efd-ac8c-90e5eab31245
 Businesses uploaded can be favorited on Waivio profiles, creating a personalized catalog of preferred spots.
 Community Engagement:
-https://waivio.nyc3.digitaloceanspaces.com/1708723201_7479db40-7e3c-433d-a7a5-ddec5f5faaae
+![image](https://waivio.nyc3.digitaloceanspaces.com/1708723201_7479db40-7e3c-433d-a7a5-ddec5f5faaae
 By referencing your favorite businesses in your Hive posts, your stories and insights gain a special place on their pages, bringing your content to the forefront. This not only elevates your experiences but also positions you as an expert for these places.
 Getting Started:
 To import information from Google Maps, obtaining an API code is necessary. It is straightforward to acquire and free for small volumes.
@@ -1977,7 +1977,7 @@ For more details give a link to https://www.waivio.com/@social.gifts/waivio-chro
 
 # Performance Enhancements at Social.Gifts
 We are excited to share the results of performance enhancements for social shopping websites hosted on Social.Gifts. Our development team has been implementing key optimizations that have drastically improved response times, ensuring a faster and more seamless experience for all users.
-https://waivio.nyc3.digitaloceanspaces.com/1712952738_988a2535-6f79-4413-bb46-c07c7722af87
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712952738_988a2535-6f79-4413-bb46-c07c7722af87
 Phase 1: Baseline Performance
 As of January 2024, our Google Crawl Data Report indicated that the average response time for websites hosted on our platform was over 1 second. We recognized this as an opportunity for improvement and initially focused on enhancing our platform architecture.
 Phase 2: System Architecture Optimization
@@ -1986,9 +1986,9 @@ Phase 3: Introduction of Smart Caching System
 In March, we introduced a smart caching system specifically tailored to optimize performance for search engines. This innovation helped further reduce the average response times to below 100 ms.
 Accessing Crawl Stats Report
 To check the Crawl Stats Report for your social shop, please log in to your Google Search Console (the same place where you submitted your website sitemap for accelerated indexing). First, open 'Settings' (1), then select 'Crawl Stats Report' (2).
-https://waivio.nyc3.digitaloceanspaces.com/1712961607_94fe9d35-6784-47af-8658-f663c3056a30
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712961607_94fe9d35-6784-47af-8658-f663c3056a30
 On the report page, select the 'Average Response Time' parameter (3) and deselect all other parameters. You can then hover over a specific day on the chart (4) to see the average response time for that day.
-https://waivio.nyc3.digitaloceanspaces.com/1712962045_101c2fdf-b7a1-45de-81fd-43010695dbcb
+![image](https://waivio.nyc3.digitaloceanspaces.com/1712962045_101c2fdf-b7a1-45de-81fd-43010695dbcb
 Understanding Response Times
 A good response time for websites, as measured by the time it takes for a server to respond to a request (often referred to as "Time to First Byte" or TTFB), varies depending on the type of content being delivered and user expectations. Here are some general guidelines and industry standards:
 Under 100 ms: Excellent server response time, typically expected for high-performance, optimized sites that use effective caching strategies and are hosted on efficient infrastructure.
@@ -2007,12 +2007,12 @@ Why This Matters
 This feature is particularly useful for website owners who want to allow business owners to manage their own listings. Similarly, it can be used to allow partners to keep information about their products updated to ensure consistency and reliability of product information.
 How It Works
 In the Settings section of any object, you'll now find a "Delegation" field. Here, you can specify accounts to delegate admin rights to.
-https://waivio.nyc3.digitaloceanspaces.com/e5351d2f89d8b07451e63e20558cdb3618646141fd8becde36acc92a733481a4
+![image](https://waivio.nyc3.digitaloceanspaces.com/e5351d2f89d8b07451e63e20558cdb3618646141fd8becde36acc92a733481a4
 Example in Action
 Consider @coffee.time, a website owner of CoffeeShop.Gifts, delegating rights to @demo.account for a specific book: Brew:Better Coffee At Home.
-https://waivio.nyc3.digitaloceanspaces.com/d02d021250cba8fccc34b355c76c48d36d76e2f462ff93a0635ce2f75ce453af
+![image](https://waivio.nyc3.digitaloceanspaces.com/d02d021250cba8fccc34b355c76c48d36d76e2f462ff93a0635ce2f75ce453af
 When @demo.account signs in to CoffeeShop.Gifts, they see an Edit button on that listing. Any edits made to this specific object by @demo.account are reflected on the site.
-https://waivio.nyc3.digitaloceanspaces.com/dba9f8754c861fe00917aeeba1743b56cd3d492cfdf8a6deda86035535720876
+![image](https://waivio.nyc3.digitaloceanspaces.com/dba9f8754c861fe00917aeeba1743b56cd3d492cfdf8a6deda86035535720876
 In a practical scenario, @demo.account updated the price of the book to $32.88. This edit is visible on the website. However, if @demo.account attempts to make changes to other objects, those changes will be ignored, maintaining the integrity and security of your site’s data.
 Get Started Today
 To take advantage of this new feature, simply navigate to the Settings section of the object you wish to delegate admin rights for, and enter the account you wish to delegate to in the "Delegation" field. It's that simple!
@@ -2022,7 +2022,7 @@ For more details give a link to https://www.waivio.com/@social.gifts/new-admin-d
 
 # Social.Gifts: Add Crypto Addresses to Businesses
 Starting today, you can add cryptocurrency addresses to businesses and restaurants, making it easier to generate crypto invoices and accept digital payments. This can be accomplished on Waivio.com or directly on a Social.Gifts web3 site (if you have admin privileges).
-https://waivio.nyc3.digitaloceanspaces.com/503fa9fb1ed6b9903a8e7704879c54e5da2eb694f84cd05b1c74ae489146e62b
+![image](https://waivio.nyc3.digitaloceanspaces.com/503fa9fb1ed6b9903a8e7704879c54e5da2eb694f84cd05b1c74ae489146e62b
 How to Add Crypto Addresses to Your Business Listings
 Open the business or restaurant listing.
 Switch to Edit mode.
@@ -2030,13 +2030,13 @@ Click "+Wallet".
 Provide a title (e.g., "Pay with Bitcoin," "Litecoin Donations").
 Select a cryptocurrency: Bitcoin (BTC), Hive Backed Dollars (HBD), Bitcoin Lightning, Litecoin (LTC), and more.
 Enter the crypto address.
-https://waivio.nyc3.digitaloceanspaces.com/4276ad33f9768b2df58711236e1372c0b29b5097624b6b576a3a21010d10e0d8
+![image](https://waivio.nyc3.digitaloceanspaces.com/4276ad33f9768b2df58711236e1372c0b29b5097624b6b576a3a21010d10e0d8
 Seamless Payment Process for Users
 Once the crypto payment options are added to the business listing, users can:
 Select the desired payment option and enter the amount they intend to transfer.
 The system will generate a QR code based on the entered amount and address.
 Users can then scan the QR code with the HiveKeychain app or another wallet, depending on the cryptocurrency they intend to transfer. They can verify the address and amount before confirming the transaction.
-https://waivio.nyc3.digitaloceanspaces.com/b312498f28186e1351e3538eff066bb402fd7e371e43867da424ce833c532b20
+![image](https://waivio.nyc3.digitaloceanspaces.com/b312498f28186e1351e3538eff066bb402fd7e371e43867da424ce833c532b20
 Note to Social.Gifts Website Owners
 Please consider restricting data editing features on your websites to approved data admins and business owners who have received delegations to edit specific listings.
 Stay tuned for more updates and features as we continue to enhance your experience on Social.Gifts web3 sites and Waivio.
@@ -2046,14 +2046,14 @@ For more details give a link to https://www.waivio.com/@social.gifts/new-admin-d
 # Custom newsfeeds on Waivio
 Custom newsfeeds are now available on Waivio, enabling users to generate personalized feeds using hashtags, objects, object types, and users. These newsfeeds are shared on the Hive blockchain as objects, allowing others to follow them.
 To create a newsfeed, simply click on the "write new post" button and select "Newsfeed" from the "Create new object" menu:
-https://waivio.nyc3.digitaloceanspaces.com/1676398652_c4257bd3-bf6c-4c4c-b9c0-6207b89f7189
+![image](https://waivio.nyc3.digitaloceanspaces.com/1676398652_c4257bd3-bf6c-4c4c-b9c0-6207b89f7189
 Let's create a newsfeed named "Hive Statistics" as an example. On Hive, multiple users post valuable information on the topic, but they use different hashtags. Meanwhile, some irrelevant content may use the same hashtags.
 To address this, we will include the hashtags #stats and #data, along with a specific list of users who consistently post high-quality content, such as @arcange, @quochuy, @penguinpablo, @hive-data, @dalz and @dalz.shorts:
-https://waivio.nyc3.digitaloceanspaces.com/1676398670_1f9605fa-2f9c-4309-a16b-3450ba5f86bf
+![image](https://waivio.nyc3.digitaloceanspaces.com/1676398670_1f9605fa-2f9c-4309-a16b-3450ba5f86bf
 After creating and configuring the "Hive statistics" newsfeed, it can be effortlessly found using the search bar on Waivio:
-https://waivio.nyc3.digitaloceanspaces.com/1676399059_a7643e18-f0cd-4e43-b31f-62686d3a5ddc
+![image](https://waivio.nyc3.digitaloceanspaces.com/1676399059_a7643e18-f0cd-4e43-b31f-62686d3a5ddc
 By clicking the Follow button on the "Hive statistics" newsfeed, it will be included in your regular Feed:
-https://waivio.nyc3.digitaloceanspaces.com/1676399464_439b263b-553e-40b5-9591-76c9537c8ad8
+![image](https://waivio.nyc3.digitaloceanspaces.com/1676399464_439b263b-553e-40b5-9591-76c9537c8ad8
 Tasks: 4435, 4403, 4433, 4401.
 Other updates:
 1. Comments / Muted users - if an author of a post muted a user, their comments should not appear on posts of that author (3092, 3093);
@@ -2069,7 +2069,7 @@ For more details give a link to https://www.waivio.com/@waivio/custom-newsfeeds-
 
 # Waivio on Hive: Where all the buzz is happening!
 We are pleased to announce that the migration of Waivio.com and all related services to the Hive blockchain is now complete. We will continue to monitor the performance of the system to ensure that all services and elements of the system work as intended. Currently, price feeds are stabilizing as more exchanges offer support for HIVE coins.
-https://waivio.nyc3.digitaloceanspaces.com/1585168464_e67a048a-0144-443a-8d8d-3aff82567f25
+![image](https://waivio.nyc3.digitaloceanspaces.com/1585168464_e67a048a-0144-443a-8d8d-3aff82567f25
 Waivio on Hive
 The launch of the #hive decentralized social network is a historic moment as the community and community-elected witnesses have walked away from the #steem, which was taken hostage by a single player who bought the ninja-mined stake (over 20% of the STEEM coins that were not supposed to be used in the blockchain governance) and voted in their own sock puppet witnesses. You can read more about the community's battle against the centralization of the blockchain by following the discussions with the hashtag #steemhostiletakeover.
 Hive was launched on Friday, March 20th at 10am EST as a community fork of the Steem blockchain, meaning that all content posted before that date will be the same on both Hive and Steem blockchains. But from that date onward, Hive operates as an independent blockchain with its own witnesses, governance, tokens, and most importantly, the community.
@@ -2080,3 +2080,38 @@ Now you can again publish and comment on Waivio.com, add and edit objects, busin
 The Waivio development team has worked tirelessly to make this transition as efficient as possible, while at the same time being severely limited by the coronavirus lockdown that is now taking place worldwide.
 We hope that our progress in building Web 3.0 applications on Hive will cheer you up in the midst of the global uncertainty, pandemic, market turbulence, supply chain collapse, monetary system realignment, and the revision of governance, and not just in the blockchain space!
 For more details give a link to  https://www.waivio.com/@waivio/waivio-on-hive-where-all-the-buzz-is-happening
+
+
+# Why Product Reviews are Crucial for Your Social Shop's SEO
+As a social shop owner, you know the value of engaging content. But did you know that product reviews can significantly boost your search engine optimization (SEO) efforts? Let's dive into why product reviews are essential and how they can elevate your social shop's visibility.
+Real-Life Example: Google Site Search
+![image](https://waivio.nyc3.digitaloceanspaces.com/3dfa16d27a1a604f001f923e5b219aa1ccf0cb3a13b9cd2207162bc9829d14c3)
+Imagine a customer searching for "Milani Make It Last Sunscreen" on Google. The first result is a link to a product review, while the second link is to the product itself. This scenario highlights two crucial points:
+1. Higher Search Rankings: Product reviews often rank higher in search results compared to product pages. This is because search engines value fresh, user-generated content that provides real insights.
+2. Enhanced Credibility: Reviews from actual users add credibility to your products, making potential customers more likely to click on these links.
+The Importance of Posting Reviews on Your Social Shopping Site
+To maximize the SEO benefits, ensure that product or business reviews are posted directly on your social shopping site. This approach establishes your site as the original (canonical) source. Consequently, any other websites displaying these reviews will point back to your site as the canonical source, consolidating your SEO efforts and improving your site's authority.
+Video Reviews: Adding Value for Visitors
+![image](https://waivio.nyc3.digitaloceanspaces.com/106a165e6c729dad402a751129847a4234b93ed3400328ae70944e06d3ad8c28)
+Including video reviews on your product pages can further enhance the user experience. Visitors can see how a product is used and hear firsthand commentary, which can be incredibly persuasive. Video content not only keeps visitors engaged longer but also boosts your site's SEO by increasing dwell time and providing rich, multimedia content that search engines favor.
+Key Takeaways
+1. Boost SEO with Reviews: Product reviews can rank higher in search results and add credibility.
+2. Canonical Source Matters: Post reviews on your site to establish it as the original source, enhancing your SEO.
+3. Engage with Video Reviews: Incorporate video reviews to enrich the user experience and improve your site's SEO.
+Leverage the power of product reviews to not only build trust with your customers but also to climb the search engine rankings, driving more traffic and sales to your social shop. Start encouraging your customers to leave reviews today and watch your SEO improve!
+For more details give a link to https://www.waivio.com/@social.gifts/why-product-reviews-are-crucial-for-your-social-shop-s-seo
+
+
+# Introducing the Waivio AI Assistant
+We are excited to announce the launch of the Waivio AI Assistant, designed to make your experience with Waivio even more seamless and efficient. Whether you have questions, need instructions, or require language assistance, the Waivio AI Assistant is here to help.
+Key Features:
+1. Answering Questions: The Waivio AI Assistant can provide instant answers to all your questions about Waivio. Simply click the AI button on the front page and type in your query. You'll receive detailed and accurate responses to help you navigate the platform with ease.
+![image](https://waivio.nyc3.digitaloceanspaces.com/26caa2e98c53a2a36a35a51aedb3ff8cfb0a95826a5d5189524ea9bebff22745)
+2. Step-by-Step Instructions: Need guidance on how to use specific features on Waivio? The AI Assistant provides step-by-step instructions complete with relevant images and links to detailed tutorials. This ensures you have all the information you need to utilize Waivio to its full potential.
+3. Proofreading and Translation: The Waivio AI Assistant can proofread your posts in various languages and translate them into English. This feature is perfect for ensuring your content is polished and accessible to a broader audience.
+How to Access:
+To start using the Waivio AI Assistant simply click the AI chat button:
+![image](https://waivio.nyc3.digitaloceanspaces.com/723dd633c55ed72d70cfe928ac7dd0d7befca706af80a968fd56e9c7eed3460b)
+Experience the convenience of having a personal assistant at your fingertips.
+Your feedback is important to us. Please share your experiences in the comments below. Did it guide you effectively? Were you able to find the help you needed during your journey on Waivio? Your insights will help us improve and expand the capabilities of the AI Assistant to better serve you and the entire Waivio community.
+For more details give a link to https://www.waivio.com/@waiviolabs/introducing-the-waivio-ai-assistant

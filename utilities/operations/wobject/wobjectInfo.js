@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const {
-  Wobj, Campaign, User, App, wobjectSubscriptions,
+  Wobj, Campaign, User, wobjectSubscriptions,
 } = require('models');
 const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
@@ -15,7 +14,6 @@ const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
-const redis = require('../../redis/redis');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -385,6 +383,19 @@ const getOne = async ({
   return { wobjectData };
 };
 
+const getAuthorPermlinkByIdType = async ({ id, idType }) => {
+  const searchData = [
+    JSON.stringify({ companyId: id, companyIdType: idType }),
+    JSON.stringify({ companyIdType: idType, companyId: id }),
+    JSON.stringify({ productId: id, productIdType: idType }),
+    JSON.stringify({ productIdType: idType, productId: id }),
+  ];
+
+  const { result } = await Wobj.findOne({ 'fields.body': { $in: searchData } }, { author_permlink: 1 });
+
+  return { result: result?.author_permlink || '' };
+};
+
 module.exports = {
   getOne,
   getItemsCount,
@@ -392,4 +403,5 @@ module.exports = {
   getListDepartments,
   getAllObjectsInList,
   getListsForAuthority,
+  getAuthorPermlinkByIdType,
 };

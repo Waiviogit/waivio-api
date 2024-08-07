@@ -100,7 +100,6 @@ module.exports = async (data) => {
   const { posts, error } = await Post.getWobjectPosts({
     condition,
     limit: data.limit,
-    lastId: data.lastId,
     skip: data.skip,
   });
   if (error) return { error };
@@ -165,7 +164,6 @@ const getWobjFeedCondition = async ({
   author_permlink,
   user_languages,
   removeFilter,
-  lastId,
   hiddenPosts,
   muted,
   newsPermlink,
@@ -179,8 +177,7 @@ const getWobjFeedCondition = async ({
     blocked_for_apps: { $ne: _.get(app, 'host') },
     reblog_to: null,
   };
-  // for moderation posts
-  if (lastId) condition._id = { $lt: new ObjectId(lastId) };
+
   if (!_.isEmpty(hiddenPosts)) {
     condition._id
       ? Object.assign(condition._id, { $nin: hiddenPosts })

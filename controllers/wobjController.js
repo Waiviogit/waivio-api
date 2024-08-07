@@ -624,6 +624,21 @@ const getRawField = async (req, res, next) => {
   next();
 };
 
+const getAuthorPermlinkByIdType = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getAuthorPermlinkByIdType,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await wobjectInfo.getAuthorPermlinkByIdType(value);
+
+  res.result = { status: 200, json: result };
+  next();
+};
+
 const getMapObjectFromObjectLink = async (req, res, next) => {
   const value = validators.validate(
     { authorPermlink: req.params.authorPermlink },
@@ -677,5 +692,6 @@ module.exports = {
   getRawField,
   getListLinksAuthority,
   getObjectsLinksOnMap,
+  getAuthorPermlinkByIdType,
   getMapObjectFromObjectLink,
 };
