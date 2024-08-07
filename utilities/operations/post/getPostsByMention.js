@@ -10,11 +10,12 @@ const getPostsByMention = async ({
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(follower);
 
   const mutedNames = mutedUsers.map((el) => el.userName);
-  if (mutedNames.includes(account)) return { posts: [], hasMore: false };
 
   const { result } = await Post.getPostsByCondition({
     condition: {
-      ...(mutedNames?.length && { author: { $nin: mutedNames } }),
+      ...(mutedNames?.length
+        ? { author: { $nin: [...mutedNames, account] } }
+        : { author: { $ne: account } }),
       ...(hiddenPosts?.length && { _id: { $nin: hiddenPosts } }),
       mentions: account,
     },
