@@ -1404,14 +1404,15 @@ For more detailed information and potential troubleshooting, you can refer to th
 # Earn. Global
 ## General information
 **Global** - the page displays all campaigns that are listed in the global category. They are not tied to a location.
-(A campaign's belonging to a global is specified when creating a campaign.)
 This page has kind of 2 steps:
 1. feed with primary cards;
 2. feed with secondary cards for the specific primary card (after clicking on "Earn" button).
 By default, after clicking Earn tab in main menu, Global tab is opened. 
+
 ## Feed with primary cards
-The global feed consists of the [primary cards](https://github.com/Waiviogit/waivio/wiki/Primary-card) list.
+The global feed consists of the primary cards.
 ![image](https://user-images.githubusercontent.com/67378322/222443298-2fa24af8-db26-4907-97a0-a147a51543fa.png)
+
 ## Breadcrumbs
 **1st step**: title - Global rewards
 **2nd step**: "Eligible rewards" or "All rewards" (depending on the Eligibility checkbox in Filter rewards block) + primary object name.
@@ -1419,6 +1420,7 @@ Primary object name - not clickable.
 Eligible/All - clickable, way to return to 1st step with primary cards.
 ![image](https://user-images.githubusercontent.com/67378322/222450995-61cf38f9-9fe4-4a18-a6a0-1369f48637ff.png)
 ![image](https://user-images.githubusercontent.com/67378322/222451057-06cfd2a0-0255-44f3-bde9-362325648892.png)
+
 ## Sorting
 Sorting only for 1st step with primary cards.
 Sorting has text - "Sorted by".
@@ -1428,16 +1430,19 @@ Sorting has text - "Sorted by".
 * Expiry - sort by campaign expiration date (nearest to farthest).
 * Proximity - closest in distance to the user (from nearest to farthest).
 ![image](https://user-images.githubusercontent.com/67378322/222453811-ad8560a8-bc82-4b04-9abe-c8ba43946a60.png)
+
 ## Filters
 Filters availability:
 * Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
-* Rewards for has "reviews" item that is filter by review type.
+* Rewards for has "reviews" and "mentions" elements that filter campaigns by type.
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
+
 ## Feed with secondary cards
-After clicking on "Earn (price) ..." all (available) [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card)  associated with the primary are opened. 
+After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. 
 Breadcrumbs (path) are displayed.
 ![image](https://user-images.githubusercontent.com/67378322/222453587-3524efcd-6a10-4b69-84e5-9f2c3f005cf5.png)
+
 ## An unauthorized user
 An unauthorized user can also see this page with "all eligibility" filter that is blocked.
 ![image](https://user-images.githubusercontent.com/67378322/222661253-8e29c2f5-befc-4640-8397-7803d283e272.png)
@@ -1446,13 +1451,14 @@ An unauthorized user can also see this page with "all eligibility" filter that i
 # Earn. Local
 ## General information
 **Local** - the page displays all campaigns that are listed in the local category. They are tied to a location.
-(A campaign's belonging to a local category is specified when creating a campaign.)
 This page has kind of 2 steps:
 1. feed with primary cards;
 2. feed with secondary cards for the specific primary card (after clicking on "Earn" button).
+
 ## Feed with primary cards
-The global feed consists of the [primary cards](https://github.com/Waiviogit/waivio/wiki/Primary-card) list.
+The global feed consists of the primary cards list.
 ![image](https://user-images.githubusercontent.com/67378322/223223983-2aee83ed-06bc-41db-8f65-9cdc4c6e37bf.png)
+
 ## Breadcrumbs
 **1st step**: title - Local rewards
 **2nd step**: "Eligible rewards" or "All rewards" (depending on the Eligibility checkbox in Filter rewards block) + primary object name.
@@ -1460,6 +1466,7 @@ Primary object name - not clickable.
 Eligible/All - clickable, way to return to 1st step with primary cards.
 ![image](https://user-images.githubusercontent.com/67378322/222450995-61cf38f9-9fe4-4a18-a6a0-1369f48637ff.png)
 ![image](https://user-images.githubusercontent.com/67378322/222451057-06cfd2a0-0255-44f3-bde9-362325648892.png)
+
 ## Sorting
 Sorting only for 1st step with primary cards.
 Sorting has text - "Sorted by".
@@ -1469,18 +1476,22 @@ Sorting has text - "Sorted by".
 * Expiry - sort by campaign expiration date (nearest to farthest).
 * Proximity - closest in distance to the user (from nearest to farthest).
 ![image](https://user-images.githubusercontent.com/67378322/222453811-ad8560a8-bc82-4b04-9abe-c8ba43946a60.png)
+
 ## Filters
 Filters availability:
 * Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
-* Rewards for has "reviews" item that is filter by review type.
+* Rewards for has "reviews" and "mentions" elements that filter campaigns by type.
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
+
 ## Feed with secondary cards
-After clicking on "Earn (price) ..." all (available) [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card)  associated with the primary are opened. Breadcrumbs (path) are displayed.
+After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. Breadcrumbs (path) are displayed.
 ![image](https://user-images.githubusercontent.com/67378322/223224247-2a5f6854-b125-4712-b9f5-1c063cdff45d.png)
+
 ## An unauthorized user
 An unauthorized user can also see this page with "all eligibility" filter that is blocked.
 ![image](https://user-images.githubusercontent.com/67378322/223224472-f9a3ff00-3542-44ce-8612-701abe1f2a9c.png)
+
 ## Map
 Map depends on user location. Trying to show appropriate campaign for user location.
 Reward icons are displayed on the map.
@@ -1556,7 +1567,8 @@ Displaying the editor after clicking on "Write review".
 
 # Earn. Receivable
 Page that shows the sponsor list and the amount of reward for the campaign execution.
-WAIV token is used to create campaigns and pay.
+The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key measure.
+
 Sorting:
 * Amount - by the amount of reward
 * Time - by time
@@ -1618,3 +1630,130 @@ The footer of the card changes to:
   * Open review;
   * Rejection note.
 ![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
+
+
+# Campaign statuses
+Campaign statuses change depending on the actions of the sponsor and executors, as well as on the campaign's data. The campaign status is displayed in the "Manage" tab, in the "Active and pending campaigns" table, within the "Status" column, and on the secondary card type.
+|Status|Description|Comments|
+|--|--|--|
+|**Pending**| <ul><li>status means that the sponsor has created a campaign</li><li>the campaign is displayed only in the [Manage](https://www.waivio.com/rewards/manage) </li><li>the campaign can be edited</li></ul>|Campaign has not been <br>recorded in the blockchain yet, <br> is only in the database|
+|**Active**|<ul><li>the campaign is activated, after clicking on the checkbox next to the campaign, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>you cannot edit fields, campaign information</li><li>other users can reserve a campaign, write a review, cancel a reservation</li></ul>||
+|**Inactive**|<ul><li>deactivation of the campaign - the campaign for the reservation is not available</li><li>deactivate by clicking on the active checkbox next to the campaign, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>the campaign is displayed only in the tab [Manage](https://www.waivio.com/rewards/manage)</li><li>upon deactivation, the campaign cannot be resumed, provided there are no active reservations</li></ul>|
+|**OnHold**|<ul><li>status is displayed during deactivation, if there are active reservations</li><li>campaign activation impossible</li></ul>||
+|**Expired**|<ul><li>the maximum reservation period (days) specified when creating the campaign has expired</li></ul>|
+|**ReachedLimit**|<ul><li>status appears when the campaign's monthly budget has run out</li><li>users cannot reserve a campaign</li><li>the campaign is displayed only in the [Manage](https://www.waivio.com/rewards/manage)</li></ul>||
+|**Delete**|<ul><li>deleting a campaign</li></ul>|Implemented on the back-end|
+|**Suspended**|<ul><li>all active campaigns are blocked</li><li>status appears if “Remaining” is in the red, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>status appears in case of non-payment of debts within 30 days</li></ul>||
+
+
+# Primary card details
+**Primary card** - This card represents an object that serves as the main focus of a campaign. Examples of primary objects include a restaurant, brand, or business. The primary card has a broader and more comprehensive scope.
+|Element|Description|
+|-------|----------|
+|`Avatar`| Object avatar. After clicking, the object page is opened. |
+|`Name`| Object name. After clicking, the object page is opened. |
+|`Parent`| Parent of the object. If the object has no parent, then nothing is displayed. If present, it displays above the object name in gray letters. After clicking, the primary object page is opened. |
+|`Rating`| Object rating. There is an opportunity to vote with stars. |
+|`Object_Type`| Object type. Not clickable. |
+|`Tags`| Object tags. Displays the 2 with the highest weight. Not clickable. |
+|`Address`| Object address without postcode and country. Not clickable. |
+|`Info`| If the object has a title, it is displayed. If there is no title but there is a description, the description is displayed. If there is no title and no description, nothing is displayed. Not clickable. |
+|`Price`| Object price. Not clickable. |
+|`You_Earn`| YOU EARN: {currencyIcon} {price} - the largest review reward is displayed. |
+|`Earn`| Button "Earn {price} {currency}" to go to the list of secondaries of objects. On the same page, the content of the central feed changes to a list of secondaries by cards. If the primary object contains several secondary objects and there is a range of prices, then only the maximum value is indicated with the prefix "Earn up to {price}". {price} - on the card, the amount must be shown with two decimal places. |
+|`Heart`| Button to add to shop if the primary object is book or product type. |
+
+---
+> Everything that is displayed on the card can be regulated, edited, and added to the object page.
+![image](https://user-images.githubusercontent.com/67378322/222456786-75ce152a-3c54-4499-bb0c-326392325681.png)
+![image](https://user-images.githubusercontent.com/67378322/222456881-7f7078f0-9886-43d8-8174-44513af0b967.png)
+
+## Primary Reward Card on Social Sites
+|Element|Description|
+|-------|----------|
+|`Title`|Share photos & earn $ {amount}|
+|`Sponsor`|sponsor's avatar and name, that link to the user profile, and "(sponsor)" mark.|
+|`Earn`|button "Earn {price} {currency}" to go to the list of secondaries of objects.|
+![image](https://github.com/user-attachments/assets/cad39d4a-61d0-4326-a5f0-16bd338bb0f0)
+
+
+# Secondary card details
+**Secondary card** - This card represents a specific object within the context of a campaign, where the object is secondary to the primary focus. Examples include a dish from a restaurant or a product from a brand. The secondary card is more detailed and specific.
+|Element|Description|
+|-------|----------|
+| `Title` | Title for review campaign type: "Share {amount} photos of the {type} and earn crypto". Title for mention campaign type: "Mention {object} and earn crypto".|
+| `You Earn` | Information about the rewards for the review. How much the performer of the campaign will receive for the review. The price is in user currency (USD, CAD etc.). |
+| `User Avatar` | User avatar of the campaign sponsor. After clicking, the object page is opened. |
+| `Username` | Username of the campaign sponsor. After clicking, the sponsor page is opened. |
+| `Avatar` | Object avatar. If the object's secondary does not have an avatar, the parent's avatar is used by default. After clicking, the object page is opened. |
+| `Rarent Name` | Parent's name. If present, it displays above the object name in gray letters. After clicking, the object page is opened. |
+| `Name` | Object name. After clicking, the object page is opened. |
+| `Rating` | Object rating. There is an opportunity to vote with stars. |
+| `Object Type` | Object type. Not clickable. |
+| `Price` | Object price. Not clickable. |
+| `Tags` | Object tags. Displays the 2 with the highest weight. Not clickable. |
+| `Address` | Object address. Not clickable. |
+| `Title or Description` | If the object has a title, it is displayed. If there is no title, but there is a description, the description is displayed. If there is no title and no description, nothing is displayed. Not clickable. |
+| `Submit` | Button "Submit photos" for booking a campaign, for review campaign type. After clicking, a modal reservation window opens where the user can read all campaign requirements. Clicking on "Submit Photos" allows the user to directly write and complete the review and publish the post. <br> Button "Mention Now!" for mentions campaign type.|
+| `Days` | "For {number} days" - displays the number of days the campaign will be available for keeping a reservation. Not clickable. Available after reward reservation. |
+| `Details` | Link that, after clicking, opens a modal reservation window. After clicking, a modal reservation window opens where the user can read all campaign requirements. Clicking on "Submit Photos" allows the user to directly write and complete the review and publish the post. |
+| `Heart` | Button to add the object to user shop. |
+> Everything that is displayed on the card can be regulated, edited, and added to the object page.
+![image](https://user-images.githubusercontent.com/67378322/222457522-2b8c5ef4-9a8c-4691-b862-8cfe880a8014.png)
+![image](https://user-images.githubusercontent.com/67378322/222457580-74aa8d31-7d5f-49cf-8157-e2972b23daff.png)
+
+
+# Reservation modal window
+The modal window for reservation opens after clicking:
+- firstly, on the "Earn button" on the primary card, and after that "Submit photos" button on the secondary card;
+- on the "Submit photos" or "Mention Now!" buttons on the secondary card;
+- on the "Details" link on the secondary card.
+![image](https://user-images.githubusercontent.com/67378322/224985999-30b21958-5918-403b-8836-f4af6483d426.png)
+![image](https://user-images.githubusercontent.com/67378322/224986064-65720b4e-e065-496d-88ce-2fd991efd2e4.png)
+|Element|Description|
+|---|---|
+|`Title`|We seek honest reviews!|
+|`Close button`|cross button to close the modal window|
+|`Photo requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
+|`Sponsor`|Sponsor - link to sponsor profile|
+|`Sponsor Name`|@{sponsorName} - link to sponsor profile|
+|`Total Paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
+|`User eligibility requirements`|**User eligibility requirements:** <br>Only users who meet all eligibility criteria can participate in this rewards campaign.<br>* Minimum Waivio expertise: {number} <br>* Minimum number of followers:  {number} <br>* Minimum number of posts:  {number} <br>* Have not received a reward from {sponsorName} for reviewing {primaryObject} in the last 15 days. <br>* User account is not blacklisted by {sponsorName} or referenced accounts. <br>*User does not have an active reservation for such a reward at the moment.<br><br> "Have not received a reward ..." item is displayed if the sponsor specified an eligible period when creating - that is, the frequency of booking by one user of the campaign in a certain period. All items with asterisks are checkboxes that are filled in automatically depending on the user|
+|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
+|`Reward`|**Reward:**<br>The amount of the reward is determined in HIVE at the time of reservation. The reward will be paid in the form of a combination of upvotes (Hive Power) and direct payments (liquid HIVE). Only upvotes from registered accounts (@{sponsorName}) count towards the payment of rewards. The value of all other upvotes is not subtracted from the specified amount of the reward.|
+|`Legal`|If it was specified when creating the campaign. **Legal:**<br>By making the reservation, you confirm that you have read and agree to the Terms and Conditions of the Service Agreement <br><br>* ”Terms and Conditions of the Service Agreement“- link to https://waivio.com/object/xrj-terms-and-conditions/page|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`Submit`|"Submit photos" button. After clicking, will redirect to editor, the reservation was done automatically.|
+|`Menu`|three dots menu will have additional item - Reserve the rewards for {number} days - means, the user can just reserve the campaign, but without redirection to editor. After clicking, the reservation will be completed and redirected to Reserved tab with the card.|
+![image](https://user-images.githubusercontent.com/67378322/224994708-84c108d4-8d0b-41f7-9ccd-330c8702235b.png)
+![image](https://user-images.githubusercontent.com/67378322/224994778-ca967898-ee24-4230-9acc-4c64bb3b0720.png)
+If the user does not meet some reward reservation requirements, then the entire condition will be highlighted in red color to attract attention.
+![image](https://user-images.githubusercontent.com/67378322/224997471-b8ddb34a-7356-425c-b3ae-63c62b2e7920.png)
+
+
+# Reservation modal window if campaign was only reserved, in order to write a review
+|Element|Description|
+|---|---|
+|`Title`|We seek honest reviews!|
+|`Button to close`|button to close the modal window|
+|`Photo Requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
+|`Sponsor`|Sponsor - link to sponsor profile|
+|`Sponsor name`|@{sponsorName} - link to sponsor profile|
+|`Total paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
+|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`Submit`|"Submit photos" button. After clicking, will redirect to editor.|
+* After clicking on the button for writing a review, the editor opens where the title "Review: {primaryObject}, {secondaryObject}" is pulled up, and the objects for which the review is written
+![image](https://user-images.githubusercontent.com/67378322/224996305-b5327c60-6194-48bc-b554-8b2bb7ce3d9e.png)
+![image](https://user-images.githubusercontent.com/67378322/224996389-2bcacc08-e08d-41c2-a94f-8eed3fc210e9.png)
+
+
+# Release reservation modal window
+The modal window to confirm the action of canceling the reservation. After canceling, the campaign is displayed as available to the user again
+|Element|Description|
+|---|---|
+|`Title`|Release reservation|
+|`Question`|Do you want to release this reservation?|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`OK`|button to confirm the action|
+![image](https://user-images.githubusercontent.com/67378322/224996676-9a521577-27de-4f53-b15b-39768a18d888.png)
