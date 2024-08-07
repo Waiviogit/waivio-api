@@ -1567,7 +1567,8 @@ Displaying the editor after clicking on "Write review".
 
 # Earn. Receivable
 Page that shows the sponsor list and the amount of reward for the campaign execution.
-WAIV token is used to create campaigns and pay.
+The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key measure.
+
 Sorting:
 * Amount - by the amount of reward
 * Time - by time
