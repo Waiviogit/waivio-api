@@ -1434,7 +1434,7 @@ Sorting has text - "Sorted by".
 ## Filters
 Filters availability:
 * Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
-* Rewards for has "reviews" item that is filter by review type.
+* Rewards for has "reviews" and "mentions" elements that filter campaigns by type.
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
 
@@ -1480,7 +1480,7 @@ Sorting has text - "Sorted by".
 ## Filters
 Filters availability:
 * Eligibility has item "show all rewards" which by default inactive, and mean that by default user can see only campaigns that he can execute. If the user clicks on the show all rewards checkbox, he will see all campaigns. Filter presents only on 1st step with primary cards.
-* Rewards for has "reviews" item that is filter by review type.
+* Rewards for has "reviews" and "mentions" elements that filter campaigns by type.
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
 
