@@ -82,6 +82,13 @@ exports.schema = [
     fields_path: 'posts',
   },
   {
+    path: '/posts/mentions',
+    method: 'POST',
+    case: 2,
+    field_name: 'author',
+    fields_path: 'posts',
+  },
+  {
     path: '/user/getUsersData',
     method: 'POST',
     case: 2,
