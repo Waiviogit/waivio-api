@@ -1701,3 +1701,59 @@ Campaign statuses change depending on the actions of the sponsor and executors, 
 > Everything that is displayed on the card can be regulated, edited, and added to the object page.
 ![image](https://user-images.githubusercontent.com/67378322/222457522-2b8c5ef4-9a8c-4691-b862-8cfe880a8014.png)
 ![image](https://user-images.githubusercontent.com/67378322/222457580-74aa8d31-7d5f-49cf-8157-e2972b23daff.png)
+
+
+# Reservation modal window
+The modal window for reservation opens after clicking:
+- firstly, on the "Earn button" on the primary card, and after that "Submit photos" button on the secondary card;
+- on the "Submit photos" or "Mention Now!" buttons on the secondary card;
+- on the "Details" link on the secondary card.
+![image](https://user-images.githubusercontent.com/67378322/224985999-30b21958-5918-403b-8836-f4af6483d426.png)
+![image](https://user-images.githubusercontent.com/67378322/224986064-65720b4e-e065-496d-88ce-2fd991efd2e4.png)
+|Element|Description|
+|---|---|
+|`Title`|We seek honest reviews!|
+|`Close button`|cross button to close the modal window|
+|`Photo requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
+|`Sponsor`|Sponsor - link to sponsor profile|
+|`Sponsor Name`|@{sponsorName} - link to sponsor profile|
+|`Total Paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
+|`User eligibility requirements`|**User eligibility requirements:** <br>Only users who meet all eligibility criteria can participate in this rewards campaign.<br>* Minimum Waivio expertise: {number} <br>* Minimum number of followers:  {number} <br>* Minimum number of posts:  {number} <br>* Have not received a reward from {sponsorName} for reviewing {primaryObject} in the last 15 days. <br>* User account is not blacklisted by {sponsorName} or referenced accounts. <br>*User does not have an active reservation for such a reward at the moment.<br><br> "Have not received a reward ..." item is displayed if the sponsor specified an eligible period when creating - that is, the frequency of booking by one user of the campaign in a certain period. All items with asterisks are checkboxes that are filled in automatically depending on the user|
+|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
+|`Reward`|**Reward:**<br>The amount of the reward is determined in HIVE at the time of reservation. The reward will be paid in the form of a combination of upvotes (Hive Power) and direct payments (liquid HIVE). Only upvotes from registered accounts (@{sponsorName}) count towards the payment of rewards. The value of all other upvotes is not subtracted from the specified amount of the reward.|
+|`Legal`|If it was specified when creating the campaign. **Legal:**<br>By making the reservation, you confirm that you have read and agree to the Terms and Conditions of the Service Agreement <br><br>* ”Terms and Conditions of the Service Agreement“- link to https://waivio.com/object/xrj-terms-and-conditions/page|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`Submit`|"Submit photos" button. After clicking, will redirect to editor, the reservation was done automatically.|
+|`Menu`|three dots menu will have additional item - Reserve the rewards for {number} days - means, the user can just reserve the campaign, but without redirection to editor. After clicking, the reservation will be completed and redirected to Reserved tab with the card.|
+![image](https://user-images.githubusercontent.com/67378322/224994708-84c108d4-8d0b-41f7-9ccd-330c8702235b.png)
+![image](https://user-images.githubusercontent.com/67378322/224994778-ca967898-ee24-4230-9acc-4c64bb3b0720.png)
+If the user does not meet some reward reservation requirements, then the entire condition will be highlighted in red color to attract attention.
+![image](https://user-images.githubusercontent.com/67378322/224997471-b8ddb34a-7356-425c-b3ae-63c62b2e7920.png)
+
+
+# Reservation modal window if campaign was only reserved, in order to write a review
+|Element|Description|
+|---|---|
+|`Title`|We seek honest reviews!|
+|`Button to close`|button to close the modal window|
+|`Photo Requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
+|`Sponsor`|Sponsor - link to sponsor profile|
+|`Sponsor name`|@{sponsorName} - link to sponsor profile|
+|`Total paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
+|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`Submit`|"Submit photos" button. After clicking, will redirect to editor.|
+* After clicking on the button for writing a review, the editor opens where the title "Review: {primaryObject}, {secondaryObject}" is pulled up, and the objects for which the review is written
+![image](https://user-images.githubusercontent.com/67378322/224996305-b5327c60-6194-48bc-b554-8b2bb7ce3d9e.png)
+![image](https://user-images.githubusercontent.com/67378322/224996389-2bcacc08-e08d-41c2-a94f-8eed3fc210e9.png)
+
+
+# Release reservation modal window
+The modal window to confirm the action of canceling the reservation. After canceling, the campaign is displayed as available to the user again
+|Element|Description|
+|---|---|
+|`Title`|Release reservation|
+|`Question`|Do you want to release this reservation?|
+|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
+|`OK`|button to confirm the action|
+![image](https://user-images.githubusercontent.com/67378322/224996676-9a521577-27de-4f53-b15b-39768a18d888.png)
