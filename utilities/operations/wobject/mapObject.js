@@ -443,7 +443,7 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
     }
   }
 
-  for (const item of processed[FIELDS_NAMES.MENU_ITEM]) {
+  for (const item of links) {
     if (_.includes(existOnObjects, item)) return item;
   }
 
