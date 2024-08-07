@@ -639,6 +639,24 @@ const getAuthorPermlinkByIdType = async (req, res, next) => {
   next();
 };
 
+const getMapObjectFromObjectLink = async (req, res, next) => {
+  const value = validators.validate(
+    { authorPermlink: req.params.authorPermlink },
+    validators.wobject.mapObjectFromObjectLinkScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await mapObject.getMapObjectFromObjectLink({
+    ...value,
+    app: req.appData,
+  });
+
+  res.result = { status: 200, json: { result } };
+  next();
+};
+
 module.exports = {
   index,
   show,
@@ -675,4 +693,5 @@ module.exports = {
   getListLinksAuthority,
   getObjectsLinksOnMap,
   getAuthorPermlinkByIdType,
+  getMapObjectFromObjectLink,
 };
