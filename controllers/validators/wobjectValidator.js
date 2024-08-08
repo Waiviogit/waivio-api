@@ -276,3 +276,8 @@ exports.getAuthorPermlinkByIdType = Joi.object().keys({
   id: Joi.string().required(),
   idType: Joi.string().required(),
 });
+
+exports.getAuthorPermlinkByFieldBody = Joi.object().keys({
+  body: Joi.string().required(),
+  objectType: Joi.string(),
+});
