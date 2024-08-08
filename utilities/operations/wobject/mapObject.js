@@ -439,7 +439,13 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
 
   if (processed?.sortCustom?.include?.length) {
     for (const item of processed?.sortCustom?.include) {
-      if (_.includes(existOnObjects, item)) return item;
+      const menuItem = _.find(processed.menuItem, (el) => el.permlink === item);
+      if (!menuItem) continue;
+      const json = parseJson(menuItem.body, null);
+      if (!json) continue;
+      if (json?.objectType !== OBJECT_TYPES.MAP || !json?.linkToObject) continue;
+
+      if (_.includes(existOnObjects, json.linkToObject)) return json.linkToObject;
     }
   }
 
