@@ -396,6 +396,18 @@ const getAuthorPermlinkByIdType = async ({ id, idType }) => {
   return { result: result?.author_permlink || '' };
 };
 
+const getAuthorPermlinkByFieldBody = async ({ body, objectType }) => {
+  const { result } = await Wobj.findOne(
+    {
+      'fields.body': body,
+      ...(objectType && { object_type: objectType }),
+    },
+    { author_permlink: 1 },
+  );
+
+  return { result: result?.author_permlink || '' };
+};
+
 module.exports = {
   getOne,
   getItemsCount,
@@ -404,4 +416,5 @@ module.exports = {
   getAllObjectsInList,
   getListsForAuthority,
   getAuthorPermlinkByIdType,
+  getAuthorPermlinkByFieldBody,
 };

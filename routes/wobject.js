@@ -78,5 +78,7 @@ wobjRoutes.route('/wobjects/search-default')
   .post(reqTimeMonitor, WobjController.searchDefault);
 wobjRoutes.route('/wobjects/id-type')
   .post(reqTimeMonitor, WobjController.getAuthorPermlinkByIdType);
+wobjRoutes.route('/wobjects/field-body')
+  .post(reqTimeMonitor, WobjController.getAuthorPermlinkByFieldBody);
 
 module.exports = wobjRoutes;
