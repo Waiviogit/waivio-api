@@ -7,6 +7,7 @@ const {
   REMOVE_OBJ_STATUSES,
   MAP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
+const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
 const { ERROR_OBJ, REDIS_KEYS, TTL_TIME } = require('constants/common');
 const _ = require('lodash');
 const wObjectHelper = require('../../helpers/wObjectHelper');
@@ -341,7 +342,116 @@ const getObjectsFromAdvancedMap = async ({
   };
 };
 
+const checkMapsForObject = async ({ app, authorPermlink, check }) => {
+  const emptyResp = '';
+
+  const {
+    objectLinksCondition,
+    tagsCondition,
+    typesCondition,
+    boxCoordinates,
+  } = await getMapObjectCondition({
+    app, authorPermlink: check,
+  });
+
+  if (!boxCoordinates
+    && !tagsCondition
+    && !typesCondition
+    && !objectLinksCondition) return emptyResp;
+
+  const rectangles = _.map(boxCoordinates, (el) => [el.bottomPoint, el.topPoint]);
+
+  const mapCondition = rectangles?.length
+    ? {
+      $or: rectangles.map((el) => ({
+        map: {
+          $geoWithin: {
+            $box: el,
+          },
+        },
+      })),
+    }
+    : { map: { $exists: true, $ne: null } };
+
+  const andCondition = [];
+
+  andCondition.push(mapCondition);
+  if (typesCondition) andCondition.push(typesCondition);
+  if (tagsCondition) andCondition.push(tagsCondition);
+  if (objectLinksCondition) andCondition.push(objectLinksCondition);
+
+  const { wobjects } = await Wobj.fromAggregation([
+    {
+      $match: {
+        $and: andCondition,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        object_type: { $in: MAP_OBJECT_TYPES },
+        author_permlink: authorPermlink,
+      },
+    },
+  ]);
+
+  if (wobjects?.length) return check;
+  return emptyResp;
+};
+
+const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
+  if (!app || !app?.inherited || app?.canBeExtended) return '';
+  if (app?.configuration?.shopSettings?.type !== SHOP_SETTINGS_TYPE.OBJECT) return '';
+  if (app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.OBJECT
+    && app?.configuration?.shopSettings?.value === authorPermlink
+  ) return authorPermlink;
+
+  const { wObject } = await Wobj.getOne(app?.configuration?.shopSettings?.value);
+  if (!wObject) return '';
+
+  const processed = await wObjectHelper.processWobjects({
+    wobjects: [wObject],
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    app,
+    returnArray: false,
+  });
+
+  const links = _.reduce(processed[FIELDS_NAMES.MENU_ITEM], (acc, el) => {
+    const json = parseJson(el.body, null);
+    if (!json) return acc;
+    if (json?.objectType !== OBJECT_TYPES.MAP || !json?.linkToObject) return acc;
+    acc.push(json.linkToObject);
+    return acc;
+  }, []);
+
+  const { result } = await Wobj.findObjects({
+    filter: {
+      object_type: OBJECT_TYPES.MAP,
+      author_permlink: { $in: links },
+    },
+  });
+  if (!result?.length) return '';
+  if (result.length === 1) result[0].author.permlink;
+
+  const responses = await Promise.all(
+    result.map((el) => checkMapsForObject({ app, authorPermlink, check: el.author_permlink })),
+  );
+
+  const existOnObjects = _.compact(responses);
+  if (!existOnObjects.length) return '';
+  if (existOnObjects.length === 1) return existOnObjects[0];
+
+  if (processed?.sortCustom?.include?.length) {
+    for (const item of processed?.sortCustom?.include) {
+      if (_.includes(existOnObjects, item)) return item;
+    }
+  }
+
+  for (const item of links) {
+    if (_.includes(existOnObjects, item)) return item;
+  }
+
+  return '';
+};
+
 module.exports = {
   getObjectsFromAdvancedMap,
   getObjectLinksFromAdvancedMap,
+  getMapObjectFromObjectLink,
 };
