@@ -142,7 +142,7 @@ const getFavoritesMap = async ({
   ];
 
   const { wobjects, error } = await Wobj.fromAggregation(pipe);
-  if (error) return { error };
+  if (error) return { result: [], hasMore: false };
 
   const processed = await wObjectHelper.processWobjects({
     wobjects: _.take(wobjects, limit),
