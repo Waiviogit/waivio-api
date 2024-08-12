@@ -2115,3 +2115,27 @@ To start using the Waivio AI Assistant simply click the AI chat button:
 Experience the convenience of having a personal assistant at your fingertips.
 Your feedback is important to us. Please share your experiences in the comments below. Did it guide you effectively? Were you able to find the help you needed during your journey on Waivio? Your insights will help us improve and expand the capabilities of the AI Assistant to better serve you and the entire Waivio community.
 For more details give a link to https://www.waivio.com/@waiviolabs/introducing-the-waivio-ai-assistant
+
+
+# PayPal Button Integration into Product Pages
+If you're looking to sell your own products and directly accept payments in a social shop, PayPal offers a seamless solution. Here's a step-by-step guide on how to integrate PayPal into your product pages, with an example from Luxita Solutions, which accepts PayPal for their Premium Training Course.
+Example: Luxita Solutions' Premium Training Course
+![image](https://waivio.nyc3.digitaloceanspaces.com/ae00b981375eb21c20ecc63edd9734322c2cca82022230a3bd5f28d2525c12fd)
+Source: Premium Training Course (https://luxitasolutions.com/object/xqi-premium-training-course?breadcrumbs=4fsj5r-packages/xqi-premium-training-course)
+How to Integrate PayPal into Your Product Pages
+Step 1: Create a Product in PayPal
+First, create a product in PayPal with the necessary details like name, price, and applicable tax. Once this is done, PayPal will provide you with a dedicated URL to sell your product. The URL will look something like this:
+https://www.paypal.com/ncp/payment/L7Y46H9566LLU
+From this URL, you need to copy the code (ProductID), which in this case is L7Y46H9566LLU.
+Step 2: Create a Product on Waivio
+Next, create a product on Waivio. Provide a detailed description, add photos, and complete all relevant fields. The critical part is to add the ProductID:
+Set the name to "paypal"
+Set the value to the ProductID obtained from PayPal
+![image](https://waivio.nyc3.digitaloceanspaces.com/e8ababfe492dc96e0d883c64b68d90e9a736bf3209c356b80fb2bed77852137b)
+Step 3: Add PayPal Affiliate Code in Website Settings
+To ensure the PayPal button appears on your social shopping site, you need to add the PayPal affiliate code in the website settings. Simply enter the same name you configured in PayPal.
+![image](https://waivio.nyc3.digitaloceanspaces.com/33d82d92563159ea6ce72fb3f4d38fa91fcf0a6998c5d6ffd4da4281f33e4036)
+Note: This field is not required in the URL, but it is necessary for the button to appear on your social site.
+Simple Integration
+Now you can effortlessly integrate PayPal payments into your social shopping site. Whether you’re selling online training courses, physical products, or services, the PayPal integration ensures a smooth and trusted transaction process.
+Get started today and take your social shop to the next level with easy-to-integrate PayPal payments!
