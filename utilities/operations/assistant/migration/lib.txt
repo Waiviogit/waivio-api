@@ -2062,7 +2062,6 @@ References account name shows instead of button Delete.
 |`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
 ![image](https://user-images.githubusercontent.com/67378322/224950782-459e28d1-d365-4909-80fe-5b36e213e1dc.png)
 
-
 ## Whitelist
 ||User search block|
 |-----|---|
