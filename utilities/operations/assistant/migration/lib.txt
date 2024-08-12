@@ -2081,10 +2081,11 @@ The strength of the voice can range from + 0.1% to + 100% (max upvote).
 This bot does not vote for comments or re-blogs.
 Authors match bot has its own authorization (so as not to conflict with Sponsors match bot).
 So far, the bot is limited to only positive votes. In order not to publish votes with a small value, it makes sense to estimate the weight of the vote and if it is less than 0.01 HBD (1 cent), then ignore it.
-## How it works (simplified version)
-1. User adds an author
-2. An author writes a post
-3. User's like has appeared on the post automatically after 5 minutes.
+## How It Works (Simplified Version)
+1. A user enables the Authors Match Bot authorization.
+2. The user adds an author.
+3. The author writes a post.
+4. The user's like automatically appears on the post after 5 minutes.
 ## Page information
 |Element|Description|
 |---|--|
@@ -2178,10 +2179,11 @@ By default, the bot repeats only positive votes, but if the user specifies (tick
 For each curator, min Voting Power is set (upvote / downvote mana).
 If the estimated value of the vote is less than 0.01 HBD, then such a vote will not be played.
 
-## How it works (simplified version)
-1. User adds an curator
-2. The curator puts likes and dislikes.
-3. User's like and dislikes have appeared on the post automatically.
+## How It Works (Simplified Version)
+1. A user enables the Curator Match Bot authorization.
+2. The user adds a curator.
+3. The curator gives likes and dislikes.
+4. The user’s likes and dislikes automatically appear on the post.
 
 ## Page
 |Element|Description|
@@ -2275,6 +2277,12 @@ If a user wants to become a Match bot, he needs to activate the toggle on the "R
 For example the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV.
 In order for the sponsor to add a match bot to the campaign. The Match bot should in turn add a sponsor. To do this, in the "Sponsors" tab, click on the "Add sponsor" button.
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
+## How It Works (Simplified Version)
+1. A user enables the Sponsor Match Bot authorization.
+2. The user adds a sponsor.
+3. The sponsor adds the user to the "Registered Upvoting Accounts" when creating the campaign.
+4. When the campaign is completed, likes from the user are automatically added to the reviews.
+
 In the modal window, you need to fill in the fields:
 * choose a sponsor;
 * determine the strength of the voice;
