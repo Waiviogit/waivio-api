@@ -2300,6 +2300,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Minimum Voting Power` | minimum voice strength of the match bot |
 | `Change` | link, after clicking on which a modal window `CHANGE MINIMUM VOTING POWER MODAL` opens, as an opportunity to change the strength of the match bot's voice |
 
+Table:
 | `Table` | a table for displaying a list of sponsors, and basic information of rules with sponsors |
 | ------------- | ------------- |
 | `Active` | a column with a checkbox to activate the Match Bot rule for each specific user added to the list of match bot sponsors. After clicking on `ACTIVE` the modal window `CONFIRM RULE ACTIVATION` |
@@ -2309,9 +2310,9 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Expiry Date` | the column displays the time until which this rule is in effect. The time is selected when adding a sponsor (in the modal `ADD NEW SPONSOR MODAL`), or when editing a rule (in the modal `EDIT MATCH BOT RULES MODAL`), if the time was not specified, it is displayed - "termless" - which means the rule is valid until the match bot deactivates the rule |
 | `Notes` | a column with additional notes that can be added when adding a sponsor (in the `ADD NEW SPONSOR MODAL` modal), or when editing a rule (in the `EDIT MATCH BOT RULES MODAL` modal). These notes will be displayed only for the match bot who created the rule |
 | `Add Sponsor Button` | button to add sponsor. After pressing the modal window `ADD NEW SPONSOR MODAL` |
-
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
 
+Modal window `Change the Minimum Voice Strength`:
 | | Modal window `Change the Minimum Voice Strength` |
 | ------------- | ------------- |
 | `Title` | Title - title of the modal window "Change the minimum voice strength" |
@@ -2321,6 +2322,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Cancel` | button for canceling the action on choosing a voice |
 ![image](https://github.com/user-attachments/assets/61b4f25c-d5f9-4c7d-81cb-2510185e5e18)
 
+Modal window `Add new sponsor modal window`:
 | | Modal window `Add new sponsor modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Add new sponsor".|
@@ -2336,6 +2338,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `OK` | add a rule to a table |
 ![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
 
+Modal window `Confirm rule activation`:
 | | Modal window `Confirm rule activation` |
 | ------------- | ------------- |
 | `Title` | Title - title of the modal window "Confirm the activation of the rule" |
@@ -2345,6 +2348,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Cancel` | button for canceling the rule activation action |
 ![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
 
+Modal window `Edit match bot rules modal window`:
 | | Modal window `Edit match bot rules modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Edit rule {userName}" |
