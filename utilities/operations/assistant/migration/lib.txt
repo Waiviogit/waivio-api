@@ -1879,6 +1879,7 @@ After clicking on the arrow in the user card. The table opens.
 ![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
 ![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
 
+"Pay all" modal window:
 |`Pay all`| modal window|
 |--|--|
 |`Title`|Do you want to pay all payable?|
@@ -1899,9 +1900,7 @@ Page for creation of a report on people who completed the review. The report can
 The page consists of a form for filling in with data to receive a report with exactly these criteria, and a table as a result. Reports displayed in WAIV token.
 ![image](https://user-images.githubusercontent.com/67378322/224737410-3cb2b494-9375-4043-9fdf-f14183d598bf.png)
 
-|`Page Title`|"Reports :"|
-|---|---|
-
+Form to fill out to receive the report:
 ||`Form`|
 |---|---|
 |`Sponsor`| Title - "* Sponsor:". Sponsor search field. The required field is marked with an asterisk. Placeholder: "Find users". After searching for a sponsor and clicking on it in the search list, the card of the selected sponsor will be displayed below the field.|
@@ -1913,12 +1912,17 @@ The page consists of a form for filling in with data to receive a report with ex
 |`Object Card`| by default, the card of the user who is authorized is selected. <br>After searching for an object (`OBJECT`) and clicking on it in the search list, the card of the selected object will be displayed below the field. <br>There is a cross button on the card to delete.|
 |`Submit`|button "Submit" to confirm report generation. After clicking, a block is displayed with the entered information on which to generate a report.|
 |`Hive Reports`|"Report (HIVE) link to HIVE reports."|
+![image](https://github.com/user-attachments/assets/c0d2f396-70da-4ce7-97b5-3b207065bb90)
+
 Information on which the report will be generated -  text block where information from the form is displayed. <br>Consists of:
 <br>Reviews sponsored by @{sponsorName}
 <br>From: {date}
 <br>Till: {date}
 <br>With links to an object: {objectName}
 <br>Total amount: {amount}
+![image](https://github.com/user-attachments/assets/08fcb61e-621b-4cbf-89fc-8b33c89df126)
+
+Report table information:
 ||`Table information`|
 |---|---|
 |`Date`|  the date of the transfer. Title - "Date & Time (GMT)".|
@@ -1926,7 +1930,7 @@ Information on which the report will be generated -  text block where informatio
 |`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
 |`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
-
+![image](https://github.com/user-attachments/assets/92fea928-3d60-4670-9446-633143f47f41)
 
 
 # Earn. Reservations
@@ -1963,6 +1967,7 @@ The footer of the card changes to:
 * Reinstate reward;
 * Mute user;
 * Hide post.
+![image](https://github.com/user-attachments/assets/7b11b186-4e93-49bd-99df-7d027575779e)
 
 
 # Earn. Messages
@@ -2020,6 +2025,7 @@ At the moment, the check is carried out as follows:
 |`Sorting`|Sort by <ul><li>Reservation</li><li>Action (date)</li></ul>|
 |`Cards`| [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card) with status "Completed" are displayed.|
 |`Codes`|codes with the reason for suspicion of fraud are displayed, under the comment field.|
+![image](https://user-images.githubusercontent.com/67378322/224935974-59400359-a848-4086-8ca8-b70b0539b69e.png)
 
 
 # Earn. Blacklist
@@ -2076,10 +2082,8 @@ References account name shows instead of button Delete.
 
 
 # Earn. Match bots. Authors.
-**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author.
-The strength of the voice can range from + 0.1% to + 100% (max upvote).
-This bot does not vote for comments or re-blogs.
-Authors match bot has its own authorization (so as not to conflict with Sponsors match bot).
+**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author. The strength of the voice can range from + 0.1% to + 100% (max upvote). This bot does not vote for comments or re-blogs.
+Authors match bot has its own authorization.
 So far, the bot is limited to only positive votes. In order not to publish votes with a small value, it makes sense to estimate the weight of the vote and if it is less than 0.01 HBD (1 cent), then ignore it.
 ## How It Works (Simplified Version)
 1. A user enables the Authors Match Bot authorization.
@@ -2093,9 +2097,10 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Switch`|switch for authorization match bot. If it is red, then the bot is inactive, if green is active |
 |`Description`|The Authors match bot automatically upvotes posts published by the specified authors. It does not upvote comments or re-blogs. <br><br> For each author, please specify the upvoting power in the range from +1% to +100% (maximum upvote). Actual value of the upvote depends on the current upvoting mana on the account at the time of the action.<br><br> Important: The Authors match bot only publishes upvotes with estimated combined value of 0.01 HBD or more.<br><br> Votes will be processed as long as the mana (voting power) on the account remains above the threshold as specified for each author.|
 |`Auth Block`|**The Authors match bot requires authorization to distribute votes on your behalf: Authorize now <br> The authorization is completed via HiveSigner and can be revoked at any time.** <br> <br> **Disclaimer:** The Authors match bot service is provided on as-is / as-available basis.|
-|`Link`| "Authorize now" link for authorization https://github.com/Waiviogit/waivio/wiki/Match-bot-(Sponsor)#how-to-become-a-match-bot|
+|`Link`| "Authorize now" link for bot authorization.|
 |`Add`| button "Add author" for adding authors, after clicking the modal window "Add new author" opens|
 * "Authorize now" changes to "Remove authorization" in `AUTH_BLOCK`, if bot is active.
+![image](https://github.com/user-attachments/assets/0b62214d-e2c1-45f0-bab0-7c443ec23938)
 
 ## Table information
 |Column|Description|
@@ -2178,6 +2183,7 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 By default, the bot repeats only positive votes, but if the user specifies (ticks the check box), then downvotes are repeated with the same coefficient. In this case, the table uses the ± symbol in front of Vote ratio to indicate that negative votes are also repeated.
 For each curator, min Voting Power is set (upvote / downvote mana).
 If the estimated value of the vote is less than 0.01 HBD, then such a vote will not be played.
+![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
 
 ## How It Works (Simplified Version)
 1. A user enables the Curator Match Bot authorization.
@@ -2185,7 +2191,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 3. The curator gives likes and dislikes.
 4. The user’s likes and dislikes automatically appear on the post.
 
-## Page
+## Curators Bot Page Information
 |Element|Description|
 |---|--|
 |`Title`|Curators match bot|
@@ -2195,6 +2201,8 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 |`Link`| "Authorize now" link for authorization https://github.com/Waiviogit/waivio/wiki/Match-bot-(Sponsor)#how-to-become-a-match-bot|
 |`Add`| button "Add curator" for adding curator, after clicking the modal window "Add new curator" opens|
 * "Authorize now" changes to "Remove authorization", if bot is active.
+![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
+
 ### Table
 |Column|Description|
 |----|------|
@@ -2297,7 +2305,7 @@ Additional functionality:
 And confirmation of the action in the "Confirm rule inactivation" modal window
 ![image](https://user-images.githubusercontent.com/67378322/108823015-8cbc6d00-75c8-11eb-8629-4a327032d615.png)
 
-## Element table
+## Sponsor Bot Page Information
 | Element  | Description |
 | ------------- | ------------- |
 | `General Information`  | text information with an example of how to manage a match bot |
