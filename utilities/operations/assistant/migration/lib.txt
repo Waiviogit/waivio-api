@@ -1758,6 +1758,7 @@ The modal window to confirm the action of canceling the reservation. After cance
 
 # Earn. Create (Campaign)
 Create campaign is the starting point for using the Rewards feature as a sponsor (guide). It implies the creation of a campaign with certain conditions for writing a review on the proposed objects.
+Basic information about every field:
 | Element |  Description |
 |------ | ------ |
 |`Campaign name` | - the name of the new campaign being created by the sponsor. <br>Campaign names are used only for internal reports (Manage tab) the field cannot be empty. <br>Also used for the type of notification when the user sends a comment in the object's secondary card. <br>"Campaign name" inscription above the field. <br>"Campaign names are used only for internal reports" - inscription under the field. <br>Required field| 
@@ -1766,20 +1767,28 @@ Create campaign is the starting point for using the Rewards feature as a sponsor
 |`Display currency`| - drop-down with list of currency <br>"Display currency:" inscription above the field. By default - USD or currency what user chose in settings. [List of currencies](https://github.com/Waiviogit/waivio/wiki/Currencies). <br>"Disclaimer: Exchange rates are provided by third parties and may not be accurate." - inscription under the field. <br>Required field|
 |`Payment currency`| - dropdown to select the currency for payments, at the moment one type is available - WAIV. <br>"All payment obligations will be calculated in that currency based on the exchange rates at the time of the transactions." - inscription under the field. <br>Required field|
 |`Budget`| - funds for payment of rewards. <br>All completed reviews from the 1st of the current month are taken into account. <br>The Unused part of the budget is not accumulated (reset to zero once a month). <br>Each new month starts with a fixed amount of the campaign budget specified when it was created (this is spelled out in the rules). <br>"Campaign budget (monthly, USD)" inscription above the field. <br>"The unused portion of the budget does not accumulate" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number. |
-|`Rewatds`| - amount of reward for one review part of the reward can be paid with votes from registered accounts. <br>The amount per review is not necessarily a multiple of the campaign budget amount. <br>"Reward (per review, USD)" inscription above the field. <br>"Portion of the reward can be paid using upvotes from registered accounts" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
-|`Registered upvoting accounts` | - list of match bots. In the form of curated accounts or match bots, the sponsor can act and the accounts that the sponsor will add here. <br>The sponsor does not have to add himself, since by default all likes to set by the sponsor are tracked, the debt is also recalculated if the like is set manually by the sponsor. <br>The value of likes can be accumulated on a special compensation account. <br>"Registered upvoting accounts" inscription above the field. By default, the field is empty. <br>"The value of upvotes can be accumulated on a dedicated compensation account" - inscription under the field. |
+|`Reward`| - amount of reward for one review part of the reward can be paid with votes from registered accounts. <br>The amount per review is not necessarily a multiple of the campaign budget amount. <br>"Reward (per review, USD)" inscription above the field. <br>"Portion of the reward can be paid using upvotes from registered accounts" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
+|`Registered upvoting accounts` | - list of match bots. In the form of curated accounts or match bots, the sponsor can act and the accounts that the sponsor will add here. <br>The sponsor does not have to add himself, since by default all likes to set by the sponsor are tracked, the debt is also recalculated if the like is set manually by the sponsor. <br>The value of likes can be accumulated on a special compensation account. <br>"Registered upvoting accounts" inscription above the field. By default, the field is empty. <br>"The value of upvotes can be accumulated on a dedicated compensation account" - inscription under the field. Optional field. |
 |`Compensation account`| - accumulates the value of likes from registered upvoting accounts. User search field. Not required. <br>This is a sponsor account specified by the sponsor himself, to which he will transfer the amount of the likes set using match bots. <br>This is an additional income of the sponsor, since he does not give anything to match bots. <br>Example: <ol><li>Sponsor added 3 matchbots</li><li>Users wrote reviews (1 review = 10 Hive)</li><li>match bots set likes to 5 Hive</li><li>The sponsor must provide campaign reporting that he has actually spent the allocated budget</li></ol> <br>Placeholder "Find user". <br>"Compensation account (optional)" inscription above the field. By default, the field is empty. <br>"Accumulates the value of upvotes from registered upvoting accounts" - inscription under the field.|
 |`Maximum reservation period`| - review period, priority filter compared to target days for reviews. <br>"Maximum reservation period (days)" inscription above the field. <br>"The available budget is reduced by the amount of rewards reserved" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
-| `Target days`| - the sponsor can choose the days on which he wants to receive feedback. The period of the reservation will be dynamically adjusted in accordance with the target days. This table, which consists of checkboxes and names of days. <br>"Target days for reviews" inscription above the field. <br>"Reservation period will be dynamically adjusted to match target days" - inscription under the field. |
-|`Eligible reviews block`| - a list of editable parameters by which you can configure the sponsor's expectations from the result (recall). Block title "Eligible reviews (post requirements):" <ul><li>"Minimum number of original photos (per review)" - a field for selecting the minimum number of photos that should be in the review. The default is 2. Only numbers and a period can be entered. There are arrows to increase, decrease the number.</li><li>"Request a photo of the receipt (without personal details)" - checkbox on the requirement for the mandatory presence of a photo of the receipt. <br>"If selected, the number of photos required will be increased by one. If the checkbox is active, then there should be one more photo in the review than was selected in "Minimum number of original photos" field" - inscription under the field.</li><li> "Link to the primary (parent) object" - a field to find the object that is the parent. "Example: business, brand, restaurant, etc." - inscription under the field. Placeholder - "Find object".</li><li>"Link to one of the secondary objects" - a field to find the object that is the parent. "Example: product, service, dish, etc." - inscription under the field. Placeholder - "Find objects".</li><li>"Add all child object" - after selecting a primary object, a link is added to the name of the field for the second object to add all objects whose primary have as a parent object. After clicking on the link, a modal window for confirmation is opened.</li><li>"Additional review requirements (optional)" - text field for entering additional review conditions."This note will be shown to users at the time of reservation of the reward" - inscription under the field. </li></ul> |
-|`Eligible users`| - list of parameters for which the user can reserve a campaign. <br>Block title "Eligible users:". <br>Block signature - "User eligibility criteria will be verified at the time of reward reservation only." <ul><li>"Minimum Waivio expertise (optional)" - a field for entering the user's minimum expertise. The default is 0. Only numbers and a period can be entered. There are arrows to increase, decrease the number. "New users on Waivio start with expertise of 0" - inscription under the field.</li><li>"Minimum number of followers (optional)" - a field for entering the required minimum number of user subscriptions. The default is 0. Only numbers and a period can be entered. There are arrows to increase, decrease the number. "New users start with 0 followers" - inscription under the field.</li><li>"Minimum number of posts (optional)" - a field for entering the required minimum number of user posts. <br>The default is 0. Only numbers and a period can be entered. <br>There are arrows to increase, decrease the number. <br>"New users start with 0 posts" - inscription under the field.</li><li>"Eligibility period (days)" - a field for selecting the frequency of campaign execution by one user. <br>If 0 is selected - you can reserve an unlimited number of times, if for example 3 - then you can reserve once every 3 days, in this case the user will not be able to reserve the campaign, since the campaign will not be displayed in the Eligible tab. The default is 15. <br>Only numbers and a period can be entered. There are arrows to increase, decrease the number. <br>"If there are no restrictions on the frequency of reviews of the primary object by the same user, the value should be set to zero." - inscription under the field.</li></ul> |
+|`Target days`| - the sponsor can choose the days on which he wants to receive feedback. The period of the reservation will be dynamically adjusted in accordance with the target days. This table, which consists of checkboxes and names of days. <br>"Target days for reviews" inscription above the field. <br>"Reservation period will be dynamically adjusted to match target days" - inscription under the field. Optional field.|
+|`Minimum number of photos`|- a field in Eligible reviews (post requirements) block, for selecting the minimum number of photos that should be in the review. The default is 2. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
+|`Receipt`|"Request a photo of the receipt (without personal details)" - checkbox on the requirement for the mandatory presence of a photo of the receipt. <br>"If selected, the number of photos required will be increased by one. If the checkbox is active, then there should be one more photo in the review than was selected in "Minimum number of original photos" field.|
+|`Primary object`|"Link to the primary (parent) object" - a field to find the object that is the parent. "Example: business, brand, restaurant, etc." - inscription under the field. Placeholder - "Find object". This object represents an object that serves as the main focus of a campaign. Examples of primary objects include a restaurant, brand, or business. The primary card has a broader and more comprehensive scope.|
+|`Secondary object`|"Link to one of the secondary objects" - a field to find specific object(s). "Example: product, service, dish, etc." - inscription under the field. Placeholder - "Find objects". This object represents a specific object within the context of a campaign, where the object is secondary to the primary focus. Examples include a dish from a restaurant or a product from a brand. "Add all child object" - after selecting a primary object, a link is added to the name of the field for the second object to add all objects whose primary have as a parent object. After clicking on the link, a modal window for confirmation is opened.|
+|`Additional requirements`| "Additional review requirements (optional)" - text field for entering additional review conditions."This note will be shown to users at the time of reservation of the reward" - inscription under the field.|
+Here is the description split into four separate fields:
+|`Minimum Waivio expertise (optional)`| A field for entering the user's minimum expertise level required to participate in the campaign. The default value is 0. You can use the arrows to increase or decrease the number, or manually enter it. **New users on Waivio start with an expertise level of 0**. This field is optional, allowing you to restrict participation based on user expertise. |
+|`Minimum number of followers (optional)`| A field for specifying the minimum number of followers a user must have to reserve the campaign. The default value is 0. You can use the arrows to adjust the number or enter it manually. **New users start with 0 followers**. This is an optional field, letting you filter users based on their follower count. |
+|`Minimum number of posts (optional)`| A field to define the minimum number of posts a user must have published to participate in the campaign. The default value is 0. Numbers can be adjusted with the arrows or entered manually. **New users start with 0 posts**. This field is optional, allowing you to set a threshold for user activity. |
+|`Eligibility period (days)`| A field for setting how often a user can execute the campaign. If 0 is selected, users can reserve an unlimited number of times. For example, if 3 is selected, a user can reserve the campaign once every 3 days. The default value is 15. Numbers can be adjusted with the arrows or entered manually. **If there are no restrictions on the frequency of reviews for the primary object by the same user, set the value to zero**. This field controls the frequency with which users can participate in your campaign. |
 |`Legal`| - description about legal agreements. "All reward payments are made directly to users by the campaign creator. Waivio and other partners provide information and discovery services only. <br>Here you can add a link to the agreement, which will govern the relationship between you and participating users."|
 |`Link to agreement`| - search field. A link to an agreement that will govern the relationship between sponsor and reviewers. Object reference. Optional. <br>"Link to the agreement (page object, optional)" inscription above the field and placeholder the same. |
 |`Legal note`| - "Legal notice to users (optional)" - text field for entering additional review conditions."This note may be used to draw users attention to the specific terms and conditions of the agreement." - inscription under the field. Optional|
 |`WAIV eligibility checkbox`| - Optional checkbox for ensuring that only posts meeting the criteria for a WAIV token reward are included in the campaign.<br>Text: Only posts eligible to receive a WAIV token reward will be considered qualified for participation in the campaign.|
 |`Agreement checkbox`| - mandatory checkbox for agreeing to the terms and conditions for creating a campaign. <br>I agree to the Terms of Service for the service and acknowledge that this campaign does not violate any laws of British Columbia, Canada. With link "https://waiviodev.com/object/xrj-terms-and-conditions/page" on "Terms and Conditions"|
 |`Campaign expiry date`| -  Selection of the campaign end date. The date must be set using the calendar (mandatory).|
-|`Commissions field`| - A field labeled "I agree to pay the specified commission to Waivio and partners" where the user can enter the commission percentage from the reward. <ul><li>The commission must be no less than 5% (this value is editable).</li><li>Text under field: Commissions and rewards to users must be paid in full within 14 days from the date of payment obligations</li></ul> |
+|`Commissions field`| - A field labeled "I agree to pay the specified commission to Waivio and partners" where the user can enter the commission percentage from the reward. The commission must be no less than 5% (this value is editable). Text under field: Commissions and rewards to users must be paid in full within 14 days from the date of payment obligations.|
 |`Star`| - Required fields are marked with a star.|
 |`Create button`| A button to create the campaign. If the campaign is filled with valid data, it will be created, and the user will be redirected to the Manage tab, where they can activate it. Text: Once created, the campaign can be activated in the Campaigns/Manage tab.|
 ![image](https://github.com/user-attachments/assets/d964e37d-9014-428e-9078-bdc322edce7c)
@@ -1787,7 +1796,10 @@ Create campaign is the starting point for using the Rewards feature as a sponsor
 
 # Earn. Manage (Campaign)
 The page "Manage" displays information about campaigns and user balance.
+Include blocks: Account Balance table, Campaign table, History table.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
 
+About Account Balance table:
 |`Account Balance`|the table displays information about the balance|
 |-----|-----|
 |`Title`| "Account balance (WAIV)"|
@@ -1796,8 +1808,10 @@ The page "Manage" displays information about campaigns and user balance.
 |`Reserved`| the payment amount for the reserved review is displayed|
 |`Remaining`| the balance of the balance is displayed (Balance - Payables - Reserved = Remaining)|
 |`Note`| "* All campaigns will be suspended if accounts payable exceed 30 days"|
+![image](https://github.com/user-attachments/assets/32ad0948-d84b-4612-8508-b93ad61a4485)
 
-|`Campaign`|table with active and pending campaigns|
+About Campaign table:
+|`Campaign table`|table with active and pending campaigns|
 |-----|-----|
 |`Title`| "Active and pending campaigns"|
 |`Active`| checkbox for campaign activation. Inactive campaign with pending status.|
@@ -1808,13 +1822,13 @@ The page "Manage" displays information about campaigns and user balance.
 |`Current month`| results of the current month:<ul><li>Reserved - the number of only reserved reviews at the moment should be displayed</li><li>Completed - the number of completed reviews should be displayed</li>The numbers are clickable, and up-to-date information is displayed on how many are reserved and how many campaigns have been completed. After clicking, the reservation tab opens with the required campaign filtered and the corresponding status</ul>|
 |`Remaining`| display the remainder of unreserved and uncompleted reviews. <br>Monthly / Reward = Remaining; - as soon as the company is established. <br>Remaining - (Reserved + Completed) = Remaining - when backing up and completing a recall.|
 |`Note`| "** Only pending campaigns can be edited"|
-
 When campaigns are suspended, all active campaigns transition to the suspended status, with their records remaining in the same table. Entries in the history table remain unaffected.
-
 |`Create new campaign button`| button "Create new campaign" go to the page for creating a new campaign|
 |------|--------|
+![image](https://github.com/user-attachments/assets/817dde3b-fd14-434d-a05e-98ad36e1a622)
 
-|`History`| all user campaigns|
+About History table:
+|`History`| History table with all user campaigns.|
 |-----|-----|
 |`Title`| History|
 |`From`| from (campaign start date)|
@@ -1826,12 +1840,12 @@ When campaigns are suspended, all active campaigns transition to the suspended s
 |`Currency`| campaign currency|
 |`Reviews`| number of completed reviews|
 |`Paid`| paid (WAIV) payment for reviews|
-
-![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
+![image](https://github.com/user-attachments/assets/16fb3611-07cb-4653-83d5-f04c0f2ad597)
 
 
 # Earn. Payable
-Payable - helps sponsors keep track of their obligations to users and processing parties and make payments on time.
+Payable - helps sponsors keep track of their obligations to users and processing parties, ensuring timely payments. It includes a list of users who have completed campaigns and provides tables with additional details.
+![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
 Sorting:
 * Amount - by the amount of reward;
 * Time - by time.
@@ -1843,7 +1857,7 @@ Filters:
 |`Title`| the amount to be paid for all completed campaigns of this sponsor. Look like this: "Total: {sum} WAIV (${sum})". |
 |---|---|
 |`Pay all`|"Pay all" button for payment by all users who are in the list. After clicking, "Pay all" modal window is opened.|
-User card:
+User card from the list:
 |---|---|
 |`Avatar`| after clicking the transition to the sponsor page|
 |`User's name`| after clicking the transition to the sponsor page |
@@ -1851,7 +1865,7 @@ User card:
 |`Pay`| the button "Pay {sum} WAIV to open a modal window for a transaction |
 |`Days`|show the number of days to each line, from the date of the first unpaid review. Up to 21 days is displayed - in black, more - in orange|
 
-After clicking on the arrow. The table opens.
+After clicking on the arrow in the user card. The table opens.
 |Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
 |---|---|
 |`Title`| look like this "Payables: {sponsor} → {user}". |
@@ -1862,10 +1876,10 @@ After clicking on the arrow. The table opens.
 |`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
 |`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
-![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
 ![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
 ![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
 
+"Pay all" modal window:
 |`Pay all`| modal window|
 |--|--|
 |`Title`|Do you want to pay all payable?|
@@ -1884,10 +1898,9 @@ After clicking on the arrow. The table opens.
 # Earn. Reports
 Page for creation of a report on people who completed the review. The report can be compiled for any hive user, who has ever been a sponsor (Guest user can't be a sponsor).
 The page consists of a form for filling in with data to receive a report with exactly these criteria, and a table as a result. Reports displayed in WAIV token.
+![image](https://user-images.githubusercontent.com/67378322/224737410-3cb2b494-9375-4043-9fdf-f14183d598bf.png)
 
-|`Page Title`|"Reports :"|
-|---|---|
-
+Form to fill out to receive the report:
 ||`Form`|
 |---|---|
 |`Sponsor`| Title - "* Sponsor:". Sponsor search field. The required field is marked with an asterisk. Placeholder: "Find users". After searching for a sponsor and clicking on it in the search list, the card of the selected sponsor will be displayed below the field.|
@@ -1899,6 +1912,7 @@ The page consists of a form for filling in with data to receive a report with ex
 |`Object Card`| by default, the card of the user who is authorized is selected. <br>After searching for an object (`OBJECT`) and clicking on it in the search list, the card of the selected object will be displayed below the field. <br>There is a cross button on the card to delete.|
 |`Submit`|button "Submit" to confirm report generation. After clicking, a block is displayed with the entered information on which to generate a report.|
 |`Hive Reports`|"Report (HIVE) link to HIVE reports."|
+![image](https://github.com/user-attachments/assets/c0d2f396-70da-4ce7-97b5-3b207065bb90)
 
 Information on which the report will be generated -  text block where information from the form is displayed. <br>Consists of:
 <br>Reviews sponsored by @{sponsorName}
@@ -1906,7 +1920,9 @@ Information on which the report will be generated -  text block where informatio
 <br>Till: {date}
 <br>With links to an object: {objectName}
 <br>Total amount: {amount}
+![image](https://github.com/user-attachments/assets/08fcb61e-621b-4cbf-89fc-8b33c89df126)
 
+Report table information:
 ||`Table information`|
 |---|---|
 |`Date`|  the date of the transfer. Title - "Date & Time (GMT)".|
@@ -1914,12 +1930,12 @@ Information on which the report will be generated -  text block where informatio
 |`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
 |`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
-
-![image](https://user-images.githubusercontent.com/67378322/224737410-3cb2b494-9375-4043-9fdf-f14183d598bf.png)
+![image](https://github.com/user-attachments/assets/92fea928-3d60-4670-9446-633143f47f41)
 
 
 # Earn. Reservations
-The Reservations tab shows not only active reservations, but the entire history for this sponsor: released, expired, completed, rejected.
+The Reservations tab displays not only active reservations but the entire history for the sponsor, including released, expired, completed, and rejected reservations. The sponsor can perform various actions, such as viewing campaign reservations, releasing reservations, increasing rewards, adding users to the blacklist, showing reports, opening reviews, adding rejection notes, rejecting reviews, reinstating rewards, muting users, and hiding posts.
+![image](https://user-images.githubusercontent.com/67378322/224930185-545aec16-8cfc-47a5-8d56-a486ec8d3e14.png)
 Cards can be filtered by status and campaign. And sorting - by the date of reservation or by the date of the last action.
 Filtering by status:
 * Reserved;
@@ -1928,11 +1944,9 @@ Filtering by status:
 * Expired;
 * Rejected.
 Filtering by campaign - the names of the campaigns are displayed.
-
 Sorting:
 * Reservation - by date of reservation;
 * Action (date) - by the date of the last action.
-
 Displays the secondaries of the card of objects with which the user came into contact.
 The footer of the card changes to:
 - `STATUS` - displaying campaign status:
@@ -1941,7 +1955,6 @@ The footer of the card changes to:
 * Released;
 * Expired;
 * Rejected.
-
 - `THREE_POINT` - the options for the following actions depend on the campaign status:
 * View reservation;
 * Release reservation;
@@ -1954,25 +1967,23 @@ The footer of the card changes to:
 * Reinstate reward;
 * Mute user;
 * Hide post.
-
-![image](https://user-images.githubusercontent.com/67378322/224930185-545aec16-8cfc-47a5-8d56-a486ec8d3e14.png)
+![image](https://github.com/user-attachments/assets/7b11b186-4e93-49bd-99df-7d027575779e)
 
 
 # Earn. Messages
 The tab is intended primarily for communication between the sponsor and the campaign executor (only for reviews campaign type). Secondary cards are displayed only if the message was sent either by the sponsor or the campaign executor. The Messages tab shows the entire history for this sponsor: released, expired, completed, rejected.
+![image](https://user-images.githubusercontent.com/67378322/224933510-3f8553cb-29a4-4f24-b5d5-f38360b14fa4.png)
 Cards can be filtered by status and campaign. 
 Filtering by general status ("Case status"):
 * all;
 * open;
 * closed.
-
 Filtering by campaign status:
 * Reserved;
 * Completed;
 * Released;
 * Expired;
 * Rejected.
-
 Displays the secondaries of the card of objects with which the user came into contact.
 The footer of the card changes to:
 - `STATUS` - displaying campaign status:
@@ -1981,17 +1992,15 @@ The footer of the card changes to:
   * Released;
   * Expired;
   * Rejected.
-
 Sorting:
 * Inquiry date - by date of inquiry (most recent at the top);
 * Latest - by the last message (the most recent at the top);
 * Reservation - by date of reservation.
 
-![image](https://user-images.githubusercontent.com/67378322/224933510-3f8553cb-29a4-4f24-b5d5-f38360b14fa4.png)
-
 
 # Earn. Fraud detection
 Technology for detecting fraud attempts in reviews. The tab displays the results of the Fraud detection assistant.
+![image](https://user-images.githubusercontent.com/67378322/224935974-59400359-a848-4086-8ca8-b70b0539b69e.png)
 Page for displaying campaigns where “dubious” photos were identified in review.
 A tab is added under the Rewards / Campaigns section and is accompanied by a disclaimer stating that this is an experimental service only and should not be relied upon.
 The selection of cards is limited to 30 days.
@@ -1999,15 +2008,15 @@ At the moment, the check is carried out as follows:
 <ol><li>the models of the devices on which the pictures for the review were taken are compared, if they differ, the user is suspected of fraud.</li>
 <li>if the image has gps coordinates, then it is checked that they are made within a radius of 1 km from the restaurant (provided that the object has a map)</li>
 <li>the date of creation of the image is checked - it must be no earlier than 14 days before the reservation of the company.</li>
-<br>1st digit - code, 2nd last random. <br>Code:
-<br>1 - metadata is missing on all photos;
-<br>2 - metadata is missing in one of the photos;
-<br>3 - photo resolutions differ (no triggering on vertical / horizontal);
-<br>4 - the dates are different in the pictures;
-<br>5 - GPS coordinates are different in the pictures;
-<br>6 - pictures taken by devices with different IDs;
-<br>7 - the date on the photo differs from the post date by 14 or more days;
-<br>8 - GPS coordinates more than 1 km from the object.
+1st digit - code, 2nd last random. <br>Code:
+1 - metadata is missing on all photos;
+2 - metadata is missing in one of the photos;
+3 - photo resolutions differ (no triggering on vertical / horizontal);
+4 - the dates are different in the pictures;
+5 - GPS coordinates are different in the pictures;
+6 - pictures taken by devices with different IDs;
+7 - the date on the photo differs from the post date by 14 or more days;
+8 - GPS coordinates more than 1 km from the object.
 
 ||Page elements|
 |---|---|
@@ -2016,7 +2025,6 @@ At the moment, the check is carried out as follows:
 |`Sorting`|Sort by <ul><li>Reservation</li><li>Action (date)</li></ul>|
 |`Cards`| [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card) with status "Completed" are displayed.|
 |`Codes`|codes with the reason for suspicion of fraud are displayed, under the comment field.|
-
 ![image](https://user-images.githubusercontent.com/67378322/224935974-59400359-a848-4086-8ca8-b70b0539b69e.png)
 
 
@@ -2025,7 +2033,6 @@ To combat spam and fraud, campaign sponsors need a tool to manage blacklists:
 - Blacklist - a list of users who will not be able to take part in this sponsor's campaigns.
 - References - links to blacklists of other sponsors (taking into account one more level of nesting so that you can have blacklist aggregators).
 - Whitelist is a list of users who can participate in campaigns, even if they are included in other blacklists.
-
 At the top of the page there is a navbar with three tabs.
 ## Blacklist
 ||User search block|
@@ -2035,17 +2042,14 @@ At the top of the page there is a navbar with three tabs.
 |`Description`|"Blacklisted users cannot participate in any campaign sponsored by {userName}". {userName} - clickable, after clicking the user page opens|
 |`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
 |`Add`|button to add a user to the list|
-
 |List|after clicking on the button to add a user, the user card is displayed in this block |
 |-----|---|
 |`Title`|"Blacklist"|
 |`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
 |`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
-
 The list show not only those blocked by the user himself, but also those blocked by those whom this user trusts (References subscription).
 References account name shows instead of button Delete.
 ![image](https://user-images.githubusercontent.com/67378322/224950515-96425bed-85e4-4aa1-90c0-92b71c1c0d7e.png)
-
 ## References
 ||User search block|
 |-----|---|
@@ -2054,14 +2058,12 @@ References account name shows instead of button Delete.
 |`Description`|"When you reference another user's blacklist, you also recognize all other blacklists referred to by that user"|
 |`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
 |`Subscribe`|button to add a user to the list|
-
 |List|after clicking on the button to add a user, the user card is displayed in this block |
 |-----|---|
 |`Title`|"References"|
 |`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
 |`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
 ![image](https://user-images.githubusercontent.com/67378322/224950782-459e28d1-d365-4909-80fe-5b36e213e1dc.png)
-
 ## Whitelist
 ||User search block|
 |-----|---|
@@ -2070,115 +2072,24 @@ References account name shows instead of button Delete.
 |`Description`|Whitelisted users can participate in any campaign (subject to campaign eligibility criteria) sponsored by {userName}". {userName} - clickable, after clicking the user page opens|
 |`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
 |`Add`|button to add a user to the list|
-
 |List|after clicking on the button to add a user, the user card is displayed in this block |
 |-----|---|
 |`Title`|"Whitelist"|
 |`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
 |`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
-
 <br> * Several users can be added to the lists at once
 ![image](https://user-images.githubusercontent.com/67378322/224950841-08510b38-bf95-4ba0-82a2-1d8e3402a305.png)
 
 
-# Earn. Referrals. Details
-Any Waivio user can participate in the Referral program if his account is not included in the blacklist (the same as for receiving rewards).
-The point of the program is that the referral partner sends traffic to any waivio.com URL to which an instruction like? Ref = username is added and we temporarily remember this information either through cookies or through session. New users are associated with referrers for 90 days, and existing users must be associated with referrers for 5 days.
-If a user came by the? Ref = link and after login it turned out that he had already used the system before (that is, he is an existing user) and if at that moment he is not tied to any referral, then it must be tied to the one declared in? Ref = referrer for a period of 5 days.
-Thus, if a user is already associated with a referral partner, then even if he comes via another? Ref = link, he remains with the one to whom he is already linked. And if he re-comes via a link from a partner to which he is already attached, then the period is not extended (first the period must end, then it can be associated again).
-Now, every time payments are calculated for this user, it is this referral partner that will be indicated in the referrals line.
-Program control - an additional section of three items in the REWARDS section: Details, Instructions, Status.
-
-## Details
-This page explains the main parameters of the program. All numbers (distribution of processing fees between campaign / index / referrals) must be dynamic so that they can be changed if necessary (via admin).
-|`TITLE`|"Referral program details:"|
-|---|---|
-General information (text):
-<br>
-<br>"Waivio offers 56% of its combined processing fees to referral parties for brining new users to Waivio.com. These commissions will be paid on all the sponsored rewards for these users for a period of 90 days from their initial visit.
-<br>Waivio offers the same commissions to referral partners for brining existing customers to Waivio.com. The referral account will be listed as a beneficiary for referral portion of processing fees for these users for a period of 5 days from the moment of their association with the referral partner.
-<br>Users will remain locked to the referral partner for the specified period and will not be re-assigned until the expiration of the set period.
-<br>Waivio is using web sessions to track referrals.
-<br>Referral partners can check the list of users currently attributed to them on the Status page."
-|`TITLE`|"Referral commissions:"|
-|---|---|
-About referral commissions:
-<br>
-<br>"When sponsors post attention bids on the Hive blockchain, in addition to user rewards, they allocate 5% or more as Processing Fees for all the parties involved in posting, indexing, and presenting bids to eligible users. Waivio Campaign server offers 70% of these commissions to Index Servers. And Waivio’s Index Server offers 80% of its commissions to Referral partners. These terms can be changed by Waivio from time to time.
-<br>Example:
-<br>
-<br>Sponsor offers a reward of $5.00 to eligible users and agrees to pay 5% as processing fees.
-<br>Processing fees ($0.25) will be distributed in the following way:
-<br>Waivio.campaigns (30%): $0.075
-<br>Waivio.index (14%): $0.035
-<br>Referrals (56%): $0.14
-<br>
-<br>All payments are processed directly by the sponsors and the status of all payments can be checked on the Receivables page in the Rewards section. Please note that Waivio is not involved in the processing of payments and we only handle information relating to payment obligations between the parties. To ensure that sponsors pay rewards and processing fees on time, Waivio stops processing sponsor campaigns if they are overdue by 30 days or more."
-![2021-04-08_15-44](https://user-images.githubusercontent.com/67378322/114028604-563d6780-9881-11eb-99ce-9b6b32919d43.png)
-* The word "Receivables" is link, after clicking Receivables page is opened.
-* The word "Status" is link, after clicking Status page is opened.
-
-
-# Earn. Referrals. Instructions
-To get started, the user must agree to the legal working conditions.
-|`Title`|"Referral instructions:"|
-|----|----|
-|`Description`|"To reveal the instructions and to participate in the Referral program you must agree to the terms on conditions of the service."|
-|`Checkbox`|"*I have read and agree to the Terms and Conditions of the service. I also acknowledge that I am not operating any online or offline service in violation of the laws of British Columbia, Canada.". Where "Terms and Conditions" - link https://waivio.com/object/xrj-terms-and-conditions/page|
-||after activating the checkbox, instructions are loaded|
-|`Explanations`|**Direct links:**<br>Simply add ?ref={userName} to any Waivio page URL<br>For example:<br>https://www.waivio.com?ref={userName}<br>https://www.waivio.com/rewards/all?ref={userName} <br> {userName} - the name of the currently logged-in user|
-||`Widget` |
-|`Title`|"Waivio widget:"|
-|`Description`|"This page-size widget is designed to show relevant active rewards. Paste the following code into your webpage:"|
-|`Code`|`<iframe src="https://waivio.com/rewards/all/?display=widget&userName=someUserName&ref=mnb89" height="400" width="350" style="border: none;">Can't load Rewards widget.</iframe>`|
-|`Copy`|button to copy the widget code (`CODE`)|
-|`Example`|See an example. Where "an example" - link https://waivio.com/rewards/all?display=widget|
-|`Note`|"Please note that any misleading promotions are not allowed in accordance with the Referral agreement. Waivio reserves the right to terminate the referral program at any time for any reason."|
-* If the user tries to remove the checkbox, then he needs to show the Terminate Referral program message and ask him to confirm the choice. In this case, the program stops and all new charges are not made (calculations that have already been made are saved). The binding of users at this moment must also be reset. If the user resumes participation in the program, he will start from scratch (except for previously processed charges).
-* Widget - A customized code is provided here so that the Rewards page can be integrated into any site. At the start, we'll just show a combination of the middle and right columns that adjust to size, right down to the mobile view. Inside the widget, parameters are needed, such as the GPS region, which will be focused on in the widget. Other filters should also get there, which we will add to the standard rewards view (by sponsors, by types of rewards, by types of objects, by tags, etc.).
-![2021-11-08_14-54](https://user-images.githubusercontent.com/67378322/140745603-2f18cfa9-8ec3-42b8-87a3-c6fed0e53a4a.png)
-![2021-11-08_15-06](https://user-images.githubusercontent.com/67378322/140747171-48d348a6-9881-4c5e-ba29-e65e7acfaf29.png)
-If the user is included in the blacklist, then he will not be able to participate in the program and the section with instructions looks like this:
-![2021-04-12_13-32](https://user-images.githubusercontent.com/67378322/114381216-8b083200-9b93-11eb-8a33-dd15aa599640.png)
-
-
-# Earn. Referrals. Status
-This page provides a dynamic list of users who are already linked to this referral with the remaining number of days. The list can be sorted by Recency (the newest on top) or Expiry (the oldest first).
-When a user goes beyond the Referral period, he disappears from this plate without a trace.
-When clicking on the user's line, send to the plate similar to Receivables, only for all sponsors at once for this person. The last column simply calculates the total of all sponsors for this user.
-|`Title`|"Referral status:"|
-|------|-------|
-|`Description`|"The following users are currently assigned by the Waivio index server to the referral partner {username}:". Where {username} - link to user page|
-|`Count`|"Total count: {number}". The number of users for whom this authorized user is a referral|
-|`Sort`| sort by: <ul><li>Recency</li><li>Expiry</li></ul>|
-|`List`|list of user cards. The card consists: <ul><li>user avatar</li><li>name</li><li>waivio name</li><li>number of days - the maximum number of days for a new user is 90 days, for a not new user - 5. Countdown - 90 days, 89 days ...</li><li>arrow - to open a table for a specific user. When hovering over the card, the cursor becomes the hand cursor</li></ul>|
-|`Note`|The status of all outstanding and completed payments can be checked on the Receivables page in the Rewards section. Where "Receivables" - link.|
-* When a user goes beyond the Referral period, he disappears from this plate without a trace.
-When you click on the user's line, send to the plate similar to Receivables, only for all sponsors at once for this person. It is not necessary to include payments in the plate. The last column simply calculates the total of all sponsors for this user.
-|Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
-|---|---|
-|`Title`| look like this "Sponsored rewards: {user}". Where {user} - link to user page |
-|`Date`| the date of the transfer|
-|`Action`| additional information about the written review:<ul><li>Review by @{user} (requested by @sponsor)</li><li>Review: {primaryObject}, {secondaryObject}</li><li>Beneficiaries: {mainApp} (3%), {sponsor} (97%)</li></ul> <br>All names (users and objects) are clickable, after clicking the corresponding page opens. In the second line of the review is also clickable, after clicking a full screen of the review of the post opens. All clickable links are highlighted in orange.|
-|`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
-|`Amount HIVE`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
-|`Balance HIVE`| running total |
-![2021-04-09_13-36](https://user-images.githubusercontent.com/67378322/114168158-901d7500-9938-11eb-8610-22d9b7a834db.png)
-![2021-04-09_13-41](https://user-images.githubusercontent.com/67378322/114168733-539e4900-9939-11eb-80d9-7e2306988686.png)
-
-
 # Earn. Match bots. Authors.
-**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author.
-The strength of the voice can range from + 0.1% to + 100% (max upvote).
-This bot does not vote for comments or re-blogs.
-Authors match bot has its own authorization (so as not to conflict with Sponsors match bot).
+**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author. The strength of the voice can range from + 0.1% to + 100% (max upvote). This bot does not vote for comments or re-blogs.
+Authors match bot has its own authorization.
 So far, the bot is limited to only positive votes. In order not to publish votes with a small value, it makes sense to estimate the weight of the vote and if it is less than 0.01 HBD (1 cent), then ignore it.
-
-## How it works (simplified version)
-1. User adds an author
-2. An author writes a post
-3. User's like has appeared on the post automatically after 5 minutes.
-
+## How It Works (Simplified Version)
+1. A user enables the Authors Match Bot authorization.
+2. The user adds an author.
+3. The author writes a post.
+4. The user's like automatically appears on the post after 5 minutes.
 ## Page information
 |Element|Description|
 |---|--|
@@ -2186,9 +2097,10 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Switch`|switch for authorization match bot. If it is red, then the bot is inactive, if green is active |
 |`Description`|The Authors match bot automatically upvotes posts published by the specified authors. It does not upvote comments or re-blogs. <br><br> For each author, please specify the upvoting power in the range from +1% to +100% (maximum upvote). Actual value of the upvote depends on the current upvoting mana on the account at the time of the action.<br><br> Important: The Authors match bot only publishes upvotes with estimated combined value of 0.01 HBD or more.<br><br> Votes will be processed as long as the mana (voting power) on the account remains above the threshold as specified for each author.|
 |`Auth Block`|**The Authors match bot requires authorization to distribute votes on your behalf: Authorize now <br> The authorization is completed via HiveSigner and can be revoked at any time.** <br> <br> **Disclaimer:** The Authors match bot service is provided on as-is / as-available basis.|
-|`Link`| "Authorize now" link for authorization https://github.com/Waiviogit/waivio/wiki/Match-bot-(Sponsor)#how-to-become-a-match-bot|
+|`Link`| "Authorize now" link for bot authorization.|
 |`Add`| button "Add author" for adding authors, after clicking the modal window "Add new author" opens|
 * "Authorize now" changes to "Remove authorization" in `AUTH_BLOCK`, if bot is active.
+![image](https://github.com/user-attachments/assets/0b62214d-e2c1-45f0-bab0-7c443ec23938)
 
 ## Table information
 |Column|Description|
@@ -2249,7 +2161,7 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Text`|Do you want to delete author match bot rule for @{username}?|
 |`Cancel`|"Cancel" button to cancel the action and close the modal window|
 |`Delete`|"Delete" button to confirm the delete action|
-![2021-09-17_09-17_1](https://user-images.githubusercontent.com/67378322/133733896-adc20d8b-a706-4964-8b4b-7c063ecc0182.png)
+![image](https://user-images.githubusercontent.com/67378322/133733896-adc20d8b-a706-4964-8b4b-7c063ecc0182.png)
 
 ## Confirm changes (modal window)
 |Element|Description|
@@ -2259,7 +2171,7 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Text`|Do you want to save the changes for @{username}?|
 |`Cancel`|"Cancel" button to cancel the action and close the modal window|
 |`OK`|"OK" button to confirm the save action|
-![2021-09-17_09-17](https://user-images.githubusercontent.com/67378322/133733841-007dc150-3ba2-48c1-acde-bc7db4482923.png)
+![image](https://user-images.githubusercontent.com/67378322/133733841-007dc150-3ba2-48c1-acde-bc7db4482923.png)
 
 * after adding an author, a notification of success appears ("Author was successfully added"), and the author appears in the list without reloading the page
 * after update a rule, a notification of success appears ("Author was successfully updated"), and the author appears in the list without reloading the page
@@ -2271,13 +2183,15 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 By default, the bot repeats only positive votes, but if the user specifies (ticks the check box), then downvotes are repeated with the same coefficient. In this case, the table uses the ± symbol in front of Vote ratio to indicate that negative votes are also repeated.
 For each curator, min Voting Power is set (upvote / downvote mana).
 If the estimated value of the vote is less than 0.01 HBD, then such a vote will not be played.
+![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
 
-## How it works (simplified version)
-1. User adds an curator
-2. The curator puts likes and dislikes.
-3. User's like and dislikes have appeared on the post automatically.
+## How It Works (Simplified Version)
+1. A user enables the Curator Match Bot authorization.
+2. The user adds a curator.
+3. The curator gives likes and dislikes.
+4. The user’s likes and dislikes automatically appear on the post.
 
-## Page
+## Curators Bot Page Information
 |Element|Description|
 |---|--|
 |`Title`|Curators match bot|
@@ -2287,6 +2201,8 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 |`Link`| "Authorize now" link for authorization https://github.com/Waiviogit/waivio/wiki/Match-bot-(Sponsor)#how-to-become-a-match-bot|
 |`Add`| button "Add curator" for adding curator, after clicking the modal window "Add new curator" opens|
 * "Authorize now" changes to "Remove authorization", if bot is active.
+![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
+
 ### Table
 |Column|Description|
 |----|------|
@@ -2346,7 +2262,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 |`Text`|Do you want to delete curator match bot rule for @{username}?|
 |`Cancel`|"Cancel" button to cancel the action and close the modal window|
 |`Delete`|"Delete" button to confirm the delete action|
-![2021-09-17_09-24_1](https://user-images.githubusercontent.com/67378322/133734698-a6b12efa-df10-447c-bbbe-4b9bd00b5af6.png)
+![image](https://user-images.githubusercontent.com/67378322/133734698-a6b12efa-df10-447c-bbbe-4b9bd00b5af6.png)
 
 ## Confirm changes (modal window)
 |Element|Description|
@@ -2356,7 +2272,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 |`Text`|Do you want to save the changes for @{username}?|
 |`Cancel`|"Cancel" button to cancel the action and close the modal window|
 |`OK`|"OK" button to confirm the save action|
-![2021-09-17_09-25](https://user-images.githubusercontent.com/67378322/133734707-262d5470-5542-4b9f-b736-5db20c57d664.png)
+![image](https://user-images.githubusercontent.com/67378322/133734707-262d5470-5542-4b9f-b736-5db20c57d664.png)
 
 * after adding a curator, a notification of success appears ("Curator was successfully added"), and the author appears in the list without reloading the page;
 * after update a rule, a notification of success appears ("Curator was successfully updated"), and the author appears in the list without reloading the page;
@@ -2369,21 +2285,27 @@ If a user wants to become a Match bot, he needs to activate the toggle on the "R
 For example the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV.
 In order for the sponsor to add a match bot to the campaign. The Match bot should in turn add a sponsor. To do this, in the "Sponsors" tab, click on the "Add sponsor" button.
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
+## How It Works (Simplified Version)
+1. A user enables the Sponsor Match Bot authorization.
+2. The user adds a sponsor.
+3. The sponsor adds the user to the "Registered Upvoting Accounts" when creating the campaign.
+4. When the campaign is completed, likes from the user are automatically added to the reviews.
+
 In the modal window, you need to fill in the fields:
 * choose a sponsor;
 * determine the strength of the voice;
 * select the date until which the match bot will be active (optional);
 * write a comment (optional).
 And click "Add sponsor" with further confirmation of the action in the modal window "Rule create confirmation".
-![2021-09-17_09-29_1](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
-![2021-02-23_11-05](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
+![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
+![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
 After refreshing the page, the sponsor is added to the bot's match list. And the sponsor can add a match bot to their campaigns.
 Additional functionality:
 * deactivation of the sponsor: after clicking on the checkbox in the "Active" column
 And confirmation of the action in the "Confirm rule inactivation" modal window
-![2021-02-23_11-15](https://user-images.githubusercontent.com/67378322/108823015-8cbc6d00-75c8-11eb-8629-4a327032d615.png)
+![image](https://user-images.githubusercontent.com/67378322/108823015-8cbc6d00-75c8-11eb-8629-4a327032d615.png)
 
-## Element table
+## Sponsor Bot Page Information
 | Element  | Description |
 | ------------- | ------------- |
 | `General Information`  | text information with an example of how to manage a match bot |
@@ -2394,6 +2316,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Minimum Voting Power` | minimum voice strength of the match bot |
 | `Change` | link, after clicking on which a modal window `CHANGE MINIMUM VOTING POWER MODAL` opens, as an opportunity to change the strength of the match bot's voice |
 
+Table:
 | `Table` | a table for displaying a list of sponsors, and basic information of rules with sponsors |
 | ------------- | ------------- |
 | `Active` | a column with a checkbox to activate the Match Bot rule for each specific user added to the list of match bot sponsors. After clicking on `ACTIVE` the modal window `CONFIRM RULE ACTIVATION` |
@@ -2403,9 +2326,9 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Expiry Date` | the column displays the time until which this rule is in effect. The time is selected when adding a sponsor (in the modal `ADD NEW SPONSOR MODAL`), or when editing a rule (in the modal `EDIT MATCH BOT RULES MODAL`), if the time was not specified, it is displayed - "termless" - which means the rule is valid until the match bot deactivates the rule |
 | `Notes` | a column with additional notes that can be added when adding a sponsor (in the `ADD NEW SPONSOR MODAL` modal), or when editing a rule (in the `EDIT MATCH BOT RULES MODAL` modal). These notes will be displayed only for the match bot who created the rule |
 | `Add Sponsor Button` | button to add sponsor. After pressing the modal window `ADD NEW SPONSOR MODAL` |
-
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
 
+Modal window `Change the Minimum Voice Strength`:
 | | Modal window `Change the Minimum Voice Strength` |
 | ------------- | ------------- |
 | `Title` | Title - title of the modal window "Change the minimum voice strength" |
@@ -2415,6 +2338,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Cancel` | button for canceling the action on choosing a voice |
 ![image](https://github.com/user-attachments/assets/61b4f25c-d5f9-4c7d-81cb-2510185e5e18)
 
+Modal window `Add new sponsor modal window`:
 | | Modal window `Add new sponsor modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Add new sponsor".|
@@ -2428,8 +2352,9 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Title` | Do you want to create rule with sponsor @username and with upvote ...%? |
 | `Cancel` | cancel rule creation |
 | `OK` | add a rule to a table |
-![2021-09-17_09-29_1](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
+![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
 
+Modal window `Confirm rule activation`:
 | | Modal window `Confirm rule activation` |
 | ------------- | ------------- |
 | `Title` | Title - title of the modal window "Confirm the activation of the rule" |
@@ -2437,8 +2362,9 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Text` | confirmation question text: "Do you want to activate the rule sponsored by {@userName}?" |
 | `Confirm` | button to confirm the rule activation action |
 | `Cancel` | button for canceling the rule activation action |
-![2021-02-23_11-05](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
+![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
 
+Modal window `Edit match bot rules modal window`:
 | | Modal window `Edit match bot rules modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Edit rule {userName}" |
