@@ -1758,39 +1758,36 @@ The modal window to confirm the action of canceling the reservation. After cance
 
 # Earn. Create (Campaign)
 Create campaign is the starting point for using the Rewards feature as a sponsor (guide). It implies the creation of a campaign with certain conditions for writing a review on the proposed objects.
-Basic information about every field:
-| Element |  Description |
-|------ | ------ |
-|`Campaign name` | - the name of the new campaign being created by the sponsor. <br>Campaign names are used only for internal reports (Manage tab) the field cannot be empty. <br>Also used for the type of notification when the user sends a comment in the object's secondary card. <br>"Campaign name" inscription above the field. <br>"Campaign names are used only for internal reports" - inscription under the field. <br>Required field| 
-|`Campaign type`| - drop-down, with two options for campaign type: 1. reviews - A campaign with a reservation, where the user must manually find and complete the campaign. 2. mentions - A campaign type where eligibility is automatically checked after post creation, with no reservation needed. <br>"Campaign type" inscription above the field. By default, the field is empty. <br>"The campaign parameters are specific to the type of campaign" - inscription under the field. <br>Required field|
-|`Campaign reach`| - drop-down with list of reach options for campaign. <br>"Campaign reach" inscription above the field. By default, the field with placeholder "Select campaign reach". <br>"If the campaign has a local reach, make sure that the primary object has both longitude and latitude specified." - inscription under the field. <br>Required field. <br>Options: <br>- Global - campaign does not depend on location; <br>- Local - campaign varies by location.|
-|`Display currency`| - drop-down with list of currency <br>"Display currency:" inscription above the field. By default - USD or currency what user chose in settings. [List of currencies](https://github.com/Waiviogit/waivio/wiki/Currencies). <br>"Disclaimer: Exchange rates are provided by third parties and may not be accurate." - inscription under the field. <br>Required field|
-|`Payment currency`| - dropdown to select the currency for payments, at the moment one type is available - WAIV. <br>"All payment obligations will be calculated in that currency based on the exchange rates at the time of the transactions." - inscription under the field. <br>Required field|
-|`Budget`| - funds for payment of rewards. <br>All completed reviews from the 1st of the current month are taken into account. <br>The Unused part of the budget is not accumulated (reset to zero once a month). <br>Each new month starts with a fixed amount of the campaign budget specified when it was created (this is spelled out in the rules). <br>"Campaign budget (monthly, USD)" inscription above the field. <br>"The unused portion of the budget does not accumulate" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number. |
-|`Reward`| - amount of reward for one review part of the reward can be paid with votes from registered accounts. <br>The amount per review is not necessarily a multiple of the campaign budget amount. <br>"Reward (per review, USD)" inscription above the field. <br>"Portion of the reward can be paid using upvotes from registered accounts" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
-|`Registered upvoting accounts` | - list of match bots. In the form of curated accounts or match bots, the sponsor can act and the accounts that the sponsor will add here. <br>The sponsor does not have to add himself, since by default all likes to set by the sponsor are tracked, the debt is also recalculated if the like is set manually by the sponsor. <br>The value of likes can be accumulated on a special compensation account. <br>"Registered upvoting accounts" inscription above the field. By default, the field is empty. <br>"The value of upvotes can be accumulated on a dedicated compensation account" - inscription under the field. Optional field. |
-|`Compensation account`| - accumulates the value of likes from registered upvoting accounts. User search field. Not required. <br>This is a sponsor account specified by the sponsor himself, to which he will transfer the amount of the likes set using match bots. <br>This is an additional income of the sponsor, since he does not give anything to match bots. <br>Example: <ol><li>Sponsor added 3 matchbots</li><li>Users wrote reviews (1 review = 10 Hive)</li><li>match bots set likes to 5 Hive</li><li>The sponsor must provide campaign reporting that he has actually spent the allocated budget</li></ol> <br>Placeholder "Find user". <br>"Compensation account (optional)" inscription above the field. By default, the field is empty. <br>"Accumulates the value of upvotes from registered upvoting accounts" - inscription under the field.|
-|`Maximum reservation period`| - review period, priority filter compared to target days for reviews. <br>"Maximum reservation period (days)" inscription above the field. <br>"The available budget is reduced by the amount of rewards reserved" - inscription under the field. <br>Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
-|`Target days`| - the sponsor can choose the days on which he wants to receive feedback. The period of the reservation will be dynamically adjusted in accordance with the target days. This table, which consists of checkboxes and names of days. <br>"Target days for reviews" inscription above the field. <br>"Reservation period will be dynamically adjusted to match target days" - inscription under the field. Optional field.|
-|`Minimum number of photos`|- a field in Eligible reviews (post requirements) block, for selecting the minimum number of photos that should be in the review. The default is 2. Only numbers and a period can be entered. There are arrows to increase, decrease the number.|
-|`Receipt`|"Request a photo of the receipt (without personal details)" - checkbox on the requirement for the mandatory presence of a photo of the receipt. <br>"If selected, the number of photos required will be increased by one. If the checkbox is active, then there should be one more photo in the review than was selected in "Minimum number of original photos" field.|
-|`Primary object`|"Link to the primary (parent) object" - a field to find the object that is the parent. "Example: business, brand, restaurant, etc." - inscription under the field. Placeholder - "Find object". This object represents an object that serves as the main focus of a campaign. Examples of primary objects include a restaurant, brand, or business. The primary card has a broader and more comprehensive scope.|
-|`Secondary object`|"Link to one of the secondary objects" - a field to find specific object(s). "Example: product, service, dish, etc." - inscription under the field. Placeholder - "Find objects". This object represents a specific object within the context of a campaign, where the object is secondary to the primary focus. Examples include a dish from a restaurant or a product from a brand. "Add all child object" - after selecting a primary object, a link is added to the name of the field for the second object to add all objects whose primary have as a parent object. After clicking on the link, a modal window for confirmation is opened.|
-|`Additional requirements`| "Additional review requirements (optional)" - text field for entering additional review conditions."This note will be shown to users at the time of reservation of the reward" - inscription under the field.|
-Here is the description split into four separate fields:
-|`Minimum Waivio expertise (optional)`| A field for entering the user's minimum expertise level required to participate in the campaign. The default value is 0. You can use the arrows to increase or decrease the number, or manually enter it. **New users on Waivio start with an expertise level of 0**. This field is optional, allowing you to restrict participation based on user expertise. |
-|`Minimum number of followers (optional)`| A field for specifying the minimum number of followers a user must have to reserve the campaign. The default value is 0. You can use the arrows to adjust the number or enter it manually. **New users start with 0 followers**. This is an optional field, letting you filter users based on their follower count. |
-|`Minimum number of posts (optional)`| A field to define the minimum number of posts a user must have published to participate in the campaign. The default value is 0. Numbers can be adjusted with the arrows or entered manually. **New users start with 0 posts**. This field is optional, allowing you to set a threshold for user activity. |
-|`Eligibility period (days)`| A field for setting how often a user can execute the campaign. If 0 is selected, users can reserve an unlimited number of times. For example, if 3 is selected, a user can reserve the campaign once every 3 days. The default value is 15. Numbers can be adjusted with the arrows or entered manually. **If there are no restrictions on the frequency of reviews for the primary object by the same user, set the value to zero**. This field controls the frequency with which users can participate in your campaign. |
-|`Legal`| - description about legal agreements. "All reward payments are made directly to users by the campaign creator. Waivio and other partners provide information and discovery services only. <br>Here you can add a link to the agreement, which will govern the relationship between you and participating users."|
-|`Link to agreement`| - search field. A link to an agreement that will govern the relationship between sponsor and reviewers. Object reference. Optional. <br>"Link to the agreement (page object, optional)" inscription above the field and placeholder the same. |
-|`Legal note`| - "Legal notice to users (optional)" - text field for entering additional review conditions."This note may be used to draw users attention to the specific terms and conditions of the agreement." - inscription under the field. Optional|
-|`WAIV eligibility checkbox`| - Optional checkbox for ensuring that only posts meeting the criteria for a WAIV token reward are included in the campaign.<br>Text: Only posts eligible to receive a WAIV token reward will be considered qualified for participation in the campaign.|
-|`Agreement checkbox`| - mandatory checkbox for agreeing to the terms and conditions for creating a campaign. <br>I agree to the Terms of Service for the service and acknowledge that this campaign does not violate any laws of British Columbia, Canada. With link "https://waiviodev.com/object/xrj-terms-and-conditions/page" on "Terms and Conditions"|
-|`Campaign expiry date`| -  Selection of the campaign end date. The date must be set using the calendar (mandatory).|
-|`Commissions field`| - A field labeled "I agree to pay the specified commission to Waivio and partners" where the user can enter the commission percentage from the reward. The commission must be no less than 5% (this value is editable). Text under field: Commissions and rewards to users must be paid in full within 14 days from the date of payment obligations.|
-|`Star`| - Required fields are marked with a star.|
-|`Create button`| A button to create the campaign. If the campaign is filled with valid data, it will be created, and the user will be redirected to the Manage tab, where they can activate it. Text: Once created, the campaign can be activated in the Campaigns/Manage tab.|
+Basic information about every field in Create form:
+- **Campaign name** - the name of the new campaign being created by the sponsor. Campaign names are used only for internal reports (Manage tab) the field cannot be empty. Also used for the type of notification when the user sends a comment in the object's secondary card. "Campaign name" inscription above the field. "Campaign names are used only for internal reports" - inscription under the field. Required field.
+- **Campaign type** - drop-down, with two options for campaign type: 1. reviews - A campaign with a reservation, where the user must manually find and complete the campaign; 2. mentions - A campaign type where eligibility is automatically checked after post creation, with no reservation needed. "Campaign type" inscription above the field. By default, the field is empty. "The campaign parameters are specific to the type of campaign" - inscription under the field. Required field.
+- **Campaign reach** - drop-down with list of reach options for campaign. "Campaign reach" inscription above the field. By default, the field with placeholder "Select campaign reach". "If the campaign has a local reach, make sure that the primary object has both longitude and latitude specified." - inscription under the field. Required field. Options: 1. Global - campaign does not depend on location; 2. Local - campaign varies by location.
+- **Display currency** - drop-down with list of currency. "Display currency:" inscription above the field. By default - USD or currency what user chose in settings. "Disclaimer: Exchange rates are provided by third parties and may not be accurate." - inscription under the field. Required field.
+- **Payment currency** - dropdown to select the currency for payments, at the moment one type is available WAIV. "All payment obligations will be calculated in that currency based on the exchange rates at the time of the transactions." - inscription under the field. Required field.
+- **Budget** - funds for payment of rewards. All completed reviews from the 1st of the current month are taken into account. The Unused part of the budget is not accumulated (reset to zero once a month). Each new month starts with a fixed amount of the campaign budget specified when it was created (this is spelled out in the rules). "Campaign budget (monthly, USD)" inscription above the field. "The unused portion of the budget does not accumulate" - inscription under the field. Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.
+- **Reward** - amount of reward for one review part of the reward can be paid with votes from registered accounts. The amount per review is not necessarily a multiple of the campaign budget amount. "Reward (per review, USD)" inscription above the field. "Portion of the reward can be paid using upvotes from registered accounts" - inscription under the field. Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.
+- **Registered upvoting accounts** - list of match bots. In the form of curated accounts or match bots, the sponsor can act and the accounts that the sponsor will add here. The sponsor does not have to add himself, since by default all likes to set by the sponsor are tracked, the debt is also recalculated if the like is set manually by the sponsor. The value of likes can be accumulated on a special compensation account. "Registered upvoting accounts" inscription above the field. By default, the field is empty. "The value of upvotes can be accumulated on a dedicated compensation account" - inscription under the field. Optional field.
+- **Compensation account** - accumulates the value of likes from registered upvoting accounts. User search field. Not required. This is a sponsor account specified by the sponsor himself, to which he will transfer the amount of the likes set using match bots. This is an additional income of the sponsor, since he does not give anything to match bots. Example: 1. Sponsor added 3 matchbots; 2. Users wrote reviews (1 review = 10 Hive); 3. match bots set likes to 5 Hive; 4. The sponsor must provide campaign reporting that he has actually spent the allocated budget. Placeholder "Find user". "Compensation account (optional)" inscription above the field. By default, the field is empty. "Accumulates the value of upvotes from registered upvoting accounts" - inscription under the field.
+- **Maximum reservation period** - review period, priority filter compared to target days for reviews. "Maximum reservation period (days)" inscription above the field. "The available budget is reduced by the amount of rewards reserved" - inscription under the field. Required field. Only numbers and a period can be entered. There are arrows to increase, decrease the number.
+- **Target days** - the sponsor can choose the days on which he wants to receive feedback. The period of the reservation will be dynamically adjusted in accordance with the target days. This table, which consists of checkboxes and names of days. "Target days for reviews" inscription above the field. "Reservation period will be dynamically adjusted to match target days" - inscription under the field. Optional field.
+- **Minimum number of photos** - a field in Eligible reviews (post requirements) block, for selecting the minimum number of photos that should be in the review. The default is 2. Only numbers and a period can be entered. There are arrows to increase, decrease the number.
+- **Receipt** - "Request a photo of the receipt (without personal details)" - checkbox on the requirement for the mandatory presence of a photo of the receipt. "If selected, the number of photos required will be increased by one. If the checkbox is active, then there should be one more photo in the review than was selected in "Minimum number of original photos" field.
+- **Primary object** - "Link to the primary (parent) object" - a field to find the object that is the parent. "Example: business, brand, restaurant, etc." - inscription under the field. Placeholder - "Find object". This object represents an object that serves as the main focus of a campaign. Examples of primary objects include a restaurant, brand, or business. The primary card has a broader and more comprehensive scope.
+- **Secondary object** - "Link to one of the secondary objects" - a field to find specific object(s). "Example: product, service, dish, etc." - inscription under the field. Placeholder - "Find objects". This object represents a specific object within the context of a campaign, where the object is secondary to the primary focus. Examples include a dish from a restaurant or a product from a brand. "Add all child object" - after selecting a primary object, a link is added to the name of the field for the second object to add all objects whose primary have as a parent object. After clicking on the link, a modal window for confirmation is opened.
+- **Additional requirements** - "Additional review requirements (optional)" - text field for entering additional review conditions."This note will be shown to users at the time of reservation of the reward" - inscription under the field.
+- **Minimum Waivio expertise (optional)** - A field for entering the user's minimum expertise level required to participate in the campaign. The default value is 0. You can use the arrows to increase or decrease the number, or manually enter it. **New users on Waivio start with an expertise level of 0**. This field is optional, allowing you to restrict participation based on user expertise.
+- **Minimum number of followers (optional)** - A field for specifying the minimum number of followers a user must have to reserve the campaign. The default value is 0. You can use the arrows to adjust the number or enter it manually. **New users start with 0 followers**. This is an optional field, letting you filter users based on their follower count.
+- **Minimum number of posts (optional)** - A field to define the minimum number of posts a user must have published to participate in the campaign. The default value is 0. Numbers can be adjusted with the arrows or entered manually. **New users start with 0 posts**. This field is optional, allowing you to set a threshold for user activity.
+- **Eligibility period (days)** - A field for setting how often a user can execute the campaign. If 0 is selected, users can reserve an unlimited number of times. For example, if 3 is selected, a user can reserve the campaign once every 3 days. The default value is 15. Numbers can be adjusted with the arrows or entered manually. **If there are no restrictions on the frequency of reviews for the primary object by the same user, set the value to zero**. This field controls the frequency with which users can participate in your campaign.
+- **Legal** - description about legal agreements. "All reward payments are made directly to users by the campaign creator. Waivio and other partners provide information and discovery services only. Here you can add a link to the agreement, which will govern the relationship between you and participating users."
+- **Link to agreement** - search field. A link to an agreement that will govern the relationship between sponsor and reviewers. Object reference. Optional. "Link to the agreement (page object, optional)" inscription above the field and placeholder the same.
+- **Legal note** - "Legal notice to users (optional)" - text field for entering additional review conditions."This note may be used to draw users' attention to the specific terms and conditions of the agreement." - inscription under the field. Optional.
+- **WAIV eligibility checkbox** - Optional checkbox for ensuring that only posts meeting the criteria for a WAIV token reward are included in the campaign. Text: Only posts eligible to receive a WAIV token reward will be considered qualified for participation in the campaign.
+- **Agreement checkbox** - mandatory checkbox for agreeing to the terms and conditions for creating a campaign. I agree to the Terms of Service for the service and acknowledge that this campaign does not violate any laws of British Columbia, Canada. With link "https://waivio.com/object/xrj-terms-and-conditions/page" on "Terms and Conditions".
+- **Campaign expiry date** - Selection of the campaign end date. The date must be set using the calendar (mandatory).
+- **Commissions field** - A field labeled "I agree to pay the specified commission to Waivio and partners" where the user can enter the commission percentage from the reward. The commission must be no less than 5% (this value is editable). Text under field: Commissions and rewards to users must be paid in full within 14 days from the date of payment obligations.
+- **Create button** - A button to create the campaign. If the campaign is filled with valid data, it will be created, and the user will be redirected to the Manage tab, where they can activate it. Text: Once created, the campaign can be activated in the Campaigns/Manage tab.
+- **Star** - Required fields are marked with a star.
 ![image](https://github.com/user-attachments/assets/d964e37d-9014-428e-9078-bdc322edce7c)
 
 
@@ -1810,11 +1807,11 @@ About Account Balance table:
 |`Note`| "* All campaigns will be suspended if accounts payable exceed 30 days"|
 ![image](https://github.com/user-attachments/assets/32ad0948-d84b-4612-8508-b93ad61a4485)
 
-About Campaign table:
-|`Campaign table`|table with active and pending campaigns|
+Campaigns table - This table displays the details of active and pending campaigns:
+|`Campaigns table`|table with active and pending campaigns|
 |-----|-----|
 |`Title`| "Active and pending campaigns"|
-|`Active`| checkbox for campaign activation. Inactive campaign with pending status.|
+|`Active`| Checkbox for campaign activation/deactivation: After clicking on the checkbox, a confirmation window will appear to confirm the action, whether activation or deactivation. Inactive campaigns will have a pending status|
 |`Campaign`| campaign name, by clicking on the campaign name, you can go to the campaign edit page. The name is displayed in orange. <br>You can edit the campaign in statuses: <ul><li>pending - editing a campaign</li></ul>|
 |`Status`| campaign statuses: <ul><li>Pending</li><li>Active</li><li>ReachedLimit</li><li>OnHold</li><li>Inactive (after deactivating a campaign, after reloading the campaign page with this status, move to the History table)</li></ul>|
 |`Type`| reviews or mentions.|
@@ -1823,11 +1820,11 @@ About Campaign table:
 |`Remaining`| display the remainder of unreserved and uncompleted reviews. <br>Monthly / Reward = Remaining; - as soon as the company is established. <br>Remaining - (Reserved + Completed) = Remaining - when backing up and completing a recall.|
 |`Note`| "** Only pending campaigns can be edited"|
 When campaigns are suspended, all active campaigns transition to the suspended status, with their records remaining in the same table. Entries in the history table remain unaffected.
-|`Create new campaign button`| button "Create new campaign" go to the page for creating a new campaign|
+|`Create new campaign button`| button "Create new campaign" go to the page for creating a new campaign or to click on tab Create to create a new campaign.|
 |------|--------|
 ![image](https://github.com/user-attachments/assets/817dde3b-fd14-434d-a05e-98ad36e1a622)
 
-About History table:
+About History Table - This table displays the history of campaigns that are no longer active or have expired:
 |`History`| History table with all user campaigns.|
 |-----|-----|
 |`Title`| History|
@@ -1866,6 +1863,8 @@ User card from the list:
 |`Days`|show the number of days to each line, from the date of the first unpaid review. Up to 21 days is displayed - in black, more - in orange|
 
 After clicking on the arrow in the user card. The table opens.
+![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
+![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
 |Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
 |---|---|
 |`Title`| look like this "Payables: {sponsor} → {user}". |
@@ -1876,8 +1875,6 @@ After clicking on the arrow in the user card. The table opens.
 |`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
 |`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
-![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
-![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
 
 "Pay all" modal window:
 |`Pay all`| modal window|
@@ -1955,7 +1952,7 @@ The footer of the card changes to:
 * Released;
 * Expired;
 * Rejected.
-- `THREE_POINT` - the options for the following actions depend on the campaign status:
+- `Three-dot menu` - the options for the following actions depend on the campaign status:
 * View reservation;
 * Release reservation;
 * Increase reward;
@@ -2004,19 +2001,6 @@ Technology for detecting fraud attempts in reviews. The tab displays the results
 Page for displaying campaigns where “dubious” photos were identified in review.
 A tab is added under the Rewards / Campaigns section and is accompanied by a disclaimer stating that this is an experimental service only and should not be relied upon.
 The selection of cards is limited to 30 days.
-At the moment, the check is carried out as follows:
-<ol><li>the models of the devices on which the pictures for the review were taken are compared, if they differ, the user is suspected of fraud.</li>
-<li>if the image has gps coordinates, then it is checked that they are made within a radius of 1 km from the restaurant (provided that the object has a map)</li>
-<li>the date of creation of the image is checked - it must be no earlier than 14 days before the reservation of the company.</li>
-1st digit - code, 2nd last random. <br>Code:
-1 - metadata is missing on all photos;
-2 - metadata is missing in one of the photos;
-3 - photo resolutions differ (no triggering on vertical / horizontal);
-4 - the dates are different in the pictures;
-5 - GPS coordinates are different in the pictures;
-6 - pictures taken by devices with different IDs;
-7 - the date on the photo differs from the post date by 14 or more days;
-8 - GPS coordinates more than 1 km from the object.
 
 ||Page elements|
 |---|---|
@@ -2035,6 +2019,7 @@ To combat spam and fraud, campaign sponsors need a tool to manage blacklists:
 - Whitelist is a list of users who can participate in campaigns, even if they are included in other blacklists.
 At the top of the page there is a navbar with three tabs.
 ## Blacklist
+Blacklist - a list of users who will not be able to take part in this sponsor's campaigns.
 ||User search block|
 |-----|---|
 |`Title`|"Add user to the blacklist"|
@@ -2050,7 +2035,9 @@ At the top of the page there is a navbar with three tabs.
 The list show not only those blocked by the user himself, but also those blocked by those whom this user trusts (References subscription).
 References account name shows instead of button Delete.
 ![image](https://user-images.githubusercontent.com/67378322/224950515-96425bed-85e4-4aa1-90c0-92b71c1c0d7e.png)
+
 ## References
+References - list of links to blacklists of other sponsors (taking into account one more level of nesting so that you can have blacklist aggregators).
 ||User search block|
 |-----|---|
 |`Title`|"Recognize other users' blacklists"|
@@ -2064,7 +2051,9 @@ References account name shows instead of button Delete.
 |`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
 |`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
 ![image](https://user-images.githubusercontent.com/67378322/224950782-459e28d1-d365-4909-80fe-5b36e213e1dc.png)
+
 ## Whitelist
+Whitelist is a list of users who can participate in campaigns, even if they are included in other blacklists
 ||User search block|
 |-----|---|
 |`Title`|"Add user to the whitelist"|
@@ -2081,10 +2070,11 @@ References account name shows instead of button Delete.
 ![image](https://user-images.githubusercontent.com/67378322/224950841-08510b38-bf95-4ba0-82a2-1d8e3402a305.png)
 
 
+# Match bots are services implemented on the Waivio platform that automatically vote on content produced by specific authors or content based on specific criteria. There are three types of match bots: Authors Match Bot, Curators Match Bot, and Sponsors Match Bot.
+
+
 # Earn. Match bots. Authors.
-**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author. The strength of the voice can range from + 0.1% to + 100% (max upvote). This bot does not vote for comments or re-blogs.
-Authors match bot has its own authorization.
-So far, the bot is limited to only positive votes. In order not to publish votes with a small value, it makes sense to estimate the weight of the vote and if it is less than 0.01 HBD (1 cent), then ignore it.
+**Authors match bot** monitors the publication of new posts by the specified authors and, after 5 minutes, votes for them if the Voting Power at that moment is not less than the specified one (upvote mana). This parameter is different for each author. The strength of the voice can range from + 0.1% to + 100% (max upvote). This bot does not vote for comments or re-blogs. Authors match bot has its own authorization. So far, the bot is limited to only positive votes. In order not to publish votes with a small value, it makes sense to estimate the weight of the vote and if it is less than 0.01 HBD (1 cent), then ignore it.
 ## How It Works (Simplified Version)
 1. A user enables the Authors Match Bot authorization.
 2. The user adds an author.
@@ -2098,11 +2088,12 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Description`|The Authors match bot automatically upvotes posts published by the specified authors. It does not upvote comments or re-blogs. <br><br> For each author, please specify the upvoting power in the range from +1% to +100% (maximum upvote). Actual value of the upvote depends on the current upvoting mana on the account at the time of the action.<br><br> Important: The Authors match bot only publishes upvotes with estimated combined value of 0.01 HBD or more.<br><br> Votes will be processed as long as the mana (voting power) on the account remains above the threshold as specified for each author.|
 |`Auth Block`|**The Authors match bot requires authorization to distribute votes on your behalf: Authorize now <br> The authorization is completed via HiveSigner and can be revoked at any time.** <br> <br> **Disclaimer:** The Authors match bot service is provided on as-is / as-available basis.|
 |`Link`| "Authorize now" link for bot authorization.|
-|`Add`| button "Add author" for adding authors, after clicking the modal window "Add new author" opens|
+|`Add author button`| button "Add author" for adding authors, after clicking the modal window "Add new author" opens|
 * "Authorize now" changes to "Remove authorization" in `AUTH_BLOCK`, if bot is active.
 ![image](https://github.com/user-attachments/assets/0b62214d-e2c1-45f0-bab0-7c443ec23938)
 
-## Table information
+## Table Information 
+This table displays users added as authors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as author names, upvote power, minimum voting power, expiry dates, and notes.
 |Column|Description|
 |----|------|
 |`Checkbox`|"Active" checkbox for activating and deactivating authors for which the bot will like|
@@ -2114,7 +2105,8 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Notes`|"Notes" comments|
 ![image](https://user-images.githubusercontent.com/67378322/224953821-5235ad25-f3f1-4e9f-a299-6fcb4d83b80e.png)
 
-## Add new author (modal window)
+## Add New Author (Modal Window)
+This modal window appears after clicking the "Add author" button. It allows you to add a new author.
 |Element|Description|
 |---|--|
 |`Title`|Add new author|
@@ -2133,7 +2125,8 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 |`Confirm`|"Add author" button to confirm the action|
 ![image](https://user-images.githubusercontent.com/67378322/224953907-d4455886-9afb-4f78-900e-53f468c64b76.png)
 
-## Edit (modal window)
+## Edit author information (modal window)
+This modal window appears after clicking the "Edit" link in the table. It allows you to modify the author bot settings for a specific user.
 |Element|Description|
 |---|--|
 |`Title`|Edit match bot rules for author {@username}|
@@ -2154,6 +2147,7 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 ![image](https://user-images.githubusercontent.com/67378322/224953991-76b6a0b2-3ff9-4358-ac32-33d9febd80d3.png)
 
 ## Delete confirmation (modal window)
+This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the author bot.
 |Element|Description|
 |---|--|
 |`Title`|Delete confirmation|
@@ -2164,6 +2158,7 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 ![image](https://user-images.githubusercontent.com/67378322/133733896-adc20d8b-a706-4964-8b4b-7c063ecc0182.png)
 
 ## Confirm changes (modal window)
+This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
 |Element|Description|
 |---|--|
 |`Title`|Confirm changes|
@@ -2175,16 +2170,12 @@ So far, the bot is limited to only positive votes. In order not to publish votes
 
 * after adding an author, a notification of success appears ("Author was successfully added"), and the author appears in the list without reloading the page
 * after update a rule, a notification of success appears ("Author was successfully updated"), and the author appears in the list without reloading the page
-* immediately after adding an author, the checkbox is active, the rule is activated
+* immediately after adding an author, the checkbox is active, the rule is activated.
 
 
 # Earn. Match bots. Curators
-**Curators match bot** repeats the curators' voices with a specified coefficient (from 1% to 10 000%).
-By default, the bot repeats only positive votes, but if the user specifies (ticks the check box), then downvotes are repeated with the same coefficient. In this case, the table uses the ± symbol in front of Vote ratio to indicate that negative votes are also repeated.
-For each curator, min Voting Power is set (upvote / downvote mana).
-If the estimated value of the vote is less than 0.01 HBD, then such a vote will not be played.
+**Curators match bot** repeats the curators' voices with a specified coefficient (from 1% to 10 000%). By default, the bot repeats only positive votes, but if the user specifies (ticks the check box), then downvotes are repeated with the same coefficient. In this case, the table uses the ± symbol in front of Vote ratio to indicate that negative votes are also repeated. For each curator, min Voting Power is set (upvote / downvote mana). If the estimated value of the vote is less than 0.01 HBD, then such a vote will not be played.
 ![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
-
 ## How It Works (Simplified Version)
 1. A user enables the Curator Match Bot authorization.
 2. The user adds a curator.
@@ -2203,7 +2194,8 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 * "Authorize now" changes to "Remove authorization", if bot is active.
 ![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
 
-### Table
+### Table information
+This table displays users added as authors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
 |Column|Description|
 |----|------|
 |`Checkbox`|"Active" checkbox for activating and deactivating authors for which the bot will like|
@@ -2216,6 +2208,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 ![image](https://user-images.githubusercontent.com/67378322/224958970-da703e52-f5e9-4158-9ca8-31f088d64114.png)
 
 ## Add new curator (modal window)
+This modal window appears after clicking the "Add curator" button. It allows you to add a new curator.
 |Element|Description|
 |---|--|
 |`Title`|Add new curator|
@@ -2235,7 +2228,8 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 |`Confirm`|"Add curator" button to confirm the action|
 ![image](https://user-images.githubusercontent.com/67378322/224959070-3cb07bb3-3fdb-4d1e-8e6c-e8a9803c0c40.png)
 
-## Edit (modal window)
+## Edit curator information (modal window)
+This modal window appears after clicking the "Edit" link in the table. It allows you to modify the curator bot settings for a specific user.
 |Element|Description|
 |---|--|
 |`Title`|Edit match bot rules for curator {@username}|
@@ -2255,6 +2249,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 ![image](https://user-images.githubusercontent.com/67378322/224959186-d9b30e65-5622-49a1-9c31-96b06081a8f0.png)
 
 ## Delete confirmation (modal window)
+This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the curator bot.
 |Element|Description|
 |---|--|
 |`Title`|Delete confirmation|
@@ -2265,6 +2260,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 ![image](https://user-images.githubusercontent.com/67378322/133734698-a6b12efa-df10-447c-bbbe-4b9bd00b5af6.png)
 
 ## Confirm changes (modal window)
+This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
 |Element|Description|
 |---|--|
 |`Title`|Confirm changes|
@@ -2280,10 +2276,7 @@ If the estimated value of the vote is less than 0.01 HBD, then such a vote will 
 
 
 # Earn. Match bots. Sponsors
-**Sponsors match bot** - is an account for paying part of the reward for reviews in the form of votes, thereby reducing the amount of direct payment.
-If a user wants to become a Match bot, he needs to activate the toggle on the "Rewards" page in the "Sponsors" tab.
-For example the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV.
-In order for the sponsor to add a match bot to the campaign. The Match bot should in turn add a sponsor. To do this, in the "Sponsors" tab, click on the "Add sponsor" button.
+**Sponsors match bot** - is an account for paying part of the reward for reviews in the form of votes, thereby reducing the amount of direct payment. If a user wants to become a Match bot, he needs to activate the toggle on the "Rewards" page in the "Sponsors" tab. For example the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV. In order for the sponsor to add a match bot to the campaign. The Match bot should in turn add a sponsor. To do this, in the "Sponsors" tab, click on the "Add sponsor" button.
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
 ## How It Works (Simplified Version)
 1. A user enables the Sponsor Match Bot authorization.
@@ -2317,6 +2310,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 | `Change` | link, after clicking on which a modal window `CHANGE MINIMUM VOTING POWER MODAL` opens, as an opportunity to change the strength of the match bot's voice |
 
 Table:
+This table displays users added as sponsors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
 | `Table` | a table for displaying a list of sponsors, and basic information of rules with sponsors |
 | ------------- | ------------- |
 | `Active` | a column with a checkbox to activate the Match Bot rule for each specific user added to the list of match bot sponsors. After clicking on `ACTIVE` the modal window `CONFIRM RULE ACTIVATION` |
@@ -2328,7 +2322,8 @@ Table:
 | `Add Sponsor Button` | button to add sponsor. After pressing the modal window `ADD NEW SPONSOR MODAL` |
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
 
-Modal window `Change the Minimum Voice Strength`:
+Modal window `Change the Minimum Voting Power`:
+This modal window appears after clicking the "Change" button. It allows you to adjust the Minimum Voting Power to your preferred level. Once this limit is reached, the bot will stop functioning until the voting power is restored.
 | | Modal window `Change the Minimum Voice Strength` |
 | ------------- | ------------- |
 | `Title` | Title - title of the modal window "Change the minimum voice strength" |
@@ -2338,7 +2333,18 @@ Modal window `Change the Minimum Voice Strength`:
 | `Cancel` | button for canceling the action on choosing a voice |
 ![image](https://github.com/user-attachments/assets/61b4f25c-d5f9-4c7d-81cb-2510185e5e18)
 
+Modal window `Confirm rule activation`:
+| | Modal window `Confirm rule activation` |
+| ------------- | ------------- |
+| `Title` | Title - title of the modal window "Confirm the activation of the rule" |
+| `Close` | button to close modal window |
+| `Text` | confirmation question text: "Do you want to activate the rule sponsored by {@userName}?" |
+| `Confirm` | button to confirm the rule activation action |
+| `Cancel` | button for canceling the rule activation action |
+![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
+
 Modal window `Add new sponsor modal window`:
+This modal window appears after clicking the "Add sponsor" button. It allows you to add a new sponsor.
 | | Modal window `Add new sponsor modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Add new sponsor".|
@@ -2354,17 +2360,8 @@ Modal window `Add new sponsor modal window`:
 | `OK` | add a rule to a table |
 ![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
 
-Modal window `Confirm rule activation`:
-| | Modal window `Confirm rule activation` |
-| ------------- | ------------- |
-| `Title` | Title - title of the modal window "Confirm the activation of the rule" |
-| `Close` | button to close modal window |
-| `Text` | confirmation question text: "Do you want to activate the rule sponsored by {@userName}?" |
-| `Confirm` | button to confirm the rule activation action |
-| `Cancel` | button for canceling the rule activation action |
-![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
-
 Modal window `Edit match bot rules modal window`:
+This modal window appears after clicking the "Edit" link in the table. It allows you to modify the sponsor bot settings for a specific user.
 | | Modal window `Edit match bot rules modal window` |
 | ------------- | ------------- |
 | `Title` | Title - "Edit rule {userName}" |
@@ -2376,3 +2373,25 @@ Modal window `Edit match bot rules modal window`:
 | `Save` | button to save new changes |
 | `Delete` | button to delete the match bot rule for this sponsor |
 ![image](https://github.com/user-attachments/assets/5dc0f464-02b4-4945-a6b2-8138748877f5)
+
+## Delete confirmation (modal window)
+This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the sponsor bot.
+|Element|Description|
+|---|--|
+|`Title`|Confirmation required|
+|`Close`|button to close the modal window|
+|`Text`|Do you want to delete match bot rules for @{username}?|
+|`Cancel`|"Cancel" button to cancel the action and close the modal window|
+|`Delete`|"Delete" button to confirm the delete action|
+![image](https://github.com/user-attachments/assets/f90bdd50-a899-4cf6-9b96-d4804e64f321)
+
+## Confirm changes (modal window)
+This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
+|Element|Description|
+|---|--|
+|`Title`|Rule editing confirmation|
+|`Close`|button to close the modal window|
+|`Text`|Do you want to edit rule with current changes?|
+|`Cancel`|"Cancel" button to cancel the action and close the modal window|
+|`OK`|"OK" button to confirm the save action|
+![image](https://github.com/user-attachments/assets/0591de4e-26e8-4df7-86c1-da2734789e19)
