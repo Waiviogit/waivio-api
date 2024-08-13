@@ -76,6 +76,11 @@ exports.FIELDS_NAMES = {
   BUDGET: 'budget',
   COOKING_TIME: 'cookingTime',
   COST: 'cost',
+  GROUP_EXPERTISE: 'groupExpertise',
+  GROUP_FOLLOWERS: 'groupFollowers',
+  GROUP_FOLLOWING: 'groupFollowing',
+  GROUP_ADD: 'groupAdd',
+  GROUP_EXCLUDE: 'groupExclude',
 };
 
 exports.LIST_TYPES = {
@@ -117,6 +122,7 @@ exports.OBJECT_TYPES = {
   MAP: 'map',
   LINK: 'link',
   RECIPE: 'recipe',
+  GROUP: 'group',
 };
 
 exports.WALLET_ADDRESS_LINKED_TYPES = [
@@ -187,6 +193,8 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
   this.FIELDS_NAMES.WALLET_ADDRESS,
   this.FIELDS_NAMES.DELEGATION,
+  this.FIELDS_NAMES.GROUP_ADD,
+  this.FIELDS_NAMES.GROUP_EXCLUDE,
 ];
 
 exports.REQUIREDFIELDS = [
