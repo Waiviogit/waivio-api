@@ -1507,7 +1507,7 @@ Reward icons are displayed on the map.
 
 
 # Earn. Reserved
-The campaign cards reserved by the user are displayed (only campaign type 'Review' has the opportunity to reserve them).
+The Reserved in Earn displays the campaign cards reserved by the user. Only campaigns of the 'Review' type have the option to be reserved.
 ![image](https://user-images.githubusercontent.com/67378322/223233714-238a0520-84b6-428f-8637-56a0fe377ec1.png)
 Campaigns with the status: `active`, `onHold` are displayed.
 ## Reserved card
@@ -1566,70 +1566,64 @@ Displaying the editor after clicking on "Write review".
 
 
 # Earn. Receivable
-Page that shows the sponsor list and the amount of reward for the campaign execution.
-The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key measure.
-
-Sorting:
-* Amount - by the amount of reward
-* Time - by time
- Filters:
-* Over 15 days - the sponsor gets stuck in front of the recipient for more than 15 days
-* Over 30 days - the sponsor's congestion in front of the recipient is more than 30 days
-* Over 20 WAIV - the sponsor's mortgage in front of the recipient is more than 20 WAIV
+Receivable in Earn displays the list of sponsors, the reward amounts, and detailed information about the campaign's execution. The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key metric.
 ![image](https://user-images.githubusercontent.com/67378322/223230948-5700ffe0-0160-4b92-b89e-7f273dea853e.png)
-After clicking on the arrow
+When you click on the arrow next to a sponsor's name in the list, a table appears, showing detailed information about each sponsor and campaign.
 ![image](https://user-images.githubusercontent.com/67378322/223231018-dc8b0217-e3d7-4ada-834e-c0c871e0b741.png)
-The table opens
 ![image](https://user-images.githubusercontent.com/67378322/223231117-0764fae5-0504-4c58-b058-2274caf93a85.png)
-User card:
+
+Sorting Sponsors List:
+* Amount: Sort by the amount of reward.
+* Time: Sort by time.
+Filters for Sponsors List:
+* Over 15 Days: Sponsor delay exceeding 15 days.
+* Over 30 Days: Sponsor delay exceeding 30 days.
+* Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
+![image](https://github.com/user-attachments/assets/49db8777-61ba-4552-aac1-9aa54d6df4f2)
+
+Sponsor card in list details: section provides a summary of the total payments due for completed campaigns associated with each sponsor. Its purpose is to offer an overview of financial obligations and facilitate easy access to detailed payment information.
 |`Sponsor avatar`| link to the sponsor page|
 |`Sponsor username`| link to the sponsor page |
 |`Arrow button`| button to the payment history between the sponsor user and the executor user (open table)|
 |`Amount`| amount of rewards |
-Table where history of actions and transfers between sponsor and selected user is displayed, in chronological order:
+![image](https://github.com/user-attachments/assets/946eb7a0-4f80-4877-a678-05dbeeaa8afd)
+
+Table details: This Receivable table provides a detailed view of the history of actions and transfers between a sponsor and a selected user. Its purpose is to track and manage payments by showing a chronological record of transactions, including detailed information about reviews and amounts due.
+|Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
+|---|---|
+|`Title`| look like this "Receivable: {sponsor} → {user}". |
 |`Date`| the date of the transfer|
-|`Action`| Transfer from @username to @sponsorname|
-|`Details`| Payment|
-|`Amount`| the amount of remuneration for a specific review|
+|`Action`| additional information about the written review:<ul><li>Review by @{user} (requested by @sponsor)</li><li>Review: {primaryObject}, {secondaryObject}</li><li>Beneficiaries: {mainApp} (3%), {sponsor} (97%)</li></ul> <br>All names (users and objects) are clickable, after clicking the corresponding page opens. In the second line of the review is also clickable, after clicking a full screen of the review of the post opens. All clickable links are highlighted in orange.|
+|`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
+|`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
+![image](https://github.com/user-attachments/assets/59e091b0-88ad-45e2-9e0f-682ed6747331)
 
 
 # Earn. History
-The History tab shows not only active reservations, but also the entire history for this user, where the user was as the campaign executor: 
-* released; 
-* expired;
-* completed; 
-* rejected.
-The tab displays secondary cards (Secondary card).
-Cards can be filtered by status and sponsor. And sorting:
+The History tab in Earn shows not only active reservations but also the user's entire history as a campaign executor. This includes statuses such as released, expired, completed, and rejected. The tab displays secondary cards (Secondary Card).
+![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
+
+Sorting history cards:
 * Reservation - by the date of reservation;  
 * Action (date) - by the date of the last action.
-Filtering by status:
+Filtering history cards by status:
 * Reserved;
 * Completed;
 * Released;
 * Expired;
 * Rejected.
 Filtering by sponsor - displays the sponsors from which the user has booked campaigns.
-Sorting:
-* Reservation - by date of reservation;
-* Action (date) - by the date of the last action.
-Displays the secondaries of the card of objects with which the user came into contact.
-The footer of the card changes to:
-- `STATUS` - displaying campaign status:
-  * Reserved;
-  * Completed;
-  * Released;
-  * Expired;
-  * Rejected.
-- `THREE POINT` - the options for the following actions depend on the campaign status:
+![image](https://github.com/user-attachments/assets/67d57f3e-a7b5-414f-8e83-1529b8ab86ae)
+
+`Three-dot menu` on history cards provides the opportunity to perform the following actions, depending on the campaign status:
   * View reservation;
   * Release reservation;
   * Decrease reward;
   * Show report;
   * Open review;
   * Rejection note.
-![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
+![image](https://github.com/user-attachments/assets/8224001a-881f-4d34-be7a-486893addf57)
 
 
 # Campaign statuses
@@ -1703,6 +1697,7 @@ Campaign statuses change depending on the actions of the sponsor and executors, 
 ![image](https://user-images.githubusercontent.com/67378322/222457580-74aa8d31-7d5f-49cf-8157-e2972b23daff.png)
 
 # Reservation modal window
+The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. The purpose of this modal is to guide users through the process of reserving and submitting content for a rewards campaign, while clearly outlining the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission.
 The modal window for reservation opens after clicking:
 - firstly, on the "Earn button" on the primary card, and after that "Submit photos" button on the secondary card;
 - on the "Submit photos" or "Mention Now!" buttons on the secondary card;
@@ -1729,7 +1724,8 @@ The modal window for reservation opens after clicking:
 If the user does not meet some reward reservation requirements, then the entire condition will be highlighted in red color to attract attention.
 ![image](https://user-images.githubusercontent.com/67378322/224997471-b8ddb34a-7356-425c-b3ae-63c62b2e7920.png)
 
-# Reservation modal window if campaign was only reserved, in order to write a review
+# Reservation modal window if campaign was only reserved, in order to write a review.
+The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. After a user reserves a campaign, this modal window presents the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission. Since the campaign has already been reserved, the option to reserve it is no longer available within this modal.
 |Element|Description|
 |---|---|
 |`Title`|We seek honest reviews!|
@@ -1746,7 +1742,7 @@ If the user does not meet some reward reservation requirements, then the entire 
 ![image](https://user-images.githubusercontent.com/67378322/224996389-2bcacc08-e08d-41c2-a94f-8eed3fc210e9.png)
 
 # Release reservation modal window
-The modal window to confirm the action of canceling the reservation. After canceling, the campaign is displayed as available to the user again
+The release reservation modal window confirms the action of canceling a reservation. It appears after clicking "Release reservation" in the three-dot menu on the secondary card. Once the reservation is canceled, the campaign becomes available to the user again.
 |Element|Description|
 |---|---|
 |`Title`|Release reservation|
@@ -1761,6 +1757,7 @@ Create campaign is the starting point for using the Rewards feature as a sponsor
 A sponsor can create a campaign by either going to the Create tab in Earn or by clicking the "Create new campaign" button in the Manage tab in Earn.
 To create a campaign using the Rewards (Earn) feature in Earn, you need to provide the following required fields: campaign name, type, reach, display and payment currency, budget, reward amount, maximum reservation period, minimum number of photos, primary and secondary objects, eligibility period, agreement to terms and conditions, and the campaign expiry date. The optional fields include: registered upvoting accounts, compensation account, target review days, receipt requirement, additional review requirements, minimum Waivio expertise, minimum number of followers, minimum number of posts, link to an agreement, legal notice to users, and commission percentage.
 After creating a campaign, the sponsor should activate it by going to the Manage tab, clicking the checkbox, and confirming the activation.
+![image](https://github.com/user-attachments/assets/d964e37d-9014-428e-9078-bdc322edce7c)
 
 Basic information about every field in Create form:
 - **Campaign name** - the name of the new campaign being created by the sponsor. Campaign names are used only for internal reports (Manage tab) the field cannot be empty. Also used for the type of notification when the user sends a comment in the object's secondary card. "Campaign name" inscription above the field. "Campaign names are used only for internal reports" - inscription under the field. Required field.
@@ -1792,12 +1789,10 @@ Basic information about every field in Create form:
 - **Commissions field** - A field labeled "I agree to pay the specified commission to Waivio and partners" where the user can enter the commission percentage from the reward. The commission must be no less than 5% (this value is editable). Text under field: Commissions and rewards to users must be paid in full within 14 days from the date of payment obligations.
 - **Create button** - A button to create the campaign. If the campaign is filled with valid data, it will be created, and the user will be redirected to the Manage tab, where they can activate it. Text: Once created, the campaign can be activated in the Campaigns/Manage tab.
 - **Star** - Required fields are marked with a star.
-![image](https://github.com/user-attachments/assets/d964e37d-9014-428e-9078-bdc322edce7c)
 
 
 # Earn. Manage (Campaign)
-The page "Manage" displays information about campaigns and user balance.
-Include blocks: Account Balance table, Campaign table, History table.
+The Manage in Earn provides an overview of campaigns and user balance, helping users manage their active and inactive campaigns, as well as view detailed information. This page includes several key sections: the Account Balance table, which displays the user's financial status; the Campaign table, which lists and allows management of ongoing campaigns; and the History table, which records past campaigns and details related to those campaigns.
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
 
 About Account Balance table:
@@ -1845,16 +1840,23 @@ About History Table - This table displays the history of campaigns that are no l
 
 
 # Earn. Payable
-Payable - helps sponsors keep track of their obligations to users and processing parties, ensuring timely payments. It includes a list of users who have completed campaigns and provides tables with additional details.
+Payable in Earn helps sponsors keep track of their obligations to users and processing parties, ensuring timely payments. It includes a list of users who have completed campaigns and provides tables with additional details.
 ![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
-Sorting:
-* Amount - by the amount of reward;
-* Time - by time.
+When you click on the arrow next to a user's name in the list, a table appears, showing detailed information about each user and campaign.
+![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
+![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
+
+Sorting User List:
+* Amount: Sort by the amount of reward.
+* Time: Sort by time.
 If a user has unpaid review more than 21 days, an orange sign (!) will be shown after the tab name in the left sidebar.
-Filters:
-* Over 15 days - the sponsor's congestion in front of the recipient is more than 15 days;
-* Over 30 days - the sponsor's congestion in front of the recipient is more than 30 days;
-* Over 20 WAIV - the sponsor's mortgage in front of the recipient is more than 20 WAIV.
+Filters for User List:
+* Over 15 Days: Sponsor delay exceeding 15 days.
+* Over 30 Days: Sponsor delay exceeding 30 days.
+* Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
+![image](https://github.com/user-attachments/assets/5736d374-596c-44be-8308-802c7fe19713)
+
+User list details: This "User List Details" section provides a comprehensive overview of the payments due for completed campaigns with a sponsor. Its purpose is to facilitate the management and processing of payments by displaying the total amount payable and allowing bulk payments through the "Pay all" button, which opens a modal window for payment processing.
 |`Title`| the amount to be paid for all completed campaigns of this sponsor. Look like this: "Total: {sum} WAIV (${sum})". |
 |---|---|
 |`Pay all`|"Pay all" button for payment by all users who are in the list. After clicking, "Pay all" modal window is opened.|
@@ -1865,10 +1867,10 @@ User card from the list:
 |`Arrow`| after clicking, there is a transition to the payment history between the sponsor user and the executor user (open table)|
 |`Pay`| the button "Pay {sum} WAIV to open a modal window for a transaction |
 |`Days`|show the number of days to each line, from the date of the first unpaid review. Up to 21 days is displayed - in black, more - in orange|
+![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
 
-After clicking on the arrow in the user card. The table opens.
-![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
-![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
+Table details: 
+This Payable table is designed to provide a comprehensive view of the history of actions and transfers between a sponsor and a selected user. It serves the purpose of tracking and managing payments, showing detailed information such as transaction dates, review specifics, and amounts. Key features include a button for initiating payments, notifications for overdue reviews, and clickable links for easy access to related reservations and reports. The table also maintains a running total of remuneration, helping sponsors stay organized and ensure timely payments.
 |Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
 |---|---|
 |`Title`| look like this "Payables: {sponsor} → {user}". |
@@ -1879,8 +1881,9 @@ After clicking on the arrow in the user card. The table opens.
 |`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
 |`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
 |`Balance`| running total |
+![image](https://github.com/user-attachments/assets/d6719311-90b7-4822-ad0f-c21247a8d342)
 
-"Pay all" modal window:
+"Pay all" modal window: The "Pay All" modal window is an interface designed to streamline the process of making payments to users who have completed campaigns. Its purpose is to allow sponsors to efficiently manage bulk transactions, providing a detailed list of users eligible for payment, along with the total amount to be paid. The modal also includes options to review the sponsor's current balance, estimate the transaction value, and proceed with payment through HiveSigner. The interface ensures that sponsors can easily confirm and complete their obligations in a single, organized process.
 |`Pay all`| modal window|
 |--|--|
 |`Title`|Do you want to pay all payable?|
@@ -1935,28 +1938,23 @@ Report table information:
 
 
 # Earn. Reservations
-The Reservations tab displays not only active reservations but the entire history for the sponsor, including released, expired, completed, and rejected reservations. The sponsor can perform various actions, such as viewing campaign reservations, releasing reservations, increasing rewards, adding users to the blacklist, showing reports, opening reviews, adding rejection notes, rejecting reviews, reinstating rewards, muting users, and hiding posts.
+The Reservations tab provides a comprehensive overview of all reservations associated with a sponsor, including active, released, expired, completed, and rejected reservations. Sponsors can manage their campaign through various actions such as viewing campaign details, releasing reservations, increasing rewards, adding users to the blacklist, showing reports, opening reviews, adding rejection notes, rejecting reviews, reinstating rewards, muting users, and hiding posts. The tab displays these details on secondary cards for easy navigation and management.
 ![image](https://user-images.githubusercontent.com/67378322/224930185-545aec16-8cfc-47a5-8d56-a486ec8d3e14.png)
+
 Cards can be filtered by status and campaign. And sorting - by the date of reservation or by the date of the last action.
-Filtering by status:
+Filtering cards by status:
 * Reserved;
 * Completed;
 * Released;
 * Expired;
 * Rejected.
 Filtering by campaign - the names of the campaigns are displayed.
-Sorting:
+Sorting cards:
 * Reservation - by date of reservation;
 * Action (date) - by the date of the last action.
-Displays the secondaries of the card of objects with which the user came into contact.
-The footer of the card changes to:
-- `STATUS` - displaying campaign status:
-* Reserved;
-* Completed;
-* Released;
-* Expired;
-* Rejected.
-- `Three-dot menu` - the options for the following actions depend on the campaign status:
+![image](https://github.com/user-attachments/assets/e784fce0-2be9-4dc2-a799-358865fbd647)
+
+- `Three-dot menu` - The options available in the secondary card's three-dot menu depend on the campaign status:
 * View reservation;
 * Release reservation;
 * Increase reward;
@@ -1972,8 +1970,9 @@ The footer of the card changes to:
 
 
 # Earn. Messages
-The tab is intended primarily for communication between the sponsor and the campaign executor (only for reviews campaign type). Secondary cards are displayed only if the message was sent either by the sponsor or the campaign executor. The Messages tab shows the entire history for this sponsor: released, expired, completed, rejected.
+The tab is intended primarily for communication between the sponsor and the campaign executor (only for reviews campaign type). Secondary cards are displayed only if the message was sent either by the sponsor or the campaign executor. The Messages tab shows the entire history for this sponsor: released, expired, completed, rejected.  The tab displays these details on secondary cards for easy navigation and management.
 ![image](https://user-images.githubusercontent.com/67378322/224933510-3f8553cb-29a4-4f24-b5d5-f38360b14fa4.png)
+
 Cards can be filtered by status and campaign. 
 Filtering by general status ("Case status"):
 * all;
@@ -1985,18 +1984,11 @@ Filtering by campaign status:
 * Released;
 * Expired;
 * Rejected.
-Displays the secondaries of the card of objects with which the user came into contact.
-The footer of the card changes to:
-- `STATUS` - displaying campaign status:
-  * Reserved;
-  * Completed;
-  * Released;
-  * Expired;
-  * Rejected.
 Sorting:
 * Inquiry date - by date of inquiry (most recent at the top);
 * Latest - by the last message (the most recent at the top);
 * Reservation - by date of reservation.
+![image](https://github.com/user-attachments/assets/7b01c856-faa3-4188-ae25-ec0d4708a222)
 
 
 # Earn. Fraud detection
