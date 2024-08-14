@@ -1757,7 +1757,11 @@ The modal window to confirm the action of canceling the reservation. After cance
 
 
 # Earn. Create (Campaign)
-Create campaign is the starting point for using the Rewards feature as a sponsor (guide). It implies the creation of a campaign with certain conditions for writing a review on the proposed objects.
+Create campaign is the starting point for using the Rewards feature as a sponsor (guide). It implies the creation of a campaign with certain conditions for writing a review on the proposed objects. 
+A sponsor can create a campaign by either going to the Create tab in Earn or by clicking the "Create new campaign" button in the Manage tab in Earn.
+To create a campaign using the Rewards (Earn) feature in Earn, you need to provide the following required fields: campaign name, type, reach, display and payment currency, budget, reward amount, maximum reservation period, minimum number of photos, primary and secondary objects, eligibility period, agreement to terms and conditions, and the campaign expiry date. The optional fields include: registered upvoting accounts, compensation account, target review days, receipt requirement, additional review requirements, minimum Waivio expertise, minimum number of followers, minimum number of posts, link to an agreement, legal notice to users, and commission percentage.
+After creating a campaign, the sponsor should activate it by going to the Manage tab, clicking the checkbox, and confirming the activation.
+
 Basic information about every field in Create form:
 - **Campaign name** - the name of the new campaign being created by the sponsor. Campaign names are used only for internal reports (Manage tab) the field cannot be empty. Also used for the type of notification when the user sends a comment in the object's secondary card. "Campaign name" inscription above the field. "Campaign names are used only for internal reports" - inscription under the field. Required field.
 - **Campaign type** - drop-down, with two options for campaign type: 1. reviews - A campaign with a reservation, where the user must manually find and complete the campaign; 2. mentions - A campaign type where eligibility is automatically checked after post creation, with no reservation needed. "Campaign type" inscription above the field. By default, the field is empty. "The campaign parameters are specific to the type of campaign" - inscription under the field. Required field.
