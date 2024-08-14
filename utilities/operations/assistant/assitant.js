@@ -34,9 +34,15 @@ const qaPrompt = ChatPromptTemplate.fromMessages([
   ['human', '{question}'],
 ]);
 
-const llm = new OpenAI({
-  modelName: 'gpt-4-1106-preview',
-});
+let llm;
+
+try {
+  llm = new OpenAI({
+    modelName: 'gpt-4-1106-preview',
+  });
+} catch (error) {
+
+}
 
 const contextualizeQChain = contextualizeQPrompt
   .pipe(llm)
