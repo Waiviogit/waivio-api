@@ -1507,7 +1507,7 @@ Reward icons are displayed on the map.
 
 
 # Earn. Reserved
-The campaign cards reserved by the user are displayed (only campaign type 'Review' has the opportunity to reserve them).
+The Reserved in Earn displays the campaign cards reserved by the user. Only campaigns of the 'Review' type have the option to be reserved.
 ![image](https://user-images.githubusercontent.com/67378322/223233714-238a0520-84b6-428f-8637-56a0fe377ec1.png)
 Campaigns with the status: `active`, `onHold` are displayed.
 ## Reserved card
@@ -1566,22 +1566,22 @@ Displaying the editor after clicking on "Write review".
 
 
 # Earn. Receivable
-Page that shows the sponsor list and the amount of reward for the campaign execution.
-The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key measure.
-
-Sorting:
-* Amount - by the amount of reward
-* Time - by time
- Filters:
-* Over 15 days - the sponsor gets stuck in front of the recipient for more than 15 days
-* Over 30 days - the sponsor's congestion in front of the recipient is more than 30 days
-* Over 20 WAIV - the sponsor's mortgage in front of the recipient is more than 20 WAIV
+Receivable in Earn displays the list of sponsors, the reward amounts, and detailed information about the campaign's execution. The WAIV token is used for creating campaigns and making payments. The value of the WAIV token in the user's currency is a key metric.
 ![image](https://user-images.githubusercontent.com/67378322/223230948-5700ffe0-0160-4b92-b89e-7f273dea853e.png)
-After clicking on the arrow
+When you click on the arrow next to a sponsor's name in the list, a table appears, showing detailed information about each sponsor and campaign.
 ![image](https://user-images.githubusercontent.com/67378322/223231018-dc8b0217-e3d7-4ada-834e-c0c871e0b741.png)
-The table opens
 ![image](https://user-images.githubusercontent.com/67378322/223231117-0764fae5-0504-4c58-b058-2274caf93a85.png)
-User card:
+
+Sorting Sponsors List:
+* Amount: Sort by the amount of reward.
+* Time: Sort by time.
+Filters for Sponsors List:
+* Over 15 Days: Sponsor delay exceeding 15 days.
+* Over 30 Days: Sponsor delay exceeding 30 days.
+* Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
+![image](https://github.com/user-attachments/assets/49db8777-61ba-4552-aac1-9aa54d6df4f2)
+
+Sponsor card in list details:
 |`Sponsor avatar`| link to the sponsor page|
 |`Sponsor username`| link to the sponsor page |
 |`Arrow button`| button to the payment history between the sponsor user and the executor user (open table)|
@@ -1592,44 +1592,33 @@ Table where history of actions and transfers between sponsor and selected user i
 |`Details`| Payment|
 |`Amount`| the amount of remuneration for a specific review|
 |`Balance`| running total |
+![image](https://github.com/user-attachments/assets/6db0429e-862c-439e-9c6f-2a1a412aaf07)
 
 
 # Earn. History
-The History tab shows not only active reservations, but also the entire history for this user, where the user was as the campaign executor: 
-* released; 
-* expired;
-* completed; 
-* rejected.
-The tab displays secondary cards (Secondary card).
-Cards can be filtered by status and sponsor. And sorting:
+The History tab in Earn shows not only active reservations but also the user's entire history as a campaign executor. This includes statuses such as released, expired, completed, and rejected. The tab displays secondary cards (Secondary Card).
+![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
+
+Sorting history cards:
 * Reservation - by the date of reservation;  
 * Action (date) - by the date of the last action.
-Filtering by status:
+Filtering history cards by status:
 * Reserved;
 * Completed;
 * Released;
 * Expired;
 * Rejected.
 Filtering by sponsor - displays the sponsors from which the user has booked campaigns.
-Sorting:
-* Reservation - by date of reservation;
-* Action (date) - by the date of the last action.
-Displays the secondaries of the card of objects with which the user came into contact.
-The footer of the card changes to:
-- `STATUS` - displaying campaign status:
-  * Reserved;
-  * Completed;
-  * Released;
-  * Expired;
-  * Rejected.
-- `THREE POINT` - the options for the following actions depend on the campaign status:
+![image](https://github.com/user-attachments/assets/67d57f3e-a7b5-414f-8e83-1529b8ab86ae)
+
+`Three-dot menu` on history cards provides the opportunity to perform the following actions, depending on the campaign status:
   * View reservation;
   * Release reservation;
   * Decrease reward;
   * Show report;
   * Open review;
   * Rejection note.
-![image](https://user-images.githubusercontent.com/67378322/223232639-56e63e92-ee0e-4276-a74f-58d096a86ffd.png)
+![image](https://github.com/user-attachments/assets/8224001a-881f-4d34-be7a-486893addf57)
 
 
 # Campaign statuses
@@ -1703,6 +1692,7 @@ Campaign statuses change depending on the actions of the sponsor and executors, 
 ![image](https://user-images.githubusercontent.com/67378322/222457580-74aa8d31-7d5f-49cf-8157-e2972b23daff.png)
 
 # Reservation modal window
+The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. The purpose of this modal is to guide users through the process of reserving and submitting content for a rewards campaign, while clearly outlining the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission.
 The modal window for reservation opens after clicking:
 - firstly, on the "Earn button" on the primary card, and after that "Submit photos" button on the secondary card;
 - on the "Submit photos" or "Mention Now!" buttons on the secondary card;
@@ -1729,7 +1719,8 @@ The modal window for reservation opens after clicking:
 If the user does not meet some reward reservation requirements, then the entire condition will be highlighted in red color to attract attention.
 ![image](https://user-images.githubusercontent.com/67378322/224997471-b8ddb34a-7356-425c-b3ae-63c62b2e7920.png)
 
-# Reservation modal window if campaign was only reserved, in order to write a review
+# Reservation modal window if campaign was only reserved, in order to write a review.
+The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. After a user reserves a campaign, this modal window presents the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission. Since the campaign has already been reserved, the option to reserve it is no longer available within this modal.
 |Element|Description|
 |---|---|
 |`Title`|We seek honest reviews!|
@@ -1746,7 +1737,7 @@ If the user does not meet some reward reservation requirements, then the entire 
 ![image](https://user-images.githubusercontent.com/67378322/224996389-2bcacc08-e08d-41c2-a94f-8eed3fc210e9.png)
 
 # Release reservation modal window
-The modal window to confirm the action of canceling the reservation. After canceling, the campaign is displayed as available to the user again
+The release reservation modal window confirms the action of canceling a reservation. It appears after clicking "Release reservation" in the three-dot menu on the secondary card. Once the reservation is canceled, the campaign becomes available to the user again.
 |Element|Description|
 |---|---|
 |`Title`|Release reservation|
@@ -1796,8 +1787,7 @@ Basic information about every field in Create form:
 
 
 # Earn. Manage (Campaign)
-The page "Manage" displays information about campaigns and user balance.
-Include blocks: Account Balance table, Campaign table, History table.
+The Manage in Earn provides an overview of campaigns and user balance, helping users manage their active and inactive campaigns, as well as view detailed information. This page includes several key sections: the Account Balance table, which displays the user's financial status; the Campaign table, which lists and allows management of ongoing campaigns; and the History table, which records past campaigns and details related to those campaigns.
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
 
 About Account Balance table:
