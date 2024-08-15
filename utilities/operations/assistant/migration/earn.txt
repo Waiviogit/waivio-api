@@ -382,9 +382,13 @@ Basic information about every field in Create form:
 
 
 # Earn. Manage (Campaign)
-The Manage in Earn provides an overview of campaigns and user balance, helping users manage their active and inactive campaigns, as well as view detailed information. This page includes several key sections: the Account Balance table, which displays the user's financial status; the Campaign table, which lists and allows management of ongoing campaigns; and the History table, which records past campaigns and details related to those campaigns.
+The Manage in Earn provides an overview of campaigns and user balance, helping users manage their active and inactive campaigns, as well as view detailed information. This page includes several key sections: 
+- Account Balance table, which displays the user's financial status; 
+- Campaign table, which lists and allows management of ongoing campaigns; 
+- History table, which records past campaigns and details related to those campaigns.
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
-## Account Balance Table
+
+## Account Balance Table in Manage
 The Account Balance table provides a summary of the user's financial status within the system.
 - **Title**: "Account balance (WAIV)" – Indicates the purpose of the table.
 - **Balance**: Displays the total balance available to the user in the Manage section.
@@ -393,7 +397,8 @@ The Account Balance table provides a summary of the user's financial status with
 - **Remaining**: Calculates the remaining balance after deducting Payable and Reserved amounts from the total Balance (Balance - Payable - Reserved = Remaining).
 - **Note**: "* All campaigns will be suspended if accounts payable exceed 30 days."
 ![image](https://github.com/user-attachments/assets/4affaefc-90a2-4f36-8ca3-de386dd99590)
-## Campaigns table
+
+## Active and pending campaigns table in Manage
 The Campaigns Table provides an overview of both active and pending campaigns, allowing users to manage and review their campaigns efficiently.
 - **Title**: "Active and Pending Campaigns" – Indicates the focus of the table.
 - **Active**: A checkbox for activating or deactivating campaigns. Clicking the checkbox triggers a confirmation window to confirm the action. Inactive campaigns are displayed with a pending status. 
@@ -419,7 +424,8 @@ The Campaigns Table provides an overview of both active and pending campaigns, a
 When campaigns are suspended, all active campaigns transition to the suspended status, with their records remaining in the same table. Entries in the history table remain unaffected.
 - **Create New Campaign Button**: Clicking the "Create New Campaign" button takes you to the page for creating a new campaign or to the "Create" tab.
 ![image](https://github.com/user-attachments/assets/817dde3b-fd14-434d-a05e-98ad36e1a622)
-## History Table
+
+## History Table in Manage
 The History Table provides a record of campaigns that are no longer active or have expired. It allows users to review past campaigns and their details.
 - **Title**: "History" – Indicates the focus of the table.
 - **From**: Displays the start date of the campaign.
@@ -442,7 +448,8 @@ Payable in Earn helps sponsors keep track of their obligations to users and proc
 When you click on the arrow next to a user's name in the list, a table appears, showing detailed information about each user and campaign.
 ![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
 ![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
-## User List Details
+
+## User List Details in Payable
 The User List Details section provides an overview of the payments due for completed campaigns with a sponsor. It helps in managing and processing these payments efficiently by showing the total amount payable and offering an option for bulk payments.
 - **Title**: Displays the total amount due for all completed campaigns associated with the sponsor. It appears as: "Total: {sum} WAIV (${sum})".
 - **Pay All**: This button initiates a bulk payment for all users listed. Clicking "Pay All" opens a modal window where payment processing can be completed.
@@ -453,7 +460,17 @@ User Card from the List: Each user card provides specific details related to the
 - **Pay**: This button, labeled "Pay {sum} WAIV," opens a modal window for processing the payment to the selected user.
 - **Days**: Indicates the number of days since the first unpaid review. Days up to 21 are displayed in black; any additional days are shown in orange.
 ![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
-## Payable Table details: 
+Sorting User List:
+* Amount: Sort by the amount of reward.
+* Time: Sort by time.
+If a user has unpaid review more than 21 days, an orange sign (!) will be shown after the tab name in the left sidebar.
+Filters for User List:
+* Over 15 Days: Sponsor delay exceeding 15 days.
+* Over 30 Days: Sponsor delay exceeding 30 days.
+* Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
+![image](https://github.com/user-attachments/assets/5736d374-596c-44be-8308-802c7fe19713)
+
+## Payable Table details 
 This Payable table is designed to provide a comprehensive view of the history of actions and transfers between a sponsor and a selected user. It serves the purpose of tracking and managing payments, showing detailed information such as transaction dates, review specifics, and amounts. Key features include a button for initiating payments, notifications for overdue reviews, and clickable links for easy access to related reservations and reports. The table also maintains a running total of remuneration, helping sponsors stay organized and ensure timely payments:
 - **Title**: Displays as "Payables: {sponsor} → {user}".
 - **Pay**: The "Pay {sum} HIVE" button opens a modal window for processing a transaction.
@@ -470,9 +487,10 @@ This Payable table is designed to provide a comprehensive view of the history of
 - **Amount**: Shows the remuneration amount for the review. If additional reviews are added, the amount will be updated cumulatively.
 - **Balance**: Displays the running total of payments and transactions.
 ![image](https://github.com/user-attachments/assets/d6719311-90b7-4822-ad0f-c21247a8d342)
-## "Pay all" modal window 
+
+## "Pay all" modal window in Payable
 The "Pay All" modal window is an interface designed to streamline the process of making payments to users who have completed campaigns. Its purpose is to allow sponsors to efficiently manage bulk transactions, providing a detailed list of users eligible for payment, along with the total amount to be paid. The modal also includes options to review the sponsor's current balance, estimate the transaction value, and proceed with payment through HiveSigner. The interface ensures that sponsors can easily confirm and complete their obligations in a single, organized process.
-Table elements description:
+Pay all details:
 - **Title**: "Do you want to pay all payable?"
 - **Cross**: Closes the modal window.
 - **List Title**: "Payable list:"
@@ -488,15 +506,6 @@ Table elements description:
 - **Submit**: Redirects to HiveSigner to finalize the payment.
 - **Cancel**: Closes the modal window and cancels the payment process.
 ![image](https://user-images.githubusercontent.com/67378322/224724669-a873c220-5da0-4e5d-810c-a0eab0031ad4.png)
-Sorting User List:
-* Amount: Sort by the amount of reward.
-* Time: Sort by time.
-If a user has unpaid review more than 21 days, an orange sign (!) will be shown after the tab name in the left sidebar.
-Filters for User List:
-* Over 15 Days: Sponsor delay exceeding 15 days.
-* Over 30 Days: Sponsor delay exceeding 30 days.
-* Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
-![image](https://github.com/user-attachments/assets/5736d374-596c-44be-8308-802c7fe19713)
 
 
 # Earn. Reports
@@ -692,6 +701,7 @@ Whitelist List:
 2. The user adds an author.
 3. The author writes a post.
 4. The user's like automatically appears on the post after 5 minutes.
+
 ## Authors Match Bot Page
 **Title**: Authors Match Bot
 **Switch**: This switch controls the authorization status of the bot. A red switch indicates that the bot is inactive, while a green switch indicates it is active.
@@ -706,6 +716,7 @@ Whitelist List:
 **Link**: "Authorize now" link for bot authorization. If the bot is active, this link changes to "Remove authorization."
 **Add Author Button**: Click the "Add author" button to open a modal window for adding new authors.
 ![image](https://github.com/user-attachments/assets/0b62214d-e2c1-45f0-bab0-7c443ec23938)
+
 ## Authors Match Bot Table Information
 This table displays the authors added for automatic upvoting by the bot. You can manage the bot’s settings for individual authors, including activating or deactivating them, editing their upvote settings, and viewing detailed information.
 - **Checkbox**: Indicates whether the bot is active for the author. Check the box to activate or uncheck to deactivate the bot's upvotes for that author.
@@ -716,7 +727,8 @@ This table displays the authors added for automatic upvoting by the bot. You can
 - **Date**: Shows the expiry date until which the bot will continue to upvote the author's posts. If no expiry date is set, "termless" is displayed.
 - **Notes**: Provides space for additional comments or notes related to the author or upvote settings.
 ![image](https://user-images.githubusercontent.com/67378322/224953821-5235ad25-f3f1-4e9f-a299-6fcb4d83b80e.png)
-## Add New Author (Modal Window)
+
+## Add New Author (Modal Window) in Authors match bot
 This modal window appears when you click the "Add author" button, allowing you to add a new author to the upvote list. Here’s a breakdown of its elements:
 - **Title**: Displays "Add new author" at the top of the modal.
 - **Close**: A button to close the modal window without making any changes.
@@ -737,7 +749,8 @@ This modal window appears when you click the "Add author" button, allowing you t
 - **Cancel**: A button to cancel the action and close the modal window.
 - **Confirm**: A button labeled "Add author" to confirm and add the new author with the specified settings.
 ![image](https://user-images.githubusercontent.com/67378322/224953907-d4455886-9afb-4f78-900e-53f468c64b76.png)
-## Edit author information (modal window)
+
+## Edit author information (modal window) in Authors match bot
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the author bot settings for a specific user.
 Here's what you will find in this modal:
 - **Title**: "Edit match bot rules for author {@username}" – The title of the modal window.
@@ -756,7 +769,8 @@ Here's what you will find in this modal:
 - **Delete Text**: Instruction for removing the match bot rule.
 - **Delete Button**: Button labeled "Delete Rule," which opens a confirmation modal titled "Delete Confirmation" to confirm the deletion.
 ![image](https://user-images.githubusercontent.com/67378322/224953991-76b6a0b2-3ff9-4358-ac32-33d9febd80d3.png)
-## Delete confirmation (modal window)
+
+## Delete confirmation (modal window) in Authors match bot
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the author bot.
 Here's what you will find in this modal:
 - **Title**: "Delete Confirmation" – The title of the modal window.
@@ -765,7 +779,8 @@ Here's what you will find in this modal:
 - **Cancel**: Button to cancel the action and close the modal window.
 - **Delete**: Button to confirm and execute the deletion.
 ![image](https://user-images.githubusercontent.com/67378322/133733896-adc20d8b-a706-4964-8b4b-7c063ecc0182.png)
-## Confirm changes (modal window)
+
+## Confirm changes (modal window) in Authors match bot
 This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
 Here's what you will find in this modal:
 - **Title**: "Confirm Changes" – The title of the modal window.
@@ -787,6 +802,7 @@ Here's what you will find in this modal:
 2. The user adds a curator.
 3. The curator gives likes and dislikes.
 4. The user’s likes and dislikes automatically appear on the post.
+
 ## Curators Bot Page Information
 - **Title**: Displays as "Curators match bot."
 - **Switch**: A toggle switch for activating or deactivating the bot. It appears red when inactive and green when active.
@@ -801,7 +817,8 @@ Here's what you will find in this modal:
 - **Add**: A button labeled "Add curator" to add new curators. Clicking this button opens a modal window titled "Add new curator".
 *Note: The "Authorize now" link will change to "Remove authorization" when the bot is active.*
 ![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
-### Curators Match Bot Table information
+
+## Curators Match Bot Table information
 This table displays users added as authors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
 Table elements:
 - **Checkbox**: An "Active" checkbox for enabling or disabling the bot's actions for each curator.
@@ -812,7 +829,8 @@ Table elements:
 - **Date**: The "Expiry date" shows until when the bot will continue to vote based on the curator’s actions. If no date is set, "termless" is displayed.
 - **Notes**: A field for comments or additional information related to each curator.
 ![image](https://user-images.githubusercontent.com/67378322/224958970-da703e52-f5e9-4158-9ca8-31f088d64114.png)
-## Add new curator (modal window)
+
+## Add new curator (modal window) in Curators match bot
 This modal window appears after clicking the "Add curator" button. It allows you to add a new curator.
 Elements desctiption:
 - **Title**: "Add new curator"
@@ -834,7 +852,8 @@ Elements desctiption:
 - **Cancel**: "Cancel" button to cancel the action and close the modal window.
 - **Confirm**: "Add curator" button to confirm and apply the new curator settings.
 ![image](https://user-images.githubusercontent.com/67378322/224959070-3cb07bb3-3fdb-4d1e-8e6c-e8a9803c0c40.png)
-## Edit curator information (modal window)
+
+## Edit curator information (modal window) in Curators match bot
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the curator bot settings for a specific user.
 Elements desctiption:
 - **Title**: "Edit match bot rules for curator {@username}"
@@ -855,7 +874,8 @@ Elements desctiption:
 - **Delete Text**: To remove the match bot rule, click the delete button.
 - **Delete Button**: "Delete rule" button to remove the curator match bot rule. Clicking this opens a confirmation modal window titled "Delete confirmation".
 ![image](https://user-images.githubusercontent.com/67378322/224959186-d9b30e65-5622-49a1-9c31-96b06081a8f0.png)
-## Delete confirmation (modal window)
+
+## Delete confirmation (modal window) in Curators match bot
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the curator bot.
 Elements description:
 - **Title**: "Delete confirmation"
@@ -864,7 +884,8 @@ Elements description:
 - **Cancel**: "Cancel" button to cancel the action and close the modal window.
 - **Delete**: "Delete" button to confirm the deletion of the curator match bot rule.
 ![image](https://user-images.githubusercontent.com/67378322/133734698-a6b12efa-df10-447c-bbbe-4b9bd00b5af6.png)
-## Confirm changes (modal window)
+
+## Confirm changes (modal window) in Curators match bot
 This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
 Elements description:
 - **Title**: "Confirm changes"
@@ -899,6 +920,7 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 2. The user adds a sponsor.
 3. The sponsor adds the user to the "Registered Upvoting Accounts" when creating the campaign.
 4. When the campaign is completed, likes from the user are automatically added to the reviews.
+
 ## Sponsor Bot Page Information
 - **General Information**: Provides details on how to manage the match bot, including examples of its use.
 - **Switch**: Toggles the match bot on or off. Re-authorization through Hive and confirmation via HiveSigner are required when enabling or disabling the bot.
@@ -912,7 +934,8 @@ And confirmation of the action in the "Confirm rule inactivation" modal window
 - **Minimum Voting Power**: Indicates the minimum voting strength required for the match bot. "Minimum voting power:". Match bot will upvote eligible posts only if VP on the account exceeds the set value.
 - **Change**: Link to open a modal window ("Change Minimum Voting Power Modal") where you can adjust the match bot's voting strength.
 - **Disclaimer**: The Sponsors match bot service is provided on as-is / as-available basis.
-## Sponsor Bot Table Information:
+
+## Sponsor Bot Table Information in Sponsors match bot:
 This table displays users added as sponsors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
 This table displays users added as sponsors. You can manage the match bot settings for each sponsor, including activation, editing, and viewing details such as names, upvote power, minimum voting power, expiry dates, and notes.
 - **Active**: A column with checkboxes to activate or deactivate the Match Bot rule for each sponsor. Clicking on the checkbox opens the "Confirm Rule Activation" modal window.
@@ -923,7 +946,8 @@ This table displays users added as sponsors. You can manage the match bot settin
 - **Notes**: Provides a column for additional notes that can be added when setting up or editing a sponsor. These notes are visible only to the match bot that created the rule.
 - **Add Sponsor Button**: A button to add a new sponsor. Clicking it opens the "Add New Sponsor Modal."
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
-## Modal window **Change the Minimum Voting Power**:
+
+## Modal window **Change the Minimum Voting Power** in Sponsors match bot:
 This modal window appears after clicking the "Change" button. It allows you to adjust the Minimum Voting Power to your preferred level. Once this limit is reached, the bot will stop functioning until the voting power is restored.
 The modal window includes:
 - **Title**: "Change the Minimum Voting Power" - This is the title of the modal window.
@@ -932,7 +956,8 @@ The modal window includes:
 - **OK**: A button to confirm and apply the selected minimum voting power.
 - **Cancel**: A button to cancel the action and close the modal window without making changes.
 ![image](https://github.com/user-attachments/assets/61b4f25c-d5f9-4c7d-81cb-2510185e5e18)
-## Modal window **Confirm rule activation**:
+
+## Modal window **Confirm rule activation** in Sponsors match bot
 When you click to activate a rule, the modal window titled "Confirm the Activation of the Rule" will appear. This window is used to confirm your action to activate the rule. The modal window includes:
 - **Title**: "Confirm the Activation of the Rule" - This is the title of the modal window.
 - **Close**: A button to close the modal window.
@@ -940,7 +965,8 @@ When you click to activate a rule, the modal window titled "Confirm the Activati
 - **Confirm**: A button to confirm and activate the rule.
 - **Cancel**: A button to cancel the activation and close the modal window without making changes.
 ![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
-## Modal window `Add new sponsor modal window`:
+
+## Modal window `Add new sponsor modal window` in Sponsors match bot
 When you click the "Add Sponsor" button, a modal window titled "Add New Sponsor" will appear. This window allows you to add a new sponsor to your list.
 The modal window includes:
 - **Title**: "Add New Sponsor" - This is the title of the modal window.
@@ -956,7 +982,8 @@ In the "Rule Create Confirmation" modal:
 - **Cancel**: Cancels the rule creation process.
 - **OK**: Confirms and adds the rule to the table.
 ![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
-## Modal window **Edit match bot rules modal window**:
+
+## Modal window **Edit match bot rules modal window** in Sponsors match bot
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the sponsor bot settings for a specific user.
 The modal window includes:
 - **Title**: "Edit Rule {userName}" - This is the title of the modal window.
@@ -968,7 +995,8 @@ The modal window includes:
 - **Save**: A button to save the new changes.
 - **Delete**: A button to delete the match bot rule for this sponsor.
 ![image](https://github.com/user-attachments/assets/5dc0f464-02b4-4945-a6b2-8138748877f5)
-## Delete confirmation (modal window)
+
+## Delete confirmation (modal window) in Sponsors match bot
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the sponsor bot.
 Here's what you will find in this modal:
 - **Title**: "Confirmation Required" - The title of the modal window.
@@ -977,7 +1005,8 @@ Here's what you will find in this modal:
 - **Cancel**: A button to cancel the action and close the modal window.
 - **Delete**: A button to confirm and execute the deletion of the match bot rules for the specified user.
 ![image](https://github.com/user-attachments/assets/f90bdd50-a899-4cf6-9b96-d4804e64f321)
-## Confirm changes (modal window)
+
+## Confirm changes (modal window) in Sponsors match bot
 Here's what you will find in this modal:
 - **Title**: "Rule Editing Confirmation" - The title of the modal window.
 - **Close**: A button to close the modal window.
