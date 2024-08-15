@@ -9,12 +9,13 @@ const up = async () => {
   try {
     const text = await fsp.readFile(path.join(__dirname, 'lib.txt'), 'utf8');
     const text2 = await fsp.readFile(path.join(__dirname, 'lib2.txt'), 'utf8');
+    const text3 = await fsp.readFile(path.join(__dirname, 'earn.txt'), 'utf8');
     // Create a RecursiveCharacterTextSplitter with a specified chunk size
     const textSplitter = new RecursiveCharacterTextSplitter({
       chunkSize: 2000,
     });
     // Split the input text into documents
-    const docs = await textSplitter.createDocuments([text, text2]);
+    const docs = await textSplitter.createDocuments([text, text2, text3]);
 
     const client = weaviate.client({
       scheme: 'http',
