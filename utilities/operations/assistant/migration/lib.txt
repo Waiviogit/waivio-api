@@ -1400,6 +1400,8 @@ For more detailed information and potential troubleshooting, you can refer to th
 - IndexNow (https://www.indexnow.org/)
 - Bing Blogs (https://blogs.bing.com/webmaster/november-2021/Cloudflare-Supports-IndexNow-via-one-click-Integration)
 
+# Earn section on Waivio from main navigation menu
+The Earn section on Waivio offers a comprehensive platform for both sponsors and users. It includes the Rewards block, which covers categories like Global, Local, Reserved, Receivable, and History. Within this section, users can manage Campaigns—creating, managing, and tracking them, while also handling Payable rewards, generating Reports, managing Reservations, sending Messages, detecting Fraud, and maintaining a Blacklist. Additionally, the Match Bots feature connects authors, curators, and sponsors. Overall, this section allows sponsors to create and manage campaigns, while users can discover and participate in campaigns to earn rewards. 
 
 # Earn. Global
 ## General information
@@ -1412,6 +1414,11 @@ By default, after clicking Earn tab in main menu, Global tab is opened.
 ## Feed with primary cards
 The global feed consists of the primary cards.
 ![image](https://user-images.githubusercontent.com/67378322/222443298-2fa24af8-db26-4907-97a0-a147a51543fa.png)
+
+## Feed with secondary cards
+After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. 
+Breadcrumbs (path) are displayed.
+![image](https://user-images.githubusercontent.com/67378322/222453587-3524efcd-6a10-4b69-84e5-9f2c3f005cf5.png)
 
 ## Breadcrumbs
 **1st step**: title - Global rewards
@@ -1438,11 +1445,6 @@ Filters availability:
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
 
-## Feed with secondary cards
-After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. 
-Breadcrumbs (path) are displayed.
-![image](https://user-images.githubusercontent.com/67378322/222453587-3524efcd-6a10-4b69-84e5-9f2c3f005cf5.png)
-
 ## An unauthorized user
 An unauthorized user can also see this page with "all eligibility" filter that is blocked.
 ![image](https://user-images.githubusercontent.com/67378322/222661253-8e29c2f5-befc-4640-8397-7803d283e272.png)
@@ -1458,6 +1460,10 @@ This page has kind of 2 steps:
 ## Feed with primary cards
 The global feed consists of the primary cards list.
 ![image](https://user-images.githubusercontent.com/67378322/223223983-2aee83ed-06bc-41db-8f65-9cdc4c6e37bf.png)
+
+## Feed with secondary cards
+After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. Breadcrumbs (path) are displayed.
+![image](https://user-images.githubusercontent.com/67378322/223224247-2a5f6854-b125-4712-b9f5-1c063cdff45d.png)
 
 ## Breadcrumbs
 **1st step**: title - Local rewards
@@ -1484,10 +1490,6 @@ Filters availability:
 * Sponsors - filter by sponsor.
 ![image](https://user-images.githubusercontent.com/67378322/222447073-26a4adad-0501-4858-95d7-d25abb7a500e.png)
 
-## Feed with secondary cards
-After clicking on "Earn (price) ..." all (available) secondary cards associated with the primary are opened. Breadcrumbs (path) are displayed.
-![image](https://user-images.githubusercontent.com/67378322/223224247-2a5f6854-b125-4712-b9f5-1c063cdff45d.png)
-
 ## An unauthorized user
 An unauthorized user can also see this page with "all eligibility" filter that is blocked.
 ![image](https://user-images.githubusercontent.com/67378322/223224472-f9a3ff00-3542-44ce-8612-701abe1f2a9c.png)
@@ -1510,43 +1512,42 @@ Reward icons are displayed on the map.
 The Reserved in Earn displays the campaign cards reserved by the user. Only campaigns of the 'Review' type have the option to be reserved.
 ![image](https://user-images.githubusercontent.com/67378322/223233714-238a0520-84b6-428f-8637-56a0fe377ec1.png)
 Campaigns with the status: `active`, `onHold` are displayed.
-## Reserved card
-the reservation card is similar to displaying the secondary card of the object, the difference is in the footer of the object.
-|Element|Description|
-|-------|----------|
-|`Card title`| title "Reward for reviews"|
-|`Earn information`| information about the rewards for the review. How much will the performer of the campaign receive for the review. The price is in dollars.
-|`Username`| username who is the sponsor of the campaign, after clicking - the sponsor page is opened |
-|`Waivio username`| username on waivio, after clicking - the object page is opened|
-|`Avatar`| object avatar. If the object's secondary does not have an avatar, then the parent's avatar is pulled by default. After clicking - the object page is opened |
-|`Primary name`| parent's name. If present, it displays above the object name, in gray letters. After clicking - the object page is opened |
-|`Name`| object name, after clicking - the object page is opened |
-|`Weight`| object weight. А tooltip is displayed on hover "Total payout for all related posts in USD, without bidbots and upvote services" |
-|`Rating`| object rating. There is an opportunity to vote on stars |
-|`Object type`| object type. Not clickable|
-|`Price`| object price. Not clickable|
-|`Tags`| object tags. Display the 2 with the highest weight. Not clickable |
-|`Address`| object address. Not clickable |
-|`Title or description`| if the object has a title, then it is displayed, if there is no title, but there is a description, the description is displayed. If there is no title and description, nothing is displayed. Not clickable |
-|`Heart`|button to add the object to the user's shop|
-|`Period`| text about the number of days of reservation: "Reserved - {number} days left"
-|`Comment button`| button to show / hide comments with a counter
-|`Submit photos`| "Submit photos" button for writing a review. After clicking, the editor opens. Where the title: "Review: {primary object}, {secondary object}" field has already been filled in and links to objects have been added|
-|`Three-dots menu`| three dots button for additional menu. | 
-| | **Menu items** `THREE DOTS`: |
-|`View reservation`| "View reservation" - link to reservation post|
-|`Release reservation`| "Release reservation" - cancellation of the reservation|
-|`Decrease reward`|"Decrease reward" - the user can decrease the reward amount for completing the campaign.|
-| `Follow @sponsorName` | after clicking on the item, the user subscribed to the sponsor or if it is already signed - unsubscribed|
-| `Follow primaryObjectName` | after clicking on the item, the user subscribed to the primary object or if it is already signed - unsubscribed|
-|--------|---------|
-| | `COMMENT_BOX`: |
-|`Comment box`| field for comments. It is an opportunity to correspond between the campaign executor and the sponsor|
-|`User avatar`| user avatar who is the sponsor of the campaign, after clicking - the object page is opened |
-|`Text area`| field for text. When the cursor is in a field, the field is highlighted in orange|
-|`Editor menu` | main editor button to add photos, video etc. |
-|`Send button`| an arrow icon to send a message. Also, the message is displayed after clicking on the Enter |
-## Sorting
+
+## Reserved Card
+The reservation card is similar to the secondary card of an object, with the main difference being in the footer.
+- **Card Title**: Displays the title "Reward for reviews."
+- **Earn Information**: Provides details about the rewards for reviews, showing how much the campaign performer will receive in dollars.
+- **Username**: Shows the username of the campaign sponsor. Clicking on it opens the sponsor's page.
+- **Waivio Username**: Displays the Waivio username, which links to the object page when clicked.
+- **Avatar**: Shows the object’s avatar. If the secondary object doesn't have an avatar, the parent's avatar is displayed by default. Clicking on the avatar takes you to the object page.
+- **Primary Name**: If present, the parent's name is shown above the object name in gray text. Clicking on it directs you to the object page.
+- **Name**: Displays the object name, which also links to the object page.
+- **Weight**: Indicates the object’s weight. Hovering over it shows a tooltip that says, "Total payout for all related posts in USD, excluding bidbots and upvote services."
+- **Rating**: Shows the object’s rating, with an option to vote using stars.
+- **Object Type**: Displays the object type, but it’s not clickable.
+- **Price**: Shows the object's price, but it’s not clickable.
+- **Tags**: Displays the two highest-weighted tags for the object, but they are not clickable.
+- **Address**: Shows the object’s address, but it’s not clickable.
+- **Title or Description**: If the object has a title, it is displayed. If there’s no title but there is a description, the description is shown instead. If neither is available, nothing is displayed.
+- **Heart**: A button that allows the user to add the object to their shop.
+- **Period**: Displays the number of days left in the reservation, with the text: "Reserved - {number} days left."
+- **Comment Button**: Toggles the display of comments, with a counter indicating the number of comments.
+- **Submit Photos**: A button labeled "Submit photos" for writing a review. Clicking it opens the editor with the title "Review: {primary object}, {secondary object}" already filled in and links to the objects added.
+- **Three-Dots Menu**: A button that opens an additional menu with the following options:
+  - **View Reservation**: Links to the reservation post.
+  - **Release Reservation**: Cancels the reservation.
+  - **Decrease Reward**: Allows the user to decrease the reward amount for completing the campaign.
+  - **Follow Sponsor**: Clicking this option subscribes the user to the sponsor, or unsubscribes if already subscribed.
+  - **Follow Primary Object**: Clicking this option subscribes the user to the primary object, or unsubscribes if already subscribed.
+### Comment Box on Secondary Card
+- **Comment Box**: A field for comments, enabling correspondence between the campaign executor and the sponsor.
+- **User Avatar**: Displays the avatar of the sponsor. Clicking on it opens the object page.
+- **Text Area**: A field for entering text. The field is highlighted in orange when the cursor is inside.
+- **Editor Menu**: The main editor button for adding photos, videos, etc.
+- **Send Button**: An arrow icon used to send a message, which can also be sent by pressing Enter.
+![image](https://github.com/user-attachments/assets/f51d9621-f526-4a48-b0d7-7107dbcef35d)
+
+## Sorting Reserved Secondary Cards
 * Default - consists of 2 sorts: payouts + proximity. This means that first there is sorting by payouts, and if there are objects with the same payout, then sorting by proximity will be added (that is, the object that is closer to the user will be displayed above). By default.
 * payouts - the meaning of which is to calculate which of the Rewards brings max. profit for the index server. If campaign has completed reviews - quantity completed review * reward * processing fees (commissionAgreement). For zero - reward * processing fees (commissionAgreement);
 * proximity - for the nearest campaigns;
@@ -1572,6 +1573,28 @@ When you click on the arrow next to a sponsor's name in the list, a table appear
 ![image](https://user-images.githubusercontent.com/67378322/223231018-dc8b0217-e3d7-4ada-834e-c0c871e0b741.png)
 ![image](https://user-images.githubusercontent.com/67378322/223231117-0764fae5-0504-4c58-b058-2274caf93a85.png)
 
+The **Sponsor Card in List Details** section provides a summary of the total payments due for completed campaigns associated with each sponsor. Its main purpose is to give an overview of financial obligations and allow for easy access to detailed payment information.
+- **Sponsor Avatar**: A link to the sponsor's page, represented by the sponsor's avatar.
+- **Sponsor Username**: A clickable link to the sponsor's page, displaying their username.
+- **Arrow Button**: A button that opens a table showing the payment history between the sponsor and the executor user.
+- **Amount**: Displays the total amount of rewards owed.
+
+The **Receivable Table** provides a detailed view of the history of actions and transfers between a sponsor and a selected user. Its purpose is to track and manage payments by showing a chronological record of transactions, including detailed information about reviews and amounts due.
+- **Table**: Displays the history of actions and transfers between the sponsor and the selected user, organized in chronological order.
+- **Title**: Appears as "Receivable: {sponsor} → {user}."
+- **Date**: Shows the date of the transfer.
+- **Action**: Provides additional information about the written review. This includes details such as:
+  - The review by @{user}, requested by @sponsor.
+  - The review details, including the primary and secondary objects.
+  - Beneficiaries, such as {mainApp} (3%) and {sponsor} (97%).
+  All names, including users and objects, are clickable, opening the corresponding pages. The second line of the review is also clickable, opening a full-screen view of the review post. All clickable links are highlighted in orange.
+- **Details**: Contains links to:
+  - The reservation.
+  - The report.
+- **Amount**: Shows the remuneration for a specific review. If a new review appears, the amount is added to the existing total.
+- **Balance**: Displays the running total of the balance.
+![image](https://github.com/user-attachments/assets/59e091b0-88ad-45e2-9e0f-682ed6747331)
+
 Sorting Sponsors List:
 * Amount: Sort by the amount of reward.
 * Time: Sort by time.
@@ -1580,24 +1603,6 @@ Filters for Sponsors List:
 * Over 30 Days: Sponsor delay exceeding 30 days.
 * Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
 ![image](https://github.com/user-attachments/assets/49db8777-61ba-4552-aac1-9aa54d6df4f2)
-
-Sponsor card in list details: section provides a summary of the total payments due for completed campaigns associated with each sponsor. Its purpose is to offer an overview of financial obligations and facilitate easy access to detailed payment information.
-|`Sponsor avatar`| link to the sponsor page|
-|`Sponsor username`| link to the sponsor page |
-|`Arrow button`| button to the payment history between the sponsor user and the executor user (open table)|
-|`Amount`| amount of rewards |
-![image](https://github.com/user-attachments/assets/946eb7a0-4f80-4877-a678-05dbeeaa8afd)
-
-Table details: This Receivable table provides a detailed view of the history of actions and transfers between a sponsor and a selected user. Its purpose is to track and manage payments by showing a chronological record of transactions, including detailed information about reviews and amounts due.
-|Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
-|---|---|
-|`Title`| look like this "Receivable: {sponsor} → {user}". |
-|`Date`| the date of the transfer|
-|`Action`| additional information about the written review:<ul><li>Review by @{user} (requested by @sponsor)</li><li>Review: {primaryObject}, {secondaryObject}</li><li>Beneficiaries: {mainApp} (3%), {sponsor} (97%)</li></ul> <br>All names (users and objects) are clickable, after clicking the corresponding page opens. In the second line of the review is also clickable, after clicking a full screen of the review of the post opens. All clickable links are highlighted in orange.|
-|`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
-|`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
-|`Balance`| running total |
-![image](https://github.com/user-attachments/assets/59e091b0-88ad-45e2-9e0f-682ed6747331)
 
 
 # Earn. History
@@ -1626,75 +1631,71 @@ Filtering by sponsor - displays the sponsors from which the user has booked camp
 ![image](https://github.com/user-attachments/assets/8224001a-881f-4d34-be7a-486893addf57)
 
 
-# Campaign statuses
-Campaign statuses change depending on the actions of the sponsor and executors, as well as on the campaign's data. The campaign status is displayed in the "Manage" tab, in the "Active and pending campaigns" table, within the "Status" column, and on the secondary card type.
-|Status|Description|Comments|
-|--|--|--|
-|**Pending**| <ul><li>status means that the sponsor has created a campaign</li><li>the campaign is displayed only in the [Manage](https://www.waivio.com/rewards/manage) </li><li>the campaign can be edited</li></ul>|Campaign has not been <br>recorded in the blockchain yet, <br> is only in the database|
-|**Active**|<ul><li>the campaign is activated, after clicking on the checkbox next to the campaign, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>you cannot edit fields, campaign information</li><li>other users can reserve a campaign, write a review, cancel a reservation</li></ul>||
-|**Inactive**|<ul><li>deactivation of the campaign - the campaign for the reservation is not available</li><li>deactivate by clicking on the active checkbox next to the campaign, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>the campaign is displayed only in the tab [Manage](https://www.waivio.com/rewards/manage)</li><li>upon deactivation, the campaign cannot be resumed, provided there are no active reservations</li></ul>|
-|**OnHold**|<ul><li>status is displayed during deactivation, if there are active reservations</li><li>campaign activation impossible</li></ul>||
-|**Expired**|<ul><li>the maximum reservation period (days) specified when creating the campaign has expired</li></ul>|
-|**ReachedLimit**|<ul><li>status appears when the campaign's monthly budget has run out</li><li>users cannot reserve a campaign</li><li>the campaign is displayed only in the [Manage](https://www.waivio.com/rewards/manage)</li></ul>||
-|**Delete**|<ul><li>deleting a campaign</li></ul>|Implemented on the back-end|
-|**Suspended**|<ul><li>all active campaigns are blocked</li><li>status appears if “Remaining” is in the red, in the [Manage](https://www.waivio.com/rewards/manage)</li><li>status appears in case of non-payment of debts within 30 days</li></ul>||
+Here's the revised text without the table and code format, with improved readability while retaining the original meaning:
+
+---
+
+## Campaign Statuses
+Campaign statuses change based on the actions of both the sponsor and the executors, as well as the campaign's data. These statuses are displayed in the "Manage" tab, specifically in the "Active and pending campaigns" table under the "Status" column, and on the secondary card type.
+- **Pending**: This status indicates that the sponsor has created a campaign. The campaign is only visible in the [Manage](https://www.waivio.com/rewards/manage) tab and can still be edited. At this stage, the campaign has not yet been recorded on the blockchain and exists only in the database.
+- **Active**: The campaign becomes active when the sponsor clicks the checkbox next to it in the [Manage](https://www.waivio.com/rewards/manage) tab. Once active, the campaign fields and information cannot be edited. Other users can reserve the campaign, write reviews, or cancel reservations.
+- **Inactive**: This status indicates that the campaign has been deactivated, making it unavailable for reservation. Deactivation occurs by unchecking the active checkbox next to the campaign in the [Manage](https://www.waivio.com/rewards/manage) tab. The campaign remains visible only in the Manage tab, and once deactivated, it cannot be resumed unless there are no active reservations.
+- **On Hold**: This status appears during deactivation if there are active reservations. In this state, reactivating the campaign is not possible.
+- **Expired**: The status changes to expired when the maximum reservation period specified during campaign creation has ended.
+- **Reached Limit**: This status is triggered when the campaign's monthly budget has been exhausted. Users can no longer reserve the campaign, and it is only visible in the [Manage](https://www.waivio.com/rewards/manage) tab.
+- **Delete**: This status indicates that the campaign has been deleted. Deletion is handled on the back-end.
+- **Suspended**: All active campaigns are blocked under this status. It occurs when the "Remaining" amount is in the red in the [Manage](https://www.waivio.com/rewards/manage) tab, or if debts remain unpaid for 30 days.
 
 
 # Primary card details
-**Primary card** - This card represents an object that serves as the main focus of a campaign. Examples of primary objects include a restaurant, brand, or business. The primary card has a broader and more comprehensive scope.
-|Element|Description|
-|-------|----------|
-|`Avatar`| Object avatar. After clicking, the object page is opened. |
-|`Name`| Object name. After clicking, the object page is opened. |
-|`Parent`| Parent of the object. If the object has no parent, then nothing is displayed. If present, it displays above the object name in gray letters. After clicking, the primary object page is opened. |
-|`Rating`| Object rating. There is an opportunity to vote with stars. |
-|`Object_Type`| Object type. Not clickable. |
-|`Tags`| Object tags. Displays the 2 with the highest weight. Not clickable. |
-|`Address`| Object address without postcode and country. Not clickable. |
-|`Info`| If the object has a title, it is displayed. If there is no title but there is a description, the description is displayed. If there is no title and no description, nothing is displayed. Not clickable. |
-|`Price`| Object price. Not clickable. |
-|`You_Earn`| YOU EARN: {currencyIcon} {price} - the largest review reward is displayed. |
-|`Earn`| Button "Earn {price} {currency}" to go to the list of secondaries of objects. On the same page, the content of the central feed changes to a list of secondaries by cards. If the primary object contains several secondary objects and there is a range of prices, then only the maximum value is indicated with the prefix "Earn up to {price}". {price} - on the card, the amount must be shown with two decimal places. |
-|`Heart`| Button to add to shop if the primary object is book or product type. |
-
----
+**Primary Card** - This card represents an object that serves as the main focus of a campaign, such as a restaurant, brand, or business. The primary card provides a broad and comprehensive overview of the object.
+- **Avatar**: Displays the object’s avatar. Clicking on it opens the object’s page.
+- **Name**: Shows the object’s name. Clicking on it also opens the object’s page.
+- **Parent**: Displays the parent of the object, if applicable. If the object has a parent, the parent’s name is shown above the object name in gray text. Clicking on it opens the parent object’s page. If there is no parent, this section is not displayed.
+- **Rating**: Shows the object’s rating, with an option to vote using stars.
+- **Object Type**: Indicates the type of object. This field is not clickable.
+- **Tags**: Displays the two highest-weighted tags for the object. These tags are not clickable.
+- **Address**: Shows the object’s address, excluding postcode and country. This field is not clickable.
+- **Info**: Displays the object's title if it has one. If there is no title but a description is available, the description is shown instead. If neither is present, nothing is displayed. This field is not clickable.
+- **Price**: Displays the object's price. This field is not clickable.
+- **You Earn**: Shows the potential earnings for a review with the format: "YOU EARN: {currencyIcon} {price}." The highest possible review reward is displayed.
+- **Earn**: A button labeled "Earn {price} {currency}" that links to a list of secondary objects. On this page, the central feed changes to display secondary objects in card format. If the primary object has multiple secondary objects with varying prices, only the maximum value is shown with the prefix "Earn up to {price}." The price on the card is displayed with two decimal places.
+- **Heart**: A button that allows the user to add the object to their shop if the primary object is of the book or product type.
 > Everything that is displayed on the card can be regulated, edited, and added to the object page.
 ![image](https://user-images.githubusercontent.com/67378322/222456786-75ce152a-3c54-4499-bb0c-326392325681.png)
 ![image](https://user-images.githubusercontent.com/67378322/222456881-7f7078f0-9886-43d8-8174-44513af0b967.png)
 
 ## Primary Reward Card on Social Sites
-|Element|Description|
-|-------|----------|
-|`Title`|Share photos & earn $ {amount}|
-|`Sponsor`|sponsor's avatar and name, that link to the user profile, and "(sponsor)" mark.|
-|`Earn`|button "Earn {price} {currency}" to go to the list of secondaries of objects.|
+The **Primary Reward Card** is a key element on social sites, providing users with the opportunity to earn rewards through actions such as sharing photos.
+- **Title**: Displays the text "Share photos & earn $ {amount}," indicating the reward amount available.
+- **Sponsor**: Shows the sponsor’s avatar and name, linking to the sponsor's profile. It also includes a "(sponsor)" label for clarification.
+- **Earn Button**: A button labeled "Earn {price} {currency}" that directs users to a list of secondary objects related to the campaign.
 ![image](https://github.com/user-attachments/assets/cad39d4a-61d0-4326-a5f0-16bd338bb0f0)
 
 
-# Secondary card details
-**Secondary card** - This card represents a specific object within the context of a campaign, where the object is secondary to the primary focus. Examples include a dish from a restaurant or a product from a brand. The secondary card is more detailed and specific.
-|Element|Description|
-|-------|----------|
-| `Title` | Title for review campaign type: "Share {amount} photos of the {type} and earn crypto". Title for mention campaign type: "Mention {object} and earn crypto".|
-| `You Earn` | Information about the rewards for the review. How much the performer of the campaign will receive for the review. The price is in user currency (USD, CAD etc.). |
-| `User Avatar` | User avatar of the campaign sponsor. After clicking, the object page is opened. |
-| `Username` | Username of the campaign sponsor. After clicking, the sponsor page is opened. |
-| `Avatar` | Object avatar. If the object's secondary does not have an avatar, the parent's avatar is used by default. After clicking, the object page is opened. |
-| `Rarent Name` | Parent's name. If present, it displays above the object name in gray letters. After clicking, the object page is opened. |
-| `Name` | Object name. After clicking, the object page is opened. |
-| `Rating` | Object rating. There is an opportunity to vote with stars. |
-| `Object Type` | Object type. Not clickable. |
-| `Price` | Object price. Not clickable. |
-| `Tags` | Object tags. Displays the 2 with the highest weight. Not clickable. |
-| `Address` | Object address. Not clickable. |
-| `Title or Description` | If the object has a title, it is displayed. If there is no title, but there is a description, the description is displayed. If there is no title and no description, nothing is displayed. Not clickable. |
-| `Submit` | Button "Submit photos" for booking a campaign, for review campaign type. After clicking, a modal reservation window opens where the user can read all campaign requirements. Clicking on "Submit Photos" allows the user to directly write and complete the review and publish the post. <br> Button "Mention Now!" for mentions campaign type.|
-| `Days` | "For {number} days" - displays the number of days the campaign will be available for keeping a reservation. Not clickable. Available after reward reservation. |
-| `Details` | Link that, after clicking, opens a modal reservation window. After clicking, a modal reservation window opens where the user can read all campaign requirements. Clicking on "Submit Photos" allows the user to directly write and complete the review and publish the post. |
-| `Heart` | Button to add the object to user shop. |
-> Everything that is displayed on the card can be regulated, edited, and added to the object page.
+# Secondary Card Details
+The **Secondary Card** represents a specific object within the context of a campaign, such as a dish from a restaurant or a product from a brand. This card is more detailed and focused on the specific object in question.
+- **Title**: For review campaigns, the title is displayed as "Share {amount} photos of the {type} and earn crypto." For mention campaigns, it reads "Mention {object} and earn crypto."
+- **You Earn**: Displays the reward amount that the campaign performer will receive for the review, shown in the user's currency (USD, CAD, etc.).
+- **User Avatar**: Shows the campaign sponsor’s avatar. Clicking on it opens the object’s page.
+- **Username**: Displays the campaign sponsor’s username. Clicking on it opens the sponsor’s page.
+- **Avatar**: Shows the object’s avatar. If the object’s secondary avatar is unavailable, the parent’s avatar is used by default. Clicking on it opens the object’s page.
+- **Parent Name**: Displays the parent’s name above the object’s name in gray text, if applicable. Clicking on it opens the parent object’s page.
+- **Name**: Shows the object’s name. Clicking on it opens the object’s page.
+- **Rating**: Displays the object’s rating with the option to vote using stars.
+- **Object Type**: Indicates the type of object. This field is not clickable.
+- **Price**: Displays the object’s price. This field is not clickable.
+- **Tags**: Displays the two highest-weighted tags for the object. These tags are not clickable.
+- **Address**: Shows the object’s address. This field is not clickable.
+- **Title or Description**: Displays the object’s title if available. If no title is present, the description is shown. If neither is available, nothing is displayed. This field is not clickable.
+- **Submit**: For review campaigns, a "Submit Photos" button is available for booking the campaign. Clicking it opens a modal reservation window where the user can read all campaign requirements. Afterward, users can submit photos, complete the review, and publish the post. For mention campaigns, the button is labeled "Mention Now!"
+- **Days**: Displays the number of days the campaign will be available for reservation, shown as "For {number} days." This field is not clickable and is available after reserving the reward.
+- **Details**: A link that opens a modal reservation window where users can read all campaign requirements. After clicking "Submit Photos," users can directly write and complete the review and publish the post.
+- **Heart**: A button that allows users to add the object to their shop.
+Everything displayed on the card can be regulated, edited, and added to the object page as needed.
 ![image](https://user-images.githubusercontent.com/67378322/222457522-2b8c5ef4-9a8c-4691-b862-8cfe880a8014.png)
 ![image](https://user-images.githubusercontent.com/67378322/222457580-74aa8d31-7d5f-49cf-8157-e2972b23daff.png)
+
 
 # Reservation modal window
 The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. The purpose of this modal is to guide users through the process of reserving and submitting content for a rewards campaign, while clearly outlining the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission.
@@ -1704,21 +1705,34 @@ The modal window for reservation opens after clicking:
 - on the "Details" link on the secondary card.
 ![image](https://user-images.githubusercontent.com/67378322/224985999-30b21958-5918-403b-8836-f4af6483d426.png)
 ![image](https://user-images.githubusercontent.com/67378322/224986064-65720b4e-e065-496d-88ce-2fd991efd2e4.png)
-|Element|Description|
-|---|---|
-|`Title`|We seek honest reviews!|
-|`Close button`|cross button to close the modal window|
-|`Photo requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
-|`Sponsor`|Sponsor - link to sponsor profile|
-|`Sponsor Name`|@{sponsorName} - link to sponsor profile|
-|`Total Paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
-|`User eligibility requirements`|**User eligibility requirements:** <br>Only users who meet all eligibility criteria can participate in this rewards campaign.<br>* Minimum Waivio expertise: {number} <br>* Minimum number of followers:  {number} <br>* Minimum number of posts:  {number} <br>* Have not received a reward from {sponsorName} for reviewing {primaryObject} in the last 15 days. <br>* User account is not blacklisted by {sponsorName} or referenced accounts. <br>*User does not have an active reservation for such a reward at the moment.<br><br> "Have not received a reward ..." item is displayed if the sponsor specified an eligible period when creating - that is, the frequency of booking by one user of the campaign in a certain period. All items with asterisks are checkboxes that are filled in automatically depending on the user|
-|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
-|`Reward`|**Reward:**<br>The amount of the reward is determined in HIVE at the time of reservation. The reward will be paid in the form of a combination of upvotes (Hive Power) and direct payments (liquid HIVE). Only upvotes from registered accounts (@{sponsorName}) count towards the payment of rewards. The value of all other upvotes is not subtracted from the specified amount of the reward.|
-|`Legal`|If it was specified when creating the campaign. **Legal:**<br>By making the reservation, you confirm that you have read and agree to the Terms and Conditions of the Service Agreement <br><br>* ”Terms and Conditions of the Service Agreement“- link to https://waivio.com/object/xrj-terms-and-conditions/page|
-|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
-|`Submit`|"Submit photos" button. After clicking, will redirect to editor, the reservation was done automatically.|
-|`Menu`|three dots menu will have additional item - Reserve the rewards for {number} days - means, the user can just reserve the campaign, but without redirection to editor. After clicking, the reservation will be completed and redirected to Reserved tab with the card.|
+
+**Modal Window Details**
+The modal window provides detailed information and options related to the rewards campaign. Here's a breakdown of the elements:
+- **Title**: Displays "We seek honest reviews!" to invite users to participate in the campaign.
+- **Close Button**: A cross button to close the modal window.
+- **Photo Requirement**: Indicates the requirement to "Share {NUMBER} photos of the {objectType} and earn crypto." The number of photos required is shown at the top of the modal window.
+- **Sponsor**: A link to the sponsor's profile.
+- **Sponsor Name**: Displays @{sponsorName} as a link to the sponsor's profile.
+- **Total Paid**: Shows the total amount paid (liquid) as {number} WAIV (100%), representing the total rewards the sponsor has already paid across all campaigns.
+- **User Eligibility Requirements**: Lists the criteria that users must meet to participate in the rewards campaign:
+  - Minimum Waivio expertise: {number}
+  - Minimum number of followers: {number}
+  - Minimum number of posts: {number}
+  - Must not have received a reward from {sponsorName} for reviewing {primaryObject} in the last 15 days.
+  - User account must not be blacklisted by {sponsorName} or associated accounts.
+  - User must not have an active reservation for this reward.
+  - The item "Have not received a reward ..." is displayed if the sponsor set a frequency limit for booking the campaign. All items marked with an asterisk are automatically checked based on user eligibility.
+- **Post Requirements**: Outlines the criteria for the review to be eligible for a reward:
+  - Minimum {number} original photos of {secondaryObject}.
+  - Link to {secondaryObject}.
+  - Link to {primaryObject}.
+  - [Special requirements of the sponsor].
+  The sponsor reserves the right to refuse payment if the review is suspected of being fraudulent, spam, poorly written, or for other reasons stated in the agreement.
+- **Reward**: Details that the reward amount is determined in HIVE at the time of reservation. It will be paid through a combination of upvotes (Hive Power) and direct payments (liquid HIVE). Only upvotes from registered accounts (@{sponsorName}) count towards the reward. Other upvotes are not deducted from the reward amount.
+- **Legal**: If specified during campaign creation, this section reads: "By making the reservation, you confirm that you have read and agree to the Terms and Conditions of the Service Agreement." The "Terms and Conditions of the Service Agreement" link directs users to [https://waivio.com/object/xrj-terms-and-conditions/page](https://waivio.com/object/xrj-terms-and-conditions/page).
+- **Cancel**: A "Cancel" button to cancel the reservation and close the modal window.
+- **Submit**: A "Submit Photos" button that, when clicked, redirects to the editor and automatically completes the reservation.
+- **Menu**: The three-dots menu includes an option "Reserve the rewards for {number} days," allowing users to reserve the campaign without being redirected to the editor. Clicking this option completes the reservation and redirects to the Reserved tab with the card.
 ![image](https://user-images.githubusercontent.com/67378322/224994708-84c108d4-8d0b-41f7-9ccd-330c8702235b.png)
 ![image](https://user-images.githubusercontent.com/67378322/224994778-ca967898-ee24-4230-9acc-4c64bb3b0720.png)
 If the user does not meet some reward reservation requirements, then the entire condition will be highlighted in red color to attract attention.
@@ -1726,29 +1740,33 @@ If the user does not meet some reward reservation requirements, then the entire 
 
 # Reservation modal window if campaign was only reserved, in order to write a review.
 The reservation modal window is an interactive interface designed to facilitate user participation in rewards campaigns. After a user reserves a campaign, this modal window presents the requirements, eligibility criteria, and terms associated with the campaign. It provides essential information such as the sponsor's details, reward amount, and legal agreements, ensuring that users understand the conditions before proceeding with their submission. Since the campaign has already been reserved, the option to reserve it is no longer available within this modal.
-|Element|Description|
-|---|---|
-|`Title`|We seek honest reviews!|
-|`Button to close`|button to close the modal window|
-|`Photo Requirement`|Share {NUMBER} photos of the {objectType} and earn crypto <br>Requirements number of photos displayed at the top of the modal window|
-|`Sponsor`|Sponsor - link to sponsor profile|
-|`Sponsor name`|@{sponsorName} - link to sponsor profile|
-|`Total paid`|	Total paid (liquid):<br>{number} WAIV (100%)<br>Means how much the sponsor has already paid rewards for all his campaigns.|
-|`Post requirements`|**Post requirements:**<br>For the review to be eligible for the award, all the following requirements must be met: <ol><li>Minimum {number} original photos of {secondaryObject};</li><li>Link to {secondaryObject};</li><li>Link to {primaryObject};</li><li>[special requirements of the sponsor];</li></ol><br>Sponsor reserves the right to refuse the payment if review is suspected to be fraudulent, spam, poorly written or for other reasons as stated in the agreement.|
-|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
-|`Submit`|"Submit photos" button. After clicking, will redirect to editor.|
+Here's the revised text with improved clarity while maintaining the original meaning:
+**Modal Window Details**
+The modal window provides essential information and actions related to the rewards campaign. Here’s a breakdown of its elements:
+- **Title**: "We seek honest reviews!" – This message invites users to participate by providing reviews.
+- **Button to Close**: A button to close the modal window.
+- **Photo Requirement**: "Share {NUMBER} photos of the {objectType} and earn crypto." The number of photos required is displayed at the top of the modal window.
+- **Sponsor**: A link to the sponsor's profile.
+- **Sponsor Name**: @{sponsorName} – A link to the sponsor's profile.
+- **Total Paid**: "Total paid (liquid): {number} WAIV (100%)." This indicates the total amount the sponsor has already paid in rewards for all campaigns.
+- **Post Requirements**: To be eligible for the reward, the following must be met:
+  - Minimum {number} original photos of {secondaryObject}.
+  - A link to {secondaryObject}.
+  - A link to {primaryObject}.
+  - [Special requirements of the sponsor].
+  The sponsor reserves the right to refuse payment if the review is deemed fraudulent, spammy, poorly written, or for any other reasons specified in the agreement.
+- **Cancel**: A "Cancel" button to cancel the reservation and close the modal window.
+- **Submit**: A "Submit Photos" button that redirects to the editor when clicked.
 * After clicking on the button for writing a review, the editor opens where the title "Review: {primaryObject}, {secondaryObject}" is pulled up, and the objects for which the review is written
 ![image](https://user-images.githubusercontent.com/67378322/224996305-b5327c60-6194-48bc-b554-8b2bb7ce3d9e.png)
 ![image](https://user-images.githubusercontent.com/67378322/224996389-2bcacc08-e08d-41c2-a94f-8eed3fc210e9.png)
 
 # Release reservation modal window
-The release reservation modal window confirms the action of canceling a reservation. It appears after clicking "Release reservation" in the three-dot menu on the secondary card. Once the reservation is canceled, the campaign becomes available to the user again.
-|Element|Description|
-|---|---|
-|`Title`|Release reservation|
-|`Question`|Do you want to release this reservation?|
-|`Cancel`|button "Cancel" for canceling the reservation and closing the modal window|
-|`OK`|button to confirm the action|
+The release reservation modal window is used to confirm the cancellation of a reservation. It appears after clicking "Release reservation" in the three-dot menu on the secondary card. Once the reservation is canceled, the campaign becomes available to users again.
+- **Title**: "Release reservation" – This indicates the purpose of the modal window.
+- **Question**: "Do you want to release this reservation?" – A prompt asking the user to confirm the cancellation.
+- **Cancel**: A "Cancel" button to cancel the action and close the modal window.
+- **OK**: A button to confirm and proceed with the cancellation of the reservation.
 ![image](https://user-images.githubusercontent.com/67378322/224996676-9a521577-27de-4f53-b15b-39768a18d888.png)
 
 
@@ -1795,47 +1813,57 @@ Basic information about every field in Create form:
 The Manage in Earn provides an overview of campaigns and user balance, helping users manage their active and inactive campaigns, as well as view detailed information. This page includes several key sections: the Account Balance table, which displays the user's financial status; the Campaign table, which lists and allows management of ongoing campaigns; and the History table, which records past campaigns and details related to those campaigns.
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/77ee9167-8194-4705-bc0e-05fc0592482f)
 
-About Account Balance table:
-|`Account Balance`|the table displays information about the balance|
-|-----|-----|
-|`Title`| "Account balance (WAIV)"|
-|`Balance`| the total balance of the user in Manage is displayed|
-|`Payable`| the payment amount for completed campaigns is displayed|
-|`Reserved`| the payment amount for the reserved review is displayed|
-|`Remaining`| the balance of the balance is displayed (Balance - Payables - Reserved = Remaining)|
-|`Note`| "* All campaigns will be suspended if accounts payable exceed 30 days"|
-![image](https://github.com/user-attachments/assets/32ad0948-d84b-4612-8508-b93ad61a4485)
+## Account Balance Table
+The Account Balance table provides a summary of the user's financial status within the system.
+- **Title**: "Account balance (WAIV)" – Indicates the purpose of the table.
+- **Balance**: Displays the total balance available to the user in the Manage section.
+- **Payable**: Shows the amount due for completed campaigns.
+- **Reserved**: Displays the amount set aside for reserved reviews.
+- **Remaining**: Calculates the remaining balance after deducting Payable and Reserved amounts from the total Balance (Balance - Payable - Reserved = Remaining).
+- **Note**: "* All campaigns will be suspended if accounts payable exceed 30 days."
+![image](https://github.com/user-attachments/assets/4affaefc-90a2-4f36-8ca3-de386dd99590)
 
-Campaigns table - This table displays the details of active and pending campaigns:
-|`Campaigns table`|table with active and pending campaigns|
-|-----|-----|
-|`Title`| "Active and pending campaigns"|
-|`Active`| Checkbox for campaign activation/deactivation: After clicking on the checkbox, a confirmation window will appear to confirm the action, whether activation or deactivation. Inactive campaigns will have a pending status|
-|`Campaign`| campaign name, by clicking on the campaign name, you can go to the campaign edit page. The name is displayed in orange. <br>You can edit the campaign in statuses: <ul><li>pending - editing a campaign</li></ul>|
-|`Status`| campaign statuses: <ul><li>Pending</li><li>Active</li><li>ReachedLimit</li><li>OnHold</li><li>Inactive (after deactivating a campaign, after reloading the campaign page with this status, move to the History table)</li></ul>|
-|`Type`| reviews or mentions.|
-|`Budget target`| campaign costs: <ul><li>Monthly ({userCurrency}) - total campaign budget</li><li>Reward ({userCurrency}) - amount for 1 review</li></ul>|
-|`Current month`| results of the current month:<ul><li>Reserved - the number of only reserved reviews at the moment should be displayed</li><li>Completed - the number of completed reviews should be displayed</li>The numbers are clickable, and up-to-date information is displayed on how many are reserved and how many campaigns have been completed. After clicking, the reservation tab opens with the required campaign filtered and the corresponding status</ul>|
-|`Remaining`| display the remainder of unreserved and uncompleted reviews. <br>Monthly / Reward = Remaining; - as soon as the company is established. <br>Remaining - (Reserved + Completed) = Remaining - when backing up and completing a recall.|
-|`Note`| "** Only pending campaigns can be edited"|
+## Campaigns table
+The Campaigns Table provides an overview of both active and pending campaigns, allowing users to manage and review their campaigns efficiently.
+- **Title**: "Active and Pending Campaigns" – Indicates the focus of the table.
+- **Active**: A checkbox for activating or deactivating campaigns. Clicking the checkbox triggers a confirmation window to confirm the action. Inactive campaigns are displayed with a pending status. 
+- **Campaign**: Displays the campaign name in orange. Clicking on the name directs you to the campaign edit page. Campaigns with a status of "pending" can be edited.
+- **Status**: Shows the current status of the campaign:
+  - Pending
+  - Active
+  - ReachedLimit
+  - OnHold
+  - Inactive (Once a campaign is deactivated and the page is reloaded, it moves to the History Table.)
+- **Type**: Indicates whether the campaign involves reviews or mentions.
+- **Budget Target**: Shows campaign costs:
+  - Monthly ({userCurrency}) – Total budget for the campaign.
+  - Reward ({userCurrency}) – Amount allocated per review.
+- **Current Month**: Provides results for the current month:
+  - Reserved – Number of reviews currently reserved.
+  - Completed – Number of reviews completed.
+  These numbers are clickable, displaying up-to-date information and filtering the reservation tab to show the relevant campaign and status.
+- **Remaining**: Displays the remaining number of reviews that are yet to be reserved or completed. Calculated as:
+  - Monthly / Reward = Remaining at the start.
+  - Remaining - (Reserved + Completed) = Remaining as reviews are reserved and completed.
+- **Note**: "**Only pending campaigns can be edited**."
 When campaigns are suspended, all active campaigns transition to the suspended status, with their records remaining in the same table. Entries in the history table remain unaffected.
-|`Create new campaign button`| button "Create new campaign" go to the page for creating a new campaign or to click on tab Create to create a new campaign.|
-|------|--------|
+- **Create New Campaign Button**: Clicking the "Create New Campaign" button takes you to the page for creating a new campaign or to the "Create" tab.
 ![image](https://github.com/user-attachments/assets/817dde3b-fd14-434d-a05e-98ad36e1a622)
 
-About History Table - This table displays the history of campaigns that are no longer active or have expired:
-|`History`| History table with all user campaigns.|
-|-----|-----|
-|`Title`| History|
-|`From`| from (campaign start date)|
-|`Till`| until (campaign end date)|
-|`Campaign`| campaign name, by clicking on the campaign name, you can go to the campaign edit page. The name is displayed in orange. |
-|`Status`| campaign statuses: <ul><li>Expired</li><li>Inactive</li></ul>|
-|`Type`| reviews or mentions.|
-|`Rewards`| amount of payments (remuneration) for 1 campaign in campaign currency|
-|`Currency`| campaign currency|
-|`Reviews`| number of completed reviews|
-|`Paid`| paid (WAIV) payment for reviews|
+## History Table
+The History Table provides a record of campaigns that are no longer active or have expired. It allows users to review past campaigns and their details.
+- **Title**: "History" – Indicates the focus of the table.
+- **From**: Displays the start date of the campaign.
+- **Till**: Displays the end date of the campaign.
+- **Campaign**: Shows the name of the campaign in orange. Clicking on the campaign name directs you to the campaign edit page.
+- **Status**: Displays the status of the campaign, which could be:
+  - Expired
+  - Inactive
+- **Type**: Indicates whether the campaign involved reviews or mentions.
+- **Rewards**: Shows the amount of payment (remuneration) per campaign in the campaign's currency.
+- **Currency**: Displays the currency used for the campaign.
+- **Reviews**: Shows the number of completed reviews for the campaign.
+- **Paid**: Displays the total amount paid (in WAIV) for the reviews.
 ![image](https://github.com/user-attachments/assets/16fb3611-07cb-4653-83d5-f04c0f2ad597)
 
 
@@ -1845,6 +1873,55 @@ Payable in Earn helps sponsors keep track of their obligations to users and proc
 When you click on the arrow next to a user's name in the list, a table appears, showing detailed information about each user and campaign.
 ![image](https://user-images.githubusercontent.com/67378322/224719634-92adb3e1-5558-48cf-be1b-7fb4e0023ef7.png)
 ![image](https://user-images.githubusercontent.com/67378322/224719751-9498b9a3-81ed-4dee-a56f-2524bcf0f9f4.png)
+
+## User List Details
+The User List Details section provides an overview of the payments due for completed campaigns with a sponsor. It helps in managing and processing these payments efficiently by showing the total amount payable and offering an option for bulk payments.
+- **Title**: Displays the total amount due for all completed campaigns associated with the sponsor. It appears as: "Total: {sum} WAIV (${sum})".
+- **Pay All**: This button initiates a bulk payment for all users listed. Clicking "Pay All" opens a modal window where payment processing can be completed.
+User Card from the List: Each user card provides specific details related to the payments:
+- **Avatar**: Clicking on the avatar directs you to the sponsor's profile page.
+- **User's Name**: Clicking on the user’s name also directs you to the sponsor's profile page.
+- **Arrow**: Clicking the arrow icon opens the payment history table between the sponsor and the user, showing detailed payment transactions.
+- **Pay**: This button, labeled "Pay {sum} WAIV," opens a modal window for processing the payment to the selected user.
+- **Days**: Indicates the number of days since the first unpaid review. Days up to 21 are displayed in black; any additional days are shown in orange.
+![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
+
+## Payable Table details: 
+This Payable table is designed to provide a comprehensive view of the history of actions and transfers between a sponsor and a selected user. It serves the purpose of tracking and managing payments, showing detailed information such as transaction dates, review specifics, and amounts. Key features include a button for initiating payments, notifications for overdue reviews, and clickable links for easy access to related reservations and reports. The table also maintains a running total of remuneration, helping sponsors stay organized and ensure timely payments:
+- **Title**: Displays as "Payables: {sponsor} → {user}".
+- **Pay**: The "Pay {sum} HIVE" button opens a modal window for processing a transaction.
+- **Days**: If there are unpaid reviews older than 21 days, the label "(Over {number} d)" appears in orange next to the Pay button.
+- **Date**: Indicates the date of the transfer.
+- **Action**: Provides detailed information about the review:
+  - Review by @{user} (requested by @sponsor)
+  - Review: {primaryObject}, {secondaryObject}
+  - Beneficiaries: {mainApp} (3%), {sponsor} (97%)
+  - All names and objects are clickable, leading to their respective pages. The review link in the second line is also clickable, opening a full-screen view of the review post. Clickable links are highlighted in orange.
+- **Details**: Includes links for:
+  - Reservation: Link to the reservation details
+  - Report: Link to the report
+- **Amount**: Shows the remuneration amount for the review. If additional reviews are added, the amount will be updated cumulatively.
+- **Balance**: Displays the running total of payments and transactions.
+![image](https://github.com/user-attachments/assets/d6719311-90b7-4822-ad0f-c21247a8d342)
+
+## "Pay all" modal window 
+The "Pay All" modal window is an interface designed to streamline the process of making payments to users who have completed campaigns. Its purpose is to allow sponsors to efficiently manage bulk transactions, providing a detailed list of users eligible for payment, along with the total amount to be paid. The modal also includes options to review the sponsor's current balance, estimate the transaction value, and proceed with payment through HiveSigner. The interface ensures that sponsors can easily confirm and complete their obligations in a single, organized process.
+Table elements description:
+- **Title**: "Do you want to pay all payable?"
+- **Cross**: Closes the modal window.
+- **List Title**: "Payable list:"
+- **User List**: Displays users eligible for payment with a limit of 30-40 transactions at a time. Each user card includes:
+  - **Checkbox**: Allows the user to be included in the bulk transaction. Checked by default.
+  - **User Avatar**: Clickable image of the user.
+  - **Username**: Clickable link to the user's profile.
+  - **Payment Amount**: Amount to be paid to the user, displayed in WAIV.
+- **Total Amount**: Shows the total payment amount for all selected users with active checkboxes.
+- **User Balance**: Displays the sponsor's current balance.
+- **Est Value**: Provides an estimate of the transaction value in the user’s currency.
+- **Note**: "Click the button below to be redirected to HiveSigner to complete your transaction."
+- **Submit**: Redirects to HiveSigner to finalize the payment.
+- **Cancel**: Closes the modal window and cancels the payment process.
+![image](https://user-images.githubusercontent.com/67378322/224724669-a873c220-5da0-4e5d-810c-a0eab0031ad4.png)
 
 Sorting User List:
 * Amount: Sort by the amount of reward.
@@ -1856,66 +1933,21 @@ Filters for User List:
 * Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
 ![image](https://github.com/user-attachments/assets/5736d374-596c-44be-8308-802c7fe19713)
 
-User list details: This "User List Details" section provides a comprehensive overview of the payments due for completed campaigns with a sponsor. Its purpose is to facilitate the management and processing of payments by displaying the total amount payable and allowing bulk payments through the "Pay all" button, which opens a modal window for payment processing.
-|`Title`| the amount to be paid for all completed campaigns of this sponsor. Look like this: "Total: {sum} WAIV (${sum})". |
-|---|---|
-|`Pay all`|"Pay all" button for payment by all users who are in the list. After clicking, "Pay all" modal window is opened.|
-User card from the list:
-|---|---|
-|`Avatar`| after clicking the transition to the sponsor page|
-|`User's name`| after clicking the transition to the sponsor page |
-|`Arrow`| after clicking, there is a transition to the payment history between the sponsor user and the executor user (open table)|
-|`Pay`| the button "Pay {sum} WAIV to open a modal window for a transaction |
-|`Days`|show the number of days to each line, from the date of the first unpaid review. Up to 21 days is displayed - in black, more - in orange|
-![image](https://user-images.githubusercontent.com/67378322/224719513-660e6994-4160-4e4a-9e29-c7319a9495ad.png)
-
-Table details: 
-This Payable table is designed to provide a comprehensive view of the history of actions and transfers between a sponsor and a selected user. It serves the purpose of tracking and managing payments, showing detailed information such as transaction dates, review specifics, and amounts. Key features include a button for initiating payments, notifications for overdue reviews, and clickable links for easy access to related reservations and reports. The table also maintains a running total of remuneration, helping sponsors stay organized and ensure timely payments.
-|Table| table where history of actions and transfers between sponsor and selected user is displayed, in chronological order|
-|---|---|
-|`Title`| look like this "Payables: {sponsor} → {user}". |
-|`Pay`| the button "Pay {sum} HIVE to open a modal window for a transaction |
-|`Days`|if the user has unpaid reviews for more than 21 days, then the inscription is displayed in orange - (Over {number} d) near pay button |
-|`Date`| the date of the transfer|
-|`Action`| additional information about the written review:<ul><li>Review by @{user} (requested by @sponsor)</li><li>Review: {primaryObject}, {secondaryObject}</li><li>Beneficiaries: {mainApp} (3%), {sponsor} (97%)</li></ul> <br>All names (users and objects) are clickable, after clicking the corresponding page opens. In the second line of the review is also clickable, after clicking a full screen of the review of the post opens. All clickable links are highlighted in orange.|
-|`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
-|`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
-|`Balance`| running total |
-![image](https://github.com/user-attachments/assets/d6719311-90b7-4822-ad0f-c21247a8d342)
-
-"Pay all" modal window: The "Pay All" modal window is an interface designed to streamline the process of making payments to users who have completed campaigns. Its purpose is to allow sponsors to efficiently manage bulk transactions, providing a detailed list of users eligible for payment, along with the total amount to be paid. The modal also includes options to review the sponsor's current balance, estimate the transaction value, and proceed with payment through HiveSigner. The interface ensures that sponsors can easily confirm and complete their obligations in a single, organized process.
-|`Pay all`| modal window|
-|--|--|
-|`Title`|Do you want to pay all payable?|
-|`Cross`|cross button to close the window|
-|`List Title`|"Payable list:"|
-|`User list`|list of users to whom payment can be made. Having limit 30-40 transaction per one time. User card in list consist of:<ul><li>checkbox - means the possibility of including the user in the general transaction. Active by default - that means user will be included in transaction.</li><li>user avatar</li><li>username</li><li>payment amount with currency WAIV</li></ul>|
-|`Total amount`|total amount, that sponsor will pay according to the user list with an active checkbox.|
-|`User balance`|current sponsor balance|
-|`Est value`|the approximate value of the transaction in the user's currency|
-|`Note`|Click the button below to be redirected to HiveSigner to complete your transaction.|
-|`Submit`|redirect to HiveSigner|
-|`Cancel`|close modal window, cancel action.|
-![image](https://user-images.githubusercontent.com/67378322/224724669-a873c220-5da0-4e5d-810c-a0eab0031ad4.png)
-
-
 # Earn. Reports
 Page for creation of a report on people who completed the review. The report can be compiled for any hive user, who has ever been a sponsor (Guest user can't be a sponsor).
 The page consists of a form for filling in with data to receive a report with exactly these criteria, and a table as a result. Reports displayed in WAIV token.
 ![image](https://user-images.githubusercontent.com/67378322/224737410-3cb2b494-9375-4043-9fdf-f14183d598bf.png)
 
-Form to fill out to receive the report:
-||`Form`|
-|---|---|
-|`Sponsor`| Title - "* Sponsor:". Sponsor search field. The required field is marked with an asterisk. Placeholder: "Find users". After searching for a sponsor and clicking on it in the search list, the card of the selected sponsor will be displayed below the field.|
-|`Sponsor Card`| by default, the card of the user who is authorized is selected. <br>After searching for a sponsor (`SPONSOR`) and clicking on it in the search list, the card of the selected sponsor will be displayed below the field. <br>There is a cross button on the card to delete. <br>If you delete the card, the `SUBMIT` button will be inactive.|
-|`From`|Title - "From:". Date selection field, from this date reports will be displayed. Placeholder - "Select date and time". After clicking, the calendar opens.|
-|`Till`|Title - "Till:". Date selection field, reports will be displayed before this date. By default, the real time date is displayed. After clicking, the calendar opens.|
-|`Total Amount`| Title - "Or total amount:". <ul><li>Field for entering the total amount of payments for the campaign. Placeholder - "Enter amount".</li><li>Dropdown for currency selection. Items: WAIV (by default), {userCurrency}.</li><li>Checkbox to enable processing fee "Include processing fees" - all additional transfers, commissions are taken into account.</li></ul>|
-|`Object`|Title - "With links to an object:". A field for searching for an object by which objects will be displayed. Placeholder - "Find object". After searching for a sponsor and clicking on it in the search list, the card of the selected sponsor will be displayed below the field. Optional.|
-|`Object Card`| by default, the card of the user who is authorized is selected. <br>After searching for an object (`OBJECT`) and clicking on it in the search list, the card of the selected object will be displayed below the field. <br>There is a cross button on the card to delete.|
-|`Submit`|button "Submit" to confirm report generation. After clicking, a block is displayed with the entered information on which to generate a report.|
-|`Hive Reports`|"Report (HIVE) link to HIVE reports."|
+## To request a report, fill out the following form:
+1. **Sponsor**: Search for a sponsor using the search field. This is a required field marked with an asterisk. The placeholder text is "Find users." After selecting a sponsor from the search results, their card will appear below the field.
+2. **Sponsor Card**: By default, the card of the currently authorized user is displayed. When you select a sponsor from the search results, their card will appear below the field. You can remove this card using the cross button. If you delete the card, the `Submit` button will be disabled.
+3. **From**: Select the start date for the report using the date picker. The placeholder text is "Select date and time." Clicking on the field opens a calendar to choose the date.
+4. **Till**: Select the end date for the report. The placeholder text is "Select date and time," with the current date shown by default. Clicking on the field opens a calendar to choose the date.
+5. **Total Amount**: Enter the total amount for the campaign. The placeholder text is "Enter amount." Select the currency from the dropdown menu (default is WAIV, with an option for `{userCurrency}`). There is also a checkbox to include processing fees, which accounts for any additional transfers or commissions.
+6. **Object**: Optionally, you can search for an object by which reports will be filtered. The placeholder text is "Find object." After selecting an object, its card will appear below the field.
+7. **Object Card**: By default, the card of the currently authorized user is displayed. When you select an object from the search results, its card will appear below the field. You can remove this card using the cross button.
+8. **Submit**: Click the "Submit" button to confirm and generate the report based on the provided information.
+9. **Hive Reports**: You can access the HIVE reports via a link provided for report generation.
 ![image](https://github.com/user-attachments/assets/c0d2f396-70da-4ce7-97b5-3b207065bb90)
 
 Information on which the report will be generated -  text block where information from the form is displayed. <br>Consists of:
@@ -1926,14 +1958,19 @@ Information on which the report will be generated -  text block where informatio
 <br>Total amount: {amount}
 ![image](https://github.com/user-attachments/assets/08fcb61e-621b-4cbf-89fc-8b33c89df126)
 
-Report table information:
-||`Table information`|
-|---|---|
-|`Date`|  the date of the transfer. Title - "Date & Time (GMT)".|
-|`Action`| additional information about the written review:<ul><li>Review by @{user} (requested by @sponsor)</li><li>Review: {primaryObject}, {secondaryObject}</li><li>Beneficiaries: {mainApp} (3%), {sponsor} (97%)</li></ul> <br>All names (users and objects) are clickable, after clicking the corresponding page opens. In the second line of the review is also clickable, after clicking a full screen of the review of the post opens. All clickable links are highlighted in orange. <br>Title - "Action".|
-|`Details`| links:<ul><li>Reservation - link to reservation</li><li>Report - link to report</li></ul>|
-|`Amount`| the amount of remuneration for a specific review. The amount for the review, if a new one appears, then a new one is added to the old amount|
-|`Balance`| running total |
+## Report table information:
+The report table provides detailed information about transfers and associated actions. Here’s what each column represents:
+- **Date**: This column displays the date and time of the transfer in GMT.
+- **Action**: This column includes additional details about the review, such as:
+  - The review by `@{user}` requested by `@sponsor`.
+  - Information about the review, including the primary object (`{primaryObject}`) and secondary object (`{secondaryObject}`).
+  - Beneficiary breakdown, showing the main app receiving 3% and the sponsor receiving 97%.
+  Names of users and objects in this column are clickable and will open their respective pages. The review link in the second line is also clickable and will open a full-screen view of the review post. Clickable links are highlighted in orange.
+- **Details**: This column contains links to:
+  - Reservation: Direct link to the reservation details.
+  - Report: Direct link to the detailed report.
+- **Amount**: This shows the remuneration amount for each specific review. If multiple reviews are associated with the same action, the amounts are aggregated.
+- **Balance**: This column shows the running total of the payments and adjustments.
 ![image](https://github.com/user-attachments/assets/92fea928-3d60-4670-9446-633143f47f41)
 
 
@@ -1998,14 +2035,15 @@ Page for displaying campaigns where “dubious” photos were identified in revi
 A tab is added under the Rewards / Campaigns section and is accompanied by a disclaimer stating that this is an experimental service only and should not be relied upon.
 The selection of cards is limited to 30 days.
 
-||Page elements|
-|---|---|
-|`Title`|"Fraud detection assistant"|
-|`Description`| "**Disclaimer**: It is an experimental service with a limited scope and is provided "as is" with no guarantee of applicability for the detection of probable fraud attempts. All submissions must always be manually verified and confirmed by the campaign sponsor."|
-|`Sorting`|Sort by <ul><li>Reservation</li><li>Action (date)</li></ul>|
-|`Cards`| [secondary cards](https://github.com/Waiviogit/waivio/wiki/Secondary-card) with status "Completed" are displayed.|
-|`Codes`|codes with the reason for suspicion of fraud are displayed, under the comment field.|
-![image](https://user-images.githubusercontent.com/67378322/224935974-59400359-a848-4086-8ca8-b70b0539b69e.png)
+Fraud detection Page Overview:
+- **Title**: "Fraud Detection Assistant"
+- **Description**: **Disclaimer**: This is an experimental service with a limited scope, provided "as is" with no guarantee of detecting probable fraud attempts. All submissions must be manually verified and confirmed by the campaign sponsor.
+- **Sorting Options**: 
+  - Sort by Reservation
+  - Sort by Action (date)
+- **Displayed Items**: Secondary cards with a status of "Completed" are shown. 
+- **Suspicion Codes**: Codes indicating the reason for suspicion of fraud are displayed under the comment field.
+Please note that the system displays reviews flagged as suspicious based on the photos provided, and the selection of cards is limited to those from the past 30 days.
 
 
 # Earn. Blacklist
@@ -2016,53 +2054,72 @@ To combat spam and fraud, campaign sponsors need a tool to manage blacklists:
 At the top of the page there is a navbar with three tabs.
 ## Blacklist
 Blacklist - a list of users who will not be able to take part in this sponsor's campaigns.
-||User search block|
-|-----|---|
-|`Title`|"Add user to the blacklist"|
-|`Field`|user search field. Placeholder - "Find users"|
-|`Description`|"Blacklisted users cannot participate in any campaign sponsored by {userName}". {userName} - clickable, after clicking the user page opens|
-|`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
-|`Add`|button to add a user to the list|
-|List|after clicking on the button to add a user, the user card is displayed in this block |
-|-----|---|
-|`Title`|"Blacklist"|
-|`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
-|`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
-The list show not only those blocked by the user himself, but also those blocked by those whom this user trusts (References subscription).
-References account name shows instead of button Delete.
+Add User to Blacklist:
+- **Title**: "Add user to the blacklist"
+- **Search Field**: A search field is provided to find users. Placeholder text: "Find users".
+- **Description**: "Blacklisted users cannot participate in any campaign sponsored by {userName}." (where {userName} is a clickable link that leads to the user's profile page).
+**User Card**: When searching for users, a card will display with the following information:
+    - Waivio name (unique username)
+    - Avatar
+    - A "Delete" button to cancel adding the user to the blacklist
+- **Add Button**: Click the "Add" button to include the user in the blacklist.
+- **List**: Once a user is added, their card will appear in the blacklist section.
+Blacklist List:
+- **Title**: "Blacklist"
+- **Empty Message**: If there are no users in the blacklist, the message "Your list is empty" will be displayed.
+- **User Card**: Each card in the blacklist includes:
+    - Waivio name (unique username)
+    - Avatar
+    - Expertise (user's expertise level on the site)
+    - A "Delete" button to remove the user from the blacklist
+  - The list not only shows users blocked by the sponsor but also includes users blocked by those whom the sponsor trusts (References subscription). For users blocked by references, the "Delete" button will be replaced by the references account name.
+This feature helps maintain the integrity of the campaigns by ensuring that users who should not participate are effectively managed.
 ![image](https://user-images.githubusercontent.com/67378322/224950515-96425bed-85e4-4aa1-90c0-92b71c1c0d7e.png)
 
 ## References
 References - list of links to blacklists of other sponsors (taking into account one more level of nesting so that you can have blacklist aggregators).
-||User search block|
-|-----|---|
-|`Title`|"Recognize other users' blacklists"|
-|`Field`|user search field. Placeholder - "Find users"|
-|`Description`|"When you reference another user's blacklist, you also recognize all other blacklists referred to by that user"|
-|`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
-|`Subscribe`|button to add a user to the list|
-|List|after clicking on the button to add a user, the user card is displayed in this block |
-|-----|---|
-|`Title`|"References"|
-|`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
-|`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
+Add User References:
+- **Title**: "Recognize other users' blacklists"
+- **Search Field**: A search field is provided to find users. Placeholder text: "Find users".
+- **Description**: "When you reference another user's blacklist, you also acknowledge all other blacklists that the referenced user recognizes."
+- **User Card**: When searching for users, a card will display with the following information:
+    - Waivio name (unique username)
+    - Avatar
+    - A "Delete" button to cancel adding the user to your references list
+- **Subscribe Button**: Click the "Subscribe" button to add the user to your references list.
+- **List**: Once a user is added, their card will appear in this section.
+References List:
+- **Title**: "References"
+- **Empty Message**: If no users are in the references list, the message "Your list is empty" will be displayed.
+- **User Card**: Each card in the references list includes:
+    - Waivio name (unique username)
+    - Avatar
+    - Expertise (user's expertise level on the site)
+    - A "Delete" button to remove the user from your references list
+This feature allows you to aggregate and utilize multiple blacklists, improving the effectiveness of your fraud detection and prevention efforts.
 ![image](https://user-images.githubusercontent.com/67378322/224950782-459e28d1-d365-4909-80fe-5b36e213e1dc.png)
 
 ## Whitelist
 Whitelist is a list of users who can participate in campaigns, even if they are included in other blacklists
-||User search block|
-|-----|---|
-|`Title`|"Add user to the whitelist"|
-|`Field`|user search field. Placeholder - "Find users"|
-|`Description`|Whitelisted users can participate in any campaign (subject to campaign eligibility criteria) sponsored by {userName}". {userName} - clickable, after clicking the user page opens|
-|`User Card`|after clicking on the username when searching through the `FIELD`, the user card is displayed. The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>delete button - button to delete a user, cancel adding a user to the list</li></ul>|
-|`Add`|button to add a user to the list|
-|List|after clicking on the button to add a user, the user card is displayed in this block |
-|-----|---|
-|`Title`|"Whitelist"|
-|`Empty Message`|if the list is empty, the message "Your list is empty" is displayed|
-|`User Card`| The card has: <ul><li> waivio name - username on waivio, unique name</li><li>avatar</li><li>expertise - user expertise on the site</li><li>delete button - button to remove a user from the blacklist</li></ul>|
-<br> * Several users can be added to the lists at once
+Add Users to Whitelist:
+- **Title**: "Add user to the whitelist"
+- **Search Field**: A search field is provided to find users. Placeholder text: "Find users".
+- **Description**: "Whitelisted users can participate in any campaign sponsored by {userName}, provided they meet the campaign eligibility criteria." (Click on {userName} to view their profile.)
+- **User Card**: When searching for users, a card will display with the following information:
+    - Waivio name (unique username)
+    - Avatar
+    - A "Delete" button to remove a user from the whitelist
+- **Add Button**: Click the "Add" button to include a user in the whitelist.
+- **List**: Once a user is added, their card will appear in this section.
+Whitelist List:
+- **Title**: "Whitelist"
+- **Empty Message**: If there are no users in the whitelist, the message "Your list is empty" will be displayed.
+- **User Card**: Each card in the whitelist includes:
+    - Waivio name (unique username)
+    - Avatar
+    - Expertise (user's expertise level on the site)
+    - A "Delete" button to remove the user from the whitelist
+*Note: Multiple users can be added to the whitelist at once.*
 ![image](https://user-images.githubusercontent.com/67378322/224950841-08510b38-bf95-4ba0-82a2-1d8e3402a305.png)
 
 
@@ -2076,92 +2133,92 @@ Whitelist is a list of users who can participate in campaigns, even if they are 
 2. The user adds an author.
 3. The author writes a post.
 4. The user's like automatically appears on the post after 5 minutes.
-## Page information
-|Element|Description|
-|---|--|
-|`Title`|Authors match bot|
-|`Switch`|switch for authorization match bot. If it is red, then the bot is inactive, if green is active |
-|`Description`|The Authors match bot automatically upvotes posts published by the specified authors. It does not upvote comments or re-blogs. <br><br> For each author, please specify the upvoting power in the range from +1% to +100% (maximum upvote). Actual value of the upvote depends on the current upvoting mana on the account at the time of the action.<br><br> Important: The Authors match bot only publishes upvotes with estimated combined value of 0.01 HBD or more.<br><br> Votes will be processed as long as the mana (voting power) on the account remains above the threshold as specified for each author.|
-|`Auth Block`|**The Authors match bot requires authorization to distribute votes on your behalf: Authorize now <br> The authorization is completed via HiveSigner and can be revoked at any time.** <br> <br> **Disclaimer:** The Authors match bot service is provided on as-is / as-available basis.|
-|`Link`| "Authorize now" link for bot authorization.|
-|`Add author button`| button "Add author" for adding authors, after clicking the modal window "Add new author" opens|
-* "Authorize now" changes to "Remove authorization" in `AUTH_BLOCK`, if bot is active.
+## Authors Match Bot Page
+**Title**: Authors Match Bot
+**Switch**: This switch controls the authorization status of the bot. A red switch indicates that the bot is inactive, while a green switch indicates it is active.
+**Description**: 
+  - The Authors match bot automatically upvotes posts published by the specified authors. It does not upvote comments or re-blogs.
+  - For each author, please specify the upvoting power in the range from +1% to +100% (maximum upvote). Actual value of the upvote depends on the current upvoting mana on the account at the time of the action.
+  - Important: The Authors match bot only publishes upvotes with estimated combined value of 0.01 HBD or more. Votes will be processed as long as the mana (voting power) on the account remains above the threshold as specified for each author.
+**Authorization Block**: 
+  - The Authors match bot requires authorization to distribute votes on your behalf.
+  - The authorization is completed via HiveSigner and can be revoked at any time.
+  - **Disclaimer**: The service is provided on an "as-is" and "as-available" basis.
+**Link**: "Authorize now" link for bot authorization. If the bot is active, this link changes to "Remove authorization."
+**Add Author Button**: Click the "Add author" button to open a modal window for adding new authors.
 ![image](https://github.com/user-attachments/assets/0b62214d-e2c1-45f0-bab0-7c443ec23938)
 
-## Table Information 
-This table displays users added as authors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as author names, upvote power, minimum voting power, expiry dates, and notes.
-|Column|Description|
-|----|------|
-|`Checkbox`|"Active" checkbox for activating and deactivating authors for which the bot will like|
-|`Author`|"Author" the name of the author who will receive likes|
-|`Upvote`|"Upvote" the strength of bot's like|
-|`Mana`|"Min VP" minimum mana value the bot will like and according to what currency|
-|`Action`|"Action" column include "Edit" link for opening a modal window for editing a rule|
-|`Date`|"Expiry date:" the date until which the likes will be put. If no date has been selected, "termless" is displayed|
-|`Notes`|"Notes" comments|
+## Authors Match Bot Table Information
+This table displays the authors added for automatic upvoting by the bot. You can manage the bot’s settings for individual authors, including activating or deactivating them, editing their upvote settings, and viewing detailed information.
+- **Checkbox**: Indicates whether the bot is active for the author. Check the box to activate or uncheck to deactivate the bot's upvotes for that author.
+- **Author**: Displays the name of the author who will receive upvotes from the bot.
+- **Upvote**: Shows the strength of the bot's upvote for the author.
+- **Mana**: Lists the minimum voting power (VP) required for the bot to upvote and specifies the currency used.
+- **Action**: Contains an "Edit" link that opens a modal window for editing the upvote settings for the selected author.
+- **Date**: Shows the expiry date until which the bot will continue to upvote the author's posts. If no expiry date is set, "termless" is displayed.
+- **Notes**: Provides space for additional comments or notes related to the author or upvote settings.
 ![image](https://user-images.githubusercontent.com/67378322/224953821-5235ad25-f3f1-4e9f-a299-6fcb4d83b80e.png)
 
 ## Add New Author (Modal Window)
-This modal window appears after clicking the "Add author" button. It allows you to add a new author.
-|Element|Description|
-|---|--|
-|`Title`|Add new author|
-|`Close`|button to close the modal window|
-|`Author`| "Author" user search field. Placeholder - "Find author". Starred as a required field|
-|`Value Text`|Specify the value for the vote:|
-|`Value Slider`|slider for choosing the strength of the bot's like voice. Default 100%|
-|`Value Note`|The Authors match bot only publishes upvotes with estimated value of 0.01 HBD or more.|
-|`Mana Text`|Min. Voting Power (mana):|
-|`Mana Dropdown`|dropdown for selecting tokens for min. voting power. Dropdown has 3 options: <br><ul><li>HIVE</li><li>WAIV</li><li>HIVE OR WAIV </li></ul>By default - WAIV |
-|`Mana Slider`|a slider for choosing at what minimum mana value the bot will like, that is, if the mana is less than this value, the likes will not be put until it is restored. Default 75%|
-|`Mana Note`|Votes will only be processed if the VP on the account is greater than the specified threshold at the time of voting (typically, 5 min after the post is published).|
-|`Date`|"Expiry date:" the date until which the likes will be put|
-|`Notes`|textarea for comments, maxlength="255"|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Confirm`|"Add author" button to confirm the action|
+This modal window appears when you click the "Add author" button, allowing you to add a new author to the upvote list. Here’s a breakdown of its elements:
+- **Title**: Displays "Add new author" at the top of the modal.
+- **Close**: A button to close the modal window without making any changes.
+- **Author**: A user search field labeled "Author" where you can find and select an author. This field is required and has a placeholder text of "Find author."
+- **Value Text**: A label prompting you to specify the upvote strength.
+- **Value Slider**: A slider to adjust the strength of the bot’s upvote. The default value is set to 100%.
+- **Value Note**: A note stating that the Authors match bot only publishes upvotes with an estimated value of 0.01 HBD or more.
+- **Mana Text**: A label for "Min. Voting Power (mana):" indicating the minimum voting power required.
+- **Mana Dropdown**: A dropdown menu to select the token for the minimum voting power. Options include:
+    - HIVE
+    - WAIV
+    - HIVE OR WAIV 
+  - The default selection is WAIV.
+- **Mana Slider**: A slider to set the minimum mana value required for the bot to upvote. The default value is 75%.
+- **Mana Note**: A note explaining that votes will only be processed if the voting power (VP) on the account is above the specified threshold, typically checked about 5 minutes after the post is published.
+- **Date**: A field labeled "Expiry date:" where you can set the date until which the bot will continue to upvote the author’s posts.
+- **Notes**: A textarea for entering additional comments or notes, with a maximum length of 255 characters.
+- **Cancel**: A button to cancel the action and close the modal window.
+- **Confirm**: A button labeled "Add author" to confirm and add the new author with the specified settings.
 ![image](https://user-images.githubusercontent.com/67378322/224953907-d4455886-9afb-4f78-900e-53f468c64b76.png)
 
 ## Edit author information (modal window)
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the author bot settings for a specific user.
-|Element|Description|
-|---|--|
-|`Title`|Edit match bot rules for author {@username}|
-|`Close`|button to close the modal window|
-|`Value Text`|Specify the value for the vote:|
-|`Value Slider`|slider for choosing the strength of the bot's like voice. Default 100%|
-|`Value Note`|The Authors match bot only publishes upvotes with estimated value of 0.01 HBD or more.|
-|`Mana Text`|Min. Voting Power (mana):|
-|`Mana Dropdown`|dropdown for selecting tokens for min. voting power. Dropdown has 3 options: <br><ul><li>HIVE</li><li>WAIV</li><li>HIVE OR WAIV </li></ul><br> By default - WAIV |
-|`Mana Slider`|a slider for choosing at what minimum mana value the bot will like, that is, if the mana is less than this value, the likes will not be put until it is restored. Default 75%|
-|`Mana Note`|Votes will only be processed if the VP on the account is greater than the specified threshold at the time of voting (typically, 5 min after the post is published).|
-|`Date`|"Expiry date:" the date until which the likes will be put|
-|`Notes`|textarea for comments, maxlength="255"|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Save`|"Save changes" button to confirm the action, after clicking, a modal window opens to confirm the action "Confirm changes" |
-|`Delete text`|To remove the match bot rule, click the delete button:|
-|`Delete button`| "Delete rule" delete button, after clicking, a modal window opens to confirm the action "Delete confirmation" |
+Here's what you will find in this modal:
+- **Title**: "Edit match bot rules for author {@username}" – The title of the modal window.
+- **Close**: Button to close the modal window.
+- **Value Text**: Label prompting you to specify the value for the vote.
+- **Value Slider**: Slider for adjusting the strength of the bot's upvote, default set to 100%.
+- **Value Note**: Note stating that the Authors match bot only publishes upvotes with an estimated value of 0.01 HBD or more.
+- **Mana Text**: Label for setting the minimum voting power (mana).
+- **Mana Dropdown**: Dropdown menu for selecting the token type for minimum voting power, with options: HIVE, WAIV, or HIVE OR WAIV. Default is WAIV.
+- **Mana Slider**: Slider to set the minimum mana value required for the bot to cast a vote. If the mana is below this value, votes will not be cast until it is restored. Default is 75%.
+- **Mana Note**: Note indicating that votes will only be processed if the voting power (VP) is above the specified threshold at the time of voting, typically 5 minutes after the post is published.
+- **Date**: Field for setting the expiry date of the rule, specifying until when the likes will be applied.
+- **Notes**: Text area for adding comments, with a maximum length of 255 characters.
+- **Cancel**: Button to cancel any changes and close the modal window.
+- **Save**: Button to save changes. Clicking this will open a confirmation modal titled "Confirm Changes."
+- **Delete Text**: Instruction for removing the match bot rule.
+- **Delete Button**: Button labeled "Delete Rule," which opens a confirmation modal titled "Delete Confirmation" to confirm the deletion.
 ![image](https://user-images.githubusercontent.com/67378322/224953991-76b6a0b2-3ff9-4358-ac32-33d9febd80d3.png)
 
 ## Delete confirmation (modal window)
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the author bot.
-|Element|Description|
-|---|--|
-|`Title`|Delete confirmation|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to delete author match bot rule for @{username}?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Delete`|"Delete" button to confirm the delete action|
+Here's what you will find in this modal:
+- **Title**: "Delete Confirmation" – The title of the modal window.
+- **Close**: Button to close the modal window.
+- **Text**: A prompt asking, "Do you want to delete the author match bot rule for @{username}?"
+- **Cancel**: Button to cancel the action and close the modal window.
+- **Delete**: Button to confirm and execute the deletion.
 ![image](https://user-images.githubusercontent.com/67378322/133733896-adc20d8b-a706-4964-8b4b-7c063ecc0182.png)
 
 ## Confirm changes (modal window)
 This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
-|Element|Description|
-|---|--|
-|`Title`|Confirm changes|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to save the changes for @{username}?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`OK`|"OK" button to confirm the save action|
+Here's what you will find in this modal:
+- **Title**: "Confirm Changes" – The title of the modal window.
+- **Close**: Button to close the modal window.
+- **Text**: A prompt asking, "Do you want to save the changes for @{username}?"
+- **Cancel**: Button to cancel the action and close the modal window.
+- **OK**: Button to confirm and save the changes.
 ![image](https://user-images.githubusercontent.com/67378322/133733841-007dc150-3ba2-48c1-acde-bc7db4482923.png)
 
 * after adding an author, a notification of success appears ("Author was successfully added"), and the author appears in the list without reloading the page
@@ -2179,91 +2236,95 @@ This modal window appears after clicking the "Save Changes" button in the Edit m
 4. The user’s likes and dislikes automatically appear on the post.
 
 ## Curators Bot Page Information
-|Element|Description|
-|---|--|
-|`Title`|Curators match bot|
-|`Switch`|switch for authorization match bot. If it is red, then the bot is inactive, if green is active |
-|`Description`|The Curators match bot automatically repeats the upvotes and downvotes of specified users (curators) on posts and comments. <br><br>For each curator, please specify the voting ratio - the proportion of your vote to the curator's vote. For example, 100% means that you want the same vote as the curator. Sometimes, if your vote value is less than the curator's, you can amplify your vote. If you specified a 200% vote ratio and the curator voted 10%, your vote would be 20%. Please note that all votes are capped at a maximum of 100%.<br><br>Important: If the estimated value of the vote combined is less than 0.01 HBD, the Curator match bot will skip this vote.<br><br>If you also want to repeat curator’s downvotes, please check the corresponding box. <br><br>Votes will be processed as long as the mana (voting power) on the account remains above the threshold specified for each curator.|
-|`Auth Block`|**The Authors match bot requires authorization to distribute votes on your behalf: Authorize now <br>The authorization is completed via HiveSigner and can be revoked at any time.**<br><br>**Disclaimer:** The Authors match bot service is provided on as-is / as-available basis.|
-|`Link`| "Authorize now" link for authorization https://github.com/Waiviogit/waivio/wiki/Match-bot-(Sponsor)#how-to-become-a-match-bot|
-|`Add`| button "Add curator" for adding curator, after clicking the modal window "Add new curator" opens|
-* "Authorize now" changes to "Remove authorization", if bot is active.
+- **Title**: Displays as "Curators match bot."
+- **Switch**: A toggle switch for activating or deactivating the bot. It appears red when inactive and green when active.
+- **Description**: 
+  - The Curators match bot automatically repeats the upvotes and downvotes of specified users (curators) on posts and comments. 
+  - For each curator, please specify the voting ratio - the proportion of your vote to the curator's vote. For example, 100% means that you want the same vote as the curator. Sometimes, if your vote value is less than the curator's, you can amplify your vote. If you specified a 200% vote ratio and the curator voted 10%, your vote would be 20%. Please note that all votes are capped at a maximum of 100%.
+  - Important: Important: If the estimated combined value of the vote is less than 0.01 HBD, the Curator match bot will skip this vote. If you also want to repeat curator’s downvotes, please check the corresponding box. Votes will be processed as long as the mana (voting power) on the account remains above the threshold specified for each curator.
+- **Auth Block**: 
+  - **Authorization Requirement**: "The Curators match bot requires authorization to distribute votes on your behalf: Authorize now. Authorization is completed via HiveSigner and can be revoked at any time."
+  - **Disclaimer**: "The Curators match bot service is provided on an as-is / as-available basis."
+- **Link**: A link labeled "Authorize now" for initiating the authorization process.
+- **Add**: A button labeled "Add curator" to add new curators. Clicking this button opens a modal window titled "Add new curator".
+*Note: The "Authorize now" link will change to "Remove authorization" when the bot is active.*
 ![image](https://github.com/user-attachments/assets/fe9a7df2-3175-40c8-b8c3-594f619c812b)
 
-### Table information
+### Curators Match Bot Table information
 This table displays users added as authors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
-|Column|Description|
-|----|------|
-|`Checkbox`|"Active" checkbox for activating and deactivating authors for which the bot will like|
-|`Curator`|"Curator" the name of the author who will receive likes|
-|`Ratio`|"Vote ratio" the strength of bot's like|
-|`Mana`|"Min VP" minimum mana value the bot will like|
-|`Action`|"Action" column include "Edit" link for opening a modal window for editing a rule|
-|`Date`|"Expiry date:" the date until which the likes will be put. If no date has been selected, "termless" is displayed|
-|`Notes`|"Notes" comments|
+Table elements:
+- **Checkbox**: An "Active" checkbox for enabling or disabling the bot's actions for each curator.
+- **Curator**: Displays the name of the curator who will receive likes.
+- **Ratio**: The "Vote ratio" specifies the proportion of your vote relative to the curator's vote. For example, a 200% ratio means your vote is twice as strong as the curator’s vote.
+- **Mana**: "Min VP" indicates the minimum voting power required for the bot to cast a vote.
+- **Action**: Includes an "Edit" link to open a modal window for modifying settings related to the curator.
+- **Date**: The "Expiry date" shows until when the bot will continue to vote based on the curator’s actions. If no date is set, "termless" is displayed.
+- **Notes**: A field for comments or additional information related to each curator.
 ![image](https://user-images.githubusercontent.com/67378322/224958970-da703e52-f5e9-4158-9ca8-31f088d64114.png)
 
 ## Add new curator (modal window)
 This modal window appears after clicking the "Add curator" button. It allows you to add a new curator.
-|Element|Description|
-|---|--|
-|`Title`|Add new curator|
-|`Close`|button to close the modal window|
-|`Curator`| "Curator" user search field. Placeholder - "Find curator". Starred as a required field|
-|`Ratio`|"Vote ratio (1%-10 000%):" determines the ratio of the strength of the bot's like that needs to be placed, in relation to the curator's like. The maximum coefficient is 10 000%, which is equal to 1000% of the curator's vote|
-|`Ratio Note`|The Curators match bot only publishes votes with estimated value of 0.01 HBD or more.|
-|`Dislike`|"Match downvotes" checkbox, which means that the bot will repeat dislikes |
-|`Comments Like`|"Match votes on comments" a checkbox that means that the bot will repeat likes on comments|
-|`Mana Text`|Min. Voting Power (mana):|
-|`Mana Dropdown`|dropdown for selecting tokens for min. voting power. Dropdown has 3 options: <br><ul><li>HIVE</li><li>WAIV</li><li>HIVE OR WAIV </li></ul>By default - WAIV. HIVE OR WAIV - means if one is less than the specified percentage, then the bot stops liking |
-|`Mana Slider`|a slider for choosing at what minimum mana value the bot will like, that is, if the mana is less than this value, the likes will not be put until it is restored. Default 75%|
-|`Mana Note`|Votes will only be processed if the VP on the account is greater than the specified threshold at the time of voting.|
-|`Date`|"Expiry date:" the date until which the likes will be put|
-|`Notes`|textarea for comments, maxlength="255"|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Confirm`|"Add curator" button to confirm the action|
+Elements desctiption:
+- **Title**: "Add new curator"
+- **Close**: Button to close the modal window.
+- **Curator**: "Curator" search field for finding and selecting a user. Placeholder: "Find curator." This field is required.
+- **Ratio**: "Vote ratio (1%-10,000%)" determines the strength of the bot's vote in relation to the curator's vote. The maximum ratio is 10,000%, equating to 1000% of the curator’s vote.
+- **Ratio Note**: The Curators match bot only processes votes with an estimated value of 0.01 HBD or more.
+- **Dislike**: Checkbox labeled "Match downvotes," indicating whether the bot should replicate the curator’s downvotes.
+- **Comments Like**: Checkbox labeled "Match votes on comments," specifying whether the bot should replicate the curator’s likes on comments.
+- **Mana Text**: "Min. Voting Power (mana):"
+- **Mana Dropdown**: Dropdown for selecting the token used for minimum voting power. Options include:
+    - HIVE
+    - WAIV
+    - HIVE OR WAIV (default) - This option means the bot will stop liking if either token falls below the specified percentage.
+- **Mana Slider**: Slider to set the minimum voting power required for the bot to cast votes. Default is 75%.
+- **Mana Note**: Votes are only processed if the voting power (VP) on the account is above the specified threshold at the time of voting.
+- **Date**: "Expiry date:" specifies until when the bot will continue to vote based on the curator’s actions.
+- **Notes**: Textarea for additional comments, with a maximum length of 255 characters.
+- **Cancel**: "Cancel" button to cancel the action and close the modal window.
+- **Confirm**: "Add curator" button to confirm and apply the new curator settings.
 ![image](https://user-images.githubusercontent.com/67378322/224959070-3cb07bb3-3fdb-4d1e-8e6c-e8a9803c0c40.png)
 
 ## Edit curator information (modal window)
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the curator bot settings for a specific user.
-|Element|Description|
-|---|--|
-|`Title`|Edit match bot rules for curator {@username}|
-|`Close`|button to close the modal window|
-|`Ratio`|"Vote ratio (1%-10000%):" determines the ratio of the strength of the bot's like that needs to be placed, in relation to the curator's like. The maximum coefficient is 10000%, which is equal to 1000% of the curator's vote|
-|`Ratio Note`|The Curators match bot only publishes votes with estimated value of 0.01 HBD or more.
-|`Mana Text`|Min. Voting Power (mana):|
-|`Mana Dropdown`|dropdown for selecting tokens for min. voting power. Dropdown has 3 options: <br><ul><li>HIVE</li><li>WAIV</li><li>HIVE OR WAIV </li></ul>By default - WAIV |
-|`Mana Slider`|a slider for choosing at what minimum mana value the bot will like, that is, if the mana is less than this value, the likes will not be put until it is restored. Default 75%|
-|`Mana Note`|Votes will only be processed if the VP on the account is greater than the specified threshold at the time of voting (typically, 5 min after the post is published).|
-|`Date`|"Expiry date:" the date until which the likes will be put|
-|`Notes`|textarea for comments, maxlength="255"|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Save`|"Save changes" button to confirm the action, after clicking, a modal window opens to confirm the action "Confirm changes" |
-|`Delete text`|To remove the match bot rule, click the delete button:|
-|`Delete button`| "Delete rule" delete button, after clicking, a modal window opens to confirm the action "Delete confirmation" |
+Elements desctiption:
+- **Title**: "Edit match bot rules for curator {@username}"
+- **Close**: Button to close the modal window.
+- **Ratio**: "Vote ratio (1%-10,000%)" specifies the ratio of the bot's vote strength compared to the curator's vote. The maximum ratio is 10,000%, equivalent to 1000% of the curator's vote.
+- **Ratio Note**: The Curators match bot only processes votes with an estimated value of 0.01 HBD or more.
+- **Mana Text**: "Min. Voting Power (mana):"
+- **Mana Dropdown**: Dropdown for selecting the token used for minimum voting power. Options include:
+    - HIVE
+    - WAIV
+    - HIVE OR WAIV (default) - This means the bot will stop liking if either token falls below the specified percentage.
+- **Mana Slider**: Slider to set the minimum mana value required for the bot to cast votes. Default is 75%.
+- **Mana Note**: Votes will only be processed if the voting power (VP) on the account is above the specified threshold at the time of voting (typically 5 minutes after the post is published).
+- **Date**: "Expiry date:" specifies the date until which the bot will continue to vote based on the curator's actions.
+- **Notes**: Textarea for additional comments, with a maximum length of 255 characters.
+- **Cancel**: "Cancel" button to cancel the action and close the modal window.
+- **Save**: "Save changes" button to confirm and apply the updated settings. Clicking this opens a confirmation modal window titled "Confirm changes."
+- **Delete Text**: To remove the match bot rule, click the delete button.
+- **Delete Button**: "Delete rule" button to remove the curator match bot rule. Clicking this opens a confirmation modal window titled "Delete confirmation".
 ![image](https://user-images.githubusercontent.com/67378322/224959186-d9b30e65-5622-49a1-9c31-96b06081a8f0.png)
 
 ## Delete confirmation (modal window)
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the curator bot.
-|Element|Description|
-|---|--|
-|`Title`|Delete confirmation|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to delete curator match bot rule for @{username}?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Delete`|"Delete" button to confirm the delete action|
+Elements description:
+- **Title**: "Delete confirmation"
+- **Close**: Button to close the modal window.
+- **Text**: "Do you want to delete the curator match bot rule for @{username}?"
+- **Cancel**: "Cancel" button to cancel the action and close the modal window.
+- **Delete**: "Delete" button to confirm the deletion of the curator match bot rule.
 ![image](https://user-images.githubusercontent.com/67378322/133734698-a6b12efa-df10-447c-bbbe-4b9bd00b5af6.png)
 
 ## Confirm changes (modal window)
 This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
-|Element|Description|
-|---|--|
-|`Title`|Confirm changes|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to save the changes for @{username}?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`OK`|"OK" button to confirm the save action|
+Elements description:
+- **Title**: "Confirm changes"
+- **Close**: Button to close the modal window.
+- **Text**: "Do you want to save the changes for @{username}?"
+- **Cancel**: "Cancel" button to cancel the action and close the modal window.
+- **OK**: "OK" button to confirm and save the changes.
 ![image](https://user-images.githubusercontent.com/67378322/133734707-262d5470-5542-4b9f-b736-5db20c57d664.png)
 
 * after adding a curator, a notification of success appears ("Curator was successfully added"), and the author appears in the list without reloading the page;
@@ -2274,12 +2335,6 @@ This modal window appears after clicking the "Save Changes" button in the Edit m
 # Earn. Match bots. Sponsors
 **Sponsors match bot** - is an account for paying part of the reward for reviews in the form of votes, thereby reducing the amount of direct payment. If a user wants to become a Match bot, he needs to activate the toggle on the "Rewards" page in the "Sponsors" tab. For example the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV. In order for the sponsor to add a match bot to the campaign. The Match bot should in turn add a sponsor. To do this, in the "Sponsors" tab, click on the "Add sponsor" button.
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
-## How It Works (Simplified Version)
-1. A user enables the Sponsor Match Bot authorization.
-2. The user adds a sponsor.
-3. The sponsor adds the user to the "Registered Upvoting Accounts" when creating the campaign.
-4. When the campaign is completed, likes from the user are automatically added to the reviews.
-
 In the modal window, you need to fill in the fields:
 * choose a sponsor;
 * determine the strength of the voice;
@@ -2294,100 +2349,102 @@ Additional functionality:
 And confirmation of the action in the "Confirm rule inactivation" modal window
 ![image](https://user-images.githubusercontent.com/67378322/108823015-8cbc6d00-75c8-11eb-8629-4a327032d615.png)
 
-## Sponsor Bot Page Information
-| Element  | Description |
-| ------------- | ------------- |
-| `General Information`  | text information with an example of how to manage a match bot |
-| `Switch`  |  switch to enable / disable the match bot. When switching, you must re-authorize your account. To enable the match bot, you must click on the switch and go through the authorization through hive and confirmation of actions through the hivesigner  |
-| `Active Switch` | after activating the match bot, the switch turns green |
-| `Inactive Switch` | if the matchbot is not active or deactivated, then the switch is red |
-| `Authorize Now / Remove Authorization` | works identically to the switch `SWITCH BUTTON` |
-| `Minimum Voting Power` | minimum voice strength of the match bot |
-| `Change` | link, after clicking on which a modal window `CHANGE MINIMUM VOTING POWER MODAL` opens, as an opportunity to change the strength of the match bot's voice |
+## How It Works (Simplified Version)
+1. A user enables the Sponsor Match Bot authorization.
+2. The user adds a sponsor.
+3. The sponsor adds the user to the "Registered Upvoting Accounts" when creating the campaign.
+4. When the campaign is completed, likes from the user are automatically added to the reviews.
 
-Table:
+## Sponsor Bot Page Information
+- **General Information**: Provides details on how to manage the match bot, including examples of its use.
+- **Switch**: Toggles the match bot on or off. Re-authorization through Hive and confirmation via HiveSigner are required when enabling or disabling the bot.
+- **Active Switch**: The switch turns green when the match bot is active.
+- **Inactive Switch**: The switch turns red when the match bot is inactive or deactivated.
+- **Description**: 
+  - Sponsors match bot is designed to offset portion of direct rewards with upvotes.
+  - For example, the user has posted a review that is eligible to receive a direct reward of 5.00 WAIV. Match bot can upvote that post for a specified value of, say, 10% of the reward (assuming Match bot has enough voting value). This way, the user will receive 0.50 WAIV in author's rewards and the direct payment can be reduced to 4.50 WAIV.
+  - Important: Third party campaign sponsors must register the match bot in their campaigns for the value of bot upvotes to be subtracted from the direct obligations.
+- **Authorize Now / Remove Authorization**: "The match bot requires authorization to distribute votes on your behalf: Authorize Now / Remove Authorization". Functions the same as the switch for enabling or disabling the match bot.
+- **Minimum Voting Power**: Indicates the minimum voting strength required for the match bot. "Minimum voting power:". Match bot will upvote eligible posts only if VP on the account exceeds the set value.
+- **Change**: Link to open a modal window ("Change Minimum Voting Power Modal") where you can adjust the match bot's voting strength.
+- **Disclaimer**: The Sponsors match bot service is provided on as-is / as-available basis.
+
+## Sponsor Bot Table Information:
 This table displays users added as sponsors. You can activate or deactivate the bot for specific users, edit settings for individual users, and view details such as names, upvote power, minimum voting power, expiry dates, and notes.
-| `Table` | a table for displaying a list of sponsors, and basic information of rules with sponsors |
-| ------------- | ------------- |
-| `Active` | a column with a checkbox to activate the Match Bot rule for each specific user added to the list of match bot sponsors. After clicking on `ACTIVE` the modal window `CONFIRM RULE ACTIVATION` |
-| `Sponsor` | column with the names of users acting as sponsors, which the match bot will like (if the match bot was specified as a curated account when creating a campaign) |
-| `Upvote` | established power of the vote in % |
-| `Action` | the column consists of links "Edit", for editing the rules of each specific sponsor. After clicking on the link, the modal window `EDIT MATCH BOT RULES MODAL` opens |
-| `Expiry Date` | the column displays the time until which this rule is in effect. The time is selected when adding a sponsor (in the modal `ADD NEW SPONSOR MODAL`), or when editing a rule (in the modal `EDIT MATCH BOT RULES MODAL`), if the time was not specified, it is displayed - "termless" - which means the rule is valid until the match bot deactivates the rule |
-| `Notes` | a column with additional notes that can be added when adding a sponsor (in the `ADD NEW SPONSOR MODAL` modal), or when editing a rule (in the `EDIT MATCH BOT RULES MODAL` modal). These notes will be displayed only for the match bot who created the rule |
-| `Add Sponsor Button` | button to add sponsor. After pressing the modal window `ADD NEW SPONSOR MODAL` |
+This table displays users added as sponsors. You can manage the match bot settings for each sponsor, including activation, editing, and viewing details such as names, upvote power, minimum voting power, expiry dates, and notes.
+- **Active**: A column with checkboxes to activate or deactivate the Match Bot rule for each sponsor. Clicking on the checkbox opens the "Confirm Rule Activation" modal window.
+- **Sponsors**: Lists the names of users who are acting as sponsors. The match bot will upvote these sponsors if they are specified as curated accounts when creating a campaign.
+- **Upvote**: Displays the upvote power in percentage.
+- **Action**: Contains "Edit" links for modifying the rules for each sponsor. Clicking on the link opens the "Edit Match Bot Rules Modal."
+- **Expiry Date**: Shows the date until which the rule is effective. This date is set when adding or editing a sponsor. If no expiry date is specified, "termless" is displayed, meaning the rule is valid until manually deactivated.
+- **Notes**: Provides a column for additional notes that can be added when setting up or editing a sponsor. These notes are visible only to the match bot that created the rule.
+- **Add Sponsor Button**: A button to add a new sponsor. Clicking it opens the "Add New Sponsor Modal."
 ![image](https://user-images.githubusercontent.com/67378322/224961310-a3ab6c86-e75c-4c18-b8ee-7cb453d19d91.png)
 
-Modal window `Change the Minimum Voting Power`:
+## Modal window **Change the Minimum Voting Power**:
 This modal window appears after clicking the "Change" button. It allows you to adjust the Minimum Voting Power to your preferred level. Once this limit is reached, the bot will stop functioning until the voting power is restored.
-| | Modal window `Change the Minimum Voice Strength` |
-| ------------- | ------------- |
-| `Title` | Title - title of the modal window "Change the minimum voice strength" |
-| `Close` | button to close modal window |
-| `Slider` | a slider for choosing the strength of the match-bot's voice in percent, the selected strength is highlighted in orange. If 0% is selected, the slider is white, if 100% is selected, it is orange |
-| `OK` | button to confirm the action of choosing the strength of the voice
-| `Cancel` | button for canceling the action on choosing a voice |
+The modal window includes:
+- **Title**: "Change the Minimum Voting Power" - This is the title of the modal window.
+- **Close**: A button to close the modal window.
+- **Slider**: A slider to set the strength of the match-bot's vote in percentage. The selected value is highlighted in orange. The slider appears white when set to 0% and orange at 100%.
+- **OK**: A button to confirm and apply the selected minimum voting power.
+- **Cancel**: A button to cancel the action and close the modal window without making changes.
 ![image](https://github.com/user-attachments/assets/61b4f25c-d5f9-4c7d-81cb-2510185e5e18)
 
-Modal window `Confirm rule activation`:
-| | Modal window `Confirm rule activation` |
-| ------------- | ------------- |
-| `Title` | Title - title of the modal window "Confirm the activation of the rule" |
-| `Close` | button to close modal window |
-| `Text` | confirmation question text: "Do you want to activate the rule sponsored by {@userName}?" |
-| `Confirm` | button to confirm the rule activation action |
-| `Cancel` | button for canceling the rule activation action |
+## Modal window **Confirm rule activation**:
+When you click to activate a rule, the modal window titled "Confirm the Activation of the Rule" will appear. This window is used to confirm your action to activate the rule. The modal window includes:
+- **Title**: "Confirm the Activation of the Rule" - This is the title of the modal window.
+- **Close**: A button to close the modal window.
+- **Text**: A confirmation prompt asking, "Do you want to activate the rule sponsored by {@userName}?"
+- **Confirm**: A button to confirm and activate the rule.
+- **Cancel**: A button to cancel the activation and close the modal window without making changes.
 ![image](https://user-images.githubusercontent.com/67378322/108822129-503c4180-75c7-11eb-85e6-b9726c8df35f.png)
 
-Modal window `Add new sponsor modal window`:
-This modal window appears after clicking the "Add sponsor" button. It allows you to add a new sponsor.
-| | Modal window `Add new sponsor modal window` |
-| ------------- | ------------- |
-| `Title` | Title - "Add new sponsor".|
-| `Close` | button to close modal window |
-| `Sponsor` | Required Search Box for Selecting a User to Acting as a Match Bot |
-| `Upvote Value` | slider for setting or changing the strength of the voice in % |
-| `Expiry Date` | field to set or change the active Match Bot expiration date |
-| `Note` | field for entering additional information, not available for public viewing |
-| `Cancel Button` | button to undo new changes |
-| `Add Sponsor Button` | go to `Rule Create Confirmation` |
-| `Title` | Do you want to create rule with sponsor @username and with upvote ...%? |
-| `Cancel` | cancel rule creation |
-| `OK` | add a rule to a table |
+## Modal window `Add new sponsor modal window`:
+When you click the "Add Sponsor" button, a modal window titled "Add New Sponsor" will appear. This window allows you to add a new sponsor to your list.
+The modal window includes:
+- **Title**: "Add New Sponsor" - This is the title of the modal window.
+- **Close**: A button to close the modal window.
+- **Sponsor**: A required search box for selecting a user to act as a match bot.
+- **Upvote Value**: A slider for setting or adjusting the strength of the upvote in percentage.
+- **Expiry Date**: A field to set or change the expiration date for the active match bot rule.
+- **Note**: A field for entering additional information, which is not visible to the public.
+- **Cancel Button**: A button to undo any new changes made in the modal.
+- **Add Sponsor Button**: Opens the "Rule Create Confirmation" modal to confirm adding the new sponsor.
+In the "Rule Create Confirmation" modal:
+- **Title**: Asks, "Do you want to create a rule with sponsor @username and with upvote ...%?"
+- **Cancel**: Cancels the rule creation process.
+- **OK**: Confirms and adds the rule to the table.
 ![image](https://user-images.githubusercontent.com/67378322/133735200-fa8a9c5e-8f4c-40d9-846d-b7ef9f5ae8da.png)
 
-Modal window `Edit match bot rules modal window`:
+## Modal window **Edit match bot rules modal window**:
 This modal window appears after clicking the "Edit" link in the table. It allows you to modify the sponsor bot settings for a specific user.
-| | Modal window `Edit match bot rules modal window` |
-| ------------- | ------------- |
-| `Title` | Title - "Edit rule {userName}" |
-| `Close` | button to close modal window |
-| `Upvote Value` | slider to set or change the strength of the voice in % |
-| `Expiry Date` | to set or change the expiration date of an active Match Bot |
-| `Note` | text box for additional information, not available for public viewing |
-| `Cancel Button` | button to undo new changes |
-| `Save` | button to save new changes |
-| `Delete` | button to delete the match bot rule for this sponsor |
+The modal window includes:
+- **Title**: "Edit Rule {userName}" - This is the title of the modal window.
+- **Close**: A button to close the modal window.
+- **Upvote Value**: A slider for setting or adjusting the strength of the upvote in percentage.
+- **Expiry Date**: A field to set or change the expiration date for the active match bot rule.
+- **Note**: A text box for entering additional information, which is not visible to the public.
+- **Cancel Button**: A button to undo any new changes made in the modal.
+- **Save**: A button to save the new changes.
+- **Delete**: A button to delete the match bot rule for this sponsor.
 ![image](https://github.com/user-attachments/assets/5dc0f464-02b4-4945-a6b2-8138748877f5)
 
 ## Delete confirmation (modal window)
 This modal window appears after clicking the "Delete rule" button in the Edit modal window. It allows you to remove the user from the sponsor bot.
-|Element|Description|
-|---|--|
-|`Title`|Confirmation required|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to delete match bot rules for @{username}?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`Delete`|"Delete" button to confirm the delete action|
+Here's what you will find in this modal:
+- **Title**: "Confirmation Required" - The title of the modal window.
+- **Close**: A button to close the modal window.
+- **Text**: A confirmation message asking, "Do you want to delete match bot rules for @{username}?"
+- **Cancel**: A button to cancel the action and close the modal window.
+- **Delete**: A button to confirm and execute the deletion of the match bot rules for the specified user.
 ![image](https://github.com/user-attachments/assets/f90bdd50-a899-4cf6-9b96-d4804e64f321)
 
 ## Confirm changes (modal window)
-This modal window appears after clicking the "Save Changes" button in the Edit modal window. It allows you to save the new settings for the user.
-|Element|Description|
-|---|--|
-|`Title`|Rule editing confirmation|
-|`Close`|button to close the modal window|
-|`Text`|Do you want to edit rule with current changes?|
-|`Cancel`|"Cancel" button to cancel the action and close the modal window|
-|`OK`|"OK" button to confirm the save action|
+Here's what you will find in this modal:
+- **Title**: "Rule Editing Confirmation" - The title of the modal window.
+- **Close**: A button to close the modal window.
+- **Text**: A confirmation message asking, "Do you want to edit the rule with the current changes?"
+- **Cancel**: A button to cancel the action and close the modal window.
+- **OK**: A button to confirm and save the changes.
 ![image](https://github.com/user-attachments/assets/0591de4e-26e8-4df7-86c1-da2734789e19)
