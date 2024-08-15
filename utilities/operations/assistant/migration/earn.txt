@@ -498,6 +498,7 @@ Filters for User List:
 * Over 20 WAIV: Sponsor's outstanding amount exceeds 20 WAIV.
 ![image](https://github.com/user-attachments/assets/5736d374-596c-44be-8308-802c7fe19713)
 
+
 # Earn. Reports
 Page for creation of a report on people who completed the review. The report can be compiled for any hive user, who has ever been a sponsor (Guest user can't be a sponsor).
 The page consists of a form for filling in with data to receive a report with exactly these criteria, and a table as a result. Reports displayed in WAIV token.
