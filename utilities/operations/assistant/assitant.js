@@ -34,19 +34,18 @@ const qaPrompt = ChatPromptTemplate.fromMessages([
   ['human', '{question}'],
 ]);
 
-let llm;
+let llm, contextualizeQChain;
 
 try {
   llm = new OpenAI({
     modelName: 'gpt-4-1106-preview',
   });
+  contextualizeQChain = contextualizeQPrompt
+    .pipe(llm)
+    .pipe(new StringOutputParser());
 } catch (error) {
 
 }
-
-const contextualizeQChain = contextualizeQPrompt
-  .pipe(llm)
-  .pipe(new StringOutputParser());
 
 const contextualizedQuestion = (input) => {
   if ('chat_history' in input) {

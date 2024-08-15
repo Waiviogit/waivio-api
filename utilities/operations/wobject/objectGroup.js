@@ -162,11 +162,11 @@ const getByFollowers = async ({
   return result;
 };
 
-const getAdditionalUsers = async ({ names, lastName }) => {
+const getAdditionalUsers = async ({ names, lastName, exclude }) => {
   if (!names?.length) return [];
   const pipe = [
     {
-      $match: { name: { $in: names } },
+      $match: { name: { $in: names, ...exclude?.length && { $nin: exclude } } },
     },
   ];
 
@@ -227,12 +227,12 @@ const getObjectGroup = async ({
   const namesAdd = processed[FIELDS_NAMES.GROUP_ADD] || [];
 
   const responses = await Promise.all([
-    getAdditionalUsers({ names: namesAdd, lastName }),
+    getAdditionalUsers({ names: namesAdd, lastName, exclude }),
     getByFollowers({
-      names: followers, limit, lastName, follower: false,
+      names: followers, limit, lastName, follower: false, exclude,
     }),
     getByFollowers({
-      names: following, limit, lastName, follower: true,
+      names: following, limit, lastName, follower: true, exclude,
     }),
     getByExpertise({
       links, lastName, exclude, limit,
