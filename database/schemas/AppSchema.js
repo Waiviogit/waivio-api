@@ -100,6 +100,7 @@ const Configuration = new Schema({
   colors: { type: Colors, default: () => ({}) },
   header: { type: AppHeader },
   defaultHashtag: { type: String },
+  tabsFilter: { type: [String] },
 }, { _id: false });
 
 const AppSchema = new Schema({
