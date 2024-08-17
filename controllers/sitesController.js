@@ -18,6 +18,9 @@ const {
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
 const cachedParentHost = cacheWrapper(sitesHelper.getParentHost);
+const cachedSiteInfo = cacheWrapper(sitesHelper.siteInfo);
+const cachedGetSettings = cacheWrapper(sitesHelper.getSettings);
+const cachedAdSense = cacheWrapper(sitesHelper.getAdSense);
 
 exports.create = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.createApp, next);
@@ -36,7 +39,11 @@ exports.create = async (req, res, next) => {
 exports.info = async (req, res, next) => {
   if (!req.query.host) return next({ status: 422, message: 'App host is required' });
 
-  const { result, error } = await sitesHelper.siteInfo(req.query.host);
+  const { result, error } = await cachedSiteInfo(req.query.host)({
+    key: `${REDIS_KEYS.API_RES_CACHE}:cachedSiteInfo:${req.query.host}`,
+    ttl: TTL_TIME.ONE_MINUTE,
+  });
+
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -280,7 +287,11 @@ exports.firstLoad = async (req, res, next) => {
 exports.getSettings = async (req, res, next) => {
   if (!req.query.host) return next({ status: 422, message: 'App host is required' });
 
-  const { result, error } = await sitesHelper.getSettings(req.query.host);
+  const { result, error } = await cachedGetSettings(req.query.host)({
+    key: `${REDIS_KEYS.API_RES_CACHE}:cachedGetSettings:${req.query.host}`,
+    ttl: TTL_TIME.ONE_MINUTE,
+  });
+
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -400,7 +411,11 @@ exports.getAdSense = async (req, res, next) => {
   );
   if (!value) return;
 
-  const result = await sitesHelper.getAdSense(value);
+  const result = await cachedAdSense(value)({
+    key: `${REDIS_KEYS.AD_SENSE}:${value.host}`,
+    ttl: TTL_TIME.ONE_MINUTE,
+  });
+
   res.result = { status: 200, json: result };
   next();
 };

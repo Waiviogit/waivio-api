@@ -18,15 +18,6 @@ const moment = require('moment');
 const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
-const {
-  getCachedData,
-  setCachedData,
-} = require('./cacheHelper');
-const jsonHelper = require('./jsonHelper');
-const {
-  TTL_TIME,
-  REDIS_KEYS,
-} = require('../../constants/common');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -183,33 +174,17 @@ exports.getWebsiteData = (payments, site) => {
 };
 
 exports.siteInfo = async (host) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:siteInfo:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, {});
-  }
-
   const { result: app } = await App.findOne({ host, inherited: true });
   if (!app) {
-    const resp = { error: { status: 404, message: 'App not found!' } };
-    await setCachedData({
-      key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
-    });
-
-    return resp;
+    return { error: { status: 404, message: 'App not found!' } };
   }
 
-  const resp = {
+  return {
     result: {
       status: app.status,
       parentHost: app.parentHost,
     },
   };
-  await setCachedData({
-    key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
-  });
-
-  return resp;
 };
 
 exports.firstLoad = async ({ app }) => {
@@ -314,12 +289,6 @@ exports.updateSupportedObjects = async ({ host, app }) => {
 };
 
 exports.getSettings = async (host) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:getSiteSettings:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { result: '' });
-  }
-
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const {
@@ -347,10 +316,6 @@ exports.getSettings = async (host) => {
     language,
     objectControl,
   };
-
-  await setCachedData({
-    key, data: { result }, ttl: TTL_TIME.ONE_MINUTE,
-  });
 
   return { result };
 };
@@ -428,18 +393,6 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
-  const key = `${REDIS_KEYS.AD_SENSE}:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });
-  }
-
   const { result } = await App.findOne({ host });
-  const response = _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
-
-  await setCachedData({
-    key, data: response, ttl: TTL_TIME.ONE_MINUTE,
-  });
-
-  return response;
+  return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
 };
