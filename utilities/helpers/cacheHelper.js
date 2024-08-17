@@ -6,25 +6,26 @@ const {
   redisGetter,
   redis,
 } = require('../redis');
+const jsonHelper = require('./jsonHelper');
 
-exports.cacheRewardFund = async () => {
+const cacheRewardFund = async () => {
   const { result, error } = await currencyUtil.getRewardFund();
   if (error) return;
   await redisSetter.hmsetAsync({ key: CACHE_KEY.REWARD_FUND, data: result });
 };
 
-exports.cacheCurrentMedianHistoryPrice = async () => {
+const cacheCurrentMedianHistoryPrice = async () => {
   const { result, error } = await currencyUtil.getCurrentMedianHistoryPrice();
   if (error) return;
   await redisSetter.hmsetAsync({ key: CACHE_KEY.CURRENT_MEDIAN_HISTORY_PRICE, data: result });
 };
 
-exports.getCacheKey = (data = {}) => crypto
+const getCacheKey = (data = {}) => crypto
   .createHash('md5')
   .update(`${JSON.stringify(data)}`, 'utf8')
   .digest('hex');
 
-exports.getCachedData = async (key) => {
+const getCachedData = async (key) => {
   const { result: resp } = await redisGetter.getAsync({
     key,
     client: redis.mainFeedsCacheClient,
@@ -33,7 +34,7 @@ exports.getCachedData = async (key) => {
   return resp;
 };
 
-exports.setCachedData = async ({
+const setCachedData = async ({
   key,
   data,
   ttl,
@@ -41,4 +42,27 @@ exports.setCachedData = async ({
   await redisSetter.setEx({
     key, value: JSON.stringify(data), ttl,
   });
+};
+
+const cacheWrapper = (fn) => (...args) => async ({ key, ttl }) => {
+  const cache = await getCachedData(key);
+  if (cache) {
+    const parsed = jsonHelper.parseJson(cache, null);
+    if (parsed) return parsed;
+  }
+  const result = await fn(...args);
+
+  if (!result?.error) {
+    await setCachedData({ key, data: result, ttl });
+  }
+  return result;
+};
+
+module.exports = {
+  setCachedData,
+  getCachedData,
+  getCacheKey,
+  cacheCurrentMedianHistoryPrice,
+  cacheRewardFund,
+  cacheWrapper,
 };

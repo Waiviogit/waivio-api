@@ -9,6 +9,15 @@ const {
     manage, create, configurations, remove, map, mapCoordinates,
   },
 } = require('utilities/operations');
+const { cacheWrapper } = require('../utilities/helpers/cacheHelper');
+const {
+  REDIS_KEYS,
+  TTL_TIME,
+} = require('../constants/common');
+
+// cached controllers
+const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
+const cachedParentHost = cacheWrapper(sitesHelper.getParentHost);
 
 exports.create = async (req, res, next) => {
   const value = validators.validate(req.body, validators.sites.createApp, next);
@@ -257,8 +266,11 @@ exports.getMapCoordinates = async (req, res, next) => {
 };
 
 exports.firstLoad = async (req, res, next) => {
-  const { result, error } = await sitesHelper
-    .firstLoad({ app: req.appData });
+  const { result, error } = await cachedFirstLoad({ app: req.appData })({
+    key: `${REDIS_KEYS.API_RES_CACHE}:cachedFirstLoad:${req.appData.host}`,
+    ttl: TTL_TIME.TEN_MINUTES,
+  });
+
   if (error) return next(error);
 
   res.result = { status: 200, json: result };
@@ -401,7 +413,11 @@ exports.getParentHost = async (req, res, next) => {
   );
   if (!value) return;
 
-  const result = await sitesHelper.getParentHost(value);
+  const result = await cachedParentHost(value)({
+    key: `${REDIS_KEYS.API_RES_CACHE}:cachedFirstLoad:${value.host}`,
+    ttl: TTL_TIME.ONE_DAY,
+  });
+
   res.result = { status: 200, json: result };
   next();
-}
+};

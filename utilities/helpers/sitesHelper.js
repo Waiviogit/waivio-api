@@ -127,18 +127,10 @@ exports.getWebsitePayments = async ({
 };
 
 exports.getParentHost = async ({ host }) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:getParentHost:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { result: '' });
-  }
   const { result, error } = await App.findOne({
     host,
   });
   if (error) return { error };
-  await setCachedData({
-    key, data: { result: result?.parentHost ?? '' }, ttl: TTL_TIME.ONE_DAY,
-  });
   return { result: result?.parentHost ?? '' };
 };
 
@@ -364,12 +356,6 @@ exports.getSettings = async (host) => {
 };
 
 exports.aboutObjectFormat = async (app) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { });
-  }
-
   const aboutObject = app?.configuration?.aboutObject;
   const defaultHashtag = app?.configuration?.defaultHashtag;
   const { result: wobjects } = await Wobj
@@ -387,10 +373,6 @@ exports.aboutObjectFormat = async (app) => {
   if (defaultHashtagProcessed) {
     app.configuration.defaultHashtag = _.pick(defaultHashtagProcessed, PICK_FIELDS_ABOUT_OBJ);
   }
-
-  await setCachedData({
-    key, data: app, ttl: TTL_TIME.TEN_MINUTES,
-  });
 
   return app;
 };
