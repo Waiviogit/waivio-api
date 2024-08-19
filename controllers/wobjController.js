@@ -14,8 +14,8 @@ const {
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields, getOneField } = require('../utilities/operations/wobject/getFields');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
-const RequestPipeline = require('../utilities/helpers/requestPipeline');
-const pipelineFunctions = require('../pipelineFunctions');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -92,7 +92,7 @@ const posts = async (req, res, next) => {
     .use(pipelineFunctions.moderateObjects)
     .use(pipelineFunctions.checkFollowers)
     .use(pipelineFunctions.checkFollowings)
-    .execute(wobjectPosts, req, { key: 'test1', ttl: 100 });
+    .execute(wobjectPosts, req);
 
   return res.status(200).json(processedData);
 };
