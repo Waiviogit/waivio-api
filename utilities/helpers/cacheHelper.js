@@ -34,6 +34,15 @@ const getCachedData = async (key) => {
   return resp;
 };
 
+const getCache = async (key) => {
+  const { result: resp } = await redisGetter.getAsync({
+    key,
+    client: redis.mainFeedsCacheClient,
+  });
+
+  return jsonHelper.parseJson(resp, null);
+};
+
 const setCachedData = async ({
   key,
   data,
@@ -65,4 +74,5 @@ module.exports = {
   cacheCurrentMedianHistoryPrice,
   cacheRewardFund,
   cacheWrapper,
+  getCache,
 };
