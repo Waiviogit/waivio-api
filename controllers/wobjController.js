@@ -14,6 +14,8 @@ const {
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields, getOneField } = require('../utilities/operations/wobject/getFields');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
+const RequestPipeline = require('../utilities/helpers/requestPipeline');
+const pipelineFunctions = require('../pipelineFunctions');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -82,10 +84,18 @@ const posts = async (req, res, next) => {
   if (!value) return;
 
   const { posts: wobjectPosts, error } = await getPostsByWobject({ ...value, app: req.appData });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectPosts };
+  const pipeline = new RequestPipeline();
+  pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings);
+
+  const processedData = await pipeline.execute(wobjectPosts, req);
+
+  res.result = { status: 200, json: processedData };
   next();
 };
 

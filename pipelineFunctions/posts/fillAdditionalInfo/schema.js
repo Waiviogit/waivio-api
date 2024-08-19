@@ -1,10 +1,10 @@
 exports.schema = [
   // wobject controller
-  // {
-  //   path: '/wobject/:authorPermlink/posts',
-  //   method: 'POST',
-  //   case: 1,
-  // },
+  {
+    path: '/wobject/:authorPermlink/posts',
+    method: 'POST',
+    case: 1,
+  },
   {
     path: '/wobject/:authorPermlink/pin',
     method: 'GET',

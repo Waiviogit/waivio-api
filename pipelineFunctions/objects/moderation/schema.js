@@ -6,23 +6,23 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
-  // {
-  //   path: '/wobject/:authorPermlink',
-  //   method: 'GET',
-  //   case: 1,
-  // },
+  {
+    path: '/wobject/:authorPermlink',
+    method: 'GET',
+    case: 1,
+  },
   {
     path: '/sites/map',
     method: 'POST',
     case: 6,
     wobjects_path: 'wobjects',
   },
-  // {
-  //   path: '/wobject/:authorPermlink/posts',
-  //   method: 'POST',
-  //   case: 4,
-  //   wobjects_path: 'wobjects',
-  // },
+  {
+    path: '/wobject/:authorPermlink/posts',
+    method: 'POST',
+    case: 4,
+    wobjects_path: 'wobjects',
+  },
   {
     path: '/wobject/:authorPermlink/pin',
     method: 'GET',

@@ -21,12 +21,12 @@ exports.schema = [
     fields_path: 'users',
     field_name: 'name',
   },
-  // {
-  //   path: '/wobject/:authorPermlink/posts',
-  //   method: 'POST',
-  //   case: 1,
-  //   field_name: 'author',
-  // },
+  {
+    path: '/wobject/:authorPermlink/posts',
+    method: 'POST',
+    case: 1,
+    field_name: 'author',
+  },
   // user controller
   {
     path: '/users',
