@@ -27,7 +27,6 @@ const contextMiddleware = (req, res, next) => {
       store.set('device', device);
 
       res.on('finish', () => {
-        res.result = null;
         store.clear();
       });
 
