@@ -95,8 +95,7 @@ const posts = async (req, res, next) => {
 
   const processedData = await pipeline.execute(wobjectPosts, req);
 
-  res.result = { status: 200, json: processedData };
-  next();
+  return res.status(200).json(processedData);
 };
 
 const getPinnedPosts = async (req, res, next) => {
