@@ -16,6 +16,8 @@ const { getWalletAdvancedReport } = require('../utilities/operations/user/getWal
 const generatedReport = require('../utilities/operations/user/walletAdvancedReportGenerated');
 const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -28,8 +30,13 @@ const index = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: users };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(users, req);
+
+  return res.status(200).json(processedData);
 };
 
 const show = async (req, res, next) => {
@@ -46,8 +53,14 @@ const show = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: userData };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .use(pipelineFunctions.checkBellNotifications)
+    .execute(userData, req);
+
+  return res.status(200).json(processedData);
 };
 const showDelegation = async (req, res, next) => {
   const value = validators.validate({
@@ -110,8 +123,13 @@ const objectsFollow = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjects };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkObjectFollowings)
+    .execute(wobjects, req);
+
+  return res.status(200).json(processedData);
 };
 
 const usersFollow = async (req, res, next) => {
@@ -128,8 +146,13 @@ const usersFollow = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(result, req);
+
+  return res.status(200).json(processedData);
 };
 
 const feed = async (req, res, next) => {
@@ -171,9 +194,15 @@ const blog = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { tags, posts, hasMore } };
-  res.params = req.params;
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ tags, posts, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const blogTags = async (req, res, next) => {
@@ -207,8 +236,13 @@ const userObjectsShares = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: objectShares };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkObjectFollowings)
+    .execute(objectShares, req);
+
+  return res.status(200).json(processedData);
 };
 
 const userObjectsSharesCount = async (req, res, next) => {
@@ -252,8 +286,13 @@ const searchUsers = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { users, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ users, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const followingUpdates = async (req, res, next) => {
@@ -269,8 +308,12 @@ const followingUpdates = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(result, req);
+
+  return res.status(200).json(processedData);
 };
 
 const followingUsersUpdates = async (req, res, next) => {
@@ -324,8 +367,13 @@ const followers = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(result, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getUserComments = async (req, res, next) => {
@@ -381,8 +429,13 @@ const usersData = async (req, res, next) => {
   const { data, error } = await getManyUsers.getUsersByList(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: data };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(data, req);
+
+  return res.status(200).json(processedData);
 };
 
 const modalWindowMarker = async (req, res, next) => {

@@ -1,7 +1,6 @@
 const { app: AppOperations } = require('utilities/operations');
 const getMetrics = require('utilities/operations/aboutWaiv/getMetrics');
 const validators = require('controllers/validators');
-const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
 const config = require('config');
 const redisGetter = require('utilities/redis/redisGetter');
@@ -9,14 +8,18 @@ const _ = require('lodash');
 const { REDIS_KEYS } = require('../constants/common');
 const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 const assitant = require('../utilities/operations/assistant/assitant');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
+const asyncLocalStorage = require('../middlewares/context/context');
 
 const show = async (req, res, next) => {
   const data = {
     name: req.params.appName || 'waiviodev',
   };
   data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-  const session = getNamespace('request-session');
-  data.host = session.get('host') || config.appHost;
+  const store = asyncLocalStorage.getStore();
+
+  data.host = store.get('host') || config.appHost;
   const {
     app,
     error,
@@ -63,14 +66,13 @@ const hashtags = async (req, res, next) => {
   } = await AppOperations.hashtags(value);
 
   if (error) return next(error);
-  res.result = {
-    status: 200,
-    json: {
-      wobjects,
-      hasMore,
-    },
-  };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getReqRates = async (req, res, next) => {

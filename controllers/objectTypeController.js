@@ -3,6 +3,8 @@ const {
   getAll, getOne, getExperts, showTags, getTagsForFilter,
 } = require('utilities/operations/objectType');
 const validators = require('controllers/validators');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -15,8 +17,13 @@ const index = async (req, res, next) => {
   const { objectTypes, error } = await getAll(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: objectTypes };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(objectTypes, req);
+
+  return res.status(200).json(processedData);
 };
 
 const show = async (req, res, next) => {
@@ -37,11 +44,14 @@ const show = async (req, res, next) => {
     app: req.appData,
   });
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: objectType };
-  next();
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(objectType, req);
+
+  return res.status(200).json(processedData);
 };
 
 const search = async (req, res, next) => {

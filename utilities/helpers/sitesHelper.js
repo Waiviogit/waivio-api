@@ -11,13 +11,13 @@ const {
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
 const { redisGetter } = require('utilities/redis');
-const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -206,8 +206,8 @@ exports.firstLoad = async ({ app }) => {
 };
 
 exports.getSessionApp = async () => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
 
   return App.findOne({ host });
 };

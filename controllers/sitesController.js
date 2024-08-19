@@ -14,6 +14,8 @@ const {
   REDIS_KEYS,
   TTL_TIME,
 } = require('../constants/common');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
@@ -244,8 +246,12 @@ exports.getMapData = async (req, res, next) => {
   const { result, error } = await map.getData({ ...params, app: req.appData });
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(result, req);
+
+  return res.status(200).json(processedData);
 };
 
 exports.setMapCoordinates = async (req, res, next) => {

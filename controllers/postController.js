@@ -5,6 +5,8 @@ const {
 } = require('utilities/operations').post;
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 exports.show = async (req, res, next) => {
   const value = validators.validate({
@@ -13,15 +15,19 @@ exports.show = async (req, res, next) => {
     userName: req.headers.follower,
   }, validators.post.showSchema, next);
 
-  if (!value) {
-    return;
-  }
+  if (!value) return;
   const { post, error } = await getSinglePost(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: post };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(post, req);
+
+  return res.status(200).json(processedData);
 };
 
 exports.getByCategory = async (req, res, next) => {
@@ -73,8 +79,13 @@ exports.likePost = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: post };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .execute(post, req);
+
+  return res.status(200).json(processedData);
 };
 
 exports.getManyPosts = async (req, res, next) => {
@@ -86,8 +97,13 @@ exports.getManyPosts = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: posts };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .execute(posts, req);
+
+  return res.status(200).json(processedData);
 };
 
 exports.getSocialInfo = async (req, res, next) => {
@@ -142,6 +158,13 @@ exports.getPostsByMentions = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { posts, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ posts, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };

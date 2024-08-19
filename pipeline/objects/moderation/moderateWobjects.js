@@ -1,5 +1,4 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
 const wobjectHelper = require('utilities/helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
@@ -8,6 +7,7 @@ const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/si
 const { processAppAffiliate, processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const { WAIVIO_AFFILIATE_HOSTS } = require('constants/affiliateData');
 const { schema } = require('./schema');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 /**
  * Get app name from request headers and find app with specified name in database
@@ -15,8 +15,8 @@ const { schema } = require('./schema');
  * @returns {Object} app, error
  */
 const getApp = async () => {
-  const session = getNamespace('request-session');
-  let host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  let host = store.get('host');
   if (!host) {
     host = config.appHost;
   }

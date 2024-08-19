@@ -3,12 +3,12 @@ const {
 } = require('models');
 const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
-const { getNamespace } = require('cls-hooked');
 const moment = require('moment');
 const _ = require('lodash');
 
 const wobjectHelper = require('./wObjectHelper');
 const campaignsV2Helper = require('./campaignsV2Helper');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
     && _.floor(campaign.budget / campaign.reward) > _.filter(
@@ -139,8 +139,8 @@ exports.addCampaignsToWobjects = async ({
   const permlinks = _.map(wobjects, 'author_permlink');
 
   if (!app) {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
+    const store = asyncLocalStorage.getStore();
+    const host = store.get('host');
     ({ result: app } = await App.findOne({ host }));
   }
 

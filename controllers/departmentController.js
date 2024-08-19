@@ -1,5 +1,7 @@
 const departments = require('utilities/operations/departments');
 const validators = require('./validators');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 const getDepartments = async (req, res, next) => {
   const value = validators.validate(req.body, validators.departments.departmentsSchema, next);
@@ -27,8 +29,12 @@ const getWobjectsByDepartments = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getDepartmentsSearch = async (req, res, next) => {

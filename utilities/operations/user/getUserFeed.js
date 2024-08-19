@@ -2,27 +2,15 @@ const {
   User, Post, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel, App,
 } = require('models');
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
-const {
-  getPostCacheKey,
-  getCachedPosts,
-  setCachedPosts,
-} = require('../../helpers/postHelper');
 const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 const getFeed = async ({
   // eslint-disable-next-line camelcase
   name, limit = 20, skip = 0, user_languages, filter = {}, forApp, lastId, userName, locale, app,
 }) => {
-  // const cacheKey = getPostCacheKey({
-  //   skip, limit, user_languages, userName, method: 'getFeed',
-  // });
-
-  // const cache = await getCachedPosts(cacheKey);
-  // if (cache) return { posts: cache };
-
   let posts = [];
   const requestsMongo = await Promise.all([
     User.getOne(name),
@@ -70,15 +58,14 @@ const getFeed = async ({
     fillPostsSubscriptions({ posts, userName }),
   ]);
 
-  // await setCachedPosts({ key: cacheKey, posts, ttl: 60 * 30 });
   return { posts };
 };
 
 const getFiltersData = async (filter) => {
   const data = {};
   const byApp = _.get(filter, 'byApp');
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   if (_.isString(byApp) && !_.isEmpty(byApp)) {
     const { result: app, error } = await App.findOne({ host });
 

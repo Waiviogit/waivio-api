@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const {
   App,
   Wobj,
 } = require('models');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 module.exports = async (data) => {
   const {
@@ -12,8 +12,8 @@ module.exports = async (data) => {
     error,
   } = await Wobj.getOne(data.authorPermlink);
   if (error) return { error };
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app } = await App.findOne({ host });
   const processedObject = await wObjectHelper.processWobjects({
     app,
