@@ -87,13 +87,13 @@ const posts = async (req, res, next) => {
   if (error) return next(error);
 
   const pipeline = new RequestPipeline();
-  pipeline
+
+  const processedData = await pipeline
     .use(pipelineFunctions.fillPosts)
     .use(pipelineFunctions.moderateObjects)
     .use(pipelineFunctions.checkFollowers)
-    .use(pipelineFunctions.checkFollowings);
-
-  const processedData = await pipeline.execute(wobjectPosts, req);
+    .use(pipelineFunctions.checkFollowings)
+    .execute(wobjectPosts, req);
 
   return res.status(200).json(processedData);
 };
