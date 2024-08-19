@@ -435,7 +435,7 @@ exports.getParentHost = async (req, res, next) => {
   if (!value) return;
 
   const result = await cachedParentHost(value)({
-    key: `${REDIS_KEYS.API_RES_CACHE}:cachedFirstLoad:${value.host}`,
+    key: `${REDIS_KEYS.API_RES_CACHE}:cachedParentHost:${value.host}`,
     ttl: TTL_TIME.ONE_DAY,
   });
 
