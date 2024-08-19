@@ -15,6 +15,9 @@ class RequestPipeline {
     }
     return result;
   }
+
+  // todo getFromCache
+  // todo execute and saveTo cache
 }
 
 module.exports = RequestPipeline;
