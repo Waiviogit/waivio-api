@@ -23,7 +23,6 @@ const {
   TTL_TIME,
   REDIS_KEYS,
 } = require('constants/common');
-const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
@@ -42,6 +41,7 @@ const {
   getCachedData,
   setCachedData,
 } = require('./cacheHelper');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
@@ -590,7 +590,7 @@ const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
 };
 
 const getLinkToPageLoad = (obj) => {
-  if (getNamespace('request-session')
+  if (asyncLocalStorage.getStore()
     .get('device') === DEVICE.MOBILE) {
     return obj.object_type === OBJECT_TYPES.HASHTAG
       ? `/object/${obj.author_permlink}`

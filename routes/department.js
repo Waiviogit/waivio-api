@@ -1,14 +1,14 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { departmentController } = require('../controllers');
+const DepartmentController = require('../controllers/departmentController');
 
 const departmentRoutes = new Router();
 
 departmentRoutes.route('/departments')
-  .post(reqTimeMonitor, departmentController.getDepartments);
+  .post(reqTimeMonitor, DepartmentController.getDepartments);
 departmentRoutes.route('/departments/wobjects')
-  .post(reqTimeMonitor, departmentController.getWobjectsByDepartments);
+  .post(reqTimeMonitor, DepartmentController.getWobjectsByDepartments);
 departmentRoutes.route('/departments/search')
-  .post(reqTimeMonitor, departmentController.getDepartmentsSearch);
+  .post(reqTimeMonitor, DepartmentController.getDepartmentsSearch);
 
 module.exports = departmentRoutes;

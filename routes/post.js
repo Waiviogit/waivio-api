@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { PostController } = require('../controllers');
+const PostController = require('../controllers/postController');
 
 const postRoutes = new Router();
 

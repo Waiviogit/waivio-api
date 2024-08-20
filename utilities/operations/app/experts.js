@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const { App, UserWobjects } = require('models');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 exports.collect = async ({ limit }) => {
   // eslint-disable-next-line camelcase
@@ -28,8 +28,8 @@ exports.collect = async ({ limit }) => {
 };
 
 exports.get = async ({ skip, limit }) => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app, error } = await App.findOne({ host });
 
   if (error || !app) return { error: error || { status: 404, message: 'App not found!' } };

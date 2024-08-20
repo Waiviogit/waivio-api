@@ -10,17 +10,15 @@ const unwindByGroupId = (arr, f) => arr.reduce(
   [],
 );
 
-const filterUniqGroupId = async (req, res, next) => {
+const filterUniqGroupId = async (data, req) => {
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
 
-  if (!currentSchema) {
-    next();
-    return;
-  }
+  if (!currentSchema) return data;
+
   switch (currentSchema.case) {
     case 1:
-      res.result.json[currentSchema.wobjects_path] = _.chain(
-        unwindByGroupId(res.result.json[currentSchema.wobjects_path], FIELDS_NAMES.GROUP_ID),
+      data[currentSchema.wobjects_path] = _.chain(
+        unwindByGroupId(data[currentSchema.wobjects_path], FIELDS_NAMES.GROUP_ID),
       ).uniqBy(
         FIELDS_NAMES.GROUP_ID,
       ).uniqBy('author_permlink').value();
@@ -28,9 +26,7 @@ const filterUniqGroupId = async (req, res, next) => {
     default:
       break;
   }
-  next();
+  return data;
 };
 
-module.exports = {
-  filterUniqGroupId,
-};
+module.exports = filterUniqGroupId;

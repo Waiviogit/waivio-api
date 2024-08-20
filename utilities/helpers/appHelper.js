@@ -1,8 +1,8 @@
-const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 exports.getApp = async () => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   return App.findOne({ host });
 };

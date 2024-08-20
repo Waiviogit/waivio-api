@@ -1,8 +1,8 @@
 const PostModel = require('database').models.Post;
-const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
 const _ = require('lodash');
 const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
+const asyncLocalStorage = require('../middlewares/context/context');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -388,8 +388,8 @@ exports.findOneFirstByAuthor = async ({ author }) => {
 
 const getBlockedAppCond = () => {
   try {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
+    const store = asyncLocalStorage.getStore();
+    const host = store.get('host');
     return { blocked_for_apps: { $ne: host } };
   } catch (error) {
     return {};

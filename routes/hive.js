@@ -1,16 +1,16 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { hiveController } = require('../controllers');
+const HiveController = require('../controllers/hiveController');
 
 const hiveRoutes = new Router();
 
 hiveRoutes.route('/hive/reward-fund')
-  .get(reqTimeMonitor, hiveController.getRewardFund);
+  .get(reqTimeMonitor, HiveController.getRewardFund);
 hiveRoutes.route('/hive/current-median-history')
-  .get(reqTimeMonitor, hiveController.getCurrentMedianHistory);
+  .get(reqTimeMonitor, HiveController.getCurrentMedianHistory);
 hiveRoutes.route('/hive/global-properties')
-  .get(reqTimeMonitor, hiveController.getGlobalProperties);
+  .get(reqTimeMonitor, HiveController.getGlobalProperties);
 hiveRoutes.route('/hive/block-num')
-  .get(reqTimeMonitor, hiveController.getBlockNum);
+  .get(reqTimeMonitor, HiveController.getBlockNum);
 
 module.exports = hiveRoutes;
