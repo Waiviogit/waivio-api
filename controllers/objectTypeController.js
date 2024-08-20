@@ -60,12 +60,9 @@ const search = async (req, res, next) => {
     skip: req.body.skip || 0,
     limit: req.body.limit || 30,
   });
+  if (error) return next(error);
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: objectTypes };
-  next();
+  return res.status(200).json(objectTypes);
 };
 
 const expertise = async (req, res, next) => {
@@ -77,10 +74,9 @@ const expertise = async (req, res, next) => {
 
   if (!value) return;
   const { users, error } = await getExperts(value);
-
   if (error) return next(error);
-  res.result = { status: 200, json: users };
-  next();
+
+  return res.status(200).json(users);
 };
 const showMoreTags = async (req, res, next) => {
   const value = validators.validate(
@@ -91,8 +87,8 @@ const showMoreTags = async (req, res, next) => {
   if (!value) return;
   const { tags, hasMore, error } = await showTags(value);
   if (error) return next(error);
-  res.result = { status: 200, json: { tagCategory: value.tagCategory, tags, hasMore } };
-  next();
+
+  return res.status(200).json({ tagCategory: value.tagCategory, tags, hasMore });
 };
 
 const tagsForFilter = async (req, res, next) => {
@@ -104,8 +100,8 @@ const tagsForFilter = async (req, res, next) => {
   if (!value) return;
   const { tags, error } = await getTagsForFilter({ ...value, app: req.appData });
   if (error) return next(error);
-  res.result = { status: 200, json: tags };
-  next();
+
+  return res.status(200).json(tags);
 };
 
 module.exports = {

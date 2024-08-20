@@ -12,8 +12,7 @@ exports.getVipTickets = async (req, res, next) => {
   const { result, error } = await getTickets(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.addTicketNote = async (req, res, next) => {
@@ -26,6 +25,5 @@ exports.addTicketNote = async (req, res, next) => {
   const { result, error } = await addNote(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };

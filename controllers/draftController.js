@@ -20,8 +20,7 @@ exports.createOrUpdatePageDraft = async (req, res, next) => {
   const { draft, error } = await wobjectDraft.createOrUpdateDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: draft };
-  next();
+  return res.status(200).json(draft);
 };
 
 exports.getOnePageDraft = async (req, res, next) => {
@@ -35,8 +34,7 @@ exports.getOnePageDraft = async (req, res, next) => {
   const { draft, error } = await wobjectDraft.getDraft(value.user, value.authorPermlink);
   if (error) return next(error);
 
-  res.result = { status: 200, json: draft };
-  next();
+  return res.status(200).json(draft);
 };
 
 exports.createOrUpdateCommentDraft = async (req, res, next) => {
@@ -53,8 +51,7 @@ exports.createOrUpdateCommentDraft = async (req, res, next) => {
   const { result, error } = await commentDraft.createOrUpdateDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.getOneCommentDraft = async (req, res, next) => {
@@ -68,8 +65,7 @@ exports.getOneCommentDraft = async (req, res, next) => {
   const { result, error } = await commentDraft.getDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.createOrUpdatePostDraft = async (req, res, next) => {
@@ -86,8 +82,7 @@ exports.createOrUpdatePostDraft = async (req, res, next) => {
   const { result, error } = await mainDraft.createOrUpdateDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.getOnePostDraft = async (req, res, next) => {
@@ -101,8 +96,7 @@ exports.getOnePostDraft = async (req, res, next) => {
   const { result, error } = await mainDraft.getDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.getPostDrafts = async (req, res, next) => {
@@ -116,8 +110,7 @@ exports.getPostDrafts = async (req, res, next) => {
   const { result, hasMore, error } = await mainDraft.getDrafts(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result, hasMore } };
-  next();
+  return res.status(200).json({ result, hasMore });
 };
 
 exports.deleteOnePostDraft = async (req, res, next) => {
@@ -134,6 +127,5 @@ exports.deleteOnePostDraft = async (req, res, next) => {
   const { result, error } = await mainDraft.deleteDraft(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };

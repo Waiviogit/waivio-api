@@ -70,11 +70,9 @@ const showDelegation = async (req, res, next) => {
   if (!value) return;
 
   const { result, error } = await getUserDelegation(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const updateUserMetadata = async (req, res, next) => {
@@ -92,8 +90,8 @@ const updateUserMetadata = async (req, res, next) => {
   const { user_metadata: userMetadata, error } = await updateMetadata(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: { user_metadata: userMetadata } };
-  next();
+
+  return res.status(200).json({ user_metadata: userMetadata });
 };
 
 const getUserMetadata = async (req, res, next) => {
@@ -104,9 +102,9 @@ const getUserMetadata = async (req, res, next) => {
 
   if (error) return next(error);
 
-  if (req.query.onlyEmail) res.result = { status: 200, json: { privateEmail } };
-  else res.result = { status: 200, json: { user_metadata: userMetadata, privateEmail } };
-  next();
+  if (req.query.onlyEmail) return res.status(200).json({ privateEmail });
+
+  return res.status(200).json({ user_metadata: userMetadata, privateEmail });
 };
 
 const objectsFollow = async (req, res, next) => {
@@ -173,12 +171,9 @@ const feed = async (req, res, next) => {
   const { posts, error } = await getUserFeed({
     ...value, app: req.appData,
   });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: posts };
-  res.params = req.params;
-  next();
+  return res.status(200).json(posts);
 };
 
 const blog = async (req, res, next) => {
@@ -216,8 +211,7 @@ const blogTags = async (req, res, next) => {
     tags, hasMore,
   } = await getBlogTags(value);
 
-  res.result = { status: 200, json: { tags, hasMore } };
-  next();
+  return res.status(200).json({ tags, hasMore });
 };
 
 const userObjectsShares = async (req, res, next) => {
@@ -251,8 +245,7 @@ const userObjectsSharesCount = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { hashtagsExpCount, wobjectsExpCount } };
-  next();
+  return res.status(200).json({ hashtagsExpCount, wobjectsExpCount });
 };
 
 const postFilters = async (req, res, next) => {
@@ -265,11 +258,9 @@ const postFilters = async (req, res, next) => {
   if (!value) return;
 
   const { posts, error } = await getPostFilters(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: posts };
-  next();
+  return res.status(200).json(posts);
 };
 
 const searchUsers = async (req, res, next) => {
@@ -326,11 +317,9 @@ const followingUsersUpdates = async (req, res, next) => {
   if (!value) return;
 
   const { users_updates: usersUpdates, error } = await getFollowingUpdates.getUsersUpdates(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: usersUpdates };
-  next();
+  return res.status(200).json(usersUpdates);
 };
 
 const followingWobjectsUpdates = async (req, res, next) => {
@@ -346,11 +335,9 @@ const followingWobjectsUpdates = async (req, res, next) => {
   const {
     wobjects_updates: wobjectsUpdates, error,
   } = await getFollowingUpdates.getWobjectsUpdates(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectsUpdates };
-  next();
+  return res.status(200).json(wobjectsUpdates);
 };
 
 const followers = async (req, res, next) => {
@@ -388,22 +375,18 @@ const getUserComments = async (req, res, next) => {
   if (!value) return;
 
   const { comments, error } = await getComments({ ...value, app: req.appData });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: comments };
-  next();
+  return res.status(200).json(comments);
 };
 
 const importUserFromSteem = async (req, res, next) => {
   if (!req.query.userName) return next({ status: 422, message: 'userName field must exist' });
 
   const { result, error } = await importSteemUserBalancer.startImportUser(req.query.userName);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const followingsState = async (req, res, next) => {
@@ -415,11 +398,9 @@ const followingsState = async (req, res, next) => {
   if (!value) return;
 
   const { users, error } = await getFollowingsUser.getFollowingsArray(value);
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: users };
-  next();
+  return res.status(200).json(users);
 };
 
 const usersData = async (req, res, next) => {
@@ -440,8 +421,8 @@ const usersData = async (req, res, next) => {
 
 const modalWindowMarker = async (req, res, next) => {
   const result = await setMarkers.newUser(req.params.userName);
-  res.result = { status: 200, json: { result } };
-  next();
+
+  return res.status(200).json({ result });
 };
 
 const getVoteValue = async (req, res, next) => {
@@ -451,22 +432,19 @@ const getVoteValue = async (req, res, next) => {
 
   const result = await calcVoteValue.sliderCalc(value);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 const getEstimatedVote = async (req, res, next) => {
   const result = await calcVoteValue.userInfoCalc(req.params);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const checkObjectWhiteList = async (req, res, next) => {
   const result = await calcVoteValue.checkUserWhiteList(req.params);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getWaivVote = async (req, res, next) => {
@@ -476,42 +454,41 @@ const getWaivVote = async (req, res, next) => {
 
   const result = await calcVoteValue.waivVoteUSD(value);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getGeoByIp = async (req, res, next) => {
   const { longitude, latitude } = await geoData.getLocation(getIpFromHeaders(req));
 
-  res.result = { status: 200, json: { longitude, latitude } };
-  next();
+  return res.status(200).json({ longitude, latitude });
 };
 
 const putUserGeo = async (req, res, next) => {
-  const value = validators.validate({ ...req.body, ip: getIpFromHeaders(req) }, validators.user.putGeo, next);
+  const value = validators.validate(
+    { ...req.body, ip: getIpFromHeaders(req) },
+    validators.user.putGeo,
+    next,
+  );
   if (!value) return;
 
   const { longitude, latitude, error } = await geoData.putLocation({ req, ...value });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { longitude, latitude } };
-  next();
+  return res.status(200).json({ longitude, latitude });
 };
 
 const getCreationDate = async (req, res, next) => {
   const { timestamp, error } = await getUserCreationDate(req.params.userName);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { timestamp } };
-  next();
+  return res.status(200).json({ timestamp });
 };
 
 const getLastActivity = async (req, res, next) => {
   const { lastActivity, error } = await getUserLastActivity(req.params.userName);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { lastActivity } };
-  next();
+  return res.status(200).json({ lastActivity });
 };
 
 const getAdvancedReport = async (req, res, next) => {
@@ -525,8 +502,7 @@ const getAdvancedReport = async (req, res, next) => {
   const { result, error } = await getWalletAdvancedReport(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const generateAdvancedReport = async (req, res, next) => {
@@ -543,8 +519,7 @@ const generateAdvancedReport = async (req, res, next) => {
   const { result, error } = await generatedReport.generateReportTask(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const reportsInProgress = async (req, res, next) => {
@@ -558,8 +533,7 @@ const reportsInProgress = async (req, res, next) => {
   const { result, error } = await generatedReport.getInProgress(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const reportsHistory = async (req, res, next) => {
@@ -573,8 +547,7 @@ const reportsHistory = async (req, res, next) => {
   const { result, error } = await generatedReport.getHistory(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const selectDeselectRecord = async (req, res, next) => {
@@ -591,8 +564,7 @@ const selectDeselectRecord = async (req, res, next) => {
   const { result, error } = await generatedReport.selectDeselectRecord(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getGeneratedReport = async (req, res, next) => {
@@ -606,8 +578,7 @@ const getGeneratedReport = async (req, res, next) => {
   const { result, error } = await generatedReport.getGeneratedReport(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const resumeGeneratedReport = async (req, res, next) => {
@@ -624,8 +595,7 @@ const resumeGeneratedReport = async (req, res, next) => {
   const { result, error } = await generatedReport.resumeGeneration(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const stopGeneratedReport = async (req, res, next) => {
@@ -642,8 +612,7 @@ const stopGeneratedReport = async (req, res, next) => {
   const { result, error } = await generatedReport.stopGeneration(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const pauseGeneratedReport = async (req, res, next) => {
@@ -660,8 +629,7 @@ const pauseGeneratedReport = async (req, res, next) => {
   const { result, error } = await generatedReport.pauseGeneration(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getGuestWallet = async (req, res, next) => {
@@ -669,8 +637,8 @@ const getGuestWallet = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await guestWalletOperations.getWallet(value);
   if (error) return next(error);
-  res.result = { status: 200, json: result };
-  next();
+
+  return res.status(200).json(result);
 };
 
 const getGuestBalance = async (req, res, next) => {
@@ -679,8 +647,8 @@ const getGuestBalance = async (req, res, next) => {
   const { result, error } = await guestWalletOperations.getBalance(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: result };
-  next();
+
+  return res.status(200).json(result);
 };
 
 const getGuestMana = async (req, res, next) => {
@@ -688,8 +656,7 @@ const getGuestMana = async (req, res, next) => {
   if (!value) return;
   const json = await guestMana.getCurrentManaPercent(value);
 
-  res.result = { status: 200, json };
-  next();
+  return res.status(200).json(json);
 };
 
 const guestWithdrawHive = async (req, res, next) => {
@@ -706,8 +673,7 @@ const guestWithdrawHive = async (req, res, next) => {
   const { result, error } = await guestHiveWithdraw.withdrawFromHive(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const guestWithdrawHiveEstimates = async (req, res, next) => {
@@ -721,8 +687,7 @@ const guestWithdrawHiveEstimates = async (req, res, next) => {
   const { result, error } = await guestHiveWithdraw.withdrawEstimates(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 const guestWithdrawHiveRange = async (req, res, next) => {
@@ -736,8 +701,7 @@ const guestWithdrawHiveRange = async (req, res, next) => {
   const { result, error } = await guestHiveWithdraw.withdrawRange(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getAffiliate = async (req, res, next) => {
@@ -753,8 +717,7 @@ const getAffiliate = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getMinReject = async (req, res, next) => {
@@ -764,16 +727,14 @@ const getMinReject = async (req, res, next) => {
 
   const json = await calcVoteValue.getMinReject(value);
 
-  res.result = { status: 200, json };
-  next();
+  return res.status(200).json(json);
 };
 
 const getFavoritesList = async (req, res, next) => {
   const { result, error } = await favorites.getUserFavoritesList(req.params);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getFavorites = async (req, res, next) => {
@@ -795,8 +756,7 @@ const getFavorites = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result, hasMore } };
-  next();
+  return res.status(200).json({ result, hasMore });
 };
 
 const getFavouritesMap = async (req, res, next) => {
@@ -812,28 +772,23 @@ const getFavouritesMap = async (req, res, next) => {
     ...value,
     app: req.appData,
   });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result, hasMore } };
-  next();
+  return res.status(200).json({ result, hasMore });
 };
 
 const hiveUserExist = async (req, res, next) => {
   const json = await userExist.hiveUserExist(req.params);
 
-  res.result = { status: 200, json };
-  next();
+  return res.status(200).json(json);
 };
 
 const getAvatars = async (req, res, next) => {
   const value = validators.validate(req.body, validators.user.getAvatarsSchema, next);
   if (!value) return;
-
   const result = await getProfileImages(value);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 module.exports = {

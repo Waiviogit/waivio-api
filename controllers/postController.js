@@ -43,16 +43,12 @@ exports.getByCategory = async (req, res, next) => {
     locale: req.headers.locale,
   }, validators.post.getPostsByCategorySchema, next);
 
-  if (!value) {
-    return;
-  }
-  const { posts, error } = await getPostsByCategory({ ...value, app: req.appData });
+  if (!value) return;
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: posts };
-  next();
+  const { posts, error } = await getPostsByCategory({ ...value, app: req.appData });
+  if (error) return next(error);
+
+  return res.status(200).json(posts);
 };
 
 exports.getPostComments = async (req, res, next) => {
@@ -64,8 +60,7 @@ exports.getPostComments = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.likePost = async (req, res, next) => {
@@ -115,8 +110,7 @@ exports.getSocialInfo = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 exports.getPreviewLinks = async (req, res, next) => {
@@ -126,8 +120,7 @@ exports.getPreviewLinks = async (req, res, next) => {
 
   const json = await cachePreview.getLinks(value);
 
-  res.result = { status: 200, json };
-  next();
+  return res.status(200).json(json);
 };
 
 exports.putPreviewUrl = async (req, res, next) => {
@@ -137,8 +130,7 @@ exports.putPreviewUrl = async (req, res, next) => {
 
   const json = await cachePreview.putLinks(value);
 
-  res.result = { status: 200, json };
-  next();
+  return res.status(200).json(json);
 };
 
 exports.getPostsByMentions = async (req, res, next) => {

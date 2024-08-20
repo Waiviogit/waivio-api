@@ -104,8 +104,6 @@ const posts = async (req, res, next) => {
     .use(pipelineFunctions.checkFollowings)
     .execute(wobjectPosts, req);
 
-  console.log();
-
   return res.status(200).json(processedData);
 };
 
@@ -229,9 +227,7 @@ const gallery = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  req.author_permlink = req.params.authorPermlink;
-  next();
+  return res.status(200).json(result);
 };
 
 const objectExpertise = async (req, res, next) => {
@@ -264,8 +260,8 @@ const getByField = async (req, res, next) => {
   const { wobjects, error } = await Wobj.getByField(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: wobjects };
-  next();
+
+  return res.status(200).json(wobjects);
 };
 
 const getChildWobjects = async (req, res, next) => {
@@ -301,10 +297,9 @@ const getWobjectField = async (req, res, next) => {
   );
   if (!value) return;
   const { toDisplay, field, error } = await getWobjField(value);
-
   if (error) return next(error);
-  res.result = { status: 200, json: { toDisplay, field } };
-  next();
+
+  return res.status(200).json({ toDisplay, field });
 };
 
 const getWobjectsNearby = async (req, res, next) => {
@@ -339,8 +334,7 @@ const countWobjectsByArea = async (req, res, next) => {
   const { wobjects: wobjectCounts, error } = await countWobjsByArea(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectCounts };
-  next();
+  return res.status(200).json(wobjectCounts);
 };
 
 const related = async (req, res, next) => {
@@ -360,8 +354,8 @@ const related = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.result = { status: 200, json };
-  next();
+
+  return res.status(200).json(json);
 };
 
 const getMapObjectExperts = async (req, res, next) => {
@@ -440,8 +434,7 @@ const checkIfObjectExists = async (req, res, next) => {
   const { exist, error } = await checkIfWobjectExists(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { exist } };
-  next();
+  return res.status(200).json({ exist });
 };
 
 const getWobjectUpdates = async (req, res, next) => {
@@ -455,8 +448,7 @@ const getWobjectUpdates = async (req, res, next) => {
   const { fields, hasMore, error } = await getFields({ ...value, app: req.appData });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { fields, hasMore } };
-  next();
+  return res.status(200).json({ fields, hasMore });
 };
 
 const newsfeed = async (req, res, next) => {
@@ -478,11 +470,9 @@ const newsfeed = async (req, res, next) => {
   const { posts: wobjectPosts, error } = await getPostsByWobject({
     ...value, app: req.appData, newsFeed: true,
   });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectPosts };
-  next();
+  return res.status(200).json(wobjectPosts);
 };
 
 const getWobjectNames = async (req, res, next) => {
@@ -498,8 +488,7 @@ const getWobjectNames = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects } };
-  next();
+  return res.status(200).json({ wobjects });
 };
 
 const getWobjectOptions = async (req, res, next) => {
@@ -527,15 +516,13 @@ const getAuthorities = async (req, res, next) => {
   const { result, error } = await getWobjectAuthorities(req.params.authorPermlink);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getListItemsLocales = async (req, res, next) => {
   const result = await getListItemLocales(req.params);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getWobjectsByGroupId = async (req, res, next) => {
@@ -571,8 +558,7 @@ const recountList = async (req, res, next) => {
   const { result, error } = await recountListItems(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 const getListLinks = async (req, res, next) => {
@@ -591,8 +577,7 @@ const getListLinks = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getListLinksAuthority = async (req, res, next) => {
@@ -611,8 +596,7 @@ const getListLinksAuthority = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getListDepartments = async (req, res, next) => {
@@ -631,8 +615,7 @@ const getListDepartments = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getObjectsOnMap = async (req, res, next) => {
@@ -655,8 +638,7 @@ const getObjectsOnMap = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 const getObjectsLinksOnMap = async (req, res, next) => {
@@ -679,8 +661,7 @@ const getObjectsLinksOnMap = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result, hasMore } };
-  next();
+  return res.status(200).json({ result, hasMore });
 };
 
 const getRawField = async (req, res, next) => {
@@ -699,8 +680,7 @@ const getRawField = async (req, res, next) => {
   const { result, error } = await getOneField(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getAuthorPermlinkByIdType = async (req, res, next) => {
@@ -714,8 +694,7 @@ const getAuthorPermlinkByIdType = async (req, res, next) => {
 
   const result = await wobjectInfo.getAuthorPermlinkByIdType(value);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getAuthorPermlinkByFieldBody = async (req, res, next) => {
@@ -726,11 +705,9 @@ const getAuthorPermlinkByFieldBody = async (req, res, next) => {
   );
 
   if (!value) return;
-
   const result = await wobjectInfo.getAuthorPermlinkByFieldBody(value);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getMapObjectFromObjectLink = async (req, res, next) => {
@@ -747,8 +724,7 @@ const getMapObjectFromObjectLink = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 module.exports = {
