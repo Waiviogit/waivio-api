@@ -562,8 +562,6 @@ const recountList = async (req, res, next) => {
 };
 
 const getListLinks = async (req, res, next) => {
-  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-//  if (!validKey) return next();
   const value = validators.validate(
     req.body,
     validators.wobject.wobjectsRecountListItemsScheme,
@@ -581,8 +579,6 @@ const getListLinks = async (req, res, next) => {
 };
 
 const getListLinksAuthority = async (req, res, next) => {
-  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-//  if (!validKey) return next();
   const value = validators.validate(
     req.body,
     validators.wobject.wobjectsRecountListItemsScheme,
@@ -600,8 +596,6 @@ const getListLinksAuthority = async (req, res, next) => {
 };
 
 const getListDepartments = async (req, res, next) => {
-  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-//  if (!validKey) return next();
   const value = validators.validate(
     req.body,
     validators.wobject.wobjectsListDepartmentsScheme,

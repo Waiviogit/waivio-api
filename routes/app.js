@@ -23,7 +23,6 @@ appRoutes.route('/waiv/metrics')
   .get(reqTimeMonitor, AppController.waivMainMetrics);
 appRoutes.route('/waiv/swap-history')
   .get(reqTimeMonitor, AppController.swapHistory);
-
 appRoutes.route('/assistant')
   .post(reqTimeMonitor, AppController.assistant);
 appRoutes.route('/assistant/history/:id')

@@ -9,9 +9,8 @@ const contextMiddleware = (req, res, next) => {
 
       let appHost;
       const { origin, referer, device } = req.headers;
-      appHost = origin
-        ? origin.replace(REPLACE_ORIGIN, '')
-        : referer && referer.replace(REPLACE_REFERER, '');
+      if (origin) appHost = origin.replace(REPLACE_ORIGIN, '');
+      if (!origin && referer) appHost = referer.replace(REPLACE_REFERER, '');
 
       // for requests from SSR
       const serverHost = req.headers['app-host'];
