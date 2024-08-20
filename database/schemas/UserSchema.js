@@ -1,8 +1,8 @@
 /* eslint-disable func-names */
 const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
 const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
-const { getNamespace } = require('cls-hooked');
 const mongoose = require('mongoose');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 const { Schema } = mongoose;
 
@@ -163,9 +163,8 @@ UserSchema.pre('findOneAndUpdate', async function (next) {
 });
 
 UserSchema.pre('aggregate', function () {
-  const session = getNamespace('request-session');
-
-  if (!session.get('authorised_user')) {
+  const store = asyncLocalStorage.getStore();
+  if (!store.get('authorised_user')) {
     this.pipeline().push({ $project: { user_metadata: 0, 'auth.sessions': 0 } });
   }
 });

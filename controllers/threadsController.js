@@ -9,7 +9,7 @@ const byHashtag = async (req, res, next) => {
   if (!value) return;
   const { result, hasMore, error } = await threads.getThreads.byHashtag(value);
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 const byUser = async (req, res, next) => {
@@ -20,7 +20,7 @@ const byUser = async (req, res, next) => {
   if (!value) return;
   const { result, hasMore, error } = await threads.getThreads.byUser(value);
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 const hashtagsCount = async (req, res, next) => {
@@ -28,7 +28,7 @@ const hashtagsCount = async (req, res, next) => {
   if (!value) return;
   const { result, hasMore, error } = await threads.getHashtags.getTrendingHashTagsWithCount(value);
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 module.exports = {

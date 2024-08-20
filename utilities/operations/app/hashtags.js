@@ -1,6 +1,6 @@
-const { getNamespace } = require('cls-hooked');
 const { App, Wobj } = require('models');
 const _ = require('lodash');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 /**
  * Return hashtags of specified app
@@ -11,18 +11,20 @@ const _ = require('lodash');
  * @returns {Promise<{error: any}|{appError: *}|{wobjects: any, hasMore: any}>}
  */
 module.exports = async ({ name, skip, limit }) => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app, error: appError } = await App.findOne({ host });
   if (appError) return { appError };
-  const { result: wObjectsData, error } = await Wobj.find({
-    author_permlink: { $in: _.get(app, 'supported_hashtags', []) },
-    'status.title': { $nin: ['unavailable', 'relisted'] },
-  },
-  '',
-  { weight: -1 },
-  skip,
-  limit + 1);
+  const { result: wObjectsData, error } = await Wobj.find(
+    {
+      author_permlink: { $in: _.get(app, 'supported_hashtags', []) },
+      'status.title': { $nin: ['unavailable', 'relisted'] },
+    },
+    '',
+    { weight: -1 },
+    skip,
+    limit + 1,
+  );
   if (error) return { error };
   return {
     wobjects: wObjectsData.slice(0, limit),

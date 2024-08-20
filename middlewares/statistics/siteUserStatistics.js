@@ -3,7 +3,6 @@ const {
   URL, REDIS_KEYS, TTL_TIME,
 } = require('constants/common');
 const { isbot } = require('isbot');
-const { getNamespace } = require('cls-hooked');
 const config = require('config');
 const { redisSetter } = require('utilities/redis');
 const { App } = require('models');
@@ -12,6 +11,7 @@ const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
 const { REPLACE_ORIGIN } = require('../../constants/regExp');
+const asyncLocalStorage = require('../context/context');
 
 const setSiteActiveUser = async ({ userAgent, host, ip }) => {
   const bot = isbot(userAgent);
@@ -27,13 +27,13 @@ const setSiteActiveUser = async ({ userAgent, host, ip }) => {
 };
 
 const getHost = (req) => {
-  const session = getNamespace('request-session');
-  const originalHost = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const originalHost = store.get('host');
 
   let accessHost = req.headers['access-host'];
   if (accessHost) {
     accessHost = accessHost.replace(REPLACE_ORIGIN, '');
-    session.set('host', accessHost);
+    store.set('host', accessHost);
     return { originalHost, host: accessHost };
   }
 

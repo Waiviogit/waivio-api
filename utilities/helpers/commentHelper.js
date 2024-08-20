@@ -1,7 +1,7 @@
 const { postsUtil } = require('utilities/hiveApi');
 const { Comment, User, App } = require('models');
-const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 /**
  * Merge data between array of steemComments and dbComments
@@ -30,8 +30,10 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
     }
     return stComment;
   });
-  const authors = _.map(resComments,
-    (comment) => (comment.guestInfo ? comment.guestInfo.userId : comment.author));
+  const authors = _.map(
+    resComments,
+    (comment) => (comment.guestInfo ? comment.guestInfo.userId : comment.author),
+  );
   const { usersData } = await User.find({ condition: { name: { $in: authors } } });
   resComments = _.forEach(resComments, (comment) => {
     const authorName = comment.guestInfo ? comment.guestInfo.userId : comment.author;
@@ -40,8 +42,8 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
   });
   /** Check for moderator downvote */
   const filteredComments = [];
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app } = await App.findOne({ host });
   for (const comment of resComments) {
     if (!await this.checkBlackListedComment({ app, votes: comment.active_votes })) {
@@ -59,8 +61,8 @@ exports.mergeSteemCommentsWithDB = async ({ steemComments, dbComments }) => {
  * @returns {Promise<Array>} return array of db comments with all steem comment info
  */
 exports.mergeDbCommentsWithSteem = async ({ dbComments, steemComments }) => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app } = await App.findOne({ host });
 
   if (!steemComments || _.isEmpty(steemComments)) {

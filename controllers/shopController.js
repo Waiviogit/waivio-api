@@ -11,7 +11,7 @@ const getDepartments = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await shop.getShopDepartments(value);
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getFeed = async (req, res, next) => {
@@ -28,7 +28,7 @@ const getFeed = async (req, res, next) => {
     countryCode,
   });
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 const getFeedByDepartment = async (req, res, next) => {
@@ -54,7 +54,7 @@ const getFeedByDepartment = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json({ department, wobjects, hasMore });
+  return res.json({ department, wobjects, hasMore });
 };
 
 const getFilters = async (req, res, next) => {
@@ -62,7 +62,7 @@ const getFilters = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await shop.getShopFilters.getFilters(value);
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getMoreTags = async (req, res, next) => {
@@ -70,7 +70,7 @@ const getMoreTags = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await shop.getShopFilters.getMoreTagFilters(value);
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getUserDepartments = async (req, res, next) => {
@@ -81,7 +81,7 @@ const getUserDepartments = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getUserFeed = async (req, res, next) => {
@@ -99,7 +99,7 @@ const getUserFeed = async (req, res, next) => {
     countryCode,
   });
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 const getUserFeedByDepartment = async (req, res, next) => {
@@ -122,7 +122,7 @@ const getUserFeedByDepartment = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json({ department, wobjects, hasMore });
+  return res.json({ department, wobjects, hasMore });
 };
 
 const getUserFilters = async (req, res, next) => {
@@ -133,7 +133,7 @@ const getUserFilters = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getUserTags = async (req, res, next) => {
@@ -144,7 +144,7 @@ const getUserTags = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getWobjectDepartments = async (req, res, next) => {
@@ -155,7 +155,7 @@ const getWobjectDepartments = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getWobjectDepartmentFeed = async (req, res, next) => {
@@ -178,7 +178,7 @@ const getWobjectDepartmentFeed = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json({ department, wobjects, hasMore });
+  return res.json({ department, wobjects, hasMore });
 };
 
 const getWobjectMainFeed = async (req, res, next) => {
@@ -197,7 +197,7 @@ const getWobjectMainFeed = async (req, res, next) => {
   });
 
   if (error) return next(error);
-  res.json({ result, hasMore });
+  return res.json({ result, hasMore });
 };
 
 const restoreShopState = async (req, res, next) => {
@@ -209,7 +209,7 @@ const restoreShopState = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.json(result);
+  return res.json(result);
 };
 
 const getWobjectFilters = async (req, res, next) => {
@@ -217,7 +217,7 @@ const getWobjectFilters = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await shop.objectFilters.getObjectFilters(value);
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getWobjectTags = async (req, res, next) => {
@@ -225,7 +225,7 @@ const getWobjectTags = async (req, res, next) => {
   if (!value) return;
   const { result, error } = await shop.objectFilters.getMoreTagFilters(value);
   if (error) return next(error);
-  res.json(result);
+  return res.json(result);
 };
 
 const getAllReferences = async (req, res, next) => {
@@ -242,8 +242,7 @@ const getAllReferences = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getReferencesByType = async (req, res, next) => {
@@ -260,8 +259,7 @@ const getReferencesByType = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  return res.status(200).json({ wobjects, hasMore });
 };
 
 const getRelated = async (req, res, next) => {
@@ -278,8 +276,7 @@ const getRelated = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  return res.status(200).json({ wobjects, hasMore });
 };
 
 const getSimilar = async (req, res, next) => {
@@ -296,8 +293,7 @@ const getSimilar = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  return res.status(200).json({ wobjects, hasMore });
 };
 
 const getAddon = async (req, res, next) => {
@@ -314,8 +310,7 @@ const getAddon = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  return res.status(200).json({ wobjects, hasMore });
 };
 
 module.exports = {

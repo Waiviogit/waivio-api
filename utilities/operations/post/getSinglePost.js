@@ -1,12 +1,12 @@
 const {
   Post, Comment, App, hiddenPostModel, mutedUserModel,
 } = require('models');
-const { getPostObjects, mergePostData } = require('utilities/helpers/postHelper');
+const { getPostObjects } = require('utilities/helpers/postHelper');
 const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
 const engineOperations = require('utilities/hiveEngine/engineOperations');
 const { postsUtil } = require('utilities/hiveApi');
-const { getNamespace } = require('cls-hooked');
 const _ = require('lodash');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 /**
  * Return single post/comment of steem blockchain (if it exist).
@@ -23,8 +23,8 @@ const _ = require('lodash');
 module.exports = async ({ author, permlink, userName }) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
   const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
   const { result: app } = await App.findOne({ host });
   const { error, post: postResult } = await getPost({
     author, permlink, host, hiddenPosts, muted: _.map(muted, 'userName'),
