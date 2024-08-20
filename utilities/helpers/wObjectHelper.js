@@ -226,10 +226,8 @@ const arrayFieldPush = ({
 }) => {
   if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
   if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
-  if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
-    return true;
-  }
-  return false;
+
+  return !!(field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE);
 };
 
 const arrayFieldsSpecialSort = (a, b) => {
