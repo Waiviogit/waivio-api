@@ -149,13 +149,6 @@ const context = (processorName) => async (data) => {
 };
 
 const moderateObjects = async (data, req) => {
-  /*
-    First need to find app of current request, then correct scheme of
-    location wobjects data in response, and then moderate it if need
-
-    data locate on "res.result" => {status, json}
-    app locate on "res.headers.app"
-    */
   if (!req.appData) return data;
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
   if (!currentSchema) return data;
