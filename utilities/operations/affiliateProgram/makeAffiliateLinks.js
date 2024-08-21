@@ -114,7 +114,7 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [], countryCode 
       .replace('$productId', el.productId)
       .replace('$affiliateCode', affiliate.affiliateCode[1]);
 
-    acc.push({ link, image: affiliate.affiliateButton });
+    acc.push({ link, image: affiliate.affiliateButton, affiliateCode: affiliate.affiliateCode[1] });
     return acc;
   }, []);
 
