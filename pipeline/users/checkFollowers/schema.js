@@ -68,12 +68,6 @@ exports.schema = [
     case: 3,
     field_name: 'name',
   },
-  // {
-  //   path: '/user/:userName/feed',
-  //   method: 'POST',
-  //   case: 1,
-  //   field_name: 'author',
-  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',
