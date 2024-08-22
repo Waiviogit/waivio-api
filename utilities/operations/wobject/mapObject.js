@@ -427,7 +427,7 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
     },
   });
   if (!result?.length) return '';
-  if (result.length === 1) return result[0].author.permlink;
+  if (result.length === 1) return result[0].author_permlink;
 
   const responses = await Promise.all(
     result.map((el) => checkMapsForObject({ app, authorPermlink, check: el.author_permlink })),
