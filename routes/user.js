@@ -1,5 +1,7 @@
 const { Router } = require('express');
-const { UserController, draftController } = require('controllers');
+
+const UserController = require('../controllers/UserController');
+const DraftController = require('../controllers/draftController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const userRoutes = new Router();
@@ -82,8 +84,8 @@ userRoutes.route('/user/:account/guest-wallet').get(reqTimeMonitor, UserControll
 userRoutes.route('/user/:account/guest-balance').get(reqTimeMonitor, UserController.getGuestBalance);
 userRoutes.route('/user/:account/guest-mana').get(reqTimeMonitor, UserController.getGuestMana);
 // todo remove
-userRoutes.route('/user/:userName/draft').post(reqTimeMonitor, draftController.createOrUpdatePageDraft);
-userRoutes.route('/user/:userName/draft').get(reqTimeMonitor, draftController.getOnePageDraft);
+userRoutes.route('/user/:userName/draft').post(reqTimeMonitor, DraftController.createOrUpdatePageDraft);
+userRoutes.route('/user/:userName/draft').get(reqTimeMonitor, DraftController.getOnePageDraft);
 
 userRoutes.route('/user/:userName/affiliate').post(reqTimeMonitor, UserController.getAffiliate);
 userRoutes.route('/users/guest-wallet/hive-withdraw').post(reqTimeMonitor, UserController.guestWithdrawHive);

@@ -6,11 +6,6 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
-  // {
-  //   path: '/wobject/:authorPermlink',
-  //   method: 'GET',
-  //   case: 1,
-  // },
   {
     path: '/sites/map',
     method: 'POST',
@@ -82,12 +77,6 @@ exports.schema = [
     method: 'POST',
     case: 2,
   },
-  // {
-  //   path: '/user/:userName/feed',
-  //   method: 'POST',
-  //   case: 4,
-  //   wobjects_path: 'wobjects',
-  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',
@@ -128,12 +117,6 @@ exports.schema = [
     case: 6,
     wobjects_path: 'wobjects',
   },
-  // {
-  //   path: '/posts',
-  //   method: 'POST',
-  //   case: 4,
-  //   wobjects_path: 'wobjects',
-  // },
   {
     path: '/posts/getMany',
     method: 'POST',
