@@ -34,7 +34,7 @@ const getWobjWithFilters = async ({
     return { error: { status: 422, message: 'Filter or Sort param is not valid!' } };
   }
   // special filter map
-  if (filter && filter.map) {
+  if (filter?.map) {
     aggregationPipeline.push({
       $geoNear: {
         near: { type: 'Point', coordinates: [filter.map.coordinates[1], filter.map.coordinates[0]] },
@@ -47,11 +47,15 @@ const getWobjWithFilters = async ({
     delete filter.map;
   }
   // special filter searchString
-  if (_.get(filter, 'searchString')) {
+  if (filter?.searchString) {
+    const searchString = filter.searchString
+      .replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '')
+      .trim();
+
     aggregationPipeline.push({
       $match: {
         $or: [
-          { $text: { $search: `\"${filter.searchString}\"` } },
+          { $text: { $search: `\"${searchString}\"` } },
           { // if 4-th symbol is "-" - search by "author_permlink" too
             author_permlink: { $regex: `${_.get(filter.searchString, '[3]') === '-' ? `^${filter.searchString}` : '_'}`, $options: 'i' },
           },
