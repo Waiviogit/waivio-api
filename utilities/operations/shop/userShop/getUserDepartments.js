@@ -1,7 +1,7 @@
 const {
   Wobj,
 } = require('models');
-const { REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES } = require('constants/wobjectsData');
+const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
 const _ = require('lodash');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const shopHelper = require('utilities/helpers/shopHelper');
@@ -9,16 +9,17 @@ const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const { CACHE_KEY, TTL_TIME } = require('constants/common');
 
-exports.getTopDepartments = async ({
+const getTopDepartments = async ({
   userName,
   name,
   excluded,
   path,
   app,
   userFilter,
+  schema,
 }) => {
   const key = `${CACHE_KEY.USER_SHOP_DEPARTMENTS}:${getCacheKey({
-    userName, name, host: app.host, path, excluded,
+    userName, name, host: app.host, path, excluded, schema,
   })}`;
   const cache = await getCachedData(key);
   if (cache) {
@@ -27,10 +28,12 @@ exports.getTopDepartments = async ({
 
   if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
 
+  const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
+
   const { result } = await Wobj.findObjects({
     filter: {
       ...userFilter,
-      object_type: { $in: SHOP_OBJECT_TYPES },
+      ...objectTypeCondition,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
     },
     projection: { departments: 1, metaGroupId: 1 },
@@ -80,4 +83,8 @@ exports.getTopDepartments = async ({
   });
 
   return { result: orderedDepartments };
+};
+
+module.exports = {
+  getTopDepartments,
 };

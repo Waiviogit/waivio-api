@@ -48,6 +48,7 @@ module.exports = async ({
   follower,
   path,
   userFilter,
+  schema,
 }) => {
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
@@ -58,13 +59,14 @@ module.exports = async ({
   const departmentCondition = await getUserDepartmentCondition({
     department, path, userName, userFilter, app,
   });
+  const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
         ...departmentCondition,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        object_type: { $in: SHOP_OBJECT_TYPES },
+        ...objectTypeCondition,
         $and: [
           userFilter,
           shopHelper.makeFilterCondition(filter),
