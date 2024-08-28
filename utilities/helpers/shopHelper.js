@@ -7,6 +7,7 @@ const {
 } = require('models');
 const { OTHERS_DEPARTMENT } = require('constants/departments');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const { SHOP_SCHEMA } = require('constants/shop');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 const { checkForSocialSite } = require('./sitesHelper');
@@ -388,6 +389,15 @@ const getUserFilter = async ({
   };
 };
 
+const objectTypesToSearch = {
+  [SHOP_SCHEMA.SHOP]: { object_type: { $in: SHOP_OBJECT_TYPES } },
+  [SHOP_SCHEMA.RECIPE]: { object_type: OBJECT_TYPES.RECIPE },
+  default: { object_type: { $in: SHOP_OBJECT_TYPES } },
+};
+
+const getObjectTypeCondition = (schema) => objectTypesToSearch[schema]
+  || objectTypesToSearch.default;
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -403,4 +413,5 @@ module.exports = {
   getMoreTagsForCategory,
   getUserFilter,
   omitRelated,
+  getObjectTypeCondition,
 };
