@@ -1,32 +1,53 @@
 const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const {
-  expect, dropDatabase, sinon, faker,
+  expect, dropDatabase, sinon, faker, dropRedisDb,
 } = require('test/testHelper');
 const {
   AppFactory, ObjectFactory,
 } = require('test/factories');
-const { getNamespace } = require('cls-hooked');
 const { STATUSES } = require('constants/sitesConstants');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { COUNTRY_TO_CONTINENT, GLOBAL_GEOGRAPHY } = require('constants/affiliateData');
+const rewire = require('rewire');
 const {
-  createFieldsForAffiliate, createAffiliateGeoArea, createAffiliateCode, createAffiliateUrlTemplate, createAffiliateProductIdTypes,
+  createFieldsForAffiliate,
+  createAffiliateGeoArea,
+  createAffiliateCode,
+  createAffiliateUrlTemplate,
+  createAffiliateProductIdTypes,
 } = require('../helper');
+const redis = require('../../../../utilities/redis/redis');
+const asyncLocalStorage = require('../../../../middlewares/context/context');
+
+const myModule = rewire('utilities/operations/affiliateProgram/makeAffiliateLinks');
+const getAffiliateCode = myModule.__get__('getAffiliateCode');
 
 describe('On affiliate program', async () => {
-  let currentApp, session, result;
+  let currentApp, result, storeStub;
+
+  before(async () => {
+    await redis.setupRedisConnections();
+  });
+
   beforeEach(async () => {
     await dropDatabase();
     currentApp = await AppFactory.Create({
       status: STATUSES.ACTIVE,
       host: 'waiviotest.com',
     });
-    session = getNamespace('request-session');
-    sinon.stub(session, 'get').returns(currentApp.host);
+
+    asyncLocalStorage.run(new Map(), () => {
+      const store = asyncLocalStorage.getStore();
+      store.set('host', currentApp.host);
+
+      storeStub = sinon.stub(asyncLocalStorage, 'getStore').returns(store);
+    });
   });
-  afterEach(() => {
+  afterEach(async () => {
     sinon.restore();
+    storeStub.restore();
+    await dropRedisDb();
   });
 
   describe('Process Affiliate App', async () => {
@@ -38,7 +59,7 @@ describe('On affiliate program', async () => {
       await ObjectFactory.Create({
         fields: [
           ...createFieldsForAffiliate(),
-          createAffiliateGeoArea({ body: 'EUROPE'}),
+          createAffiliateGeoArea({ body: 'EUROPE' }),
         ],
         objectType: OBJECT_TYPES.AFFILIATE,
       });
@@ -105,6 +126,7 @@ describe('On affiliate program', async () => {
           createAffiliateCode({
             body: JSON.stringify([currentApp.host, affiliateCode]),
             weight: 100,
+            creator: currentApp.owner,
           }),
           createAffiliateUrlTemplate({
             body: template,
@@ -150,6 +172,73 @@ describe('On affiliate program', async () => {
       });
 
       expect(result[0].link).to.be.eq(expectedLink);
+    });
+  });
+
+  describe('getAffiliateCode Function Tests', () => {
+    it('should return an empty string for an empty array', () => {
+      expect(getAffiliateCode([])).to.equal('');
+    });
+
+    it('should return an empty string for an array with fewer than two elements', () => {
+      expect(getAffiliateCode(['onlyone'])).to.equal('');
+    });
+
+    it('should return the second element if array length is exactly 2', () => {
+      expect(getAffiliateCode(['first', 'second'])).to.equal('second');
+    });
+
+    it('should handle valid input with proper chance distribution', () => {
+      const input = ['luxitasolutions.com', 'luxitasolutions::30', 'test::70'];
+      const counts = { luxitasolutions: 0, test: 0 };
+      const runs = 10000;
+
+      for (let i = 0; i < runs; i++) {
+        const result = getAffiliateCode(input);
+        if (result in counts) counts[result]++;
+      }
+
+      const luxitasPercentage = (counts.luxitasolutions / runs) * 100;
+      const testPercentage = (counts.test / runs) * 100;
+
+      // Allowing a margin of error due to randomness
+      expect(luxitasPercentage).to.be.closeTo(30, 2);
+      expect(testPercentage).to.be.closeTo(70, 2);
+    });
+
+    it('should return an empty string for invalid input (non-numeric chance)', () => {
+      const input = ['luxitasolutions.com', 'luxitasolutions::abc', 'test::70'];
+      expect(getAffiliateCode(input)).to.equal('');
+    });
+
+    it('should return an empty string if any chance is negative', () => {
+      const input = ['luxitasolutions.com', 'luxitasolutions::-10', 'test::110'];
+      expect(getAffiliateCode(input)).to.equal('');
+    });
+
+    it('should correctly use provided chances when they sum to 100', () => {
+      const input = ['luxitasolutions.com', 'luxitasolutions::30', 'test::50', 'extra::20'];
+      const counts = { luxitasolutions: 0, test: 0, extra: 0 };
+      const runs = 10000;
+
+      for (let i = 0; i < runs; i++) {
+        const result = getAffiliateCode(input);
+        if (result in counts) counts[result]++;
+      }
+
+      const luxitasPercentage = (counts.luxitasolutions / runs) * 100;
+      const testPercentage = (counts.test / runs) * 100;
+      const extraPercentage = (counts.extra / runs) * 100;
+
+      // Allowing a margin of error due to randomness
+      expect(luxitasPercentage).to.be.closeTo(30, 1);
+      expect(testPercentage).to.be.closeTo(50, 1);
+      expect(extraPercentage).to.be.closeTo(20, 1);
+    });
+
+    it('should return an empty string if all chances sum to zero', () => {
+      const input = ['luxitasolutions.com', 'luxitasolutions::0', 'test::0'];
+      expect(getAffiliateCode(input)).to.equal('');
     });
   });
 });
