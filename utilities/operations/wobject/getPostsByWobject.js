@@ -162,7 +162,8 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
       const link = makeSocialLink(parsedConditionKey, id);
-      conditionArr.push({ links: { $regex: `^${link}` } });
+      // conditionArr.push({ links: { $regex: `^${link}` } });
+      conditionArr.push({ links: link });
     }
   }
   if (!conditionArr?.length) return { condition };
