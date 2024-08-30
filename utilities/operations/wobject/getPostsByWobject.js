@@ -6,7 +6,6 @@ const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('con
 const { TOKEN } = require('constants/common');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
-const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 const getRelistedLinks = async (authorPermlink) => {
@@ -44,6 +43,7 @@ module.exports = async (data) => {
       FIELDS_NAMES.PIN,
       FIELDS_NAMES.REMOVE,
       FIELDS_NAMES.WALLET_ADDRESS,
+      FIELDS_NAMES.LINK,
     ],
     returnArray: false,
     app: data.app,
