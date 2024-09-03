@@ -1,0 +1,446 @@
+# User profile
+The User Profile section is a comprehensive overview of a user's identity and activities on the platform. It includes key elements such as the profile header with visual and financial details, a left sidebar with personal information and financial metrics, and a navigation menu for accessing various tabs. These tabs cover posts, threads, comments, mentions, and activity, along with sections for managing the user's shop, favorites, map, and wallet. This section serves as a central hub for users to view and manage their personal details, contributions, and financial transactions.
+![Image](https://github.com/user-attachments/assets/30222e22-02a1-430c-b4c7-591abe9ea954)
+
+## User Profile Header
+The header contains the Cover Picture, Avatar, Service Name, Total Payout, Edit Profile Button, Username, and User's Level:
+- **Cover Picture**: A background image in the user's profile header. Size limit: ≤ 30 MB (JPG, GIF, or PNG)
+- **Avatar**: An image uploaded via a link on the Edit Profile page, serving as the main photo of the user's profile. Size limit: ≤ 30 MB (JPG, GIF, or PNG)
+- **Service Name**: The user's name, entered in the Name Field on the Edit Profile page.
+- **Total Payout**: The total amount of payouts, in USD, for all related posts, excluding bots and like services (Also serves as a measure of user expertise).
+- **Edit Profile Button**: Allows the user to navigate to the Edit Profile page to update their profile information.
+- **Username**: The name entered during the registration of the user's account.
+- **User's Level**: A system that tracks the user's level based on their activity on the platform. User's Level: 1. Plankton; 2. Minnow; 3. Whale; 4. Dolphin; 5. Orca.
+![image](https://github.com/user-attachments/assets/62bcd95b-4b0d-4d47-aa4c-5f758be45939)
+
+## User Left Sidebar
+Contains basic information about the user in the left sidebar:
+- **About Me**: Information "About Me," provided at the user's discretion and entered on the profile page.
+- **Location**: The user's current location, entered on the profile page.
+- **Website**: A link to any website, provided at the user's discretion and entered on the profile page.
+- **Email**: The user's email information.
+- **Joined**: Displays the user's registration date on the platform in the format: Joined {Month} {Date} {Year}.
+- **Expertise**: The total amount of payouts, in USD, for all related posts, excluding bots and like services. (Also serves as a measure of user expertise.)
+- **Active**: Information about the user's last activity.
+- **Vote Value**: The value of the user's vote (in USD or user currency) based on their balance and the current exchange rate. It is the sum of the WAIV token vote value and HIVE.
+- **Wallets**: The user's wallets include HIVE, HBD, Bitcoin, Litecoin, Ethereum, and Lightning Bitcoin. After clicking, a modal window with the address and QR code is displayed. ![image](https://github.com/user-attachments/assets/1d243d90-558b-4256-8970-ff1f70b2469a)
+- **WAIV Token**: The WAIV token section displays information about the WAIV token. This includes:
+  - **Upvoting Mana**: A 100% indicator that depends on the power-up of the token. It shows how many votes a user can make. The more staked (powered up), the slower the voting power is depleted.
+  - **Downvoting Mana**: Indicates how many downvotes a user can make (used to flag posts on Waivio).
+  - **WAIV Vote**: The value of the vote in the user's currency (e.g., USD). The more staked (powered up), the higher the vote value.
+- **HIVE Token**: The HIVE token section displays information about the HIVE token. This includes:
+  - **Upvoting Mana**: Indicates the percentage of voting power available for upvoting.
+  - **Downvoting Mana**: Indicates the percentage of voting power available for downvoting.
+  - **Resource Credits**: Shows the available resource credits for performing various actions on the platform.
+  - **HIVE Vote**: The value of the vote in the user's currency (e.g., USD).
+![image](https://github.com/user-attachments/assets/46e890e7-9b96-44ce-a908-37656dd502b4)
+
+
+# User Profile Navigation Menu
+The user profile includes a navigation menu with the following sections and sub-items:
+- **Posts**: Posts, Threads, Comments, Mentions, Activity.
+- **Shop**
+- **Favorites**
+- **Map**
+- **Wallet**: WAIV, HIVE, Hive Engine, Rebalancing.
+- **Followers**: Followers, Following, Objects.
+- **Expertise**: Hashtags, Objects.
+![image](https://github.com/user-attachments/assets/f6c855f6-e5c5-41f1-ab5e-7cca90ee3ebe)
+
+
+# User profile: Posts
+The Posts tab in the user profile displays the user's posts.
+The right sidebar includes a Filter Posts section, where users can filter posts by tags.
+![image](https://github.com/user-attachments/assets/e80d06ec-3bc0-465f-8f6e-b7a1576d09ff)
+
+# User profile: Threads
+ The **Threads** on user profile page displays threads that the user has written, as well as threads that other users have addressed to the user.
+Elements description:
+**`Write threads`** - A field for entering and publishing thread posts.
+**`Threads feed`** - A feed featuring threads, resembling comments but without the app and reblog buttons. When a thread is clicked, it opens in a modal window view.
+**`Right sidebar`** - Contains the "Expertise" section.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/d311e673-200a-4055-8bdd-5ebab18cf401)
+
+Edit thread:
+Threads can be edited in the feed. After clicking on the three dots button, there will be an option 'Edit thread,' and a "small" editor will appear.
+![image](https://github.com/user-attachments/assets/0c092ec0-f4d5-4851-a1ca-b73929da26a4) ![image](https://github.com/user-attachments/assets/5162875d-d3e8-40e8-98f7-8543f2202a1c)
+Threads can be edited in the post modal window mode and full-screen. After clicking on the three dots button, there will be an option 'Edit thread,' and a "comments" editor will appear.
+![image](https://github.com/user-attachments/assets/0d83dcce-4d08-4e5f-95a8-4106c7f42d97) 
+![image](https://github.com/user-attachments/assets/a618dd7c-0eeb-485a-b0f4-92675696a30b)
+
+# User profile: Comments
+The Comments tab in the user profile displays the user's comments.
+![image](https://github.com/user-attachments/assets/049bf428-4cf0-4477-ada0-bb949e1e359d)
+
+# User profile: Mentions
+The Mentions tab in the user profile displays posts where the user has been mentioned.
+![image](https://github.com/user-attachments/assets/1a27c808-5bc0-480c-90dd-fab8fe5dcd55)
+
+# User profile: Activity
+The Activity tab in the user profile displays records of actions that the user has performed and that have been recorded on the blockchain.
+The right sidebar includes a Filter Activities section, where users can filter records by specific actions: General (Upvoted, Downvoted, Unvoted, Followed, Unfollowed, Replied to, Reblogged), Finance (Powered up, Received from, Transferred to, Savings), Rewards (Author reward, 
+ Curation reward, Claim rewards).
+![image](https://github.com/user-attachments/assets/bb5ccc7b-793d-4f5f-b581-274d70f77f8f)
+
+# User profile: Shop
+The Shop section in the user profile includes objects linked in posts, as well as those to which the user has claimed authority. All claimed objects (marked with a heart) are displayed here, allowing users to create their own shop.
+This section includes:
+* Left Sidebar: A department list.
+* Main Feed: A list of three object cards for the main departments. After clicking on a department, it will display nested departments and objects.
+* Right Sidebar: Filters to sort the shop list by Ratings, Tags, and Categories.
+![image](https://user-images.githubusercontent.com/67378322/235594204-6672c677-c57a-45d7-b1b5-4fb238486776.png)
+
+# User profile: Favorites
+**Favorites** is a page where all objects that the user has marked with a heart (indicating administrative authority) are displayed by type. Users can add hearts (administrative authority) to any object type. Favorites are displayed in the user profile and are available to both full Hive accounts and guests. The Favorites left sidebar is sorted by items within each object type category.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/6adc8dea-8d21-4a9e-bdcf-fe0dfd1cb3a6)
+Favorites page details:
+- Favorites left sidebar: Title: "Favorites." Contains a list of tabs with object types. There is no hashtag category. The list is sorted by the number of items in each category, from largest to smallest.
+- Feed: Displays object cards for each category.
+- Right sidebar: Contains the "Expertise" block.
+There is an additional setting for Favorites in Settings which allows user to manage your public favorites list in your profile. By default, the Favorites section displays objects linked from your posts (or first-level comments). However, you can choose not to show these objects by selecting the checkbox "Do not show objects linked in posts" in the Favorites section of the settings.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/32b0e8cc-beeb-4e81-a8eb-607170365c51)
+On object cards, there is a heart icon that allows users to add or remove items from their favorites. A hint is displayed based on the heart's status:
+- "Add to favorites" – if the heart is not active.
+- "Remove from favorites" – if the heart is active.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/86382157-92c7-491f-9aa2-53fd2f6215a2)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/47ae3d3b-df2c-4759-a855-fbffd3cab63f)
+
+# User profile: Map
+The Map section in the user profile displays all favorite (hearted) objects that have a map field, such as businesses, restaurants, etc. The main page content features a map with these objects, and the left sidebar shows object cards corresponding to the locations on the map.
+![image](https://github.com/user-attachments/assets/5c1d2022-a0f9-438c-81b3-0732b3eebb79)
+
+# User profile: Wallet
+Main action in wallet: Transfer, Power up, power down, manage delegation, claim rewards, swap, deposit, withdraw.
+![image](https://user-images.githubusercontent.com/67378322/155954042-5418f09c-5642-4414-bfb4-718002bf4dc8.png)
+
+# User profile: Wallet / Transfer 
+The transfer functionality allows users to send money to one another. When a user clicks the "Transfer" button, a "Transfer Funds" modal window opens.
+### Transfer Modal Window Components:
+- **Title:** "Transfer Funds"
+- **Close Button:** A cross icon to close the modal window.
+- **To Field:** A search field to find a user. 
+  - **Placeholder:** "Find users"
+  - After selecting a user, a button to clear the selection appears.
+- **Amount Field:** A field where the user enters the amount they want to send.
+- **Currency Drop-Down:** A drop-down menu to select the currency to send. 
+  - The menu displays currencies that the user has, sorted as follows:
+    - The first three currencies are WAIV, HIVE, and HBD.
+    - The rest are sorted by price, with currencies having a balance of 0 sorted alphabetically.
+  - If the user clicks the "Transfer" button from the Waiv wallet tab, WAIV is selected by default. If clicked from the Hive or Hive Engine wallet, HIVE is selected by default.
+  - Changing the currency updates the displayed balance accordingly.
+- **Balance Display:** Shows the user's balance for the selected currency.
+  - **Format:** "Your balance: {amount} {currency}"
+  - The balance amount is clickable, automatically populating the amount field with the maximum available balance. The cursor changes to a pointer when hovering over the balance.
+- **Estimated Value:** Shows the estimated transaction value in USD.
+  - **Format:** "Estimated transaction value: {number} USD"
+- **Memo Field:** An optional textarea to leave a comment for the transaction.
+  - **Placeholder:** "Additional message to include in this payment"
+- **Note:** A message informing the user that clicking the button below will redirect them to HiveSigner to complete the transaction.
+- **Continue Button:** Clicking "Continue" redirects the user to HiveSigner.
+- **Cancel Button:** Clicking "Cancel" cancels the transaction and closes the modal window.
+### Hover and Error Messages:
+- The following fields are highlighted in orange when hovered over: "To", "Amount", "Currency", and "Memo".
+- Error messages:
+  - "Amount has to be higher than 0."
+  - "Amount is required."
+  - "Insufficient funds."
+![image](https://github.com/user-attachments/assets/2de1111a-15be-4ebb-b463-dda943b4f011)
+
+# User profile: Wallet / Power Up
+The power-up functionality allows users to stake liquid tokens for themselves. When a user clicks the "Power Up" button, a "Power Up" modal window opens.
+### Power Up Modal Window Components:
+- **Title:** "Power Up"
+- **Close Button:** A cross icon to close the modal window.
+- **Amount Field:** A field where the user enters the amount they want to stake.
+- **Max Button:** A button to set the maximum amount the user can stake.
+- **Currency Drop-Down:** A drop-down menu to select the currency to stake.
+  - The menu displays currencies that the user has, sorted as follows:
+    - The first two currencies are WAIV and HIVE.
+    - The rest are sorted by price.
+    - Currencies with a balance of 0 are not shown.
+  - If the user clicks the "Power Up" button from the Waiv wallet tab, WAIV is selected by default. If clicked from the Hive or Hive Engine wallet, HIVE is selected by default.
+  - Changing the currency updates the displayed balance accordingly.
+- **Balance Display:** Shows the user's balance for the selected currency.
+  - **Format:** "Your balance: {amount} {currency}"
+  - The balance amount is clickable, automatically populating the amount field with the maximum available balance. The cursor changes to a pointer when hovering over the balance.
+- **Notice:** Information about the staking and unstaking process:
+  - "Please note that Power Up (staking) is instant, while Power Down (unstaking) takes time:
+    - 4 weeks for Waiv Power (WP);
+    - 13 weeks for Hive Power (HP).
+  - Staked funds are released each week for the specified period in equal amounts."
+- **Note:** A message informing the user that clicking the button below will redirect them to HiveSigner to complete the transaction.
+- **Continue Button:** Clicking "Continue" redirects the user to HiveSigner.
+- **Cancel Button:** Clicking "Cancel" cancels the transaction and closes the modal window.
+### Error Messages:
+- "Amount has to be higher than 0."
+- "Amount is required."
+- "Insufficient funds."
+![image](https://github.com/user-attachments/assets/054654e7-3fa9-419f-af40-aac097bc2848)
+
+# User profile: Wallet / Power Down
+The power-down functionality allows users to unstake their tokens. When a user clicks the "Power Down" button, a "Power Down" modal window opens.
+### Power Down Modal Window Components:
+- **Title:** "Power Down"
+- **Close Button:** A cross icon to close the modal window.
+- **Amount Field:** A field where the user enters the amount they want to unstake.
+- **Max Button:** A button to set the maximum amount the user can unstake.
+- **Currency Drop-Down:** A drop-down menu to select the currency to unstake.
+  - The menu displays currencies that the user has, sorted as follows:
+    - The first three currencies are WP and HIVE.
+    - The rest are sorted by price.
+    - Currencies with a balance of 0 are not shown.
+  - If the user clicks the "Power Down" button from the Waiv wallet tab, WP is selected by default. If clicked from the Hive or Hive Engine wallet, HP is selected by default.
+  - Changing the currency updates the displayed balance accordingly.
+- **Balance Display:** Shows the user's balance for the selected currency.
+  - **Format:** "Your balance: {amount} {currency}"
+  - The balance amount is clickable, automatically populating the amount field with the maximum available balance. The cursor changes to a pointer when hovering over the balance.
+- **Notice:** Information about the staking and unstaking process:
+  - "Please note that Power Up (staking) is instant, while Power Down (unstaking) takes time:
+    - 4 weeks for Waiv Power (WP);
+    - 13 weeks for Hive Power (HP).
+  - Staked funds are released each week for the specified period in equal amounts."
+- **Note:** A message informing the user that clicking the button below will redirect them to HiveSigner to complete the transaction.
+- **Continue Button:** Clicking "Continue" redirects the user to HiveSigner.
+- **Cancel Button:** Clicking "Cancel" cancels the transaction and closes the modal window.
+### Error Messages:
+- "Amount has to be higher than 0."
+- "Amount is required."
+- "Insufficient funds."
+![image](https://github.com/user-attachments/assets/72442558-726b-4db8-91f4-a434962f707b)
+
+# User profile: Wallet / Manage Delegations
+The "Manage Delegations" functionality allows users to delegate their staked tokens to another user. Upon clicking the "Manage Delegations" button, a "Manage Delegations" modal window opens.
+### Manage Delegations Modal Window Components:
+- **Title:** "Manage Delegations"
+- **Close Button:** A cross icon to close the modal window.
+- **Token Information:** Displays information about the specific token.
+  - **Format:** "Token: {token}"
+- **Available Voting Power:** Displays the available voting power for delegations.
+  - **Format:** "Available voting power for delegations: {price} {token}P"
+- **User List:** A list of users who have received delegations from the authorized user. Each entry includes:
+  - User avatar
+  - Username
+  - Delegation amount (displayed in orange)
+  - Edit button to modify the delegation
+- **Edit Button:** Opens the "Edit Delegation" modal window.
+- **Delegate Button:** Opens the "Delegate" modal window.
+![image](https://github.com/user-attachments/assets/f1ecca53-092d-4743-8685-4ddedd4505fe)
+
+### Delegate Modal Window Components:
+- **Title:** "Delegate"
+- **Notice:** Information about the delegation process.
+  - "Please enter the name of the account that you wish to delegate a portion of your voting power to."
+- **Target Account Field:** A field to search for the user to delegate to.
+  - **Placeholder:** "Find users"
+- **Amount Field:** A field to enter the amount to delegate.
+- **Max Button:** A button to set the maximum amount the user can delegate.
+- **Currency Drop-Down:** A drop-down menu to select the currency for delegation.
+  - Displays available currencies, sorted as follows:
+    - The first two currencies are WAIV and HIVE.
+    - The rest are sorted by price.
+    - Currencies with a balance of 0 are not shown unless a delegation exists. In such cases, the delegation is displayed, but the "Delegate" button is disabled.
+- **Balance Display:** Shows the user's balance for the selected currency.
+  - **Format:** "Your balance: {amount} {currency}"
+  - The balance amount is clickable, automatically populating the amount field with the maximum available balance. The cursor changes to a pointer when hovering over the balance.
+- **Estimated Value:** Displays the estimated value of the delegation.
+  - **Format:** "Est. amount: {NUMBER} {userCurrency (USD / CAD / ...)}"
+- **Notes:** Information about the delegation process.
+  - "Please note that delegations are instant, but it will take 7 days for the amount to be returned to your account after undelegation."
+  - "Click the button below to be redirected to HiveSigner to complete your transaction."
+- **Delegate Button:** Clicking this button redirects the user to HiveSigner. The button is inactive if the user or amount fields are empty.
+- **Cancel Button:** Cancels the transaction and closes the modal window.
+![image](https://github.com/user-attachments/assets/82cc1107-7441-4547-9779-67e39dce265a)
+
+### Edit Delegation Modal Window Components:
+- **Title:** "Edit Delegation"
+- **Notice:** Information about the delegation process.
+  - "Please enter the name of the account that you wish to delegate a portion of your voting power to."
+- **User Card:** Displays the selected user's avatar and name. The user cannot choose another account.
+- **Amount Field:** A field to enter the new amount to delegate.
+- **Max Button:** A button to set the maximum amount the user can delegate.
+- **Currency Drop-Down:** A drop-down menu to select the currency for delegation, with the same sorting and display rules as in the Delegate modal.
+- **Balance Display:** Shows the user's balance for the selected currency, similar to the Delegate modal.
+- **Estimated Value:** Displays the estimated value of the delegation.
+- **Notes:** Information about the delegation process.
+  - "Please note that delegations are instant, but it will take 7 days for the amount to be returned to your account after undelegation."
+  - "Click the button below to be redirected to HiveSigner to complete your transaction."
+- **Submit Button:** Clicking this button redirects the user to HiveSigner. The button is inactive if the amount field is empty.
+- **Cancel Button:** Cancels the action and closes the modal window.
+- **Delegation Note:** Provides information on how to remove the delegation.
+  - "To remove delegation, click undelegate."
+- **Undelegate Button:** Allows the user to undelegate (return the delegation to the authorized user).
+![image](https://github.com/user-attachments/assets/37961ffc-b8ca-451c-9183-cfc5a5d058a0)
+
+### Additional Information about Manage Delegations:
+- **Undelegation:**
+  - When a user undelegates Hive, a transaction with 0 vest is sent.
+  - When a user undelegates Hive Engine tokens, all delegated amounts are returned. Hive Engine also allows partial undelegation.
+- **Editing Delegation:**
+  - For Hive tokens, editing the delegation replaces the previous amount with the new amount (combines undelegation and new delegation). Example: If the original amount was 1 and the new amount is 2, the total delegation becomes 2.
+  - For Hive Engine tokens, the new amount is added to the previous delegation. Example: If the original amount was 1 and the new amount is 2, the total delegation becomes 3.
+
+# User profile: Wallet / Claim Rewards
+The "Claim Rewards" functionality allows users to add the rewards they have earned to their general balance. 
+### How It Works:
+- **Button:** Users click the "Claim Rewards" button to initiate the process.
+- **Purpose:** This action transfers the rewards that the user has accumulated into their general balance, making the funds available for use.
+- **Applicable Token:** This functionality is specifically for the HIVE token. For WAIV, rewards are automatically credited without requiring manual claiming.
+![image](https://user-images.githubusercontent.com/67378322/156128961-05328b99-8f26-4815-b474-b499485716a4.png)
+
+# User profile: Wallet / Swap
+The "Swap" functionality allows users to exchange one token for another.
+### How It Works:
+- **Button:** Users initiate the token exchange process by clicking the "Swap" button.
+- **Modal Window:** Upon clicking, a "Swap Tokens" modal window opens, where users can specify the tokens they wish to swap and configure the transaction details.
+### Swap Tokens Modal Window Components:
+- **Title:** "Swap Tokens"
+- **Close Button:** A cross icon to close the modal window.
+- **From Field:** An input field where users enter the amount they want to swap.
+- **To Field:** Displays the amount of tokens the user will receive after the swap.
+- **Max Button:** A button that sets the maximum amount the user can swap.
+- **Amount Field:** Another input field for users to enter the amount they wish to swap.
+- **Currency Drop-Down:** A drop-down menu to select the currency the user wants to send. It displays the currencies that the user has, with "WAIV -> SWAP.HIVE" set by default. If the user selects a currency in the "From" field, the "To" field and the "Your balance" field are cleared.
+- **Arrow Button:** A button to swap the positions of the selected currencies in the "From" and "To" fields.
+- **Balance Display:** Shows the user's balance for the chosen currency.
+  - **Format:** "Your balance: {amount} {currency}"
+  - The balance amount is clickable, automatically populating the amount field with the maximum available balance. The cursor changes to a pointer when hovering over the balance.
+- **Estimated Value:** Displays the estimated value of the transaction in USD.
+  - **Format:** "Estimated transaction value: {number} USD"
+- **Estimated Price Impact:** Shows the estimated impact of the transaction on the exchange rate.
+  - **Format:** "Estimated price impact: {number}%"
+- **Price Impact Slider:** Allows users to set the maximum price impact they are willing to accept for the transaction. The slider options are:
+  - 0.5%, 1%, 5%, 10%, 25%, 49%
+  - The slider's position depends on the estimated price impact.
+- **Impact Note:** Informs users that large transactions may affect the exchange rate. If the impact exceeds the selected value, the transaction will be canceled.
+- **Note:** Provides instructions for completing the transaction via HiveSigner.
+  - "Click the button below to be redirected to HiveSigner to complete your transaction."
+- **Submit Button:** Redirects the user to HiveSigner to complete the transaction.
+- **Cancel Button:** Cancels the transaction and closes the modal window.
+![image](https://github.com/user-attachments/assets/38b957ad-d5e5-4588-8fab-7fb5791f51d4)
+
+# User profile: Wallet / Deposit
+The "Deposit" functionality provides instructions for bringing tokens into the Hive or Hive-Engine system.
+![image](https://user-images.githubusercontent.com/67378322/156137938-1b6dab04-86fd-48c0-9d87-3145699420b5.png)
+### How It Works:
+- **Button:** Users click the "Deposit" button to start the deposit process.
+- **Modal Window:** Upon clicking, a "Deposit" modal window opens, providing step-by-step instructions for depositing tokens.
+### Deposit Modal Window Components:
+- **Title:** "Deposit"
+- **Info:** 
+  - Explanation that all crypto deposits are processed by Hive-Engine.com.
+  - Upon depositing, the user will receive an equivalent amount of the SWAP version of the deposited token, which can be exchanged on the Hive-Engine blockchain.
+  - A 0.75% fee is applied to deposits (with a minimum fee of 0.001 for HIVE).
+  - Users are also informed about the standard network fees when sending cryptocurrencies.
+- **Step 1: Select the Crypto Token to Deposit**
+  - **Token Dropdown:** A drop-down menu with a placeholder "Select the crypto token" where users can choose the token they wish to deposit.
+- **Step 2: Follow the Deposit Instructions**
+  - Before selecting a token, the instructions prompt the user to "Please select the crypto token first."
+  - After selecting a token, users are prompted to send any amount of the selected token to a specific address. Once the transaction receives the required confirmations, the user will receive an equivalent amount of SWAP.{token} in their account.
+- **Done Button:** For some tokens, after clicking "Done," the user is redirected to HiveSigner, where a record of the deposit instruction is broadcast to the blockchain. This transaction will appear in the account history of the Hive Engine wallet.
+- **Continue Button:** For HIVE and HBD, instead of a "Done" button, there is a "Continue" button. Clicking this button redirects the user to the Transfer page with the fields pre-filled.
+- **Cancel Button:** Cancels the transaction and closes the modal window.
+![image](https://github.com/user-attachments/assets/4bb0f1f5-cd74-4f0d-b7db-a2d8a0061d7a)
+### Additional Instructions Based on Token Type:
+- **For Tokens with an Account and Memo:**
+  - **Account Field:** A blocked (read-only) field displaying a specific username for the transaction.
+  - **Memo Field:** A blocked (read-only) field displaying a specific memo that must be used.
+  - **Memo Note:** A warning that failure to specify the memo will result in a loss of funds.
+  - **Copy Button:** Allows users to copy the content from the Account and Memo fields.
+  - **Tokens Requiring Account and Memo**: BLURT, BTS, EOS, GOLOS, HBD, HIVE, SBD, STEEM, ENG, TLOS, WAX.
+  - ![2022-03-01_14-32](https://user-images.githubusercontent.com/67378322/156169791-1cbc2593-4c34-4c0e-a318-f6aa7f895c8a.png)
+- **For Tokens with an Address:**
+  - **Address Field:** A blocked (read-only) field displaying a specific address.
+  - **QR Code:** A wallet QR code for easier scanning and copying of the address.
+  - **Copy Button:** Allows users to copy the address.
+  - **Tokens Requiring Address**: BTC, BCH, DOGE, LTC, SWIFT.
+  - ![2022-03-01_14-33](https://user-images.githubusercontent.com/67378322/156169799-d600c9b1-97d7-4558-9010-8ad977a0fb2f.png)
+This comprehensive guide ensures users can successfully deposit their tokens into the Hive or Hive-Engine system, while also informing them of important details like fees and the necessity of using the correct memo or address.
+
+# User profile: Wallet / Withdraw 
+The "Withdraw" functionality allows users to withdraw tokens from the Hive and Hive Engine systems. Clicking the "Withdraw" button opens the "Withdraw" modal window.
+![2022-03-01_15-18](https://user-images.githubusercontent.com/67378322/156176265-0b4620bb-164e-4147-aef3-327cbdfe3e22.png)
+### Withdraw Modal Window Components
+- **Title:** Withdraw
+- **Info:** 
+  - All crypto withdrawals are processed by Hive-Engine.com. 
+  - A 0.75% fee is applied to withdrawals. 
+  - Please note that standard network transfer fees will also be deducted from the amount. 
+  - [Hive-Engine.com](https://hive-engine.com/) is the platform handling these transactions.
+- **Amount:** "Withdraw:" field for entering the amount to withdraw.
+- **Max Button:** Sets the maximum amount that the user can withdraw.
+- **Currency:** Drop-down menu to select the currency for withdrawal. Displays the available currencies that the user can withdraw.
+- **Balance:** 
+  - Displays the user's balance for the chosen currency.
+  - Example: "Your balance {amount} {currency}"
+  - The {amount} {currency} text is clickable and represents the maximum amount that the user can withdraw. Clicking it populates the amount field with this value. Cursor changes to a pointer.
+- **Receive:** Field showing the amount of tokens the user will receive.
+- **Receive Currency:** Field showing the currency the user will receive.
+- **Estimated Amount:** Displays the estimated amount in the user's local currency (e.g., USD, CAD).
+- **Minimum Amount:** The minimum withdrawal amount is 0.0075.
+- **Address:** "Destination address:" field where the user can enter or already see a filled account name.
+- **QR Code:** For tokens that require an address, users can scan the QR code using a web camera.
+- **Note:** "Click the button below to be redirected to HiveSigner to complete your transaction."
+- **Withdraw Button:** Submits the action and redirects the user to HiveSigner.
+![image](https://github.com/user-attachments/assets/43fc74b9-aadc-41f3-ab74-8ea5ad6c9263)
+### Withdrawal Pairs
+**For Hive Accounts:**
+- WAIV - HIVE
+- WAIV - ETH
+- WAIV - BTC
+- WAIV - LTC
+- SWAP.BTC - BTC
+- SWAP.ETH - ETH
+- SWAP.LTC - LTC
+- SWAP.HIVE - HIVE
+- SWAP.HBD - HBD
+- SWAP.SAVVA - SAVVA
+**For Guest Accounts:**
+- WAIV - HIVE
+- WAIV - ETH
+- WAIV - BTC
+- WAIV - LTC
+**Additional Warning for BTC:** Minimum withdrawal amount: 0.01 SWAP.BTC
+
+# User profile: Followers
+The **Followers** tab provides lists related to users and objects, showing who follows the user, who the user follows, and which objects the user is following. This tab includes three sub-menu items:
+- **Followers:** A list of users who are following the user. 
+![image](https://github.com/user-attachments/assets/501886cf-cfa8-45c1-991b-cf414bc5d594)
+- **Following:** A list of users that the user is following. 
+![image](https://github.com/user-attachments/assets/1fd174da-37c6-4b7f-9748-5e6027c34851)
+- **Objects:** A list of objects that the user is following. 
+![image](https://github.com/user-attachments/assets/d9774bbc-bc2d-4b70-8647-b5451bb526e7)
+The **Followers** and **Following** tabs include sorting options to help users organize the lists according to their preferences. The available sorting options are:
+- **Rank:** Sorts users based on their expertise ranking.
+- **A..Z:** Sorts users alphabetically by name.
+- **Followers:** Sorts users by the number of followers they have.
+- **Recency:** Sorts users by the most recent follow actions.
+
+### User Profile Followers List View Details
+For users:
+- **Avatar:** Displays the profile picture.
+- **Name:** The username.
+- **Expertise:** The user's area of expertise.
+- **Count of Followers:** The number of followers the user has.
+- **Follow/Unfollow Button:** Allows the user to follow or unfollow the listed user.
+![image](https://github.com/user-attachments/assets/ed6f4df4-7478-4b2f-aad7-cdbf1a7d73db)
+For objects:
+- **Avatar:** Displays the object’s image.
+- **Name:** The name of the object.
+- **Object Expertise:** The total payout for all related posts in USD, excluding bidbots and upvote services.
+- **Follow/Unfollow Button:** Allows the user to follow or unfollow the listed object.
+![image](https://github.com/user-attachments/assets/ea335b54-7cfd-4eba-9b09-62516218fc51)
+
+# User profile: Expertise
+The **Expertise** tab displays a list of objects where the user has gained expertise. This tab includes two sub-menu items:
+- **Hashtags:** A list of objects that are of the hashtag type. 
+![image](https://github.com/user-attachments/assets/25a8551a-3cfb-4464-8142-2a4e2831eae1)
+- **Objects:** A list of all object types (except hashtags) where the user has gained expertise. 
+![image](https://github.com/user-attachments/assets/4a5fad56-a1da-47ec-9985-65df3c2ba4af)
+
+### User Profile Expertise List View Details
+Each object card in the list includes the following details:
+- **Avatar:** Displays the image of the object.
+- **Name:** The name of the object.
+- **Object Expertise:** Shows the total payout for all related posts in USD, excluding earnings from bidbots and upvote services.
+- **Follow/Unfollow Button:** Allows the user to follow or unfollow the object.
+![image](https://github.com/user-attachments/assets/658366e3-5a3a-48f0-819d-c6baa89fdf36)
