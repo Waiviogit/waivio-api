@@ -283,3 +283,528 @@ The **Invite** page provides users with a referral link that they can share to i
     - Twitter
     - Mail
 ![image](https://user-images.githubusercontent.com/67378322/134465772-2669def6-3bbc-4501-ab42-7fede77977b9.png)
+
+
+# Tools / Data import
+**Data import** - automation tool for object importing/updating objects on the Hive blockchain. Location: Tools -> Data management -> Data import. This tool allows users to upload data files that they may have created using Datafiniti.io or made from the data schema used by Datafiniti (https://developer.datafiniti.co/docs/product-data-schema). Import file type: .txt, .json. Max size 50 mb. Import download data is updated automatically.
+
+## Data import page elements description:
+**Title**: Data import bot
+**Switch**: The switch that shows authorization status, red - user is not authorized for import, green - authorized. After clicking, the HiveSigner page is opened, in order to give authorization or revoke it.
+**Text**: The data import bot automatically creates or updates objects on the Hive blockchain using the JSON data files generated 
+in accordance with the following data schema. (https://developer.datafiniti.co/docs/product-data-schema). Product, 
+people and business data files downloaded from the Datafiniti.io service are compliant.
+Each object consists of multiple updates (e.g., title, description, price, address, etc.), which are posted on the Hive 
+blockchain as individual records. Each update must be approved by the user who initiated the data import with an upvote 
+equivalent to $0.001 in WAIV power.
+If the WAIV power on the account is insufficient to cast a $0.001 USD vote, or if the WAIV power reaches the specified 
+threshold, the data import process will continue at a slower pace.
+**Auth**: text with the link "Authorize now / Remove authorization", which leads to HiveSigner page in order to give authorization (Authorize now) or revoke it (Remove authorization).
+The Data import bot requires authorization to upvote data updates on your behalf: Authorize now
+The authorization is completed via HiveSigner and can be revoked at any time.
+**Threshold Note**: `WAIV voting power threshold: 70% (change)`
+**Vote Slider**: "change" - the link, which opens a `Vote modal window` to choose the vote power.
+**Note**: The data import bot will pause if WAIV voting power on the account drops below the set threshold.
+**Status**: Block that displays the amount of user resources. <br> Text:
+<br>Status of the user account:
+<br>WAIV upvoting mana: {amount}%
+<br>Resource credits: {amount}%
+**Disclaimer**: Disclaimer: The data import bot service is provided on as-is / as-available basis.
+**Upload button**: "Upload new file" button, which opens a UPLOAD_MODAL_WINDOW to upload the import file.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/42bcd348-9467-4473-9133-9caa8b9a9fc6)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/66fec54b-c70b-4853-92f8-014e4c000b58)
+
+## Data import Active table
+The table with active imports. 
+**Active checkbox**: Column - "Active". Activation checkbox. If active - import is active, if not - not active.
+**Date**: Column - "Start date". Import start date.
+**Type**: Column - "Object type". Object type selected when creating the import.
+**Authority**: Column - "Claimed authority". Claimed authority type selected when creating the import.
+**Objects number**: Column - "Number of objects". Displays the number of objects found during the initial parsing of the import file.
+**Updates number**: Column - "Number of updates". Displays the number of updates found during the initial parsing of the import file.
+**Posted updates**: Column - "Posted updates". Displays the number of updates that have already been posted.
+**Posted objects**: Column - "Posted objects". Displays the number of objects that have already been posted. The number is clickable, it is a link to open a Object list modal window with object links that were imported.
+**Actions**: Column - "Actions". Having actions to completely stop the import. After clicking on "stop" link, Stop modal window is opened. After the import is stopped, the import record will be displayed in the "History" table.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://user-images.githubusercontent.com/67378322/229489471-e252b592-9731-43fd-ae58-0158c6fab3fb.png)
+![image](https://user-images.githubusercontent.com/67378322/229489920-1cc0601a-d81e-482c-a1f3-910ec8ab06a3.png)
+
+## Data import History table
+The table with completed or stopped imports.
+**Title**: History
+**Date**: Column - "Start date". Import start date.
+**End date**: Column - "Finish date". Import end date.
+**Type**: Column - "Object type". Object type selected when creating the import.
+**Authority**: Column - "Claimed authority". Claimed authority type selected when creating the import.
+**Submitted objects**: Column - "Submitted objects". Displays the number of objects that have been posted. The number is clickable, it is a link to open a Object list modal window with object links that were imported.
+**Submitted updates**: Column - "Submitted updates". Displays the number of objects found during the initial parsing of the import file.
+**Posted updates**: Column - "Posted updates". Displays the number of updates that have been posted.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://user-images.githubusercontent.com/67378322/229490498-ec5ecaf9-93c5-490f-bfb7-06dfabe7be5c.png)
+
+## Data import Vote modal window
+The modal window with a slider to select the minimum threshold for the WAIV vote power, up to which the import will work.
+**Cross**: The button to close the modal window.
+**Slider**: The slider to choose. By default - 70%.
+**Submit**: "OK" button to submit/save the selection.
+**Cancel**: "Cancel" button to cancel the selection and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229374454-5707210e-0ce3-4545-b39b-f085d9eb2c41.png)
+
+## Data import "Upload new file modal window"
+The modal window to download a file to import.
+**Title**: Upload new file.
+**Type label**: Select object type:.
+**Type dropdown**: The dropdown to select the type of objects to be imported. Placeholder - Select. Currently, there are 7 types available: book, product, business, restaurant, link, recipe, person.
+**Local label**: Select locale:
+**Local dropdown**: The language dropdown. By default, the user language is set.
+**Tags checkbox**: Checkbox for enabling translating tags for the selected locale. Works only for restaurant type. Text: Translate tags to the selected locale
+**Description checkbox**: Checkbox for enabling description optimization with ChatGPT. The result will be text in 3 paragraphs. Text: Optimize description with ChatGPT
+**File label**: Upload JSON file:
+**File**: "Upload file" button to download the import file from user's device.
+**File preview**: After the file is loaded, the "Upload file" button is changed to the file name with the cross button.
+**File note**: The JSON file must be created according to the Datafiniti.io data schema.
+**Authority note**: Claim authority:
+**Authority dropdown**: The dropdown to choose the authority type for the imported objects from the user. 2 types: 1. Administrative - by default; 2. Ownership.
+**Authority note**: Administrative authority indicates that other non-competing object updates posted by other users are allowed. Ownership authority indicates that all updates by other users must be ignored.
+**Cancel**: "Cancel" button to cancel the action and close the modal window.
+**Submit**: "Submit" button to confirm the action and start the import.
+![image](https://user-images.githubusercontent.com/67378322/235421268-91158783-e210-44f4-aca1-7db0cd516463.png)
+![image](https://user-images.githubusercontent.com/67378322/235421310-e94dc69b-754a-415f-8e0e-646a8ab4d768.png)
+
+## Data import "Object list modal window"
+The modal window with an object list that was imported.
+**Cross**: The button to close the modal window.
+**LIST**: Consist of the name of the permlink, this is a link to the page of the object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/06cf9caf-3ff7-44ed-b7c4-a5408ce6407f)
+
+## Data import "Stop modal window"
+The modal window with to stop the import.
+**Title**: `Stop JSON data file import`
+**Text**: `Once stopped, the import cannot be resumed. To temporarily suspend/resume the data import, please consider using the Active checkbox.`
+**Submit**: "Stop import" button to submit the stop action.
+**Cancel**: "Cancel" button to cancel action and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229457685-46ce4951-f530-4b38-8c52-d03ea7c8067d.png)
+
+
+# Tools / Claim authority
+**Claim authority**: This automation tool simplifies the process of claiming administrative ownership over all products, their variations listed, and any embedded lists. Location: Tools -> Data Management -> Claim Authority.
+
+## Claim authority Elements Description
+**Title**: Claim Authority Bot
+**Switch**: A switch that indicates the authorization status: red means the user is not authorized for import, green means authorized. Clicking the switch opens the HiveSigner page to grant or revoke authorization.
+**Text**: The search functionality on custom websites is restricted to objects that are claimed by the website owner and trusted authorities (objected added to their profile shops). This tool simplifies the process of claiming administrative ownership over all products, their variations mentioned in the specified list, and all embedded lists.
+Each claim must be approved by the user with an upvote equivalent to $0.001 in WAIV power.
+If the account's WAIV power drops below $0.001 USD, or if the WAIV power reaches the predetermined threshold, the authority claiming process will proceed at a slower speed.
+**Auth**: Text with the link "Authorize now / Remove authorization," which leads to the HiveSigner page to grant (Authorize now) or revoke (Remove authorization) authorization.
+The Claim authority bot requires authorization to upvote data updates on your behalf: Authorize now.
+The authorization is completed via HiveSigner and can be revoked at any time.
+**Threshold note**: WAIV voting power threshold: {amount}% (change)
+**Vote slider**: "Change" is a link that opens a Vote modal window to select the vote power.
+**Note**: The Claim authority bot will pause if WAIV voting power on the account drops below the set threshold.
+**Status**: Block that displays the amount of user resources. Text:
+Status of the user account:  
+WAIV upvoting mana: {amount}%  
+Resource credits: {amount}%  
+**Disclaimer**: The Claim authority bot service is provided on an as-is / as-available basis.
+**Upload button**: "Claim authority" button, which opens a MODAL_WINDOW to select the list.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/f4ae43dc-ead7-4479-b247-792e55d3bbd5)
+
+## Claim authority Active Table
+The table with active claims.
+**Active**: Column - "Active". Activation checkbox. If active, the claim is active; if not, the claim is inactive.
+**Date**: Column - "Start date". Claim start date.
+**Objects number**: Column - "Number of objects". Displays the number of objects found during the initial list scan.
+**Claimed objects**: Column - "Claimed objects". Displays the number of objects that have already been claimed. The number is clickable and links to a OBJECT_LIST_MODAL_WINDOW with the claimed object links.
+**Actions**: Column - "Actions". Provides actions to completely stop the claim. After clicking on the "stop" link, a Stop modal window is opened. Once the claim is stopped, the record will be displayed in the "History" table.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/28eb8514-9942-4d2d-a4c7-7cd4ee37d481)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/cbfe296a-3015-4df8-b463-97e4932c7e42)
+
+## Claim authority History Table
+The table with completed or stopped claims.
+**Title**: History
+**Date**: Column - "Start date". Claim start date.
+**End date**: Column - "Finish date". Claim end date.
+**Base list**: Column - "Base list". Displays the list that has been claimed. The number is clickable and links to an Object list modal window.
+**Number of objects**: Column - "Number of objects". Displays the number of objects found during the initial parsing of the import file.
+**Claimed objects**: Column - "Claimed objects". Displays the number of objects that have been claimed.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/f4d68f51-7125-48f8-a2ec-ca59b9e5d9ba)
+
+## Vote Modal Window
+The modal window with a slider to select the minimum threshold for the WAIV vote power, below which the import will pause.
+**Cross**: The button to close the modal window.
+**Slider**: The slider to choose the threshold. By default, it is set to 70%.
+**Submit**: "OK" button to submit/save the selection.
+**Cancel**: "Cancel" button to cancel the selection and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229374454-5707210e-0ce3-4545-b39b-f085d9eb2c41.png)
+
+## Claim Authority Modal Window
+The modal window to choose a list to claim.
+**Title**: Claim Administrative Authority
+**Field label**: Select list or map:
+**Search**: The search field to find the list or map with objects to be claimed. Placeholder - Find object.
+**Embedded lists**: Checkbox Include objects from embedded lists that signals the bot to include objects from embedded lists as well. Active by default.
+**Cancel**: "Cancel" button to cancel the action and close the modal window.
+**Submit**: "Submit" button to confirm the action and start the claim.
+![image](https://github.com/user-attachments/assets/69ec4fd0-1141-4dfc-87bf-dfc36c4e0b6e)
+![image](https://github.com/user-attachments/assets/7211b3c8-590f-48f4-9e2f-ebc925d2a9aa)
+
+## Claim Authority Link Modal Window
+The modal window with a base list or map that was claimed.
+**Cross**: The button to close the modal window.
+**Link**: Contains the name of the permalink, which is a link to the page of the object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/be666581-6b98-4d76-8f20-ee336e77a8cd)
+
+## Claim Authority Stop Modal Window
+The modal window to stop the import.
+**Title**: Stop Claim Authority
+**Text**: Once stopped, the claim authority cannot be resumed. To temporarily suspend or resume the claim authority, please consider using the Active checkbox.
+**Submit**: "Stop claim" button to submit the stop action.
+**Cancel**: "Cancel" button to cancel the action and close the window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/ab65a55e-4995-4d58-bef3-079336593f18)
+
+# Tools / Departments bot
+**Departments Update Bot** - This tool is designed to automatically categorize products into departments using a hierarchical structure of connected lists from list or map object types. The department bot lets users vote on updates. This allows users to vote on updates even if they have already been submitted by other users. Location: Tools -> Data Management -> Departments Bot.
+
+## Departments bot Elements Description
+**Title**: Departments Update Bot
+**Switch**: A switch that shows the authorization status: red means the user is not authorized for import, green means authorized. Clicking the switch opens the HiveSigner page to grant or revoke authorization.
+**Text**: This tool is designed to automatically categorize products into departments using a hierarchical structure of connected lists. The bot uses the names of the lists and sub-lists within them to assign these names as departments for all products referenced in these lists.
+Each update must be approved on behalf of the user with an upvote equivalent to $0.001 in WAIV power.
+If the account's WAIV power drops below $0.001 USD, or if the WAIV power reaches the predetermined threshold, the bot will proceed at a slower speed.
+**Auth**: Text with the link "Authorize now / Remove authorization," which leads to the HiveSigner page to grant (Authorize now) or revoke (Remove authorization) authorization.  
+The Departments Update Bot requires authorization to upvote data updates on your behalf: Authorize now.
+The authorization is completed via HiveSigner and can be revoked at any time.
+**Threshold note**: WAIV voting power threshold: {amount}% (change)
+**Vote slider**: "Change" is a link that opens a Vote modal window to choose the vote power.
+**Note**: The Departments Update Bot will pause if WAIV voting power on the account drops below the set threshold.
+**Status**: Block that displays the amount of user resources.  Text: 
+Status of the user account:  
+WAIV upvoting mana: {amount}%  
+Resource credits: {amount}%
+**Disclaimer**: The Departments Update Bot service is provided on an as-is / as-available basis.
+**Upload button**: "Update departments" button, which opens a modal window to select the list.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/0f31a68b-2adb-4beb-a93d-c0d5775b3399)
+
+## Departments bot Active Table
+The table with active claims.
+**Active**: Column - "Active". Activation checkbox. If active, the departments update is active; if not, it is inactive.
+**Date**: Column - "Start date". Start date of the update.
+**Objects number**: Column - "Number of objects". Displays the number of objects found during the initial list or map scan.
+**Claimed objects**: Column - "Updated objects". Displays the number of objects that have already been updated. The number is clickable and links to an Object list modal window with the list or map link.
+**Actions**: Column - "Actions". Provides options to completely stop the update. After clicking the "stop" link, a Stop modal window is opened. Once the update is stopped, the record will be displayed in the "History" table.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/8e3e8bf0-233b-484a-b9a0-61b47e7327d9)
+
+## Departments bot History Table
+The table with completed or stopped updates.
+**Title**: History
+**Date**: Column - "Start date". Start date of the update.
+**End date**: Column - "Finish date". End date of the update.
+**Base object**: Column - "Base object". Displays the main list or map. The number is clickable and links to an Object list modal window.
+**Number of objects**: Column - "Number of objects". Displays the number of objects found during the initial parsing of the list or map.
+**Claimed objects**: Column - "Updated objects". Displays the number of objects that have been updated.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/f4ad127f-a547-4e37-bc77-ca99d6da6ad0)
+
+## Departments bot Vote Modal Window
+The modal window with a slider to select the minimum threshold for the WAIV vote power, below which the import will pause.
+**Cross**: The button to close the modal window.
+**Slider**: The slider to choose the threshold. By default, it is set to 70%.
+**Submit**: "OK" button to submit/save the selection.
+**Cancel**: "Cancel" button to cancel the selection and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229374454-5707210e-0ce3-4545-b39b-f085d9eb2c41.png)
+
+## Department Bot Modal Window
+The modal window to choose a list or map to update.
+**Title**: Department Update Bot
+**Field label**: Select list or map:
+**Search**: The search field to find the list or map with objects to be updated. Placeholder - Find an object.
+**Embedded lists**: Checkbox Process embedded lists that signals the bot to process embedded lists as well. Active by default.
+**Cancel**: "Cancel" button to cancel the action and close the modal window.
+**Submit**: "Submit" button to confirm the action and start the update.
+![image](https://github.com/user-attachments/assets/7727f76d-92ab-4658-9ea2-69bb1e4883ce)
+![image](https://github.com/user-attachments/assets/32b91031-89b1-4ee9-830c-8e73cf360e1d)
+
+## Departments bot Object List Modal Window
+The modal window with a base list or map that was claimed.
+**Cross**: The button to close the modal window.
+**Object**: Contains the name of the permalink, which is a link to the page of the object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/be666581-6b98-4d76-8f20-ee336e77a8cd)
+
+## Departments bot Stop Modal Window
+The modal window to stop the import.
+**Title**: Stop Update Department
+**Text**: Once stopped, the update department cannot be resumed. To temporarily suspend or resume the update department, please consider using the Active checkbox.
+**Submit**: "Stop update" button to submit the stop action.
+**Cancel**: "Cancel" button to cancel the action and close the window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/428f3095-a282-4eb6-92b1-aa166de28e26)
+
+
+# Tools / Descriptions bot
+**Descriptions Bot** - This bot processes all nested lists and rewrites titles and descriptions for both lists and objects linked from these lists. Location: Tools -> Data Management -> Descriptions Bot.
+
+## Descriptions Bot Elements Description
+**Title**: Descriptions Bot
+**Switch**: A switch that shows the authorization status. Red indicates the user is not authorized for import, while green means authorized. Clicking the switch opens the HiveSigner page to grant or revoke authorization.
+**Text**:
+This bot utilizes ChatGPT to rewrite titles and descriptions for all embedded lists, as well as names and descriptions for all objects linked from these lists. If the same user repeats this process, it will only be completed for lists and objects added since the last session.
+Each update must be approved on behalf of the user with an upvote equivalent to $0.001 in WAIV power.
+If the account's WAIV power drops below $0.001 USD, or if the WAIV power reaches the predetermined threshold, the bot will proceed at a slower speed.
+**Auth**: Text with the link "Authorize now / Remove authorization," which leads to the HiveSigner page to grant (Authorize now) or revoke (Remove authorization) authorization.  
+The Descriptions Bot requires authorization to upvote data updates on your behalf: Authorize now.
+The authorization is completed via HiveSigner and can be revoked at any time.
+**Threshold note**: WAIV voting power threshold: {amount}% (change)
+**Vote slider**: "Change" - the link that opens a VOTE_MODAL_WINDOW to choose the vote power.
+**Note**: The Descriptions Bot will pause if WAIV voting power on the account drops below the set threshold.
+**Status**: Block that displays the amount of user resources. Text:  
+Status of the user account:  
+WAIV upvoting mana: {amount}%  
+Resource credits: {amount}%
+**Disclaimer**: The Descriptions Bot service is provided on an as-is / as-available basis.
+**Upload button**: "Rewrite descriptions" button, which opens a MODAL_WINDOW to select the list.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/667427c0-b3a3-49be-b7a6-52dacd1ccd3c)
+
+## Descriptions Bot Active Table
+The table with active rewriting tasks.
+**Active**: Column - "Active". Activation checkbox. If active, rewriting is in progress; if not, it is inactive.
+**Date**: Column - "Start date". Start date of the rewriting task.
+**Objects number**: Column - "Number of objects". Displays the number of objects found during the initial list scan.
+**Updated objects**: Column - "Updated objects". Displays the number of objects that have already been rewritten. The number is clickable and links to an OBJECT_LIST_MODAL_WINDOW with the main list link.
+**Actions**: Column - "Actions". Provides options to completely stop the rewriting task. Clicking the "stop" link opens a STOP_MODAL_WINDOW. Once the rewriting task is stopped, the record will be displayed in the "History" table.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/e5dc5ea9-9693-4a67-a408-a849946e26eb)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/79f4c525-0337-4b6d-872f-64d1515b875b)
+
+## Descriptions Bot History Table
+The table with completed or stopped rewrites.
+**Title**: History
+**Date**: Column - "Start date". Rewrite start date.
+**End date**: Column - "Finish date". Rewrite end date.
+**Base list**: Column - "Base list". Displays the list that has been rewritten. The number is clickable and links to an OBJECT_LIST_MODAL_WINDOW.
+**Number of objects**: Column - "Number of objects". Displays the number of objects found during the initial parsing of the import list.
+**Updated objects**: Column - "Updated objects". Displays the number of objects that have been rewritten.
+**Show more**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/21cf78d0-06a7-4879-8846-1f53922ae6c6)
+
+## Descriptions Bot Vote Modal Window
+The modal window with a slider to select the minimum threshold for the WAIV vote power, below which the import will pause.
+**Cross**: The button to close the modal window.
+**Slider**: The slider to choose the threshold. By default, it is set to 70%.
+**Submit**: "OK" button to submit and save the selection.
+**Cancel**: "Cancel" button to cancel the selection and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229374454-5707210e-0ce3-4545-b39b-f085d9eb2c41.png)
+
+## Descriptions Bot Modal Window
+The modal window to choose a list to rewrite.
+**Title**: Descriptions Bot
+**Field label**: Select list or map:
+**Search**: The search field to find the list or map. Placeholder - Find object.
+**Embedded lists**: Checkbox Process embedded lists that signals the bot to include objects from embedded lists as well. Active by default.
+**Cancel**: "Cancel" button to cancel the action and close the modal window.
+**Submit**: "Submit" button to confirm the action and start the rewrite.
+![image](https://github.com/user-attachments/assets/649be0f6-cea7-4a01-a659-42736678b9a0)
+![image](https://github.com/user-attachments/assets/4d5c71ae-44af-482b-8ed7-09f3ab3bade4)
+
+## Descriptions Bot Link Modal Window
+The modal window with a base link to the object list or map.
+**Cross**: The button to close the modal window.
+**Link**: Contains the name of the permalink, which is a link to the page of the object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/be666581-6b98-4d76-8f20-ee336e77a8cd)
+
+## Descriptions Bot Stop Rewrite Description
+The modal window to stop the rewrite.
+**Title**: Stop Rewrite Description
+**Text**: Once stopped, the description bot cannot be resumed. To temporarily suspend or resume the rewrite, please consider using the Active checkbox.
+**Submit**: "Stop Rewrite" button to submit the stop action.
+**Cancel**: "Cancel" button to cancel the action and close the window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/95dd0df6-3006-45c7-9553-d4e0f499b776)
+
+
+# Tools / List Duplication
+**List Duplication** - Creates copies of lists, including all embedded lists and links to products or other objects. It uses ChatGPT to rewrite titles and descriptions for all lists.
+Location: Tools -> Data management -> List duplication.
+
+## List Duplication Elements Description
+**Title**: List Duplication Bot
+**Switch**: The switch that shows authorization status. Red indicates the user is not authorized for import, and green indicates authorized. Clicking the switch opens the HiveSigner page to grant or revoke authorization.
+**Text**: This bot creates copies of lists, including all embedded lists and links to products or other objects. It uses ChatGPT to rewrite titles and descriptions for all lists.
+Each update must be approved on behalf of the user with an upvote equivalent to $0.001 in WAIV power.
+If the WAIV power on the account is insufficient to cast a $0.001 USD vote, or if the WAIV power reaches the specified threshold, the list duplication process will continue at a slower pace.
+**Auth**: Text with the link "Authorize now / Remove authorization," which leads to the HiveSigner page to grant authorization (Authorize now) or revoke it (Remove authorization).
+The List Duplication Bot requires authorization to upvote data updates on your behalf: Authorize now
+The authorization is completed via HiveSigner and can be revoked at any time.
+**Threshold Note**: WAIV voting power threshold: {amount}% (change)
+**Vote Slider**: "Change" - the link opens a Vote modal window to select the voting power.
+**Note**: The list duplication bot will pause if WAIV voting power on the account drops below the set threshold.
+**Status**: Block that displays the amount of user resources. <br> Text:
+Status of the user account:
+WAIV upvoting mana: {amount}%
+Resource credits: {amount}%
+**Disclaimer**: The List Duplication Bot service is provided on an as-is / as-available basis.
+**Upload Button**: "Add List" button, which opens a modal window to select the list.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/442256c7-92db-4e6e-8230-24f8e1c2259b)
+
+## List Duplication Active Table
+The table with active duplications.
+**Active**: Column - "Active". Activation checkbox. If checked, the duplication is active; if unchecked, the duplication is not active.
+**Date**: Column - "Start date". The date when the duplication started.
+**Number of Objects**: Column - "Number of objects". Displays the number of objects found during the initial list scan.
+**Number of Lists**: Column - "Number of lists". Displays the number of lists found during the initial list scan.
+**Posted Lists**: Column - "Posted lists". Displays the number of lists that have already been duplicated. The number is clickable and links to an OBJECT_LIST_MODAL_WINDOW showing the main list that was created and duplicated.
+**Voted Updates**: Column - "Voted updates". Displays the number of updates that have already been created and voted on.
+**Actions**: Column - "Actions". Provides options to completely stop the duplication. Clicking the "stop" link opens a STOP_MODAL_WINDOW. Once the duplication is stopped, the record will be displayed in the "History" table.
+**Show More**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/ffcd2612-39e2-4f70-a9c0-37d6992a49c0)
+
+## List Duplication History Table
+The table with completed or stopped duplications.
+**Title**: `History`
+**Date**: Column - "Start date". The date when the duplication started.
+**End Date**: Column - "Finish date". The date when the duplication ended.
+**Base Object**: Column - "Base object". Displays the main list that was created. The number is clickable and links to an OBJECT_LIST_MODAL_WINDOW showing the main list that was duplicated.
+**Number of Objects**: Column - "Number of objects". Displays the number of objects found during the initial parsing of the import file.
+**Number of Lists**: Column - "Number of lists". Displays the number of lists found during the initial parsing of the import file.
+**Voted Updates**: Column - "Voted updates". Displays the number of updates that have been voted on.
+**Show More**: A "Show More" button will appear if there are more than 30 records.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/dcb28c4f-ef53-4ceb-992d-9fca1a6ba031)
+
+## List Duplication Vote Modal Window
+The modal window for selecting the minimum threshold for WAIV vote power, which determines how long the import process will continue.
+**Cross**: The button to close the modal window.
+**Slider**: The slider to adjust the threshold. By default, it is set to 70%.
+**Submit**: The "OK" button to save and apply the selected threshold.
+**Cancel**: The "Cancel" button to discard changes and close the window.
+![image](https://user-images.githubusercontent.com/67378322/229374454-5707210e-0ce3-4545-b39b-f085d9eb2c41.png)
+
+## List Duplication Modal Window
+The modal window for selecting a list to duplicate.
+**Title**: `List Duplication Bot`
+**Field Label**: `Select List:`
+**Search**: A search field to locate the list with objects to be duplicated. Placeholder text: "Find object."
+**Embedded Lists**: Checkbox labeled `Process Embedded Lists` to include objects from embedded lists as well. This option is enabled by default.
+**Cancel**: "Cancel" button to abort the action and close the modal window.
+**Submit**: "Submit" button to confirm the selection and initiate the duplication process.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/b64a9c22-3e84-4cbb-b1e4-ccb067f4d4d2)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/ca473eb0-2e16-4cf0-93e9-60dd4f79330b)
+
+## List Duplication Object List Modal Window
+The modal window displaying the base list that was claimed.
+**Cross**: The button to close the modal window.
+**List**: Displays the name of the permlink, which is a link to the page of the object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/be666581-6b98-4d76-8f20-ee336e77a8cd)
+
+## List Duplication Stop Modal Window
+The modal window to stop the list duplication process.
+**Title**: `Stop List Duplication`
+**Text**: `Once stopped, the list duplication cannot be resumed. To temporarily suspend or resume the list duplication, please consider using the Active checkbox.`
+**Submit**: "Stop" button to confirm and execute the stop action.
+**Cancel**: "Cancel" button to abort the action and close the window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/bb8dac5d-267f-4d51-93af-f5fe1d63e156)
+
+
+# Tools / Chrome extension
+## General information
+The Chrome extension page provides details on how to use the Waivio Chrome Extension.
+The **Waivio Chrome Extension** is a browser extension designed to efficiently scrape Amazon, Sephora, and Walmart pages and extract crucial information tailored to Waivio's requirements. Currently working for Chrome and Brave browsers.
+Location: Tools -> Data management -> Chrome extension.
+
+Text: 
+Chrome extension
+The Waivio Chrome Extension is a browser tool designed to efficiently scrape Amazon, Sephora, and Walmart pages to extract crucial information tailored to Waivio's requirements. By effortlessly parsing through a product page, this extension gathers relevant data such as product names, prices, avatars, and more. After processing the collected information, it generates a compatible output file.
+Installation instruction:
+1. Download the archive file (.zip, .tar).
+2. Extract the contents of the archive into a chosen folder.
+3. Open the Chrome extensions page by navigating to chrome://extensions/ in your browser.
+4. Enable Developer Mode by toggling the switch located in the top-right corner of the page.
+5. Click the "Load unpacked" button.
+6. Locate and select the extension directory containing the previously downloaded file.
+7. The Waivio Chrome Extension should now appear on your extensions page, ready for use.
+Version:
+Current version: 1.1.4
+Download file.zip
+Download file.tar
+Please note that after each of our updates, you need to reinstall the extension or refresh the file and extension to use the most current version.
+The Waivio Chrome Extension original repository[ GitHub](https://github.com/Waiviogit/waivio-import-extension).
+Where:
+- Current version: {1.1.4} - automatically pulls up the current version 
+- Download file.zip - button to download the file in .zip format.
+- Download file.tar - button to download the file in .tar format.
+Extension features:
+Create JSON: users can receive a .json file containing the page information.
+Create XLSX: users can download an .xlsx file in a tabular format.
+Copy to clipboard: page information can be copied to the clipboard for easy insertion into Google Sheets. This option copies the data without field names.
+Scan for ASINs: tool can scan any Amazon URL and extract ASIN numbers of products from that webpage. It generates a search query for Datafiniti's product search API tab, downloads the file, and also instantly copies the information to the clipboard.
+Upload to Waivio: tool scans the URL, generates the required file, and immediately initiates the import to Waivio under the currently logged-in user.
+Create post draft: tool can create a post based on a YouTube video using chatGPT.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/7999f476-e08b-448c-b79f-5409813a4210)
+![Extension on Retails sites image example](https://github.com/user-attachments/assets/28f7d02c-6c4e-4b62-9d53-a12855197634)
+![Extension on YouTube sites image example](https://github.com/user-attachments/assets/e12c0f03-41b0-4bf4-b6f5-aaba5b31c499)
+
+## Create JSON using Chrome extension
+This functionality creates a .json file in a format suitable for further successful import to Waivio. Base fields template [here](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON).
+![image](https://github.com/Waiviogit/waivio/assets/67378322/0be46280-7e2c-4483-9ee5-2951ef23da11)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/1d51228b-0148-41b2-a5dd-d850f76b591d)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/eef8638b-eb17-4eb0-a8b4-55863816a2e5)
+
+## Create XLSX using Chrome extension
+This functionality creates a table file in a format suitable for further successful import to Waivio. Base fields template [here](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON). This is to give the user control over the product data and provide the ability to edit the information before importing it.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/40604a6a-42c2-4189-af4b-ce58ce8fb5bc)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/1fc1ab9f-5707-4e40-8b1b-dbc93d34f2ad)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/f6baa577-1667-498e-ae35-f99af30a7c95)
+
+## Copy to clipboard using Chrome extension
+This functionality copies the information to the clipboard so that it can be pasted into a pre-existing table template. Therefore, only the values are copied, and the field names are not copied. Base fields template [here](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON).
+![image](https://github.com/Waiviogit/waivio/assets/67378322/17b6c069-bcf9-4c2f-b7d3-96fef6df5342)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/8cfc0e6b-7f82-4d52-8733-00fa2d906580)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/65647cc4-222d-4acd-b896-ddc9fa4eb31f)
+
+
+## Scan for ASINs using Chrome extension
+This functionality scans any Amazon URL and extract ASIN numbers of products from that webpage. It generates a search query for Datafiniti's product search API tab, downloads the file, and also instantly copies the information to the clipboard.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/da21aef2-738d-404b-a27e-1a40ad1504fa)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/e6a5ba28-1a8a-4eec-a9c8-1fb679bffe4a)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/dd4bab16-231f-403b-b6ad-ec4c9c9bfc76)
+
+## Upload to Waivio using Chrome extension
+This functionality scans the Amazon URL, generates the required file, and immediately initiates the import to Waivio under the currently logged-in user.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/9e81c7a4-8156-4090-9b7d-16b5b3146f04)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/5174b90c-0437-4a5b-86f2-3fa9ccbee4f8)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/a1c1c947-777e-44cd-9bcd-2e3a24a2e0fa)
+
+## Create post draft using Chrome extension
+This functionality creates a post based on a YouTube video using ChatGPT.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/5f8bea80-400b-4c76-a8c7-ec077bae5d18)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/f6c33c6c-808a-4929-ad0e-9b45c47f9d11)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/0c8d2ef9-fe93-4600-bd21-cd654b41f27c)
+
+## Google map import objects using Chrome extension
+It's also possible to download information about businesses and restaurants from Google Maps.
+To accomplish this, users need to obtain a Google API key. Instructions on how to obtain this key are provided [here](https://www.waivio.com/object/jiw-google-maps-integration-set-up-an-api-key/page).
+![image](https://github.com/Waiviogit/waivio/assets/67378322/2117ebeb-9f87-48e8-aaef-ac1984c6f38e)
+There is a warning pop-up, if the selected type in the extension is different from the type of the object they want to upload. 
+The system identifies this object as a restaurant, but it is currently set as a business. If you still wish to proceed with downloading it as a business, please click Ok.
+![image](https://github.com/user-attachments/assets/2bb51639-8dcd-49f4-a5b1-98e3fe03dbe1)
+
+## Show ID  using Chrome extension
+There is a button to show the ID for objects on Google Maps and OpenStreetMap. The user can then get the ID from Google Maps and add it to previously added objects. After that, they can upload the desired object to ensure that duplicates are not created and new information is retrieved for the object.
+After clicking the "Show Google ID" or "Show OSM ID" button, a modal window will appear with the type and ID value.
+![Show Google ID example image 1](https://github.com/user-attachments/assets/cfb34d2c-a924-4926-96f7-2ff93992a3e4)
+![Show Google ID example image 2](https://github.com/user-attachments/assets/c01f6da1-e9c2-43c1-a869-409b800ba5ce)
+![Show OpenStreetMap ID example image 1](https://github.com/user-attachments/assets/d3e33c37-70d0-4e53-803b-6508069f4800)
+![Show OpenStreetMap ID example image 1](https://github.com/user-attachments/assets/f7189b21-f680-41e2-a688-249b63280a71)
+
+## Warning "Object already exists" in Chrome extension
+"Warn the user if the object already exists in Waivio, and provide an option to open it immediately. After clicking the extension button, a warning modal window will appear with a 'Go to Object' button.
+![image](https://github.com/user-attachments/assets/4445928f-7c85-4467-b49c-6c81ad3c9ff5)
+
+## Upload link object type using Chrome extension
+The user can upload a link object type. To do this, open a site, click on the extension, and then select either 'Create Exact Link' or 'Create * Link'. After clicking one of these buttons, the 'import' of the link object to Waivio will begin, and a record will be added to the import table. Data will be extracted from the metadata, including the avatar, title, description, and link. The description can also be generated using ChatGPT.
+- 'Create Exact Link' means that the URL will be exactly the same as the original.
+- 'Create * Link' means that the URL will represent the main site, and all subdirectories will be acceptable.
+![image](https://github.com/user-attachments/assets/ec3416ff-24a6-4ab0-a3a0-9b462c4d363a)
+
+## Create recipe draft using Chrome extension
+On YouTube, the user can see an option 'Create Recipe Draft' in the extension. This will generate a recipe draft using ChatGPT and the video's subtitles.
+![image](https://github.com/user-attachments/assets/8c754301-5602-4e31-9053-c7ddd6f6fcfe)

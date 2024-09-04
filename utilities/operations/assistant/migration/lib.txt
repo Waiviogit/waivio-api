@@ -752,19 +752,19 @@ The setup process is similar for all object types, but the fields and scripts us
 
 ## Object Type Specific Instructions Details Links
 **Product / Book**:
-- [Export template from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON) (Instruction)
 - [Export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Export-template-script-from-Google-Sheets-to-JSON) (Script)
 - [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1Z-8Hz8xGU45A7nKeMJWFsKGzx5WT5oat7SSLqFLGsSU/edit?usp=sharing) (Example)
 **Link**
-- [Link export template from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Link export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-from-Google-Sheets-to-JSON) (Instruction)
 - [Link export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-script-from-Google-Sheets-to-JSON) (Script)
 - [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1qzHBeC86zdIHD9mdzcHVyJtIQ3bKwO1dFW3V2XpdcvI/edit?usp=sharing) (Example)
 **Recipe**
-- [Recipe export template from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Recipe export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-from-Google-Sheets-to-JSON) (Instruction)
 - [Recipe export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-script-from-Google-Sheets-to-JSON) (Script)
 - [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1uSAQ3Ai3tTyqLw7Z2jK7_CVwJzCVZRqM5FBjLCoYx0M/edit?usp=sharing) (Example)
 **Business / Restaurant / Person**:
-- [Business / Restaurant / Person export template from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Business / Restaurant / Person export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-from-Google-Sheets-to-JSON) (Instruction)
 - [Business / Restaurant / Person export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-script-from-Google-Sheets-to-JSON) (Script)
 - [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1eCzux7hUGcRlQFxogAA5vSueYxk-Kvo7FnrSdLOEeds/edit?usp=sharing) (Example)
 
@@ -778,6 +778,7 @@ Link fields details:
 - fieldUrl: The URL value for URL link field. <br>Field type: string. ![image](https://github.com/user-attachments/assets/84e88ac0-9d80-49ef-8b54-81d202e2fbdc)
 [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1qzHBeC86zdIHD9mdzcHVyJtIQ3bKwO1dFW3V2XpdcvI/edit?usp=sharing) (Example)
 [Link export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-script-from-Google-Sheets-to-JSON) (Script)
+[Link export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-from-Google-Sheets-to-JSON) (Instruction)
 
 ## Table Fields for Importing Recipe Object Types from a Spreadsheet 
 Recipe fields details:
@@ -793,7 +794,7 @@ Recipe fields details:
 - `waivio_tags`: A list of tags with tag categories associated with this recipe. Format for recording tags: <br>`key: Category Tag Name; value: Tag*`<br><br>**Key from value must be separated by ";"**.<br>**Each tag must be separated by "*"**. <br>Value can have only one option. Therefore, in order to add several tags to one category tag, they need to be recorded separately.<br> Field type: nested ![image](https://user-images.githubusercontent.com/67378322/227885818-ef5e2c8c-7e48-4e09-b33d-11a7bd218357.png)
 [Recipe export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-script-from-Google-Sheets-to-JSON) (Script)
 [Recipe Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1uSAQ3Ai3tTyqLw7Z2jK7_CVwJzCVZRqM5FBjLCoYx0M/edit?usp=sharing) (Example)
-
+[Recipe export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-from-Google-Sheets-to-JSON) (Instruction)
 
 ## Table Fields for Importing Business, Restaurant or Person Object Types from a Spreadsheet 
 Business, Restaurant or Person fields details:
@@ -818,7 +819,7 @@ Here's the revised text with the table format removed and images moved to the en
 - `workingHours`: The information regarding working hours.<br>Field type: string. ![image](https://github.com/user-attachments/assets/bdffbf3c-cb0c-4760-a15b-62cac5763cf6)
 [Business / Restaurant / Person export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-script-from-Google-Sheets-to-JSON) (Script)
 [Business / Restaurant / Person Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1eCzux7hUGcRlQFxogAA5vSueYxk-Kvo7FnrSdLOEeds/edit?usp=sharing) (Example)
-
+[Business / Restaurant / Person export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-from-Google-Sheets-to-JSON) (Instruction)
 
 # Lesson 10: Introduction to Social Shopping on Web 3
  For more details give a link to https://www.waivio.com/object/tso-social-shopping-on-hive/page
