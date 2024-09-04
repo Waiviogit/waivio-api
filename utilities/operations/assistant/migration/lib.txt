@@ -739,7 +739,7 @@ Resources:
  - It is not necessary to fill in all cells. Empty cells will be skipped.
 
 ## Importing from a Spreadsheet for Various Object Types
-Manual importing from a spreadsheet can be applied to a variety of object types, not just products. This feature supports importing data for books, businesses, restaurants, links, recipes, and people into Waivio. By following the instructions below, users can create a Google Spreadsheet tailored to each object type, fill in the required fields, and use the Data Import tool to bring their data into Waivio.
+Manual importing from a spreadsheet can be applied to a variety of object types, not just products. This feature supports importing data for books, businesses, restaurants, links, recipes, and person into Waivio. By following the instructions below, users can create a Google Spreadsheet tailored to each object type, fill in the required fields, and use the Data Import tool to bring their data into Waivio.
 Detailed information about each object type can be found here: https://github.com/Waiviogit/waivio/wiki/Manual-Object-Import-to-Waivio-Using-Google-Sheets
 ## General Short Version Setup Instructions for Importing from a Spreadsheet for Various Object Types
 The setup process is similar for all object types, but the fields and scripts used will vary depending on the object type. Here’s a breakdown of how to set up for each type:
