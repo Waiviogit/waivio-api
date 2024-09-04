@@ -23,7 +23,7 @@ Contains basic information about the user in the left sidebar:
 - **Expertise**: The total amount of payouts, in USD, for all related posts, excluding bots and like services. (Also serves as a measure of user expertise.)
 - **Active**: Information about the user's last activity.
 - **Vote Value**: The value of the user's vote (in USD or user currency) based on their balance and the current exchange rate. It is the sum of the WAIV token vote value and HIVE.
-- **Wallets**: The user's wallets include HIVE, HBD, Bitcoin, Litecoin, Ethereum, and Lightning Bitcoin. After clicking, a modal window with the address and QR code is displayed. ![image](https://github.com/user-attachments/assets/1d243d90-558b-4256-8970-ff1f70b2469a)
+- **Wallets**: The user's wallets include HIVE, HBD, Bitcoin, Litecoin, Ethereum, and Lightning Bitcoin. After clicking, a modal window with the address and QR code is displayed.
 - **WAIV Token**: The WAIV token section displays information about the WAIV token. This includes:
   - **Upvoting Mana**: A 100% indicator that depends on the power-up of the token. It shows how many votes a user can make. The more staked (powered up), the slower the voting power is depleted.
   - **Downvoting Mana**: Indicates how many downvotes a user can make (used to flag posts on Waivio).
