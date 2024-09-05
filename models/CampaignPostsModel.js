@@ -1,6 +1,6 @@
 const { CampaignPosts } = require('database').models;
 
-exports.findOne = async ({ filter, projection = {}, options = {} }) => {
+const findOne = async ({ filter, projection = {}, options = {} }) => {
   try {
     return { result: await CampaignPosts.findOne(filter, projection, options).lean() };
   } catch (error) {
@@ -8,7 +8,7 @@ exports.findOne = async ({ filter, projection = {}, options = {} }) => {
   }
 };
 
-exports.find = async ({ filter, projection = {}, options = {} }) => {
+const find = async ({ filter, projection = {}, options = {} }) => {
   try {
     return { result: await CampaignPosts.find(filter, projection, options).lean() };
   } catch (error) {
@@ -16,10 +16,31 @@ exports.find = async ({ filter, projection = {}, options = {} }) => {
   }
 };
 
-exports.updateOne = async ({ filter, update = {}, options = {} }) => {
+const updateOne = async ({ filter, update = {}, options = {} }) => {
   try {
     return { result: await CampaignPosts.updateOne(filter, update, options) };
   } catch (error) {
     return { error };
   }
+};
+
+const findOneByPost = async (post) => {
+  const { result } = await findOne({
+    filter: {
+      author: post.author,
+      permlink: post.permlink,
+    },
+    projection: {
+      author: 1, permlink: 1,
+    },
+  });
+
+  return result;
+};
+
+module.exports = {
+  updateOne,
+  find,
+  findOne,
+  findOneByPost,
 };
