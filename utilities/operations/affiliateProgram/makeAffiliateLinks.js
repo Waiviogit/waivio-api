@@ -1,10 +1,61 @@
 const _ = require('lodash');
 const jsonHelper = require('utilities/helpers/jsonHelper');
+const BigNumber = require('bignumber.js');
 const { AFFILIATE_NULL_TYPES } = require('../../../constants/wobjectsData');
 const {
   COUNTRY_TO_CONTINENT,
   GLOBAL_GEOGRAPHY,
 } = require('../../../constants/affiliateData');
+
+const getAffiliateCode = (codesArr) => {
+  if (!Array.isArray(codesArr) || codesArr.length < 2) return '';
+
+  if (codesArr.length === 2) return codesArr[1];
+
+  const items = codesArr.slice(1).map((el) => {
+    const [value, chance] = el.split('::');
+    const parsedChance = Number(chance);
+
+    // Mark as invalid if chance is not a valid number or negative
+    if (isNaN(parsedChance) || parsedChance < 0) return null;
+    return { value, chance: parsedChance };
+  });
+
+  // Check for invalid entries and return empty string if any
+  if (items.includes(null)) return '';
+
+  // Calculate total sum of chances
+  const totalChance = items.reduce((acc, item) => acc + item.chance, 0);
+
+  if (totalChance === 0) return ''; // Return empty string if total chance sum is zero
+
+  // Normalize the chances if they do not sum up to 100
+  if (totalChance !== 100) {
+    items.forEach((item) => {
+      item.chance = (item.chance / totalChance) * 100;
+    });
+  }
+
+  // Create an array of cumulative chances
+  const cumulativeChances = [];
+  let sum = 0;
+
+  for (let i = 0; i < items.length; i++) {
+    sum += items[i].chance;
+    cumulativeChances[i] = sum;
+  }
+
+  // Generate a random number between 0 and 100
+  const randomNumber = BigNumber(Math.random()).times(100);
+
+  // Find the item that corresponds to the random number
+  for (let i = 0; i < cumulativeChances.length; i++) {
+    if (randomNumber.lt(cumulativeChances[i])) return items[i].value;
+  }
+
+  // Fallback return in case something goes wrong
+  return '';
+};
 
 const makeFromExactMatched = ({
   affiliateCodes,
@@ -18,14 +69,17 @@ const makeFromExactMatched = ({
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
+    const affiliateCode = getAffiliateCode(affiliate.affiliateCode);
+    if (!affiliateCode) return acc;
+
     const link = affiliate.affiliateUrlTemplate
       .replace('$productId', el.productId)
-      .replace('$affiliateCode', affiliate.affiliateCode[1]);
+      .replace('$affiliateCode', affiliateCode);
 
     acc.push({
       link,
       image: affiliate.affiliateButton,
-      affiliateCode: affiliate.affiliateCode[1],
+      affiliateCode,
       type: el.productIdType,
     });
     return acc;
@@ -115,14 +169,17 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [], countryCode 
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
+    const affiliateCode = getAffiliateCode(affiliate.affiliateCode);
+    if (!affiliateCode) return acc;
+
     const link = affiliate.affiliateUrlTemplate
       .replace('$productId', el.productId)
-      .replace('$affiliateCode', affiliate.affiliateCode[1]);
+      .replace('$affiliateCode', affiliateCode);
 
     acc.push({
       link,
       image: affiliate.affiliateButton,
-      affiliateCode: affiliate.affiliateCode[1],
+      affiliateCode,
       type: el.productIdType,
     });
     return acc;

@@ -142,7 +142,7 @@ exports.zadd = async ({
   score: now, value: keyValue,
 });
 
-exports.saddAsync = async ({ key, values, client }) => client.sadd(key, ...values);
+exports.saddAsync = async ({ key, values, client }) => client.SADD(key, values);
 
 exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.SET(key, value);
 

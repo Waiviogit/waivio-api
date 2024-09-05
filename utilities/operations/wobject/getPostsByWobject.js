@@ -6,7 +6,6 @@ const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('con
 const { TOKEN } = require('constants/common');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const jsonHelper = require('utilities/helpers/jsonHelper');
-const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 
 const getRelistedLinks = async (authorPermlink) => {
@@ -44,6 +43,7 @@ module.exports = async (data) => {
       FIELDS_NAMES.PIN,
       FIELDS_NAMES.REMOVE,
       FIELDS_NAMES.WALLET_ADDRESS,
+      FIELDS_NAMES.LINK,
     ],
     returnArray: false,
     app: data.app,
@@ -140,6 +140,37 @@ const makeConditionForLink = ({ condition, wObject }) => {
   return { condition: { $or: [condition, condition2] } };
 };
 
+const socialLinksMap = {
+  linkFacebook: 'https://www.facebook.com/profile.php?id=',
+  linkTwitter: 'https://x.com/',
+  linkYouTube: 'https://www.youtube.com/@',
+  linkInstagram: 'https://www.instagram.com/',
+  linkGitHub: 'https://github.com/',
+};
+
+const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
+
+const makeConditionForPerson = ({ condition, processedObj }) => {
+  if (!processedObj.link) return { condition };
+  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
+  if (!parsedCondition) return { condition };
+
+  const conditionArr = [];
+
+  for (const parsedConditionKey in parsedCondition) {
+    const id = parsedCondition[parsedConditionKey];
+    const keyExist = !!socialLinksMap[parsedConditionKey];
+    if (id && keyExist) {
+      const link = makeSocialLink(parsedConditionKey, id);
+      // conditionArr.push({ links: { $regex: `^${link}` } });
+      conditionArr.push({ links: link });
+    }
+  }
+  if (!conditionArr?.length) return { condition };
+
+  return { condition: { $or: [condition, ...conditionArr] } };
+};
+
 // here we can either take fields from processed object or get all fields with Hive
 const makeConditionForBusiness = ({ condition, processedObj }) => {
   const hiveWallets = (processedObj[FIELDS_NAMES.WALLET_ADDRESS] || []).reduce((acc, el) => {
@@ -196,6 +227,10 @@ const getWobjFeedCondition = async ({
   }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
+  if (wObject.object_type === OBJECT_TYPES.PERSON) {
+    return makeConditionForPerson({ condition, processedObj });
+  }
+
   if (wObject.object_type === OBJECT_TYPES.LINK) {
     return makeConditionForLink({ condition, wObject });
   }

@@ -738,6 +738,88 @@ Resources:
  - Don't change field order and don't delete columns, because the script is guided by the location index.
  - It is not necessary to fill in all cells. Empty cells will be skipped.
 
+## Importing from a Spreadsheet for Various Object Types
+Manual importing from a spreadsheet can be applied to a variety of object types, not just products. This feature supports importing data for books, businesses, restaurants, links, recipes, and person into Waivio. By following the instructions below, users can create a Google Spreadsheet tailored to each object type, fill in the required fields, and use the Data Import tool to bring their data into Waivio.
+Detailed information about each object type can be found here: https://github.com/Waiviogit/waivio/wiki/Manual-Object-Import-to-Waivio-Using-Google-Sheets
+## General Short Version Setup Instructions for Importing from a Spreadsheet for Various Object Types
+The setup process is similar for all object types, but the fields and scripts used will vary depending on the object type. Here’s a breakdown of how to set up for each type:
+1. Create or open your Google Spreadsheet following the template and instructions provided for the specific object type.
+2. Install the corresponding script using the provided link for each object type. This script is necessary to convert your spreadsheet data into JSON format.
+3. Save and authorize the script if required, following the steps provided in the respective tutorials.
+4. Refresh your Google Spreadsheet to ensure the new tab or menu option appears.
+5. Fill in the fields according to the guidelines and formats specified for each object type.
+6. Export the JSON file by using the script menu option. This file will be saved to your Google Drive.
+
+## Object Type Specific Instructions Details Links
+**Product / Book**:
+- [Export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Export-template-script-from-Google-Sheets-to-JSON) (Script)
+- [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1Z-8Hz8xGU45A7nKeMJWFsKGzx5WT5oat7SSLqFLGsSU/edit?usp=sharing) (Example)
+**Link**
+- [Link export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Link export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-script-from-Google-Sheets-to-JSON) (Script)
+- [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1qzHBeC86zdIHD9mdzcHVyJtIQ3bKwO1dFW3V2XpdcvI/edit?usp=sharing) (Example)
+**Recipe**
+- [Recipe export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Recipe export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-script-from-Google-Sheets-to-JSON) (Script)
+- [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1uSAQ3Ai3tTyqLw7Z2jK7_CVwJzCVZRqM5FBjLCoYx0M/edit?usp=sharing) (Example)
+**Business / Restaurant / Person**:
+- [Business / Restaurant / Person export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-from-Google-Sheets-to-JSON) (Instruction)
+- [Business / Restaurant / Person export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-script-from-Google-Sheets-to-JSON) (Script)
+- [Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1eCzux7hUGcRlQFxogAA5vSueYxk-Kvo7FnrSdLOEeds/edit?usp=sharing) (Example)
+
+## Table Fields for Importing Link Object Types from a Spreadsheet 
+Link fields details:
+- primaryImageURLs: The link's avatar. <br>Field type: array. ![image](https://github.com/user-attachments/assets/5fed8cbe-3525-4f98-b587-b78359204947)
+- fieldDescription: The description for this link. <br>Field type: nested. ![image](https://github.com/user-attachments/assets/a3524fa5-8a68-4f07-8cc7-596fbd6c87c8) 
+- imageURLs: A list of image URLs for this link. <br>**Each image URLs must be separated by ";"**. <br>There is no need to put a ";" after the last URL.<br>Field type: array. ![image](https://github.com/user-attachments/assets/8603d528-c3e8-4baa-84d9-bf236693d129)
+- name: The link's name.<br>Field type: string. ![image](https://github.com/user-attachments/assets/a530f6f5-9ace-4ec8-9d28-02bb34ed58af)
+- fieldTitle: The title for this link. <br>Field type: string. ![image](https://github.com/user-attachments/assets/b69ae550-00bf-465c-b25d-4cf619a62fca)
+- fieldUrl: The URL value for URL link field. <br>Field type: string. ![image](https://github.com/user-attachments/assets/84e88ac0-9d80-49ef-8b54-81d202e2fbdc)
+[Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1qzHBeC86zdIHD9mdzcHVyJtIQ3bKwO1dFW3V2XpdcvI/edit?usp=sharing) (Example)
+[Link export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-script-from-Google-Sheets-to-JSON) (Script)
+[Link export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Link-export-template-from-Google-Sheets-to-JSON) (Instruction)
+
+## Table Fields for Importing Recipe Object Types from a Spreadsheet 
+Recipe fields details:
+- `fieldBudget`: The recipe budget information. <br>Field type: string. ![image](https://github.com/user-attachments/assets/8781d063-c026-41b7-ba21-0c84c43f083a)
+- `fieldCalories`: The recipe calories information. <br>Field type: string. ![image](https://github.com/user-attachments/assets/9a94d21f-0110-4c8f-8d70-16b73878a1d7)
+- `fieldCookingTime`: The recipe cooking time information. <br>Field type: string. ![image](https://github.com/user-attachments/assets/c20fca21-4afb-4ada-a3ce-8d4cf8a8226a)
+- `fieldDescription`: The description for this object. <br>Field type: string. ![image](https://github.com/user-attachments/assets/b27e8522-e7e8-44af-8b19-49dcf7426697)
+- `fieldRecipeIngredients`: A list of recipe ingredients.  <br>**Each ingredient information must be separated by ";"**. <br>There is no need to put a ";" after the last URL.<br>Field type: array. ![image](https://github.com/user-attachments/assets/7091a653-5973-48ad-8ddb-dabad12d3ab0)
+- `imageURLs`: A list of image URLs (gallery items) for this link. <br>**Each image URLs must be separated by ";"**. <br>There is no need to put a ";" after the last URL.<br>Field type: array. ![image](https://github.com/user-attachments/assets/46e5e3aa-45bd-44e1-9830-ab5f179bab4d)
+- `name`: The object's name.<br>Field type: string. ![image](https://github.com/user-attachments/assets/91f66e25-8df8-4b85-99b2-b8160a76a46a)
+- `primaryImageURLs`: The object's avatar. <br>Field type: array. ![image](https://github.com/user-attachments/assets/f267015c-278b-482f-9712-85f3b5d505f2)
+- `waivio_product_ids`: A list of product IDs with value associated with this recipe. Format for recording tags: <br>`key: Product ID type; value: Value*`<br><br>**Key from value must be separated by ";"**.<br>**Each product ID must be separated by "*"**. <br>Value can have only one option. <br> Field type: nested ![image](https://github.com/Waiviogit/waivio/assets/67378322/630178be-f15e-403c-9eec-514c71986462)
+- `waivio_tags`: A list of tags with tag categories associated with this recipe. Format for recording tags: <br>`key: Category Tag Name; value: Tag*`<br><br>**Key from value must be separated by ";"**.<br>**Each tag must be separated by "*"**. <br>Value can have only one option. Therefore, in order to add several tags to one category tag, they need to be recorded separately.<br> Field type: nested ![image](https://user-images.githubusercontent.com/67378322/227885818-ef5e2c8c-7e48-4e09-b33d-11a7bd218357.png)
+[Recipe export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-script-from-Google-Sheets-to-JSON) (Script)
+[Recipe Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1uSAQ3Ai3tTyqLw7Z2jK7_CVwJzCVZRqM5FBjLCoYx0M/edit?usp=sharing) (Example)
+[Recipe export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Recipe-export-template-from-Google-Sheets-to-JSON) (Instruction)
+
+## Table Fields for Importing Business, Restaurant or Person Object Types from a Spreadsheet 
+Business, Restaurant or Person fields details:
+Here's the revised text with the table format removed and images moved to the end:
+- `address`: The full address text. <br>Field type: string. ![image](https://github.com/user-attachments/assets/a331a0be-fac5-42bc-9b7e-ab145fb93b8f)
+- `city`: The city name (as part of the address details). <br>Field type: string. ![image](https://github.com/user-attachments/assets/b07d5ccf-9f61-428e-8c2a-92dc05dfba9a)
+- `companyIds`: A list of company IDs with value associated with this business / restaurant. Format for recording tags: <br>`companyId: TestID; companyIdType: TestIDType*`<br><br>**ID from type must be separated by ";"**.<br>**Each company ID must be separated by "*"**. <br>Field type: nested. ![image](https://github.com/user-attachments/assets/3708a279-b3c0-4a66-b634-af73bc88b487)
+- `country`: The country name (as part of the address details). <br>Field type: string. ![image](https://github.com/user-attachments/assets/df32b609-c76a-438b-ac24-c28375633620)
+- `descriptions`: The description for this object. <br>Field type: nested. ![image](https://github.com/user-attachments/assets/7c543adb-1791-4b93-98a1-9d4e4cdd58ab)
+- `emails`: The email for this object. <br>Field type: array. ![image](https://github.com/user-attachments/assets/a284e07a-2c23-4287-b712-272a438fd750)
+- `imageURLs`: A list of image URLs (gallery items) for this link. <br>**Each image URLs must be separated by ";"**. <br>There is no need to put a ";" after the last URL.<br>Field type: array. ![image](https://github.com/user-attachments/assets/5c266908-c588-4f00-9016-21b2de9c982d)
+- `latitude`: The value of latitude for the map field (both latitude and longitude are required to add a map update for the object). <br>Field type: string. ![image](https://github.com/user-attachments/assets/ca0e6005-5aa5-4eff-a5a5-9065373ba0e3)
+- `longitude`: The value of longitude for the map field (both latitude and longitude are required to add a map update for the object). <br>Field type: string. ![image](https://github.com/user-attachments/assets/527419c3-5e4e-4169-861c-ccd4a2a65784)
+- `name`: The object's name.<br>Field type: string. ![image](https://github.com/user-attachments/assets/91f66e25-8df8-4b85-99b2-b8160a76a46a)
+- `phone`: The phone number. <br>Field type: string. ![image](https://github.com/user-attachments/assets/6287a1df-5e11-4101-b4c6-ae04c575da99)
+- `postalCode`: The postal code (as part of the address details). <br>Field type: string. ![image](https://github.com/user-attachments/assets/aa51ef35-7876-4b69-8eff-f37bfd270139)
+- `primaryImageURLs`: The object's avatar. <br>Field type: array. ![image](https://github.com/user-attachments/assets/f267015c-278b-482f-9712-85f3b5d505f2)
+- `province`: The province (as part of the address details). <br>Field type: string. ![image](https://github.com/user-attachments/assets/5ae459cd-0648-4434-b4da-8cdff8c8ed57)
+- `socialLinks`: The social link identifiers for platforms like Facebook (linkFacebook), X (linkTwitter), YouTube (linkYouTube), Instagram (linkInstagram), GitHub (linkGitHub). In this field, you should only enter the unique identifier for these profiles, such as a permalink or username. There is no need to enter the full URL, only the unique part. <br> Format: `linkFacebook: facebook-link; linkTwitter: user-test; linkYouTube: permalink; linkInstagram: username`. ![image](https://github.com/user-attachments/assets/c0db4b1d-f95a-475e-990f-306993035fe0)
+- `waivio_tags`: A list of tags with tag categories associated with this object. Format for recording tags: <br>`key: Category Tag Name; value: Tag*`<br><br>**Key from value must be separated by ";"**.<br>**Each tag must be separated by "*"**. <br>Value can have only one option. Therefore, in order to add several tags to one category tag, they need to be recorded separately.<br>Field type: nested. ![image](https://github.com/user-attachments/assets/4228d513-ece4-45eb-9550-4405a91c4e0a)
+- `websites`: A list of websites for this object. <br>**Each website must be separated by ";"**. <br>There is no need to put a ";" after the last URL.<br>Field type: array. ![image](https://github.com/user-attachments/assets/97240015-6974-421a-824d-e9efedb7c3f5)
+- `workingHours`: The information regarding working hours.<br>Field type: string. ![image](https://github.com/user-attachments/assets/bdffbf3c-cb0c-4760-a15b-62cac5763cf6)
+[Business / Restaurant / Person export template script from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-script-from-Google-Sheets-to-JSON) (Script)
+[Business / Restaurant / Person Fields template Google Sheets](https://docs.google.com/spreadsheets/d/1eCzux7hUGcRlQFxogAA5vSueYxk-Kvo7FnrSdLOEeds/edit?usp=sharing) (Example)
+[Business / Restaurant / Person export instructions from Google Sheets to JSON](https://github.com/Waiviogit/waivio/wiki/Business,-Restaurant-or-Person-export-template-from-Google-Sheets-to-JSON) (Instruction)
 
 # Lesson 10: Introduction to Social Shopping on Web 3
  For more details give a link to https://www.waivio.com/object/tso-social-shopping-on-hive/page

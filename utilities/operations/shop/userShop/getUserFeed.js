@@ -18,6 +18,7 @@ module.exports = async ({
   skip,
   limit,
   categoryLimit,
+  schema,
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
 
@@ -44,6 +45,7 @@ module.exports = async ({
     path: [...path, d.name],
     userFilter,
     limit: categoryLimit,
+    schema,
   })));
 
   const hasMore = userDepartments.length > departments.length + skip;
