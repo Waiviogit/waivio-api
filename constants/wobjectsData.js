@@ -76,6 +76,7 @@ exports.FIELDS_NAMES = {
   BUDGET: 'budget',
   COOKING_TIME: 'cookingTime',
   COST: 'cost',
+  RECIPE_INGREDIENTS: 'recipeIngredients',
   GROUP_EXPERTISE: 'groupExpertise',
   GROUP_FOLLOWERS: 'groupFollowers',
   GROUP_FOLLOWING: 'groupFollowing',
@@ -498,4 +499,5 @@ exports.FAVORITES_OBJECT_TYPES = [
   'test',
   'map',
   'link',
+  'recipe',
 ];

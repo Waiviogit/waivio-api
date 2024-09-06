@@ -911,6 +911,10 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "schema" : {
+                "type" : "string",
+                "enum": ["shop", "recipe"]
               }
             }
           }
@@ -984,6 +988,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }
@@ -1061,6 +1069,10 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }
@@ -1112,6 +1124,10 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "schema" : {
+                "type" : "string",
+                "enum": ["shop", "recipe"]
               }
             }
           }
@@ -1168,6 +1184,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }

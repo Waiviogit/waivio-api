@@ -1,7 +1,6 @@
 const { app: AppOperations } = require('utilities/operations');
 const getMetrics = require('utilities/operations/aboutWaiv/getMetrics');
 const validators = require('controllers/validators');
-const { getNamespace } = require('cls-hooked');
 const { App } = require('models');
 const config = require('config');
 const redisGetter = require('utilities/redis/redisGetter');
@@ -9,14 +8,18 @@ const _ = require('lodash');
 const { REDIS_KEYS } = require('../constants/common');
 const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 const assitant = require('../utilities/operations/assistant/assitant');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
+const asyncLocalStorage = require('../middlewares/context/context');
 
 const show = async (req, res, next) => {
   const data = {
     name: req.params.appName || 'waiviodev',
   };
   data.bots = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-  const session = getNamespace('request-session');
-  data.host = session.get('host') || config.appHost;
+  const store = asyncLocalStorage.getStore();
+
+  data.host = store.get('host') || config.appHost;
   const {
     app,
     error,
@@ -25,8 +28,7 @@ const show = async (req, res, next) => {
   if (error) {
     return next(error);
   }
-  res.status(200)
-    .json(app);
+  return res.status(200).json(app);
 };
 
 const experts = async (req, res, next) => {
@@ -44,8 +46,7 @@ const experts = async (req, res, next) => {
   } = await AppOperations.experts.get(value);
 
   if (error) return next(error);
-  res.status(200)
-    .json(users);
+  return res.status(200).json(users);
 };
 
 const hashtags = async (req, res, next) => {
@@ -63,24 +64,20 @@ const hashtags = async (req, res, next) => {
   } = await AppOperations.hashtags(value);
 
   if (error) return next(error);
-  res.result = {
-    status: 200,
-    json: {
-      wobjects,
-      hasMore,
-    },
-  };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getReqRates = async (req, res, next) => {
   const key = req?.query?.key;
 
-  if (key !== process.env.REQ_TIME_KEY) {
-    res.status(401)
-      .send();
-    return;
-  }
+  if (key !== process.env.REQ_TIME_KEY) return res.status(401).send();
+
   const date = req?.query?.date || getCurrentDateString();
 
   try {
@@ -114,26 +111,16 @@ const getReqRates = async (req, res, next) => {
       .orderBy(['requestTimes', 'avgTime'], ['desc', 'desc'])
       .value();
 
-    res.result = {
-      status: 200,
-      json: result,
-    };
+    return res.status(200).json(result);
   } catch (error) {
-    // Handle any errors that occur during the asynchronous operations
-    console.error(error);
-    res.result = {
-      status: 500,
-      error: 'Internal Server Error',
-    };
+    return res.status(500).json({ error: 'Internal Server Error' });
   }
-
-  next();
 };
 
 const waivMainMetrics = async (req, res, next) => {
   const result = await getMetrics.getMainMetrics();
 
-  res.status(200).json(result);
+  return res.status(200).json(result);
 };
 
 const swapHistory = async (req, res, next) => {
@@ -143,7 +130,7 @@ const swapHistory = async (req, res, next) => {
 
   const result = await getMetrics.getSwapHistory(value);
 
-  res.status(200).json(result);
+  return res.status(200).json(result);
 };
 
 const assistant = async (req, res, next) => {
@@ -154,7 +141,7 @@ const assistant = async (req, res, next) => {
   const { result, error } = await assitant.runWithEmbeddings(value);
   if (error) return next(error);
 
-  res.status(200).json({ result });
+  return res.status(200).json({ result });
 };
 
 const assistantHistory = async (req, res, next) => {
@@ -165,7 +152,7 @@ const assistantHistory = async (req, res, next) => {
   const { result, error } = await assitant.getHistory(value);
   if (error) return next(error);
 
-  res.status(200).json({ result });
+  return res.status(200).json({ result });
 };
 
 module.exports = {

@@ -395,12 +395,16 @@ const checkMapsForObject = async ({ app, authorPermlink, check }) => {
   return emptyResp;
 };
 
+const getMapConfigCondition = ({ authorPermlink, app }) => {
+  if (!app?.inherited || app?.canBeExtended) return true;
+  if (app?.configuration?.shopSettings?.type !== SHOP_SETTINGS_TYPE.OBJECT) return true;
+  return !!(app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.OBJECT
+    && app?.configuration?.shopSettings?.value === authorPermlink);
+};
+
 const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
-  if (!app || !app?.inherited || app?.canBeExtended) return '';
-  if (app?.configuration?.shopSettings?.type !== SHOP_SETTINGS_TYPE.OBJECT) return '';
-  if (app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.OBJECT
-    && app?.configuration?.shopSettings?.value === authorPermlink
-  ) return authorPermlink;
+  const configCondition = getMapConfigCondition({ app, authorPermlink });
+  if (configCondition) return '';
 
   const { wObject } = await Wobj.getOne(app?.configuration?.shopSettings?.value);
   if (!wObject) return '';
@@ -427,7 +431,7 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
     },
   });
   if (!result?.length) return '';
-  if (result.length === 1) result[0].author.permlink;
+  if (result.length === 1) return result[0].author_permlink;
 
   const responses = await Promise.all(
     result.map((el) => checkMapsForObject({ app, authorPermlink, check: el.author_permlink })),
@@ -438,7 +442,7 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
   if (existOnObjects.length === 1) return existOnObjects[0];
 
   if (processed?.sortCustom?.include?.length) {
-    for (const item of processed?.sortCustom?.include) {
+    for (const item of processed?.sortCustom?.include ?? []) {
       const menuItem = _.find(processed.menuItem, (el) => el.permlink === item);
       if (!menuItem) continue;
       const json = parseJson(menuItem.body, null);
