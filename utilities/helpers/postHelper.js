@@ -287,6 +287,21 @@ const recalcRshares = ({ post, payoutToken }) => {
   );
 };
 
+const updateTotalRewards = ({ post, key, reward }) => {
+  // Check if the key exists in the post object
+  if (post[key] !== undefined) {
+    // Convert the value to a number if it's a string
+    if (typeof post[key] === 'string') {
+      post[key] = parseFloat(post[key]) || 0;
+    }
+    // Add the rewardInToken to the existing value
+    post[key] += reward;
+  } else {
+    // Initialize the value if it doesn't exist
+    post[key] = reward;
+  }
+};
+
 const sponsorObligationsNewReview = async ({
   post,
   blacklist = [],
@@ -331,8 +346,8 @@ const sponsorObligationsNewReview = async ({
 
     const rewardInToken = new BigNumber(rewardInUSD)
       .dividedBy(tokenRate).toNumber();
-    const totalPayout = _.get(post, `total_payout_${payoutToken}`);
-    const voteRshares = _.get(post, `net_rshares_${payoutToken}`);
+    const totalPayout = _.get(post, `total_payout_${payoutToken}`, 0);
+    const voteRshares = _.get(post, `net_rshares_${payoutToken}`, 0);
 
     const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
 
@@ -344,12 +359,26 @@ const sponsorObligationsNewReview = async ({
       const sponsorPayout = rewardInToken - (likedSum / 2);
       if (sponsorPayout <= 0) continue;
 
-      if (beforeCashOut) post[`total_payout_${payoutToken}`] += sponsorPayout;
+      if (beforeCashOut) {
+        updateTotalRewards({
+          post,
+          key: `total_payout_${payoutToken}`,
+          reward: sponsorPayout,
+        });
+      }
 
       if (!totalPayout && !_.isEmpty(bots)) {
-        post[`total_rewards_${payoutToken}`] += rewardInToken;
+        updateTotalRewards({
+          post,
+          key: `total_rewards_${payoutToken}`,
+          reward: rewardInToken,
+        });
       } else {
-        post[`total_rewards_${payoutToken}`] += sponsorPayout;
+        updateTotalRewards({
+          post,
+          key: `total_rewards_${payoutToken}`,
+          reward: sponsorPayout,
+        });
       }
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === guideName);
 
@@ -375,9 +404,17 @@ const sponsorObligationsNewReview = async ({
       continue;
     }
     if (beforeCashOut) {
-      post[`total_payout_${payoutToken}`] += rewardInToken;
+      updateTotalRewards({
+        post,
+        key: `total_payout_${payoutToken}`,
+        reward: rewardInToken,
+      });
     } else {
-      post[`total_rewards_${payoutToken}`] += rewardInToken;
+      updateTotalRewards({
+        post,
+        key: `total_rewards_${payoutToken}`,
+        reward: rewardInToken,
+      });
     }
 
     _.forEach(post.active_votes, (el) => {
