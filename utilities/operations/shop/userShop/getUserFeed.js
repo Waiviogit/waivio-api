@@ -26,7 +26,14 @@ module.exports = async ({
 
   const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
-      userName, user, name: department, excluded: excludedDepartments, path, userFilter, app,
+      userName,
+      user,
+      name: department,
+      excluded: excludedDepartments,
+      path,
+      userFilter,
+      app,
+      schema,
     });
 
   const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
