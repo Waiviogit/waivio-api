@@ -27,6 +27,13 @@ exports.schema = [
     case: 1,
     field_name: 'author',
   },
+  {
+    path: '/wobjects/group',
+    method: 'POST',
+    case: 2,
+    fields_path: 'result',
+    field_name: 'name',
+  },
   // user controller
   {
     path: '/users',

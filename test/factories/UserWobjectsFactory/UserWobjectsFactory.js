@@ -5,7 +5,7 @@ const Create = async ({
   id, userName, authorPermlink, weight,
 } = {}) => {
   const userWobjectData = {
-    _id: id || mongoose.Types.ObjectId(),
+    _id: id || new mongoose.Types.ObjectId(),
     user_name: userName || faker.name.firstName(),
     author_permlink: authorPermlink || faker.internet.url(),
     weight: weight || 0,

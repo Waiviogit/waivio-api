@@ -21,5 +21,6 @@ moduleExports.recountListItems = require('./recountListItems');
 moduleExports.getListItemLocales = require('./getListItemLocales');
 moduleExports.getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
 moduleExports.mapObject = require('./mapObject');
+moduleExports.objectGroup = require('./objectGroup');
 
 module.exports = moduleExports;
