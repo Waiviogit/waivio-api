@@ -9,12 +9,16 @@ const appUsersStatistics = redis.createClient();
 const processedPostClient = redis.createClient();
 
 const setupRedisConnections = async () => {
-  await wobjRefsClient.connect();
-  await importUserClient.connect();
-  await mainFeedsCacheClient.connect();
-  await tagCategoriesClient.connect();
-  await appUsersStatistics.connect();
-  await processedPostClient.connect();
+  try {
+    await wobjRefsClient.connect();
+    await importUserClient.connect();
+    await mainFeedsCacheClient.connect();
+    await tagCategoriesClient.connect();
+    await appUsersStatistics.connect();
+    await processedPostClient.connect();
+  } catch (error) {
+    return;
+  }
 
   await wobjRefsClient.select(config.redis.wobjRefs);
   await importUserClient.select(config.redis.importUser);
