@@ -281,3 +281,10 @@ exports.getAuthorPermlinkByFieldBody = Joi.object().keys({
   body: Joi.string().required(),
   objectType: Joi.string(),
 });
+
+exports.getGroupByPermlink = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  lastName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+});

@@ -3,21 +3,22 @@ const {
   Wobj,
 } = require('models');
 const {
-  SHOP_OBJECT_TYPES,
   REMOVE_OBJ_STATUSES,
 } = require('constants/wobjectsData');
 const shopHelper = require('utilities/helpers/shopHelper');
 const { SHOP_ITEM_RATINGS } = require('constants/shop');
 
 const getUserObjects = async ({
-  userName, tagCategory, path, app,
+  userName, tagCategory, path, app, schema,
 }) => {
   const userFilter = await shopHelper.getUserFilter({ userName, app });
+
+  const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 
   const { result } = await Wobj.findObjects({
     filter: {
       ...userFilter,
-      object_type: { $in: SHOP_OBJECT_TYPES },
+      ...objectTypeCondition,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
       ...(!_.isEmpty(path) && { departments: { $all: path } }),
       ...(tagCategory && { 'fields.tagCategory': tagCategory }),
@@ -29,10 +30,10 @@ const getUserObjects = async ({
 };
 
 const getMoreTagFilters = async ({
-  userName, tagCategory, skip, limit, path, app,
+  userName, tagCategory, skip, limit, path, app, schema,
 }) => {
   const objects = await getUserObjects({
-    userName, tagCategory, app, path,
+    userName, tagCategory, app, path, schema,
   });
 
   const { tags, hasMore } = shopHelper.getMoreTagsForCategory({
@@ -49,12 +50,14 @@ const getMoreTagFilters = async ({
 };
 
 const getUserFilters = async ({
-  userName, path, app,
+  userName, path, app, schema,
 }) => {
   const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
   if (error) return { error };
 
-  const objects = await getUserObjects({ userName, path, app });
+  const objects = await getUserObjects({
+    userName, path, app, schema,
+  });
 
   const tagCategoryFilters = shopHelper
     .getFilteredTagCategories({ objects, tagCategories });

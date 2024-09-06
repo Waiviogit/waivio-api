@@ -1,0 +1,285 @@
+# Tools
+The **Tools** section offers a variety of features for managing your Waivio account, enhancing user experience through customization, notifications, and social interaction. This section includes the following functionalities:
+- **Notification Settings**: Configure and manage notifications, with options to receive alerts via the Waivio platform and Telegram.
+- **Drafts**: Manage unpublished posts, with options to publish or delete them.
+- **Bookmarks**: View and manage bookmarked posts, presented in a format similar to the news feed.
+- **Edit Profile**: Update personal information, including your avatar, cover photo, and social media links.
+- **Settings**: Adjust user preferences such as voting power, language, and night mode.
+- **Affiliate Codes**: Enter and manage affiliate codes to earn commissions from sales linked to your content.
+- **New Accounts**: Create new Hive accounts or invite friends using VIP tickets.
+- **Invite**: Share referral links to invite new users to Waivio and earn rewards. 
+Each of these tools is designed to help you optimize your Waivio experience by providing more control over how you interact with the platform and its community.
+![Image](https://github.com/user-attachments/assets/7f9b9a11-f6ce-4aef-bb58-3efc607c651d)
+
+# Tools / Notifications
+**Notification Settings** - This page allows users to configure notifications. Notifications from active checkboxes will be sent to both the notification bell and the bot's Telegram account.
+By default, almost all checkboxes are active. When changing the state of a notification checkbox, users should click the "Save" button to apply the new settings.
+![image](https://github.com/user-attachments/assets/fdc24f9a-b6b6-4b31-99d4-65d6a2312321)
+
+### Notification Settings page details:
+**Title**: "Notification Settings".
+**Information title**: "Instant mobile notifications".
+**Note**: You can now receive instant mobile notifications via the Telegram app when someone replies to or re-blogs your post on Hive, mentions you, follows you, transfers funds to you, and so on. Open the Telegram chart with @WaivioNotificationsBot and enter the Hive usernames to subscribe.
+![image](https://github.com/user-attachments/assets/f0495917-7d2a-47fb-b459-3579bde714b3)
+
+Notification checkboxes information is divided into four sections (Community actions, Wallet transactions, My actions, Security alerts):
+1. **Community actions section**:
+* Likes: Receive notifications when other users like your post.
+* Re-blogs: Receive notifications when other users re-blog (repost) your post.
+* Replies: Receive notifications when other users reply to your posts or comments.
+* Mentions: Receive notifications when you are mentioned in posts, comments, or threads.
+* Downvotes: Receive notifications when other users downvote your posts.
+* Follow: Receive notifications when other users start following you.
+* Status Changed
+* Activation Campaign: Receive notifications about campaign activation for a specific object or user.
+* Claimed Object Updates: Enables notifications about all changes to an object (addition/rejection) if the user claims authority (gives a heart) to this object.
+* Group ID Control: Notifies you about the addition or rejection of a Group ID. The Group ID is taken from objects over which the user has claimed authority. For example, if a user claims an object that has a Group ID, and this Group ID is added by another user to a different object, this notification will be sent.
+* Followed User Threads: Receive notifications for threads created by followed users. This applies to users who have activated the bell on another user's profile to receive notifications about threads initiated by that user.
+![image](https://github.com/user-attachments/assets/cc8c5cd5-21dd-4841-b7aa-9a023391954c)
+2. **Wallet transactions section**:
+* Incoming transfers: Receive notifications for incoming transfers. You can specify a minimum amount for notifications (min. amount: {number} USD).
+* Internal market (HIVE/HBD conversions): Receive notifications about market operations involving HIVE/HBD conversions.
+* Power ups: Receive notifications about power-up actions.
+* Claimed rewards: Receive notifications when rewards are claimed.
+![image](https://github.com/user-attachments/assets/1b64b94f-bd84-438b-8878-f09c41d5ef0e)
+3. My actions section:
+* My posts: Receive notifications when your posts are published.
+* My comments: Receive notifications when your comments are published.
+* My likes: Receive notifications when you leave likes.
+![image](https://github.com/user-attachments/assets/d802bdf8-0473-4f7f-8271-cb597ac52c77)
+4. **Security alerts section**:
+* Security: This checkbox is disabled to ensure users always receive notifications about outgoing transfers, power downs, withdrawals from savings, delegations, password recovery requests, recovery address changes, and app authorizations.
+![image](https://github.com/user-attachments/assets/240bf9e5-bf58-414e-bc1e-94ca99e20316)
+
+
+# Tools / Drafts
+**Drafts** are unpublished posts that you can either publish or delete in Tools.
+**Drafts Information:**
+- **Title:** Drafts
+- **Description:** These are posts that were never made public. You can publish them or delete them.
+- **All Delete:** Checkbox to mark all drafts.
+- **Delete Link:** Link to a modal window for deleting this draft.
+- **List:** List of draft cards consisting of:
+  - Checkbox - To select a draft
+  - Title - Post title or text body if the post has no title
+  - Info about last update
+
+**Modal Window: "Delete This Draft"**
+- **Title:** Delete This Draft
+- **Close:** Button to close the modal window
+- **Text:** Are you sure you want to delete this draft permanently?
+- **Confirm:** "Confirm" button to submit actions
+- **Cancel:** "Cancel" button to cancel actions
+![image](https://github.com/user-attachments/assets/c6b8923f-4e16-407e-8886-f240b5ec7e89)
+
+
+# Toools / Bookmarks
+The **Bookmarks** page displays posts that have been added to user bookmarks. Posts are shown in the same format as the news feed, with the newest bookmark appearing at the top. The right sidebar features blocks for "Interesting Objects" and "Interesting People."
+## How to add to bookmarks:
+1. On the post, click on button three points.
+2. Click "Add to bookmarks".
+![image](https://github.com/user-attachments/assets/c96f5808-3f43-47a1-bb7f-94b42d25aa80)
+
+
+# Tools / Edit profile
+The **Edit Profile** page allows users to update their personal information.
+![image](https://github.com/user-attachments/assets/ec597353-0582-45be-8a3e-614e5251be14)
+Edit Profile page details:
+- **Title:** Edit Profile.
+- **Name:** "Name" - Field to add your name. Placeholder: "Name to display on your profile".
+- **About:** "About Me" - Field to add a description about yourself. Placeholder: "A few words about you".
+- **Location:** "Location (Public)" - Field to add your location information. Placeholder: "Your location".
+- **Email:** "Email (Public)" - Field to add your email. Placeholder: "Your email".
+- **Website:** "Website (Public)" - Field to add your website URL. Placeholder: "Your website URL".
+- **Avatar:** Block titled "Profile Picture" for adding an avatar. Consists of:
+  - Icon - A preview of the avatar; after adding a picture, it appears in the icon.
+  - Button "Change Avatar" - Button to upload a new avatar. Clicking this opens a modal window.
+- **Cover:** Block titled "Cover Picture" for adding a cover photo. Consists of:
+  - Icon - A preview of the cover; after adding a picture, it appears in the icon.
+  - Button "Change Cover" - Button to upload a new cover photo. Clicking this opens a modal window.
+- **Social:** Fields for entering links to your social profiles, including:
+  - Facebook
+  - Twitter
+  - LinkedIn
+  - YouTube
+  - Instagram
+  - GitHub
+  - Bitcoin
+  - Litecoin
+  - Ethereum
+  - Lightning Bitcoin  
+- **Signature:** Field for adding a signature for comments.
+- **Save:** Button to save changes. If no changes are made, the button is disabled.
+
+
+# Tools / Settings
+The **Settings** page allows you to configure various user preferences. Access it through Tools -> Settings.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/7d31bfe7-7b82-4528-8b3c-f9f45c1a8263)
+Settings page information:
+- **Title:** Settings
+- **Voting Power** ![image](https://github.com/user-attachments/assets/0a8b1f70-0a41-41c5-a601-68a7ca77030c)
+  - **Title:** Voting Power
+  - **Description:** Enable the Voting Power slider to specify the exact percentage of your Voting Power used for likes.
+  - **Disable:** If the checkbox is active, the slider is not displayed by default.
+  - **Enable:** If the checkbox is active, the slider is displayed.
+- **Default Vote Percent** ![image](https://github.com/user-attachments/assets/4ec05efc-9a04-4daf-a8c6-c89d974781b6)
+  - **Title:** Default Vote Percent
+  - **Description:** Select your default voting percentage. This value will be used as the default in the voting slider and as the vote value when the slider is disabled.
+  - **Slider:** Defaults to 100%. You can adjust values by dragging the slider or selecting a percentage at the bottom.
+- **Language** ![image](https://github.com/user-attachments/assets/88879d30-a477-4c31-b310-ad38020f5ade)
+  - **Title:** Interface Language
+  - **Description:** Select your preferred language for the website and its objects.
+  - **Dropdown:** Placeholder "Select your language" or the language you have chosen, with a dropdown menu listing.
+- **Content Language Preferences** ![image](https://github.com/user-attachments/assets/cfc1e965-84a7-4170-a165-6c137a60504d)
+  - **Title:** Content Language Preferences
+  - **Description:** Content from the blockchain (posts, comments) will be filtered according to these language preferences.
+  - **Field:** Field to select preferred languages.
+- **Base Currency** ![image](https://github.com/user-attachments/assets/e9fc6ca9-87e4-4d6a-a420-76b3323bb05c)
+  - **Title:** Base Currency
+  - **Description:** Choose the currency in which content will be displayed. This currency is used for displaying rewards, vote values, and post earnings.
+  - **Dropdown:** Dropdown menu with currencies.
+- **NSFW Posts** ![image](https://github.com/user-attachments/assets/a52c4949-42d5-4548-8ee0-cdde91a396a9)
+  - **Title:** NSFW Posts
+  - **Description:** Enable this option to show all posts tagged with NSFW by default, with a minimized view and a link indicating that the content is not safe.
+  - **Checkbox:** Checkbox "Display NSFW Posts," inactive by default.
+- **Shop** ![image](https://github.com/user-attachments/assets/44c732e4-2767-4b87-bea5-3af817d1233f)
+  - **Title:** Shop
+  - **Description:** Manage your public shopping list in your profile. By default, the Shop section displays objects linked from your posts (or first-level comments). You can choose not to show these objects.
+  - **Checkbox:** Checkbox "Do not show objects linked in posts," inactive by default.
+- **Favorites** ![image](https://github.com/user-attachments/assets/009bdb40-dfab-44ca-8d13-acf49185f362)
+  - **Title:** Favorites
+  - **Description:** Manage your public favorites list in your profile. By default, the Favorites section displays objects linked from your posts (or first-level comments). You can choose not to show these objects.
+  - **Checkbox:** Checkbox "Do not show objects linked in posts," inactive by default.
+- **Nightmode** ![image](https://github.com/user-attachments/assets/cfbc874c-d4f6-4a07-9c5c-c677b7806311)
+  - **Title:** Nightmode
+  - **Description:** Enable this option for a more eye-friendly experience at night with a dark version of the app.
+  - **Checkbox:** Checkbox "Use Nightmode," inactive by default.
+- **Like My Posts** ![image](https://github.com/user-attachments/assets/34cb553b-3df6-4924-a521-27e5bf40c807)
+  - **Title:** Like My Posts
+  - **Description:** Enable this option to automatically like your own posts.
+  - **Checkbox:** Checkbox "Like my posts," inactive by default.
+- **Enable Exit Page** ![image](https://github.com/user-attachments/assets/e0140f65-606a-499b-a003-1f015ce435ea)
+  - **Title:** Enable Exit Page
+  - **Description:** Enable this option to use an exit page when clicking on an external link.
+  - **Checkbox:** Checkbox "Enable exit page," inactive by default.
+- **Save** ![image](https://github.com/user-attachments/assets/413ce3ca-916c-4430-83fa-d4f081dfa230)
+  - **Button:** "Save" - Click to save changes. After clicking, the profile page will open.
+
+
+# Tools / Affiliate codes
+The **Affiliate Codes** page allows users to enter their affiliate codes. By doing so, they can earn commissions from sales of products that are linked or mentioned in their profile, shop, posts, and comments. The user's affiliate code is given priority when used on various sites.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/fca6ece3-af9f-4c93-8db2-67318220401c)
+
+### Affiliate codes page element description
+**`TITLE`**: Affiliate codes for @{username}
+**`TEXT`**:
+Enter your affiliate program codes from various platforms, including Amazon.com, Walmart.com, and others. These codes will be automatically integrated into the 'Buy Now' links across your profile, posts and comments. This ensures you earn affiliate commissions from sales initiated by your readers and followers.
+Take advantage of the geo-targeting feature by entering affiliate codes for location-specific shops, such as Amazon.ca, Amazon.co.uk, and more. These codes will direct users based on their geographical location, thereby maximizing your potential affiliate revenues.
+For a seamless and uninterrupted user experience, we also recommend checking and confirming the Product IDs on the referenced products.
+**`FIND_TITLE`**: Find affiliate program
+**`FIEND_FIELD`**: search field by affiliate programs object type.
+**`CODES_TITLE`**: Affiliate codes:
+**`CODES_LIST`**: list of affiliate programs that the user added. Affiliate cards include name, code, and Delete button. If a user deletes an affiliate code and then re-adds the same code, our system will recognize this action. Instead of creating a new update, we will automatically validate and update the existing code, adding approved vote.
+
+## Add Affiliate Code Modal Window
+When a user finds an affiliate program, they must specify a code value. To do this, a modal window will open.
+- **Title:** Affiliate Program: {name}
+- **Code Field:** A field where the user can enter the affiliate code value.
+- **Context:** Explanation that in the user's shop, this code will be implemented for the specified affiliate program.
+- **Submit/Cancel:**
+  - **Submit:** Action button to add the code. Upon clicking "Submit," the update will be published and added to the affiliate program object.
+  - **Cancel:** Action button to cancel the action.
+![image](https://github.com/user-attachments/assets/66b70870-38f7-4d3a-97a4-7de05b046ea2)
+
+
+# Tools / New accounts
+**New Accounts** - page to make it easy for users to create new accounts or invite friends, the VIP tickets system supported by HiveOnBoard.com is proposed.
+![image](https://github.com/user-attachments/assets/4dcc54fe-1bd3-482e-b1de-81bfa1abb1a0)
+New Accounts Page details:
+- **Title:** Create New Hive Accounts
+- **Description:**
+  In order to protect Hive from spam, blockchain witnesses have introduced a small one-time fee for new Hive accounts.
+  When creating your first Hive account, you can do so [for free](https://hiveonboard.com/create-account) by confirming your mobile phone. If you prefer an anonymous account or need additional accounts, you can purchase HiveOnBoard VIP tickets.
+  You can also help your friends open Hive accounts by giving them VIP tickets.
+  VIP tickets can be securely shared via email or other digital means and are valid for activating a single new account via [HiveOnBoard.com](https://hiveonboard.com/). Once a VIP ticket has been used, it will no longer be valid and will be archived in the second table.
+- **Buy VIP Tickets:**
+  - **Title:** Buy VIP Tickets
+  - **Quantity:** Input field for the number of tickets. Placeholder: "# of tickets"
+  - **Calculation:** `{QUANTITY} X 5 HIVE = {sum} HIVE`
+    - `{sum}` is dynamically generated based on the entered quantity.
+  - **Button:** "Pay Now" button opens the "Transfer Funds" modal window.
+![image](https://github.com/user-attachments/assets/a3e69aa1-6464-4f40-ab79-ab0abb23b5a9)
+
+**Tables for VIP Tickets:**
+1. **Active VIP Tickets Table:**
+   - **Title:** Active VIP Tickets
+   - **Purchased:** Displays the creation date of the ticket.
+   - **VIP Ticket:** Displays the unique ID of the ticket with a link to "(add note)" or "edit" if a note already exists. Clicking opens the "Share VIP Ticket" modal window.
+   - **Link:** Displays an "apply" link for directly creating an account.
+   - **Share:** Displays a "details" link to the "Share VIP Ticket" modal window.
+![image](https://github.com/user-attachments/assets/59f37547-5145-4ff2-9041-cbd200809caa)
+2. **Used VIP Tickets Table:**
+   - **Title:** Used VIP Tickets
+   - **Purchased:** Displays the creation date of the ticket.
+   - **VIP Ticket:** Displays the unique ID of the ticket with a link to "(add note)" or "edit" if a note already exists. Clicking opens the "Share VIP Ticket" modal window.
+![image](https://github.com/user-attachments/assets/8bbb48f9-10a1-41f1-b251-ad1ad1f0eecc)
+
+### Share VIP Ticket Modal Window:
+- **Title:** Share VIP Ticket
+- **Close:** Button to close the modal window.
+- **VIP Ticket:** Displays "VIP ticket: {id}" where `{id}` is the ticket's unique ID.
+- **Copy ID:** Button to copy the ticket ID.
+- **Link:** Displays "VIP ticket link: {link}" where `{link}` is the HiveOnBoard link.
+- **Copy Link:** Button to copy the link.
+- **Note:** Textarea to enter a note. Placeholder: "Note to self".
+- **Save:** Button to save changes, active if there are changes.
+- **Cancel:** Button to cancel the action and close the modal window.
+![image](https://github.com/user-attachments/assets/46c4a92f-180b-44e4-a7eb-f6117c231a92)
+
+### Transfer Funds Modal Window
+When the user clicks on "Pay now," a transfer modal window appears. The user must review the payment details and click "Continue" to confirm the transaction.
+- The recipient is pre-selected as `waivio.vip`.
+- The quantity is automatically adjusted based on the number of tickets selected for purchase.
+- The currency is defaulted and locked to WAIV.
+- Your balance is displayed and locked.
+- The memo field is also locked.
+![image](https://github.com/user-attachments/assets/866e7647-fb15-4db5-b6b4-1671710ccce4)
+
+
+# Tools / Invite
+The **Invite** page provides users with a referral link that they can share to invite new users to Waivio. The page is tailored for both Hive-users and guest-users, with slightly different messaging and reward structures.
+#### **Hive-User Invite Page:**
+- **Title:** Invite Friends Now!
+- **Description:**  
+  Invite your friends and family to join you on Waivio and collect rewards together with them!
+- **Referral Link Information:**  
+  Use the link below to invite new users and start receiving _referral commissions_ from their sponsored rewards for 90 days! These commissions are paid by the sponsors in addition to the rewards collected by users.  
+- **Referral Link Field:**
+  - A field containing the referral link, which is blocked by default.
+- **Copy Link Button:**
+  - Button labeled "Copy link" to copy the referral link.
+  - After clicking, the button changes to "Copied".
+- **Social Sharing Buttons:**
+  - Buttons for sharing the invite link on social platforms:
+    - Facebook
+    - Twitter
+    - Mail
+![image](https://user-images.githubusercontent.com/67378322/134465679-1e02b27d-9227-4109-ae96-b7e98339a702.png)
+![image](https://user-images.githubusercontent.com/67378322/134464496-d1b1c6b0-4152-4258-8261-dfa014c3c6ed.png)
+![image](https://user-images.githubusercontent.com/67378322/134464533-dfbc543d-3e9e-4061-810e-b24a138d2add.png)
+
+#### **Guest-User Invite Page:**
+- **Title:** Don't Use Waivio Alone!
+- **Description:**  
+  Onboard new users on Waivio today using the link below and get 10% of their rewards for 30 days.
+- **Referral Link Field:**
+  - A field containing the referral link, which is blocked by default.
+- **Copy Link Button:**
+  - Button labeled "Copy link" to copy the referral link.
+  - After clicking, the button changes to "Copied".
+- **Social Sharing Buttons:**
+  - Buttons for sharing the invite link on social platforms:
+    - Facebook
+    - Twitter
+    - Mail
+![image](https://user-images.githubusercontent.com/67378322/134465772-2669def6-3bbc-4501-ab42-7fede77977b9.png)
