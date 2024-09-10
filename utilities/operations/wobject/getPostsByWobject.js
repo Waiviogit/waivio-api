@@ -161,12 +161,13 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
     const id = parsedCondition[parsedConditionKey];
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
-      // const link = makeSocialLink(parsedConditionKey, id);
+      const link = makeSocialLink(parsedConditionKey, id);
 
-      const link = 'https://www.instagram.com/345345345';
-      const regex = new RegExp(`^${link}`);
+      const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+      const regex = new RegExp(`^${escapedLink}`);
 
       conditionArr.push({ links: { $regex: regex } });
+
       // conditionArr.push({ links: { $regex:  } });
     }
   }
