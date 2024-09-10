@@ -167,8 +167,6 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
       const regex = new RegExp(`^${escapedLink}`);
 
       conditionArr.push({ links: { $regex: regex } });
-
-      // conditionArr.push({ links: { $regex:  } });
     }
   }
   if (!conditionArr?.length) return { condition };
