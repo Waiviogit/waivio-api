@@ -162,8 +162,11 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
       const link = makeSocialLink(parsedConditionKey, id);
-      // conditionArr.push({ links: { $regex: `^${link}` } });
-      conditionArr.push({ links: link });
+
+      const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+      const regex = new RegExp(`^${escapedLink}`);
+
+      conditionArr.push({ links: { $regex: regex } });
     }
   }
   if (!conditionArr?.length) return { condition };
