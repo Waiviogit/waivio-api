@@ -259,7 +259,6 @@ const getAddOn = async ({
 
   const permlinks = _.map(object?.addOn, 'body');
 
-  const objectsForResponse = [];
   const social = checkForSocialSite(app?.parentHost ?? '');
   const authorities = [app.owner, ...app.authority];
 
@@ -276,13 +275,12 @@ const getAddOn = async ({
     },
     { $addFields: { __order: { $indexOfArray: [permlinks, '$author_permlink'] } } },
     { $sort: { __order: 1 } },
+    { $skip: skip },
     { $limit: limit + 1 },
   ]);
 
-  objectsForResponse.push(...similarObjects.slice(skip, skip + limit + 1));
-
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
-  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: objectsForResponse });
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: similarObjects });
 
   const affiliateCodes = await processAppAffiliate({
     app,
@@ -290,7 +288,7 @@ const getAddOn = async ({
   });
 
   const processed = await wObjectHelper.processWobjects({
-    wobjects: objectsForResponse,
+    wobjects: similarObjects,
     fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: true,
@@ -302,7 +300,7 @@ const getAddOn = async ({
 
   return {
     wobjects: _.take(processed, limit),
-    hasMore: objectsForResponse.length > limit,
+    hasMore: similarObjects.length > limit,
   };
 };
 
