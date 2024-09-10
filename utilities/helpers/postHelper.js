@@ -313,6 +313,10 @@ const sponsorObligationsNewReview = async ({
   const campaigns = await CampaignV2.findCompletedByPost(post);
   if (!campaigns?.length) return;
 
+  post.guideName = campaigns[0]?.guideName;
+  post.reservationPermlink = campaigns[0]?.users[0]?.reservationPermlink;
+  post.reservationRootAuthor = campaigns[0]?.users[0]?.rootName;
+
   const bots = await SponsorsUpvote.getBotsByPost(post);
 
   const symbols = await Promise.all(campaigns.map(
