@@ -2,42 +2,6 @@ const _ = require('lodash');
 const { getFollowingsUser } = require('utilities/operations/user');
 const { schema } = require('./schema');
 
-exports.check = async (req, res, next) => {
-  const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
-  if (!currentSchema || !req.headers.follower) return next();
-
-  switch (currentSchema.case) {
-    case 1:
-      const { followings, error: usersError } = await checkForFollowings({
-        userName: req.headers.follower,
-        followings: res.result.json,
-        path: currentSchema.field_name,
-      });
-      if (usersError) return next(usersError);
-      res.result.json = followings;
-      break;
-    case 2:
-      const { followings: searchUsers, error } = await checkForFollowings({
-        userName: req.headers.follower,
-        followings: res.result.json[currentSchema.fields_path],
-        path: currentSchema.field_name,
-      });
-      if (error) return next(error);
-      res.result.json[currentSchema.fields_path] = searchUsers;
-      break;
-    case 3:
-      const { following, error: e } = await checkForFollowingsSingle({
-        userName: req.headers.follower,
-        following: res.result.json,
-        path: currentSchema.field_name,
-      });
-      if (e) return next(e);
-      res.result.json = following;
-      break;
-  }
-  next();
-};
-
 const checkForFollowings = async ({ userName, path, followings }) => {
   const permlinks = _.map(followings, (following) => following[path]);
   const { users: permlinksData, error } = await getFollowingsUser.getFollowingsArray(
@@ -65,40 +29,64 @@ const checkForFollowingsSingle = async ({ userName, path, following }) => {
   return { following };
 };
 
+const case1Processor = async ({ data, currentSchema, req }) => {
+  const { followings, error: usersError } = await checkForFollowings({
+    userName: req.headers.follower,
+    followings: data,
+    path: currentSchema.field_name,
+  });
+  if (usersError) return data;
+  data = followings;
+
+  return data;
+};
+
+const case2Processor = async ({ data, currentSchema, req }) => {
+  const { followings: searchUsers, error } = await checkForFollowings({
+    userName: req.headers.follower,
+    followings: data[currentSchema.fields_path],
+    path: currentSchema.field_name,
+  });
+  if (error) return data;
+  data[currentSchema.fields_path] = searchUsers;
+
+  return data;
+};
+
+const case3Processor = async ({ data, currentSchema, req }) => {
+  const { following, error: e } = await checkForFollowingsSingle({
+    userName: req.headers.follower,
+    following: data,
+    path: currentSchema.field_name,
+  });
+  if (e) return data;
+  data = following;
+
+  return data;
+};
+
+const defaultObjectProcessor = async ({ data }) => data;
+
+const processors = {
+  case1: case1Processor,
+  case2: case2Processor,
+  case3: case3Processor,
+  default: defaultObjectProcessor,
+};
+
+const context = (processorName) => async (data) => {
+  const processor = processors[processorName] || processors.default;
+  return processor(data);
+};
+
 const checkObjectFollowings = async (data, req) => {
-  const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
+  const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path')
+    && s.method === req.method);
   if (!currentSchema || !req.headers.follower) return data;
 
-  switch (currentSchema.case) {
-    case 1:
-      const { followings, error: usersError } = await checkForFollowings({
-        userName: req.headers.follower,
-        followings: data,
-        path: currentSchema.field_name,
-      });
-      if (usersError) return data;
-      data = followings;
-      break;
-    case 2:
-      const { followings: searchUsers, error } = await checkForFollowings({
-        userName: req.headers.follower,
-        followings: data[currentSchema.fields_path],
-        path: currentSchema.field_name,
-      });
-      if (error) return data;
-      data[currentSchema.fields_path] = searchUsers;
-      break;
-    case 3:
-      const { following, error: e } = await checkForFollowingsSingle({
-        userName: req.headers.follower,
-        following: data,
-        path: currentSchema.field_name,
-      });
-      if (e) return data;
-      data = following;
-      break;
-  }
-  return data;
+  const handler = context(currentSchema.case);
+
+  return handler({ data, currentSchema, req });
 };
 
 module.exports = checkObjectFollowings;

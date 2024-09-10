@@ -23,23 +23,11 @@ exports.schema = [
     case: 1,
   },
   // user controller
-  // {
-  //   path: '/user/:userName/feed',
-  //   method: 'POST',
-  //   case: 1,
-  // },
   {
     path: '/user/:userName/blog',
     method: 'POST',
     case: 3,
   },
-
-  // post controller
-  // {
-  //   path: '/posts',
-  //   method: 'POST',
-  //   case: 1,
-  // },
   {
     path: '/post/:author/:permlink',
     method: 'GET',
