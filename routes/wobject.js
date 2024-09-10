@@ -80,5 +80,7 @@ wobjRoutes.route('/wobjects/id-type')
   .post(reqTimeMonitor, WobjController.getAuthorPermlinkByIdType);
 wobjRoutes.route('/wobjects/field-body')
   .post(reqTimeMonitor, WobjController.getAuthorPermlinkByFieldBody);
+wobjRoutes.route('/wobjects/group')
+  .post(reqTimeMonitor, WobjController.getGroupByPermlink);
 
 module.exports = wobjRoutes;

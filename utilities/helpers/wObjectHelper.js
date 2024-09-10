@@ -31,10 +31,6 @@ const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAf
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
-const {
-  formAffiliateLinks,
-  getAppAffiliateCodes,
-} = require('./affiliateHelper');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 const {
   getCacheKey,
@@ -132,10 +128,48 @@ const calculateApprovePercent = (field) => {
 /** We have some types of admins at wobject, in this method we find admin role type */
 const getFieldVoteRole = (vote) => {
   let role = ADMIN_ROLES.ADMIN;
-  vote.ownership ? role = ADMIN_ROLES.OWNERSHIP : null;
-  vote.administrative ? role = ADMIN_ROLES.ADMINISTRATIVE : null;
-  vote.owner ? role = ADMIN_ROLES.OWNER : null;
+  if (vote.ownership) role = ADMIN_ROLES.OWNERSHIP;
+  if (vote.administrative) role = ADMIN_ROLES.ADMINISTRATIVE;
+  if (vote.owner) role = ADMIN_ROLES.OWNER;
+
   return role;
+};
+
+const addAdminVote = ({
+  field, owner, admins, administrative, isOwnershipObj, ownership,
+}) => {
+  let adminVote, administrativeVote, ownershipVote, ownerVote;
+  _.forEach(field.active_votes, (vote) => {
+    vote.timestamp = vote._id
+      ? vote._id.getTimestamp().valueOf()
+      : Date.now();
+    if (vote.voter === owner) {
+      vote.owner = true;
+      ownerVote = vote;
+    } else if (_.includes(admins, vote.voter)) {
+      vote.admin = true;
+      if (vote.timestamp > _.get(adminVote, 'timestamp', 0)) adminVote = vote;
+    } else if (_.includes(administrative, vote.voter)) {
+      vote.administrative = true;
+      if (vote.timestamp > _.get(administrativeVote, 'timestamp', 0)) administrativeVote = vote;
+    } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
+      vote.ownership = true;
+      if (vote.timestamp > _.get(ownershipVote, 'timestamp', 0)) ownershipVote = vote;
+    }
+  });
+
+  /** If field includes admin votes fill in it */
+  if (ownerVote || adminVote || administrativeVote || ownershipVote) {
+    const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
+    if (mainVote?.percent !== 0) {
+      return {
+        role: getFieldVoteRole(mainVote),
+        status: mainVote?.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
+        name: mainVote?.voter,
+        timestamp: mainVote?.timestamp,
+      };
+    }
+  }
 };
 
 const addDataToFields = ({
@@ -165,41 +199,12 @@ const addDataToFields = ({
       const weightWaiv = _.sumBy(field.active_votes, (vote) => vote.weightWAIV) || 0;
       field.weight = weightHive + weightWaiv;
     }
-    let adminVote, administrativeVote, ownershipVote, ownerVote;
-    _.map(field.active_votes, (vote) => {
-      vote.timestamp = vote._id
-        ? vote._id.getTimestamp().valueOf()
-        : Date.now();
-      if (vote.voter === owner) {
-        vote.owner = true;
-        ownerVote = vote;
-      } else if (_.includes(admins, vote.voter)) {
-        vote.admin = true;
-        vote.timestamp > _.get(adminVote, 'timestamp', 0) ? adminVote = vote : null;
-      } else if (_.includes(administrative, vote.voter)) {
-        vote.administrative = true;
-        vote.timestamp > _.get(administrativeVote, 'timestamp', 0) ? administrativeVote = vote : null;
-      } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
-        vote.ownership = true;
-        vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
-      }
+    if (_.has(field, '_id')) field.createdAt = field._id.getTimestamp().valueOf();
+
+    const adminVote = addAdminVote({
+      field, owner, admins, administrative, isOwnershipObj, ownership,
     });
-    if (_.has(field, '_id')) {
-      field.createdAt = field._id.getTimestamp()
-        .valueOf();
-    }
-    /** If field includes admin votes fill in it */
-    if (ownerVote || adminVote || administrativeVote || ownershipVote) {
-      const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
-      if (mainVote.percent !== 0) {
-        field.adminVote = {
-          role: getFieldVoteRole(mainVote),
-          status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
-          name: mainVote.voter,
-          timestamp: mainVote.timestamp,
-        };
-      }
-    }
+    if (adminVote) field.adminVote = adminVote;
     field.approvePercent = calculateApprovePercent(field);
   }
   return fields;
@@ -283,6 +288,8 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.REMOVE:
       case FIELDS_NAMES.AFFILIATE_GEO_AREA:
       case FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES:
+      case FIELDS_NAMES.GROUP_ADD:
+      case FIELDS_NAMES.GROUP_EXCLUDE:
         if (arrayFieldPush({
           filter,
           field,
@@ -313,7 +320,8 @@ const arrayFieldFilter = ({
 };
 
 const filterFieldValidation = (filter, field, locale, ownership) => {
-  field.locale === 'auto' ? field.locale = 'en-US' : null;
+  if (field.locale === 'auto') field.locale = 'en-US';
+
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership?.length) {
@@ -427,16 +435,18 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
         && _.includes(existedLanguages, field.locale),
     );
 
-    _.isEmpty(nativeLang)
-      ? acc = [
+    if (_.isEmpty(nativeLang)) {
+      acc = [
         ...acc,
         ..._.filter(el, (field) => filterFieldValidation(
           filter,
           field,
           getLangByPopularity(existedLanguages),
           ownership,
-        ))]
-      : acc = [...acc, ...nativeLang];
+        ))];
+      return acc;
+    }
+    acc = [...acc, ...nativeLang];
     return acc;
   }, []);
 };
@@ -550,14 +560,14 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
   if (!result) {
     obj.fields = [];
   }
-  obj.fields.map((field, index) => {
+  obj.fields.forEach((field, index) => {
     /** if field not exist in object type for this object - remove it */
     if (!_.includes(exposedFields, field.name)) {
       delete obj.fields[index];
       return;
     }
     let post = _.get(result, `content['${field.author}/${field.permlink}']`);
-    if (!post || !post.author) post = createMockPost(field);
+    if (!post?.author) post = createMockPost(field);
 
     Object.assign(
       field,
@@ -652,9 +662,10 @@ const getDefaultLink = (obj) => {
   }
   let listItem = _.get(obj, 'listItem', []);
   if (listItem.length) {
-    _.find(listItem, (list) => list.type === 'menuList')
-      ? listItem = _.filter(listItem, (list) => list.type === 'menuList')
-      : null;
+    if (_.find(listItem, (list) => list.type === 'menuList')) {
+      listItem = _.filter(listItem, (list) => list.type === 'menuList');
+    }
+
     const item = _
       .chain(listItem)
       .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
@@ -874,7 +885,6 @@ const processWobjects = async ({
       { search: 0, departments: 0 },
     ));
   }
-  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
   /** Get waivio admins and owner */
   const waivioAdmins = await getWaivioAdminsAndOwner();
@@ -988,23 +998,12 @@ const processWobjects = async ({
         parent,
       });
     }
-    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      if (affiliateCodes.length) {
-        obj.affiliateLinks = makeAffiliateLinks({
-          affiliateCodes,
-          productIds: obj.productId,
-          countryCode,
-        });
-      }
-      if (!obj?.affiliateLinks?.length) {
-        const affiliateLinks = formAffiliateLinks({
-          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
-        });
-        if (!_.isEmpty(affiliateLinks)) {
-          obj.affiliateLinks = affiliateLinks;
-          obj.website = null;
-        }
-      }
+    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON && affiliateCodes.length) {
+      obj.affiliateLinks = makeAffiliateLinks({
+        affiliateCodes,
+        productIds: obj.productId,
+        countryCode,
+      });
     }
     if (obj.departments && typeof obj.departments[0] === 'string') {
       obj.departments = null;
