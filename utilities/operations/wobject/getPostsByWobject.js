@@ -162,8 +162,10 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
       const link = makeSocialLink(parsedConditionKey, id);
-      conditionArr.push({ links: { $regex: /^https:\/\/www\.instagram\.com\/345345345/ } });
-      // conditionArr.push({ links: { $regex: new RegExp(`^${link}`) } });
+      const regex = new RegExp(`^${link}`);
+
+      conditionArr.push({ links: { $regex: regex } });
+      // conditionArr.push({ links: { $regex:  } });
     }
   }
   if (!conditionArr?.length) return { condition };
