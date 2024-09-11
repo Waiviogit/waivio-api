@@ -76,7 +76,11 @@ module.exports = async ({
     },
   ];
 
-  if (schema === SHOP_SCHEMA.SHOP) pipe.push(shopHelper.getDefaultGroupStage());
+  if (schema === SHOP_SCHEMA.SHOP) {
+    pipe.push(...shopHelper.getDefaultGroupStage());
+  } else {
+    pipe.push({ $sort: { weight: -1, createdAt: -1 } });
+  }
   pipe.push(
     { $skip: skip },
     { $limit: limit + 1 },
