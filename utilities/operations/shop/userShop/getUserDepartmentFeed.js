@@ -5,7 +5,6 @@ const {
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
-  SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
