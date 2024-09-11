@@ -499,5 +499,5 @@ exports.FAVORITES_OBJECT_TYPES = [
   'test',
   'map',
   'link',
-  'recipe',
+  'group',
 ];
