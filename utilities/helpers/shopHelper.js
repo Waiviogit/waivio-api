@@ -254,7 +254,7 @@ const getDepartmentsFromObjects = (objects, path) => {
     for (const item of filteredPath) {
       const departments = item?.departments;
 
-      if (!departments.length) continue;
+      if (!departments?.length) continue;
       for (const department of departments) {
         if (!department) continue;
         const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
