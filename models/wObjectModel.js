@@ -240,8 +240,9 @@ const getFavoritesListByUsername = async ({ userName, specialCondition }) => {
     const addSameKeys = Object.entries(arrayOfObjects.reduce((acc, obj) => {
       if (acc[obj._id]) {
         acc[obj._id] += obj.count;
+      } else {
+        acc[obj._id] = obj.count;
       }
-      acc[obj._id] = obj.count;
 
       return acc;
     }, {})).map(([key, value]) => ({ _id: key, count: value }));

@@ -373,7 +373,7 @@ exports.getFavoritesLinksFromPosts = async ({ userName }) => {
         .map((wobject) => wobject.author_permlink),
     );
   }
-  return linksArray;
+  return _.uniq(linksArray);
 };
 
 exports.findOneFirstByAuthor = async ({ author }) => {
