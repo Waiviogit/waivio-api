@@ -736,8 +736,13 @@ const getGroupByPermlink = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowings)
+    .use(pipelineFunctions.checkFollowers)
+    .execute({ result, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 module.exports = {
