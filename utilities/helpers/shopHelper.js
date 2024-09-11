@@ -261,12 +261,12 @@ const getDepartmentsFromObjects = (objects, path) => {
         ? _.filter(related, (r) => !_.includes(path, r))
         : related;
       const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
+
+      if (object !== 'undefined') relatedToPush.push(...departments);
+
       departmentsMap.set(department, {
         name: department,
-        related: [...new Set([
-          ...relatedToPush,
-          ...departments,
-        ])],
+        related: [...new Set(relatedToPush)],
         metaGroupIds: updatedMetaGroupIds,
         objectsCount: updatedMetaGroupIds.length,
       });
