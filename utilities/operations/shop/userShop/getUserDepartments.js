@@ -26,7 +26,7 @@ const getTopDepartments = async ({
     return jsonHelper.parseJson(cache, { result: [] });
   }
 
-  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
+  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app, schema });
 
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 

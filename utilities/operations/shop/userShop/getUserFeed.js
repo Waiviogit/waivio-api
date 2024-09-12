@@ -22,7 +22,7 @@ module.exports = async ({
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
 
-  const userFilter = await shopHelper.getUserFilter({ userName, app });
+  const userFilter = await shopHelper.getUserFilter({ userName, app, schema });
 
   const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
