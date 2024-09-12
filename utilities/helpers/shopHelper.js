@@ -250,26 +250,29 @@ const getDepartmentsFromObjects = (objects, path) => {
       (o) => _.every(path, (p) => _.includes(o.departments, p)),
     );
     if (!filteredPath.length) continue;
-    const departments = _.flatten(_.map(filteredPath, 'departments'));
 
-    if (!departments.length) continue;
-    for (const department of departments) {
-      if (!department) continue;
-      const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
-      const filter = !_.every(path, (p) => _.includes(related, p));
-      const relatedToPush = filter
-        ? _.filter(related, (r) => !_.includes(path, r))
-        : related;
-      const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
-      departmentsMap.set(department, {
-        name: department,
-        related: [...new Set([
-          ...relatedToPush,
-          ...departments,
-        ])],
-        metaGroupIds: updatedMetaGroupIds,
-        objectsCount: updatedMetaGroupIds.length,
-      });
+    for (const item of filteredPath) {
+      const departments = item?.departments;
+
+      if (!departments?.length) continue;
+      for (const department of departments) {
+        if (!department) continue;
+        const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
+        const filter = !_.every(path, (p) => _.includes(related, p));
+        const relatedToPush = filter
+          ? _.filter(related, (r) => !_.includes(path, r))
+          : related;
+        const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
+
+        relatedToPush.push(...departments);
+
+        departmentsMap.set(department, {
+          name: department,
+          related: [...new Set(relatedToPush)],
+          metaGroupIds: updatedMetaGroupIds,
+          objectsCount: updatedMetaGroupIds.length,
+        });
+      }
     }
   }
 

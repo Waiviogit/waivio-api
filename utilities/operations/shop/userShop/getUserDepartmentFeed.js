@@ -5,7 +5,6 @@ const {
 const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
-  SHOP_OBJECT_TYPES,
 } = require('constants/wobjectsData');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const shopHelper = require('utilities/helpers/shopHelper');
@@ -14,9 +13,10 @@ const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
 const { processUserAffiliate, processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const getUserDepartments = require('./getUserDepartments');
+const { SHOP_SCHEMA } = require('../../../../constants/shop');
 
 const getUserDepartmentCondition = async ({
-  department, path, userName, userFilter, app,
+  department, path, userName, userFilter, app, schema,
 }) => {
   if (department === UNCATEGORIZED_DEPARTMENT) {
     return { $or: [{ departments: [] }, { departments: null }] };
@@ -28,6 +28,7 @@ const getUserDepartmentCondition = async ({
       path,
       userFilter,
       app,
+      schema,
     });
     return { departments: { $in: _.map(result, 'name') } };
   }
@@ -57,11 +58,11 @@ module.exports = async ({
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
 
   const departmentCondition = await getUserDepartmentCondition({
-    department, path, userName, userFilter, app,
+    department, path, userName, userFilter, app, schema,
   });
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 
-  const { wobjects: result, error } = await Wobj.fromAggregation([
+  const pipe = [
     {
       $match: {
         ...departmentCondition,
@@ -73,10 +74,19 @@ module.exports = async ({
         ],
       },
     },
-    ...shopHelper.getDefaultGroupStage(),
+  ];
+
+  if (schema === SHOP_SCHEMA.SHOP) {
+    pipe.push(...shopHelper.getDefaultGroupStage());
+  } else {
+    pipe.push({ $sort: { weight: -1, createdAt: -1 } });
+  }
+  pipe.push(
     { $skip: skip },
     { $limit: limit + 1 },
-  ]);
+  );
+
+  const { wobjects: result, error } = await Wobj.fromAggregation(pipe);
 
   if (error) return emptyResp;
   if (_.isEmpty(result)) return emptyResp;

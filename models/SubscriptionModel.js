@@ -125,3 +125,13 @@ exports.deleteMany = async (condition) => {
     return { error };
   }
 };
+
+exports.aggregate = async (pipeline) => {
+  try {
+    return {
+      result: await Subscriptions.aggregate(pipeline),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

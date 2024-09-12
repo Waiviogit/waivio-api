@@ -66,6 +66,7 @@ const UserMetadataSchema = new Schema({
       default: SUPPORTED_CURRENCIES.USD,
     },
     hideFavoriteObjects: { type: Boolean },
+    hideRecipeObjects: { type: Boolean },
     shop: { type: ShopSchema },
   },
   bookmarks: { type: [String], default: [] },

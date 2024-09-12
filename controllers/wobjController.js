@@ -4,7 +4,7 @@ const {
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
-  getWobjectPinnedPosts,
+  getWobjectPinnedPosts, objectGroup,
 } = require('utilities/operations').wobject;
 const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
 const validators = require('controllers/validators');
@@ -721,6 +721,30 @@ const getMapObjectFromObjectLink = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const getGroupByPermlink = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getGroupByPermlink,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, hasMore, error } = await objectGroup.getObjectGroup({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowings)
+    .use(pipelineFunctions.checkFollowers)
+    .execute({ result, hasMore }, req);
+
+  return res.status(200).json(processedData);
+};
+
 module.exports = {
   index,
   show,
@@ -759,4 +783,5 @@ module.exports = {
   getAuthorPermlinkByIdType,
   getMapObjectFromObjectLink,
   getAuthorPermlinkByFieldBody,
+  getGroupByPermlink,
 };

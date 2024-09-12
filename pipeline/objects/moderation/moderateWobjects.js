@@ -7,21 +7,6 @@ const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/si
 const { processAppAffiliate, processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
 const { WAIVIO_AFFILIATE_HOSTS } = require('constants/affiliateData');
 const { schema } = require('./schema');
-const asyncLocalStorage = require('../../../middlewares/context/context');
-
-/**
- * Get app name from request headers and find app with specified name in database
- * @param {Object} req instance of current request
- * @returns {Object} app, error
- */
-const getApp = async () => {
-  const store = asyncLocalStorage.getStore();
-  let host = store.get('host');
-  if (!host) {
-    host = config.appHost;
-  }
-  return App.getAppFromCache(host);
-};
 
 const newValidationArray = async ({
   posts, app, locale, path, countryCode, reqUserName, affiliateCodes,
@@ -47,7 +32,15 @@ const newValidationArray = async ({
 const newValidation = async ({
   wobjects, app, locale, countryCode, reqUserName, affiliateCodes,
 }) => wobjectHelper.processWobjects({
-  wobjects, app, hiveData: false, returnArray: true, locale, fields: REQUIREDFILDS_WOBJ_LIST, countryCode, reqUserName, affiliateCodes,
+  wobjects,
+  app,
+  hiveData: false,
+  returnArray: true,
+  locale,
+  fields: REQUIREDFILDS_WOBJ_LIST,
+  countryCode,
+  reqUserName,
+  affiliateCodes,
 });
 
 const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
@@ -64,99 +57,114 @@ const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
   return affiliateCodes;
 };
 
+const singleObjectProcessor = async ({
+  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+}) => {
+  const wobject = await wobjectHelper.processWobjects({
+    wobjects: [data],
+    app,
+    hiveData: true,
+    returnArray: false,
+    locale: req.headers.locale,
+    countryCode,
+    reqUserName,
+    affiliateCodes,
+  });
+  wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
+  data = _.omit(wobject, ['fields']);
+
+  return data;
+};
+
+const case2ObjectProcessor = async ({
+  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+}) => newValidation({
+  wobjects: data,
+  app,
+  locale: req.headers.locale,
+  countryCode,
+  reqUserName,
+  affiliateCodes,
+});
+const case3ObjectProcessor = async ({
+  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+}) => newValidationArray({
+  posts: data,
+  app,
+  locale: req.headers.locale,
+  path: currentSchema.wobjects_path,
+  countryCode,
+  reqUserName,
+  affiliateCodes,
+});
+const case4ObjectProcessor = async ({
+  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+}) => {
+  if (_.get(req, 'route.path') === '/post/:author/:permlink') {
+    const creator = data?.author;
+    affiliateCodes = await getAffiliateCodes({ app, creator, affiliateCodes });
+  }
+
+  data[currentSchema.wobjects_path] = await newValidation({
+    wobjects: data[currentSchema.wobjects_path],
+    app,
+    locale: req.headers.locale,
+    countryCode,
+    reqUserName,
+    affiliateCodes,
+  });
+
+  return data;
+};
+const case5ObjectProcessor = async ({
+  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+}) => {
+  data[currentSchema.array_path] = await newValidationArray({
+    posts: data[currentSchema.array_path],
+    app,
+    locale: req.headers.locale,
+    path: currentSchema.wobjects_path,
+    countryCode,
+    reqUserName,
+    affiliateCodes,
+  });
+
+  return data;
+};
+
+const defaultObjectProcessor = async ({ data }) => data;
+
+const processors = {
+  case1: singleObjectProcessor,
+  case2: case2ObjectProcessor,
+  case3: case3ObjectProcessor,
+  case4: case4ObjectProcessor,
+  case5: case5ObjectProcessor,
+  default: defaultObjectProcessor,
+};
+
+const context = (processorName) => async (data) => {
+  const processor = processors[processorName] || processors.default;
+  return processor(data);
+};
+
 const moderateObjects = async (data, req) => {
-  /*
-    First need to find app of current request, then correct scheme of
-    location wobjects data in response, and then moderate it if need
-
-    data locate on "res.result" => {status, json}
-    app locate on "res.headers.app"
-    */
-
+  if (!req.appData) return data;
   const currentSchema = schema.find((s) => s.path === _.get(req, 'route.path') && s.method === req.method);
-
-  if (!currentSchema) {
-    return data;
-  }
-
-  const app = await getApp();
-
-  if (!app) {
-    return data;
-  }
+  if (!currentSchema) return data;
 
   const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
   const reqUserName = _.get(req, 'headers.follower');
-  let affiliateCodes = await processAppAffiliate({
-    app,
+  const affiliateCodes = await processAppAffiliate({
+    app: req.appData,
     locale: req.headers.locale,
   });
 
-  switch (currentSchema.case) {
-    case 1:
-      // root result is single wobject
-      const wobject = await wobjectHelper.processWobjects({
-        wobjects: [data],
-        app,
-        hiveData: true,
-        returnArray: false,
-        locale: req.headers.locale,
-        countryCode,
-        reqUserName,
-        affiliateCodes,
-      });
-      wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
-      data = _.omit(wobject, ['fields']);
-      break;
-    case 2:
-      data = await newValidation({
-        wobjects: data,
-        app,
-        locale: req.headers.locale,
-        countryCode,
-        reqUserName,
-        affiliateCodes,
-      });
-      break;
-    case 4:
-      data = await newValidationArray({
-        posts: data,
-        app,
-        locale: req.headers.locale,
-        path: currentSchema.wobjects_path,
-        countryCode,
-        reqUserName,
-        affiliateCodes,
-      });
-      break;
-    case 6:
-      if (_.get(req, 'route.path') === '/post/:author/:permlink') {
-        const creator = data?.author;
-        affiliateCodes = await getAffiliateCodes({ app, creator, affiliateCodes });
-      }
+  const handler = context(currentSchema.case);
 
-      data[currentSchema.wobjects_path] = await newValidation({
-        wobjects: data[currentSchema.wobjects_path],
-        app,
-        locale: req.headers.locale,
-        countryCode,
-        reqUserName,
-        affiliateCodes,
-      });
-      break;
-    case 7:
-      data[currentSchema.array_path] = await newValidationArray({
-        posts: data[currentSchema.array_path],
-        app,
-        locale: req.headers.locale,
-        path: currentSchema.wobjects_path,
-        countryCode,
-        reqUserName,
-        affiliateCodes,
-      });
-      break;
-  }
-  return data;
+  return handler({
+    data, app: req.appData, req, countryCode, reqUserName, affiliateCodes, currentSchema,
+  });
 };
 
 module.exports = moderateObjects;
