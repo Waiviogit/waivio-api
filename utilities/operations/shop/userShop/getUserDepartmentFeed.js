@@ -54,7 +54,7 @@ module.exports = async ({
   path = _.filter(path, (p) => p !== OTHERS_DEPARTMENT);
   const emptyResp = { department, wobjects: [], hasMore: false };
 
-  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app });
+  if (!userFilter) userFilter = await shopHelper.getUserFilter({ userName, app, schema });
   if (!user) ({ user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP));
 
   const departmentCondition = await getUserDepartmentCondition({
