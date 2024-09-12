@@ -359,8 +359,16 @@ const getMoreTagsForCategory = ({
   };
 };
 
+const pathToHideConfig = {
+  [SHOP_SCHEMA.SHOP]: 'user_metadata.settings.shop.hideLinkedObjects',
+  [SHOP_SCHEMA.RECIPE]: 'user_metadata.settings.hideRecipeObjects',
+};
+
+const getPathToHideConfig = (schema) => pathToHideConfig[schema]
+  || pathToHideConfig[SHOP_SCHEMA.SHOP];
+
 const getUserFilter = async ({
-  userName, app,
+  userName, app, schema,
 }) => {
   const social = sitesHelper.checkForSocialSite(app?.parentHost ?? '');
   const isMainObject = app?.configuration?.shopSettings?.value === userName;
@@ -373,7 +381,7 @@ const getUserFilter = async ({
 
   for (const acc of users) {
     const { user } = await User.getOne(acc, SELECT_USER_CAMPAIGN_SHOP);
-    const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
+    const hideLinkedObjects = _.get(user, getPathToHideConfig(schema), false);
     const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName: acc });
     orFilter.push(...[
       { 'authority.ownership': acc },
