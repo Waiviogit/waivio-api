@@ -330,7 +330,7 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
   const { result } = await this.find({
     filter: {
       author: userName || { $in: names },
-      'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+      'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE] },
     },
     projection: { wobjects: 1 },
   });
@@ -341,7 +341,7 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
       ...resultElement.wobjects
         .filter(
           (wobject) => _.includes(
-            [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK],
+            [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE],
             wobject.object_type,
           ),
         )
