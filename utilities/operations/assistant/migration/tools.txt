@@ -385,46 +385,46 @@ CROSS: The cross button allows users to close the modal window and cancel the ac
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/c3c42d1f-f148-446a-ad81-2be65e2521e0)
 
 
-# Tools / Site / Settings in Settings (website)
+# Tools / Site / Settings (website, user can custimize his site)
 The **Settings** page (website) provides centralized control over settings that impact the entire website. It allows for adjustments of parameters such as language preferences, currency settings, and verification methods, offering the website owner full control over key operational aspects.
 ![image](https://github.com/Waiviogit/waivio/assets/67378322/3067be26-33dc-4dd6-9f62-68e0f4b8aa24)
 
-## Language Preferences in Settings (website)
+### Language Preferences in Settings (website)
 This section allows users to select the default language for the website interface. The default language is set to English, but users can choose from other available languages via a dropdown menu. Note that individual users can customize their language preferences through personal settings.
 Title: "Default language:".
 Dropdown: drop-down with languages supported by platform. By default - English.
 Note: "Users can select another language for the interface in the user settings."
 ![image](https://github.com/user-attachments/assets/577bef29-5dc8-450f-9294-d48f965b8065)
 
-## Currency Settings in Settings (website)
+### Currency Settings in Settings (website)
 The base currency of the site is set to USD by default, with other options available in a dropdown menu. A note clarifies that exchange rates are provided by third-party services and may not always be fully accurate.
 Title: "Base currency:"
 Dropdown: drop-down with currencies supported by platform. By default - USD.
 Note: "Disclaimer: Exchange rates are provided by third parties and may not always be accurate."
 ![image](https://github.com/user-attachments/assets/b8e02513-cf7f-4d45-aaf3-002e39c67f29)
 
-## Object Control by Users in Settings (website)
+### Object Control by Users in Settings (website)
 This feature gives website administrators full control over how users interact with objects on the platform. A checkbox, disabled by default, restricts object edits to approved administrators only. When enabled, object updates made by non-admin users will not be applied unless an administrator approves them. The restriction applies specifically to objects claimed by one of the administrators.
 Title: "Object editing by users:"
 Checkbox: Checkbox (disabled by default), which gives the owner and admin group full control over all objects on the site. That is, only object updates that are approved by them will be used to form objects. This function will need to be limited to objects that have been claimed by one of the administrators.
 Checkbox text: "Do not allow users to make changes to objects on the website. Only updates by approved administrators will be used."
 ![image](https://github.com/user-attachments/assets/0b97886e-ccac-4255-8873-501d3aefb1a6)
 
-## Google Analytics Integration in Settings (website)
+### Google Analytics Integration in Settings (website)
 This section allows the website owner to add a Google Analytics 4 measurement ID to monitor site performance. A placeholder field is provided for entering the ID, which should follow the format “G-XXXXXXX.”
 Title: "Google Analytics 4 property ID:"
 Input: Input for Google Analytic tag. Placeholder - "Paste Measurement ID here"
 Note: "You can monitor website performance using Google Analytics. Please note, that Google Measurement ID should look like G-XXXXXXX."
 ![image](https://github.com/user-attachments/assets/61adeb8c-7602-4d38-8a3a-37a5387ad33e)
 
-## Google Search Console Verification in Settings (website)
+### Google Search Console Verification in Settings (website)
 To verify site ownership with Google Search Console, the website owner can input an HTML verification tag. A placeholder field allows for easy entry of the tag, which will be added to the website's header.
 Title: "Google Search Console HTML verification tag:"
 Input: input for HTML verification tag. Placeholder - "Paste your meta tag here"
 Note: "Obtain an HTML verification tag from Google Search Console and enter it here to verify site ownership. This tag will be added to your site's header."
 ![image](https://github.com/user-attachments/assets/dde17017-db89-493d-87be-2c24d9cd5107)
 
-## Google Ads Configuration in Settings (website)
+### Google Ads Configuration in Settings (website)
 To enable outbound click tracking in Google Ads, this section provides fields for the outbound click config command and event snippet. The config command should follow the format gtag('config', 'AW-XXXXX'), and the event snippet can be used to track conversions. Instructions for obtaining these values are provided within the section.
 Google Ads Outbound Click Config Command:
 Title: "Google Ads Outbound Click Config Command:"
@@ -437,7 +437,7 @@ Input: text field for code snippet code. Placeholder - "Paste your Event Snippet
 Note: To find the event snippet in Google Ads, navigate to Tools > Conversions > Outbound Click > Tag Setup > Install Tag Yourself > Event Snippet > Click.
 ![image](https://github.com/user-attachments/assets/575ca80f-1ed9-49b9-833a-d0ed9a793143)
 
-## Beneficiary Settings in Settings (website)
+### Beneficiary Settings in Settings (website)
 The website owner can designate a beneficiary to receive a percentage of rewards generated by posts submitted through the platform. By default, the beneficiary is set to the user account, but this can be changed to another user. The percentage of rewards given to the beneficiary is set at 5% by default, but this value can be adjusted as needed.
 Title: Beneficiary
 Note: The website owner may earn a share of the author rewards on posts submitted using their website.
@@ -445,7 +445,7 @@ Account: "Beneficiary account:" by default - user account. It is a field for sea
 Percent: "Beneficiary %:" percent for beneficiary. By default - 5%.
 ![image](https://github.com/user-attachments/assets/3c9cfb26-5494-4919-9c6f-007b143d6374)
 
-## Referral Payments in Settings (website)
+### Referral Payments in Settings (website)
 Website owners have the option to receive referral commissions when users claim rewards through the platform. A field is provided for specifying the account that will receive referral payments. Referral commissions are governed by the terms set by the Campaign Management Services used by sponsors.
 Title: Referral payments
 Note:The website owner may receive referral commissions when users claim their rewards through the website.
@@ -453,7 +453,7 @@ Account: "Account for referral payments:" by default - user account. It is a fie
 Note 2:	The terms for referral commissions are defined by the Campaign Management Services used by sponsors to launch their campaigns.
 ![image](https://github.com/user-attachments/assets/b85f7657-c557-4139-ab42-c85825690445)
 
-## Save Changes Setting (Website)
+### Save Changes Setting (Website)
 At the bottom of the page, a "Save" button allows the website owner to apply any changes made to the settings.
 ![image](https://github.com/user-attachments/assets/3c75d319-7ca5-4e2c-ad50-d6b7615fea0e)
 
@@ -481,7 +481,7 @@ Codes list: list of affiliate programs that user added. Affiliate card include n
 # Tools / Site / Administrators
 Hive is a public blockchain where any user can publish updates to objects. These updates are then subject to community voting for approval or rejection. However, on individual websites, there may be a need for certain objects to appear in a specific way as defined by the site operators.
 To manage this, the website owner can assign administrative privileges to certain Hive users, giving them the authority to govern the appearance and updates of objects. Administrators play a key role in deciding which updates to approve or reject.
-![Administrator Management UI](https://user-images.githubusercontent.com/42100432/93951599-a4cb5000-fcfb-11ea-8414-5c95ada36549.png)
+![Administrator Management UI](https://github.com/user-attachments/assets/c453b00e-4c9c-43ad-8ff2-f6a11dd52f74)
 ### Administrator Voting and Object Ownership:
 - **Voting Power**: Administrators have the final say in whether an update is accepted or rejected for the site. If several administrators vote on the same update, only the last vote is considered.
 - **Object Ownership**: If an administrator claims ownership over an object, only the updates that are explicitly approved by that administrator (or other approved administrators) will be displayed for the object.
@@ -562,7 +562,7 @@ If the administrator added someone to the blacklist, then all updates initiated 
 
 # Tools / Site / AdSense ads
 The **AdSense Advertisements** page is a user interface designed to help website owners integrate Google AdSense ads into their website. This ensures ads are displayed across all pages of the site, providing a consistent and seamless ad experience for visitors.
-![image](https://github.com/user-attachments/assets/e8421016-6588-45ff-8e42-7b65c1bb1bbd)
+![AdSense ads page UI image](https://github.com/user-attachments/assets/e8421016-6588-45ff-8e42-7b65c1bb1bbd)
 Unfortunately, the 'AdSense ads' program does not seem to work as expected. After completing all the steps, there is still a high probability that Google AdSense will not approve the domain unless the site meets AdSense policy criteria. We are currently investigating the reasons for this.
 
 AdSense ads page element:
