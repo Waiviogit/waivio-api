@@ -283,3 +283,318 @@ The **Invite** page provides users with a referral link that they can share to i
     - Twitter
     - Mail
 ![image](https://user-images.githubusercontent.com/67378322/134465772-2669def6-3bbc-4501-ab42-7fede77977b9.png)
+
+
+# Customizing a Site Created on Waivio
+To customize a site created on Waivio, the user will have access to a "Site Settings" block, which appears in the Tools tab after the site has been created. The following tabs will be available to the user: Configuration, Settings, Affiliate Codes, Administrators, Moderators, Authorities, Muted Users, and AdSense Ads.
+![Image](https://github.com/user-attachments/assets/d06354e2-8e56-47ba-b4d4-b19dd34542ac)
+
+
+# Tools / Site / Configuration
+The Configuration tab houses the primary settings for customizing the appearance and structure of the site.
+![Configuration page image](https://github.com/Waiviogit/waivio/assets/67378322/0159269a-c83a-442f-bc4e-707098ea2149)
+
+## Page elements in Configuration (website)
+Title: Website configuration
+### Colors section
+This section allows users to customize website colors. Users can select the main color (e.g., button background color) and text color (e.g., button text color). It consists of a color preview, title, and a "Select color" button.
+Titles: "Website colors:", "Main color", "Text color".
+Clicking the "Select color" button opens the "Website colors" modal window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/bdc596ce-a5bd-42fb-ab4d-057b6939b473)
+
+### Desktop logo in Configuration (website)
+This section allows users to customize the desktop version of the site's logo. 
+Title: Desktop logo
+Preview: Image preview. User avatar displayed by default.
+Button: "Change logo" button to open the "Choose image" modal window. 
+Note: "Desktop logo will appear on the homepage of the desktop version of the site.".
+![image](https://github.com/Waiviogit/waivio/assets/67378322/54c3ca3c-9eab-4477-871e-2af2af890f61)
+
+### Mobile logo in Configuration (website)
+This section allows users to customize the mobile version of the site's logo. 
+Title: Mobile logo
+Preview: Image preview. User avatar displayed by default.
+Button: "Change logo" button to open the "Choose image" modal window. 
+Note:"Mobile logo will appear on the home page of the mobile version of the site.".
+![image](https://github.com/Waiviogit/waivio/assets/67378322/1b196541-07ca-4b1d-8c45-8cc779d84d6e)
+
+### List default image in Configuration (website)
+This section allows users to customize the default image for lists that do not have a specified avatar.
+Title: List default image
+Preview: Image preview. User avatar displayed by default.
+Button: "Change image" button to open the "Choose image" modal window. 
+Note: "List default image will be displayed for those lists that don't have an avatar.".
+![image](https://github.com/Waiviogit/waivio/assets/67378322/a07a1676-d3d2-4a50-abc9-74e4fc5cf0b7)
+
+### Main banner in Configuration (website)
+This section allows users to customize the site's banner.
+Title: Main banner
+Preview: Image preview.
+Button: "Change banner" button to open the "Choose image" modal window. 
+Note: "Main banner will be displayed at the top of all website pages.".
+![image](https://github.com/Waiviogit/waivio/assets/67378322/b2797e1a-d4cd-487a-8034-e35072dc4fef)
+
+### Base object in Configuration (website)
+This object serves as a core reference for creating the website's main menu. 
+Title: "Base object:"
+Search: Initially displays a user or object card that can be transformed into a search field. The base object can be a product, business, restaurant objects, or users. The site creator is set up by default. If a product or business doesn't have menu items, the site will consist of two tabs: 1 - Home, representing the entity itself, and 2 - Legal. This applies similarly to restaurants; even if a restaurant offers menu items, the site will still have the same two tabs.
+Edit: "Edit" button to convert the user card into a search field. Once clicked, "Edit" changes to "View".
+Note: The main menu of the website will be created using the base object.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/e669af37-874f-4269-a989-5a61a3e86a6e)
+
+### Default hashtag in Configuration (website)
+The "Default Hashtag" section allows users to specify a hashtag that will be recommended for all new posts on the website, aiding in organizing content and ensuring consistent appearance in the site's custom newsfeed. 
+Title: "Default hashtag:"
+Search: A search field for hashtag type. Initially displays a search field that can be transformed into an object card.
+Note: This hashtag will be recommended for all new posts on the website, ensuring that they consistently appear in the website's custom newsfeed.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/dad15a18-0cad-4878-a4c4-c4bc752f2cb3)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/73f43f8e-8907-4d28-81a1-c1ebdb6b8524)
+
+### Website header in Configuration (website)
+The "Website Header" section allows users to modify the site name. By default, the site name is displayed as the full domain name in uppercase.
+Title: "Website header:"
+Preview: Preview of the site name.
+Button: "Edit" button that opens the "Edit website header" modal window.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/10f0e2ca-06b4-40ca-bad0-89bc766dc182)
+
+### "Website colors" modal window in Configuration (website)
+Title: Website colors
+Main: The "Main color:" button allows users to choose a color from a palette. The default color is Orange from Waivio.
+Text: The "Text color:" button allows users to choose a color from a palette. The default color is White from Waivio.
+OK: The "OK" button allows users to submit and save the selected colors.
+Cancel: The "Cancel" button allows users to cancel the action and close the modal window.
+Cross: The cross button allows users to close the modal window and cancel the action.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/9279dd6a-5c2a-410b-96f2-8322bc98c531)
+![image](https://github.com/Waiviogit/waivio/assets/67378322/2b4b852e-1cd3-49ac-a2a9-652afed20856)
+
+### "Choose image" modal window in Configuration (website)
+Title: Choose image
+Upload: Block to upload an image from the user's device.
+URL: Field to paste an image via clipboard or paste an image link.
+OK: The "OK" button allows users to submit and save the selected image.
+CANCEL: The "Cancel" button allows users to cancel the action and close the modal window.
+CROSS: The cross button allows users to close the modal window and cancel the action.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/e9d783e6-d9d7-4683-8254-5b87f57fc077)
+
+### "Edit website header" modal window in Configuration (website)
+LABEL: Website name:
+FIELD: field to enter text.
+SAVE: The "Save" button allows users to submit and save the selected image.
+CANCEL: The "Cancel" button allows users to cancel the action and close the modal window.
+CROSS: The cross button allows users to close the modal window and cancel the action.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/c3c42d1f-f148-446a-ad81-2be65e2521e0)
+
+
+# Tools / Site / Settings in Settings (website)
+The **Settings** page (website) provides centralized control over settings that impact the entire website. It allows for adjustments of parameters such as language preferences, currency settings, and verification methods, offering the website owner full control over key operational aspects.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/3067be26-33dc-4dd6-9f62-68e0f4b8aa24)
+
+## Language Preferences in Settings (website)
+This section allows users to select the default language for the website interface. The default language is set to English, but users can choose from other available languages via a dropdown menu. Note that individual users can customize their language preferences through personal settings.
+Title: "Default language:".
+Dropdown: drop-down with languages supported by platform. By default - English.
+Note: "Users can select another language for the interface in the user settings."
+![image](https://github.com/user-attachments/assets/577bef29-5dc8-450f-9294-d48f965b8065)
+
+## Currency Settings in Settings (website)
+The base currency of the site is set to USD by default, with other options available in a dropdown menu. A note clarifies that exchange rates are provided by third-party services and may not always be fully accurate.
+Title: "Base currency:"
+Dropdown: drop-down with currencies supported by platform. By default - USD.
+Note: "Disclaimer: Exchange rates are provided by third parties and may not always be accurate."
+![image](https://github.com/user-attachments/assets/b8e02513-cf7f-4d45-aaf3-002e39c67f29)
+
+## Object Control by Users in Settings (website)
+This feature gives website administrators full control over how users interact with objects on the platform. A checkbox, disabled by default, restricts object edits to approved administrators only. When enabled, object updates made by non-admin users will not be applied unless an administrator approves them. The restriction applies specifically to objects claimed by one of the administrators.
+Title: "Object editing by users:"
+Checkbox: Checkbox (disabled by default), which gives the owner and admin group full control over all objects on the site. That is, only object updates that are approved by them will be used to form objects. This function will need to be limited to objects that have been claimed by one of the administrators.
+Checkbox text: "Do not allow users to make changes to objects on the website. Only updates by approved administrators will be used."
+![image](https://github.com/user-attachments/assets/0b97886e-ccac-4255-8873-501d3aefb1a6)
+
+## Google Analytics Integration in Settings (website)
+This section allows the website owner to add a Google Analytics 4 measurement ID to monitor site performance. A placeholder field is provided for entering the ID, which should follow the format “G-XXXXXXX.”
+Title: "Google Analytics 4 property ID:"
+Input: Input for Google Analytic tag. Placeholder - "Paste Measurement ID here"
+Note: "You can monitor website performance using Google Analytics. Please note, that Google Measurement ID should look like G-XXXXXXX."
+![image](https://github.com/user-attachments/assets/61adeb8c-7602-4d38-8a3a-37a5387ad33e)
+
+## Google Search Console Verification in Settings (website)
+To verify site ownership with Google Search Console, the website owner can input an HTML verification tag. A placeholder field allows for easy entry of the tag, which will be added to the website's header.
+Title: "Google Search Console HTML verification tag:"
+Input: input for HTML verification tag. Placeholder - "Paste your meta tag here"
+Note: "Obtain an HTML verification tag from Google Search Console and enter it here to verify site ownership. This tag will be added to your site's header."
+![image](https://github.com/user-attachments/assets/dde17017-db89-493d-87be-2c24d9cd5107)
+
+## Google Ads Configuration in Settings (website)
+To enable outbound click tracking in Google Ads, this section provides fields for the outbound click config command and event snippet. The config command should follow the format gtag('config', 'AW-XXXXX'), and the event snippet can be used to track conversions. Instructions for obtaining these values are provided within the section.
+Google Ads Outbound Click Config Command:
+Title: "Google Ads Outbound Click Config Command:"
+Input: input for config command. Placeholder - "Paste your Config Command here (e.g., gtag('config', 'AW-XXXXX');)"
+Note: "To find the 'config' command in Google Ads, navigate to Tools > Conversions > Outbound Click > Tag Setup > Install Tag Yourself > Google Tag > The Google tag is already installed on all pages..."
+![image](https://github.com/user-attachments/assets/71175a00-e3d6-4267-9aa1-e1df2163ba0a)
+Google Ads Outbound Click Event Snippet:
+Title: Google Ads Outbound Click Event Snippet:
+Input: text field for code snippet code. Placeholder - "Paste your Event Snippet for Outbound Click here"
+Note: To find the event snippet in Google Ads, navigate to Tools > Conversions > Outbound Click > Tag Setup > Install Tag Yourself > Event Snippet > Click.
+![image](https://github.com/user-attachments/assets/575ca80f-1ed9-49b9-833a-d0ed9a793143)
+
+## Beneficiary Settings in Settings (website)
+The website owner can designate a beneficiary to receive a percentage of rewards generated by posts submitted through the platform. By default, the beneficiary is set to the user account, but this can be changed to another user. The percentage of rewards given to the beneficiary is set at 5% by default, but this value can be adjusted as needed.
+Title: Beneficiary
+Note: The website owner may earn a share of the author rewards on posts submitted using their website.
+Account: "Beneficiary account:" by default - user account. It is a field for searching a user, and adding him as beneficiary. On waivio - waivio - receives the beneficiary reward, but for the site, the user can change this setting.
+Percent: "Beneficiary %:" percent for beneficiary. By default - 5%.
+![image](https://github.com/user-attachments/assets/3c9cfb26-5494-4919-9c6f-007b143d6374)
+
+## Referral Payments in Settings (website)
+Website owners have the option to receive referral commissions when users claim rewards through the platform. A field is provided for specifying the account that will receive referral payments. Referral commissions are governed by the terms set by the Campaign Management Services used by sponsors.
+Title: Referral payments
+Note:The website owner may receive referral commissions when users claim their rewards through the website.
+Account: "Account for referral payments:" by default - user account. It is a field for searching a user, and adding him as referral. On waivio - waivio - receives the referral reward, but for the site, the user can change this setting.
+Note 2:	The terms for referral commissions are defined by the Campaign Management Services used by sponsors to launch their campaigns.
+![image](https://github.com/user-attachments/assets/b85f7657-c557-4139-ab42-c85825690445)
+
+## Save Changes Setting (Website)
+At the bottom of the page, a "Save" button allows the website owner to apply any changes made to the settings.
+![image](https://github.com/user-attachments/assets/3c75d319-7ca5-4e2c-ad50-d6b7615fea0e)
+
+
+# Tools / Site / Affiliate codes
+The **Affiliate Codes** (website) page allows users to enter and manage their affiliate codes for the website. These codes enable users to earn commissions from affiliate programs such as Amazon, Walmart, and others by automatically integrating them into 'Buy Now' links across the site’s product listings.
+![image](https://github.com/Waiviogit/waivio/assets/67378322/9a7154ec-897b-444c-a59b-05f26778330b)
+
+### Element description in Affiliate codes (website) page
+Title: Affiliate codes for {site}
+Text: Enter your affiliate program codes from various platforms, including Amazon.com, Walmart.com, and others. These codes will be automatically integrated into the 'Buy Now' links across your website's product listings. This ensures you earn affiliate commissions from all sales initiated by your website visitors. Take advantage of the geo-targeting feature by entering affiliate codes for location-specific shops, such as Amazon.ca, Amazon.co.uk, and more. These codes will direct traffic based on the geographical location of your website visitors, thereby maximizing your potential affiliate revenues.
+For a seamless and uninterrupted user experience, we also recommend checking and confirming the Product IDs on your products.
+Find: "Find affiliate program"
+Find field: search field by affiliate programs object type.
+Codes title: "Affiliate codes:"
+Codes list: list of affiliate programs that user added. Affiliate card include name, code and Delete button. If a user deletes an affiliate code and then re-adds the same code, our system will recognize this action. Instead of creating a new update, we will automatically validate and update the existing code, adding approve vote.
+
+**Affiliate Code Features:**
+- If a user has not provided a region-specific affiliate code, the system will default to the next available code in the country-region-global hierarchy. Button links for the missing region will redirect to the code that is set.
+- If a user deletes a site, the corresponding affiliate code will be invalidated. However, if the user re-adds the same site with the same affiliate code, the system will automatically approve the code to make it active again.
+- When an affiliate code is updated via the **Affiliate Codes** page (for both users and sites), it will automatically receive a 1% approval vote.
+- If a user owns a store but hasn’t provided personal affiliate codes, the system will insert the website’s default affiliate codes on the **social.gifts** sites.
+
+
+# Tools / Site / Administrators
+Hive is a public blockchain where any user can publish updates to objects. These updates are then subject to community voting for approval or rejection. However, on individual websites, there may be a need for certain objects to appear in a specific way as defined by the site operators.
+To manage this, the website owner can assign administrative privileges to certain Hive users, giving them the authority to govern the appearance and updates of objects. Administrators play a key role in deciding which updates to approve or reject.
+![Administrator Management UI](https://user-images.githubusercontent.com/42100432/93951599-a4cb5000-fcfb-11ea-8414-5c95ada36549.png)
+### Administrator Voting and Object Ownership:
+- **Voting Power**: Administrators have the final say in whether an update is accepted or rejected for the site. If several administrators vote on the same update, only the last vote is considered.
+- **Object Ownership**: If an administrator claims ownership over an object, only the updates that are explicitly approved by that administrator (or other approved administrators) will be displayed for the object.
+### Managing Administrators:
+In **Administrators Mode**, the website owner can add or remove administrators as needed. The process for managing the administrator list is similar to managing a blacklist. 
+1. **Grant Administrative Privileges**:
+   - Use the "Find User" field to search for and select a Hive user to assign as an administrator.
+   - The "Add" button will become active once a user is selected.
+2. **List of Website Administrators**:
+   - The **Administrator List** displays all users who have been assigned administrative privileges.
+   - Each entry includes a delete button, allowing the removal of an administrator if necessary.
+
+
+# Tools / Site / Moderators
+Some content published on the Hive blockchain may conflict with local laws or company policies. To ensure that such content does not appear on your website, the site owner can appoint moderators.
+![Moderator Management UI](https://user-images.githubusercontent.com/67378322/141975953-fb4f53c6-6c48-4c1b-87b8-8f541b02857b.png)
+### Moderator Roles:
+- **Hide Content**: If a moderator flags a post or comment as inappropriate, that content will be removed from the site.
+- **Mute Users**: If a moderator mutes a user, none of the content from that user will be displayed on the site.
+### Managing Moderators:
+The process for managing moderators is similar to managing blacklists. 
+1. **Grant Moderator Privileges**:
+   - Use the "Find User" field to search for and select a Hive user to assign as a moderator.
+   - The "Add" button will become active once a user is selected.
+2. **List of Website Moderators**:
+   - The **Website Moderators** section displays all users who have been granted moderator privileges.
+   - Each entry includes a delete button, allowing the removal of a moderator if necessary.
+Website Moderators Page Text: Some of the content on the Hive blockchain may violate local laws or company policies and it is essential that such content does not appear on the website. The website owner may grant moderator privileges to some Hive users. If a moderator flags a post or comment, that content will not appear on the website. If a moderator mute a user, none of that user's content will be displayed on the website.
+
+
+# Tools / Site / Authorities
+The **Authorities page** is a management interface where website owners can assign and oversee trusted users (authorities) who are responsible for maintaining the accuracy of object data on the site. It provides tools to:
+- Add Hive users as **trusted authorities**, allowing them to approve or reject updates to specific objects.
+- View and manage the list of authorities, ensuring that only approved updates from trusted users are displayed.
+- Assign **ownership authority**, which limits object updates to those explicitly approved by the designated authority.
+The page also allows site administrators to override authority votes, ensuring key decisions like affiliate link updates align with site goals.
+Authority Roles:
+- Claiming Authority: Any user can claim authority over an entity, enabling them to monitor and approve updates for accuracy.
+- Trusted Authorities: The website owner can specify which authorities are trusted, ensuring that only updates approved by these users are applied to the site.
+- Administrator Override: The votes of site administrators take precedence over authorities, allowing website operators to make key decisions like including affiliate codes on product links.
+This mechanism can help ensure that object descriptions remain accurate while allowing controlled lists of objects to be added to the website.
+For instance, a manufacturer can oversee the accuracy of their product descriptions, and a website can automatically add the manufacturer’s products to its catalog by including them in the trusted authority list.
+Managing Authorities:
+1. Add Authorities:
+  - Use the "Find User" field to search for and add a user as a trusted authority.
+  - The "Add" button will be enabled once a user is selected.
+2. List of Trusted Authorities: Displays all users assigned as trusted authorities for the website. Each entry includes a delete button to remove a user from the list if needed.
+Page main text: Any Hive user can declare that they are responsible for the accuracy of an object by claiming authority over it. They exercise their authority by approving or rejecting object updates. If full ownership authority has been claimed, then user assumes that only approved updates will be processed. The website owner can specify which authorities to trust (claims of other users will be ignored). This mechanism can be used to add controlled lists of objects to the website, while ensuring their accuracy.
+![2021-11-16_13-27_1](https://user-images.githubusercontent.com/67378322/141977369-7b88e72a-85b5-4754-a91a-a7cd4eba2544.png)
+
+
+# Tools / Site / Muted users
+The **Muted Users page** is a management tool where website owners can monitor and control user privileges. It is divided into two tabs: **Muted** and **Blacklisted**, each serving a distinct function for user moderation.
+Both tabs allow website owners to maintain control over user content and ensure that moderation aligns with site policies.
+![image](https://github.com/user-attachments/assets/e7aac475-fcbf-4bb8-8c94-0e5551e4719f)
+
+### Muted Tab in Muted users
+The **Muted** section displays a list of users who have been muted by website moderators or the site owner. Muted users' posts, comments, and profile information are hidden from the website. Website owners can mute users, but only the moderator who applied the mute can unmute them. If the site owner muted the user, they have the ability to unmute them.
+Moderators can mute users and admins can add them to blacklists and even link to other users and their blacklists. In such a situation, it is important for the site owner to understand why the privileges of a particular user are suspended and by whom. In the case of blacklists, the site owner can restore the user's privileges to edit objects by adding him to his whitelist.
+In the Muted section, all users who are muted by any moderator are collected in one list. The site owner can also mute users and on such users he sees the Unmute button. For everyone else - just a link to the moderator/ s who muted this user.
+If the user is muted, then his posts and comments are not shown, and only his username is shown on the profile page. This mode can be used to partially satisfy the "right to be forgotten" when the user requires the site owner to keep information about him unavailable.
+![Muted users page image](https://user-images.githubusercontent.com/67378322/141988499-ac1f0d58-1420-4c08-bf73-523e75b643ce.png)
+- **Features**:
+  - Shows a list of all muted users, with a link to the moderator(s) responsible for muting each user.
+  - Muted users only have their username displayed on their profile.
+  - The list can be sorted by rank or recency of the mute action.
+- **Text**: Website moderators can mute users. Posts, comments, and the profile content of muted users are not accessible on the website. The website owner can also mute users, but only the moderator who has muted a user can unmute them.
+
+### Blacklisted Tab in Muted users
+The **Blacklisted** section allows website administrators to blacklist users, which prevents any updates or votes from those users from being counted. Administrators can manage the blacklist and whitelist through the Rewards section, allowing for control over which users' contributions are ignored or restored.
+![2021-11-16_14-32](https://user-images.githubusercontent.com/67378322/141988498-8b185bf1-17da-45cb-a388-9fea2338e480.png)
+- **Features**:
+  - Displays a list of blacklisted users, sourced from the Rewards section.
+  - Administrators can override blacklists by adding users to a whitelist, restoring their privileges.
+- **Text**: Website administrators can add users to blacklists. All object updates and votes on updates from blacklisted users are ignored. The website owner can also add users to their blacklist. They can also add users to their whitelist to override any other blacklist.
+If the administrator added someone to the blacklist, then all updates initiated by this user and votes for updates are no longer counted. Only those updates remain for which there are other votes. In fact, all of this user's contribution to the creation and enhancement of objects should be ignored. Administrators do not have access to site configuration and they use a standard tool - (campaigns) blacklist.
+
+
+# Tools / Site / AdSense ads
+The **AdSense Advertisements** page is a user interface designed to help website owners integrate Google AdSense ads into their website. This ensures ads are displayed across all pages of the site, providing a consistent and seamless ad experience for visitors.
+![image](https://github.com/user-attachments/assets/e8421016-6588-45ff-8e42-7b65c1bb1bbd)
+Unfortunately, the 'AdSense ads' program does not seem to work as expected. After completing all the steps, there is still a high probability that Google AdSense will not approve the domain unless the site meets AdSense policy criteria. We are currently investigating the reasons for this.
+
+AdSense ads page element:
+- **Page Title**: AdSense advertisements
+- **Text**:  Google AdSense is a program that allows website owners to earn revenue by displaying targeted advertisements on their site. These ads are chosen based on the content of the site and the interests of the visitors, ensuring relevance to your audience.
+When integrating the AdSense code into your website, you can choose the level of ad intensity, allowing you to control how prominently the ads are displayed. Simply add the code from Google AdSense and select the desired intensity level on our platform.
+- **AdSense code**: This section allows users to add their AdSense code, which will be embedded in the site's header, ensuring ads are displayed properly across all pages.
+- **Ads.txt**: This section is used to input the `.txt` content needed for Google AdSense’s ads.txt file, which is required for ad verification and transparency.
+- **Level**: This dropdown menu allows users to control how frequently ads are displayed on their site, balancing user experience with potential ad revenue.
+- **Save**: This button applies any changes made to the AdSense configuration.
+![image](https://github.com/user-attachments/assets/e8421016-6588-45ff-8e42-7b65c1bb1bbd)
+
+### AdSense Code Section
+This section allows users to add their AdSense code, which will be embedded in the site's header, ensuring ads are displayed properly across all pages.
+- **Label**: AdSense code
+- **Placeholder**: Add your AdSense code
+- **Note**: This code will be displayed within the `<head></head>` tags on every page of your site.
+![image](https://github.com/user-attachments/assets/aed0bb5c-d221-4f31-91e3-e3dfd649978b)
+
+### Ads.txt Section
+This section is used to input the `.txt` content needed for Google AdSense’s ads.txt file, which is required for ad verification and transparency.
+- **Label**: Ads.txt
+- **Placeholder**: Add your AdSense .txt content
+- **Note**: This text will be added to ads.txt to your site.
+![image](https://github.com/user-attachments/assets/104bd9ee-b053-4cac-a2f7-f807f746d166)
+
+### Ad Intensity Level Section
+This dropdown menu allows users to control how frequently ads are displayed on their site, balancing user experience with potential ad revenue.
+- **Label**: Level
+- **Options**:  
+  1. Minimal  
+  2. Moderate  
+  3. Intensive  
+- **Note**: Choose the advertising intensity to balance user experience with revenue generation.
+![image](https://github.com/user-attachments/assets/181d3bf1-1f1d-4304-893a-c3ef0315c172)
