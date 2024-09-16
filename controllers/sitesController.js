@@ -257,7 +257,7 @@ exports.getMapCoordinates = async (req, res, next) => {
 exports.firstLoad = async (req, res, next) => {
   const { result, error } = await cachedFirstLoad({ app: req.appData })({
     key: `${REDIS_KEYS.API_RES_CACHE}:cachedFirstLoad:${req.appData.host}`,
-    ttl: TTL_TIME.TEN_MINUTES,
+    ttl: TTL_TIME.ONE_MINUTE,
   });
   if (error) return next(error);
 
