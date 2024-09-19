@@ -8,9 +8,11 @@ const _ = require('lodash');
 const { REDIS_KEYS } = require('../constants/common');
 const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 const assitant = require('../utilities/operations/assistant/assitant');
+const googleObjects = require('../utilities/operations/placesAPI/googleObjects');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 const asyncLocalStorage = require('../middlewares/context/context');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
 
 const show = async (req, res, next) => {
   const data = {
@@ -155,6 +157,34 @@ const assistantHistory = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const placesObjects = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.app.placesNearSchema, next);
+
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await googleObjects.googleSearchNearby(value);
+  if (error) return next(error);
+
+  return res.status(200).json({ result });
+};
+
+const placesImage = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.app.placesImageSchema, next);
+
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await googleObjects.uploadGoogleImage(value);
+  if (error) return next(error);
+
+  return res.status(200).json({ result });
+};
+
 module.exports = {
   show,
   experts,
@@ -164,4 +194,6 @@ module.exports = {
   swapHistory,
   assistant,
   assistantHistory,
+  placesObjects,
+  placesImage,
 };
