@@ -25,3 +25,15 @@ exports.assistantScheme = Joi.object().keys({
 exports.assistantHistoryScheme = Joi.object().keys({
   id: Joi.string().required(),
 });
+
+exports.placesNearSchema = Joi.object().keys({
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required(),
+  includedTypes: Joi.array().items(Joi.string()).min(1),
+  userName: Joi.string().required(),
+});
+
+exports.placesImageSchema = Joi.object().keys({
+  placesUrl: Joi.string().required(),
+  userName: Joi.string().required(),
+});

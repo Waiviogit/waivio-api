@@ -70,6 +70,7 @@ models.GuestMana = require('./schemas/GuestManaSchema');
 models.Delegation = require('./schemas/DelegationSchema');
 models.EngineAdvancedReport = require('./schemas/EngineAdvancedReportSchema');
 models.EngineAdvancedReportStatus = require('./schemas/EngineAdvancedReportStatusSchema');
+models.PlacesApiAccess = require('./schemas/PlacesApiAccess');
 
 module.exports = {
   Mongoose: mongoose,
