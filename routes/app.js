@@ -27,5 +27,9 @@ appRoutes.route('/assistant')
   .post(reqTimeMonitor, AppController.assistant);
 appRoutes.route('/assistant/history/:id')
   .get(reqTimeMonitor, AppController.assistantHistory);
+appRoutes.route('/places-api/image')
+  .post(reqTimeMonitor, AppController.placesImage);
+appRoutes.route('/places-api/objects')
+  .post(reqTimeMonitor, AppController.placesObjects);
 
 module.exports = appRoutes;
