@@ -9,6 +9,8 @@ const ACCESS_TYPE = {
   IMAGE: 'image',
 };
 
+const SEARCH_RADIUS = 100;
+
 const googleSearchNearbyRequest = async ({
   apiKey, includedTypes, location,
 }) => {
@@ -38,6 +40,38 @@ const googleSearchNearbyRequest = async ({
   }
 };
 
+const placesSearchRequest = async ({
+  textQuery, apiKey, includedType, location,
+}) => {
+  try {
+    const response = await axios.post(
+      'https://places.googleapis.com/v1/places:searchText',
+      {
+        textQuery,
+        languageCode: 'en',
+        ...(includedType && { includedType }),
+        ...location,
+      },
+      {
+        // search for locale
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Goog-Api-Key': apiKey,
+          // pick fields
+          'X-Goog-FieldMask': '*',
+        },
+      },
+    );
+
+    return { result: response?.data?.places ?? [] };
+  } catch (error) {
+    return {
+      error,
+      result: [],
+    };
+  }
+};
+
 const placesPhotoRequest = async ({ apiKey, maxWidthPx, placesUrl }) => {
   try {
     const response = await fetch(
@@ -63,7 +97,7 @@ const googleSearchNearby = async ({
           latitude,
           longitude,
         },
-        radius: 100,
+        radius: SEARCH_RADIUS,
       },
     },
   };
@@ -71,6 +105,34 @@ const googleSearchNearby = async ({
   const { result, error } = await googleSearchNearbyRequest({
     location,
     includedTypes,
+    apiKey: process.env.PLACES_API_KEY,
+  });
+
+  if (error) return { error };
+  await PlacesApiAccessModel.incrAccessCount(userName, ACCESS_TYPE.OBJECTS);
+
+  return { result };
+};
+
+const googleSearchText = async ({
+  latitude, longitude, textQuery, userName, includedType,
+}) => {
+  const location = {
+    locationBias: {
+      circle: {
+        center: {
+          latitude,
+          longitude,
+        },
+        radius: SEARCH_RADIUS,
+      },
+    },
+  };
+
+  const { result, error } = await placesSearchRequest({
+    location,
+    textQuery,
+    includedType,
     apiKey: process.env.PLACES_API_KEY,
   });
 
@@ -100,4 +162,5 @@ const uploadGoogleImage = async ({ placesUrl, userName }) => {
 module.exports = {
   googleSearchNearby,
   uploadGoogleImage,
+  googleSearchText,
 };

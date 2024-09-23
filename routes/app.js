@@ -31,5 +31,7 @@ appRoutes.route('/places-api/image')
   .post(reqTimeMonitor, AppController.placesImage);
 appRoutes.route('/places-api/objects')
   .post(reqTimeMonitor, AppController.placesObjects);
+appRoutes.route('/places-api/text')
+  .post(reqTimeMonitor, AppController.placesText);
 
 module.exports = appRoutes;
