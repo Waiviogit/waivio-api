@@ -33,6 +33,14 @@ exports.placesNearSchema = Joi.object().keys({
   userName: Joi.string().required(),
 });
 
+exports.placesTextSchema = Joi.object().keys({
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required(),
+  includedType: Joi.string(),
+  userName: Joi.string().required(),
+  textQuery: Joi.string().required(),
+});
+
 exports.placesImageSchema = Joi.object().keys({
   placesUrl: Joi.string().required(),
   userName: Joi.string().required(),
