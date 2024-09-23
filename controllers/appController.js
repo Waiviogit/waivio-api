@@ -171,6 +171,20 @@ const placesObjects = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const placesText = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.app.placesTextSchema, next);
+
+  if (!value) return;
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await googleObjects.googleSearchText(value);
+  if (error) return next(error);
+
+  return res.status(200).json({ result });
+};
+
 const placesImage = async (req, res, next) => {
   const value = validators.validate(req.body, validators.app.placesImageSchema, next);
 
@@ -196,4 +210,5 @@ module.exports = {
   assistantHistory,
   placesObjects,
   placesImage,
+  placesText,
 };
