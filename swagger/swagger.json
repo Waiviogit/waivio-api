@@ -2032,6 +2032,9 @@
                 "limit": {
                   "type": "number",
                   "default": 10
+                },
+                "schema": {
+                  "type": "string"
                 }
               }
             }
