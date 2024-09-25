@@ -1,6 +1,7 @@
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
+  DEFAULT_REFERRAL,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj, geoIpModel,
@@ -288,6 +289,11 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   await App.findOneAndUpdate({ _id: app._id }, { $set: { supported_objects: _.map(result, 'author_permlink') } });
 };
 
+const getDefaultRefferal = (account = '') => {
+  if (account.includes('_')) return DEFAULT_REFERRAL;
+  return account;
+};
+
 exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
@@ -309,9 +315,9 @@ exports.getSettings = async (host) => {
     googleEventSnippet,
     googleAdsConfig,
     beneficiary,
-    referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
+    referralCommissionAcc: app_commissions?.referral_commission_acc
       ? app_commissions.referral_commission_acc
-      : app.owner,
+      : getDefaultRefferal(app.owner),
     currency,
     language,
     objectControl,
