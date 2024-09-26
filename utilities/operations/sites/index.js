@@ -1,6 +1,6 @@
 module.exports = {
   objectsFilter: require('./objectsFilter'),
-  manage: require('./manage.js'),
+  manage: require('./manage'),
   reports: require('./reports'),
   authorities: require('./authorities'),
   refunds: require('./refunds'),
