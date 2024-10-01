@@ -247,7 +247,7 @@ const getObjectGroup = async ({
 
   return {
     result: _.take(orderedList, limit),
-    hasMore: orderedList.length > limit,
+    hasMore: orderedList.length >= limit,
   };
 };
 
