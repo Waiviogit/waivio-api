@@ -760,14 +760,14 @@ const searchArea = async (req, res, next) => {
 
   addRequestDetails(value);
 
-  const { wobjects, hasMore, error } = await searchByArea({ ...value, app: req.appData });
+  const { wobjects, error } = await searchByArea({ ...value, app: req.appData });
 
   if (error) return next(error);
 
   const pipeline = new RequestPipeline();
   const processedData = await pipeline
     .use(pipelineFunctions.moderateObjects)
-    .execute({ wobjects, hasMore }, req);
+    .execute({ wobjects }, req);
 
   return res.status(200).json(processedData);
 };

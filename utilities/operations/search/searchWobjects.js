@@ -468,7 +468,7 @@ const makePipelineForDrinksAndDishes = ({
 };
 
 const searchByArea = async ({
-  box, map, object_type, app, skip, limit,
+  box, map, object_type, app, sample,
 }) => {
   const mainPipe = matchSitesPipe({
     box, map, object_type,
@@ -505,24 +505,13 @@ const searchByArea = async ({
   }
 
   mainPipe.push(
-    {
-      $sort: { weight: -1, _id: -1 },
-    },
-    {
-      $skip: skip,
-    },
-    {
-      $limit: limit + 1,
-    },
+    { $sample: { size: sample } },
   );
 
   const { wobjects, error } = await Wobj.fromAggregation(mainPipe);
   if (error) return { error };
 
-  return {
-    wobjects: _.take(wobjects, limit),
-    hasMore: wobjects.length > limit,
-  };
+  return { wobjects };
 };
 
 module.exports = {

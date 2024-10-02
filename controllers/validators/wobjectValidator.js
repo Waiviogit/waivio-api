@@ -290,9 +290,8 @@ exports.getGroupByPermlink = Joi.object().keys({
 });
 
 exports.searchAreaSchema = Joi.object().keys({
-  limit: Joi.number().integer().min(1).max(100)
-    .default(10),
-  skip: Joi.number().integer().min(0).default(0),
+  sample: Joi.number().integer().min(1).max(10)
+    .default(5),
   userName: Joi.string(),
   map: Joi.object().keys({
     coordinates: Joi
