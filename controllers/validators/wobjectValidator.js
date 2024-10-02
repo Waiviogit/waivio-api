@@ -288,3 +288,21 @@ exports.getGroupByPermlink = Joi.object().keys({
   lastName: Joi.string().allow(''),
   authorPermlink: Joi.string().required(),
 });
+
+exports.searchAreaSchema = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  userName: Joi.string(),
+  map: Joi.object().keys({
+    coordinates: Joi
+      .array()
+      .ordered(
+        Joi.number().min(-180).max(180),
+        Joi.number().min(-90).max(90),
+      ),
+    radius: Joi.number().min(0),
+  }),
+  object_type: Joi.string(),
+  box: boxScheme,
+}).options(options);

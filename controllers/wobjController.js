@@ -6,7 +6,11 @@ const {
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts, objectGroup,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
+const {
+  wobjects: {
+    searchWobjects, defaultWobjectSearch, addRequestDetails, searchByArea,
+  },
+} = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
@@ -745,6 +749,29 @@ const getGroupByPermlink = async (req, res, next) => {
   return res.status(200).json(processedData);
 };
 
+const searchArea = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.searchAreaSchema,
+    next,
+  );
+
+  if (!value) return;
+
+  addRequestDetails(value);
+
+  const { wobjects, hasMore, error } = await searchByArea({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
+};
+
 module.exports = {
   index,
   show,
@@ -784,4 +811,5 @@ module.exports = {
   getMapObjectFromObjectLink,
   getAuthorPermlinkByFieldBody,
   getGroupByPermlink,
+  searchArea,
 };
