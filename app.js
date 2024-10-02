@@ -18,6 +18,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
+if (process.env.NODE_ENV === 'staging') app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(middlewares.contextMiddleware);
 app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
 app.use('/', middlewares.reqRates.incrRate);

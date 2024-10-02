@@ -42,6 +42,23 @@ const getObjectPermlinksFromUrl = (link) => {
   }
 };
 
+const getAppAuthorities = (app) => {
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+
+  const authorities = [...app.authority];
+
+  if (userShop) {
+    authorities.push(app?.configuration?.shopSettings?.value);
+    return authorities;
+  }
+
+  authorities.push(app.owner);
+
+  return authorities;
+};
+
+const checkUserShop = (app) => app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
   const linksFromUrl = getObjectPermlinksFromUrl(data.string);
@@ -71,7 +88,8 @@ const searchWobjects = async (data) => {
 };
 
 const socialSearch = async (data) => {
-  const userShop = data?.app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const userShop = checkUserShop(data?.app);
+
   if (userShop) {
     const names = [data?.app?.configuration?.shopSettings?.value, ...data?.app?.authority ?? []];
     data.userShop = userShop;
@@ -325,7 +343,7 @@ const matchSitesPipe = ({
   }
   const matchCond = {
     $match: {
-      object_type: { $in: supportedTypes },
+      ...supportedTypes?.length && { object_type: { $in: supportedTypes } },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
       ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
     },
@@ -344,20 +362,15 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
-  object_type && pipeline.push({
-    $match: { object_type },
-  });
+
+  if (object_type) pipeline.push({ $match: { object_type } });
+
   return pipeline;
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes, linksFromUrl,
+  string, addHashtag, object_type, app, skip, limit, userLinks = [], deselect = [], counters, onlyObjectTypes, linksFromUrl,
 }) => {
-  const authorities = [...app.authority];
-  userShop
-    ? authorities.push(app?.configuration?.shopSettings?.value)
-    : authorities.push(app.owner);
-
   const pipeline = [
     {
       $match: {
@@ -365,7 +378,7 @@ const matchSocialPipe = ({
         ...(!addHashtag && {
           $or: [
             {
-              'authority.administrative': { $in: authorities },
+              'authority.administrative': { $in: getAppAuthorities(app) },
             },
           ],
         }),
@@ -454,8 +467,56 @@ const makePipelineForDrinksAndDishes = ({
   return pipeline;
 };
 
+const searchByArea = async ({
+  box, map, object_type, app, sample,
+}) => {
+  const mainPipe = matchSitesPipe({
+    box, map, object_type,
+  });
+  const social = checkForSocialSite(app?.parentHost ?? '');
+
+  /** ------if social site search in authority objects
+   * also check if site based on user and add conditions
+   */
+  if (social) {
+    const appAuthorities = getAppAuthorities(app);
+    const sitesCondition = [
+      {
+        'authority.ownership': { $in: appAuthorities },
+      },
+      {
+        'authority.administrative': { $in: appAuthorities },
+      },
+    ];
+
+    const userShop = checkUserShop(app);
+    if (userShop) {
+      const userLinks = await Post.getProductLinksFromPosts({ names: appAuthorities });
+      if (userLinks.length) {
+        const deselect = await userShopDeselectModel.findUsersLinks({ names: appAuthorities });
+        const and = deselect.length
+          ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
+          : [{ author_permlink: { $in: userLinks } }];
+
+        sitesCondition.push({ $and: and });
+      }
+    }
+    mainPipe.push({ $match: { $or: sitesCondition } });
+  }
+
+  mainPipe.push(
+    { $sample: { size: sample } },
+  );
+
+  const { wobjects, error } = await Wobj.fromAggregation(mainPipe);
+  if (error) return { error };
+
+  return { wobjects };
+};
+
 module.exports = {
   searchWobjects,
   defaultWobjectSearch,
   addRequestDetails,
+  searchByArea,
 };
