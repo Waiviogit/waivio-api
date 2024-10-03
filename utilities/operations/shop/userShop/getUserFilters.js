@@ -15,7 +15,6 @@ const getUserObjects = async ({
 
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 
-
   const { wobjects } = await Wobj.fromAggregation([{
     $match: {
       ...userFilter,
@@ -78,7 +77,9 @@ const getUserFilters = async ({
   const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
   if (error) return { error };
 
-  const tags = await getUserObjects({ userName, path, app, schema });
+  const tags = await getUserObjects({
+    userName, path, app, schema,
+  });
 
   const tagCategoryFilters = shopHelper
     .getFilteredTagCategories({ tags, tagCategories });
