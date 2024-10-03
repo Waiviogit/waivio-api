@@ -336,7 +336,7 @@ const getMoreTagsForCategory = ({
 
   const tags = _.slice(tagCategories?.tags, skip, skip + limit);
 
-  const hasMore = tagCategories?.tags?.length > tags?.length ?? 0 + skip;
+  const hasMore = tags?.length === limit;
 
   return {
     tags,
