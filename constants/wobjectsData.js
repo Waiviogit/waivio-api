@@ -70,6 +70,18 @@ exports.FIELDS_NAMES = {
   MAP_DESKTOP_VIEW: 'mapDesktopView',
   MAP_OBJECTS_LIST: 'mapObjectsList',
   WALLET_ADDRESS: 'walletAddress',
+  DELEGATION: 'delegation',
+  URL: 'url',
+  CALORIES: 'calories',
+  BUDGET: 'budget',
+  COOKING_TIME: 'cookingTime',
+  COST: 'cost',
+  RECIPE_INGREDIENTS: 'recipeIngredients',
+  GROUP_EXPERTISE: 'groupExpertise',
+  GROUP_FOLLOWERS: 'groupFollowers',
+  GROUP_FOLLOWING: 'groupFollowing',
+  GROUP_ADD: 'groupAdd',
+  GROUP_EXCLUDE: 'groupExclude',
 };
 
 exports.LIST_TYPES = {
@@ -109,7 +121,16 @@ exports.OBJECT_TYPES = {
   AFFILIATE: 'affiliate',
   WEB_PAGE: 'webpage',
   MAP: 'map',
+  LINK: 'link',
+  RECIPE: 'recipe',
+  GROUP: 'group',
 };
+
+exports.WALLET_ADDRESS_LINKED_TYPES = [
+  this.OBJECT_TYPES.BUSINESS,
+  this.OBJECT_TYPES.RESTAURANT,
+  this.OBJECT_TYPES.PERSON,
+];
 
 exports.ADMIN_ROLES = {
   OWNER: 'owner',
@@ -172,6 +193,9 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.AFFILIATE_GEO_AREA,
   this.FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
   this.FIELDS_NAMES.WALLET_ADDRESS,
+  this.FIELDS_NAMES.DELEGATION,
+  this.FIELDS_NAMES.GROUP_ADD,
+  this.FIELDS_NAMES.GROUP_EXCLUDE,
 ];
 
 exports.REQUIREDFIELDS = [
@@ -343,6 +367,21 @@ exports.REMOVE_OBJ_STATUSES = [
   this.STATUSES.UNAVAILABLE,
 ];
 
+exports.MAP_OBJECT_TYPES = [
+  this.OBJECT_TYPES.RESTAURANT,
+  this.OBJECT_TYPES.DISH,
+  this.OBJECT_TYPES.DRINK,
+  this.OBJECT_TYPES.BUSINESS,
+  this.OBJECT_TYPES.SERVICE,
+  this.OBJECT_TYPES.PLACE,
+  this.OBJECT_TYPES.HOTEL,
+  this.OBJECT_TYPES.MOTEL,
+  this.OBJECT_TYPES.ORGANIZATION,
+  this.OBJECT_TYPES.RESORT,
+  this.OBJECT_TYPES.BnB,
+  this.OBJECT_TYPES.COMPANY,
+];
+
 exports.MAIN_OBJECT_TYPES = [
   this.OBJECT_TYPES.RESTAURANT,
   this.OBJECT_TYPES.DISH,
@@ -424,8 +463,8 @@ exports.AFFILIATE_NULL_TYPES = ['none', 'null'];
 exports.WHITE_LIST_KEY = 'white_list_import';
 
 exports.VOTE_COST = {
-  USUAL: 0.001,
-  FOR_WHITE_LIST: 0.0001,
+  USUAL: 0.0001,
+  FOR_WHITE_LIST: 0.00001,
 };
 
 exports.FAVORITES_OBJECT_TYPES = [
@@ -458,4 +497,7 @@ exports.FAVORITES_OBJECT_TYPES = [
   'b&b',
   'car',
   'test',
+  'map',
+  'link',
+  'group',
 ];

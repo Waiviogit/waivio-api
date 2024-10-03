@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const { SHOP_SCHEMA } = require('../../constants/shop');
 
 const options = { allowUnknown: true, stripUnknown: true, convert: true };
 
@@ -10,6 +11,7 @@ exports.departmentsSchema = Joi.object().keys({
 
 exports.departmentsWobjectsSchema = Joi.object().keys({
   departments: Joi.array().items(Joi.string()).required(),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
   skip: Joi.number().min(0).default(0),
   limit: Joi.number().min(1).default(10),
 }).options(options);

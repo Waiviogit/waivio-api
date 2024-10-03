@@ -7,6 +7,7 @@ const {
 } = require('models');
 const { OTHERS_DEPARTMENT } = require('constants/departments');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const { SHOP_SCHEMA } = require('constants/shop');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 const { checkForSocialSite } = require('./sitesHelper');
@@ -249,26 +250,29 @@ const getDepartmentsFromObjects = (objects, path) => {
       (o) => _.every(path, (p) => _.includes(o.departments, p)),
     );
     if (!filteredPath.length) continue;
-    const departments = _.flatten(_.map(filteredPath, 'departments'));
 
-    if (!departments.length) continue;
-    for (const department of departments) {
-      if (!department) continue;
-      const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
-      const filter = !_.every(path, (p) => _.includes(related, p));
-      const relatedToPush = filter
-        ? _.filter(related, (r) => !_.includes(path, r))
-        : related;
-      const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
-      departmentsMap.set(department, {
-        name: department,
-        related: [...new Set([
-          ...relatedToPush,
-          ...departments,
-        ])],
-        metaGroupIds: updatedMetaGroupIds,
-        objectsCount: updatedMetaGroupIds.length,
-      });
+    for (const item of filteredPath) {
+      const departments = item?.departments;
+
+      if (!departments?.length) continue;
+      for (const department of departments) {
+        if (!department) continue;
+        const { related = [], metaGroupIds = [] } = departmentsMap.get(department) ?? {};
+        const filter = !_.every(path, (p) => _.includes(related, p));
+        const relatedToPush = filter
+          ? _.filter(related, (r) => !_.includes(path, r))
+          : related;
+        const updatedMetaGroupIds = [...new Set([object, ...metaGroupIds])];
+
+        relatedToPush.push(...departments);
+
+        departmentsMap.set(department, {
+          name: department,
+          related: [...new Set(relatedToPush)],
+          metaGroupIds: updatedMetaGroupIds,
+          objectsCount: updatedMetaGroupIds.length,
+        });
+      }
     }
   }
 
@@ -340,8 +344,16 @@ const getMoreTagsForCategory = ({
   };
 };
 
+const pathToHideConfig = {
+  [SHOP_SCHEMA.SHOP]: 'user_metadata.settings.shop.hideLinkedObjects',
+  [SHOP_SCHEMA.RECIPE]: 'user_metadata.settings.hideRecipeObjects',
+};
+
+const getPathToHideConfig = (schema) => pathToHideConfig[schema]
+  || pathToHideConfig[SHOP_SCHEMA.SHOP];
+
 const getUserFilter = async ({
-  userName, app,
+  userName, app, schema,
 }) => {
   const social = sitesHelper.checkForSocialSite(app?.parentHost ?? '');
   const isMainObject = app?.configuration?.shopSettings?.value === userName;
@@ -354,7 +366,7 @@ const getUserFilter = async ({
 
   for (const acc of users) {
     const { user } = await User.getOne(acc, SELECT_USER_CAMPAIGN_SHOP);
-    const hideLinkedObjects = _.get(user, 'user_metadata.settings.shop.hideLinkedObjects', false);
+    const hideLinkedObjects = _.get(user, getPathToHideConfig(schema), false);
     const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName: acc });
     orFilter.push(...[
       { 'authority.ownership': acc },
@@ -373,6 +385,15 @@ const getUserFilter = async ({
   };
 };
 
+const objectTypesToSearch = {
+  [SHOP_SCHEMA.SHOP]: { object_type: { $in: SHOP_OBJECT_TYPES } },
+  [SHOP_SCHEMA.RECIPE]: { object_type: OBJECT_TYPES.RECIPE },
+  default: { object_type: { $in: SHOP_OBJECT_TYPES } },
+};
+
+const getObjectTypeCondition = (schema) => objectTypesToSearch[schema]
+  || objectTypesToSearch.default;
+
 module.exports = {
   makeFilterCondition,
   subdirectoryMap,
@@ -388,4 +409,5 @@ module.exports = {
   getMoreTagsForCategory,
   getUserFilter,
   omitRelated,
+  getObjectTypeCondition,
 };

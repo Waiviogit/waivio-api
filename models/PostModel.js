@@ -1,8 +1,8 @@
 const PostModel = require('database').models.Post;
-const { getNamespace } = require('cls-hooked');
 const AppModel = require('models/AppModel');
 const _ = require('lodash');
 const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
+const asyncLocalStorage = require('../middlewares/context/context');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -36,6 +36,30 @@ exports.getAllPosts = async (data) => {
     const posts = await PostModel.aggregate(aggregatePipeline);
 
     return { posts };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getPostsByCondition = async ({ condition, skip, limit }) => {
+  try {
+    const aggregatePipeline = [
+      { $match: { ...condition, ...getBlockedAppCond() } },
+      { $sort: { _id: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'wobjects.author_permlink',
+          foreignField: 'author_permlink',
+          as: 'fullObjects',
+        },
+      },
+    ];
+    const posts = await PostModel.aggregate(aggregatePipeline);
+
+    return { result: posts };
   } catch (error) {
     return { error };
   }
@@ -277,17 +301,17 @@ exports.findByCondition = async (condition, select = {}) => {
 };
 
 exports.getWobjectPosts = async ({
-  condition, limit, lastId, skip,
+  condition, limit, skip,
 }) => {
   try {
     const postsQuery = PostModel
       .find(condition)
       .sort({ _id: -1 })
+      .skip(skip)
       .limit(limit)
       .populate({ path: 'fullObjects', select: 'author authority parent fields weight author_permlink object_type default_name status' })
       .lean();
 
-    if (!lastId) postsQuery.skip(skip);
     return { posts: await postsQuery.exec() };
   } catch (error) {
     return { error };
@@ -306,7 +330,7 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
   const { result } = await this.find({
     filter: {
       author: userName || { $in: names },
-      'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+      'wobjects.object_type': { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE] },
     },
     projection: { wobjects: 1 },
   });
@@ -317,7 +341,7 @@ exports.getProductLinksFromPosts = async ({ userName, names }) => {
       ...resultElement.wobjects
         .filter(
           (wobject) => _.includes(
-            [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK],
+            [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE],
             wobject.object_type,
           ),
         )
@@ -349,7 +373,7 @@ exports.getFavoritesLinksFromPosts = async ({ userName }) => {
         .map((wobject) => wobject.author_permlink),
     );
   }
-  return linksArray;
+  return _.uniq(linksArray);
 };
 
 exports.findOneFirstByAuthor = async ({ author }) => {
@@ -364,8 +388,8 @@ exports.findOneFirstByAuthor = async ({ author }) => {
 
 const getBlockedAppCond = () => {
   try {
-    const session = getNamespace('request-session');
-    const host = session.get('host');
+    const store = asyncLocalStorage.getStore();
+    const host = store.get('host');
     return { blocked_for_apps: { $ne: host } };
   } catch (error) {
     return {};

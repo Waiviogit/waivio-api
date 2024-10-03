@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { SHOP_DEPARTMENTS_TYPE } = require('constants/shop');
+const { SHOP_DEPARTMENTS_TYPE, SHOP_SCHEMA } = require('constants/shop');
 
 const options = { stripUnknown: true, convert: true };
 
@@ -25,11 +25,13 @@ exports.userDepartmentsSchema = Joi.object().keys({
   name: Joi.string(),
   excluded: Joi.array().items(Joi.string()),
   path: Joi.array().items(Joi.string()),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
 }).options(options);
 
 exports.userFiltersSchema = Joi.object().keys({
   userName: Joi.string().required(),
   path: Joi.array().items(Joi.string()),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
 }).options(options);
 
 exports.userTagsSchema = Joi.object().keys({
@@ -38,6 +40,7 @@ exports.userTagsSchema = Joi.object().keys({
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
   path: Joi.array().items(Joi.string()),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
 }).options(options);
 
 exports.wobjectDepartmentsSchema = Joi.object().keys({
@@ -97,6 +100,7 @@ exports.userFeedSchema = Joi.object().keys({
   skip: Joi.number().default(0),
   limit: Joi.number().default(5),
   categoryLimit: Joi.number().default(3),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
 }).options(options);
 
 exports.userFeedDepartmentsSchema = Joi.object().keys({
@@ -114,6 +118,7 @@ exports.userFeedDepartmentsSchema = Joi.object().keys({
   skip: Joi.number().default(0),
   limit: Joi.number().default(10),
   path: Joi.array().items(Joi.string()).required(),
+  schema: Joi.string().default(SHOP_SCHEMA.SHOP),
 }).options(options);
 
 exports.wobjectFeedSchema = Joi.object().keys({
@@ -194,6 +199,13 @@ exports.getRelatedSchema = Joi.object().keys({
 });
 
 exports.getSimilarSchema = Joi.object().keys({
+  userName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).default(10),
+  skip: Joi.number().integer().min(0).default(0),
+});
+
+exports.getAddOnSchema = Joi.object().keys({
   userName: Joi.string().allow(''),
   authorPermlink: Joi.string().required(),
   limit: Joi.number().integer().min(1).default(10),

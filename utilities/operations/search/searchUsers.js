@@ -37,6 +37,7 @@ exports.searchUsers = async ({
         account: u.name,
         wobjects_weight: u.wobjects_weight,
         followers_count: u.followers_count,
+        posting_json_metadata: u.posting_json_metadata,
       })), limit),
     usersCount,
     error: error || countError,

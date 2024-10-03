@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { ObjectTypeController } = require('../controllers');
+const ObjectTypeController = require('../controllers/objectTypeController');
 
 const objectTypeRoutes = new Router();
 

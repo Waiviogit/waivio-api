@@ -18,14 +18,22 @@ module.exports = async ({
   skip,
   limit,
   categoryLimit,
+  schema,
 }) => {
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
 
-  const userFilter = await shopHelper.getUserFilter({ userName, app });
+  const userFilter = await shopHelper.getUserFilter({ userName, app, schema });
 
   const { result: userDepartments } = await getUserDepartments
     .getTopDepartments({
-      userName, user, name: department, excluded: excludedDepartments, path, userFilter, app,
+      userName,
+      user,
+      name: department,
+      excluded: excludedDepartments,
+      path,
+      userFilter,
+      app,
+      schema,
     });
 
   const isEmptyFilter = _.isEmpty(_.get(filter, 'tagCategory')) && !_.get(filter, 'rating');
@@ -44,6 +52,7 @@ module.exports = async ({
     path: [...path, d.name],
     userFilter,
     limit: categoryLimit,
+    schema,
   })));
 
   const hasMore = userDepartments.length > departments.length + skip;

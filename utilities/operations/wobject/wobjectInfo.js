@@ -1,7 +1,6 @@
 const _ = require('lodash');
-const { getNamespace } = require('cls-hooked');
 const {
-  Wobj, Campaign, User, App, wobjectSubscriptions,
+  Wobj, Campaign, User, wobjectSubscriptions,
 } = require('models');
 const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
@@ -15,7 +14,6 @@ const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
-const redis = require('../../redis/redis');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -240,7 +238,16 @@ const getAllListPermlinks = async ({ authorPermlink, app, scanEmbedded }) => {
   return { result: _.uniq(result) };
 };
 
-const getListItems = async (wobject, data, app) => {
+const getListsForAuthority = async ({ authorPermlink, scanEmbedded, app }) => {
+  const result = await getAllObjectsInList({
+    authorPermlink, scanEmbedded, app,
+  });
+  return { result: _.uniq(result) };
+};
+
+const getListItems = async ({
+  wobject, ip, app, locale, userName,
+}) => {
   const filteredUnavailable = _.filter(wobject.fields, (f) => f.name === FIELDS_NAMES.LIST_ITEM);
 
   const { result: available } = await Wobj.find({
@@ -254,15 +261,15 @@ const getListItems = async (wobject, data, app) => {
   const newObject = _.cloneDeep(wobject);
   newObject.fields = fieldsToProcess;
 
-  const countryCode = await getCountryCodeFromIp(data.ip);
+  const countryCode = await getCountryCodeFromIp(ip);
 
   const affiliateCodes = await processAppAffiliate({
     app,
-    locale: data.locale,
+    locale,
   });
 
   const fields = (await wObjectHelper.processWobjects({
-    locale: data.locale,
+    locale,
     fields: [FIELDS_NAMES.LIST_ITEM],
     wobjects: [newObject],
     returnArray: false,
@@ -280,8 +287,8 @@ const getListItems = async (wobject, data, app) => {
   if (!fields) return { wobjects: [] };
 
   let user;
-  if (data.user) {
-    ({ user } = await User.getOne(data.user));
+  if (userName) {
+    ({ user } = await User.getOne(userName));
   }
 
   wobjects = await Promise.all(wobjects.map(async (wobj) => {
@@ -290,13 +297,13 @@ const getListItems = async (wobject, data, app) => {
       wobj.listItemsCount = wobj.fields.filter((f) => f.name === FIELDS_NAMES.LIST_ITEM).length;
     }
     wobj = await wObjectHelper.processWobjects({
-      locale: data.locale,
+      locale,
       fields: REQUIREDFIELDS,
       wobjects: [wobj],
       returnArray: false,
       app,
       countryCode,
-      reqUserName: data.user,
+      reqUserName: userName,
       affiliateCodes,
     });
     wobj.type = _.get(fieldInList, 'type');
@@ -330,25 +337,26 @@ const getListItems = async (wobject, data, app) => {
   return { wobjects };
 };
 
-const getOne = async (data) => { // get one wobject by author_permlink
-  const { wObject, error: getWobjError } = await Wobj.getOne(data.author_permlink);
+const getOne = async ({
+  authorPermlink, app, locale, user, countryCode, ip,
+}) => { // get one wobject by author_permlink
+  const { wObject, error: getWobjError } = await Wobj.getOne(authorPermlink);
   if (getWobjError) return { error: getWobjError };
-
   const { count } = await wobjectSubscriptions.getFollowersCount(wObject.author_permlink);
   wObject.followers_count = count || 0;
-
-  const { app } = data;
 
   // format listItems field
   const keyName = wObject.object_type.toLowerCase() === OBJECT_TYPES.LIST ? 'listItems' : 'menuItems';
   if (_.find(wObject.fields, { name: FIELDS_NAMES.LIST_ITEM })) {
-    const { wobjects } = await getListItems(wObject, data, app);
+    const { wobjects } = await getListItems({
+      wobject: wObject, ip, locale, app, userName: user,
+    });
     if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
 
   const affiliateCodes = await processAppAffiliate({
     app,
-    locale: data.locale,
+    locale,
   });
 
   const wobjectData = await wobjectHelper.processWobjects({
@@ -356,15 +364,15 @@ const getOne = async (data) => { // get one wobject by author_permlink
     app,
     hiveData: true,
     returnArray: false,
-    locale: data.locale,
-    countryCode: data.countryCode,
-    reqUserName: data.user,
+    locale,
+    countryCode,
+    reqUserName: user,
     affiliateCodes,
   });
 
   wobjectData.canonical = await getWobjectCanonical({
     owner: wobjectData.descriptionCreator,
-    authorPermlink: data.author_permlink,
+    authorPermlink,
     host: app?.host,
   });
 
@@ -375,10 +383,38 @@ const getOne = async (data) => { // get one wobject by author_permlink
   return { wobjectData };
 };
 
+const getAuthorPermlinkByIdType = async ({ id, idType }) => {
+  const searchData = [
+    JSON.stringify({ companyId: id, companyIdType: idType }),
+    JSON.stringify({ companyIdType: idType, companyId: id }),
+    JSON.stringify({ productId: id, productIdType: idType }),
+    JSON.stringify({ productIdType: idType, productId: id }),
+  ];
+
+  const { result } = await Wobj.findOne({ 'fields.body': { $in: searchData } }, { author_permlink: 1 });
+
+  return { result: result?.author_permlink || '' };
+};
+
+const getAuthorPermlinkByFieldBody = async ({ body, objectType }) => {
+  const { result } = await Wobj.findOne(
+    {
+      'fields.body': body,
+      ...(objectType && { object_type: objectType }),
+    },
+    { author_permlink: 1 },
+  );
+
+  return { result: result?.author_permlink || '' };
+};
+
 module.exports = {
   getOne,
   getItemsCount,
   getAllListPermlinks,
   getListDepartments,
   getAllObjectsInList,
+  getListsForAuthority,
+  getAuthorPermlinkByIdType,
+  getAuthorPermlinkByFieldBody,
 };

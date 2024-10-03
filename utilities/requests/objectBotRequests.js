@@ -9,7 +9,10 @@ exports.sendCustomJson = async (data, url, sendSentry = true) => {
       url,
       data,
       {
-        headers: { api_key: process.env.API_KEY },
+        headers: {
+          api_key: process.env.API_KEY,
+          'access-key': process.env.OBJECT_BOT_ACCESS_KEY,
+        },
       },
     );
     return { result: _.get(result, 'data.result') };

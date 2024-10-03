@@ -1,6 +1,7 @@
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
+  DEFAULT_REFERRAL,
 } = require('constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj, geoIpModel,
@@ -11,22 +12,13 @@ const {
 const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
 const { processWobjects } = require('utilities/helpers/wObjectHelper');
 const { redisGetter } = require('utilities/redis');
-const { getNamespace } = require('cls-hooked');
 const BigNumber = require('bignumber.js');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
-const {
-  getCachedData,
-  setCachedData,
-} = require('./cacheHelper');
-const jsonHelper = require('./jsonHelper');
-const {
-  TTL_TIME,
-  REDIS_KEYS,
-} = require('../../constants/common');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -127,18 +119,10 @@ exports.getWebsitePayments = async ({
 };
 
 exports.getParentHost = async ({ host }) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:getParentHost:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { result: '' });
-  }
   const { result, error } = await App.findOne({
     host,
   });
   if (error) return { error };
-  await setCachedData({
-    key, data: { result: result?.parentHost ?? '' }, ttl: TTL_TIME.ONE_DAY,
-  });
   return { result: result?.parentHost ?? '' };
 };
 
@@ -191,33 +175,17 @@ exports.getWebsiteData = (payments, site) => {
 };
 
 exports.siteInfo = async (host) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:siteInfo:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, {});
-  }
-
   const { result: app } = await App.findOne({ host, inherited: true });
   if (!app) {
-    const resp = { error: { status: 404, message: 'App not found!' } };
-    await setCachedData({
-      key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
-    });
-
-    return resp;
+    return { error: { status: 404, message: 'App not found!' } };
   }
 
-  const resp = {
+  return {
     result: {
       status: app.status,
       parentHost: app.parentHost,
     },
   };
-  await setCachedData({
-    key, data: resp, ttl: TTL_TIME.ONE_MINUTE,
-  });
-
-  return resp;
 };
 
 exports.firstLoad = async ({ app }) => {
@@ -239,8 +207,8 @@ exports.firstLoad = async ({ app }) => {
 };
 
 exports.getSessionApp = async () => {
-  const session = getNamespace('request-session');
-  const host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  const host = store.get('host');
 
   return App.findOne({ host });
 };
@@ -321,13 +289,12 @@ exports.updateSupportedObjects = async ({ host, app }) => {
   await App.findOneAndUpdate({ _id: app._id }, { $set: { supported_objects: _.map(result, 'author_permlink') } });
 };
 
-exports.getSettings = async (host) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:getSiteSettings:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { result: '' });
-  }
+const getDefaultRefferal = (account = '') => {
+  if (account.includes('_')) return DEFAULT_REFERRAL;
+  return account;
+};
 
+exports.getSettings = async (host) => {
   const { result: app } = await App.findOne({ host });
   if (!app) return { error: { status: 404, message: 'App not found!' } };
   const {
@@ -348,28 +315,18 @@ exports.getSettings = async (host) => {
     googleEventSnippet,
     googleAdsConfig,
     beneficiary,
-    referralCommissionAcc: _.get(app_commissions, 'referral_commission_acc')
+    referralCommissionAcc: app_commissions?.referral_commission_acc
       ? app_commissions.referral_commission_acc
-      : app.owner,
+      : getDefaultRefferal(app.owner),
     currency,
     language,
     objectControl,
   };
 
-  await setCachedData({
-    key, data: { result }, ttl: TTL_TIME.ONE_MINUTE,
-  });
-
   return { result };
 };
 
 exports.aboutObjectFormat = async (app) => {
-  const key = `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { });
-  }
-
   const aboutObject = app?.configuration?.aboutObject;
   const defaultHashtag = app?.configuration?.defaultHashtag;
   const { result: wobjects } = await Wobj
@@ -387,10 +344,6 @@ exports.aboutObjectFormat = async (app) => {
   if (defaultHashtagProcessed) {
     app.configuration.defaultHashtag = _.pick(defaultHashtagProcessed, PICK_FIELDS_ABOUT_OBJ);
   }
-
-  await setCachedData({
-    key, data: app, ttl: TTL_TIME.TEN_MINUTES,
-  });
 
   return app;
 };
@@ -446,18 +399,6 @@ exports.getSumByPaymentType = (payments, type) => _
 exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.includes(sh));
 
 exports.getAdSense = async ({ host }) => {
-  const key = `${REDIS_KEYS.AD_SENSE}:${host}`;
-  const cache = await getCachedData(key);
-  if (cache) {
-    return jsonHelper.parseJson(cache, { code: '', level: '', txtFile: '' });
-  }
-
   const { result } = await App.findOne({ host });
-  const response = _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
-
-  await setCachedData({
-    key, data: response, ttl: TTL_TIME.ONE_MINUTE,
-  });
-
-  return response;
+  return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
 };

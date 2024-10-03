@@ -85,6 +85,10 @@ exports.SUPPORTED_CURRENCIES = {
   CHF: 'CHF',
 };
 
+exports.ADVANCED_REPORT_SYMBOLS = [
+  'WAIV',
+];
+
 exports.CURSOR_TIMEOUT = 60000;
 exports.WARNING_REQ_TIME = 30000;
 exports.REQUEST_TIMEOUT = 15000;
@@ -136,6 +140,13 @@ exports.REDIS_KEYS = {
   API_RATE_LIMIT_BOTS: 'api_rate_limit_bots',
   API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
   ASSISTANT: 'assistant',
+  DYNAMIC_GLOBAL_PROPERTIES: 'get_dynamic_global_properties',
+};
+
+exports.SERVICE_NOTIFICATION_TYPES = {
+  UPDATE_IMPORT: 'updateImport',
+  UPDATE_REPORT: 'updateReport',
+  FINISH_REPORT: 'finishReport',
 };
 
 exports.LANGUAGES = ['en-US',

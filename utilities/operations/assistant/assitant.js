@@ -23,8 +23,8 @@ const contextualizeQPrompt = ChatPromptTemplate.fromMessages([
 
 const qaSystemPrompt = `You are an assistant for question-answering tasks.
 Use the following pieces of retrieved context to answer the question.
-If you don't know the answer, just say that you don't know.
-Use three sentences maximum and keep the answer concise. Don't use "AI:" in answers
+Whenever possible, accompany your answers with links and images (![image]) to relevant articles or lessons. 
+Keep the answer concise. Don't use "AI:" in answers.
 
 {context}`;
 
@@ -34,13 +34,18 @@ const qaPrompt = ChatPromptTemplate.fromMessages([
   ['human', '{question}'],
 ]);
 
-const llm = new OpenAI({
-  modelName: 'gpt-4-1106-preview',
-});
+let llm, contextualizeQChain;
 
-const contextualizeQChain = contextualizeQPrompt
-  .pipe(llm)
-  .pipe(new StringOutputParser());
+try {
+  llm = new OpenAI({
+    modelName: 'gpt-4-1106-preview',
+  });
+  contextualizeQChain = contextualizeQPrompt
+    .pipe(llm)
+    .pipe(new StringOutputParser());
+} catch (error) {
+
+}
 
 const contextualizedQuestion = (input) => {
   if ('chat_history' in input) {

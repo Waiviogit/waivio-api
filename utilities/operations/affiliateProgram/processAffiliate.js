@@ -220,7 +220,7 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
     });
 
     await setCachedData({
-      key, data: response, ttl: TTL_TIME.ONE_DAY,
+      key, data: response, ttl: TTL_TIME.THIRTY_MINUTES,
     });
 
     return response;
@@ -246,7 +246,7 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
   });
 
   await setCachedData({
-    key, data: response, ttl: TTL_TIME.ONE_DAY,
+    key, data: response, ttl: TTL_TIME.THIRTY_MINUTES,
   });
 
   return response;

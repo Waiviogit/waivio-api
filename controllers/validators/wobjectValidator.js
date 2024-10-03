@@ -4,30 +4,14 @@ const { customValidationHelper } = require('utilities/helpers');
 const { OBJECT_TYPES } = require('constants/wobjectsData');
 const { LANGUAGES } = require('constants/common');
 const Joi = require('joi');
+const { boxScheme } = require('./common');
 
 const options = { allowUnknown: true, stripUnknown: true };
 
-const boxScheme = Joi.object().keys({
-  topPoint: Joi
-    .array()
-    .ordered(
-      Joi.number().min(-180).max(180),
-      Joi.number().min(-90).max(90),
-    ).required(),
-  bottomPoint: Joi
-    .array()
-    .ordered(
-      Joi.number().min(-180).max(180),
-      Joi.number().min(-90).max(90),
-    ).required(),
-});
-
 exports.showSchema = Joi.object().keys({
-  author_permlink: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
   locale: Joi.string(),
   user: Joi.string(),
-  appName: Joi.string(),
-  listCounters: Joi.boolean().default(false),
 });
 
 exports.indexSchema = Joi.object().keys({
@@ -116,6 +100,7 @@ exports.searchScheme = Joi.object().keys({
   box: boxScheme,
   addHashtag: Joi.boolean().default(false),
   mapMarkers: Joi.boolean().default(false),
+  onlyObjectTypes: Joi.array().items(Joi.string()),
 }).options(options);
 
 exports.galleryScheme = Joi.object().keys({
@@ -264,6 +249,18 @@ exports.wobjectAdvancedMapScheme = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(10),
 });
 
+exports.wobjectAdvancedMapListScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  follower: Joi.string(),
+  locale: Joi.string().default('en-US'),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(1).default(10),
+});
+
+exports.mapObjectFromObjectLinkScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+});
+
 exports.listLinksScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
@@ -274,3 +271,29 @@ exports.getRawField = Joi.object().keys({
   locale: Joi.string().default('en-US'),
   body: Joi.string().required(),
 });
+
+exports.getAuthorPermlinkByIdType = Joi.object().keys({
+  id: Joi.string().required(),
+  idType: Joi.string().required(),
+});
+
+exports.getAuthorPermlinkByFieldBody = Joi.object().keys({
+  body: Joi.string().required(),
+  objectType: Joi.string(),
+});
+
+exports.getGroupByPermlink = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(30),
+  lastName: Joi.string().allow(''),
+  authorPermlink: Joi.string().required(),
+});
+
+exports.searchAreaSchema = Joi.object().keys({
+  sample: Joi.number().integer().min(1).max(10)
+    .default(5),
+  userName: Joi.string(),
+  string: Joi.string().allow(''),
+  box: boxScheme,
+  object_type: Joi.string(),
+}).options(options);

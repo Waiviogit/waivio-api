@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { WobjController } = require('controllers');
+const WobjController = require('controllers/wobjController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const wobjRoutes = new Router();
@@ -46,6 +46,10 @@ wobjRoutes.route('/wobject/:authorPermlink/pin')
   .get(reqTimeMonitor, WobjController.getPinnedPosts);
 wobjRoutes.route('/wobject/:authorPermlink/map')
   .post(reqTimeMonitor, WobjController.getObjectsOnMap);
+wobjRoutes.route('/wobject/:authorPermlink/map-link')
+  .get(reqTimeMonitor, WobjController.getMapObjectFromObjectLink);
+wobjRoutes.route('/wobject/:authorPermlink/map/list')
+  .post(reqTimeMonitor, WobjController.getObjectsLinksOnMap);
 wobjRoutes.route('/wobject/:authorPermlink/raw-field')
   .post(reqTimeMonitor, WobjController.getRawField);
 
@@ -66,9 +70,19 @@ wobjRoutes.route('/wobjects/list-item-process')
   .post(reqTimeMonitor, WobjController.recountList);
 wobjRoutes.route('/wobjects/list-item-links')
   .post(reqTimeMonitor, WobjController.getListLinks);
+wobjRoutes.route('/wobjects/list-item-links/authority')
+  .post(reqTimeMonitor, WobjController.getListLinksAuthority);
 wobjRoutes.route('/wobjects/list-item-departments')
   .post(reqTimeMonitor, WobjController.getListDepartments);
 wobjRoutes.route('/wobjects/search-default')
   .post(reqTimeMonitor, WobjController.searchDefault);
+wobjRoutes.route('/wobjects/search-area')
+  .post(reqTimeMonitor, WobjController.searchArea);
+wobjRoutes.route('/wobjects/id-type')
+  .post(reqTimeMonitor, WobjController.getAuthorPermlinkByIdType);
+wobjRoutes.route('/wobjects/field-body')
+  .post(reqTimeMonitor, WobjController.getAuthorPermlinkByFieldBody);
+wobjRoutes.route('/wobjects/group')
+  .post(reqTimeMonitor, WobjController.getGroupByPermlink);
 
 module.exports = wobjRoutes;

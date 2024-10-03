@@ -1,7 +1,7 @@
-const { getNamespace } = require('cls-hooked');
 const authoriseSteemconnect = require('./steemconnect/authorise');
 const waivioAuthorise = require('./waivioAuth/authorise');
 const hiveAuthorise = require('./hiveAuth/authorise');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 /**
  * Authorise particular user with "access-token" from session(if it exist)
@@ -13,20 +13,22 @@ const hiveAuthorise = require('./hiveAuth/authorise');
  */
 
 const authoriseResponse = (valid, username) => {
-  const session = getNamespace('request-session');
+  const store = asyncLocalStorage.getStore();
+
   if (valid) {
-    session.set('authorised_user', username);
+    store.set('authorised_user', username);
     return { isValid: true };
   }
 
-  return { error: { status: 401, message: 'Token not valid!' } };
+  return { error: { status: 401, message: 'The Waivio authorization token is invalid!' } };
 };
 
 exports.authorise = async (username) => {
-  const session = getNamespace('request-session');
-  const accessToken = session.get('access-token');
-  const hiveAuth = session.get('hive-auth');
-  const isWaivioAuth = session.get('waivio-auth');
+  const store = asyncLocalStorage.getStore();
+
+  const accessToken = store.get('access-token');
+  const hiveAuth = store.get('hive-auth');
+  const isWaivioAuth = store.get('waivio-auth');
 
   if (isWaivioAuth) {
     const isValidToken = await waivioAuthorise.authorise(username, accessToken);
@@ -40,5 +42,5 @@ exports.authorise = async (username) => {
     const isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
     return authoriseResponse(isValidToken, username);
   }
-  return { error: { status: 401, message: 'Token not valid!' } };
+  return { error: { status: 401, message: 'The Waivio authorization token is invalid' } };
 };

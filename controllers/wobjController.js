@@ -4,9 +4,13 @@ const {
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
-  getWobjectPinnedPosts,
+  getWobjectPinnedPosts, objectGroup,
 } = require('utilities/operations').wobject;
-const { wobjects: { searchWobjects, defaultWobjectSearch, addRequestDetails } } = require('utilities/operations').search;
+const {
+  wobjects: {
+    searchWobjects, defaultWobjectSearch, addRequestDetails, searchByArea,
+  },
+} = require('utilities/operations').search;
 const validators = require('controllers/validators');
 const {
   getIpFromHeaders,
@@ -14,6 +18,8 @@ const {
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields, getOneField } = require('../utilities/operations/wobject/getFields');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
+const pipelineFunctions = require('../pipeline');
+const RequestPipeline = require('../pipeline/requestPipeline');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -36,18 +42,21 @@ const index = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects: wObjectsData, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkObjectFollowings)
+    .execute({ wobjects: wObjectsData, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 // flag - Temporary solution
 const show = async (req, res, next) => {
   const value = validators.validate({
-    author_permlink: req.params.authorPermlink,
+    authorPermlink: req.params.authorPermlink,
     locale: req.headers.locale,
-    listCounters: req.query.listCounters,
-    user: req.query.user,
-    appName: req.headers.app,
+    ...req.query,
   }, validators.wobject.showSchema, next);
 
   if (!value) return;
@@ -65,8 +74,13 @@ const show = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectData };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkBellNotifications)
+    .use(pipelineFunctions.checkObjectFollowings)
+    .execute(wobjectData, req);
+
+  return res.status(200).json(processedData);
 };
 
 const posts = async (req, res, next) => {
@@ -84,11 +98,17 @@ const posts = async (req, res, next) => {
   if (!value) return;
 
   const { posts: wobjectPosts, error } = await getPostsByWobject({ ...value, app: req.appData });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectPosts };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(wobjectPosts, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getPinnedPosts = async (req, res, next) => {
@@ -103,11 +123,15 @@ const getPinnedPosts = async (req, res, next) => {
   const { posts: wobjectPosts, error } = await getWobjectPinnedPosts({
     ...value, app: req.appData,
   });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectPosts };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .execute(wobjectPosts, req);
+
+  return res.status(200).json(processedData);
 };
 
 const feed = async (req, res, next) => {
@@ -120,12 +144,15 @@ const feed = async (req, res, next) => {
   if (!value) return;
 
   const { posts: AllPosts, error } = await Post.getAllPosts(value);
+  if (error) return next(error);
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: AllPosts };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .execute(AllPosts, req);
+
+  return res.status(200).json(processedData);
 };
 
 const followers = async (req, res, next) => {
@@ -138,8 +165,13 @@ const followers = async (req, res, next) => {
 
   const { result } = await sortFollowers(value);
 
-  res.result = { status: 200, json: result };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute(result, req);
+
+  return res.status(200).json(processedData);
 };
 
 const search = async (req, res, next) => {
@@ -154,8 +186,13 @@ const search = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.filterUniqGroupId)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 // site-independent search
@@ -173,8 +210,12 @@ const searchDefault = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const gallery = async (req, res, next) => {
@@ -190,9 +231,7 @@ const gallery = async (req, res, next) => {
 
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  req.author_permlink = req.params.authorPermlink;
-  next();
+  return res.status(200).json(result);
 };
 
 const objectExpertise = async (req, res, next) => {
@@ -204,11 +243,15 @@ const objectExpertise = async (req, res, next) => {
   if (!value) return;
   const { experts, userExpert, error } = await objectExperts.getWobjExperts(value);
 
-  if (error) {
-    return next(error);
-  }
-  res.result = { status: 200, json: { users: experts, user: userExpert } };
-  next();
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ users: experts, user: userExpert }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getByField = async (req, res, next) => {
@@ -221,8 +264,8 @@ const getByField = async (req, res, next) => {
   const { wobjects, error } = await Wobj.getByField(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: wobjects };
-  next();
+
+  return res.status(200).json(wobjects);
 };
 
 const getChildWobjects = async (req, res, next) => {
@@ -236,8 +279,13 @@ const getChildWobjects = async (req, res, next) => {
   const { wobjects, error } = await getChildren(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: wobjects };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(wobjects, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getWobjectField = async (req, res, next) => {
@@ -253,10 +301,9 @@ const getWobjectField = async (req, res, next) => {
   );
   if (!value) return;
   const { toDisplay, field, error } = await getWobjField(value);
-
   if (error) return next(error);
-  res.result = { status: 200, json: { toDisplay, field } };
-  next();
+
+  return res.status(200).json({ toDisplay, field });
 };
 
 const getWobjectsNearby = async (req, res, next) => {
@@ -272,8 +319,13 @@ const getWobjectsNearby = async (req, res, next) => {
   const { wobjects, error } = await getWobjsNearby(value);
 
   if (error) return next(error);
-  res.result = { status: 200, json: wobjects };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute(wobjects, req);
+
+  return res.status(200).json(processedData);
 };
 
 const countWobjectsByArea = async (req, res, next) => {
@@ -286,8 +338,7 @@ const countWobjectsByArea = async (req, res, next) => {
   const { wobjects: wobjectCounts, error } = await countWobjsByArea(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectCounts };
-  next();
+  return res.status(200).json(wobjectCounts);
 };
 
 const related = async (req, res, next) => {
@@ -307,8 +358,8 @@ const related = async (req, res, next) => {
     app: req.appData,
   });
   if (error) return next(error);
-  res.result = { status: 200, json };
-  next();
+
+  return res.status(200).json(json);
 };
 
 const getMapObjectExperts = async (req, res, next) => {
@@ -324,8 +375,14 @@ const getMapObjectExperts = async (req, res, next) => {
   );
 
   if (error) return next(error);
-  res.result = { status: 200, json: { users, hasMore } };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ users, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getMapObjectLastPost = async (req, res, next) => {
@@ -339,10 +396,15 @@ const getMapObjectLastPost = async (req, res, next) => {
   const { wobjects, hasMore, error } = await objectsOnMap.getLastPostOnObjectFromArea(
     { ...value, app: req.appData },
   );
-
   if (error) return next(error);
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getWobjectsByRequiredObject = async (req, res, next) => {
@@ -358,8 +420,13 @@ const getWobjectsByRequiredObject = async (req, res, next) => {
   );
 
   if (error) return next(error);
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const checkIfObjectExists = async (req, res, next) => {
@@ -371,8 +438,7 @@ const checkIfObjectExists = async (req, res, next) => {
   const { exist, error } = await checkIfWobjectExists(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { exist } };
-  next();
+  return res.status(200).json({ exist });
 };
 
 const getWobjectUpdates = async (req, res, next) => {
@@ -386,8 +452,7 @@ const getWobjectUpdates = async (req, res, next) => {
   const { fields, hasMore, error } = await getFields({ ...value, app: req.appData });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { fields, hasMore } };
-  next();
+  return res.status(200).json({ fields, hasMore });
 };
 
 const newsfeed = async (req, res, next) => {
@@ -409,11 +474,9 @@ const newsfeed = async (req, res, next) => {
   const { posts: wobjectPosts, error } = await getPostsByWobject({
     ...value, app: req.appData, newsFeed: true,
   });
-
   if (error) return next(error);
 
-  res.result = { status: 200, json: wobjectPosts };
-  next();
+  return res.status(200).json(wobjectPosts);
 };
 
 const getWobjectNames = async (req, res, next) => {
@@ -429,8 +492,7 @@ const getWobjectNames = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects } };
-  next();
+  return res.status(200).json({ wobjects });
 };
 
 const getWobjectOptions = async (req, res, next) => {
@@ -446,23 +508,25 @@ const getWobjectOptions = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const getAuthorities = async (req, res, next) => {
   const { result, error } = await getWobjectAuthorities(req.params.authorPermlink);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getListItemsLocales = async (req, res, next) => {
   const result = await getListItemLocales(req.params);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getWobjectsByGroupId = async (req, res, next) => {
@@ -476,8 +540,12 @@ const getWobjectsByGroupId = async (req, res, next) => {
   const { wobjects, hasMore, error } = await getByGroupId(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { wobjects, hasMore } };
-  next();
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
 };
 
 const recountList = async (req, res, next) => {
@@ -494,13 +562,10 @@ const recountList = async (req, res, next) => {
   const { result, error } = await recountListItems(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
 };
 
 const getListLinks = async (req, res, next) => {
-  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-//  if (!validKey) return next();
   const value = validators.validate(
     req.body,
     validators.wobject.wobjectsRecountListItemsScheme,
@@ -514,13 +579,27 @@ const getListLinks = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
+};
+
+const getListLinksAuthority = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.wobjectsRecountListItemsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result } = await wobjectInfo.getListsForAuthority({
+    ...value,
+    app: req.appData,
+  });
+
+  return res.status(200).json(result);
 };
 
 const getListDepartments = async (req, res, next) => {
-  // const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
-//  if (!validKey) return next();
   const value = validators.validate(
     req.body,
     validators.wobject.wobjectsListDepartmentsScheme,
@@ -534,8 +613,7 @@ const getListDepartments = async (req, res, next) => {
     app: req.appData,
   });
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
 };
 
 const getObjectsOnMap = async (req, res, next) => {
@@ -558,8 +636,30 @@ const getObjectsOnMap = async (req, res, next) => {
   });
   if (error) return next(error);
 
-  res.result = { status: 200, json: { result } };
-  next();
+  return res.status(200).json({ result });
+};
+
+const getObjectsLinksOnMap = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      locale: req.headers.locale,
+      authorPermlink: req.params.authorPermlink,
+      follower: req.headers.follower,
+    },
+    validators.wobject.wobjectAdvancedMapListScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, hasMore, error } = await mapObject.getObjectLinksFromAdvancedMap({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  return res.status(200).json({ result, hasMore });
 };
 
 const getRawField = async (req, res, next) => {
@@ -578,8 +678,98 @@ const getRawField = async (req, res, next) => {
   const { result, error } = await getOneField(value);
   if (error) return next(error);
 
-  res.result = { status: 200, json: result };
-  next();
+  return res.status(200).json(result);
+};
+
+const getAuthorPermlinkByIdType = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getAuthorPermlinkByIdType,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await wobjectInfo.getAuthorPermlinkByIdType(value);
+
+  return res.status(200).json(result);
+};
+
+const getAuthorPermlinkByFieldBody = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getAuthorPermlinkByFieldBody,
+    next,
+  );
+
+  if (!value) return;
+  const result = await wobjectInfo.getAuthorPermlinkByFieldBody(value);
+
+  return res.status(200).json(result);
+};
+
+const getMapObjectFromObjectLink = async (req, res, next) => {
+  const value = validators.validate(
+    { authorPermlink: req.params.authorPermlink },
+    validators.wobject.mapObjectFromObjectLinkScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const result = await mapObject.getMapObjectFromObjectLink({
+    ...value,
+    app: req.appData,
+  });
+
+  return res.status(200).json({ result });
+};
+
+const getGroupByPermlink = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.getGroupByPermlink,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, hasMore, error } = await objectGroup.getObjectGroup({
+    ...value,
+    app: req.appData,
+  });
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.checkFollowings)
+    .use(pipelineFunctions.checkFollowers)
+    .execute({ result, hasMore }, req);
+
+  return res.status(200).json(processedData);
+};
+
+const searchArea = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.searchAreaSchema,
+    next,
+  );
+
+  if (!value) return;
+
+  addRequestDetails(value);
+
+  const { wobjects, error } = await searchByArea({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects }, req);
+
+  return res.status(200).json(processedData);
 };
 
 module.exports = {
@@ -615,4 +805,11 @@ module.exports = {
   getPinnedPosts,
   getObjectsOnMap,
   getRawField,
+  getListLinksAuthority,
+  getObjectsLinksOnMap,
+  getAuthorPermlinkByIdType,
+  getMapObjectFromObjectLink,
+  getAuthorPermlinkByFieldBody,
+  getGroupByPermlink,
+  searchArea,
 };

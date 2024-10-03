@@ -1,11 +1,10 @@
 /* eslint-disable camelcase */
 const {
   IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED,
-  MEDIAN_USER_WAIVIO_RATE,
+  MEDIAN_USER_WAIVIO_RATE, IGNORED_AUTHORS_HOT,
 } = require('constants/postsData');
 const { hiddenPostModel, mutedUserModel } = require('models');
 const { ObjectId } = require('mongoose').Types;
-const { getNamespace } = require('cls-hooked');
 const { Post } = require('database').models;
 const config = require('config');
 const _ = require('lodash');
@@ -13,6 +12,7 @@ const { getCachedPosts, setCachedPosts, getPostCacheKey } = require('utilities/h
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');
+const asyncLocalStorage = require('../../../middlewares/context/context');
 
 const objectIdFromDaysBefore = (daysCount) => {
   const startDate = new Date();
@@ -43,6 +43,7 @@ const makeConditions = ({
         _id: { $gte: objectIdFromDaysBefore(DAYS_FOR_HOT_FEED) },
         author_weight: { $gte: MEDIAN_USER_WAIVIO_RATE },
         reblog_to: null,
+        author: { $nin: IGNORED_AUTHORS_HOT },
       };
       sort = { children: -1 };
       break;
@@ -64,7 +65,7 @@ const makeConditions = ({
   }
   if (!_.isEmpty(muted)) {
     _.get(cond, 'author')
-      ? Object.assign(cond.author, { $nin: _.union(muted, IGNORED_AUTHORS) })
+      ? Object.assign(cond.author, { $nin: _.union(muted, [...IGNORED_AUTHORS, ...IGNORED_AUTHORS_HOT]) })
       : cond.author = { $nin: muted };
   }
   cond.blocked_for_apps = { $nin: [host] };
@@ -76,8 +77,8 @@ const makeConditions = ({
 module.exports = async ({
   category, skip, limit, user_languages, userName, locale, app,
 }) => {
-  const session = getNamespace('request-session');
-  let host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  let host = store.get('host');
   if (!host) host = config.appHost;
 
   const cacheKey = getPostCacheKey({

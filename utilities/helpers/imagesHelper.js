@@ -37,17 +37,24 @@ const prepareImage = async (req) => {
   } else if (imageUrl) {
     base64 = await base64ByUrl(imageUrl);
   }
-  const fileName = await generateFileName({ type, userName });
 
+  const fileName = generateFileName({ type, userName, base64 });
   return { base64, fileName, size };
 };
 
-const generateFileName = async ({ type, userName }) => {
+const createHashFromBase64 = (base64Str, algorithm = 'sha256') => {
+  const buffer = Buffer.from(base64Str, 'base64');
+  const hash = crypto.createHash(algorithm);
+  hash.update(buffer);
+  return hash.digest('hex');
+};
+
+const generateFileName = ({ type, userName, base64 }) => {
   switch (type) {
     case 'avatar':
       return `avatar/${userName}`;
     default:
-      return `${Math.round(new Date() / 1000)}_${crypto.randomUUID()}`;
+      return createHashFromBase64(base64);
   }
 };
 
@@ -59,4 +66,6 @@ const base64ByUrl = async (url) => axios
   .then((response) => new Buffer(response.data, 'binary').toString('base64'))
   .catch(() => null);
 
-module.exports = { prepareImage, base64ByUrl, generateFileName };
+module.exports = {
+  prepareImage, base64ByUrl, generateFileName, createHashFromBase64,
+};

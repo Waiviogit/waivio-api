@@ -1,6 +1,6 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { PostController } = require('../controllers');
+const PostController = require('../controllers/postController');
 
 const postRoutes = new Router();
 
@@ -19,5 +19,7 @@ postRoutes.route('/post_comments')
   .get(reqTimeMonitor, PostController.getPostComments);
 postRoutes.route('/post/social-info')
   .get(reqTimeMonitor, PostController.getSocialInfo);
+postRoutes.route('/posts/mentions')
+  .post(reqTimeMonitor, PostController.getPostsByMentions);
 
 module.exports = postRoutes;

@@ -94,7 +94,75 @@ const getFavorites = async ({
   };
 };
 
+const getFavoritesMap = async ({
+  userName, skip, limit, objectTypes, app, locale, follower, box,
+}) => {
+  const specialCondition = await getConditionObjectsFromPosts({ userName });
+
+  const defaultFilter = {
+    'authority.administrative': userName,
+  };
+  const filter = specialCondition?.$or?.length
+    ? {
+      $or: [...specialCondition.$or, defaultFilter],
+      object_type: { $in: objectTypes },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(specialCondition.author_permlink
+        && { author_permlink: specialCondition.author_permlink }),
+    }
+    : {
+      ...defaultFilter,
+      ...specialCondition,
+      object_type: { $in: objectTypes },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    };
+
+  const pipe = [
+    {
+      $match: {
+        map: {
+          $geoWithin: {
+            $box: [box.bottomPoint, box.topPoint],
+          },
+        },
+      },
+    },
+    {
+      $match: filter,
+    },
+    {
+      $sort: { weight: -1, _id: 1 },
+    },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit + 1,
+    },
+  ];
+
+  const { wobjects, error } = await Wobj.fromAggregation(pipe);
+  if (error) return { result: [], hasMore: false };
+
+  const processed = await wObjectHelper.processWobjects({
+    wobjects: _.take(wobjects, limit),
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    reqUserName: follower,
+    app,
+    locale,
+  });
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });
+
+  return {
+    result: processed,
+    hasMore: wobjects.length > limit,
+  };
+};
+
 module.exports = {
   getUserFavoritesList,
   getFavorites,
+  getFavoritesMap,
 };

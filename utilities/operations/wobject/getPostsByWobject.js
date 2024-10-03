@@ -2,9 +2,10 @@
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
 } = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
+const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('constants/wobjectsData');
+const { TOKEN } = require('constants/common');
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const { ObjectId } = require('mongoose').Types;
+const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 
 const getRelistedLinks = async (authorPermlink) => {
@@ -36,7 +37,14 @@ module.exports = async (data) => {
   const processedObj = await wObjectHelper.processWobjects({
     wobjects: [_.cloneDeep(wObject)],
     locale: data.locale,
-    fields: [FIELDS_NAMES.NEWS_FEED, FIELDS_NAMES.GROUP_ID, FIELDS_NAMES.PIN, FIELDS_NAMES.REMOVE],
+    fields: [
+      FIELDS_NAMES.NEWS_FEED,
+      FIELDS_NAMES.GROUP_ID,
+      FIELDS_NAMES.PIN,
+      FIELDS_NAMES.REMOVE,
+      FIELDS_NAMES.WALLET_ADDRESS,
+      FIELDS_NAMES.LINK,
+    ],
     returnArray: false,
     app: data.app,
   });
@@ -76,7 +84,15 @@ module.exports = async (data) => {
   const relistedLinks = await getRelistedLinks(data.author_permlink);
 
   const { condition, error: conditionError } = await getWobjFeedCondition({
-    ...data, hiddenPosts, muted: _.map(muted, 'userName'), wObject, groupIdPermlinks, removeFilter, relistedLinks,
+    ...data,
+    hiddenPosts,
+    muted:
+      _.map(muted, 'userName'),
+    wObject,
+    groupIdPermlinks,
+    removeFilter,
+    relistedLinks,
+    processedObj,
   });
 
   if (conditionError) return { error: conditionError };
@@ -84,7 +100,6 @@ module.exports = async (data) => {
   const { posts, error } = await Post.getWobjectPosts({
     condition,
     limit: data.limit,
-    lastId: data.lastId,
     skip: data.skip,
   });
   if (error) return { error };
@@ -111,17 +126,92 @@ module.exports = async (data) => {
   return { posts };
 };
 
+const makeConditionForLink = ({ condition, wObject }) => {
+  const urlField = wObject.fields?.find((el) => el.name === FIELDS_NAMES.URL);
+  if (!urlField) return { condition };
+  const { body } = urlField;
+
+  // when body ends with * it means that al path after * is valid, if no * - strict eq
+  const condition2 = {
+    links: body.endsWith('*') ? { $regex: `^${body.slice(0, -1)}` } : body,
+    ..._.omit(condition, 'wobjects.author_permlink'),
+  };
+
+  return { condition: { $or: [condition, condition2] } };
+};
+
+const socialLinksMap = {
+  linkFacebook: 'https://www.facebook.com/profile.php?id=',
+  linkTwitter: 'https://x.com/',
+  linkYouTube: 'https://www.youtube.com/@',
+  linkInstagram: 'https://www.instagram.com/',
+  linkGitHub: 'https://github.com/',
+};
+
+const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
+
+const makeConditionForPerson = ({ condition, processedObj }) => {
+  if (!processedObj.link) return { condition };
+  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
+  if (!parsedCondition) return { condition };
+
+  const conditionArr = [];
+
+  for (const parsedConditionKey in parsedCondition) {
+    const id = parsedCondition[parsedConditionKey];
+    const keyExist = !!socialLinksMap[parsedConditionKey];
+    if (id && keyExist) {
+      const link = makeSocialLink(parsedConditionKey, id);
+
+      const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+      const regex = new RegExp(`^${escapedLink}`);
+
+      conditionArr.push({ links: { $regex: regex } });
+    }
+  }
+  if (!conditionArr?.length) return { condition };
+
+  return { condition: { $or: [condition, ...conditionArr] } };
+};
+
+// here we can either take fields from processed object or get all fields with Hive
+const makeConditionForBusiness = ({ condition, processedObj }) => {
+  const hiveWallets = (processedObj[FIELDS_NAMES.WALLET_ADDRESS] || []).reduce((acc, el) => {
+    const walletObj = jsonHelper.parseJson(el.body);
+    if (!walletObj) return acc;
+    if (![TOKEN.HIVE, TOKEN.HBD].includes(walletObj.symbol)) return acc;
+    acc.push(walletObj.address);
+    return acc;
+  }, []);
+
+  if (!hiveWallets?.length) return { condition };
+  const condition2 = {
+    mentions: { $in: _.uniq(hiveWallets) },
+    ..._.omit(condition, 'wobjects.author_permlink'),
+  };
+
+  return { condition: { $or: [condition, condition2] } };
+};
+
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
 const getWobjFeedCondition = async ({
-  author_permlink, user_languages, removeFilter,
-  lastId, hiddenPosts, muted, newsPermlink, app, wObject, groupIdPermlinks, relistedLinks,
+  author_permlink,
+  user_languages,
+  removeFilter,
+  hiddenPosts,
+  muted,
+  newsPermlink,
+  app,
+  wObject,
+  groupIdPermlinks,
+  relistedLinks,
+  processedObj,
 }) => {
   const condition = {
     blocked_for_apps: { $ne: _.get(app, 'host') },
     reblog_to: null,
   };
-  // for moderation posts
-  if (lastId) condition._id = { $lt: new ObjectId(lastId) };
+
   if (!_.isEmpty(hiddenPosts)) {
     condition._id
       ? Object.assign(condition._id, { $nin: hiddenPosts })
@@ -140,6 +230,17 @@ const getWobjFeedCondition = async ({
   }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
+  if (wObject.object_type === OBJECT_TYPES.PERSON) {
+    return makeConditionForPerson({ condition, processedObj });
+  }
+
+  if (wObject.object_type === OBJECT_TYPES.LINK) {
+    return makeConditionForLink({ condition, wObject });
+  }
+
+  if (WALLET_ADDRESS_LINKED_TYPES.includes(wObject.object_type)) {
+    return makeConditionForBusiness({ condition, processedObj });
+  }
   return { condition };
 };
 
@@ -200,6 +301,7 @@ const getNewsFilterCondition = ({
   if (!_.isEmpty(newsFilter.authors)) {
     // posts only includes and objects
     condition.author = { $in: newsFilter.authors };
+    delete condition.reblog_to;
   }
 
   condition.$and = _.compact([firstCond, secondCond]);

@@ -1,63 +1,63 @@
 const { Router } = require('express');
-const { sitesController } = require('controllers');
+const SitesController = require('controllers/sitesController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const sitesRoutes = new Router();
 
 sitesRoutes.route('/sites')
-  .get(reqTimeMonitor, sitesController.getUserApps)
-  .post(reqTimeMonitor, sitesController.firstLoad)
-  .delete(reqTimeMonitor, sitesController.delete);
+  .get(reqTimeMonitor, SitesController.getUserApps)
+  .post(reqTimeMonitor, SitesController.firstLoad)
+  .delete(reqTimeMonitor, SitesController.delete);
 sitesRoutes.route('/sites/parent-host')
-  .get(reqTimeMonitor, sitesController.getParentHost);
+  .get(reqTimeMonitor, SitesController.getParentHost);
 sitesRoutes.route('/sites/info')
-  .get(reqTimeMonitor, sitesController.info);
+  .get(reqTimeMonitor, SitesController.info);
 sitesRoutes.route('/sites/getParents')
-  .get(reqTimeMonitor, sitesController.parentList);
+  .get(reqTimeMonitor, SitesController.parentList);
 sitesRoutes.route('/sites/create')
-  .put(reqTimeMonitor, sitesController.create);
+  .put(reqTimeMonitor, SitesController.create);
 sitesRoutes.route('/sites/checkAvailable')
-  .get(reqTimeMonitor, sitesController.availableCheck);
+  .get(reqTimeMonitor, SitesController.availableCheck);
 sitesRoutes.route('/sites/check-ns')
-  .get(reqTimeMonitor, sitesController.checkNs);
+  .get(reqTimeMonitor, SitesController.checkNs);
 sitesRoutes.route('/sites/configuration')
-  .get(reqTimeMonitor, sitesController.configurationsList)
-  .post(reqTimeMonitor, sitesController.saveConfigurations);
+  .get(reqTimeMonitor, SitesController.configurationsList)
+  .post(reqTimeMonitor, SitesController.saveConfigurations);
 sitesRoutes.route('/sites/ad-sense')
-  .get(reqTimeMonitor, sitesController.getAdSense);
+  .get(reqTimeMonitor, SitesController.getAdSense);
 sitesRoutes.route('/sites/manage')
-  .get(reqTimeMonitor, sitesController.managePage);
+  .get(reqTimeMonitor, SitesController.managePage);
 sitesRoutes.route('/sites/report')
-  .get(reqTimeMonitor, sitesController.report);
+  .get(reqTimeMonitor, SitesController.report);
 sitesRoutes.route('/sites/refunds')
-  .get(reqTimeMonitor, sitesController.refundList);
+  .get(reqTimeMonitor, SitesController.refundList);
 sitesRoutes.route('/sites/administrators')
-  .get(reqTimeMonitor, sitesController.siteAuthorities);
+  .get(reqTimeMonitor, SitesController.siteAuthorities);
 sitesRoutes.route('/sites/moderators')
-  .get(reqTimeMonitor, sitesController.siteAuthorities);
+  .get(reqTimeMonitor, SitesController.siteAuthorities);
 sitesRoutes.route('/sites/authorities')
-  .get(reqTimeMonitor, sitesController.siteAuthorities);
+  .get(reqTimeMonitor, SitesController.siteAuthorities);
 sitesRoutes.route('/sites/filters')
-  .get(reqTimeMonitor, sitesController.getObjectFilters)
-  .post(reqTimeMonitor, sitesController.saveObjectFilters);
+  .get(reqTimeMonitor, SitesController.getObjectFilters)
+  .post(reqTimeMonitor, SitesController.saveObjectFilters);
 sitesRoutes.route('/sites/tags')
-  .get(reqTimeMonitor, sitesController.findTags);
+  .get(reqTimeMonitor, SitesController.findTags);
 sitesRoutes.route('/sites/map')
-  .get(reqTimeMonitor, sitesController.getMapCoordinates)
-  .post(reqTimeMonitor, sitesController.getMapData)
-  .put(reqTimeMonitor, sitesController.setMapCoordinates);
+  .get(reqTimeMonitor, SitesController.getMapCoordinates)
+  .post(reqTimeMonitor, SitesController.getMapData)
+  .put(reqTimeMonitor, SitesController.setMapCoordinates);
 sitesRoutes.route('/sites/settings')
-  .get(reqTimeMonitor, sitesController.getSettings);
+  .get(reqTimeMonitor, SitesController.getSettings);
 sitesRoutes.route('/sites/restrictions')
-  .get(reqTimeMonitor, sitesController.getRestrictions);
+  .get(reqTimeMonitor, SitesController.getRestrictions);
 sitesRoutes.route('/sites/prefetch')
-  .get(reqTimeMonitor, sitesController.getPrefetchesList)
-  .post(reqTimeMonitor, sitesController.createPrefetch)
-  .put(reqTimeMonitor, sitesController.updatePrefetchesList);
+  .get(reqTimeMonitor, SitesController.getPrefetchesList)
+  .post(reqTimeMonitor, SitesController.createPrefetch)
+  .put(reqTimeMonitor, SitesController.updatePrefetchesList);
 sitesRoutes.route('/sites/all-prefetches')
-  .get(reqTimeMonitor, sitesController.showAllPrefetches);
+  .get(reqTimeMonitor, SitesController.showAllPrefetches);
 sitesRoutes.route('/sites/affiliate')
-  .get(reqTimeMonitor, sitesController.getAffiliateList)
-  .put(reqTimeMonitor, sitesController.updateAffiliateList);
+  .get(reqTimeMonitor, SitesController.getAffiliateList)
+  .put(reqTimeMonitor, SitesController.updateAffiliateList);
 
 module.exports = sitesRoutes;

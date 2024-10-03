@@ -23,7 +23,6 @@ const {
   TTL_TIME,
   REDIS_KEYS,
 } = require('constants/common');
-const { getNamespace } = require('cls-hooked');
 const Wobj = require('models/wObjectModel');
 const mutedModel = require('models/mutedUserModel');
 const moment = require('moment');
@@ -32,16 +31,13 @@ const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAf
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
-const {
-  formAffiliateLinks,
-  getAppAffiliateCodes,
-} = require('./affiliateHelper');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 const {
   getCacheKey,
   getCachedData,
   setCachedData,
 } = require('./cacheHelper');
+const asyncLocalStorage = require('../../middlewares/context/context');
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
@@ -132,10 +128,48 @@ const calculateApprovePercent = (field) => {
 /** We have some types of admins at wobject, in this method we find admin role type */
 const getFieldVoteRole = (vote) => {
   let role = ADMIN_ROLES.ADMIN;
-  vote.ownership ? role = ADMIN_ROLES.OWNERSHIP : null;
-  vote.administrative ? role = ADMIN_ROLES.ADMINISTRATIVE : null;
-  vote.owner ? role = ADMIN_ROLES.OWNER : null;
+  if (vote.ownership) role = ADMIN_ROLES.OWNERSHIP;
+  if (vote.administrative) role = ADMIN_ROLES.ADMINISTRATIVE;
+  if (vote.owner) role = ADMIN_ROLES.OWNER;
+
   return role;
+};
+
+const addAdminVote = ({
+  field, owner, admins, administrative, isOwnershipObj, ownership,
+}) => {
+  let adminVote, administrativeVote, ownershipVote, ownerVote;
+  _.forEach(field.active_votes, (vote) => {
+    vote.timestamp = vote._id
+      ? vote._id.getTimestamp().valueOf()
+      : Date.now();
+    if (vote.voter === owner) {
+      vote.owner = true;
+      ownerVote = vote;
+    } else if (_.includes(admins, vote.voter)) {
+      vote.admin = true;
+      if (vote.timestamp > _.get(adminVote, 'timestamp', 0)) adminVote = vote;
+    } else if (_.includes(administrative, vote.voter)) {
+      vote.administrative = true;
+      if (vote.timestamp > _.get(administrativeVote, 'timestamp', 0)) administrativeVote = vote;
+    } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
+      vote.ownership = true;
+      if (vote.timestamp > _.get(ownershipVote, 'timestamp', 0)) ownershipVote = vote;
+    }
+  });
+
+  /** If field includes admin votes fill in it */
+  if (ownerVote || adminVote || administrativeVote || ownershipVote) {
+    const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
+    if (mainVote?.percent !== 0) {
+      return {
+        role: getFieldVoteRole(mainVote),
+        status: mainVote?.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
+        name: mainVote?.voter,
+        timestamp: mainVote?.timestamp,
+      };
+    }
+  }
 };
 
 const addDataToFields = ({
@@ -165,41 +199,12 @@ const addDataToFields = ({
       const weightWaiv = _.sumBy(field.active_votes, (vote) => vote.weightWAIV) || 0;
       field.weight = weightHive + weightWaiv;
     }
-    let adminVote, administrativeVote, ownershipVote, ownerVote;
-    _.map(field.active_votes, (vote) => {
-      vote.timestamp = vote._id
-        ? vote._id.getTimestamp().valueOf()
-        : Date.now();
-      if (vote.voter === owner) {
-        vote.owner = true;
-        ownerVote = vote;
-      } else if (_.includes(admins, vote.voter)) {
-        vote.admin = true;
-        vote.timestamp > _.get(adminVote, 'timestamp', 0) ? adminVote = vote : null;
-      } else if (_.includes(administrative, vote.voter)) {
-        vote.administrative = true;
-        vote.timestamp > _.get(administrativeVote, 'timestamp', 0) ? administrativeVote = vote : null;
-      } else if (isOwnershipObj && _.includes(ownership, vote.voter)) {
-        vote.ownership = true;
-        vote.timestamp > _.get(ownershipVote, 'timestamp', 0) ? ownershipVote = vote : null;
-      }
+    if (_.has(field, '_id')) field.createdAt = field._id.getTimestamp().valueOf();
+
+    const adminVote = addAdminVote({
+      field, owner, admins, administrative, isOwnershipObj, ownership,
     });
-    if (_.has(field, '_id')) {
-      field.createdAt = field._id.getTimestamp()
-        .valueOf();
-    }
-    /** If field includes admin votes fill in it */
-    if (ownerVote || adminVote || administrativeVote || ownershipVote) {
-      const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
-      if (mainVote.percent !== 0) {
-        field.adminVote = {
-          role: getFieldVoteRole(mainVote),
-          status: mainVote.percent > 0 ? VOTE_STATUSES.APPROVED : VOTE_STATUSES.REJECTED,
-          name: mainVote.voter,
-          timestamp: mainVote.timestamp,
-        };
-      }
-    }
+    if (adminVote) field.adminVote = adminVote;
     field.approvePercent = calculateApprovePercent(field);
   }
   return fields;
@@ -226,10 +231,8 @@ const arrayFieldPush = ({
 }) => {
   if (_.includes(filter, FIELDS_NAMES.GALLERY_ALBUM)) return false;
   if (_.get(field, 'adminVote.status') === VOTE_STATUSES.APPROVED) return true;
-  if (field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE) {
-    return true;
-  }
-  return false;
+
+  return !!(field.weight > 0 && field.approvePercent > MIN_PERCENT_TO_SHOW_UPGATE);
 };
 
 const arrayFieldsSpecialSort = (a, b) => {
@@ -273,6 +276,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.RELATED:
       case FIELDS_NAMES.SIMILAR:
       case FIELDS_NAMES.WALLET_ADDRESS:
+      case FIELDS_NAMES.DELEGATION:
         if (arrayFieldPush({
           filter,
           field,
@@ -284,6 +288,8 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.REMOVE:
       case FIELDS_NAMES.AFFILIATE_GEO_AREA:
       case FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES:
+      case FIELDS_NAMES.GROUP_ADD:
+      case FIELDS_NAMES.GROUP_EXCLUDE:
         if (arrayFieldPush({
           filter,
           field,
@@ -314,7 +320,8 @@ const arrayFieldFilter = ({
 };
 
 const filterFieldValidation = (filter, field, locale, ownership) => {
-  field.locale === 'auto' ? field.locale = 'en-US' : null;
+  if (field.locale === 'auto') field.locale = 'en-US';
+
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership?.length) {
@@ -428,16 +435,18 @@ const getFilteredFields = (fields, locale, filter, ownership) => {
         && _.includes(existedLanguages, field.locale),
     );
 
-    _.isEmpty(nativeLang)
-      ? acc = [
+    if (_.isEmpty(nativeLang)) {
+      acc = [
         ...acc,
         ..._.filter(el, (field) => filterFieldValidation(
           filter,
           field,
           getLangByPopularity(existedLanguages),
           ownership,
-        ))]
-      : acc = [...acc, ...nativeLang];
+        ))];
+      return acc;
+    }
+    acc = [...acc, ...nativeLang];
     return acc;
   }, []);
 };
@@ -551,14 +560,14 @@ const fillObjectByExposedFields = async (obj, exposedFields) => {
   if (!result) {
     obj.fields = [];
   }
-  obj.fields.map((field, index) => {
+  obj.fields.forEach((field, index) => {
     /** if field not exist in object type for this object - remove it */
     if (!_.includes(exposedFields, field.name)) {
       delete obj.fields[index];
       return;
     }
     let post = _.get(result, `content['${field.author}/${field.permlink}']`);
-    if (!post || !post.author) post = createMockPost(field);
+    if (!post?.author) post = createMockPost(field);
 
     Object.assign(
       field,
@@ -589,7 +598,7 @@ const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
 };
 
 const getLinkToPageLoad = (obj) => {
-  if (getNamespace('request-session')
+  if (asyncLocalStorage.getStore()
     .get('device') === DEVICE.MOBILE) {
     return obj.object_type === OBJECT_TYPES.HASHTAG
       ? `/object/${obj.author_permlink}`
@@ -621,6 +630,8 @@ const getLinkToPageLoad = (obj) => {
       return `/object/${obj.author_permlink}/webpage`;
     case OBJECT_TYPES.MAP:
       return `/object/${obj.author_permlink}/map`;
+    case OBJECT_TYPES.GROUP:
+      return `/object/${obj.author_permlink}/group`;
     default:
       return `/object/${obj.author_permlink}`;
   }
@@ -653,9 +664,10 @@ const getDefaultLink = (obj) => {
   }
   let listItem = _.get(obj, 'listItem', []);
   if (listItem.length) {
-    _.find(listItem, (list) => list.type === 'menuList')
-      ? listItem = _.filter(listItem, (list) => list.type === 'menuList')
-      : null;
+    if (_.find(listItem, (list) => list.type === 'menuList')) {
+      listItem = _.filter(listItem, (list) => list.type === 'menuList');
+    }
+
     const item = _
       .chain(listItem)
       .orderBy([(list) => _.get(list, 'adminVote.timestamp', 0), 'weight'], ['desc', 'desc'])
@@ -809,6 +821,45 @@ const getOwnerAndAdmins = (app) => {
 
   return { owner, admins };
 };
+
+const filterAssignedAdmin = (admins, field) => field.name === FIELDS_NAMES.DELEGATION
+  && admins.includes(field.creator);
+
+const getAssignedAdmins = ({
+  admins = [],
+  owner,
+  object,
+  ownership,
+  administrative,
+  blacklist,
+}) => {
+  let fields = object?.fields?.filter((f) => filterAssignedAdmin([...admins, owner], f));
+  if (!fields?.length) return [];
+
+  fields = addDataToFields({
+    isOwnershipObj: !!ownership.length,
+    fields,
+    filter: [FIELDS_NAMES.DELEGATION],
+    admins,
+    ownership,
+    administrative,
+    owner,
+    blacklist,
+  });
+
+  const processed = getFieldsToDisplay(
+    fields,
+    'en-US',
+    [FIELDS_NAMES.DELEGATION],
+    object.author_permlink,
+    ownership,
+  );
+
+  if (!processed[FIELDS_NAMES.DELEGATION]) return [];
+
+  return processed[FIELDS_NAMES.DELEGATION].map((el) => el.body);
+};
+
 /** Parse wobjects to get its winning */
 const processWobjects = async ({
   wobjects,
@@ -836,13 +887,11 @@ const processWobjects = async ({
       { search: 0, departments: 0 },
     ));
   }
-  const affiliateCodesOld = await getAppAffiliateCodes({ app, countryCode });
 
   /** Get waivio admins and owner */
   const waivioAdmins = await getWaivioAdminsAndOwner();
   const { owner, admins } = getOwnerAndAdmins(app);
   const blacklist = await getBlacklist(_.uniq([owner, ...admins, ...waivioAdmins]));
-
   // means that owner want's all objects on sites behave like ownership objects
   const objectControl = !!app?.objectControl;
   const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
@@ -859,6 +908,12 @@ const processWobjects = async ({
     const ownership = _.intersection(_.get(obj, 'authority.ownership', []), _.get(app, 'authority', []));
     const administrative = _.intersection(_.get(obj, 'authority.administrative', []), _.get(app, 'authority', []));
 
+    // get admins that can be assigned by owner or other admins
+    const assignedAdmins = getAssignedAdmins({
+      admins, ownership, administrative, owner, blacklist, object: obj,
+    });
+    const objectAdmins = [...admins, ...assignedAdmins];
+
     if (objectControl
       && (!_.isEmpty(administrative)
         || !_.isEmpty(ownership)
@@ -866,11 +921,12 @@ const processWobjects = async ({
         || _.get(obj, 'authority.ownership', []).includes(extraAuthority)
       )
     ) {
-      ownership.push(extraAuthority, ...admins);
+      ownership.push(extraAuthority, ...objectAdmins);
     }
 
     /** If flag hiveData exists - fill in wobj fields with hive data */
     if (hiveData) {
+      // only if 1 object processed no need to refactor before for of
       const { objectType } = await ObjectTypeModel.getOne({ name: obj.object_type });
       exposedFields = getExposedFields(objectType, obj.fields);
     }
@@ -879,7 +935,7 @@ const processWobjects = async ({
       isOwnershipObj: !!ownership.length,
       fields: _.compact(obj.fields),
       filter: fields,
-      admins,
+      admins: objectAdmins,
       ownership,
       administrative,
       owner,
@@ -908,7 +964,7 @@ const processWobjects = async ({
           ? await addOptions({
             object: obj,
             ownership,
-            admins,
+            admins: objectAdmins,
             administrative,
             owner,
             blacklist,
@@ -923,7 +979,7 @@ const processWobjects = async ({
         ? await addOptions({
           object: obj,
           ownership,
-          admins,
+          admins: objectAdmins,
           administrative,
           owner,
           blacklist,
@@ -944,23 +1000,12 @@ const processWobjects = async ({
         parent,
       });
     }
-    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON) {
-      if (affiliateCodes.length) {
-        obj.affiliateLinks = makeAffiliateLinks({
-          affiliateCodes,
-          productIds: obj.productId,
-          countryCode,
-        });
-      }
-      if (!obj?.affiliateLinks?.length) {
-        const affiliateLinks = formAffiliateLinks({
-          affiliateCodes: affiliateCodesOld, productIds: obj.productId, countryCode,
-        });
-        if (!_.isEmpty(affiliateLinks)) {
-          obj.affiliateLinks = affiliateLinks;
-          obj.website = null;
-        }
-      }
+    if (obj.productId && obj.object_type !== OBJECT_TYPES.PERSON && affiliateCodes.length) {
+      obj.affiliateLinks = makeAffiliateLinks({
+        affiliateCodes,
+        productIds: obj.productId,
+        countryCode,
+      });
     }
     if (obj.departments && typeof obj.departments[0] === 'string') {
       obj.departments = null;

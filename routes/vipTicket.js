@@ -1,11 +1,11 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { vipTicketsController } = require('../controllers');
+const VipTicketsController = require('../controllers/vipTicketsController');
 
 const ticketsRoutes = new Router();
 
 ticketsRoutes.route('/vip-tickets')
-  .get(reqTimeMonitor, vipTicketsController.getVipTickets)
-  .patch(reqTimeMonitor, vipTicketsController.addTicketNote);
+  .get(reqTimeMonitor, VipTicketsController.getVipTickets)
+  .patch(reqTimeMonitor, VipTicketsController.addTicketNote);
 
 module.exports = ticketsRoutes;

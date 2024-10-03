@@ -1,9 +1,9 @@
 const _ = require('lodash');
 const config = require('config');
-const { getNamespace } = require('cls-hooked');
 const { redisGetter } = require('utilities/redis');
 const { Post } = require('database').models;
 const { IGNORED_AUTHORS } = require('constants/postsData');
+const asyncLocalStorage = require('../../../../middlewares/context/context');
 
 /**
  * Get HOT posts by locales using indexes from redis cache
@@ -34,8 +34,8 @@ exports.getHot = async ({
 
   // get ids of needed posts range
   const postIds = this.getTopFromArrays(idLocaleArrays, limit, skip);
-  const session = getNamespace('request-session');
-  let host = session.get('host');
+  const store = asyncLocalStorage.getStore();
+  let host = store.get('host');
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({
@@ -81,9 +81,9 @@ exports.getTrend = async ({
 
   // get ids of needed posts range
   const postIds = this.getTopFromArrays(idLocaleArrays, limit, skip);
+  const store = asyncLocalStorage.getStore();
 
-  const session = getNamespace('request-session');
-  let host = session.get('host');
+  let host = store.get('host');
   if (!host) host = config.appHost;
   // get post from db by cached indexes
   return getFromDb({

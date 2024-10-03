@@ -10,8 +10,62 @@ const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
 const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
 
+const getObjectPermlinksFromUrl = (link) => {
+  try {
+    const url = new URL(link);
+
+    const objectPath = /^\/object|^\/checklist/.test(url.pathname);
+    const searchParams = /\?breadcrumbs=/.test(url.search);
+    if (!objectPath) return;
+
+    const links = [];
+
+    const parts = url.pathname.split('/');
+    const mainPermlink = parts.length > 3 ? parts[2] : (parts[2] || '');
+    if (mainPermlink) links.push(mainPermlink);
+    if (url?.hash) {
+      const hashObjects = url.hash
+        .replace('#', '')
+        .split('/');
+      if (hashObjects?.length)links.push(...hashObjects);
+    }
+    if (searchParams) {
+      const searchObjects = url.search
+        .replace(/\?breadcrumbs=/, '')
+        .split('/');
+      if (searchObjects?.length)links.push(...searchObjects);
+    }
+
+    return _.compact(_.uniq(links));
+  } catch (error) {
+    return [];
+  }
+};
+
+const getAppAuthorities = (app) => {
+  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+
+  const authorities = [...app.authority];
+
+  if (userShop) {
+    authorities.push(app?.configuration?.shopSettings?.value);
+    return authorities;
+  }
+
+  authorities.push(app.owner);
+
+  return authorities;
+};
+
+const checkUserShop = (app) => app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+
 const addRequestDetails = (data) => {
   if (_.isUndefined(data.string)) data.string = '';
+  const linksFromUrl = getObjectPermlinksFromUrl(data.string);
+  if (linksFromUrl?.length) {
+    data.linksFromUrl = linksFromUrl;
+    data.string = '';
+  }
   if (!_.includes(data.string, '@') || !_.includes(data.string, '.')) {
     data.string = data.string.replace(/[.,%?+*|{}[\]()<>“”^'"\\\-_=!&$:]/g, '').trim();
   }
@@ -34,7 +88,8 @@ const searchWobjects = async (data) => {
 };
 
 const socialSearch = async (data) => {
-  const userShop = data?.app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  const userShop = checkUserShop(data?.app);
+
   if (userShop) {
     const names = [data?.app?.configuration?.shopSettings?.value, ...data?.app?.authority ?? []];
     data.userShop = userShop;
@@ -71,6 +126,7 @@ const defaultWobjectSearch = async (data) => {
     pipeline: makePipeline(data),
     string: data.string,
     object_type: data.object_type,
+    onlyObjectTypes: data.onlyObjectTypes,
   });
 
   if (data.needCounters && !error) {
@@ -79,7 +135,7 @@ const defaultWobjectSearch = async (data) => {
 
   return {
     wobjects: _.take(wobjects, data.limit),
-    hasMore: wobjects.length > data.limit,
+    hasMore: wobjects?.length > data.limit,
     error,
   };
 };
@@ -130,16 +186,19 @@ const getSiteWobjects = async (data) => {
   });
 };
 
-const getWobjectsFromAggregation = async ({ pipeline, string, object_type }) => {
+const getWobjectsFromAggregation = async ({
+  pipeline, string, object_type, onlyObjectTypes,
+}) => {
   const { wobjects = [], error } = await Wobj.fromAggregation(pipeline);
-  const { wObject } = await Wobj.getOne(string, object_type, true);
+  const { wObject } = await Wobj.getOne(string, object_type, true, onlyObjectTypes);
 
-  if (wObject && wobjects.length) {
+  if (wObject) {
     _.remove(wobjects, (wobj) => wObject.author_permlink === wobj.author_permlink);
     wobjects.splice(0, 0, wObject);
   }
+  if (!wobjects?.length && error) return { wobjects, error };
 
-  return { wobjects, error };
+  return { wobjects };
 };
 
 const searchWithCounters = async (data) => {
@@ -176,7 +235,7 @@ const fillTagCategories = async (wobjectsCounts) => {
 /** If forParent object exist - add checkField for primary sorting, else sort by weight */
 const makeSitePipelineForRestaurants = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers,
-  skip, limit, supportedTypes, forSites, tagCategory, map, sort,
+  skip, limit, supportedTypes, forSites, tagCategory, map, sort, linksFromUrl,
 }) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
@@ -188,6 +247,7 @@ const makeSitePipelineForRestaurants = ({
     map,
     box,
     object_type,
+    linksFromUrl,
   })];
   if (forParent) {
     pipeline.push({
@@ -203,9 +263,11 @@ const makeSitePipelineForRestaurants = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes,
+  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes, linksFromUrl,
 }) => {
-  const pipeline = [matchSimplePipe({ string, object_type, onlyObjectTypes })];
+  const pipeline = [matchSimplePipe({
+    string, object_type, onlyObjectTypes, linksFromUrl,
+  })];
   if (_.get(crucialWobjects, 'length') || forParent) {
     pipeline.push(
       {
@@ -217,6 +279,9 @@ const makePipeline = ({
       { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
     );
   } else pipeline.push({ $sort: { weight: -1 } });
+  if (onlyObjectTypes?.length) {
+    pipeline.push({ $match: { object_type: { $in: onlyObjectTypes } } });
+  }
   pipeline.push({ $skip: skip || 0 }, { $limit: limit + 1 });
 
   return pipeline;
@@ -238,10 +303,10 @@ const makeCountPipeline = (data = {}) => {
         counters: true,
       }))
       : pipeline.unshift(...matchSitesPipe({
-        string, crucialWobjects, object_type, supportedTypes, forSites,
+        string, crucialWobjects, object_type, supportedTypes, forSites, linksFromUrl: data.linksFromUrl,
       }));
   } else {
-    pipeline.unshift(matchSimplePipe({ string, object_type }));
+    pipeline.unshift(matchSimplePipe({ string, object_type, linksFromUrl: data.linksFromUrl }));
   }
   return pipeline;
 };
@@ -249,7 +314,7 @@ const makeCountPipeline = (data = {}) => {
 /** If search request for custom sites - find objects only by authorities and supported objects,
  * if app can be extended - search objects by supported object types */
 const matchSitesPipe = ({
-  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type,
+  crucialWobjects, string, supportedTypes, forSites, tagCategory, map, box, addHashtag, object_type, linksFromUrl,
 }) => {
   const pipeline = [];
   if (string) {
@@ -278,11 +343,17 @@ const matchSitesPipe = ({
   }
   const matchCond = {
     $match: {
-      object_type: { $in: supportedTypes },
+      ...supportedTypes?.length && { object_type: { $in: supportedTypes } },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
     },
   };
-  if (forSites && !addHashtag) matchCond.$match.author_permlink = { $in: crucialWobjects };
+  if (forSites && !addHashtag) {
+    const permlinks = linksFromUrl?.length
+      ? linksFromUrl.filter((link) => crucialWobjects.includes(link))
+      : crucialWobjects;
+    matchCond.$match.author_permlink = { $in: permlinks };
+  }
   pipeline.push(matchCond);
   if (tagCategory) {
     const condition = _.reduce(tagCategory, (acc, category) => {
@@ -291,20 +362,15 @@ const matchSitesPipe = ({
     }, []);
     pipeline.push({ $match: { $and: condition } });
   }
-  object_type && pipeline.push({
-    $match: { object_type },
-  });
+
+  if (object_type) pipeline.push({ $match: { object_type } });
+
   return pipeline;
 };
 
 const matchSocialPipe = ({
-  string, addHashtag, object_type, app, skip, limit, userShop, userLinks = [], deselect = [], counters, onlyObjectTypes,
+  string, addHashtag, object_type, app, skip, limit, userLinks = [], deselect = [], counters, onlyObjectTypes, linksFromUrl,
 }) => {
-  const authorities = [...app.authority];
-  userShop
-    ? authorities.push(app?.configuration?.shopSettings?.value)
-    : authorities.push(app.owner);
-
   const pipeline = [
     {
       $match: {
@@ -312,12 +378,13 @@ const matchSocialPipe = ({
         ...(!addHashtag && {
           $or: [
             {
-              'authority.administrative': { $in: authorities },
+              'authority.administrative': { $in: getAppAuthorities(app) },
             },
           ],
         }),
         ...(object_type && { object_type }),
         ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
+        ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
       },
     },
     { $sort: { weight: -1 } },
@@ -339,18 +406,21 @@ const matchSocialPipe = ({
   return pipeline;
 };
 
-const matchSimplePipe = ({ string, object_type, onlyObjectTypes }) => ({
+const matchSimplePipe = ({
+  string, object_type, onlyObjectTypes, linksFromUrl,
+}) => ({
   $match: {
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
     ...(object_type && { object_type }),
     ...(onlyObjectTypes && { object_type: { $in: onlyObjectTypes } }),
+    ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
     ...(string && { $text: { $search: `\"${string}\"` } }),
   },
 });
 
 const makePipelineForDrinksAndDishes = ({
   crucialWobjects, string, object_type, forParent, box, addHashtag, mapMarkers, supportedTypes, forSites, tagCategory,
-  map, sort, skip, limit,
+  map, sort, skip, limit, linksFromUrl,
 }) => {
   const pipeline = [...matchSitesPipe({
     crucialWobjects,
@@ -362,6 +432,7 @@ const makePipelineForDrinksAndDishes = ({
     map,
     box,
     object_type,
+    linksFromUrl,
   })];
   if (forParent) {
     pipeline.push({
@@ -396,8 +467,56 @@ const makePipelineForDrinksAndDishes = ({
   return pipeline;
 };
 
+const searchByArea = async ({
+  object_type, app, sample, string, box,
+}) => {
+  const mainPipe = matchSitesPipe({
+    object_type, string, box,
+  });
+  const social = checkForSocialSite(app?.parentHost ?? '');
+
+  /** ------if social site search in authority objects
+   * also check if site based on user and add conditions
+   */
+  if (social) {
+    const appAuthorities = getAppAuthorities(app);
+    const sitesCondition = [
+      {
+        'authority.ownership': { $in: appAuthorities },
+      },
+      {
+        'authority.administrative': { $in: appAuthorities },
+      },
+    ];
+
+    const userShop = checkUserShop(app);
+    if (userShop) {
+      const userLinks = await Post.getProductLinksFromPosts({ names: appAuthorities });
+      if (userLinks.length) {
+        const deselect = await userShopDeselectModel.findUsersLinks({ names: appAuthorities });
+        const and = deselect.length
+          ? [{ author_permlink: { $in: userLinks } }, { author_permlink: { $nin: deselect } }]
+          : [{ author_permlink: { $in: userLinks } }];
+
+        sitesCondition.push({ $and: and });
+      }
+    }
+    mainPipe.push({ $match: { $or: sitesCondition } });
+  }
+
+  mainPipe.push(
+    { $sample: { size: sample } },
+  );
+
+  const { wobjects, error } = await Wobj.fromAggregation(mainPipe);
+  if (error) return { error };
+
+  return { wobjects };
+};
+
 module.exports = {
   searchWobjects,
   defaultWobjectSearch,
   addRequestDetails,
+  searchByArea,
 };

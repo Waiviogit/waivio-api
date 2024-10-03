@@ -1,13 +1,13 @@
 const { Router } = require('express');
-const { threadsController } = require('../controllers');
+const ThreadsController = require('../controllers/threadsController');
 
 const threadRotes = new Router();
 
 threadRotes.route('/thread/hashtag')
-  .get(threadsController.byHashtag);
+  .get(ThreadsController.byHashtag);
 threadRotes.route('/thread/user')
-  .get(threadsController.byUser);
+  .get(ThreadsController.byUser);
 threadRotes.route('/thread/hashtag/count')
-  .get(threadsController.hashtagsCount);
+  .get(ThreadsController.hashtagsCount);
 
 module.exports = threadRotes;

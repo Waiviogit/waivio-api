@@ -17,7 +17,7 @@
     },
     {
       "name": "wobject",
-      "description": "Info about waivio objects"
+      "description": "Info about waivio objects.\n A full description of possible keys with parameters can be found at \n https://github.com/Waiviogit/objects-bot/blob/master/docs/DetailsObjectFields.md"
     },
     {
       "name": "post",
@@ -911,6 +911,10 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "schema" : {
+                "type" : "string",
+                "enum": ["shop", "recipe"]
               }
             }
           }
@@ -984,6 +988,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }
@@ -1061,6 +1069,10 @@
                 },
                 "limit": {
                   "type": "number"
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }
@@ -1112,6 +1124,10 @@
                 "items": {
                   "type": "string"
                 }
+              },
+              "schema" : {
+                "type" : "string",
+                "enum": ["shop", "recipe"]
               }
             }
           }
@@ -1168,6 +1184,10 @@
                   "items": {
                     "type": "string"
                   }
+                },
+                "schema" : {
+                  "type" : "string",
+                  "enum": ["shop", "recipe"]
                 }
               }
             }
@@ -1789,6 +1809,61 @@
         }
       }
     },
+    "/api/shop/wobject/add-on": {
+      "post": {
+        "tags": [
+          "shop"
+        ],
+        "summary": "Return list of wobjects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following in wobjects",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Users locale",
+            "required": false,
+            "type": "string",
+            "default": "en-US"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/inline_response_200_12"
+            }
+          }
+        }
+      }
+    },
     "/api/departments": {
       "post": {
         "tags": [
@@ -1957,6 +2032,9 @@
                 "limit": {
                   "type": "number",
                   "default": 10
+                },
+                "schema": {
+                  "type": "string"
                 }
               }
             }
@@ -2210,6 +2288,25 @@
                   "example": 56181880
                 }
               }
+            }
+          }
+        }
+      }
+    },
+    "/api/hive/global-properties": {
+      "get": {
+        "tags": [
+          "hive"
+        ],
+        "description": "Return get_dynamic_global_properties",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object"
             }
           }
         }
@@ -5978,55 +6075,7 @@
             "in": "body",
             "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
             "schema": {
-              "type": "object",
-              "properties": {
-                "accounts": {
-                  "type": "array",
-                  "items": {
-                    "type": "object",
-                    "properties": {
-                      "name": {
-                        "type": "string",
-                        "example": "blauser"
-                      },
-                      "lastId": {
-                        "type": "string",
-                        "example": "627d9aa9a72924295ebcff0e"
-                      }
-                    }
-                  }
-                },
-                "filterAccounts": {
-                  "type": "array",
-                  "items": {
-                    "type": "string",
-                    "example": "blaster"
-                  }
-                },
-                "startDate": {
-                  "type": "number",
-                  "example": 1619816400
-                },
-                "endDate": {
-                  "type": "number",
-                  "example": 1621857636
-                },
-                "limit": {
-                  "type": "number"
-                },
-                "user": {
-                  "type": "string",
-                  "example": "blauser"
-                },
-                "currency": {
-                  "type": "string",
-                  "example": "UAH"
-                },
-                "symbol": {
-                  "type": "string",
-                  "example": "WAIV"
-                }
-              }
+              "$ref": "#/definitions/advancedReportParams"
             }
           }
         ],
@@ -6039,7 +6088,7 @@
                 "wallet": {
                   "type": "array",
                   "items": {
-                    "type": "object"
+                    "$ref": "#/definitions/engineReportWallet"
                   }
                 },
                 "accounts": {
@@ -6068,6 +6117,462 @@
                   "type": "number"
                 }
               }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "create new report task",
+        "description": "create new report task",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "description": "filterAccounts - array of all requested accounts names\nNot required properties: startDate, endDate, limit, symbol, currency, user",
+            "schema": {
+              "$ref": "#/definitions/advancedReportParams"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/progress": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get tasks in progress",
+        "description": "get tasks in progress",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/history": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "get completed tasks",
+        "description": "get completed tasks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/engineReportStatus"
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/record": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "exclude/include record in report",
+        "description": "exclude/include record in report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "user": {
+                  "type": "string"
+                },
+                "reportId": {
+                  "type": "string"
+                },
+                "_id": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportWallet"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/report": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "shows generated report",
+        "description": "shows generated report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "wallet": {
+                  "$ref": "#/definitions/engineReportWallet"
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/resume": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "resume report",
+        "description": "resume report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/stop": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "stop report",
+        "description": "stop report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
+            }
+          },
+          "422": {
+            "description": "Unprocessable Entity",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/user/advanced-report/generated/pause": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "pause report",
+        "description": "pause report",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Hive user access token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "waivio-auth",
+            "in": "header",
+            "description": "send if it is guest",
+            "type": "boolean"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "reportId": {
+                  "type": "string"
+                },
+                "user": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "ok",
+            "schema": {
+              "$ref": "#/definitions/engineReportStatus"
             }
           },
           "422": {
@@ -6214,10 +6719,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6251,10 +6755,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6302,10 +6805,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6338,6 +6840,12 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
           {
             "in": "body",
             "name": "params",
@@ -6393,6 +6901,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "required": true,
@@ -6436,6 +6950,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "required": true,
@@ -6475,6 +6995,12 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
           {
             "name": "Origin",
             "in": "header",
@@ -6520,10 +7046,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6584,6 +7109,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "name": "authorPermlink",
             "in": "path",
             "description": "wobject which field need to return",
@@ -6611,22 +7142,15 @@
           "wobject"
         ],
         "summary": "Return info about specified waivio object",
+        "description": "A full description of possible keys with parameters can be found at https://github.com/Waiviogit/objects-bot/blob/master/docs/DetailsObjectFields.md",
         "produces": [
           "application/json"
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "app",
-            "in": "header",
-            "description": "Specify app to enable waivio-wobject moderation",
-            "required": false,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6649,25 +7173,6 @@
             "description": "Read locale of user(default en-EN)",
             "required": false,
             "type": "string"
-          },
-          {
-            "name": "listCounters",
-            "in": "query",
-            "description": "add listItems or menuItems to response",
-            "default": false,
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "required_fields",
-            "in": "query",
-            "description": "Additional fields which (not includes in REQUIRED FIELDS on waivio) to return with wobject",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "collectionFormat": "multi"
           }
         ],
         "responses": {
@@ -6691,10 +7196,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6752,6 +7256,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "name": "locale",
             "in": "header",
             "description": "locale",
@@ -6797,10 +7307,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6858,10 +7367,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -6915,6 +7423,12 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",
@@ -6995,10 +7509,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7048,10 +7561,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7093,10 +7605,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7177,10 +7688,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7237,10 +7747,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7295,10 +7804,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7350,6 +7858,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "description": "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates\n **addHashtag** - boolean - if true add hashtag on wobj search(for sites)",
@@ -7391,10 +7905,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7439,10 +7952,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7484,10 +7996,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7573,10 +8084,9 @@
         ],
         "parameters": [
           {
-            "name": "Origin",
+            "name": "Access-Host",
             "in": "header",
-            "description": "Domain of website",
-            "required": true,
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
             "type": "string"
           },
           {
@@ -7621,6 +8131,12 @@
         ],
         "parameters": [
           {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "name": "authorPermlink",
             "in": "path",
             "description": "author_permlink of specified wobject",
@@ -7653,6 +8169,12 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",
@@ -7690,7 +8212,14 @@
         "produces": [
           "application/json"
         ],
-        "parameters": [{
+        "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
             "name": "follower",
             "in": "header",
             "description": "Name of user to check for following in wobjects",
@@ -7748,6 +8277,133 @@
         }
       }
     },
+    "/api/wobject/{authorPermlink}/map/list": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return objects from object_type map",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
+          "name": "follower",
+          "in": "header",
+          "description": "Name of user to check for following in wobjects",
+          "required": false,
+          "type": "string"
+        },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Read locale of user(default en-EN)",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobject/{authorPermlink}/map-link": {
+      "get": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return objects from object_type map",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of user to check for following in wobjects",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "name": "authorPermlink",
+            "in": "path",
+            "description": "author_permlink of object to return",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "Read locale of user(default en-EN)",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject/{authorPermlink}/raw-field": {
       "post": {
         "tags": [
@@ -7758,6 +8414,12 @@
           "application/json"
         ],
         "parameters": [
+          {
+            "name": "Access-Host",
+            "in": "header",
+            "description": "To get the object as it appears on the desired site, add the host to this header. \n No need to add https://",
+            "type": "string"
+          },
           {
             "name": "authorPermlink",
             "in": "path",
@@ -7797,6 +8459,72 @@
           },
           "404": {
             "description": "Not Found"
+          }
+        }
+      }
+    },
+    "/api/wobjects/group": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Search objects by prefix of \"name\" field",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "description": "**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates\n **addHashtag** - boolean - if true add hashtag on wobj search(for sites)",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "limit": {
+                  "type": "number"
+                },
+                "authorPermlink": {
+                  "type": "string"
+                },
+                "lastName": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "last_posts_count": {
+                        "type": "number"
+                      },
+                      "followers_count": {
+                        "type": "number"
+                      },
+                      "wobjects_weight": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
           }
         }
       }
@@ -8019,6 +8747,64 @@
               "type": "array",
               "items": {
                 "$ref": "#/definitions/post"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/posts/mentions": {
+      "post": {
+        "tags": [
+          "post"
+        ],
+        "summary": "Return list of posts by authors and permlinks",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "user currently logged in",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "account": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "posts": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/post"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           }
@@ -9142,6 +9928,156 @@
         }
       }
     },
+    "/api/places-api/image": {
+      "post": {
+        "tags": [
+          "app"
+        ],
+        "summary": "prompt to assistant",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "placesUrl": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/places-api/objects": {
+      "post": {
+        "tags": [
+          "app"
+        ],
+        "summary": "prompt to assistant",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "longitude": {
+                  "type": "number"
+                },
+                "latitude": {
+                  "type": "number"
+                },
+                "includedTypes":{
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/places-api/text": {
+      "post": {
+        "tags": [
+          "app"
+        ],
+        "summary": "prompt to assistant",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "longitude": {
+                  "type": "number"
+                },
+                "latitude": {
+                  "type": "number"
+                },
+                "includedType":{
+                  "type": "string"
+                },
+                "textQuery":{
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/user/{userName}/draft": {
       "post": {
         "tags": [
@@ -9679,6 +10615,85 @@
               "type": "array",
               "items": {
                 "type": "string"
+              }
+            }
+          },
+          "422":  {
+            "description": "Validation error"
+          }
+        }
+      }
+    },
+    "/api/user/{userName}/favorites/map" : {
+      "post": {
+        "tags": ["user"],
+        "summary": "get favorite objects",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "path",
+            "description": "Name of user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "follower",
+            "in": "header",
+            "description": "Name of authorized user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "locale",
+            "in": "header",
+            "description": "locale",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "objectTypes": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "box": {
+                  "$ref": "#/definitions/box_params"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/wobjectonlist"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
               }
             }
           },
@@ -10321,30 +11336,37 @@
       },
       "wobject": {
         "type": "object",
+        "required": ["author_permlink", "default_name", "creator", "author"],
         "properties": {
-          "author_permlink": {
-            "type": "string"
-          },
-          "weight": {
-            "type": "number"
-          },
           "app": {
             "type": "string"
           },
           "community": {
             "type": "string"
           },
-          "parents": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
+          "default_name": {
+            "type": "string"
           },
-          "propositions": {
-            "type": "array",
-            "items": {
-              "type": "object"
-            }
+          "is_posting_open": {
+            "type": "boolean"
+          },
+          "is_extending_open": {
+            "type": "boolean"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "author_permlink": {
+            "type": "string"
+          },
+          "weight": {
+            "type": "number"
+          },
+          "parent": {
+            "type": "object"
           },
           "children": {
             "type": "array",
@@ -10352,69 +11374,194 @@
               "type": "string"
             }
           },
-          "followers_count": {
-            "type": "integer"
+          "authority": {
+            "type": "object"
           },
-          "users": {
+          "status": {
+            "type": "object"
+          },
+          "propositions": {
             "type": "array",
             "items": {
-              "$ref": "#/definitions/wobjectonlist_users"
-            }
-          },
-          "fields": {
-            "type": "array",
-            "items": {
-              "$ref": "#/definitions/apiuseruserNamefollowing_objects_fields"
-            }
-          },
-          "moderators": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          "admins": {
-            "type": "array",
-            "items": {
-              "type": "string"
+              "type": "object"
             }
           },
           "updatesCount": {
             "type": "number",
             "example": 21
+          },
+          "name": {
+            "type": "string"
+          },
+          "title": {
+            "type": "string"
+          },
+          "avatar": {
+            "type": "string"
+          },
+          "background": {
+            "type": "string"
+          },
+          "defaultShowLink": {
+            "type": "string"
+          },
+          "rating": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "ratings": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "tagCategory": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "galleryAlbum": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "galleryItem": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "delegation": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "walletAddress": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "similar": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "addOn": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "related": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "pin": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "remove": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "features": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "groupId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "productId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "companyId": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "departments": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "authors": {
+            "type": "array",
+            "items": {
+              "type": "object"
+            }
+          },
+          "options": {
+            "type": "object"
           }
         }
       },
       "wobjField": {
         "type": "object",
-        "example": {
-          "toDisplay": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
-          "field": {
-            "weight": 1,
-            "locale": "en-US",
-            "_id": "5ccf4aa2d0555b20e12b26bc",
-            "creator": "diningguide",
-            "author": "jkl65",
-            "permlink": "diningguide-1v9z8t55y33",
-            "name": "avatar",
-            "body": "https://waivio.nyc3.digitaloceanspaces.com/1562259502_01bd13b0-180f-4e19-ba1a-c8a5b6b8c697",
-            "active_votes": [
-              {
-                "_id": "5ccf4aa5d0555b20e12b2a81",
-                "voter": "diningguide",
-                "weight": 1,
-                "rshares_weight": 0,
-                "percent": 100
-              }
-            ],
-            "children": 0,
-            "total_payout_value": "0.000 HBD",
-            "pending_payout_value": "0.000 HBD",
-            "curator_payout_value": "0.000 HBD",
-            "cashout_time": "1969-12-31T23:59:59",
-            "fullBody": "@diningguide added avatar(English):\n https://ipfs.busy.org/ipfs/QmWnXjy3ZBeBhuh7EHxjC6WQJFij6PZS7e8aofYCXvfB77",
-            "approvePercent": 100,
-            "createdAt": 1557088930000
+        "properties": {
+          "weight": {
+            "type": "number"
+          },
+          "locale": {
+            "type": "string"
+          },
+          "_id": {
+            "type": "string"
+          },
+          "creator": {
+            "type": "string"
+          },
+          "author": {
+            "type": "string"
+          },
+          "permlink": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "children": {
+            "type": "number"
+          },
+          "approvePercent": {
+            "type": "number"
+          },
+          "active_votes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/post_active_votes"
+            }
+          },
+          "items":{
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/raw_field"
+            }
           }
         }
       },
@@ -11609,6 +12756,12 @@
           },
           "mapMarkers": {
             "type": "boolean"
+          },
+          "onlyObjectTypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
           }
         }
       },
@@ -12483,6 +13636,127 @@
           "type": "string"
         },
         "affiliateCode": {
+          "type": "string"
+        }
+      }
+    },
+    "advancedReportParams": {
+      "type": "object",
+      "properties": {
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "example": "blauser"
+              },
+              "lastId": {
+                "type": "string",
+                "example": "627d9aa9a72924295ebcff0e"
+              }
+            }
+          }
+        },
+        "filterAccounts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "example": "blaster"
+          }
+        },
+        "startDate": {
+          "type": "number",
+          "example": 1619816400
+        },
+        "endDate": {
+          "type": "number",
+          "example": 1621857636
+        },
+        "limit": {
+          "type": "number"
+        },
+        "user": {
+          "type": "string",
+          "example": "blauser"
+        },
+        "currency": {
+          "type": "string",
+          "example": "UAH"
+        },
+        "symbol": {
+          "type": "string",
+          "example": "WAIV"
+        }
+      }
+    },
+    "engineReportWallet": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "symbol": {
+          "type": "string"
+        } ,
+        "operation": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "_id": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "number"
+        },
+        "blockNumber": {
+          "type": "number"
+        },
+        "checked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "engineReportStatus": {
+      "type": "object",
+      "properties": {
+        "reportId": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        } ,
+        "currency": {
+          "type": "string"
+        },
+        "startDate": {
+          "type": "string"
+        },
+        "endDate": {
+          "type": "string"
+        },
+        "filterAccounts": {
+          "type": "array",
+          "items": {
+            "type":"string"
+          }
+        },
+        "accounts": {
+          "type": "array",
+          "items": {
+            "type":"string"
+          }
+        },
+        "deposits": {
+          "type": "string"
+        } ,
+        "withdrawals": {
+          "type": "string"
+        } ,
+        "status": {
           "type": "string"
         }
       }
