@@ -37,6 +37,12 @@ exports.schema = [
     wobjects_path: 'wobjects',
   },
   {
+    path: '/wobjects/search-area',
+    method: 'POST',
+    case: 'case4',
+    wobjects_path: 'wobjects',
+  },
+  {
     path: '/wobjects/search-default',
     method: 'POST',
     case: 'case4',
