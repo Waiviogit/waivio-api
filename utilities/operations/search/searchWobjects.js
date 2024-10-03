@@ -468,10 +468,10 @@ const makePipelineForDrinksAndDishes = ({
 };
 
 const searchByArea = async ({
-  box, map, object_type, app, sample,
+  map, object_type, app, sample, string,
 }) => {
   const mainPipe = matchSitesPipe({
-    box, map, object_type,
+    map, object_type, string,
   });
   const social = checkForSocialSite(app?.parentHost ?? '');
 
