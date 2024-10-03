@@ -294,14 +294,6 @@ exports.searchAreaSchema = Joi.object().keys({
     .default(5),
   userName: Joi.string(),
   string: Joi.string(),
-  map: Joi.object().keys({
-    coordinates: Joi
-      .array()
-      .ordered(
-        Joi.number().min(-180).max(180),
-        Joi.number().min(-90).max(90),
-      ),
-    radius: Joi.number().min(0),
-  }),
+  box: boxScheme,
   object_type: Joi.string(),
 }).options(options);
