@@ -311,27 +311,18 @@ const getTagCategoriesForFilter = async () => {
   return { result: tagCategories };
 };
 
-const getFilteredTagCategories = ({ objects, tagCategories }) => {
+const getFilteredTagCategories = ({ tags, tagCategories }) => {
   const tagCategoryFilters = [];
 
-  const fields = _.chain(objects)
-    .map('fields')
-    .flatten()
-    .filter((f) => _.includes(tagCategories, f.tagCategory))
-    .value();
-
   for (const category of tagCategories) {
-    const categoryFields = getUniqArrayWithScore(
-      _.map(_.filter(fields, (f) => category === f.tagCategory), 'body'),
-    );
-    if (_.isEmpty(categoryFields)) continue;
-    const tags = _.chain(categoryFields).orderBy(['score'], ['desc']).map('value').take(3)
-      .value();
+    const categoryTags = tags.find((el) => el.tagCategory === category);
+
+    const tagsArr = _.take(categoryTags?.tags, 3);
 
     tagCategoryFilters.push({
       tagCategory: category,
-      tags,
-      hasMore: categoryFields.length > tags.length,
+      tags: tagsArr,
+      hasMore: categoryTags?.tags?.length > tagsArr.length,
     });
   }
 
@@ -339,23 +330,17 @@ const getFilteredTagCategories = ({ objects, tagCategories }) => {
 };
 
 const getMoreTagsForCategory = ({
-  objects, tagCategory, skip, limit,
+  objects, skip, limit,
 }) => {
-  const fields = _.chain(objects)
-    .map('fields')
-    .flatten()
-    .filter((f) => f.tagCategory === tagCategory)
-    .value();
+  const tagCategories = objects[0];
 
-  const categoryFields = getUniqArrayWithScore(
-    _.map(fields, 'body'),
-  );
-  const tags = _.chain(categoryFields).orderBy(['score'], ['desc']).map('value').slice(skip, skip + limit)
-    .value();
+  const tags = _.slice(tagCategories?.tags, skip, skip + limit);
+
+  const hasMore = tags?.length === limit;
 
   return {
     tags,
-    hasMore: categoryFields.length > tags.length + skip,
+    hasMore,
   };
 };
 
