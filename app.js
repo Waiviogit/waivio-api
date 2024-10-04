@@ -50,7 +50,7 @@ app.use((err, req, res, next) => {
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
   // render the error page
-  console.log(JSON.stringify(err, null, 2));
+  console.log(err?.stack);
   res.status(err.status || 500).json({ message: err.message });
 });
 
