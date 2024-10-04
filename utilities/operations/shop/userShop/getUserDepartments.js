@@ -79,7 +79,7 @@ const getTopDepartments = async ({
   }
 
   await setCachedData({
-    key, data: { result: orderedDepartments }, ttl: TTL_TIME.THIRTY_MINUTES,
+    key, data: { result: orderedDepartments }, ttl: TTL_TIME.FIVE_MINUTES,
   });
 
   return { result: orderedDepartments };

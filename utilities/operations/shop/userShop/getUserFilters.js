@@ -56,17 +56,6 @@ const getUserObjects = async ({
     schema,
   });
 
-  const pipe = {
-    ...userFilter,
-    ...objectTypeCondition,
-    'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    ...(!_.isEmpty(path) && departmentsCondition),
-    ...(tagCategory ? { 'fields.tagCategory': tagCategory } : { 'fields.tagCategory': { $exists: true } }),
-  };
-
-  console.log('AGGREGATION');
-  console.log(JSON.stringify(pipe, null, 2));
-
   const { wobjects } = await Wobj.fromAggregation([{
     $match: {
       ...userFilter,
