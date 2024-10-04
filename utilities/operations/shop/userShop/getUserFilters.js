@@ -7,20 +7,61 @@ const {
 } = require('constants/wobjectsData');
 const shopHelper = require('utilities/helpers/shopHelper');
 const { SHOP_ITEM_RATINGS } = require('constants/shop');
+const {
+  UNCATEGORIZED_DEPARTMENT,
+  OTHERS_DEPARTMENT,
+} = require('../../../../constants/departments');
+const { getTopDepartments } = require('./getUserDepartments');
+
+const getDepartmentsCondition = async ({
+  path,
+  userName,
+  app,
+  userFilter,
+  schema,
+}) => {
+  if (!path?.length) return;
+  if (path[0] === UNCATEGORIZED_DEPARTMENT) {
+    return { $or: [{ departments: [] }, { departments: null }] };
+  }
+  if (path[0] === OTHERS_DEPARTMENT) {
+    if (path[1]) return { departments: path[1] };
+
+    const { result } = await getTopDepartments({
+      userName,
+      app,
+      userFilter,
+      schema,
+      path,
+      name: OTHERS_DEPARTMENT,
+    });
+
+    return { departments: { $in: _.map(result, 'name') } };
+  }
+  return { departments: { $all: path } };
+};
 
 const getUserObjects = async ({
   userName, tagCategory, path, app, schema,
 }) => {
-  const userFilter = await shopHelper.getUserFilter({ userName, app });
+  const userFilter = await shopHelper.getUserFilter({ userName, app, schema });
 
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
+
+  const departmentsCondition = await getDepartmentsCondition({
+    path,
+    userName,
+    app,
+    userFilter,
+    schema,
+  });
 
   const { wobjects } = await Wobj.fromAggregation([{
     $match: {
       ...userFilter,
       ...objectTypeCondition,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
-      ...(!_.isEmpty(path) && { departments: { $all: path } }),
+      ...(!_.isEmpty(path) && departmentsCondition),
       ...(tagCategory ? { 'fields.tagCategory': tagCategory } : { 'fields.tagCategory': { $exists: true } }),
     },
   },
