@@ -311,11 +311,11 @@ const getTagCategoriesForFilter = async () => {
   return { result: tagCategories };
 };
 
-const getFilteredTagCategories = ({ tags, tagCategories }) => {
+const getFilteredTagCategories = ({ tags = [], tagCategories }) => {
   const tagCategoryFilters = [];
 
   for (const category of tagCategories) {
-    const categoryTags = tags.find((el) => el.tagCategory === category);
+    const categoryTags = tags.find((el) => el?.tagCategory === category);
 
     const tagsArr = _.take(categoryTags?.tags, 3);
 
