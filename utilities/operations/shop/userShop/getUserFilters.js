@@ -15,18 +15,40 @@ const getUserObjects = async ({
 
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
 
-  const { result } = await Wobj.findObjects({
-    filter: {
+  const { wobjects } = await Wobj.fromAggregation([{
+    $match: {
       ...userFilter,
       ...objectTypeCondition,
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
       ...(!_.isEmpty(path) && { departments: { $all: path } }),
-      ...(tagCategory && { 'fields.tagCategory': tagCategory }),
+      ...(tagCategory ? { 'fields.tagCategory': tagCategory } : { 'fields.tagCategory': { $exists: true } }),
     },
-    projection: { fields: 1 },
-  });
+  },
+  {
+    $unwind: {
+      path: '$fields',
+    },
+  },
+  {
+    $match: {
+      'fields.tagCategory': tagCategory || { $exists: true },
+    },
+  },
+  {
+    $group: {
+      _id: '$fields.tagCategory',
+      tags: { $addToSet: '$fields.body' },
+    },
+  },
+  {
+    $project: {
+      tagCategory: '$_id',
+      tags: 1,
+    },
+  },
+  ]);
 
-  return result;
+  return wobjects;
 };
 
 const getMoreTagFilters = async ({
@@ -55,12 +77,12 @@ const getUserFilters = async ({
   const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
   if (error) return { error };
 
-  const objects = await getUserObjects({
+  const tags = await getUserObjects({
     userName, path, app, schema,
   });
 
   const tagCategoryFilters = shopHelper
-    .getFilteredTagCategories({ objects, tagCategories });
+    .getFilteredTagCategories({ tags, tagCategories });
 
   return {
     result: {
