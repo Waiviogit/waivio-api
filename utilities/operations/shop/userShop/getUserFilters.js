@@ -88,7 +88,7 @@ const getUserObjects = async ({
     },
   },
   ]);
-  if (wobjects) return [];
+  if (!wobjects) return [];
 
   return wobjects;
 };
