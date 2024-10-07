@@ -410,3 +410,9 @@ exports.getParentHost = async (req, res, next) => {
 
   return res.status(200).json(result);
 };
+
+exports.getDescription = async (req, res, next) => {
+  const result = await sitesHelper.getDescription({ app: req.appData });
+
+  return res.status(200).json(result);
+};

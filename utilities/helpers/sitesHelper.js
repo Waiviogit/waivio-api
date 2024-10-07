@@ -19,6 +19,8 @@ const _ = require('lodash');
 const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
 const asyncLocalStorage = require('../../middlewares/context/context');
+const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
+const { parseJson } = require('./jsonHelper');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -401,4 +403,28 @@ exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.inclu
 exports.getAdSense = async ({ host }) => {
   const { result } = await App.findOne({ host });
   return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
+};
+
+exports.getDescription = async ({ app }) => {
+  const userSite = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
+  if (userSite) {
+    const userName = app?.configuration?.shopSettings?.value;
+    const { user } = await User.getOne(userName);
+
+    const parsedData = parseJson(user?.posting_json_metadata, null);
+    if (!parsedData) return '';
+    return { result: parsedData?.profile?.about ?? '' };
+  }
+
+  const objectPermlink = app?.configuration?.shopSettings?.value;
+  if (!objectPermlink) return { result: '' };
+
+  const { wObject } = await Wobj.getOne(objectPermlink);
+  if (!wObject) return { result: '' };
+
+  const processed = await processWobjects({
+    wobjects: [wObject], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
+  });
+
+  return { result: processed.description ?? '' };
 };
