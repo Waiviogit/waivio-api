@@ -124,6 +124,7 @@ exports.FIRST_LOAD_FIELDS = [
   'language',
   'status',
   'host',
+  'owner',
 ];
 
 exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';

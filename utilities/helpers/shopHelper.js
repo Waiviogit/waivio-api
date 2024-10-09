@@ -311,11 +311,11 @@ const getTagCategoriesForFilter = async () => {
   return { result: tagCategories };
 };
 
-const getFilteredTagCategories = ({ tags, tagCategories }) => {
+const getFilteredTagCategories = ({ tags = [], tagCategories }) => {
   const tagCategoryFilters = [];
 
   for (const category of tagCategories) {
-    const categoryTags = tags.find((el) => el.tagCategory === category);
+    const categoryTags = tags.find((el) => el?.tagCategory === category);
 
     const tagsArr = _.take(categoryTags?.tags, 3);
 
@@ -361,22 +361,29 @@ const getUserFilter = async ({
   const users = social && isMainObject
     ? [...new Set([userName, ...app.authority])]
     : [userName];
-  const orFilter = [];
+
   const deselectLinks = [];
+  const wobjectsLinks = [];
 
   for (const acc of users) {
     const { user } = await User.getOne(acc, SELECT_USER_CAMPAIGN_SHOP);
     const hideLinkedObjects = _.get(user, getPathToHideConfig(schema), false);
     const wobjectsFromPosts = await Post.getProductLinksFromPosts({ userName: acc });
-    orFilter.push(...[
-      { 'authority.ownership': acc },
-      { 'authority.administrative': acc },
-    ]);
+
     if (!_.isEmpty(wobjectsFromPosts) && !hideLinkedObjects) {
-      orFilter.push({ author_permlink: { $in: wobjectsFromPosts } });
+      wobjectsLinks.push(...wobjectsFromPosts);
     }
+
     const deselect = await userShopDeselectModel.findUsersLinks({ userName: acc });
     if (deselect?.length) deselectLinks.push(...deselect);
+  }
+
+  const orFilter = [
+    { 'authority.ownership': { $in: users } },
+    { 'authority.administrative': { $in: users } },
+  ];
+  if (!_.isEmpty(wobjectsLinks)) {
+    orFilter.push({ author_permlink: { $in: wobjectsLinks } });
   }
 
   return {

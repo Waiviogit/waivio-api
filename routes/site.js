@@ -59,5 +59,7 @@ sitesRoutes.route('/sites/all-prefetches')
 sitesRoutes.route('/sites/affiliate')
   .get(reqTimeMonitor, SitesController.getAffiliateList)
   .put(reqTimeMonitor, SitesController.updateAffiliateList);
+sitesRoutes.route('/sites/description')
+  .get(reqTimeMonitor, SitesController.getDescription);
 
 module.exports = sitesRoutes;
