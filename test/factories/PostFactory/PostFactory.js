@@ -6,7 +6,7 @@ const Create = async ({
   reblogged, depth, author, author_weight, totalVoteWeight, parentAuthor, additionsForMetadata = {}, onlyData,
   additionsForPost = {}, active_votes = [], app, rootAuthor, permlink, wobjects, children,
   pending_payout_value, curator_payout_value, cashout_time, parentPermlink, blocked,
-  reblog_to = {}, fullObjects,
+  reblog_to = {}, fullObjects, total_rewards_WAIV, total_payout_WAIV, net_rshares_WAIV,
 } = {}) => { // additionsForMetadata(Post) must be an Object
   const jsonMetadata = {
     community: 'waiviotest',
@@ -42,6 +42,9 @@ const Create = async ({
     pending_payout_value,
     curator_payout_value,
     cashout_time,
+    total_rewards_WAIV,
+    total_payout_WAIV,
+    net_rshares_WAIV,
   };
 
   if (fullObjects) {
