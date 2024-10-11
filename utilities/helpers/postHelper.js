@@ -335,7 +335,7 @@ const sponsorObligationsNewReview = async ({
 
   for (const campaign of campaigns) {
     const {
-      rewardInUSD, users, payoutToken, type, guideName, payoutTokenRateUSD, _id,
+      rewardInUSD, users, payoutToken, type, guideName, payoutTokenRateUSD, _id, name,
     } = campaign;
     const tokenRate = _.find(symbols, (el) => el.symbol === payoutToken)
       ?.tokenRate ?? payoutTokenRateUSD;
@@ -345,6 +345,7 @@ const sponsorObligationsNewReview = async ({
       reservationPermlink: users[0]?.reservationPermlink,
       guideName,
       type,
+      name,
       campaignId: _id.toString(),
     });
 
