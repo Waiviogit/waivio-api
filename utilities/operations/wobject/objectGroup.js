@@ -6,6 +6,15 @@ const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 
+const USER_PROJECTION = {
+  _id: 1,
+  name: 1,
+  alias: 1,
+  last_posts_count: 1,
+  followers_count: 1,
+  wobjects_weight: 1,
+};
+
 const getByExpertise = async ({
   links = [], limit, lastName = '', exclude,
 }) => {
@@ -69,13 +78,7 @@ const getByExpertise = async ({
       },
     },
     {
-      $project: {
-        _id: 1,
-        name: 1,
-        last_posts_count: 1,
-        followers_count: 1,
-        wobjects_weight: 1,
-      },
+      $project: USER_PROJECTION,
     },
   ];
 
@@ -147,13 +150,7 @@ const getByFollowers = async ({
       $limit: limit,
     },
     {
-      $project: {
-        _id: 1,
-        name: 1,
-        last_posts_count: 1,
-        followers_count: 1,
-        wobjects_weight: 1,
-      },
+      $project: USER_PROJECTION,
     },
   );
 
@@ -186,13 +183,7 @@ const getAdditionalUsers = async ({ names, lastName, exclude }) => {
       },
     },
     {
-      $project: {
-        _id: 1,
-        name: 1,
-        last_posts_count: 1,
-        followers_count: 1,
-        wobjects_weight: 1,
-      },
+      $project: USER_PROJECTION,
     },
   );
 
