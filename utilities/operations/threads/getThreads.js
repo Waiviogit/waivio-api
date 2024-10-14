@@ -34,7 +34,7 @@ const byUser = async ({
   const { result: muted } = await mutedUserModel.find({ condition: { mutedBy: userName } });
   const { result } = await ThreadModel.find({
     filter: {
-      $or: [{ mentions: user }, { author: user }],
+      $or: [{ mentions: user }, { author: user, bulkMessage: false }],
       ...(muted.length && { author: { $nin: _.map(muted, 'userName') } }),
     },
     options: {
