@@ -271,7 +271,10 @@ const getLikedSum = ({
   post, ratio, payoutToken, guideName, bots,
 }) => {
   let likedSum = 0;
-  const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), guideName], v.voter));
+  const registeredVotes = _.filter(
+    post.active_votes,
+    (v) => _.includes([..._.map(bots, 'botName'), guideName], v.voter) && !v.fake,
+  );
   for (const el of registeredVotes) {
     likedSum += (ratio * _.get(el, `rshares${payoutToken}`, 0));
   }
@@ -319,15 +322,12 @@ const sponsorObligationsNewReview = async ({
 
   const bots = await SponsorsUpvote.getBotsByPost(post);
 
-  const symbols = await Promise.all(campaigns.map(
-    async (el) => {
-      const { result: tokenRate } = await currenciesRequests
-        .getEngineRate({ token: el.payoutToken });
+  const campaignSymbols = _.uniq(campaigns.map((el) => el.payoutToken));
 
-      return {
-        symbol: el.payoutToken,
-        tokenRate: tokenRate?.USD,
-      };
+  const symbols = await Promise.all(campaignSymbols.map(
+    async (el) => {
+      const { result: tokenRate } = await currenciesRequests.getEngineRate({ token: el });
+      return { symbol: el, tokenRate: tokenRate?.USD };
     },
   ));
 
