@@ -598,8 +598,7 @@ const getLinkFromMenuItem = ({ mainObjectPermlink, menu }) => {
 };
 
 const getLinkToPageLoad = (obj) => {
-  if (asyncLocalStorage.getStore()
-    .get('device') === DEVICE.MOBILE) {
+  if (asyncLocalStorage.getStore()?.get('device') === DEVICE.MOBILE) {
     return obj.object_type === OBJECT_TYPES.HASHTAG
       ? `/object/${obj.author_permlink}`
       : `/object/${obj.author_permlink}/about`;

@@ -24,7 +24,8 @@
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha",
     "addVectors": "node utilities/operations/assistant/migration/up.js",
-    "removeVectors": "node utilities/operations/assistant/migration/down.js"
+    "removeVectors": "node utilities/operations/assistant/migration/down.js",
+    "createCustomVStore": "node utilities/operations/assistant/migration/customByApp.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.485.0",
