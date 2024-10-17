@@ -15,3 +15,9 @@ exports.find = async ({ condition, select = {}, sort = {} }) => {
     return { error };
   }
 };
+
+exports.findMutedBy = async ({ userName }) => {
+  if (!userName) return [];
+  const { result } = await this.find({ condition: { mutedBy: userName } });
+  return result.map((el) => el.userName);
+};

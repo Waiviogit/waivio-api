@@ -1,4 +1,4 @@
-const { CampaignV2, CampaignPayments } = require('models');
+const { CampaignV2, CampaignPayments, mutedUserModel } = require('models');
 const _ = require('lodash');
 const redisGetter = require('utilities/redis/redisGetter');
 const moment = require('moment');
@@ -43,11 +43,13 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
   const userName = _.get(user, 'name');
   const assignedObjects = await findAssignedMainObjects(userName);
   const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
+  const mutedNames = await mutedUserModel.findMutedBy({ userName });
 
   const { result = [] } = await CampaignV2.aggregate([
     {
       $match: {
         status: CAMPAIGN_STATUSES.ACTIVE,
+        ...(mutedNames.length && { guideName: { $nin: mutedNames } }),
         $or: [
           { objects: { $in: permlinks } },
           { requiredObject: { $in: permlinks } },
@@ -292,9 +294,7 @@ const addTotalPayedToCampaigns = async (campaigns) => {
 
     const matchedCampaigns = _.filter(campaigns, (c) => c.payoutToken === payoutToken);
     for (const matchedCampaign of matchedCampaigns) {
-      const payedRecord = _.find(
-        guidesPayables, (gp) => gp.guideName === matchedCampaign.guideName,
-      );
+      const payedRecord = _.find(guidesPayables, (gp) => gp.guideName === matchedCampaign.guideName);
       campaignsWithPayed.push({
         ...matchedCampaign,
         totalPayed: _.get(payedRecord, 'payed', 0),
@@ -344,15 +344,15 @@ const addNewCampaignsToObjects = async ({
 
   if (_.isEmpty(campaignsWithPayed)) return;
   for (const object of wobjects) {
-    const primaryCampaigns = _.filter(
-      campaignsWithPayed, { requiredObject: object.author_permlink },
-    );
+    const primaryCampaigns = _.filter(campaignsWithPayed, { requiredObject: object.author_permlink });
     if (!_.isEmpty(primaryCampaigns) && !onlySecondary) {
       addPrimaryCampaign({ object, primaryCampaigns });
     }
 
-    const secondaryCampaigns = _.filter(campaignsWithPayed,
-      (campaign) => _.includes(campaign.objects, object.author_permlink));
+    const secondaryCampaigns = _.filter(
+      campaignsWithPayed,
+      (campaign) => _.includes(campaign.objects, object.author_permlink),
+    );
     if (!_.isEmpty(secondaryCampaigns)) addSecondaryCampaigns({ object, secondaryCampaigns });
   }
 };

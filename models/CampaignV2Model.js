@@ -1,6 +1,6 @@
 const { CampaignV2 } = require('database').models;
 
-exports.find = async ({ filter, projection = {}, options = {} }) => {
+const find = async ({ filter, projection = {}, options = {} }) => {
   try {
     return { result: await CampaignV2.find(filter, projection, options).lean() };
   } catch (error) {
@@ -8,7 +8,7 @@ exports.find = async ({ filter, projection = {}, options = {} }) => {
   }
 };
 
-exports.aggregate = async (pipeline) => {
+const aggregate = async (pipeline) => {
   try {
     return { result: await CampaignV2.aggregate(pipeline) };
   } catch (error) {
@@ -16,10 +16,42 @@ exports.aggregate = async (pipeline) => {
   }
 };
 
-exports.findOne = async ({ filter, projection = {}, options = {} }) => {
+const findOne = async ({ filter, projection = {}, options = {} }) => {
   try {
     return { result: await CampaignV2.findOne(filter, projection, options).lean() };
   } catch (error) {
     return { error };
   }
+};
+
+const findCompletedByPost = async (post) => {
+  const { result } = await find({
+    filter: {
+      users: {
+        $elemMatch: {
+          name: post.author,
+          reviewPermlink: post.permlink,
+          status: 'completed',
+        },
+      },
+    },
+    projection: {
+      rewardInUSD: 1,
+      'users.$': 1,
+      payoutToken: 1,
+      type: 1,
+      guideName: 1,
+      payoutTokenRateUSD: 1,
+      name: 1,
+    },
+  });
+
+  return result;
+};
+
+module.exports = {
+  findOne,
+  aggregate,
+  find,
+  findCompletedByPost,
 };
