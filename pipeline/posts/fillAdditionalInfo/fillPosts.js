@@ -22,6 +22,8 @@ const fillPosts = async (data, req) => {
     'params.userName',
     _.get(req, 'headers.follower', req.headers.following),
   );
+  const requestUserName = req.headers.follower;
+
   // separate requests which return array of posts and which return single post
   switch (currentSchema.case) {
     case 1:
@@ -32,7 +34,7 @@ const fillPosts = async (data, req) => {
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight(data);
       // if review  add additional sponsor obligations to calculations
-      data = await postHelper.additionalSponsorObligations(data, userName);
+      data = await postHelper.additionalSponsorObligations(data, userName, requestUserName);
       break;
     case 2:
       // replace reblog post blank to source post
@@ -42,7 +44,7 @@ const fillPosts = async (data, req) => {
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight([data], _.get(req, 'headers.app'), userName);
       // if review  add additional sponsor obligations to calculations
-      [data] = await postHelper.additionalSponsorObligations([data], userName);
+      [data] = await postHelper.additionalSponsorObligations([data], userName, requestUserName);
       break;
     case 3:
       // replace reblog post blank to source post
@@ -52,13 +54,13 @@ const fillPosts = async (data, req) => {
       // add current "author_wobjects_weight" to each post;
       await postHelper.addAuthorWobjectsWeight(data.posts);
       // if review  add additional sponsor obligations to calculations
-      data.posts = await postHelper.additionalSponsorObligations(data.posts, userName);
+      data.posts = await postHelper.additionalSponsorObligations(data.posts, userName, requestUserName);
       break;
     case 4:
       const iteratedArray = data[currentSchema.pathToArray];
       for (let i = 0; i < iteratedArray.length; i++) {
         const posts = await postHelper
-          .additionalSponsorObligations([iteratedArray[i][currentSchema.pathToPost]], userName);
+          .additionalSponsorObligations([iteratedArray[i][currentSchema.pathToPost]], userName, requestUserName);
         if (_.isEmpty(posts)) continue;
         data[currentSchema.pathToArray][i][currentSchema.pathToPost] = posts[0];
       }

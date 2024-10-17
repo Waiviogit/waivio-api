@@ -308,7 +308,7 @@ const updateTotalRewards = ({ post, key, reward }) => {
 const sponsorObligationsNewReview = async ({
   post,
   blacklist = [],
-  userName,
+  requestUserName,
 }) => {
   post.blacklisted = blacklist.includes(post.author);
   post.campaigns = [];
@@ -341,7 +341,7 @@ const sponsorObligationsNewReview = async ({
     const tokenRate = _.find(symbols, (el) => el.symbol === payoutToken)
       ?.tokenRate ?? payoutTokenRateUSD;
 
-    if (userName === guideName) {
+    if (requestUserName === guideName) {
       post.campaigns.push({
         reservationRootAuthor: users[0]?.rootName,
         reservationPermlink: users[0]?.reservationPermlink,
@@ -461,13 +461,13 @@ const sponsorObligationsNewReview = async ({
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
  */
-const additionalSponsorObligations = async (posts, userName) => {
+const additionalSponsorObligations = async (posts, userName, requestUserName) => {
   const blacklist = await blacklistModel.getUserBlacklist(userName);
 
   for (const post of posts) {
     if (!post) continue;
     const campaignReview = await CampaignPosts.findOneByPost(post);
-    if (campaignReview) await sponsorObligationsNewReview({ post, blacklist, userName });
+    if (campaignReview) await sponsorObligationsNewReview({ post, blacklist, requestUserName });
   }
   return posts;
 };
