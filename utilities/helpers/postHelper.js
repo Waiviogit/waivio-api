@@ -308,6 +308,7 @@ const updateTotalRewards = ({ post, key, reward }) => {
 const sponsorObligationsNewReview = async ({
   post,
   blacklist = [],
+  userName,
 }) => {
   post.blacklisted = blacklist.includes(post.author);
   post.campaigns = [];
@@ -340,14 +341,16 @@ const sponsorObligationsNewReview = async ({
     const tokenRate = _.find(symbols, (el) => el.symbol === payoutToken)
       ?.tokenRate ?? payoutTokenRateUSD;
 
-    post.campaigns.push({
-      reservationRootAuthor: users[0]?.rootName,
-      reservationPermlink: users[0]?.reservationPermlink,
-      guideName,
-      type,
-      name,
-      campaignId: _id.toString(),
-    });
+    if (userName === guideName) {
+      post.campaigns.push({
+        reservationRootAuthor: users[0]?.rootName,
+        reservationPermlink: users[0]?.reservationPermlink,
+        guideName,
+        type,
+        name,
+        campaignId: _id.toString(),
+      });
+    }
 
     const rewardInToken = new BigNumber(rewardInUSD)
       .dividedBy(tokenRate).toNumber();
@@ -464,7 +467,7 @@ const additionalSponsorObligations = async (posts, userName) => {
   for (const post of posts) {
     if (!post) continue;
     const campaignReview = await CampaignPosts.findOneByPost(post);
-    if (campaignReview) await sponsorObligationsNewReview({ post, blacklist });
+    if (campaignReview) await sponsorObligationsNewReview({ post, blacklist, userName });
   }
   return posts;
 };
