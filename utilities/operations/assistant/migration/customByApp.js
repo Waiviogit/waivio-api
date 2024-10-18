@@ -21,27 +21,27 @@ const getApp = async (host) => {
 };
 
 const addDocsToStore = async ({ store, textArray }) => {
-  // const docs = await textSplitter.createDocuments(textArray);
-  //
-  // await store.addDocuments(docs);
+  const docs = await textSplitter.createDocuments(textArray);
+
+  await store.addDocuments(docs);
   console.log(`${textArray.length} added to store`);
 };
 
 const getStore = () => {
-  // const client = weaviate.client({
-  //   scheme: 'http',
-  //   host: process.env.WEAVIATE_CONNECTION_STRING,
-  // });
-  //
-  // const store = new WeaviateStore(
-  //   new OpenAIEmbeddings(),
-  //   {
-  //     client,
-  //     indexName: 'testCustom',
-  //     textKey: 'pageContent',
-  //   },
-  // );
-  // return store;
+  const client = weaviate.client({
+    scheme: 'http',
+    host: process.env.WEAVIATE_CONNECTION_STRING,
+  });
+
+  const store = new WeaviateStore(
+    new OpenAIEmbeddings(),
+    {
+      client,
+      indexName: 'testCustom',
+      textKey: 'pageContent',
+    },
+  );
+  return store;
 };
 
 const processAppToStore = async (host) => {
