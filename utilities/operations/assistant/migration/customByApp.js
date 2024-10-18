@@ -49,7 +49,10 @@ const processAppToStore = async (host) => {
   await redis.setupRedisConnections();
   const app = await getApp(host);
   const store = getStore();
-  const asyncIterator = WObject.find({ 'authority.administrative': { $in: [app.owner, ...app.authority] } });
+  const asyncIterator = WObject.find({
+    'authority.administrative': { $in: [app.owner, ...app.authority] },
+    object_type: { $in: ['product', 'list', 'book'] },
+  });
 
   const textArray = [];
 
@@ -61,7 +64,7 @@ const processAppToStore = async (host) => {
       app,
     });
 
-    const line = `name: ${processed.name}, avatar: ${processed.avatar}, link: https://${host}${processed.defaultShowLink}, ${processed.description ? `description: ${processed.description}` : ''}`;
+    const line = `[${processed.name}](https://${host}${processed.defaultShowLink}), [avatar](${processed.avatar}).`;
     textArray.push(line);
 
     if (textArray.length >= 100) {
@@ -78,7 +81,24 @@ const processAppToStore = async (host) => {
   process.exit();
 };
 
+const down = async () => {
+  try {
+    const client = weaviate.client({
+      scheme: 'http',
+      host: process.env.WEAVIATE_CONNECTION_STRING,
+    });
+
+    await client.schema
+      .classDeleter()
+      .withClassName(INDEX_NAME)
+      .do();
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 (async () => {
-  await processAppToStore('cleangirllook.com');
+  // await down();
+  // await processAppToStore('cleangirllook.com');
   console.log();
 })();
