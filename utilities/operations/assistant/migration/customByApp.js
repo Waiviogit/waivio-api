@@ -11,6 +11,8 @@ const textSplitter = new RecursiveCharacterTextSplitter({
   chunkSize: 2000,
 });
 
+const INDEX_NAME = 'CleanGirl';
+
 const getApp = async (host) => {
   try {
     const result = await App.findOne({ host }).lean();
@@ -24,7 +26,6 @@ const addDocsToStore = async ({ store, textArray }) => {
   const docs = await textSplitter.createDocuments(textArray);
 
   await store.addDocuments(docs);
-  console.log(`${textArray.length} added to store`);
 };
 
 const getStore = () => {
@@ -37,7 +38,7 @@ const getStore = () => {
     new OpenAIEmbeddings(),
     {
       client,
-      indexName: 'testCustom',
+      indexName: INDEX_NAME,
       textKey: 'pageContent',
     },
   );
@@ -60,7 +61,7 @@ const processAppToStore = async (host) => {
       app,
     });
 
-    const line = `name: ${processed.name}, avatar: ${processed.avatar}, link: https://${host}${processed.defaultShowLink}`;
+    const line = `name: ${processed.name}, avatar: ${processed.avatar}, link: https://${host}${processed.defaultShowLink}, ${processed.description ? `description: ${processed.description}` : ''}`;
     textArray.push(line);
 
     if (textArray.length >= 100) {
