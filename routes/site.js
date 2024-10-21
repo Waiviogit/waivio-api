@@ -61,5 +61,7 @@ sitesRoutes.route('/sites/affiliate')
   .put(reqTimeMonitor, SitesController.updateAffiliateList);
 sitesRoutes.route('/sites/description')
   .get(reqTimeMonitor, SitesController.getDescription);
+sitesRoutes.route('/sites/assistant/custom')
+  .post(reqTimeMonitor, SitesController.updateAiStore);
 
 module.exports = sitesRoutes;
