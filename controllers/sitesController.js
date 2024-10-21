@@ -16,6 +16,7 @@ const {
 } = require('../constants/common');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
+const { updateAiCustomStore } = require('../utilities/operations/assistant/migration/customByApp');
 
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
@@ -415,4 +416,18 @@ exports.getDescription = async (req, res, next) => {
   const result = await sitesHelper.getDescription({ app: req.appData });
 
   return res.status(200).json(result);
+};
+
+exports.updateAiStore = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.updateAiSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+  const { result, error } = await updateAiCustomStore(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
 };

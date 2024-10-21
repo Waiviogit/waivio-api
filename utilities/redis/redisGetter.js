@@ -120,3 +120,11 @@ exports.keys = ({ key, client = mainFeedsCacheClient }) => client.KEYS(key);
 exports.zrangeWithScores = async ({
   key, start, end, client = importUserClient,
 }) => client.ZRANGE_WITHSCORES(key, start, end);
+
+exports.ttlAsync = async ({ key, client = importUserClient }) => {
+  try {
+    return { result: await client.TTL(key) };
+  } catch (error) {
+    return { error };
+  }
+};
