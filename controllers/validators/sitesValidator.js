@@ -161,3 +161,8 @@ exports.getAdSenseSchema = Joi.object().keys({
 exports.getParentHostSchema = Joi.object().keys({
   host: Joi.string().required(),
 });
+
+exports.updateAiSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  host: Joi.string().required(),
+});

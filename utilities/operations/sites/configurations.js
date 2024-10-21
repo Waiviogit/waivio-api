@@ -9,6 +9,7 @@ const {
 } = require('../../helpers/cacheHelper');
 const jsonHelper = require('../../helpers/jsonHelper');
 const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
+const { updateAiCustomStore } = require('../assistant/migration/customByApp');
 
 /** For different types of sites, different configurations will be available,
  * in this method we send to the front a list of allowed configurations for this site */
@@ -29,15 +30,24 @@ exports.getConfigurationsList = async (host) => {
   return { result: _.get(result, 'configuration') };
 };
 
-exports.saveConfigurations = async (params) => {
-  const { result: app, error } = await App.findOne(
-    { host: params.host, owner: params.userName, inherited: true },
-  );
+const deleteConfigCache = async ({ host }) => {
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:getConfigurationsList:${host}`,
+    client: mainFeedsCacheClient,
+  });
+  await redisSetter.deleteKey({
+    key: `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${host}`,
+    client: mainFeedsCacheClient,
+  });
+};
+
+exports.saveConfigurations = async ({ host, userName, configuration }) => {
+  const { result: app, error } = await App.findOne({ host, owner: userName, inherited: true });
   if (error) return { error };
   if (!app) return { error: { status: 404, message: 'App not found' } };
 
   const dbConfigKeys = _.get(app.configuration, 'configurationFields');
-  const keysForUpdate = Object.keys(_.omit(params.configuration, ['configurationFields']));
+  const keysForUpdate = Object.keys(_.omit(configuration, ['configurationFields']));
 
   /** Validate configuration keys, for different sites - can be different keys */
   if (_.some(keysForUpdate, (el) => !_.includes(dbConfigKeys, el))) {
@@ -45,27 +55,21 @@ exports.saveConfigurations = async (params) => {
   }
 
   /** Check wobject to exist */
-  if (_.get(params, 'configuration.aboutObject')) {
-    const { result } = await Wobj.findOne({ author_permlink: params.configuration.aboutObject });
+  if (configuration?.aboutObject) {
+    const { result } = await Wobj.findOne({ author_permlink: configuration.aboutObject });
     if (!result) return { error: { status: 422, message: 'Configuration validation failed, aboutObject not exist' } };
   }
+  /** update assistant knowledge */
+  if (configuration?.advancedAI) updateAiCustomStore({ userName, host });
 
   const { result: updatedApp, error: updateError } = await App.findOneAndUpdate({ _id: app._id }, {
     configuration: {
       ...app.configuration,
-      ...params.configuration,
+      ...configuration,
     },
   });
   if (updateError) return { error: updateError };
-
-  await redisSetter.deleteKey({
-    key: `${REDIS_KEYS.API_RES_CACHE}:getConfigurationsList:${app.host}`,
-    client: mainFeedsCacheClient,
-  });
-  await redisSetter.deleteKey({
-    key: `${REDIS_KEYS.API_RES_CACHE}:aboutObjectFormat:${app.host}`,
-    client: mainFeedsCacheClient,
-  });
+  await deleteConfigCache({ host: app.host });
 
   const result = await sitesHelper.aboutObjectFormat(updatedApp);
   return { result: _.get(result, 'configuration') };
