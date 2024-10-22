@@ -44,6 +44,8 @@ userRoutes.route('/user/:userName/favorites/map').post(reqTimeMonitor, UserContr
 
 userRoutes.route('/users/search')
   .get(reqTimeMonitor, UserController.searchUsers);
+userRoutes.route('/users/search/host')
+  .post(reqTimeMonitor, UserController.searchUsersByHost);
 userRoutes.route('/user/:userName/userMetadata')
   .put(reqTimeMonitor, UserController.updateUserMetadata)
   .get(reqTimeMonitor, UserController.getUserMetadata);

@@ -1,5 +1,94 @@
-const { User } = require('models');
+const { User, App, UserWobjects } = require('models');
 const _ = require('lodash');
+
+const SEARCH_STRATEGY = {
+  EXPERTISE: 'EXPERTISE',
+  ALL: 'ALL',
+};
+
+const getSearchStrategy = ({ inherited, canBeExtended }) => {
+  if (inherited && !canBeExtended) return SEARCH_STRATEGY.EXPERTISE;
+  return SEARCH_STRATEGY.ALL;
+};
+
+const searchAll = async ({
+  string, configuration, skip, limit,
+}) => searchUsers({ string, limit, skip });
+
+const searchExpertise = async ({
+  string, configuration, skip, limit,
+}) => {
+  if (!configuration?.defaultHashtag) return { users: [], hasMore: false, error: null };
+  const pipeline = [
+    {
+      $match: {
+        author_permlink: configuration.defaultHashtag,
+        weight: { $gt: 1 },
+        ...(string && { user_name: string }),
+      },
+    },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit + 1,
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'user_name',
+        foreignField: 'name',
+        as: 'user',
+      },
+    },
+    {
+      $unwind: {
+        path: '$user',
+        preserveNullAndEmptyArrays: false,
+      },
+    },
+    {
+      $replaceRoot: {
+        newRoot: '$user',
+      },
+    },
+    {
+      $project: {
+        account: '$name',
+        wobjects_weight: 1,
+        followers_count: 1,
+        posting_json_metadata: 1,
+      },
+    },
+  ];
+
+  const { result, error } = await UserWobjects.aggregate(pipeline);
+
+  return {
+    users: _.take(result, limit),
+    hasMore: result?.length > limit,
+    error,
+  };
+};
+
+const searchProcessor = {
+  [SEARCH_STRATEGY.ALL]: searchAll,
+  [SEARCH_STRATEGY.EXPERTISE]: searchExpertise,
+};
+
+const getSiteUsersByHost = async ({
+  host, string, skip, limit,
+}) => {
+  const { app } = await App.getOne({ host });
+  if (!app) return { users: [], hasMore: false, error: null };
+  const { configuration, inherited, canBeExtended } = app;
+  const strategy = getSearchStrategy({ inherited, canBeExtended });
+  const processor = searchProcessor[strategy];
+
+  return processor({
+    configuration, string, skip, limit,
+  });
+};
 
 const makeCountPipeline = ({ string, notGuest }) => {
   const pipeline = [
@@ -10,7 +99,7 @@ const makeCountPipeline = ({ string, notGuest }) => {
   return pipeline;
 };
 
-exports.searchUsers = async ({
+const searchUsers = async ({
   string, limit, skip, notGuest = false,
 }) => {
   if (!string) return getAllUsers({ skip, limit });
@@ -62,4 +151,9 @@ const getAllUsers = async ({ skip, limit }) => {
       })), limit),
     hasMore: users.length > limit,
   };
+};
+
+module.exports = {
+  searchUsers,
+  getSiteUsersByHost,
 };
