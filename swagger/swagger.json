@@ -5018,6 +5018,62 @@
         }
       }
     },
+    "/api/users/search/host": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Search users by name and host",
+        "description": "Search users by name with param \"limit\"",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "searchString",
+            "in": "body",
+            "description": "String to search, when no search string returns top users by wobjects_weight",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "string": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/inline_response_200_4"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/user/{userName}/following_objects": {
       "post": {
         "tags": [
