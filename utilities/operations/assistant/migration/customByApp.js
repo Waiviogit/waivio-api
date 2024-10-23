@@ -1,4 +1,5 @@
 const { App, WObject } = require('database').models;
+const mongoose = require('database').Mongoose;
 const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 const { OpenAIEmbeddings } = require('@langchain/openai');
 const { WeaviateStore } = require('@langchain/weaviate');
@@ -10,10 +11,60 @@ const redisGetter = require('../../../redis/redisGetter');
 const redisSetter = require('../../../redis/redisSetter');
 const { REDIS_KEYS, TTL_TIME } = require('../../../../constants/common');
 const { mainFeedsCacheClient } = require('../../../redis/redis');
+const { getCollectionName } = require('../../../helpers/namesHelper');
 
 const textSplitter = new RecursiveCharacterTextSplitter({
   chunkSize: 2000,
 });
+
+const checkLock = async ({
+  userName,
+  host,
+}) => {
+  const key = `${REDIS_KEYS.UPDATE_AI_STORE}:${userName}:${host}`;
+  const { result: lock } = await redisGetter.getAsync({
+    key,
+    client: mainFeedsCacheClient,
+  });
+  if (lock) {
+    const { result: ttl } = await redisGetter.ttlAsync({
+      key,
+      client: mainFeedsCacheClient,
+    });
+    const timeToNextRequest = moment.utc()
+      .add(ttl, 's')
+      .format();
+    return {
+      result: false,
+      error: {
+        status: 422,
+        message: `Try again on ${timeToNextRequest}`,
+      },
+    };
+  }
+  await redisSetter.setEx({
+    key,
+    value: host,
+    ttl: TTL_TIME.ONE_DAY,
+    client: mainFeedsCacheClient,
+  });
+
+  return {
+    result: true,
+    error: null,
+  };
+};
+
+const releaseLock = async ({
+  userName,
+  host,
+}) => {
+  const key = `${REDIS_KEYS.UPDATE_AI_STORE}:${userName}:${host}`;
+  await redisSetter.deleteKey({
+    key,
+    client: mainFeedsCacheClient,
+  });
+};
 
 const getIndexFromHostName = ({ host }) => {
   const cleanedHostName = host.replace(/[^a-zA-Z0-9]/g, '');
@@ -30,9 +81,12 @@ const getApp = async ({ host }) => {
 };
 
 const addDocsToStore = async ({ store, textArray }) => {
-  const docs = await textSplitter.createDocuments(textArray);
-
-  await store.addDocuments(docs);
+  try {
+    const docs = await textSplitter.createDocuments(textArray);
+    await store.addDocuments(docs);
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
 const getStore = ({ indexName }) => {
@@ -63,29 +117,66 @@ const dropIndex = async ({ indexName }) => {
   }
 };
 
+const getObject = async (object) => {
+  try {
+    const result = await WObject.findOne({ author_permlink: object.author_permlink }).lean();
+    return result;
+  } catch (error) {
+    return null;
+  }
+};
+
+const getCursor = async ({ host }) => {
+  try {
+    const listCollections = await mongoose.connection.useDb('waivio')
+      .listCollections();
+    const collectionName = getCollectionName({ host });
+    const collection = listCollections.find((el) => el.name === collectionName);
+    if (!collection) return null;
+
+    const model = await mongoose.connection.useDb('waivio')
+      .collection(collection.name);
+
+    return model.find();
+  } catch (error) {
+    return null;
+  }
+};
+
+const getLine = ({ processed, host }) => {
+  let line = `[${processed.name}](https://${host}${processed.defaultShowLink}), ![avatar](${processed.avatar}), ${processed.object_type}.`;
+  if (['business', 'restaurant'].includes(processed.object_type) && processed.address) {
+    line += processed.address;
+  }
+  return line;
+};
+
 const createVectorStoreFromAppObjects = async ({ host, app }) => {
   const indexName = getIndexFromHostName({ host });
 
   await dropIndex({ indexName });
   const store = getStore({ indexName });
-  const asyncIterator = WObject.find({
-    'authority.administrative': { $in: [app.owner, ...app.authority] },
-    object_type: { $in: ['product', 'list', 'book'] },
-  });
+
+  const asyncIterator = await getCursor({ host });
+  if (!asyncIterator) {
+    await releaseLock({ userName: app.owner, host });
+    return;
+  }
+  console.log(`[INFO] START CREATE VECTORS FOR ${host}`);
 
   const textArray = [];
 
   for await (const object of asyncIterator) {
+    const objectFromDb = await getObject(object);
+    if (!objectFromDb) continue;
+
     const processed = await processWobjects({
-      wobjects: [object.toObject()],
+      wobjects: [objectFromDb],
       fields: REQUIREDFILDS_WOBJ_LIST,
       returnArray: false,
       app,
     });
-
-    const line = `[${processed.name}](https://${host}${processed.defaultShowLink}), [avatar](${processed.avatar}).`;
-    textArray.push(line);
-
+    textArray.push(getLine({ processed, host }));
     if (textArray.length >= 100) {
       await addDocsToStore({ textArray, store });
       textArray.length = 0;
@@ -96,23 +187,7 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
     await addDocsToStore({ textArray, store });
     textArray.length = 0;
   }
-};
-
-const checkLock = async ({ userName, host }) => {
-  const key = `${REDIS_KEYS.UPDATE_AI_STORE}:${userName}:${host}`;
-  const { result: lock } = await redisGetter.getAsync({
-    key, client: mainFeedsCacheClient,
-  });
-  if (lock) {
-    const { result: ttl } = await redisGetter.ttlAsync({ key, client: mainFeedsCacheClient });
-    const timeToNextRequest = moment.utc().add(ttl, 's').format();
-    return { result: false, error: { status: 422, message: `Try again on ${timeToNextRequest}` } };
-  }
-  await redisSetter.setEx({
-    key, value: host, ttl: TTL_TIME.ONE_DAY, client: mainFeedsCacheClient,
-  });
-
-  return { result: true, error: null };
+  console.log(`[INFO] FINISH CREATE VECTORS FOR ${host}`);
 };
 
 const updateAiCustomStore = async ({ userName, host }) => {
@@ -120,7 +195,6 @@ const updateAiCustomStore = async ({ userName, host }) => {
   if (userName !== app.owner) return { error: { status: 401, message: 'Not Authorized' } };
   const { result, error } = await checkLock({ userName, host });
   if (error) return { error };
-
   createVectorStoreFromAppObjects({ app, host });
 
   return { result };

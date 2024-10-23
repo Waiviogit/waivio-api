@@ -3,7 +3,7 @@ const AppModel = require('models/AppModel');
 const _ = require('lodash');
 const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
 const asyncLocalStorage = require('../middlewares/context/context');
-const { getIndexFromHostName } = require('../utilities/helpers/namesHelper');
+const { getCollectionName } = require('../utilities/helpers/namesHelper');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -392,7 +392,7 @@ exports.getNewsFeedPosts = async ({
 }) => {
   try {
     const lookupToCollection = app?.inherited && !app?.canBeExtended;
-    const collection = getIndexFromHostName({ host: app?.host });
+    const collection = getCollectionName({ host: app?.host });
 
     const pipeline = [{
       $match: condition,
