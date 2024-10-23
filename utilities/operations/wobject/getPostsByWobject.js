@@ -13,6 +13,21 @@ const getRelistedLinks = async (authorPermlink) => {
   return relisted.map((el) => el?.author_permlink);
 };
 
+const POST_RETRIEVER = {
+  REGULAR: 'REGULAR',
+  FEED: 'FEED',
+};
+
+const postsQuery = {
+  [POST_RETRIEVER.REGULAR]: Post.getWobjectPosts,
+  [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
+};
+
+const getPostRetriever = (data) => {
+  if (data.newsPermlink) return postsQuery[POST_RETRIEVER.FEED];
+  return postsQuery[POST_RETRIEVER.REGULAR];
+};
+
 module.exports = async (data) => {
   const groupIdPermlinks = [];
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
@@ -97,11 +112,15 @@ module.exports = async (data) => {
 
   if (conditionError) return { error: conditionError };
 
-  const { posts, error } = await Post.getWobjectPosts({
+  const retriever = getPostRetriever(data);
+
+  const { posts, error } = await retriever({
     condition,
     limit: data.limit,
     skip: data.skip,
+    app: data.app,
   });
+
   if (error) return { error };
 
   if (!_.isEmpty(pinnedLinks) || !_.isEmpty(removeLinks)) {
