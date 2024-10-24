@@ -13,51 +13,67 @@ const USER_PROJECTION = {
   last_posts_count: 1,
   followers_count: 1,
   wobjects_weight: 1,
+  lastActivity: 1,
 };
 
-const getByExpertise = async ({
-  links = [], limit, lastName = '', exclude,
-}) => {
-  if (!links?.length) return [];
+/**
+ * Helper function to build pagination condition for cursor-based pagination.
+ */
+const buildPaginationCondition = (cursor, sortFields) => {
+  if (!cursor || !sortFields.length) return {};
 
-  const secondMatchCondition = {
-    $match: {
-      links: { $all: links },
-      ...(lastName && { _id: { $gt: lastName } }),
-      ...(exclude?.length && { _id: { $nin: exclude } }),
-    },
-  };
+  const conditions = [];
+  for (let i = 0; i < sortFields.length; i++) {
+    const { field } = sortFields[i];
+    const { order } = sortFields[i];
 
-  // To handle the case where both `lastName` and `exclude` exist
-  if (lastName && exclude?.length) {
-    secondMatchCondition.$match._id = {
-      $gt: lastName,
-      $nin: exclude,
-    };
+    const operator = order === 1 ? '$gt' : '$lt';
+
+    const condition = {};
+    // Equal conditions for all previous fields
+    for (let j = 0; j < i; j++) {
+      const prevField = sortFields[j].field;
+      condition[`user.${prevField}`] = cursor[prevField];
+    }
+    // Comparison condition for the current field
+    condition[`user.${field}`] = { [operator]: cursor[field] };
+
+    conditions.push(condition);
   }
 
+  return { $or: conditions };
+};
+
+/**
+ * Fetch users by expertise (links) with sorting and lastActivity filtering.
+ */
+const getByExpertise = async ({
+  links = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
+}) => {
+  if (!links.length) return [];
+
+  const matchConditions = {
+    author_permlink: { $in: links },
+  };
+
+  const paginationCondition = buildPaginationCondition(cursor, sortFields);
+
   const pipe = [
-    {
-      $match: {
-        author_permlink: { $in: links },
-      },
-    },
+    { $match: matchConditions },
     {
       $group: {
         _id: '$user_name',
-        weight: { $sum: '$weight' },
-        links: {
-          $push: '$author_permlink',
-        },
+        totalWeight: { $sum: '$weight' },
       },
     },
-    secondMatchCondition,
-    {
-      $sort: { _id: 1 },
-    },
-    {
-      $limit: limit,
-    },
+  ];
+
+  if (exclude.length) {
+    pipe.push({
+      $match: { _id: { $nin: exclude } },
+    });
+  }
+  pipe.push(...[
     {
       $lookup: {
         from: 'users',
@@ -66,12 +82,27 @@ const getByExpertise = async ({
         as: 'user',
       },
     },
-    {
-      $unwind: {
-        path: '$user',
-        preserveNullAndEmptyArrays: false,
+    { $unwind: '$user' }]);
+
+  if (lastActivityFilter) {
+    pipe.push({
+      $match: {
+        'user.lastActivity': lastActivityFilter,
       },
+    });
+  }
+  if (Object.keys(paginationCondition).length) {
+    pipe.push({ $match: paginationCondition });
+  }
+
+  pipe.push(...[
+    {
+      $sort: sortFields.reduce((acc, field) => {
+        acc[`user.${field.field}`] = field.order;
+        return acc;
+      }, {}),
     },
+    { $limit: limit },
     {
       $replaceRoot: {
         newRoot: '$user',
@@ -80,25 +111,34 @@ const getByExpertise = async ({
     {
       $project: USER_PROJECTION,
     },
-  ];
+  ]);
 
   const { result, error } = await UserWobjects.aggregate(pipe);
-  if (error) return [];
+  if (error) {
+    console.error('Error in getByExpertise:', error);
+    return [];
+  }
   return result;
 };
 
+/**
+ * Fetch users by followers/following with sorting and lastActivity filtering.
+ */
 const getByFollowers = async ({
-  names = [], limit, lastName = '', follower = true, exclude,
+  names = [], limit, cursor, follower = true, exclude = [], lastActivityFilter, sortFields,
 }) => {
-  if (!names?.length) return [];
+  if (!names.length) return [];
+
   const matchCondition = follower ? 'follower' : 'following';
   const localField = follower ? 'following' : 'follower';
 
-  //
+  const paginationCondition = buildPaginationCondition(cursor, sortFields);
+
   const pipe = [
     {
       $match: {
         [matchCondition]: { $in: names },
+        ...(exclude.length && { [localField]: { $nin: exclude } }),
       },
     },
     {
@@ -109,94 +149,100 @@ const getByFollowers = async ({
         as: 'user',
       },
     },
+    { $unwind: '$user' },
+  ];
+  if (lastActivityFilter) {
+    pipe.push({ $match: { 'user.lastActivity': lastActivityFilter } });
+  }
+  if (Object.keys(paginationCondition).length) {
+    pipe.push({ $match: paginationCondition });
+  }
+
+  pipe.push(...[
     {
-      $unwind: {
-        path: '$user',
-        preserveNullAndEmptyArrays: false,
-      },
+      $sort: sortFields.reduce((acc, field) => {
+        acc[`user.${field.field}`] = field.order;
+        return acc;
+      }, {}),
     },
+    { $limit: limit },
     {
       $replaceRoot: {
         newRoot: '$user',
       },
     },
-  ];
-
-  // Conditionally add $match stage if lastName is provided
-  if (lastName) {
-    pipe.push({
-      $match: {
-        name: { $gt: lastName },
-      },
-    });
-  }
-  if (exclude?.length) {
-    pipe.push({
-      $match: {
-        name: { $nin: exclude },
-      },
-    });
-  }
-
-  // Add the remaining stages
-  pipe.push(
-    {
-      $sort: {
-        name: 1,
-        // wobjects_weight: -1, _id: -1,
-      },
-    },
-    {
-      $limit: limit,
-    },
     {
       $project: USER_PROJECTION,
     },
-  );
+  ]);
 
   const { result, error } = await Subscriptions.aggregate(pipe);
-  if (error) return [];
+  if (error) {
+    console.error('Error in getByFollowers:', error);
+    return [];
+  }
   return result;
 };
 
-const getAdditionalUsers = async ({ names, lastName, exclude }) => {
-  if (!names?.length) return [];
+/**
+ * Fetch additional users by namesAdd with sorting and lastActivity filtering.
+ */
+const getAdditionalUsers = async ({
+  names = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
+}) => {
+  if (!names.length) return [];
+
+  const matchConditions = {
+    name: { $in: names },
+    ...(exclude.length && { name: { $nin: exclude } }),
+    ...(lastActivityFilter && { lastActivity: lastActivityFilter }),
+  };
+
+  const paginationCondition = buildPaginationCondition(cursor, sortFields);
+
   const pipe = [
-    {
-      $match: { name: { $in: names, ...exclude?.length && { $nin: exclude } } },
-    },
+    { $match: matchConditions },
   ];
-
-  if (lastName) {
-    pipe.push({
-      $match: {
-        name: { $gt: lastName },
-      },
-    });
+  if (Object.keys(paginationCondition).length) {
+    pipe.push({ $match: paginationCondition });
   }
-
-  pipe.push(
-    {
-      $sort: {
-        name: 1,
-        // wobjects_weight: -1, _id: -1,
-      },
-    },
-    {
-      $project: USER_PROJECTION,
-    },
-  );
+  pipe.push(...[{
+    $sort: sortFields.reduce((acc, field) => {
+      acc[field.field] = field.order;
+      return acc;
+    }, {}),
+  },
+  { $limit: limit },
+  {
+    $project: USER_PROJECTION,
+  },
+  ]);
 
   const { result, error } = await User.aggregate(pipe);
-  if (error) return [];
+  if (error) {
+    console.error('Error in getAdditionalUsers:', error);
+    return [];
+  }
   return result;
 };
 
+/**
+ * Main function to get users based on various criteria.
+ */
 const getObjectGroup = async ({
-  authorPermlink, app, limit = 10, lastName,
+  authorPermlink,
+  app,
+  limit = 10,
+  cursor,
+  lastActivityFilter = { $gte: new Date('2021-01-01') },
+  sortFields = [
+    { field: 'wobjects_weight', order: -1 }, // Descending order
+    { field: 'name', order: 1 }, // Ascending order
+  ],
 }) => {
   const { wObject, error } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.GROUP);
   if (error) return { error };
+
   const processed = await wObjectHelper.processWobjects({
     wobjects: [wObject],
     app,
@@ -213,32 +259,52 @@ const getObjectGroup = async ({
   const followers = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_FOLLOWERS], []);
   const following = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_FOLLOWING], []);
   const links = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_EXPERTISE], []);
-
   const exclude = processed[FIELDS_NAMES.GROUP_EXCLUDE] || [];
   const namesAdd = processed[FIELDS_NAMES.GROUP_ADD] || [];
 
-  const responses = await Promise.all([
-    getAdditionalUsers({ names: namesAdd, lastName, exclude }),
-    getByFollowers({
-      names: followers, limit, lastName, follower: false, exclude,
+  // Fetch users based on different criteria in parallel
+  const [additionalUsers, followersUsers, followingUsers, expertiseUsers] = await Promise.all([
+    getAdditionalUsers({
+      names: namesAdd, limit, cursor, exclude, lastActivityFilter, sortFields,
     }),
     getByFollowers({
-      names: following, limit, lastName, follower: true, exclude,
+      names: followers, limit, cursor, follower: false, exclude, lastActivityFilter, sortFields,
+    }),
+    getByFollowers({
+      names: following, limit, cursor, follower: true, exclude, lastActivityFilter, sortFields,
     }),
     getByExpertise({
-      links, lastName, exclude, limit,
+      links, limit, cursor, exclude, lastActivityFilter, sortFields,
     }),
   ]);
 
-  const orderedList = _.chain(responses)
-    .flatten()
-    .uniqBy('name')
-    .orderBy(['name'], ['asc'])
-    .value();
+  // Combine and deduplicate users
+  const combinedUsers = _.unionBy(
+    additionalUsers,
+    followersUsers,
+    followingUsers,
+    expertiseUsers,
+    'name',
+  );
+
+  // Since each query limited the results, we limit the combined list to the specified limit
+  const resultUsers = combinedUsers.slice(0, limit);
+  const hasMore = combinedUsers.length === limit;
+
+  // Prepare the cursor for the next page
+  let nextCursor = null;
+  if (hasMore) {
+    const lastUser = resultUsers[resultUsers.length - 1];
+    nextCursor = sortFields.reduce((acc, field) => {
+      acc[field.field] = lastUser[field.field];
+      return acc;
+    }, {});
+  }
 
   return {
-    result: _.take(orderedList, limit),
-    hasMore: orderedList.length >= limit,
+    result: resultUsers,
+    hasMore,
+    nextCursor,
   };
 };
 
