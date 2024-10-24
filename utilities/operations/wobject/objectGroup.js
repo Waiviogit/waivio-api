@@ -296,8 +296,12 @@ const getObjectGroup = async ({
     'name',
   );
 
+  const fields = sortFields.map((el) => el.field);
+  const order = sortFields.map((el) => (el.order === 1 ? 'asc' : 'desc'));
+  const sorted = _.orderBy(combinedUsers, fields, order);
+
   // Since each query limited the results, we limit the combined list to the specified limit
-  const resultUsers = combinedUsers.slice(0, limit);
+  const resultUsers = sorted.slice(0, limit);
   const hasMore = combinedUsers.length >= limit;
 
   // Prepare the cursor for the next page
