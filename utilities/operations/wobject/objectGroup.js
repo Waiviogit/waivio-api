@@ -298,7 +298,7 @@ const getObjectGroup = async ({
 
   // Since each query limited the results, we limit the combined list to the specified limit
   const resultUsers = combinedUsers.slice(0, limit);
-  const hasMore = combinedUsers.length === limit;
+  const hasMore = combinedUsers.length >= limit;
 
   // Prepare the cursor for the next page
   let nextCursor = null;
