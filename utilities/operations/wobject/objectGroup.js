@@ -5,6 +5,7 @@ const {
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const moment = require('moment');
 
 const USER_PROJECTION = {
   _id: 1,
@@ -235,6 +236,20 @@ const getAdditionalUsers = async ({
   return result;
 };
 
+const getLastActivityFilter = (activity) => {
+  if (!activity) return null;
+  const num = Number(activity);
+  if (Number.isNaN(num)) return null;
+  return { $gte: moment().subtract(num, 'ms').toDate() };
+};
+
+const getMinExpertiseFilter = (expertise) => {
+  if (!expertise) return null;
+  const num = Number(expertise);
+  if (Number.isNaN(num)) return null;
+  return { $gte: num };
+};
+
 /**
  * Main function to get users based on various criteria.
  */
@@ -243,7 +258,6 @@ const getObjectGroup = async ({
   app,
   limit = 10,
   cursor,
-  lastActivityFilter = { $gte: new Date('2021-01-01') },
   sortFields = [
     { field: 'wobjects_weight', order: -1 }, // Descending order
     { field: 'name', order: 1 }, // Ascending order
@@ -262,6 +276,8 @@ const getObjectGroup = async ({
       FIELDS_NAMES.GROUP_FOLLOWERS,
       FIELDS_NAMES.GROUP_FOLLOWING,
       FIELDS_NAMES.GROUP_EXPERTISE,
+      FIELDS_NAMES.GROUP_LAST_ACTIVITY,
+      FIELDS_NAMES.GROUP_MIN_EXPERTISE,
     ],
   });
 
@@ -270,6 +286,13 @@ const getObjectGroup = async ({
   const links = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_EXPERTISE], []);
   const exclude = processed[FIELDS_NAMES.GROUP_EXCLUDE] || [];
   const namesAdd = processed[FIELDS_NAMES.GROUP_ADD] || [];
+
+  if (!followers.length && !following.length && !links.length && !namesAdd.length) {
+    return { result: [], hasMore: false, nextCursor: null };
+  }
+
+  const lastActivityFilter = getLastActivityFilter(processed[FIELDS_NAMES.GROUP_LAST_ACTIVITY]);
+  const minExpertiseFilter = getMinExpertiseFilter(processed[FIELDS_NAMES.GROUP_MIN_EXPERTISE]);
 
   // Fetch users based on different criteria in parallel
   const [additionalUsers, followersUsers, followingUsers, expertiseUsers] = await Promise.all([

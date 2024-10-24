@@ -82,6 +82,8 @@ exports.FIELDS_NAMES = {
   GROUP_FOLLOWING: 'groupFollowing',
   GROUP_ADD: 'groupAdd',
   GROUP_EXCLUDE: 'groupExclude',
+  GROUP_LAST_ACTIVITY: 'groupLastActivity',
+  GROUP_MIN_EXPERTISE: 'groupMinExpertise',
 };
 
 exports.LIST_TYPES = {
