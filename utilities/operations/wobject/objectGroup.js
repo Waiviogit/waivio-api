@@ -19,7 +19,7 @@ const USER_PROJECTION = {
 /**
  * Helper function to build pagination condition for cursor-based pagination.
  */
-const buildPaginationCondition = (cursor, sortFields) => {
+const buildPaginationCondition = (cursor, sortFields, conditionField = 'user.') => {
   if (!cursor || !sortFields.length) return {};
 
   const conditions = [];
@@ -33,10 +33,10 @@ const buildPaginationCondition = (cursor, sortFields) => {
     // Equal conditions for all previous fields
     for (let j = 0; j < i; j++) {
       const prevField = sortFields[j].field;
-      condition[`user.${prevField}`] = cursor[prevField];
+      condition[`${conditionField}${prevField}`] = cursor[prevField];
     }
     // Comparison condition for the current field
-    condition[`user.${field}`] = { [operator]: cursor[field] };
+    condition[`${conditionField}${field}`] = { [operator]: cursor[field] };
 
     conditions.push(condition);
   }
@@ -204,7 +204,7 @@ const getAdditionalUsers = async ({
     ...(lastActivityFilter && { lastActivity: lastActivityFilter }),
   };
 
-  const paginationCondition = buildPaginationCondition(cursor, sortFields);
+  const paginationCondition = buildPaginationCondition(cursor, sortFields, '');
 
   const pipe = [
     { $match: matchConditions },
