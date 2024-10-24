@@ -287,6 +287,7 @@ exports.getGroupByPermlink = Joi.object().keys({
     .default(30),
   lastName: Joi.string().allow(''),
   authorPermlink: Joi.string().required(),
+  cursor: Joi.object(),
 });
 
 exports.searchAreaSchema = Joi.object().keys({
