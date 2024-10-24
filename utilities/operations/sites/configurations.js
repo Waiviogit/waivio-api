@@ -27,7 +27,7 @@ exports.getConfigurationsList = async (host) => {
   await setCachedData({
     key, data: { result: _.get(result, 'configuration') }, ttl: TTL_TIME.ONE_MINUTE,
   });
-  return { result: _.get(result, 'configuration') };
+  return { result: _.get(result, 'configuration', {}) };
 };
 
 const deleteConfigCache = async ({ host }) => {
