@@ -17,6 +17,16 @@ const USER_PROJECTION = {
   lastActivity: 1,
 };
 
+const GROUP_FIELDS = [
+  FIELDS_NAMES.GROUP_EXCLUDE,
+  FIELDS_NAMES.GROUP_ADD,
+  FIELDS_NAMES.GROUP_FOLLOWERS,
+  FIELDS_NAMES.GROUP_FOLLOWING,
+  FIELDS_NAMES.GROUP_EXPERTISE,
+  FIELDS_NAMES.GROUP_LAST_ACTIVITY,
+  FIELDS_NAMES.GROUP_MIN_EXPERTISE,
+];
+
 /**
  * Helper function to build pagination condition for cursor-based pagination.
  */
@@ -49,7 +59,7 @@ const buildPaginationCondition = (cursor, sortFields, conditionField = 'user.') 
  * Fetch users by expertise (links) with sorting and lastActivity filtering.
  */
 const getByExpertise = async ({
-  links = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
+  links = [], limit, cursor, exclude = [], lastActivityFilter, sortFields, minExpertiseFilter,
 }) => {
   if (!links.length) return [];
   console.log('START getByExpertise');
@@ -87,11 +97,10 @@ const getByExpertise = async ({
     { $unwind: '$user' }]);
 
   if (lastActivityFilter) {
-    pipe.push({
-      $match: {
-        'user.lastActivity': lastActivityFilter,
-      },
-    });
+    pipe.push({ $match: { 'user.lastActivity': lastActivityFilter } });
+  }
+  if (minExpertiseFilter) {
+    pipe.push({ $match: { 'user.wobjects_weight': minExpertiseFilter } });
   }
   if (Object.keys(paginationCondition).length) {
     pipe.push({ $match: paginationCondition });
@@ -129,7 +138,14 @@ const getByExpertise = async ({
  * Fetch users by followers/following with sorting and lastActivity filtering.
  */
 const getByFollowers = async ({
-  names = [], limit, cursor, follower = true, exclude = [], lastActivityFilter, sortFields,
+  names = [],
+  limit,
+  cursor,
+  follower = true,
+  exclude = [],
+  lastActivityFilter,
+  sortFields,
+  minExpertiseFilter,
 }) => {
   if (!names.length) return [];
   console.log(`START getByFollowers follower: ${follower}`);
@@ -158,6 +174,9 @@ const getByFollowers = async ({
   ];
   if (lastActivityFilter) {
     pipe.push({ $match: { 'user.lastActivity': lastActivityFilter } });
+  }
+  if (minExpertiseFilter) {
+    pipe.push({ $match: { 'user.wobjects_weight': minExpertiseFilter } });
   }
   if (Object.keys(paginationCondition).length) {
     pipe.push({ $match: paginationCondition });
@@ -194,7 +213,7 @@ const getByFollowers = async ({
  * Fetch additional users by namesAdd with sorting and lastActivity filtering.
  */
 const getAdditionalUsers = async ({
-  names = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
+  names = [], limit, cursor, exclude = [], lastActivityFilter, sortFields, minExpertiseFilter,
 }) => {
   if (!names.length) return [];
   console.log('START getAdditionalUsers');
@@ -205,6 +224,7 @@ const getAdditionalUsers = async ({
       ...(exclude.length && { $nin: exclude }),
     },
     ...(lastActivityFilter && { lastActivity: lastActivityFilter }),
+    ...(minExpertiseFilter && { wobjects_weight: minExpertiseFilter }),
   };
 
   const paginationCondition = buildPaginationCondition(cursor, sortFields, '');
@@ -259,8 +279,8 @@ const getObjectGroup = async ({
   limit = 10,
   cursor,
   sortFields = [
-    { field: 'wobjects_weight', order: -1 }, // Descending order
-    { field: 'name', order: 1 }, // Ascending order
+    { field: 'wobjects_weight', order: -1 },
+    { field: 'name', order: 1 },
   ],
 }) => {
   const { wObject, error } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.GROUP);
@@ -270,15 +290,7 @@ const getObjectGroup = async ({
     wobjects: [wObject],
     app,
     returnArray: false,
-    fields: [
-      FIELDS_NAMES.GROUP_EXCLUDE,
-      FIELDS_NAMES.GROUP_ADD,
-      FIELDS_NAMES.GROUP_FOLLOWERS,
-      FIELDS_NAMES.GROUP_FOLLOWING,
-      FIELDS_NAMES.GROUP_EXPERTISE,
-      FIELDS_NAMES.GROUP_LAST_ACTIVITY,
-      FIELDS_NAMES.GROUP_MIN_EXPERTISE,
-    ],
+    fields: GROUP_FIELDS,
   });
 
   const followers = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_FOLLOWERS], []);
@@ -294,36 +306,25 @@ const getObjectGroup = async ({
   const lastActivityFilter = getLastActivityFilter(processed[FIELDS_NAMES.GROUP_LAST_ACTIVITY]);
   const minExpertiseFilter = getMinExpertiseFilter(processed[FIELDS_NAMES.GROUP_MIN_EXPERTISE]);
 
+  const commonParams = {
+    limit, cursor, sortFields, lastActivityFilter, minExpertiseFilter, exclude,
+  };
+
   // Fetch users based on different criteria in parallel
-  const [additionalUsers, followersUsers, followingUsers, expertiseUsers] = await Promise.all([
-    getAdditionalUsers({
-      names: namesAdd, limit, cursor, exclude, lastActivityFilter, sortFields,
-    }),
-    getByFollowers({
-      names: followers, limit, cursor, follower: false, exclude, lastActivityFilter, sortFields,
-    }),
-    getByFollowers({
-      names: following, limit, cursor, follower: true, exclude, lastActivityFilter, sortFields,
-    }),
-    getByExpertise({
-      links, limit, cursor, exclude, lastActivityFilter, sortFields,
-    }),
+  const dbRequests = await Promise.all([
+    getAdditionalUsers({ names: namesAdd, ...commonParams }),
+    getByFollowers({ names: followers, follower: false, ...commonParams }),
+    getByFollowers({ names: following, follower: true, ...commonParams }),
+    getByExpertise({ links, ...commonParams }),
   ]);
 
   // Combine and deduplicate users
-  const combinedUsers = _.unionBy(
-    additionalUsers,
-    followersUsers,
-    followingUsers,
-    expertiseUsers,
-    'name',
-  );
+  const combinedUsers = _.unionBy(...dbRequests, 'name');
 
   const fields = sortFields.map((el) => el.field);
   const order = sortFields.map((el) => (el.order === 1 ? 'asc' : 'desc'));
   const sorted = _.orderBy(combinedUsers, fields, order);
 
-  // Since each query limited the results, we limit the combined list to the specified limit
   const resultUsers = sorted.slice(0, limit);
   const hasMore = combinedUsers.length >= limit;
 
