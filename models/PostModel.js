@@ -3,6 +3,7 @@ const AppModel = require('models/AppModel');
 const _ = require('lodash');
 const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
 const asyncLocalStorage = require('../middlewares/context/context');
+const { getCollectionName } = require('../utilities/helpers/namesHelper');
 
 exports.getAllPosts = async (data) => {
   try {
@@ -381,6 +382,63 @@ exports.findOneFirstByAuthor = async ({ author }) => {
     return {
       result: await PostModel.findOne({ author }, {}, { sort: { createdAt: 1 } }).lean(),
     };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.getNewsFeedPosts = async ({
+  condition, app, skip, limit,
+}) => {
+  try {
+    const lookupToCollection = app?.inherited && !app?.canBeExtended;
+    const collection = getCollectionName({ host: app?.host });
+
+    const pipeline = [{
+      $match: condition,
+    }];
+
+    if (lookupToCollection) {
+      pipeline.push(...[
+        {
+          $lookup: {
+            from: collection,
+            localField: 'wobjects.author_permlink',
+            foreignField: 'author_permlink',
+            as: 'matches',
+          },
+        },
+        {
+          $match: { matches: { $ne: [] } },
+        },
+        {
+          $project: { matches: 0 },
+        },
+      ]);
+    }
+
+    pipeline.push(...[
+      { $sort: { _id: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      // we use only 4 objects
+      {
+        $addFields: {
+          wobjects: { $slice: ['$wobjects', 4] },
+        },
+      },
+      {
+        $lookup: {
+          from: 'wobjects',
+          localField: 'wobjects.author_permlink',
+          foreignField: 'author_permlink',
+          as: 'fullObjects',
+        },
+      },
+    ]);
+
+    const posts = await PostModel.aggregate(pipeline);
+    return { posts };
   } catch (error) {
     return { error };
   }
