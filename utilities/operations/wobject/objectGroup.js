@@ -51,6 +51,7 @@ const getByExpertise = async ({
   links = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
 }) => {
   if (!links.length) return [];
+  console.log('START getByExpertise');
 
   const matchConditions = {
     author_permlink: { $in: links },
@@ -118,6 +119,8 @@ const getByExpertise = async ({
     console.error('Error in getByExpertise:', error);
     return [];
   }
+
+  console.log('FINISH getByExpertise');
   return result;
 };
 
@@ -128,6 +131,7 @@ const getByFollowers = async ({
   names = [], limit, cursor, follower = true, exclude = [], lastActivityFilter, sortFields,
 }) => {
   if (!names.length) return [];
+  console.log(`START getByFollowers follower: ${follower}`);
 
   const matchCondition = follower ? 'follower' : 'following';
   const localField = follower ? 'following' : 'follower';
@@ -181,6 +185,7 @@ const getByFollowers = async ({
     console.error('Error in getByFollowers:', error);
     return [];
   }
+  console.log(`FINISH getByFollowers follower: ${follower}`);
   return result;
 };
 
@@ -191,6 +196,7 @@ const getAdditionalUsers = async ({
   names = [], limit, cursor, exclude = [], lastActivityFilter, sortFields,
 }) => {
   if (!names.length) return [];
+  console.log('START getAdditionalUsers');
 
   const matchConditions = {
     name: { $in: names },
@@ -223,6 +229,7 @@ const getAdditionalUsers = async ({
     console.error('Error in getAdditionalUsers:', error);
     return [];
   }
+  console.log('FINISH getAdditionalUsers');
   return result;
 };
 
