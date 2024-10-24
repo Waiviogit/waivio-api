@@ -199,8 +199,10 @@ const getAdditionalUsers = async ({
   console.log('START getAdditionalUsers');
 
   const matchConditions = {
-    name: { $in: names },
-    ...(exclude.length && { name: { $nin: exclude } }),
+    name: {
+      $in: names,
+      ...(exclude.length && { $nin: exclude }),
+    },
     ...(lastActivityFilter && { lastActivity: lastActivityFilter }),
   };
 
