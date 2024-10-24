@@ -6,7 +6,6 @@ const moment = require('moment');
 const { SUPPORTED_CRYPTO_CURRENCIES, GUEST_COINS_TO_WITHDRAW } = require('../../constants/currencyData');
 const { boxScheme } = require('./common');
 
-
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(1).default(30),
   skip: Joi.number().integer().min(0).default(0),
@@ -81,6 +80,14 @@ exports.searchSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).max(500)
     .default(30),
   notGuest: Joi.boolean().default(false),
+});
+
+exports.searchByHostSchema = Joi.object().keys({
+  string: Joi.string().lowercase().default(''),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).max(50)
+    .default(10),
+  host: Joi.string().required(),
 });
 
 exports.getDelegationSchema = Joi.object().keys({

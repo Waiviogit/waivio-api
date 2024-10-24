@@ -4398,6 +4398,55 @@
         }
       }
     },
+    "/api/sites/assistant/custom": {
+      "post": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "update AI knowledge",
+        "description": "update AI knowledge",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                },
+                "userName" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -4946,6 +4995,62 @@
             "required": false,
             "type": "boolean",
             "default": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "users": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/inline_response_200_4"
+                  }
+                },
+                "hasMore": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/search/host": {
+      "post": {
+        "tags": [
+          "user"
+        ],
+        "summary": "Search users by name and host",
+        "description": "Search users by name with param \"limit\"",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "searchString",
+            "in": "body",
+            "description": "String to search, when no search string returns top users by wobjects_weight",
+            "required": false,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "string": {
+                  "type": "string"
+                },
+                "host": {
+                  "type": "string"
+                },
+                "skip": {
+                  "type": "number"
+                },
+                "limit": {
+                  "type": "number"
+                }
+              }
+            }
           }
         ],
         "responses": {

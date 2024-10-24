@@ -6,7 +6,6 @@ const { cursorTimeout } = require('./plugins/timeoutPlugin');
 const URI = process.env.MONGO_URI_WAIVIO
   ? process.env.MONGO_URI_WAIVIO
   : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
-
 mongoose.connect(URI, {
   maxPoolSize: 200,
   socketTimeoutMS: 60000,

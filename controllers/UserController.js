@@ -7,7 +7,7 @@ const {
   guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana,
   getProfileImages,
 } = require('utilities/operations/user');
-const { users: { searchUsers: searchByUsers } } = require('utilities/operations/search');
+const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('utilities/operations/search');
 const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
 const validators = require('controllers/validators');
 const authoriseUser = require('utilities/authorization/authoriseUser');
@@ -284,6 +284,16 @@ const searchUsers = async (req, res, next) => {
     .execute({ users, hasMore }, req);
 
   return res.status(200).json(processedData);
+};
+
+const searchUsersByHost = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.user.searchByHostSchema, next);
+  if (!value) return;
+
+  const { users, hasMore, error } = await getSiteUsersByHost(value);
+  if (error) return next(error);
+
+  return res.status(200).json({ users, hasMore });
 };
 
 const followingUpdates = async (req, res, next) => {
@@ -845,4 +855,5 @@ module.exports = {
   stopGeneratedReport,
   pauseGeneratedReport,
   getFavouritesMap,
+  searchUsersByHost,
 };

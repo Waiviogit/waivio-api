@@ -142,6 +142,7 @@ exports.REDIS_KEYS = {
   API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
   ASSISTANT: 'assistant',
   DYNAMIC_GLOBAL_PROPERTIES: 'get_dynamic_global_properties',
+  UPDATE_AI_STORE: 'updateAiStore',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {
