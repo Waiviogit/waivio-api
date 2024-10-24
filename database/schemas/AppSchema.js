@@ -101,6 +101,8 @@ const Configuration = new Schema({
   header: { type: AppHeader },
   defaultHashtag: { type: String },
   tabsFilter: { type: [String] },
+  tabsSorting: { type: [String] },
+  advancedAI: { type: Boolean },
 }, { _id: false });
 
 const AppSchema = new Schema({
