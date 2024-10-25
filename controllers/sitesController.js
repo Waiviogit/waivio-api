@@ -427,7 +427,7 @@ exports.updateAiStore = async (req, res, next) => {
 
   const { error: authError } = await authoriseUser.authorise(value.userName);
   if (authError) return next(authError);
-  const { result, error } = await updateAiCustomStore(value);
+  const { result, timeToNextRequest, error } = await updateAiCustomStore(value);
   if (error) return next(error);
-  return res.status(200).json({ result });
+  return res.status(200).json({ result, timeToNextRequest });
 };
