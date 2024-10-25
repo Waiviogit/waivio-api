@@ -31,15 +31,10 @@ const checkLock = async ({
       key,
       client: mainFeedsCacheClient,
     });
-    const timeToNextRequest = moment.utc()
-      .add(ttl, 's')
-      .format();
+
     return {
       result: false,
-      error: {
-        status: 422,
-        message: `Try again on ${timeToNextRequest}`,
-      },
+      timeToNextRequest: moment.utc().add(ttl, 's').valueOf(),
     };
   }
   await redisSetter.setEx({
@@ -51,7 +46,6 @@ const checkLock = async ({
 
   return {
     result: true,
-    error: null,
   };
 };
 
@@ -192,9 +186,9 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
 
 const updateAiCustomStore = async ({ userName, host }) => {
   const app = await getApp({ host });
-  if (userName !== app.owner) return { error: { status: 401, message: 'Not Authorized' } };
-  const { result, error } = await checkLock({ userName, host });
-  if (error) return { error };
+  if (userName !== app?.owner) return { error: { status: 401, message: 'Not Authorized' } };
+  const { result, timeToNextRequest } = await checkLock({ userName, host });
+  if (!result) return { result, timeToNextRequest };
   createVectorStoreFromAppObjects({ app, host });
 
   return { result };
