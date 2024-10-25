@@ -106,7 +106,7 @@ exports.getSocialInfo = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result, error } = await getPostSocialInfo(value);
+  const { result, error } = await getPostSocialInfo({ ...value, app: req.appData });
 
   if (error) return next(error);
 

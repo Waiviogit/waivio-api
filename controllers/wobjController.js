@@ -300,7 +300,7 @@ const getWobjectField = async (req, res, next) => {
     next,
   );
   if (!value) return;
-  const { toDisplay, field, error } = await getWobjField(value);
+  const { toDisplay, field, error } = await getWobjField({ ...value, app: req.appData });
   if (error) return next(error);
 
   return res.status(200).json({ toDisplay, field });

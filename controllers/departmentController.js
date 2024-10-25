@@ -25,7 +25,7 @@ const getWobjectsByDepartments = async (req, res, next) => {
     wobjects,
     hasMore,
     error,
-  } = await departments.getWobjectsByDepartments(value);
+  } = await departments.getWobjectsByDepartments({ ...value, app: req.appData });
 
   if (error) return next(error);
 
