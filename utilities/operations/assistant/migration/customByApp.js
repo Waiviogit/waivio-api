@@ -154,6 +154,7 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
   const asyncIterator = await getCursor({ host });
   if (!asyncIterator) {
     await releaseLock({ userName: app.owner, host });
+    console.log('[INFO] no iterator found');
     return;
   }
   console.log(`[INFO] START CREATE VECTORS FOR ${host}`);
@@ -196,4 +197,5 @@ const updateAiCustomStore = async ({ userName, host }) => {
 
 module.exports = {
   updateAiCustomStore,
+  createVectorStoreFromAppObjects,
 };
