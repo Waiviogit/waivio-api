@@ -68,6 +68,7 @@ exports.saveConfigurations = async ({ host, userName, configuration }) => {
       ...configuration,
     },
   });
+
   if (updateError) return { error: updateError };
   await deleteConfigCache({ host: app.host });
 

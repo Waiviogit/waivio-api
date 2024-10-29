@@ -145,6 +145,14 @@ const getLine = ({ processed, host }) => {
   return line;
 };
 
+const unsetAdvancedAI = async ({ host }) => {
+  try {
+    return await App.updateOne({ host }, { 'configuration?.advancedAI': false });
+  } catch (error) {
+    return null;
+  }
+};
+
 const createVectorStoreFromAppObjects = async ({ host, app }) => {
   const indexName = getIndexFromHostName({ host });
 
@@ -154,6 +162,7 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
   const asyncIterator = await getCursor({ host });
   if (!asyncIterator) {
     await releaseLock({ userName: app.owner, host });
+    await unsetAdvancedAI({ host });
     console.log('[INFO] no iterator found');
     return;
   }
