@@ -14,7 +14,7 @@ const USER_PROJECTION = {
   last_posts_count: 1,
   followers_count: 1,
   wobjects_weight: 1,
-  lastActivity: 1,
+  last_root_post: 1,
 };
 
 const GROUP_FIELDS = [
@@ -62,7 +62,6 @@ const getByExpertise = async ({
   links = [], limit, cursor, exclude = [], lastActivityFilter, sortFields, minExpertiseFilter,
 }) => {
   if (!links.length) return [];
-  console.log('START getByExpertise');
 
   const matchConditions = {
     author_permlink: { $in: links },
@@ -97,7 +96,7 @@ const getByExpertise = async ({
     { $unwind: '$user' }]);
 
   if (lastActivityFilter) {
-    pipe.push({ $match: { 'user.lastActivity': lastActivityFilter } });
+    pipe.push({ $match: { 'user.last_root_post': lastActivityFilter } });
   }
   if (minExpertiseFilter) {
     pipe.push({ $match: { 'user.wobjects_weight': minExpertiseFilter } });
@@ -130,7 +129,6 @@ const getByExpertise = async ({
     return [];
   }
 
-  console.log('FINISH getByExpertise');
   return result;
 };
 
@@ -148,7 +146,6 @@ const getByFollowers = async ({
   minExpertiseFilter,
 }) => {
   if (!names.length) return [];
-  console.log(`START getByFollowers follower: ${follower}`);
 
   const matchCondition = follower ? 'follower' : 'following';
   const localField = follower ? 'following' : 'follower';
@@ -173,7 +170,7 @@ const getByFollowers = async ({
     { $unwind: '$user' },
   ];
   if (lastActivityFilter) {
-    pipe.push({ $match: { 'user.lastActivity': lastActivityFilter } });
+    pipe.push({ $match: { 'user.last_root_post': lastActivityFilter } });
   }
   if (minExpertiseFilter) {
     pipe.push({ $match: { 'user.wobjects_weight': minExpertiseFilter } });
@@ -205,7 +202,6 @@ const getByFollowers = async ({
     console.error('Error in getByFollowers:', error);
     return [];
   }
-  console.log(`FINISH getByFollowers follower: ${follower}`);
   return result;
 };
 
@@ -216,14 +212,13 @@ const getAdditionalUsers = async ({
   names = [], limit, cursor, exclude = [], lastActivityFilter, sortFields, minExpertiseFilter,
 }) => {
   if (!names.length) return [];
-  console.log('START getAdditionalUsers');
 
   const matchConditions = {
     name: {
       $in: names,
       ...(exclude.length && { $nin: exclude }),
     },
-    ...(lastActivityFilter && { lastActivity: lastActivityFilter }),
+    ...(lastActivityFilter && { last_root_post: lastActivityFilter }),
     ...(minExpertiseFilter && { wobjects_weight: minExpertiseFilter }),
   };
 
@@ -252,7 +247,6 @@ const getAdditionalUsers = async ({
     console.error('Error in getAdditionalUsers:', error);
     return [];
   }
-  console.log('FINISH getAdditionalUsers');
   return result;
 };
 
@@ -260,7 +254,7 @@ const getLastActivityFilter = (activity) => {
   if (!activity) return null;
   const num = Number(activity);
   if (Number.isNaN(num)) return null;
-  return { $gte: moment().subtract(num, 'ms').toDate() };
+  return { $gte: moment().subtract(num, 'ms').toISOString().split('.')[0] };
 };
 
 const getMinExpertiseFilter = (expertise) => {
