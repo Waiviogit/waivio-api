@@ -279,39 +279,6 @@ const makePipeline = ({
       { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
     );
   } else {
-    const cond = [{
-      $lookup: {
-        from: 'objects_promotions',
-        localField: 'author_permlink',
-        foreignField: 'author_permlink',
-        pipeline: [
-          // test host
-          { $match: { $expr: { $eq: ['$host', 'waiviodev.com'] } } },
-          { $project: { _id: 0, author_permlink: 1 } },
-        ],
-        as: 'promotionInfo',
-      },
-    },
-    {
-      $addFields: {
-        isPromoted: { $gt: [{ $size: '$promotionInfo' }, 0] },
-      },
-    },
-    { $sort: { isPromoted: -1, weight: -1 } }];
-    // pipeline.push(...cond);
-    const cond2 = [
-      {
-        $addFields: {
-          isPromotedForSite: { $ifNull: ['$isPromoted.waivio_dev', false] },
-        },
-      },
-      { $sort: { isPromotedForSite: -1, weight: -1 } },
-    ];
-
-    // todo test with array of strings
-
-    // pipeline.push(...cond2);
-
     const cond3 = [
       {
         $addFields: {
