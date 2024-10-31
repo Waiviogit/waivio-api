@@ -310,7 +310,18 @@ const makePipeline = ({
 
     // todo test with array of strings
 
-    pipeline.push(...cond2);
+    // pipeline.push(...cond2);
+
+    const cond3 = [
+      {
+        $addFields: {
+          isPromotedForSite: { $in: ['waiviodev.com', { $ifNull: ['$promotedOnSites', []] }] },
+        },
+      },
+      { $sort: { isPromotedForSite: -1, weight: -1 } },
+    ];
+
+    pipeline.push(...cond3);
 
     // pipeline.push({ $sort: { weight: -1 } });
   }
