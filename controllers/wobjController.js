@@ -734,7 +734,9 @@ const getGroupByPermlink = async (req, res, next) => {
 
   if (!value) return;
 
-  const { result, hasMore, error } = await objectGroup.getObjectGroup({
+  const {
+    result, hasMore, nextCursor, error,
+  } = await objectGroup.getObjectGroup({
     ...value,
     app: req.appData,
   });
@@ -744,7 +746,7 @@ const getGroupByPermlink = async (req, res, next) => {
   const processedData = await pipeline
     .use(pipelineFunctions.checkFollowings)
     .use(pipelineFunctions.checkFollowers)
-    .execute({ result, hasMore }, req);
+    .execute({ result, hasMore, nextCursor }, req);
 
   return res.status(200).json(processedData);
 };

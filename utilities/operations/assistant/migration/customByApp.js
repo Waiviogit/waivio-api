@@ -13,6 +13,8 @@ const { REDIS_KEYS, TTL_TIME } = require('../../../../constants/common');
 const { mainFeedsCacheClient } = require('../../../redis/redis');
 const { getCollectionName } = require('../../../helpers/namesHelper');
 
+const OBJECTS_LIMIT = 50000;
+
 const textSplitter = new RecursiveCharacterTextSplitter({
   chunkSize: 2000,
 });
@@ -131,7 +133,7 @@ const getCursor = async ({ host }) => {
     const model = await mongoose.connection.useDb('waivio')
       .collection(collection.name);
 
-    return model.find();
+    return model.find().limit(OBJECTS_LIMIT);
   } catch (error) {
     return null;
   }
