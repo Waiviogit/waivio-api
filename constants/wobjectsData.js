@@ -82,6 +82,7 @@ exports.FIELDS_NAMES = {
   GROUP_FOLLOWING: 'groupFollowing',
   GROUP_ADD: 'groupAdd',
   GROUP_EXCLUDE: 'groupExclude',
+  PROMOTION: 'promotion',
 };
 
 exports.LIST_TYPES = {
