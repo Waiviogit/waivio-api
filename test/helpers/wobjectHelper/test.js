@@ -2116,4 +2116,42 @@ describe('On wobjectHelper', async () => {
       expect(result[fieldName]).to.be.eq(body);
     });
   });
+
+  describe('On promotion  field', async () => {
+    const fieldName = FIELDS_NAMES.PROMOTION;
+
+    const body = faker.random.string();
+    const startDate = Date.now();
+    const endDate = Date.now();
+
+    let obj, result;
+
+    beforeEach(async () => {
+      ({ wobject: obj } = await AppendObjectFactory.Create({
+        weight: 1,
+        objectType: OBJECT_TYPES.LINK,
+        name: fieldName,
+        body,
+        startDate,
+        endDate,
+      }));
+
+      result = await wObjectHelper.processWobjects({
+        wobjects: [_.cloneDeep(obj)],
+        app,
+        returnArray: false,
+        fields: [fieldName],
+      });
+    });
+
+    it('should be array', async () => {
+      expect(result[fieldName]).to.be.an('array');
+    });
+    it('should be eq field', async () => {
+      const [field] = result[fieldName];
+      expect(field.body).to.be.eq(body);
+      expect(field.startDate).to.be.eq(startDate);
+      expect(field.endDate).to.be.eq(endDate);
+    });
+  });
 });
