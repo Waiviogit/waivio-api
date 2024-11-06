@@ -309,6 +309,7 @@ exports.getSettings = async (host) => {
     currency,
     language,
     objectControl,
+    mapImportTag = '',
   } = app;
 
   const result = {
@@ -323,6 +324,7 @@ exports.getSettings = async (host) => {
     currency,
     language,
     objectControl,
+    mapImportTag,
   };
 
   return { result };
