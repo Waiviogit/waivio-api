@@ -263,7 +263,7 @@ const makeSitePipelineForRestaurants = ({
 
 /** Search pipe for basic websites, which cannot be extended and not inherited */
 const makePipeline = ({
-  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes, linksFromUrl,
+  string, limit, skip, crucialWobjects, forParent, object_type, onlyObjectTypes, linksFromUrl, app,
 }) => {
   const pipeline = [matchSimplePipe({
     string, object_type, onlyObjectTypes, linksFromUrl,
@@ -279,18 +279,7 @@ const makePipeline = ({
       { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
     );
   } else {
-    const cond3 = [
-      {
-        $addFields: {
-          isPromotedForSite: { $in: ['waiviodev.com', { $ifNull: ['$promotedOnSites', []] }] },
-        },
-      },
-      { $sort: { isPromotedForSite: -1, weight: -1 } },
-    ];
-
-    pipeline.push(...cond3);
-
-    // pipeline.push({ $sort: { weight: -1 } });
+    pipeline.push(...Wobj.getSortingStagesByHost({ host: app?.host }));
   }
   if (onlyObjectTypes?.length) {
     pipeline.push({ $match: { object_type: { $in: onlyObjectTypes } } });
@@ -400,7 +389,7 @@ const matchSocialPipe = ({
         ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
       },
     },
-    { $sort: { weight: -1 } },
+    ...Wobj.getSortingStagesByHost({ host: app?.host }),
   ];
   if (!counters) {
     pipeline.push(...[{ $skip: skip || 0 }, { $limit: limit + 1 }]);

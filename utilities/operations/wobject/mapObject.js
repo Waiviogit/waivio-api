@@ -115,7 +115,7 @@ const calculateBoxCenters = (topPoint, bottomPoint) => {
 };
 
 const objectsRequest = async ({
-  box, typesCondition, tagsCondition, objectLinksCondition, boxCoordinates, limit, skip = 0,
+  box, typesCondition, tagsCondition, objectLinksCondition, boxCoordinates, limit, skip = 0, app,
 }) => {
   const andCondition = [];
 
@@ -135,7 +135,7 @@ const objectsRequest = async ({
         // ...(authority.length && { 'authority.administrative': { $in: authority } }),
       },
     },
-    { $sort: { activeCampaignsCount: -1, weight: -1 } },
+    ...Wobj.getSortingStagesByHost({ host: app?.host }),
     {
       $skip: skip,
     },
@@ -314,6 +314,7 @@ const getObjectsFromAdvancedMap = async ({
     tagsCondition,
     objectLinksCondition,
     limit: 100,
+    app,
   })));
 
   const wobjects = _.compact(_.flatten(responses));
