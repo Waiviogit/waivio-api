@@ -1,10 +1,12 @@
 const { User, App, UserWobjects } = require('models');
+const moment = require('moment');
 const _ = require('lodash');
 
 const SEARCH_STRATEGY = {
   EXPERTISE: 'EXPERTISE',
   ALL: 'ALL',
 };
+const LAST_ACTIVITY_DAYS = 180;
 
 const getSearchStrategy = ({ inherited, canBeExtended }) => {
   if (inherited && !canBeExtended) return SEARCH_STRATEGY.EXPERTISE;
@@ -39,6 +41,11 @@ const searchExpertise = async ({
         localField: 'user_name',
         foreignField: 'name',
         as: 'user',
+      },
+    },
+    {
+      $match: {
+        'user.lastActivity': { $gte: moment().subtract(LAST_ACTIVITY_DAYS, 'days').toDate() },
       },
     },
     {
