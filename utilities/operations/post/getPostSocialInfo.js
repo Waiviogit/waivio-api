@@ -1,15 +1,15 @@
 const _ = require('lodash');
 const { Post, Wobj, User } = require('models');
-const { appHelper, wObjectHelper } = require('utilities/helpers');
+const { wObjectHelper } = require('utilities/helpers');
 const { SHARING_SOCIAL_FIELDS } = require('constants/wobjectsData');
 
-module.exports = async ({ author, permlink }) => {
+module.exports = async ({ author, permlink, app }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });
   if (!post || postError) return { error: postError || { status: 404, message: 'Post not found' } };
   const { userFacebook, userTwitter } = await getUserSocials(author);
   const {
     tags, cities, wobjectsTwitter, wobjectsFacebook,
-  } = await getWobjectInfo(post);
+  } = await getWobjectInfo({ post, app });
 
   return {
     result: {
@@ -18,12 +18,11 @@ module.exports = async ({ author, permlink }) => {
   };
 };
 
-const getWobjectInfo = async (post) => {
+const getWobjectInfo = async ({ post, app }) => {
   let json;
   const cities = [];
   const wobjectsTwitter = [];
   const wobjectsFacebook = [];
-  const app = await appHelper.getApp();
   const { result } = await Wobj.find({
     author_permlink: { $in: _.map(_.get(post, 'wobjects', []), 'author_permlink') },
   });
