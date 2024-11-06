@@ -20,10 +20,9 @@ const textSplitter = new RecursiveCharacterTextSplitter({
 });
 
 const checkLock = async ({
-  userName,
   host,
 }) => {
-  const key = `${REDIS_KEYS.UPDATE_AI_STORE}:${userName}:${host}`;
+  const key = `${REDIS_KEYS.UPDATE_AI_STORE}:${host}`;
   const { result: lock } = await redisGetter.getAsync({
     key,
     client: mainFeedsCacheClient,
@@ -198,12 +197,12 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
 
 const updateAiCustomStore = async ({ userName, host }) => {
   const app = await getApp({ host });
-  if (userName !== app?.owner) return { error: { status: 401, message: 'Not Authorized' } };
-  const { result, timeToNextRequest } = await checkLock({ userName, host });
+  if (![app?.owner, ...(app.admins ?? [])].includes(userName)) return { error: { status: 401, message: 'Not Authorized' } };
+  const { result, timeToNextRequest } = await checkLock({ host });
   if (!result) return { result, timeToNextRequest };
   createVectorStoreFromAppObjects({ app, host });
 
-  return { result };
+  return { result, timeToNextRequest: moment.utc().add(1, 'd').valueOf() };
 };
 
 module.exports = {
