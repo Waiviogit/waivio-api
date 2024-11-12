@@ -7090,6 +7090,48 @@
         }
       }
     },
+    "/api/wobjects/id-type": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "Return author_permlink if exist",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string"
+                },
+                "idType": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject": {
       "post": {
         "tags": [
