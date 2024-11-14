@@ -5,10 +5,16 @@ const _ = require('lodash');
 const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
 const { SHOP_SCHEMA } = require('../../../constants/shop');
+const {
+  getAppAuthorities,
+  isInheritedApp,
+} = require('../../helpers/appHelper');
 
 module.exports = async ({
-  departments, skip, limit, userName = '', schema,
+  departments, skip, limit, userName = '', schema, app,
 }) => {
+  const inheritedApp = isInheritedApp(app);
+
   const pipe = [
     {
       $match: {
@@ -17,6 +23,17 @@ module.exports = async ({
       },
     },
   ];
+  if (inheritedApp) {
+    pipe.push({
+      $match: {
+        $or: [
+          {
+            'authority.administrative': { $in: getAppAuthorities(app) },
+          },
+        ],
+      },
+    });
+  }
 
   if (schema === SHOP_SCHEMA.SHOP) {
     pipe.push(...shopHelper.getDefaultGroupStage());

@@ -1,20 +1,19 @@
 const _ = require('lodash');
-const { wObjectHelper, appHelper, jsonHelper } = require('utilities/helpers');
+const { wObjectHelper, jsonHelper } = require('utilities/helpers');
 const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('constants/wobjectsData');
 const { getPost } = require('../../hiveApi/postsUtil');
 
 module.exports = async ({
-  authorPermlink, author, fieldName, locale, permlink, reqUserName,
+  authorPermlink, author, fieldName, locale, permlink, reqUserName, app,
 }) => {
   const { wobject, error } = await wObjectHelper.getWobjectFields(authorPermlink);
-  const { error: appError, result: appData } = await appHelper.getApp();
-  if (error || appError) return { error: error || appError };
+  if (error) return { error };
 
   const filteredObject = await wObjectHelper.processWobjects({
     wobjects: [wobject],
     fields: SPECIFIC_FIELDS_MAPPINGS[fieldName] || fieldName,
     locale,
-    app: appData,
+    app,
     returnArray: false,
     hiveData: true,
     reqUserName,
@@ -34,9 +33,11 @@ module.exports = async ({
   const { post, error: dbError } = await getPost({ author, permlink });
   if (dbError) return { error: dbError };
 
-  Object.assign(field,
+  Object.assign(
+    field,
     _.pick(post, ['children', 'total_pending_payout_value', 'total_payout_value', 'pending_payout_value',
-      'curator_payout_value', 'cashout_time']));
+      'curator_payout_value', 'cashout_time']),
+  );
   field.fullBody = post.body;
 
   return {
