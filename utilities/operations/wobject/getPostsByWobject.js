@@ -166,6 +166,7 @@ const socialLinksMap = {
   linkYouTube: 'https://www.youtube.com/@',
   linkInstagram: 'https://www.instagram.com/',
   linkGitHub: 'https://github.com/',
+  linkTikTok: 'https://www.tiktok.com/@',
 };
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
