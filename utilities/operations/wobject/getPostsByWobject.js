@@ -171,12 +171,11 @@ const socialLinksMap = {
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
 
-const makeConditionSocialLink = ({ condition, processedObj }) => {
-  if (!processedObj.link) return { condition };
-  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
-  if (!parsedCondition) return { condition };
-
+const makeConditionSocialLink = ({ processedObj }) => {
   const conditionArr = [];
+  if (!processedObj.link) return conditionArr;
+  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
+  if (!parsedCondition) return conditionArr;
 
   for (const parsedConditionKey in parsedCondition) {
     const id = parsedCondition[parsedConditionKey];
@@ -196,6 +195,10 @@ const makeConditionSocialLink = ({ condition, processedObj }) => {
 
 // here we can either take fields from processed object or get all fields with Hive
 const makeConditionForBusiness = ({ condition, processedObj }) => {
+  const condArray = [condition];
+  const linkCondition = makeConditionSocialLink({ processedObj });
+  if (linkCondition?.length) condArray.push(...linkCondition);
+
   const hiveWallets = (processedObj[FIELDS_NAMES.WALLET_ADDRESS] || []).reduce((acc, el) => {
     const walletObj = jsonHelper.parseJson(el.body);
     if (!walletObj) return acc;
@@ -204,14 +207,14 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
     return acc;
   }, []);
 
-  if (!hiveWallets?.length) return { condition };
-  const condition2 = {
-    mentions: { $in: _.uniq(hiveWallets) },
-    ..._.omit(condition, 'wobjects.author_permlink'),
-  };
-  const linkCondition = makeConditionSocialLink({ condition, processedObj });
+  if (hiveWallets?.length) {
+    condArray.push({
+      mentions: { $in: _.uniq(hiveWallets) },
+      ..._.omit(condition, 'wobjects.author_permlink'),
+    });
+  }
 
-  return { condition: { $or: [condition, condition2, ...linkCondition] } };
+  return { condition: { $or: condArray } };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
