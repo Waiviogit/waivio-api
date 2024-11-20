@@ -171,7 +171,7 @@ const socialLinksMap = {
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
 
-const makeConditionForPerson = ({ condition, processedObj }) => {
+const makeConditionSocialLink = ({ condition, processedObj }) => {
   if (!processedObj.link) return { condition };
   const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
   if (!parsedCondition) return { condition };
@@ -190,9 +190,8 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
       conditionArr.push({ links: { $regex: regex } });
     }
   }
-  if (!conditionArr?.length) return { condition };
 
-  return { condition: { $or: [condition, ...conditionArr] } };
+  return conditionArr;
 };
 
 // here we can either take fields from processed object or get all fields with Hive
@@ -210,8 +209,9 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
     mentions: { $in: _.uniq(hiveWallets) },
     ..._.omit(condition, 'wobjects.author_permlink'),
   };
+  const linkCondition = makeConditionSocialLink({ condition, processedObj });
 
-  return { condition: { $or: [condition, condition2] } };
+  return { condition: { $or: [condition, condition2, ...linkCondition] } };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
@@ -251,10 +251,6 @@ const getWobjFeedCondition = async ({
   }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
-  if (wObject.object_type === OBJECT_TYPES.PERSON) {
-    return makeConditionForPerson({ condition, processedObj });
-  }
-
   if (wObject.object_type === OBJECT_TYPES.LINK) {
     return makeConditionForLink({ condition, wObject });
   }
