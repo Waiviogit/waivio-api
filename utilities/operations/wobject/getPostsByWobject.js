@@ -23,8 +23,16 @@ const postsQuery = {
   [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
 };
 
-const getPostRetriever = (data) => {
-  if (data.newsPermlink) return postsQuery[POST_RETRIEVER.FEED];
+const getPostRetriever = ({ data, wObject }) => {
+  if (data.newsPermlink) {
+    const newsFilter = JSON.parse(_.get(
+      _.find(wObject.fields, (f) => f.permlink === data.newsPermlink),
+      'body',
+      '{}',
+    ));
+    if (!_.isEmpty(newsFilter.typeList)) return postsQuery[POST_RETRIEVER.FEED];
+    return postsQuery[POST_RETRIEVER.REGULAR];
+  }
   return postsQuery[POST_RETRIEVER.REGULAR];
 };
 
@@ -112,7 +120,7 @@ module.exports = async (data) => {
 
   if (conditionError) return { error: conditionError };
 
-  const retriever = getPostRetriever(data);
+  const retriever = getPostRetriever({ data, wObject });
 
   const { posts, error } = await retriever({
     condition,
