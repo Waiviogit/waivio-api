@@ -401,6 +401,9 @@ exports.getNewsFeedPosts = async ({
     if (lookupToCollection) {
       pipeline.push(...[
         {
+          $project: { 'wobjects.author_permlink': 1 },
+        },
+        {
           $lookup: {
             from: collection,
             localField: 'wobjects.author_permlink',
@@ -412,7 +415,7 @@ exports.getNewsFeedPosts = async ({
           $match: { matches: { $ne: [] } },
         },
         {
-          $project: { matches: 0 },
+          $project: { _id: 1 },
         },
       ]);
     }
@@ -422,11 +425,23 @@ exports.getNewsFeedPosts = async ({
       { $skip: skip },
       { $limit: limit },
       // we use only 4 objects
+    ]);
+
+    const postIds = await PostModel.aggregate(pipeline)
+      .then((posts) => posts.map((post) => post._id));
+
+    if (!postIds?.length) return { posts: [] };
+
+    const result = await PostModel.aggregate([
+      {
+        $match: { _id: { $in: postIds } },
+      },
       {
         $addFields: {
           wobjects: { $slice: ['$wobjects', 4] },
         },
       },
+      { $sort: { _id: -1 } },
       {
         $lookup: {
           from: 'wobjects',
@@ -437,8 +452,7 @@ exports.getNewsFeedPosts = async ({
       },
     ]);
 
-    const posts = await PostModel.aggregate(pipeline);
-    return { posts };
+    return { posts: result };
   } catch (error) {
     return { error };
   }
