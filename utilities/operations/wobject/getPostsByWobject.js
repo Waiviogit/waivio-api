@@ -20,8 +20,7 @@ const POST_RETRIEVER = {
 
 const postsQuery = {
   [POST_RETRIEVER.REGULAR]: Post.getWobjectPosts,
-  [POST_RETRIEVER.FEED]: Post.getWobjectPosts,
-  // [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
+  [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
 };
 
 const getPostRetriever = (data) => {
