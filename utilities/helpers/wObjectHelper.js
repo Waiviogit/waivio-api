@@ -277,6 +277,7 @@ const arrayFieldFilter = ({
       case FIELDS_NAMES.SIMILAR:
       case FIELDS_NAMES.WALLET_ADDRESS:
       case FIELDS_NAMES.DELEGATION:
+      case FIELDS_NAMES.PROMOTION:
         if (arrayFieldPush({
           filter,
           field,

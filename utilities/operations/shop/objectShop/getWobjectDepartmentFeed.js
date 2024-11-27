@@ -80,7 +80,7 @@ const getWobjectDepartmentFeed = async ({
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
     },
-    ...shopHelper.getDefaultGroupStage(),
+    ...shopHelper.getDefaultGroupStage({ host: app?.host }),
     { $skip: skip },
     { $limit: limit + 1 },
   ]);
