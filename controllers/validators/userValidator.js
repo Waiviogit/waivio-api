@@ -160,6 +160,8 @@ exports.updateMetadataSchema = Joi.object().keys({
       parentPermlink: Joi.string(),
       permlink: Joi.string(),
       reward: Joi.string().optional(),
+      secondaryItem: Joi.string().allow(''),
+      campaignType: Joi.string().allow(''),
     })).default([]),
   }),
 });
