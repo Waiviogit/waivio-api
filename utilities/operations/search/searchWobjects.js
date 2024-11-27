@@ -9,6 +9,7 @@ const {
 const _ = require('lodash');
 const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
 const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
+const { getAppAuthorities } = require('../../helpers/appHelper');
 
 const getObjectPermlinksFromUrl = (link) => {
   try {
@@ -40,21 +41,6 @@ const getObjectPermlinksFromUrl = (link) => {
   } catch (error) {
     return [];
   }
-};
-
-const getAppAuthorities = (app) => {
-  const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
-
-  const authorities = [...app.authority];
-
-  if (userShop) {
-    authorities.push(app?.configuration?.shopSettings?.value);
-    return authorities;
-  }
-
-  authorities.push(app.owner);
-
-  return authorities;
 };
 
 const checkUserShop = (app) => app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;

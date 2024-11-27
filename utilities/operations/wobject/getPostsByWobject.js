@@ -20,12 +20,19 @@ const POST_RETRIEVER = {
 
 const postsQuery = {
   [POST_RETRIEVER.REGULAR]: Post.getWobjectPosts,
-  [POST_RETRIEVER.FEED]: Post.getWobjectPosts,
-  // [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
+  [POST_RETRIEVER.FEED]: Post.getNewsFeedPosts,
 };
 
-const getPostRetriever = (data) => {
-  if (data.newsPermlink) return postsQuery[POST_RETRIEVER.FEED];
+const getPostRetriever = ({ data, wObject }) => {
+  if (data.newsPermlink) {
+    const newsFilter = JSON.parse(_.get(
+      _.find(wObject.fields, (f) => f.permlink === data.newsPermlink),
+      'body',
+      '{}',
+    ));
+    if (!_.isEmpty(newsFilter.typeList)) return postsQuery[POST_RETRIEVER.FEED];
+    return postsQuery[POST_RETRIEVER.REGULAR];
+  }
   return postsQuery[POST_RETRIEVER.REGULAR];
 };
 
@@ -113,7 +120,7 @@ module.exports = async (data) => {
 
   if (conditionError) return { error: conditionError };
 
-  const retriever = getPostRetriever(data);
+  const retriever = getPostRetriever({ data, wObject });
 
   const { posts, error } = await retriever({
     condition,
@@ -166,16 +173,16 @@ const socialLinksMap = {
   linkYouTube: 'https://www.youtube.com/@',
   linkInstagram: 'https://www.instagram.com/',
   linkGitHub: 'https://github.com/',
+  linkTikTok: 'https://www.tiktok.com/@',
 };
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
 
-const makeConditionForPerson = ({ condition, processedObj }) => {
-  if (!processedObj.link) return { condition };
-  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
-  if (!parsedCondition) return { condition };
-
+const makeConditionSocialLink = ({ processedObj }) => {
   const conditionArr = [];
+  if (!processedObj.link) return conditionArr;
+  const parsedCondition = jsonHelper.parseJson(processedObj.link, null);
+  if (!parsedCondition) return conditionArr;
 
   for (const parsedConditionKey in parsedCondition) {
     const id = parsedCondition[parsedConditionKey];
@@ -189,13 +196,16 @@ const makeConditionForPerson = ({ condition, processedObj }) => {
       conditionArr.push({ links: { $regex: regex } });
     }
   }
-  if (!conditionArr?.length) return { condition };
 
-  return { condition: { $or: [condition, ...conditionArr] } };
+  return conditionArr;
 };
 
 // here we can either take fields from processed object or get all fields with Hive
 const makeConditionForBusiness = ({ condition, processedObj }) => {
+  const condArray = [condition];
+  const linkCondition = makeConditionSocialLink({ processedObj });
+  if (linkCondition?.length) condArray.push(...linkCondition);
+
   const hiveWallets = (processedObj[FIELDS_NAMES.WALLET_ADDRESS] || []).reduce((acc, el) => {
     const walletObj = jsonHelper.parseJson(el.body);
     if (!walletObj) return acc;
@@ -204,13 +214,14 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
     return acc;
   }, []);
 
-  if (!hiveWallets?.length) return { condition };
-  const condition2 = {
-    mentions: { $in: _.uniq(hiveWallets) },
-    ..._.omit(condition, 'wobjects.author_permlink'),
-  };
+  if (hiveWallets?.length) {
+    condArray.push({
+      mentions: { $in: _.uniq(hiveWallets) },
+      ..._.omit(condition, 'wobjects.author_permlink'),
+    });
+  }
 
-  return { condition: { $or: [condition, condition2] } };
+  return { condition: { $or: condArray } };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
@@ -250,10 +261,6 @@ const getWobjFeedCondition = async ({
   }
   condition['wobjects.author_permlink'] = { $in: _.compact([author_permlink, ...groupIdPermlinks, ...relistedLinks]) };
   if (!_.isEmpty(removeFilter)) condition.$nor = removeFilter;
-  if (wObject.object_type === OBJECT_TYPES.PERSON) {
-    return makeConditionForPerson({ condition, processedObj });
-  }
-
   if (wObject.object_type === OBJECT_TYPES.LINK) {
     return makeConditionForLink({ condition, wObject });
   }

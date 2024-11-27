@@ -165,4 +165,5 @@ exports.getParentHostSchema = Joi.object().keys({
 exports.updateAiSchema = Joi.object().keys({
   userName: Joi.string().required(),
   host: Joi.string().required(),
+  key: Joi.string(),
 });

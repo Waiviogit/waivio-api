@@ -86,6 +86,8 @@ const UserMetadataSchema = new Schema({
       parentPermlink: { type: String },
       permlink: { type: String },
       reward: { type: String },
+      secondaryItem: { type: String },
+      campaignType: { type: String },
     }],
     default: [],
   },

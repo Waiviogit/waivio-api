@@ -425,8 +425,10 @@ exports.updateAiStore = async (req, res, next) => {
     next,
   );
 
+  const validKey = value.key === process.env.API_KEY;
+
   const { error: authError } = await authoriseUser.authorise(value.userName);
-  if (authError) return next(authError);
+  if (authError && !validKey) return next(authError);
   const { result, timeToNextRequest, error } = await updateAiCustomStore(value);
   if (error) return next(error);
   return res.status(200).json({ result, timeToNextRequest });
