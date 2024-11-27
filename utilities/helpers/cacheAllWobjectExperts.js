@@ -21,7 +21,8 @@ exports.cacheAllWobjectExperts = async (limit) => {
 
   for (const wobj of _.concat(hashtags, objects)) {
     await redisGetter.removeTopWobjUsers(wobj.author_permlink);
-    const { result: userWobjects } = await UserExpertiseModel.find({ author_permlink: wobj.author_permlink }, { weight: -1 }, 5);
+    const { result: userWobjects } = await UserExpertiseModel
+      .find({ author_permlink: wobj.author_permlink }, { weight: -1 }, 5);
     const ids = _.map(userWobjects, (user) => `${user.user_name}:${user.weight}`);
     if (ids && ids.length) {
       await redisSetter.addTopWobjUsers(wobj.author_permlink, ids);
