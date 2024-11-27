@@ -82,6 +82,7 @@ exports.FIELDS_NAMES = {
   GROUP_FOLLOWING: 'groupFollowing',
   GROUP_ADD: 'groupAdd',
   GROUP_EXCLUDE: 'groupExclude',
+  PROMOTION: 'promotion',
   GROUP_LAST_ACTIVITY: 'groupLastActivity',
   GROUP_MIN_EXPERTISE: 'groupMinExpertise',
 };
@@ -198,6 +199,7 @@ exports.ARRAY_FIELDS = [
   this.FIELDS_NAMES.DELEGATION,
   this.FIELDS_NAMES.GROUP_ADD,
   this.FIELDS_NAMES.GROUP_EXCLUDE,
+  this.FIELDS_NAMES.PROMOTION,
 ];
 
 exports.REQUIREDFIELDS = [

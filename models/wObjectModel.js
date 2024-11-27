@@ -291,6 +291,19 @@ const getFavoritesByUsername = async ({
   }
 };
 
+const getSortingStagesByHost = ({ host }) => [
+  {
+    $addFields: {
+      isPromotedForSite: { $in: [host, { $ifNull: ['$promotedOnSites', []] }] },
+    },
+  },
+  {
+    $sort: {
+      isPromotedForSite: -1, activeCampaignsCount: -1, weight: -1, _id: -1,
+    },
+  },
+];
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -306,4 +319,5 @@ module.exports = {
   findRelistedObjectsByPermlink,
   getFavoritesListByUsername,
   getFavoritesByUsername,
+  getSortingStagesByHost,
 };

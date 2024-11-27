@@ -218,21 +218,29 @@ const subdirectoryMap = ({
     };
   });
 
-const getDefaultGroupStage = () => [
-  { $sort: { weight: -1 } },
-  {
-    $group: {
-      _id: '$metaGroupId',
-      doc: { $first: '$$ROOT' },
+const getDefaultGroupStage = ({ host } = {}) => {
+  const pipe = [
+    {
+      $group: {
+        _id: '$metaGroupId',
+        doc: { $first: '$$ROOT' },
+      },
     },
-  },
-  {
-    $replaceRoot: {
-      newRoot: '$doc',
+    {
+      $replaceRoot: {
+        newRoot: '$doc',
+      },
     },
-  },
-  { $sort: { weight: -1, createdAt: -1 } },
-];
+
+  ];
+  if (host) {
+    pipe.push(...Wobj.getSortingStagesByHost({ host }));
+  } else {
+    pipe.push({ $sort: { weight: -1, _id: -1 } });
+  }
+
+  return pipe;
+};
 
 const orderBySubdirectory = (departments) => _
   .orderBy(departments, ['subdirectory', 'objectsCount'], ['desc', 'desc']);

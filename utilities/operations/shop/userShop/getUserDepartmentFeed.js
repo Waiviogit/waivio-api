@@ -61,6 +61,7 @@ module.exports = async ({
     department, path, userName, userFilter, app, schema,
   });
   const objectTypeCondition = shopHelper.getObjectTypeCondition(schema);
+  const { host = '' } = app;
 
   const pipe = [
     {
@@ -77,9 +78,9 @@ module.exports = async ({
   ];
 
   if (schema === SHOP_SCHEMA.SHOP) {
-    pipe.push(...shopHelper.getDefaultGroupStage());
+    pipe.push(...shopHelper.getDefaultGroupStage({ host }));
   } else {
-    pipe.push({ $sort: { weight: -1, createdAt: -1 } });
+    pipe.push(...Wobj.getSortingStagesByHost({ host }));
   }
   pipe.push(
     { $skip: skip },
