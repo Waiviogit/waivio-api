@@ -202,7 +202,9 @@ const makeConditionSocialLink = ({ processedObj }) => {
 
 // here we can either take fields from processed object or get all fields with Hive
 const makeConditionForBusiness = ({ condition, processedObj }) => {
-  const condArray = [condition];
+  const condArray = [{
+    'wobjects.author_permlink': condition['wobjects.author_permlink'],
+  }];
   const linkCondition = makeConditionSocialLink({ processedObj });
   if (linkCondition?.length) condArray.push(...linkCondition);
 
@@ -217,11 +219,15 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
   if (hiveWallets?.length) {
     condArray.push({
       mentions: { $in: _.uniq(hiveWallets) },
-      ..._.omit(condition, 'wobjects.author_permlink'),
     });
   }
 
-  return { condition: { $or: condArray } };
+  return {
+    condition: {
+      ..._.omit(condition, 'wobjects.author_permlink'),
+      $or: condArray,
+    },
+  };
 };
 
 // Make condition for database aggregation using newsFilter if it exist, else only by "wobject"
