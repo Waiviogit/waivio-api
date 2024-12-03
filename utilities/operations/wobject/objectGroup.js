@@ -1,6 +1,6 @@
 const wObjectHelper = require('utilities/helpers/wObjectHelper');
 const {
-  Wobj, Subscriptions, UserWobjects, User,
+  Wobj, Subscriptions, UserExpertiseModel, User,
 } = require('models');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
 const jsonHelper = require('utilities/helpers/jsonHelper');
@@ -123,7 +123,7 @@ const getByExpertise = async ({
     },
   ]);
 
-  const { result, error } = await UserWobjects.aggregate(pipe);
+  const { result, error } = await UserExpertiseModel.aggregate(pipe);
   if (error) {
     console.error('Error in getByExpertise:', error);
     return [];

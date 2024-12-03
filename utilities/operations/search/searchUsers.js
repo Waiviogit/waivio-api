@@ -1,4 +1,4 @@
-const { User, App, UserWobjects } = require('models');
+const { User, App, UserExpertiseModel } = require('models');
 const moment = require('moment');
 const _ = require('lodash');
 
@@ -69,7 +69,7 @@ const searchExpertise = async ({
     },
   ];
 
-  const { result, error } = await UserWobjects.aggregate(pipeline);
+  const { result, error } = await UserExpertiseModel.aggregate(pipeline);
 
   return {
     users: _.take(result, limit),

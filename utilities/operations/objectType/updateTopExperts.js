@@ -1,4 +1,4 @@
-const { WObject, ObjectType, UserWobjects } = require('database').models;
+const { WObject, ObjectType, UserExpertiseModel } = require('database').models;
 const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('constants/wobjectsData');
 const _ = require('lodash');
 
@@ -15,7 +15,7 @@ const getObjectTypeWobjects = async (name) => {
 // eslint-disable-next-line camelcase
 const getExpertsByAuthorPermlinks = async ({ author_permlinks, limit = 50 }) => {
   try {
-    const experts = await UserWobjects.aggregate([
+    const experts = await UserExpertiseModel.aggregate([
       { $match: { author_permlink: { $in: author_permlinks } } },
       { $group: { _id: '$user_name', total_weight: { $sum: '$weight' } } },
       { $sort: { total_weight: -1 } },

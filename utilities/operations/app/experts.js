@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { App, UserWobjects } = require('models');
+const { App, UserExpertiseModel } = require('models');
 const asyncLocalStorage = require('../../../middlewares/context/context');
 
 exports.collect = async ({ limit }) => {
@@ -9,7 +9,7 @@ exports.collect = async ({ limit }) => {
   if (error) return { error };
   const res = await Promise.all(apps.map(async (app) => {
     if (!app.supported_objects || !app.supported_objects.length) return { [app.name]: 'empty' };
-    const { result, error: aggregateError } = await UserWobjects.aggregate([
+    const { result, error: aggregateError } = await UserExpertiseModel.aggregate([
       { $match: { author_permlink: { $in: app.supported_objects } } },
       { $group: { _id: '$user_name', weight: { $sum: '$weight' } } },
       { $sort: { weight: -1 } },

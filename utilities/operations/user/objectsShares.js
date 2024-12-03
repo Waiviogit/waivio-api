@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const UserWobjects = require('models/UserWobjects');
+const UserExpertiseModel = require('models/UserExpertiseModel');
 const _ = require('lodash');
 
 const makePipeline = ({
@@ -103,7 +103,7 @@ const getUserObjectsShares = async (data) => {
   const {
     result: wobjects,
     error: userWobjectsError,
-  } = await UserWobjects.aggregate(makePipeline(data));
+  } = await UserExpertiseModel.aggregate(makePipeline(data));
 
   if (userWobjectsError) {
     return { error: userWobjectsError };
@@ -122,9 +122,9 @@ const getUserObjectsShares = async (data) => {
 };
 
 const getUserObjectsSharesCounters = async (name) => {
-  const { result: [countHashtag = { count: 0 }], error: hashtagErr } = await UserWobjects
+  const { result: [countHashtag = { count: 0 }], error: hashtagErr } = await UserExpertiseModel
     .aggregate(makeCountPipeline({ name, object_types: ['hashtag'] }));
-  const { result: [countWobj = { count: 0 }], error: wobjErr } = await UserWobjects
+  const { result: [countWobj = { count: 0 }], error: wobjErr } = await UserExpertiseModel
     .aggregate(makeCountPipeline({ name, exclude_object_types: ['hashtag'] }));
 
   if (hashtagErr || wobjErr) return { error: hashtagErr || wobjErr };
