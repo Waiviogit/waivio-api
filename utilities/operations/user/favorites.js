@@ -1,4 +1,6 @@
-const { Wobj, User, Post } = require('models');
+const {
+  Wobj, User, Post, userShopDeselectModel,
+} = require('models');
 const _ = require('lodash');
 const { processUserAffiliate } = require('../affiliateProgram/processAffiliate');
 const wObjectHelper = require('../../helpers/wObjectHelper');
@@ -8,7 +10,6 @@ const {
 } = require('../../../constants/wobjectsData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
-const { userShopDeselectModel } = require('../../../models');
 
 const orderMap = new Map(FAVORITES_OBJECT_TYPES.map((value, index) => [value, index]));
 
@@ -130,9 +131,7 @@ const getFavoritesMap = async ({
     {
       $match: filter,
     },
-    {
-      $sort: { weight: -1, _id: 1 },
-    },
+    ...Wobj.getSortingStagesByHost({ host: app?.host }),
     {
       $skip: skip,
     },

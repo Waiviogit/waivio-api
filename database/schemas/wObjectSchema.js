@@ -17,6 +17,8 @@ const FieldsSchema = new Schema({
   creator: { type: String },
   author: String, //
   permlink: String, // author+permlink it's link to appendObject COMMENT
+  endDate: Number, // author+permlink it's link to appendObject COMMENT
+  startDate: Number, // author+permlink it's link to appendObject COMMENT
   active_votes: {
     type: [{
       voter: { type: String },
