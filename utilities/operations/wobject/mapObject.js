@@ -313,7 +313,7 @@ const getObjectsFromAdvancedMap = async ({
     typesCondition,
     tagsCondition,
     objectLinksCondition,
-    limit: 100,
+    limit: 25,
     app,
   })));
 
@@ -331,7 +331,7 @@ const getObjectsFromAdvancedMap = async ({
   });
 
   const processed = await wObjectHelper.processWobjects({
-    wobjects: _.take(filtered, 400),
+    wobjects: _.take(filtered, 100),
     fields: REQUIREDFILDS_WOBJ_LIST,
     reqUserName: follower,
     app,
