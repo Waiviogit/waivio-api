@@ -1,5 +1,5 @@
 const { Wobj, User } = require('models');
-const {UserExpertiseModel} = require('database').models;
+const { UserExpertise } = require('database').models;
 const _ = require('lodash');
 const { redisGetter } = require('utilities/redis');
 const {
@@ -61,7 +61,7 @@ const getMany = async (data) => {
       /** We have cached users in redis DB, if key not found< use mongo */
       const ids = await redisGetter.getTopWobjUsers(wobj.author_permlink);
       if (!ids || !ids.length) {
-        const userWobjects = await UserExpertiseModel
+        const userWobjects = await UserExpertise
           .find({ author_permlink: wobj.author_permlink })
           .sort({ weight: -1 }).limit(data.user_limit).lean();
         wobj.users = _.map(userWobjects, (user) => ({ name: user.user_name, weight: user.weight }));
