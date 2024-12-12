@@ -39,6 +39,8 @@ const {
 } = require('./cacheHelper');
 const asyncLocalStorage = require('../../middlewares/context/context');
 
+const MASTER_ACCOUNT = process.env.MASTER_ACCOUNT || 'waivio';
+
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
 const getBlacklist = async (admins) => {
@@ -131,6 +133,7 @@ const getFieldVoteRole = (vote) => {
   if (vote.ownership) role = ADMIN_ROLES.OWNERSHIP;
   if (vote.administrative) role = ADMIN_ROLES.ADMINISTRATIVE;
   if (vote.owner) role = ADMIN_ROLES.OWNER;
+  if (vote.master) role = ADMIN_ROLES.MASTER;
 
   return role;
 };
@@ -138,12 +141,15 @@ const getFieldVoteRole = (vote) => {
 const addAdminVote = ({
   field, owner, admins, administrative, isOwnershipObj, ownership,
 }) => {
-  let adminVote, administrativeVote, ownershipVote, ownerVote;
+  let adminVote, administrativeVote, ownershipVote, ownerVote, masterVote;
   _.forEach(field.active_votes, (vote) => {
     vote.timestamp = vote._id
       ? vote._id.getTimestamp().valueOf()
       : Date.now();
-    if (vote.voter === owner) {
+    if (vote.voter === MASTER_ACCOUNT) {
+      vote.master = true;
+      masterVote = vote;
+    } else if (vote.voter === owner) {
       vote.owner = true;
       ownerVote = vote;
     } else if (_.includes(admins, vote.voter)) {
@@ -159,8 +165,8 @@ const addAdminVote = ({
   });
 
   /** If field includes admin votes fill in it */
-  if (ownerVote || adminVote || administrativeVote || ownershipVote) {
-    const mainVote = ownerVote || adminVote || ownershipVote || administrativeVote;
+  if (masterVote || ownerVote || adminVote || administrativeVote || ownershipVote) {
+    const mainVote = masterVote || ownerVote || adminVote || ownershipVote || administrativeVote;
     if (mainVote?.percent !== 0) {
       return {
         role: getFieldVoteRole(mainVote),
@@ -326,7 +332,7 @@ const filterFieldValidation = (filter, field, locale, ownership) => {
   let result = _.includes(INDEPENDENT_FIELDS, field.name) || locale === field.locale;
   if (filter) result = result && _.includes(filter, field.name);
   if (ownership?.length) {
-    result = (result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER], _.get(field, 'adminVote.role')))
+    result = (result && _.includes([ADMIN_ROLES.OWNERSHIP, ADMIN_ROLES.ADMIN, ADMIN_ROLES.OWNER, ADMIN_ROLES.MASTER], _.get(field, 'adminVote.role')))
       || (result && _.includes(ownership, field?.creator));
   }
   return result;
@@ -496,23 +502,16 @@ const getFieldsToDisplay = (fields, locale, filter, permlink, ownership) => {
     }
     // pick from admin fields
     if (approvedFields.length) {
-      const ownerVotes = _.filter(
-        approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.OWNER,
-      );
-      const adminVotes = _.filter(
-        approvedFields,
-        (field) => field.adminVote.role === ADMIN_ROLES.ADMIN,
-      );
-      if (ownerVotes.length) {
-        const winningField = _.maxBy(ownerVotes, 'adminVote.timestamp');
+      const rolesPriority = [ADMIN_ROLES.MASTER, ADMIN_ROLES.OWNER, ADMIN_ROLES.ADMIN];
+
+      const winningField = rolesPriority.reduce((winning, role) => {
+        if (winning) return winning;
+        const roleVotes = _.filter(approvedFields, (field) => field.adminVote.role === role);
+        return _.maxBy(roleVotes, 'adminVote.timestamp') || winning;
+      }, null) || _.maxBy(approvedFields, 'adminVote.timestamp');
+
+      if (winningField) {
         winningFields[id] = getSingleFieldsDisplay(winningField);
-        setWinningFields({ id, winningFields, winningField });
-      } else if (adminVotes.length) {
-        const winningField = _.maxBy(adminVotes, 'adminVote.timestamp');
-        setWinningFields({ id, winningFields, winningField });
-      } else {
-        const winningField = _.maxBy(approvedFields, 'adminVote.timestamp');
         setWinningFields({ id, winningFields, winningField });
       }
       continue;
