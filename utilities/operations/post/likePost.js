@@ -123,7 +123,7 @@ const getActiveVotes = ({
         {
           percent: weight,
           rshares: Math.round(hive.rShares),
-          weight: Math.round(hive.rShares * 1e-6),
+          weight: Number((hive.hiveVotePrice + waiv.engineVotePrice).toFixed(8)) || 0,
           rsharesWAIV: waiv.rshares,
         },
       )
@@ -131,7 +131,7 @@ const getActiveVotes = ({
         voter,
         percent: weight,
         rshares: Math.round(hive.rShares) || 1,
-        weight: Math.round(hive.rShares * 1e-6),
+        weight: Number((hive.hiveVotePrice + waiv.engineVotePrice).toFixed(8)) || 0,
         rsharesWAIV: waiv.rshares || 1,
       });
   }
