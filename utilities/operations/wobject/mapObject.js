@@ -339,7 +339,11 @@ const getObjectsFromAdvancedMap = async ({
   });
 
   return {
-    result: processed,
+    result: _.orderBy(
+      processed,
+      ['isPromotedForSite', 'activeCampaignsCount', 'weight', '_id'],
+      ['desc', 'desc', 'desc', 'desc'],
+    ),
   };
 };
 
