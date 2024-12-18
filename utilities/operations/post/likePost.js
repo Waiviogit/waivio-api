@@ -122,7 +122,7 @@ const getActiveVotes = ({
         post.active_votes[post.active_votes.indexOf(voteInPost)],
         {
           percent: weight,
-          rshares: Math.round(hive.rShares),
+          rshares: Math.round(hive.rShares) || 1,
           weight: Number((hive.hiveVotePrice + waiv.engineVotePrice).toFixed(8)) || 0,
           rsharesWAIV: waiv.rshares,
         },
