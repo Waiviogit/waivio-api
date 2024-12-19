@@ -158,13 +158,20 @@ const makeConditionForLink = ({ condition, wObject }) => {
   if (!urlField) return { condition };
   const { body } = urlField;
 
+  const escapedLink = body.slice(0, -1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  const regex = new RegExp(`^${escapedLink}`);
+
   // when body ends with * it means that al path after * is valid, if no * - strict eq
   const condition2 = {
-    links: body.endsWith('*') ? { $regex: `^${body.slice(0, -1)}` } : body,
-    ..._.omit(condition, 'wobjects.author_permlink'),
+    links: body.endsWith('*') ? { $regex: regex } : body,
   };
 
-  return { condition: { $or: [condition, condition2] } };
+  return {
+    condition: {
+      $or: [_.pick(condition, 'wobjects.author_permlink'), condition2],
+      ..._.omit(condition, 'wobjects.author_permlink'),
+    },
+  };
 };
 
 const socialLinksMap = {
