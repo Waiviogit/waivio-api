@@ -297,11 +297,12 @@ const getNewsFilterCondition = ({
     return { error: { message: 'Format not include all required fields' } };
   }
 
-  if (!_.isEmpty(newsFilter.allowList)
-    && _.some(newsFilter.allowList, (rule) => !_.isEmpty(rule))) {
+  const allowList = _.filter(newsFilter.allowList, (el) => !_.isEmpty(el));
+
+  if (!_.isEmpty(allowList)) {
     const orCondArr = [];
 
-    newsFilter.allowList.forEach((allowRule) => {
+    allowList.forEach((allowRule) => {
       if (Array.isArray(allowRule) && allowRule.length) {
         orCondArr.push({
           'wobjects.author_permlink': { $all: allowRule },
@@ -325,7 +326,7 @@ const getNewsFilterCondition = ({
   }
 
   if (
-    _.some(newsFilter.allowList, (rule) => _.isEmpty(rule))
+    _.some(allowList, (rule) => _.isEmpty(rule))
     && _.isEmpty(_.get(newsFilter, 'typeList'))
     && _.isEmpty(_.get(newsFilter, 'authors'))
   ) {
