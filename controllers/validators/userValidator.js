@@ -217,7 +217,8 @@ exports.getFollowers = Joi.object().keys({
 
 exports.comments = Joi.object().keys({
   name: Joi.string().required(),
-  limit: Joi.number().integer().min(0).default(30),
+  limit: Joi.number().integer().min(0).max(15)
+    .default(15),
   skip: Joi.number().integer().min(0).default(0),
   start_permlink: Joi.string().invalid('').default(null),
   userName: Joi.string().default(''),

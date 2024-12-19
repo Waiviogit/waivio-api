@@ -304,6 +304,19 @@ const getSortingStagesByHost = ({ host }) => [
   },
 ];
 
+const getSortingStagesByHostSearch = ({ host }) => [{
+  $addFields: {
+    isPromotedForSite: { $in: [host, { $ifNull: ['$promotedOnSites', []] }] },
+    isList: { $eq: ['$object_type', 'list'] },
+  },
+},
+{
+  $sort: {
+    isList: -1, isPromotedForSite: -1, activeCampaignsCount: -1, weight: -1, _id: -1,
+  },
+},
+];
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -320,4 +333,5 @@ module.exports = {
   getFavoritesListByUsername,
   getFavoritesByUsername,
   getSortingStagesByHost,
+  getSortingStagesByHostSearch,
 };

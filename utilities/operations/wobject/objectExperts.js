@@ -1,4 +1,4 @@
-const { UserWobjects, User, Wobj } = require('models');
+const { UserExpertiseModel, User, Wobj } = require('models');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 const { EXPERTS_SORT } = require('constants/sortData');
@@ -78,14 +78,14 @@ const getWobjExperts = async ({
   const fullField = !_.isEmpty(field) ? Object.assign(field, jsonHelper.parseJson(_.get(field, 'body'))) : {};
   const multipliers = getMultipliers(fullField, author_permlink);
   const pipeline = makePipeline({ multipliers, skip, limit });
-  const { result: experts, error: aggregationError } = await UserWobjects.aggregate(pipeline);
+  const { result: experts, error: aggregationError } = await UserExpertiseModel.aggregate(pipeline);
 
   if (aggregationError) return { error: aggregationError };
   if (user) {
     const userPipeline = makePipeline({
       multipliers, skip, limit, user,
     });
-    const { result: expertsByUserName, error } = await UserWobjects.aggregate(userPipeline);
+    const { result: expertsByUserName, error } = await UserExpertiseModel.aggregate(userPipeline);
 
     if (error) return { error };
     userExpert = _.get(expertsByUserName, '[0]');
@@ -116,13 +116,13 @@ const getFollowersCount = async ({ experts, userExpert }) => {
 const getExpertsByUserWobject = async (data) => {
   switch (data.sort) {
     case EXPERTS_SORT.RANK:
-      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
+      return UserExpertiseModel.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { weight: -1 } } });
     case EXPERTS_SORT.ALPHABET:
-      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
+      return UserExpertiseModel.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { user_name: 1 } } });
     case EXPERTS_SORT.FOLLOWERS:
-      return UserWobjects.getExpertsByFollowersFromUserModel({ ...data });
+      return UserExpertiseModel.getExpertsByFollowersFromUserModel({ ...data });
     case EXPERTS_SORT.RECENCY:
-      return UserWobjects.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
+      return UserExpertiseModel.getExpertsWithoutMergingCollections({ ...data, sort: { $sort: { _id: -1 } } });
   }
 };
 module.exports = { getWobjExperts };

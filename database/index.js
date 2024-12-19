@@ -28,6 +28,7 @@ const closeMongoConnections = async () => {
 const models = {};
 
 models.UserWobjects = require('./schemas/UserWobjectsSchema');
+models.UserExpertise = require('./schemas/UserExpertiseSchema');
 models.CommentRef = require('./schemas/CommentRefSchema');
 models.ObjectType = require('./schemas/ObjectTypeSchema');
 models.WObject = require('./schemas/wObjectSchema');

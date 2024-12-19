@@ -93,7 +93,7 @@ const getDevelopmentFund = async () => {
     ? maxAmountPerDay
     : totalRequestedWaiv;
 
-  const distributedInMonthUSD = new BigNumber(maxAmountPerDay)
+  const distributedInMonthUSD = new BigNumber(waivToUsd)
     .times(dayInMonth)
     .times(realRequest)
     .toFixed();
