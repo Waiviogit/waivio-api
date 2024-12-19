@@ -5,7 +5,7 @@ const { TOKEN_WAIV } = require('constants/hiveEngine');
 const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 const {
-  Post, Comment, Wobj, UserWobjects,
+  Post, Comment, Wobj, UserExpertiseModel,
 } = require('models');
 const { redisGetter } = require('utilities/redis');
 const { WHITE_LIST_KEY, VOTE_COST } = require('constants/wobjectsData');
@@ -132,7 +132,7 @@ exports.checkUserWhiteList = async ({
 const getWeightFromObjectExpertise = async ({
   userName, authorPermlink,
 }) => {
-  const { result, error } = await UserWobjects.findOne({
+  const { result, error } = await UserExpertiseModel.findOne({
     user_name: userName,
     author_permlink: authorPermlink,
   });
