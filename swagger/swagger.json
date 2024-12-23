@@ -70,6 +70,10 @@
     {
       "name": "thread",
       "description": "thread"
+    },
+    {
+      "name": "admin",
+      "description": "admin"
     }
   ],
   "schemes": [
@@ -77,6 +81,275 @@
     "http"
   ],
   "paths": {
+    "/api/admin/sites": {
+      "get": {
+        "tags" : [ "admin" ],
+        "description" : "get manage view",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/definitions/managePage"
+                  }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/vip-tickets": {
+      "get": {
+        "tags" : [ "admin" ],
+        "description" : "get vip tickets view",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "userName": {
+                        "type": "string",
+                        "example": "john_doe"
+                      },
+                      "purchased": {
+                        "type": "number",
+                        "example": 500
+                      },
+                      "used": {
+                        "type": "number",
+                        "example": 400
+                      }
+                    }
+                  }
+                },
+                "totalPurchased": {
+                  "type": "number",
+                  "example": 1000
+                },
+                "totalUsed": {
+                  "type": "number",
+                  "example": 800
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admin/whitelist": {
+      "get": {
+        "tags" : [ "admin" ],
+        "description" : "get whitelist view",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "name": {
+                        "type": "string"
+                      },
+                      "alias": {
+                        "type": "string"
+                      },
+                      "wobjects_weight": {
+                        "type": "number"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags" : [ "admin" ],
+        "description" : "add user to whitelist",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags" : [ "admin" ],
+        "description" : "delete user from whitelist",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "number"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/thread/hashtag": {
       "get" : {
         "tags" : [ "thread" ],

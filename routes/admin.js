@@ -10,4 +10,10 @@ adminRoutes.route('/admin/whitelist')
   .put(reqTimeMonitor, adminController.setWhitelist)
   .delete(reqTimeMonitor, adminController.deleteWhitelist);
 
+adminRoutes.route('/admin/vip-tickets')
+  .get(reqTimeMonitor, adminController.getVipTickets);
+
+adminRoutes.route('/admin/sites')
+  .get(reqTimeMonitor, adminController.manageView);
+
 module.exports = adminRoutes;
