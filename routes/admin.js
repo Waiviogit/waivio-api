@@ -5,15 +5,18 @@ const adminController = require('../controllers/adminController');
 
 const adminRoutes = new Router();
 
-adminRoutes.route('/admin/whitelist')
+adminRoutes.route('/admins/whitelist')
   .get(reqTimeMonitor, adminController.getWhitelist)
   .put(reqTimeMonitor, adminController.setWhitelist)
   .delete(reqTimeMonitor, adminController.deleteWhitelist);
 
-adminRoutes.route('/admin/vip-tickets')
+adminRoutes.route('/admins/vip-tickets')
   .get(reqTimeMonitor, adminController.getVipTickets);
 
-adminRoutes.route('/admin/sites')
+adminRoutes.route('/admins/sites')
   .get(reqTimeMonitor, adminController.manageView);
+
+adminRoutes.route('/admins')
+  .get(reqTimeMonitor, adminController.getAdmins);
 
 module.exports = adminRoutes;

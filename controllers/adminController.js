@@ -3,6 +3,7 @@ const vipTickets = require('utilities/operations/admin/vipTickets');
 const sites = require('utilities/operations/admin/sites');
 const authoriseUser = require('utilities/authorization/authoriseUser');
 const validators = require('./validators');
+const { WAIVIO_ADMINS } = require('../constants/common');
 
 const getWhitelist = async (req, res, next) => {
   const { admin } = req.headers;
@@ -71,10 +72,13 @@ const manageView = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const getAdmins = async (req, res, next) => res.status(200).json(WAIVIO_ADMINS);
+
 module.exports = {
   getWhitelist,
   setWhitelist,
   deleteWhitelist,
   getVipTickets,
   manageView,
+  getAdmins,
 };

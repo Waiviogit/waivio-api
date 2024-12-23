@@ -72,8 +72,8 @@
       "description": "thread"
     },
     {
-      "name": "admin",
-      "description": "admin"
+      "name": "admins",
+      "description": "admins"
     }
   ],
   "schemes": [
@@ -81,9 +81,37 @@
     "http"
   ],
   "paths": {
-    "/api/admin/sites": {
+    "/api/admins": {
       "get": {
-        "tags" : [ "admin" ],
+        "tags" : [ "admins" ],
+        "description" : "get app admins",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/admins/sites": {
+      "get": {
+        "tags" : [ "admins" ],
         "description" : "get manage view",
         "produces" : [ "application/json" ],
         "parameters" : [
@@ -121,9 +149,9 @@
         }
       }
     },
-    "/api/admin/vip-tickets": {
+    "/api/admins/vip-tickets": {
       "get": {
-        "tags" : [ "admin" ],
+        "tags" : [ "admins" ],
         "description" : "get vip tickets view",
         "produces" : [ "application/json" ],
         "parameters" : [
@@ -188,9 +216,9 @@
         }
       }
     },
-    "/api/admin/whitelist": {
+    "/api/admins/whitelist": {
       "get": {
-        "tags" : [ "admin" ],
+        "tags" : [ "admins" ],
         "description" : "get whitelist view",
         "produces" : [ "application/json" ],
         "parameters" : [
@@ -244,7 +272,7 @@
         }
       },
       "put": {
-        "tags" : [ "admin" ],
+        "tags" : [ "admins" ],
         "description" : "add user to whitelist",
         "produces" : [ "application/json" ],
         "parameters" : [
@@ -297,7 +325,7 @@
         }
       },
       "delete": {
-        "tags" : [ "admin" ],
+        "tags" : [ "admins" ],
         "description" : "delete user from whitelist",
         "produces" : [ "application/json" ],
         "parameters" : [
