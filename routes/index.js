@@ -13,6 +13,7 @@ const routes = [
   { route: require('./shop') },
   { route: require('./draft') },
   { route: require('./thread') },
+  { route: require('./admin') },
 ];
 
 const apiRoutes = new Router();
