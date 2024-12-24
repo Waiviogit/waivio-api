@@ -71,8 +71,11 @@ const getDevelopmentFund = async () => {
   const { result: tokenRate } = await currenciesRequests.getEngineRate({ token: 'WAIV' });
   const waivToUsd = tokenRate?.USD;
 
-  const availableInMonthUSD = new BigNumber(maxAmountPerDay)
+  const availableInMonthWAIV = new BigNumber(maxAmountPerDay)
     .times(dayInMonth)
+    .toFixed();
+
+  const availableInMonthUSD = new BigNumber(availableInMonthWAIV)
     .times(waivToUsd)
     .toFixed();
 
@@ -93,14 +96,20 @@ const getDevelopmentFund = async () => {
     ? maxAmountPerDay
     : totalRequestedWaiv;
 
-  const distributedInMonthUSD = new BigNumber(maxAmountPerDay)
+  const distributedInMonthWAIV = new BigNumber(realRequest)
     .times(dayInMonth)
-    .times(realRequest)
+    .toFixed();
+
+  const distributedInMonthUSD = new BigNumber(distributedInMonthWAIV)
+    .times(waivToUsd)
+
     .toFixed();
 
   return {
     availableInMonthUSD,
     distributedInMonthUSD,
+    availableInMonthWAIV,
+    distributedInMonthWAIV,
   };
 };
 

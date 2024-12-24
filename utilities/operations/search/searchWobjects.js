@@ -265,7 +265,7 @@ const makePipeline = ({
       { $sort: { crucial_wobject: -1, priority: -1, weight: -1 } },
     );
   } else {
-    pipeline.push(...Wobj.getSortingStagesByHost({ host: app?.host }));
+    pipeline.push(...Wobj.getSortingStagesByHostSearch({ host: app?.host }));
   }
   if (onlyObjectTypes?.length) {
     pipeline.push({ $match: { object_type: { $in: onlyObjectTypes } } });
@@ -375,7 +375,7 @@ const matchSocialPipe = ({
         ...(linksFromUrl && { author_permlink: { $in: linksFromUrl } }),
       },
     },
-    ...Wobj.getSortingStagesByHost({ host: app?.host }),
+    ...Wobj.getSortingStagesByHostSearch({ host: app?.host }),
   ];
   if (!counters) {
     pipeline.push(...[{ $skip: skip || 0 }, { $limit: limit + 1 }]);

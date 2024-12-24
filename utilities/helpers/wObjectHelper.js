@@ -16,7 +16,7 @@ const {
 const { postsUtil } = require('utilities/hiveApi');
 const ObjectTypeModel = require('models/ObjectTypeModel');
 const blacklistModel = require('models/blacklistModel');
-const UserWobjects = require('models/UserWobjects');
+const UserExpertiseModel = require('models/UserExpertiseModel');
 const {
   DEVICE,
   LANGUAGES_POPULARITY,
@@ -87,7 +87,7 @@ const getBlacklist = async (admins) => {
 };
 // eslint-disable-next-line camelcase
 const getUserSharesInWobj = async (name, author_permlink) => {
-  const userObjectShare = await UserWobjects.findOne({
+  const userObjectShare = await UserExpertiseModel.findOne({
     user_name: name,
     author_permlink,
   }, '-_id weight');

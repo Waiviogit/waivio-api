@@ -2,6 +2,7 @@ const moduleExports = {};
 
 moduleExports.ObjectType = require('./ObjectTypeModel');
 moduleExports.UserWobjects = require('./UserWobjects');
+moduleExports.UserExpertiseModel = require('./UserExpertiseModel');
 moduleExports.CommentRef = require('./CommentRef');
 moduleExports.Comment = require('./CommentModel');
 moduleExports.Wobj = require('./wObjectModel');

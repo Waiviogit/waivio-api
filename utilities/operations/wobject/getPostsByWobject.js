@@ -158,13 +158,20 @@ const makeConditionForLink = ({ condition, wObject }) => {
   if (!urlField) return { condition };
   const { body } = urlField;
 
+  const escapedLink = body.slice(0, -1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  const regex = new RegExp(`^${escapedLink}`);
+
   // when body ends with * it means that al path after * is valid, if no * - strict eq
   const condition2 = {
-    links: body.endsWith('*') ? { $regex: `^${body.slice(0, -1)}` } : body,
-    ..._.omit(condition, 'wobjects.author_permlink'),
+    links: body.endsWith('*') ? { $regex: regex } : body,
   };
 
-  return { condition: { $or: [condition, condition2] } };
+  return {
+    condition: {
+      $or: [_.pick(condition, 'wobjects.author_permlink'), condition2],
+      ..._.omit(condition, 'wobjects.author_permlink'),
+    },
+  };
 };
 
 const socialLinksMap = {
@@ -297,11 +304,12 @@ const getNewsFilterCondition = ({
     return { error: { message: 'Format not include all required fields' } };
   }
 
-  if (!_.isEmpty(newsFilter.allowList)
-    && _.some(newsFilter.allowList, (rule) => !_.isEmpty(rule))) {
+  const allowList = _.filter(newsFilter.allowList, (el) => !_.isEmpty(el));
+
+  if (!_.isEmpty(allowList)) {
     const orCondArr = [];
 
-    newsFilter.allowList.forEach((allowRule) => {
+    allowList.forEach((allowRule) => {
       if (Array.isArray(allowRule) && allowRule.length) {
         orCondArr.push({
           'wobjects.author_permlink': { $all: allowRule },
@@ -325,7 +333,7 @@ const getNewsFilterCondition = ({
   }
 
   if (
-    _.some(newsFilter.allowList, (rule) => _.isEmpty(rule))
+    _.some(allowList, (rule) => _.isEmpty(rule))
     && _.isEmpty(_.get(newsFilter, 'typeList'))
     && _.isEmpty(_.get(newsFilter, 'authors'))
   ) {
