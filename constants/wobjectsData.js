@@ -140,6 +140,7 @@ exports.ADMIN_ROLES = {
   ADMIN: 'admin',
   OWNERSHIP: 'ownership',
   ADMINISTRATIVE: 'administrative',
+  MASTER: 'master',
 };
 
 exports.VOTE_STATUSES = {
