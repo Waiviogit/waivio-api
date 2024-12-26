@@ -39,7 +39,7 @@ const {
 } = require('./cacheHelper');
 const asyncLocalStorage = require('../../middlewares/context/context');
 
-const MASTER_ACCOUNT = process.env.MASTER_ACCOUNT || 'new-way';
+const MASTER_ACCOUNT = process.env.MASTER_ACCOUNT || 'waivio';
 
 const findFieldByBody = (fields, body) => _.find(fields, (f) => f.body === body);
 
