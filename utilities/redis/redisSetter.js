@@ -181,3 +181,5 @@ exports.incrExpire = async ({ key, ttl, client = importUserClient }) => {
     console.log(error.message);
   }
 };
+
+exports.sremAsync = async ({ key, value, client }) => client.SREM(key, value);

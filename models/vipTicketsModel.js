@@ -30,3 +30,13 @@ exports.updateTicket = async ({ ticket, data }) => {
     return { error };
   }
 };
+
+exports.aggregate = async (pipeline) => {
+  try {
+    return {
+      result: await VipTicket.aggregate(pipeline),
+    };
+  } catch (error) {
+    return { error };
+  }
+};
