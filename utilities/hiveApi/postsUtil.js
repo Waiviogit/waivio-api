@@ -4,7 +4,12 @@ const { getRegularClient } = require('./clientOptions');
 exports.getPostsByCategory = async (data) => {
   try {
     if (!['trending', 'created', 'hot', 'blog', 'feed', 'promoted'].includes(data.category)) {
-      return { error: { status: 422, message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!' } };
+      return {
+        error: {
+          status: 422,
+          message: 'Not valid category, expected: trending, created, hot, blog, feed, promoted!',
+        },
+      };
     }
     const client = await getRegularClient();
     const posts = await client.database.getDiscussions(data.category, {
@@ -27,7 +32,10 @@ exports.getPostsByCategory = async (data) => {
  * @param permlink
  * @returns {Promise<{error: {message: string, status: number}}|{post: ({author}|any)}>}
  */
-exports.getPost = async ({ author, permlink }) => {
+exports.getPost = async ({
+  author,
+  permlink,
+}) => {
   try {
     const client = await getRegularClient();
     const post = await client.database.call('get_content', [author, permlink]);
@@ -35,16 +43,32 @@ exports.getPost = async ({ author, permlink }) => {
     if (post.author) {
       return { post };
     }
-    return { error: { message: 'Post not found!', status: 404 } };
+    return {
+      error: {
+        message: 'Post not found!',
+        status: 404,
+      },
+    };
   } catch (e) {
-    return { error: { message: 'Post not found!', status: 404 } };
+    return {
+      error: {
+        message: 'Post not found!',
+        status: 404,
+      },
+    };
   }
 };
 
 exports.getManyPosts = async (links = []) => {
   const posts = await Promise.all(links.map(async (link) => {
-    const { post, error } = await this.getPost(
-      { author: _.get(link, 'author'), permlink: _.get(link, 'permlink') },
+    const {
+      post,
+      error,
+    } = await this.getPost(
+      {
+        author: _.get(link, 'author'),
+        permlink: _.get(link, 'permlink'),
+      },
     );
 
     if (post && !error) return post;
@@ -62,12 +86,20 @@ exports.getManyPosts = async (links = []) => {
  * @returns {Promise<{comments: [Object]}|{error: {message: string, status: number}}>}
  */
 // eslint-disable-next-line camelcase
-exports.getUserComments = async ({ start_author, start_permlink, limit }) => {
+exports.getUserComments = async ({
+  start_author,
+  start_permlink,
+  limit,
+}) => {
   try {
     const client = await getRegularClient();
     const comments = await client.database.call(
       'get_discussions_by_comments',
-      [{ start_author, start_permlink, limit }],
+      [{
+        start_author,
+        start_permlink,
+        limit,
+      }],
     );
 
     return { comments };
@@ -97,15 +129,26 @@ exports.getCommentsArr = async (permlinks) => {
  * Get state of post(comment). State include a lot info, e.x. replies, users etc.
  * @returns {Promise<{error: Object}|{result: Object}>}
  */
-exports.getPostState = async ({ author, permlink, category }) => {
+exports.getPostState = async ({
+  author,
+  permlink,
+  category,
+}) => {
   try {
     const client = await getRegularClient();
-    client.currentAddress = 'https://api.deathwing.me';
-    const result = await client.database.call(
-      'get_state',
-      [`${category}/@${author}/${permlink}`],
-    );
-    if (!result || result.error) return { error: { message: _.get(result, 'error') } };
+
+    // const result = await client.database.call(
+    //   'get_state',
+    //   [`${category}/@${author}/${permlink}`],
+    // );
+    const content = await client.call('bridge', 'get_discussion', {
+      author,
+      permlink,
+    });
+
+    if (!content || content.error) return { error: { message: _.get(content, 'error') } };
+
+    const result = { content };
 
     return { result };
   } catch (error) {
@@ -113,7 +156,10 @@ exports.getPostState = async ({ author, permlink, category }) => {
   }
 };
 
-exports.getContent = async ({ author, permlink }) => {
+exports.getContent = async ({
+  author,
+  permlink,
+}) => {
   try {
     const client = await getRegularClient();
     const result = await client.database.call(
