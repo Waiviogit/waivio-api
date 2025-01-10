@@ -146,6 +146,12 @@ exports.getPostState = async ({
       permlink,
     });
 
+    for (const contentKey in content) {
+      if (content[contentKey]?.json_metadata) {
+        content[contentKey].json_metadata = JSON.stringify(content[contentKey].json_metadata);
+      }
+    }
+
     if (!content || content.error) return { error: { message: _.get(content, 'error') } };
 
     const result = { content };
