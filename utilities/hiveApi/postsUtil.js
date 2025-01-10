@@ -100,6 +100,7 @@ exports.getCommentsArr = async (permlinks) => {
 exports.getPostState = async ({ author, permlink, category }) => {
   try {
     const client = await getRegularClient();
+    client.currentAddress = 'https://api.deathwing.me';
     const result = await client.database.call(
       'get_state',
       [`${category}/@${author}/${permlink}`],
