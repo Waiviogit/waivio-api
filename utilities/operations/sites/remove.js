@@ -6,15 +6,30 @@ const {
 const { App, AppAffiliate } = require('models');
 const objectBotRequests = require('utilities/requests/objectBotRequests');
 const { redisGetter } = require('utilities/redis');
+const { WAIVIO_ADMINS_ENV } = require('constants/common');
 
-exports.deleteWebsite = async ({ host, userName }) => {
-  const { result: app, error } = await App.findOne({
+const getAppToDelete = async ({ host, userName }) => {
+  if (WAIVIO_ADMINS_ENV.includes(userName)) {
+    const { result } = await App.findOne({
+      host,
+      inherited: true,
+      status: { $in: CAN_DELETE_STATUSES },
+    });
+    return result;
+  }
+
+  const { result } = await App.findOne({
     host, owner: userName, inherited: true, status: { $in: CAN_DELETE_STATUSES },
   });
-  if (error || !app) return { error: error || { status: 404, message: 'App not found' } };
+  return result;
+};
+
+exports.deleteWebsite = async ({ host, userName }) => {
+  const app = await getAppToDelete({ host, userName });
+  if (!app) return { status: 404, message: 'App not found' };
 
   const { result, error: createError } = await objectBotRequests.sendCustomJson(
-    { host, userName },
+    { host, userName: app.owner },
     `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.DELETE_WEBSITE}`,
   );
   if (createError) {
