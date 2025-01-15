@@ -14,5 +14,6 @@ moduleExports.departmentController = require('./departmentController');
 moduleExports.shopController = require('./shopController');
 moduleExports.draftController = require('./draftController');
 moduleExports.threadsController = require('./threadsController');
+moduleExports.adminController = require('./adminController');
 
 module.exports = moduleExports;

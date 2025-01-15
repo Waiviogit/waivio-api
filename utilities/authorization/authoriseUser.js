@@ -1,3 +1,4 @@
+const { WAIVIO_ADMINS_ENV } = require('constants/common');
 const authoriseSteemconnect = require('./steemconnect/authorise');
 const waivioAuthorise = require('./waivioAuth/authorise');
 const hiveAuthorise = require('./hiveAuth/authorise');
@@ -43,4 +44,10 @@ exports.authorise = async (username) => {
     return authoriseResponse(isValidToken, username);
   }
   return { error: { status: 401, message: 'The Waivio authorization token is invalid' } };
+};
+
+exports.checkAdmin = async (name) => {
+  if (WAIVIO_ADMINS_ENV.includes(name)) return { valid: true, error: null };
+
+  return { valid: false, error: { status: 401, message: 'Your account does not have sufficient access rights' } };
 };

@@ -12,6 +12,7 @@ exports.departments = require('./departments');
 exports.shop = require('./shop');
 exports.draft = require('./draft');
 exports.threads = require('./threadsValidator');
+exports.admin = require('./adminValidator');
 
 exports.validate = (data, schema, next) => {
   const result = schema.validate(data, { abortEarly: false });

@@ -20,13 +20,6 @@ module.exports = async ({
     comments, userName, author, app,
   });
 
-  /** Clearing accounts from muted */
-  Object.keys(postState.accounts).forEach((key) => {
-    if (!filteredComments.find((comment) => comment.author === key)) {
-      _.unset(postState.accounts, key);
-    }
-  });
-
   postState.content = _.keyBy(filteredComments, (c) => `${c.author}/${c.permlink}`);
   await engineOperations.addWAIVToCommentsObject(postState.content);
 
@@ -67,8 +60,10 @@ const filterMutedUsers = async ({
     .differenceWith(hiddenComments, (a, b) => a.author === b.author && a.permlink === b.permlink)
     .reject((comment) => {
       const condition = _.includes(_.map(mainMuted, 'userName'), comment.author);
-      const condition2 = _.find(subMuted,
-        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author);
+      const condition2 = _.find(
+        subMuted,
+        (sb) => sb.mutedBy === comment.parent_author && sb.userName === comment.author,
+      );
       const conditionGuest = _.includes(_.map(mainMuted, 'userName'), _.get(comment, 'guestInfo.userId'));
       if (condition || condition2 || conditionGuest) {
         removeRepliesFromComment({ comments, comment });
