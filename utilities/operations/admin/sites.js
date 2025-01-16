@@ -1,5 +1,11 @@
 const manage = require('utilities/operations/sites/manage');
 const { App } = require('models');
+const _ = require('lodash');
+
+const sortUserNames = (users) => _.sortBy(users, [
+  (user) => user.userName.includes('_'),
+  'userName',
+]);
 
 const manageView = async () => {
   const { result: users } = await App.aggregate([
@@ -37,7 +43,7 @@ const manageView = async () => {
     };
   }));
 
-  return views;
+  return sortUserNames(views);
 };
 
 module.exports = {
