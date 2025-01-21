@@ -28,7 +28,8 @@ const setWhitelist = async (req, res, next) => {
   const { error } = await authoriseUser.checkAdmin(admin);
   if (error) return next(error);
 
-  const { result } = await whiteList.addWhiteList(value);
+  const { result, error: errorAdd } = await whiteList.addWhiteList(value);
+  if (errorAdd) return next(errorAdd);
 
   return res.status(200).json({ result });
 };
