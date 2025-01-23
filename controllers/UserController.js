@@ -4,7 +4,7 @@ const {
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
-  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana,
+  guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana, hiveWithdraw,
   getProfileImages,
 } = require('utilities/operations/user');
 const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('utilities/operations/search');
@@ -686,6 +686,23 @@ const guestWithdrawHive = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const withdrawHive = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.user.guestWithdrawHiveSchema,
+    next,
+  );
+  if (!value) return;
+
+  const { error: authError } = await authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await hiveWithdraw.withdrawFromHive(value);
+  if (error) return next(error);
+
+  return res.status(200).json(result);
+};
+
 const guestWithdrawHiveEstimates = async (req, res, next) => {
   const value = validators.validate(
     req.body,
@@ -856,4 +873,5 @@ module.exports = {
   pauseGeneratedReport,
   getFavouritesMap,
   searchUsersByHost,
+  withdrawHive,
 };

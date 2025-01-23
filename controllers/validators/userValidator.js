@@ -347,7 +347,6 @@ exports.guestWithdrawHiveSchema = Joi.object().keys({
 exports.guestWithdrawHiveEstimatesSchema = Joi.object().keys({
   amount: Joi.number().greater(0).required(),
   outputCoinType: Joi.string().valid(...GUEST_COINS_TO_WITHDRAW).required(),
-
 });
 
 exports.guestWithdrawHiveRangeSchema = Joi.object().keys({
