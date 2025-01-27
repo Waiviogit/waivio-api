@@ -10722,6 +10722,71 @@
         }
       }
     },
+    "/api/users/hive-withdraw" : {
+      "post" : {
+        "tags" : [ "user" ],
+        "description" : "create withdraw for hive user",
+        "produces" : [ "application/json" ],
+        "parameters" : [ {
+          "name": "waivio-auth",
+          "in": "header",
+          "description": "send if it is guest",
+          "required": true,
+          "type": "boolean"
+        },
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "Access Token to identify user identity",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name" : "params",
+            "in" : "body",
+            "description" : "no params",
+            "required" : true,
+            "schema" : {
+              "type" : "object",
+              "properties" : {
+                "amount" : {
+                  "type" : "number"
+                },
+                "outputCoinType" : {
+                  "type" : "string"
+                },
+                "userName" : {
+                  "type" : "string"
+                },
+                "address" : {
+                  "type" : "string"
+                }
+              }
+            }
+          } ],
+        "responses" : {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "$ref": "#/definitions/withdrawHiveTransaction"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users/guest-wallet/hive-withdraw-estimates" : {
       "post" : {
         "tags" : [ "user" ],
@@ -14167,6 +14232,70 @@
           "type": "boolean"
         }
       }
+    },
+    "withdrawHiveTransaction": {
+      "type": "object",
+      "properties": {
+        "account": {
+          "type": "string"
+        },
+        "inputCoinType": {
+          "type": "string"
+        },
+        "outputCoinType": {
+          "type": "string"
+        },
+        "amount": {
+          "type": "number",
+          "format": "float"
+        },
+        "outputAmount": {
+          "type": "number",
+          "format": "float"
+        },
+        "status": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "memo": {
+          "type": "string"
+        },
+        "usdValue": {
+          "type": "number",
+          "format": "float"
+        },
+        "commission": {
+          "type": "number",
+          "format": "float"
+        },
+        "receiver": {
+          "type": "string"
+        },
+        "transactionId": {
+          "type": "string"
+        },
+        "transactionHash": {
+          "type": ["string", "null"]
+        },
+        "exchangeId": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "account",
+        "inputCoinType",
+        "outputCoinType",
+        "amount",
+        "outputAmount",
+        "status",
+        "address",
+        "usdValue",
+        "receiver",
+        "transactionId",
+        "exchangeId"
+      ]
     },
     "engineReportStatus": {
       "type": "object",

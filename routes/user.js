@@ -91,6 +91,7 @@ userRoutes.route('/user/:userName/draft').get(reqTimeMonitor, DraftController.ge
 
 userRoutes.route('/user/:userName/affiliate').post(reqTimeMonitor, UserController.getAffiliate);
 userRoutes.route('/users/guest-wallet/hive-withdraw').post(reqTimeMonitor, UserController.guestWithdrawHive);
+userRoutes.route('/users/hive-withdraw').post(reqTimeMonitor, UserController.withdrawHive);
 userRoutes.route('/users/guest-wallet/hive-withdraw-estimates').post(reqTimeMonitor, UserController.guestWithdrawHiveEstimates);
 userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(reqTimeMonitor, UserController.guestWithdrawHiveRange);
 userRoutes.route('/users/min-reject').post(reqTimeMonitor, UserController.getMinReject);
