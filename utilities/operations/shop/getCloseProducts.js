@@ -10,6 +10,8 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 
+const searchObjectTypes = [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE];
+
 const getDepartments = async ({ authorPermlink, app, locale }) => {
   const emptyDepartments = {
     departments: [],
@@ -19,7 +21,7 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
   const { result, error } = await Wobj
     .findOne({
       author_permlink: authorPermlink,
-      object_type: { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+      object_type: { $in: searchObjectTypes },
     });
   if (!result || error) return emptyDepartments;
 
@@ -245,7 +247,7 @@ const getAddOn = async ({
   const { result, error } = await Wobj
     .findOne({
       author_permlink: authorPermlink,
-      object_type: { $in: [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK] },
+      object_type: { $in: searchObjectTypes },
     });
   if (!result || error) return { wobjects: [], hasMore: false };
 
