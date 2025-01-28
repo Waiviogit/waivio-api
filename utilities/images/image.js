@@ -7,6 +7,20 @@ const _ = require('lodash');
 const heicConvert = require('heic-convert');
 const AWS = require('@aws-sdk/client-s3');
 
+const convertWithHeicLib = async (buffer) => {
+  try {
+    const result = await heicConvert({
+      buffer,
+      format: 'JPEG',
+      quality: 1,
+    });
+
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 class Image {
   constructor() {
     this._s3 = new AWS.S3({
@@ -69,11 +83,8 @@ class Image {
       ? IMAGES_FORMAT.GIF
       : IMAGES_FORMAT.WEBP;
     if (metadata?.format === 'heif') {
-      buffer = await heicConvert({
-        buffer,
-        format: 'JPEG',
-        quality: 1,
-      });
+      const { result: convHeic } = await convertWithHeicLib(buffer);
+      if (convHeic) buffer = convHeic;
     }
 
     if (size === IMAGE_SIZE.SMALL) {
