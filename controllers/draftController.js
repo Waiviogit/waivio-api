@@ -113,10 +113,10 @@ exports.getPostDrafts = async (req, res, next) => {
   return res.status(200).json({ result, hasMore });
 };
 
-exports.deleteOnePostDraft = async (req, res, next) => {
+exports.deletePostDraft = async (req, res, next) => {
   const value = validators.validate(
     req.body,
-    validators.draft.getOnePostDraftSchema,
+    validators.draft.deletePostDraftSchema,
     next,
   );
   if (!value) return;

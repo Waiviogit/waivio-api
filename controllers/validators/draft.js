@@ -52,3 +52,8 @@ exports.getPostDraftsSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0).default(20),
   skip: Joi.number().integer().min(0).default(0),
 });
+
+exports.deletePostDraftSchema = Joi.object().keys({
+  author: Joi.string().required(),
+  ids: Joi.array().items(Joi.string()).min(1).required(),
+});

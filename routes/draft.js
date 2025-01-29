@@ -7,7 +7,7 @@ const draftRotes = new Router();
 draftRotes.route('/draft/post')
   .post(reqTimeMonitor, DraftController.createOrUpdatePostDraft)
   .get(reqTimeMonitor, DraftController.getOnePostDraft)
-  .delete(reqTimeMonitor, DraftController.deleteOnePostDraft);
+  .delete(reqTimeMonitor, DraftController.deletePostDraft);
 draftRotes.route('/draft/posts')
   .get(reqTimeMonitor, DraftController.getPostDrafts);
 draftRotes.route('/draft/object')
