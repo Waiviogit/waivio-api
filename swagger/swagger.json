@@ -7436,6 +7436,48 @@
         }
       }
     },
+    "/api/wobjects/link/safety": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "checks link safety",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dangerous": {
+                  "type": "boolean"
+                },
+                "linkWaivio": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/wobject": {
       "post": {
         "tags": [
