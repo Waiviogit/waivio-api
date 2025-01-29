@@ -298,3 +298,7 @@ exports.searchAreaSchema = Joi.object().keys({
   box: boxScheme,
   object_type: Joi.string(),
 }).options(options);
+
+exports.linkSafetyScheme = Joi.object().keys({
+  url: Joi.string().uri().required(),
+});
