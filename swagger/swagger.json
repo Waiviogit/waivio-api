@@ -653,8 +653,11 @@
             "schema": {
               "type": "object",
               "properties": {
-                "draftId": {
-                  "type": "string"
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "author": {
                   "type": "string"
