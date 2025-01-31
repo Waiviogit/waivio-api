@@ -143,6 +143,8 @@ exports.REDIS_KEYS = {
   ASSISTANT: 'assistant',
   DYNAMIC_GLOBAL_PROPERTIES: 'get_dynamic_global_properties',
   UPDATE_AI_STORE: 'updateAiStore',
+  FISHING_SITES_SET: 'fishing_sites_set',
+  FISHING_SITES_LAST_UPDATE: 'fishing_sites_last_update',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

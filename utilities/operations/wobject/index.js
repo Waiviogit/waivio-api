@@ -22,5 +22,6 @@ moduleExports.getListItemLocales = require('./getListItemLocales');
 moduleExports.getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
 moduleExports.mapObject = require('./mapObject');
 moduleExports.objectGroup = require('./objectGroup');
+moduleExports.getByRating = require('./getByRating');
 
 module.exports = moduleExports;

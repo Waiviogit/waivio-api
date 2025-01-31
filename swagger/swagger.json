@@ -653,8 +653,11 @@
             "schema": {
               "type": "object",
               "properties": {
-                "draftId": {
-                  "type": "string"
+                "ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
                 },
                 "author": {
                   "type": "string"
@@ -7425,6 +7428,48 @@
               "type": "object",
               "properties": {
                 "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wobjects/link/safety": {
+      "post": {
+        "tags": [
+          "wobject"
+        ],
+        "summary": "checks link safety",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "params",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "url": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "dangerous": {
+                  "type": "boolean"
+                },
+                "linkWaivio": {
                   "type": "string"
                 }
               }

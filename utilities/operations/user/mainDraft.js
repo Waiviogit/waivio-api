@@ -80,9 +80,9 @@ exports.getDrafts = async ({
 
 exports.deleteDraft = async ({
   author,
-  draftId,
+  ids,
 }) => {
-  const { result, error } = await UserDraftModel.deleteOne({ author, draftId });
+  const { result, error } = await UserDraftModel.deleteMany({ author, ids });
   if (error) return { error };
 
   return { result };

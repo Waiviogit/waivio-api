@@ -4,7 +4,7 @@ const {
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
-  getWobjectPinnedPosts, objectGroup,
+  getWobjectPinnedPosts, objectGroup, getByRating,
 } = require('utilities/operations').wobject;
 const {
   wobjects: {
@@ -774,6 +774,21 @@ const searchArea = async (req, res, next) => {
   return res.status(200).json(processedData);
 };
 
+const checkLinkSafety = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.linkSafetyScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { result, error } = await getByRating.checkLinkSafety(value);
+  if (error) return next(error);
+
+  return res.status(200).json(result);
+};
+
 module.exports = {
   index,
   show,
@@ -814,4 +829,5 @@ module.exports = {
   getAuthorPermlinkByFieldBody,
   getGroupByPermlink,
   searchArea,
+  checkLinkSafety,
 };

@@ -31,6 +31,14 @@ exports.deleteOne = async ({ author, draftId }) => {
   }
 };
 
+exports.deleteMany = async ({ author, ids }) => {
+  try {
+    return { result: await UserDraft.deleteMany({ draftId: { $in: ids }, author }) };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.find = async ({ filter, projection, options }) => {
   try {
     return { result: await UserDraft.find(filter, projection, options) };
