@@ -18,6 +18,7 @@ exports.createOrUpdateDraft = async ({
   permlink,
   reward,
   campaignType,
+  secondaryItem,
 }) => {
   const { result, error } = await UserDraftModel.createOrUpdate({
     author,
@@ -38,6 +39,7 @@ exports.createOrUpdateDraft = async ({
       permlink,
       reward,
       campaignType,
+      secondaryItem,
     },
   });
   if (error) return { error };
