@@ -77,7 +77,7 @@ const checkLinkSafety = async ({ url }) => {
           $elemMatch: {
             name: 'rating',
             body: 'Safety',
-            average_rating_weight: { $lt: 6 },
+            average_rating_weight: { $lte: 8 },
           },
         },
       },
