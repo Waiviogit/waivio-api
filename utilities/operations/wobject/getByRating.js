@@ -1,7 +1,7 @@
 const { Wobj } = require('models');
 const { redis, redisGetter, redisSetter } = require('utilities/redis');
 const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
-const { REDIS_KEYS } = require('constants/common');
+const { REDIS_KEYS, TTL_TIME } = require('constants/common');
 const axios = require('axios');
 const moment = require('moment/moment');
 const _ = require('lodash');
@@ -9,8 +9,7 @@ const {
   getCachedData,
   setCachedData,
 } = require('utilities/helpers/cacheHelper');
-const jsonHelper = require('../../helpers/jsonHelper');
-const { TTL_TIME } = require('../../../constants/common');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 const DAYS_TO_UPDATE_SITES_SET = 10;
 
