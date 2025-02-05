@@ -27,6 +27,8 @@ exports.updateDraftSchema = Joi.object().keys({
   parentPermlink: Joi.string(),
   permlink: Joi.string(),
   reward: Joi.string().optional(),
+  campaignType: Joi.string().optional(),
+  secondaryItem: Joi.string().optional(),
 });
 
 exports.createOrUpdateCommentDraftSchema = Joi.object().keys({

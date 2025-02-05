@@ -17,6 +17,8 @@ const UserDraftSchema = new Schema({
   parentPermlink: { type: String },
   permlink: { type: String },
   reward: { type: String },
+  campaignType: { type: String },
+  secondaryItem: { type: String },
 }, { timestamps: true, versionKey: false });
 
 UserDraftSchema.index({ author: 1, draftId: 1, lastUpdated: -1 });
