@@ -3,12 +3,13 @@ const { User } = require('models');
 const { getAccountHistory } = require('../../hiveApi/userUtil');
 const { USER_OPERATIONS, USER_IDENTIFIERS, USER_OPERATIONS_TYPES } = require('../../../constants/usersData');
 
-const updateLastActivity = async ({ name }) => {
+const updateLastActivity = async ({ name, creationDate }) => {
   const { result, error } = await getAccountHistory(name, -1, 1000);
   if (error) return { error };
 
   if (!result || !result.length) {
-    return { error: { status: 404, message: `Activity of user ${name} not found!` } };
+    await User.updateOne({ name }, { lastActivity: creationDate });
+    return;
   }
   result.reverse();
 
@@ -28,9 +29,11 @@ exports.getUserLastActivity = async (name) => {
   if (user.lastActivity) {
     return { lastActivity: new Date(user.lastActivity).toISOString().slice(0, 19) };
   }
-  updateLastActivity({ name });
+  const creationDate = new Date(user.createdAt).toISOString().slice(0, 19);
 
-  return { lastActivity: new Date(user.createdAt).toISOString().slice(0, 19) };
+  updateLastActivity({ name, creationDate });
+
+  return { lastActivity: creationDate };
 };
 
 const findLastActivity = (data, name) => {
