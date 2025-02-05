@@ -8,7 +8,7 @@ const updateLastActivity = async ({ name, creationDate }) => {
   if (error) return { error };
 
   if (!result || !result.length) {
-    await User.updateOne({ name }, { lastActivity: creationDate });
+    await User.updateOne({ name }, { lastActivity: new Date(creationDate) });
     return;
   }
   result.reverse();
