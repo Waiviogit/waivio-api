@@ -1,10 +1,15 @@
 const { Wobj } = require('models');
 const { redis, redisGetter, redisSetter } = require('utilities/redis');
 const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
-const { REDIS_KEYS } = require('constants/common');
+const { REDIS_KEYS, TTL_TIME } = require('constants/common');
 const axios = require('axios');
 const moment = require('moment/moment');
 const _ = require('lodash');
+const {
+  getCachedData,
+  setCachedData,
+} = require('utilities/helpers/cacheHelper');
+const jsonHelper = require('utilities/helpers/jsonHelper');
 
 const DAYS_TO_UPDATE_SITES_SET = 10;
 
@@ -69,6 +74,10 @@ const checkLinkSafety = async ({ url }) => {
   const searchString = getEscapedUrl(host);
   const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
 
+  const key = `${REDIS_KEYS.API_RES_CACHE}:safe_link:${host}`;
+  const cache = await getCachedData(key);
+  if (cache) return jsonHelper.parseJson(cache, null);
+
   const { result } = await Wobj.findOne({
     object_type: OBJECT_TYPES.LINK,
     $and: [
@@ -102,6 +111,12 @@ const checkLinkSafety = async ({ url }) => {
     linkWaivio: result?.author_permlink || '',
     rating,
   };
+
+  if (result) {
+    await setCachedData({
+      key, data: { result: response }, ttl: TTL_TIME.THIRTY_DAYS,
+    });
+  }
 
   return { result: response };
 };
