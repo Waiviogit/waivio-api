@@ -36,7 +36,6 @@ exports.sendServiceNotification = async (reqData) => {
         timeout: REQUEST_TIMEOUT,
       },
     );
-    console.log();
   } catch (error) {
     Sentry.captureException(error);
     return sendSentryNotification(error);
