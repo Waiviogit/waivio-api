@@ -13,7 +13,7 @@ const updateLastActivity = async ({ name, creationDate }) => {
   }
   result.reverse();
 
-  const lastActivity = findLastActivity(_.map(result, (el) => el[1]), name);
+  const lastActivity = findLastActivity(_.map(result, (el) => el[1]), name) || creationDate;
 
   await User.updateOne({ name }, { lastActivity: new Date(lastActivity) });
 };
@@ -39,10 +39,11 @@ exports.getUserLastActivity = async (name) => {
 const findLastActivity = (data, name) => {
   if (data.length === 1) return _.get(data[0], 'timestamp');
 
-  const operation = _.find(data, (el) => _.includes(USER_OPERATIONS, el.op[0])
+  const operation = _.find(data, (el) => _.includes([...USER_OPERATIONS, 'account_created'], el.op[0])
       && ((el.op[0] === USER_OPERATIONS_TYPES.VOTE && el.op[1].hasOwnProperty(USER_IDENTIFIERS.VOTER) && el.op[1].voter === name)
           || (el.op[1].hasOwnProperty(USER_IDENTIFIERS.FROM) && el.op[1].from === name)
           || (el.op[0] === USER_OPERATIONS_TYPES.CUSTOM_JSON)
+          || (el.op[0] === 'account_created')
           || (el.op[0] === USER_OPERATIONS_TYPES.COMMENT && el.op[1].hasOwnProperty(USER_IDENTIFIERS.AUTHOR) && el.op[1].author === name)));
   if (operation) return _.get(operation, 'timestamp');
 };
