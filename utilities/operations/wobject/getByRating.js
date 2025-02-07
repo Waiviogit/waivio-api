@@ -104,7 +104,7 @@ const checkLinkSafety = async ({ url }) => {
   const rating = _.find(
     result?.fields,
     (el) => el.name === FIELDS_NAMES.RATING && el.body === 'Safety',
-  )?.average_rating_weight || 10;
+  )?.average_rating_weight || 0;
 
   const response = {
     dangerous: !!result,
