@@ -79,7 +79,6 @@ WObjectSchema.index({ weight: -1 });
 AuthoritySchema.index({ administrative: -1 });
 AuthoritySchema.index({ ownership: -1 });
 FieldsSchema.index({ name: -1, body: -1 });
-WObjectSchema.index({ search: -1 });
 WObjectSchema.index({ activeCampaignsCount: -1, weight: -1 });
 WObjectSchema.index({ object_type: -1, weight: -1 });
 WObjectSchema.index({ 'status.title': -1, 'status.link': -1 });

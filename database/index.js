@@ -71,6 +71,7 @@ models.Delegation = require('./schemas/DelegationSchema');
 models.EngineAdvancedReport = require('./schemas/EngineAdvancedReportSchema');
 models.EngineAdvancedReportStatus = require('./schemas/EngineAdvancedReportStatusSchema');
 models.PlacesApiAccess = require('./schemas/PlacesApiAccess');
+models.WobjectTokens = require('./schemas/WobjectTokensSchema');
 
 module.exports = {
   Mongoose: mongoose,
