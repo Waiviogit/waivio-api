@@ -19,6 +19,15 @@ const makePipeline = ({
       },
       { $unwind: '$wobject' },
       { $match: { 'wobject.object_type': object_types ? { $in: object_types } : { $nin: exclude_object_types } } },
+      {
+        $lookup: {
+          from: 'wobject_tokens',
+          localField: 'author_permlink',
+          foreignField: 'author_permlink',
+          as: 'excluded',
+        },
+      },
+      { $match: { excluded: { $size: 0 } } },
       { $skip: skip },
       { $limit: limit + 1 },
       {
