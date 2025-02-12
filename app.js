@@ -12,7 +12,12 @@ require('./utilities');
 const { getSentryOptions } = require('./constants/sentry');
 
 const app = express();
-Sentry.init(getSentryOptions(app));
+Sentry.init(getSentryOptions());
+Sentry.setupExpressErrorHandler(app, {
+  shouldHandleError(error) {
+    return error.status >= 500;
+  },
+});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -20,18 +25,11 @@ app.use(cors());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 if (process.env.NODE_ENV === 'staging') app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(middlewares.contextMiddleware);
-app.use(Sentry.Handlers.requestHandler({ request: true, user: true }));
 app.use('/', middlewares.reqRates.incrRate);
 app.use('/', middlewares.siteUserStatistics.saveUserIp);
 app.use('/', routes);
 app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
-app.use(Sentry.Handlers.errorHandler({
-  shouldHandleError(error) {
-    // Capture 500 errors
-    return error.status >= 500;
-  },
-}));
 process.on('unhandledRejection', (error) => {
   sendSentryNotification();
   Sentry.captureException(error);
