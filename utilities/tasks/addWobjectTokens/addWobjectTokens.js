@@ -69,6 +69,7 @@ const cryptoTags = [
   'hive-117752',
   'ctp',
   'clicktrackprofit',
+  'leofinance',
 ];
 
 const addWobjectTokens = async () => {
