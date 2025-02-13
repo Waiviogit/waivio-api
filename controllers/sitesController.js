@@ -17,6 +17,7 @@ const {
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 const { updateAiCustomStore } = require('../utilities/operations/assistant/migration/customByApp');
+const subscription = require('../utilities/operations/sites/subscription');
 
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
@@ -432,4 +433,19 @@ exports.updateAiStore = async (req, res, next) => {
   const { result, timeToNextRequest, error } = await updateAiCustomStore(value);
   if (error) return next(error);
   return res.status(200).json({ result, timeToNextRequest });
+};
+
+exports.basicPayPal = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalBasicSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await subscription.payPalBasicSubscription(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
 };
