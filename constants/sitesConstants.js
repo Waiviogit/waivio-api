@@ -132,3 +132,7 @@ exports.WEBSITE_SUSPENDED_COUNT = 'website_suspended_count';
 exports.CATEGORY_ITEMS = ['Cuisine', 'Features', 'Good+For', 'Ingredients', 'Category'];
 
 exports.DEFAULT_REFERRAL = 'waivio.referrals';
+exports.BILLING_TYPE = {
+  CRYPTO: 'crypto',
+  PAYPAL_SUBSCRIPTION: 'paypal_subscription',
+};
