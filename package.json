@@ -23,7 +23,8 @@
     "updateListAvatars": "NODE_PATH=. node utilities/tasks/updateListAvatars/run.js",
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha",
-    "addVectorStore": "node utilities/operations/assistant/migration/cliCustomStore.js"
+    "addVectorStore": "node utilities/operations/assistant/migration/cliCustomStore.js",
+    "addWobjectTokens": "node utilities/tasks/addWobjectTokens/run.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.485.0",
@@ -33,15 +34,15 @@
     "@langchain/openai": "^0.0.28",
     "@langchain/redis": "^0.0.3",
     "@langchain/weaviate": "^0.0.1",
-    "@sentry/node": "^5.24.2",
-    "@sentry/tracing": "^5.24.2",
+    "@sentry/integrations": "^7.114.0",
+    "@sentry/node": "^9.0.0",
     "axios": "^1.6.2",
     "bignumber.js": "^9.0.1",
     "cls-hooked": "^4.2.2",
     "cors": "^2.8.4",
     "cron": "^2.0.0",
     "crypto-js": "^4.2.0",
-    "express": "~4.18.1",
+    "express": "^4.21.2",
     "formidable": "^3.5.1",
     "franc-min": "^6.0.0",
     "heic-convert": "^1.2.4",
