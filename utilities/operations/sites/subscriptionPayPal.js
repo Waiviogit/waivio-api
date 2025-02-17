@@ -380,7 +380,6 @@ const checkActiveSubscriptionByHost = async ({ host }) => {
 // };
 
 
-
 module.exports = {
   payPalBasicSubscription,
   activeSubscription,
