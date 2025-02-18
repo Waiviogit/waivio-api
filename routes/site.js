@@ -63,5 +63,9 @@ sitesRoutes.route('/sites/description')
   .get(reqTimeMonitor, SitesController.getDescription);
 sitesRoutes.route('/sites/assistant/custom')
   .post(reqTimeMonitor, SitesController.updateAiStore);
+sitesRoutes.route('/sites/paypal/subscription/basic')
+  .post(reqTimeMonitor, SitesController.basicPayPal);
+sitesRoutes.route('/sites/paypal/subscription/check')
+  .post(reqTimeMonitor, SitesController.checkPayPalSubscription);
 
 module.exports = sitesRoutes;
