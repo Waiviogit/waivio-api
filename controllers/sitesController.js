@@ -449,3 +449,17 @@ exports.basicPayPal = async (req, res, next) => {
   if (error) return next(error);
   return res.status(200).json({ result });
 };
+
+exports.checkPayPalSubscription = async (req, res, next) => {
+  const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
+  if (!validKey) return next();
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalSubCheckSchema,
+    next,
+  );
+
+  const { result, error } = await subscription.checkActiveSubscriptionByHost(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};
