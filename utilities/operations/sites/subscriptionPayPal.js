@@ -144,6 +144,7 @@ const getSubscriptionIdByHost = async ({ host }) => {
 Method for checking subscription from cron-job service
  */
 const checkActiveSubscriptionByHost = async ({ host }) => {
+  // todo add sentry capture
   const { result: product } = await PayPalProductModel.findOneByName(host);
   if (!product) return { result: false };
   const { result: subscription } = await PayPalSubscriptionModel.findOne({
@@ -154,231 +155,19 @@ const checkActiveSubscriptionByHost = async ({ host }) => {
   });
   if (!subscription) return { result: false };
   const { result, error } = await getPayPalSubscriptionDetails({ subscriptionId: subscription.id });
-  // todo retry
   if (error) return { result: false };
 
   const valid = validateSubscription(result);
   if (!valid) {
-    // todo update one expired
     await PayPalSubscriptionModel.updateOne({
       filter: { id: subscription.id },
       update: { status: SUBSCRIPTION_STATUS.EXPIRED },
     });
+    await App.findOneAndUpdate({ host: product.name }, { billingType: BILLING_TYPE.CRYPTO });
   }
 
   return { result: valid };
 };
-
-// {
-//   "id": "PROD-4TM73819GL539972D",
-//   "name": "myhost.com",
-//   "description": "web hosting",
-//   "create_time": "2025-02-12T13:39:46Z",
-//   "links": [
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4TM73819GL539972D",
-//     "rel": "self",
-//     "method": "GET"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4TM73819GL539972D",
-//     "rel": "edit",
-//     "method": "PATCH"
-//   }
-// ]
-// }
-
-// {
-//   "id": "P-3ES3921951582440TM6WKJMY",
-//   "product_id": "PROD-4TM73819GL539972D",
-//   "name": "Standard Monthly Subscription",
-//   "status": "ACTIVE",
-//   "description": "A standard subscription for $30 per month",
-//   "usage_type": "LICENSED",
-//   "create_time": "2025-02-12T13:40:03Z",
-//   "links": [
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY",
-//     "rel": "self",
-//     "method": "GET",
-//     "encType": "application/json"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY",
-//     "rel": "edit",
-//     "method": "PATCH",
-//     "encType": "application/json"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY/deactivate",
-//     "rel": "self",
-//     "method": "POST",
-//     "encType": "application/json"
-//   }
-// ]
-// }
-
-/// front response SUCSESS
-
-// {
-//   "orderID": "35N70380LR5035843",
-//   "subscriptionID": "I-R78NHMNWKV04",
-//   "facilitatorAccessToken": "A21AAJFoULalrnJ5Gpzl4QTE7Kz-XtX5dvu4JZtqKnC067jUrKfn1X2KiJ56QEkGXINMeE96WqVXv7-PjIBzVy5tGJHjVfEjA",
-//   "paymentSource": "paypal"
-// }
-
-// SUBSCRIPTION BY ID REQUEST
-
-// {
-//   "status": "ACTIVE",
-//   "status_update_time": "2025-02-12T13:55:55Z",
-//   "id": "I-R78NHMNWKV04",
-//   "plan_id": "P-3ES3921951582440TM6WKJMY",
-//   "start_time": "2025-02-12T13:51:51Z",
-//   "quantity": "1",
-//   "shipping_amount": {
-//   "currency_code": "USD",
-//     "value": "0.0"
-// },
-//   "subscriber": {
-//   "email_address": "sb-h2ro429166820@personal.example.com",
-//     "payer_id": "QAVCLENE6HZNW",
-//     "name": {
-//     "given_name": "John",
-//       "surname": "Doe"
-//   },
-//   "shipping_address": {
-//     "address": {
-//       "address_line_1": "1 Main St",
-//         "admin_area_2": "San Jose",
-//         "admin_area_1": "CA",
-//         "postal_code": "95131",
-//         "country_code": "US"
-//     }
-//   }
-// },
-//   "billing_info": {
-//   "outstanding_balance": {
-//     "currency_code": "USD",
-//       "value": "0.0"
-//   },
-//   "cycle_executions": [
-//     {
-//       "tenure_type": "REGULAR",
-//       "sequence": 1,
-//       "cycles_completed": 1,
-//       "cycles_remaining": 0,
-//       "current_pricing_scheme_version": 1,
-//       "total_cycles": 0
-//     }
-//   ],
-//     "last_payment": {
-//     "amount": {
-//       "currency_code": "USD",
-//         "value": "30.0"
-//     },
-//     "time": "2025-02-12T13:55:54Z"
-//   },
-//   "next_billing_time": "2025-03-12T10:00:00Z",
-//     "failed_payments_count": 0
-// },
-//   "create_time": "2025-02-12T13:53:16Z",
-//   "update_time": "2025-02-12T13:55:55Z",
-//   "plan_overridden": false,
-//   "links": [
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04/cancel",
-//     "rel": "cancel",
-//     "method": "POST"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04",
-//     "rel": "edit",
-//     "method": "PATCH"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04",
-//     "rel": "self",
-//     "method": "GET"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04/suspend",
-//     "rel": "suspend",
-//     "method": "POST"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04/capture",
-//     "rel": "capture",
-//     "method": "POST"
-//   }
-// ]
-// }
-
-// const ss = {
-//   status: 'CANCELLED',
-//   status_update_time: '2025-02-14T13:19:37Z',
-//   id: 'I-R78NHMNWKV04',
-//   plan_id: 'P-3ES3921951582440TM6WKJMY',
-//   start_time: '2025-02-12T13:51:51Z',
-//   quantity: '1',
-//   shipping_amount: {
-//     currency_code: 'USD',
-//     value: '0.0',
-//   },
-//   subscriber: {
-//     email_address: 'sb-h2ro429166820@personal.example.com',
-//     payer_id: 'QAVCLENE6HZNW',
-//     name: {
-//       given_name: 'John',
-//       surname: 'Doe',
-//     },
-//     shipping_address: {
-//       address: {
-//         address_line_1: '1 Main St',
-//         admin_area_2: 'San Jose',
-//         admin_area_1: 'CA',
-//         postal_code: '95131',
-//         country_code: 'US',
-//       },
-//     },
-//   },
-//   billing_info: {
-//     outstanding_balance: {
-//       currency_code: 'USD',
-//       value: '0.0',
-//     },
-//     cycle_executions: [
-//       {
-//         tenure_type: 'REGULAR',
-//         sequence: 1,
-//         cycles_completed: 1,
-//         cycles_remaining: 0,
-//         current_pricing_scheme_version: 1,
-//         total_cycles: 0,
-//       },
-//     ],
-//     last_payment: {
-//       amount: {
-//         currency_code: 'USD',
-//         value: '30.0',
-//       },
-//       time: '2025-02-12T13:55:54Z',
-//     },
-//     failed_payments_count: 0,
-//   },
-//   create_time: '2025-02-12T13:53:16Z',
-//   update_time: '2025-02-14T13:19:37Z',
-//   plan_overridden: false,
-//   links: [
-//     {
-//       href: 'https://api.sandbox.paypal.com/v1/billing/subscriptions/I-R78NHMNWKV04',
-//       rel: 'self',
-//       method: 'GET',
-//     },
-//   ],
-//
-// };
-
 
 module.exports = {
   payPalBasicSubscription,
