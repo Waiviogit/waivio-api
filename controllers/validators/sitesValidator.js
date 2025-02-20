@@ -173,6 +173,12 @@ exports.payPalBasicSchema = Joi.object().keys({
   userName: Joi.string().required(),
 });
 
+exports.payPalActivateSchema = Joi.object().keys({
+  host: Joi.string().required(),
+  userName: Joi.string().required(),
+  subscriptionId: Joi.string().required(),
+});
+
 exports.payPalSubCheckSchema = Joi.object().keys({
   host: Joi.string().required(),
 });

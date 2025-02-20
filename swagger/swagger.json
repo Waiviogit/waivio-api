@@ -4751,6 +4751,230 @@
         }
       }
     },
+    "/api/sites/paypal/subscription/basic": {
+      "post": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "create plan for subscription, return plan object with id use for subscription",
+        "description": "create plan for subscription, return plan object with id use for subscription",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                },
+                "userName" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "name": {
+                      "type": "string"
+                    },
+                    "description": {
+                      "type": "string"
+                    },
+                    "create_time": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/paypal/subscription/activation": {
+      "post": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "activate subscription with subscriptionId returns subscription object",
+        "description": "activate subscription with subscriptionId returns subscription object",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                },
+                "userName" : {
+                  "type": "string"
+                },
+                "subscriptionId" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type": "string"
+                    },
+                    "product_id": {
+                      "type": "string"
+                    },
+                    "plan_id": {
+                      "type": "string"
+                    },
+                    "status": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/paypal/subscription/id": {
+      "post": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "in case you need subscription id by host to cancel subscription",
+        "description": "in case you need subscription id by host to cancel subscription",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/sites/paypal/subscription/details": {
+      "post": {
+        "tags": [
+          "sites"
+        ],
+        "summary": "subscription details by host, returns subscription object",
+        "description": "subscription details by host, returns subscription object",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "access-token",
+            "in": "header",
+            "description": "access-token",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "params",
+            "in": "body",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "host" : {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [

@@ -140,6 +140,22 @@ const getSubscriptionIdByHost = async ({ host }) => {
   return { result: subscription.id };
 };
 
+const getSubscriptionByHost = async ({ host }) => {
+  const { result: product } = await PayPalProductModel.findOneByName(host);
+  if (!product) return { error: { status: 404, message: 'Subscription product not found' } };
+  const { result: subscription } = await PayPalSubscriptionModel.findOne({
+    filter: {
+      status: SUBSCRIPTION_STATUS.ACTIVE,
+      product_id: product.id,
+    },
+  });
+  if (!subscription) return { error: { status: 404, message: 'Subscription not found' } };
+
+  const { result, error } = await getPayPalSubscriptionDetails({ subscriptionId: subscription.id });
+  if (!error) return { error };
+  return { result };
+};
+
 /*
 Method for checking subscription from cron-job service
  */
@@ -174,4 +190,5 @@ module.exports = {
   activeSubscription,
   getSubscriptionIdByHost,
   checkActiveSubscriptionByHost,
+  getSubscriptionByHost,
 };

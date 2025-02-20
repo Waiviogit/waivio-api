@@ -450,6 +450,48 @@ exports.basicPayPal = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+exports.activatePayPal = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalActivateSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await subscription.activeSubscription(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};
+
+exports.payPalSubscriptionId = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalSubCheckSchema,
+    next,
+  );
+
+  const { result, error } = await subscription.getSubscriptionIdByHost(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};
+
+exports.payPalSubscription = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalBasicSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await subscription.getSubscriptionByHost(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};
+
 exports.checkPayPalSubscription = async (req, res, next) => {
   const validKey = validators.apiKeyValidator.validateApiKey(req.headers['api-key']);
   if (!validKey) return next();
