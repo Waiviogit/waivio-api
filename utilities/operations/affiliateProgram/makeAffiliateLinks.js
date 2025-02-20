@@ -60,12 +60,17 @@ const getAffiliateCode = (codesArr) => {
 const makeFromExactMatched = ({
   affiliateCodes,
   mappedProductIds,
+  countryCode,
 }) => {
   const usedAffiliate = [];
 
   const links = mappedProductIds.reduce((acc, el) => {
-    const affiliate = affiliateCodes
-      .find((a) => a.affiliateUrlTemplate.includes(el.productIdType.toLocaleLowerCase()));
+    const affiliates = affiliateCodes
+      .filter((a) => a.affiliateUrlTemplate.includes(el.productIdType.toLocaleLowerCase()));
+
+    const affiliate = _.find(affiliates, (v) => _.includes(v.affiliateGeoArea, countryCode))
+      || affiliates[0];
+
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
@@ -144,7 +149,9 @@ const makeAffiliateLinks = ({ productIds = [], affiliateCodes = [], countryCode 
     const exec = makeFromExactMatched({
       affiliateCodes: exactMatched,
       mappedProductIds: ids,
+      countryCode,
     });
+
     links.push(...exec);
     usedAffiliate.push(...exactMatched);
   }
