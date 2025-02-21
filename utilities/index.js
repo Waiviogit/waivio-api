@@ -22,8 +22,8 @@ noroutine.init({
   modules: noroutineModules,
   pool: 2, // number of workers in thread pool
   wait: 2000, // maximum delay to wait for a free thread
-  timeout: 5000, // maximum timeout for executing a functions
-  monitoring: 5000, // event loop utilization monitoring interval
+  timeout: 6000, // maximum timeout for executing a functions
+  monitoring: 6000, // event loop utilization monitoring interval
 });
 
 const moduleExports = {};
