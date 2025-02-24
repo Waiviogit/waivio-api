@@ -26,6 +26,7 @@ exports.engineQuery = async ({
     );
     return _.get(resp, 'data.result');
   } catch (error) {
+    console.log(`Engine request error ${hostUrl}`);
     return { error };
   }
 };
