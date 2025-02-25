@@ -31,3 +31,11 @@ exports.distinct = async ({ field, query = {} }) => {
     return { error };
   }
 };
+
+exports.create = async (doc) => {
+  try {
+    return { result: await WebsitePayments.create(doc) };
+  } catch (error) {
+    return { error };
+  }
+};
