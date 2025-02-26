@@ -32,7 +32,7 @@ exports.engineQuery = async ({
 };
 
 exports.engineProxy = async ({
-  hostUrl = _.sample(HIVE_ENGINE_NODES),
+  hostUrl = 'https://engine.waivio.com',
   method,
   params,
   endpoint,
