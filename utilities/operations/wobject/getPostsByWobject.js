@@ -13,6 +13,11 @@ const getRelistedLinks = async (authorPermlink) => {
   return relisted.map((el) => el?.author_permlink);
 };
 
+const makeEscapedRegex = (link) => {
+  const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  return new RegExp(`^${escapedLink}`);
+};
+
 const POST_RETRIEVER = {
   REGULAR: 'REGULAR',
   FEED: 'FEED',
@@ -158,17 +163,17 @@ const makeConditionForLink = ({ condition, wObject }) => {
   if (!urlField) return { condition };
   const { body } = urlField;
 
-  const escapedLink = body.slice(0, -1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-  const regex = new RegExp(`^${escapedLink}`);
-
-  // when body ends with * it means that al path after * is valid, if no * - strict eq
-  const condition2 = {
-    links: body.endsWith('*') ? { $regex: regex } : body,
-  };
+  const initialLink = body.endsWith('*') ? body.slice(0, -1) : body;
+  const regex = makeEscapedRegex(initialLink);
 
   return {
     condition: {
-      $or: [_.pick(condition, 'wobjects.author_permlink'), condition2],
+      $or: [
+        _.pick(condition, 'wobjects.author_permlink'),
+        {
+          links: { $regex: regex },
+        },
+      ],
       ..._.omit(condition, 'wobjects.author_permlink'),
     },
   };
@@ -185,11 +190,6 @@ const socialLinksMap = {
 };
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
-
-const makeEscapedRegex = (link) => {
-  const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-  return new RegExp(`^${escapedLink}`);
-};
 
 const makeConditionSocialLink = ({ processedObj }) => {
   const conditionArr = [];
