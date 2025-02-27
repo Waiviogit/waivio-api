@@ -131,6 +131,15 @@ const withdrawFromHive = async ({
     withdraw: withdraw._id,
   });
 
+  await paymentHistory.addPaymentHistory({
+    userName,
+    type: PAYMENT_HISTORIES_TYPES.DEMO_USER_TRANSFER,
+    amount: 0.001,
+    sponsor: userName,
+    memo: `Withdrawal transaction ID for the HIVE-${outputCoinType} pair via SimpleSwap.io: https://simpleswap.io/exchange?id=${exchangeId}`,
+    withdraw: withdraw._id,
+  });
+
   return { result: exchangeId };
 };
 
