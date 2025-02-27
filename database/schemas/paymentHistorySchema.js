@@ -14,6 +14,8 @@ const paymentHistorySchema = new mongoose.Schema({
   is_demo_account: { type: Boolean, default: false },
   recounted: { type: Boolean, default: false },
   details: { type: Object },
+  withdraw: { type: String },
+  memo: { type: String },
 }, {
   timestamps: true,
 });
