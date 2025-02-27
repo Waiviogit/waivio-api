@@ -186,6 +186,11 @@ const socialLinksMap = {
 
 const makeSocialLink = (key, id) => `${socialLinksMap[key]}${id}`;
 
+const makeEscapedRegex = (link) => {
+  const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  return new RegExp(`^${escapedLink}`);
+};
+
 const makeConditionSocialLink = ({ processedObj }) => {
   const conditionArr = [];
   if (!processedObj.link) return conditionArr;
@@ -197,11 +202,12 @@ const makeConditionSocialLink = ({ processedObj }) => {
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
       const link = makeSocialLink(parsedConditionKey, id);
-
-      const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-      const regex = new RegExp(`^${escapedLink}`);
+      const regex = makeEscapedRegex(link);
 
       conditionArr.push({ links: { $regex: regex } });
+      if (socialLinksMap[parsedConditionKey] === socialLinksMap.linkFacebook) {
+        conditionArr.push({ links: { $regex: makeEscapedRegex(`https://www.facebook.com/${id}`) } });
+      }
     }
   }
 
