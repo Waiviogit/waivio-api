@@ -77,7 +77,7 @@ const manageView = async (req, res, next) => {
 const getAdmins = async (req, res, next) => res.status(200).json(WAIVIO_ADMINS_ENV);
 
 const createCredits = async (req, res, next) => {
-  const value = validators.validate(req.body, validators.admin.setWhiteList, next);
+  const value = validators.validate(req.body, validators.admin.createCredits, next);
 
   if (!value) return;
   const { admin } = req.headers;
