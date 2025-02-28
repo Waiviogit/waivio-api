@@ -1,5 +1,5 @@
 const objectBotRequests = require('utilities/requests/objectBotRequests');
-const { PAYMENT_TYPES } = require('constants/sitesConstants');
+const { PAYMENT_TYPES, POSITIVE_SUM_TYPES } = require('constants/sitesConstants');
 const { OBJECT_BOT } = require('constants/requestData');
 const { sitesHelper } = require('utilities/helpers');
 const _ = require('lodash');
@@ -38,8 +38,8 @@ const checkOwnerBalance = async (owner) => {
   const { error, payments } = await sitesHelper.getWebsitePayments({ owner });
   if (error) return { error };
 
-  const balance = sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.TRANSFER)
-    .minus(sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.WRITE_OFF))
+  const balance = sitesHelper.getSumByPaymentType(payments, POSITIVE_SUM_TYPES)
+    .minus(sitesHelper.getSumByPaymentType(payments, [PAYMENT_TYPES.WRITE_OFF]))
     .toNumber();
 
   return { balance };
