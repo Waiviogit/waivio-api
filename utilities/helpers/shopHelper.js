@@ -12,6 +12,7 @@ const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 const { checkForSocialSite } = require('./sitesHelper');
 const sitesHelper = require('./sitesHelper');
+const { getAppAuthorities } = require('./appHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -117,11 +118,7 @@ const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
 };
 
 const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
-  const authority = [];
-  const social = checkForSocialSite(app?.parentHost ?? '');
-  if (social) {
-    authority.push(...[app.owner, ...app.authority]);
-  }
+  const authority = getAppAuthorities(app);
   const { result } = await Wobj.findOne({
     author_permlink: authorPermlink,
     object_type: OBJECT_TYPES.SHOP,
