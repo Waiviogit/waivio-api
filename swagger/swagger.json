@@ -378,6 +378,66 @@
         }
       }
     },
+    "/api/admins/credits": {
+      "post": {
+        "tags" : [ "admins" ],
+        "description" : "add credits amount to user",
+        "produces" : [ "application/json" ],
+        "parameters" : [
+          {
+            "name": "admin",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "access-token",
+            "in": "header",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "type": "object",
+              "properties": {
+                "userName": {
+                  "type": "string"
+                },
+                "amount": {
+                  "type": "number",
+                  "minimum": 1,
+                  "maximum": 1000
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description" : "successful operation",
+            "schema" : {
+              "type": "object",
+              "properties": {
+                "result": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "422" : {
+            "description" : "ValidationError",
+            "schema" : {
+              "example" : {
+                "message" : "Validation Error"
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/thread/hashtag": {
       "get" : {
         "tags" : [ "thread" ],

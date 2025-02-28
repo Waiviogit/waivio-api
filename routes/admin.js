@@ -19,4 +19,7 @@ adminRoutes.route('/admins/sites')
 adminRoutes.route('/admins')
   .get(reqTimeMonitor, adminController.getAdmins);
 
+adminRoutes.route('/admins/credits')
+  .post(reqTimeMonitor, adminController.createCredits);
+
 module.exports = adminRoutes;
