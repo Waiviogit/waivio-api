@@ -133,6 +133,7 @@ exports.getPaymentsTable = (payments) => {
   payments = _.map(payments, (payment) => {
     switch (payment.type) {
       case PAYMENT_TYPES.TRANSFER:
+      case PAYMENT_TYPES.CREDIT:
         payment.balance = BigNumber(payable).plus(payment.amount).toNumber();
         payable = payment.balance;
         return _.pick(payment, PAYMENT_FIELDS_TRANSFER);
@@ -394,9 +395,9 @@ exports.updateSupportedObjectsTask = async () => {
   }
 };
 
-exports.getSumByPaymentType = (payments, type) => _
+exports.getSumByPaymentType = (payments, types) => _
   .chain(payments)
-  .filter((el) => el.type === type)
+  .filter((el) => types.includes(el.type))
   .reduce((acc, payment) => new BigNumber(payment.amount).plus(acc), new BigNumber(0))
   .value();
 

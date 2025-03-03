@@ -38,9 +38,12 @@ exports.SOCIAL_HOSTS = ['social.gifts', 'socialgifts.pp.ua', 'localhost:4000'];
 
 exports.PAYMENT_TYPES = {
   TRANSFER: 'transfer',
+  CREDIT: 'credit', // special type admin can give credits to site
   WRITE_OFF: 'writeOff',
   REFUND: 'refund',
 };
+
+exports.POSITIVE_SUM_TYPES = [this.PAYMENT_TYPES.TRANSFER, this.PAYMENT_TYPES.CREDIT];
 
 exports.REFUND_TYPES = {
   WEBSITE_REFUND: 'website_refund',
@@ -106,7 +109,7 @@ exports.PAYMENT_DESCRIPTION = {
   RESERVATION: 'reservation',
 };
 
-exports.PAYMENT_FIELDS_TRANSFER = ['userName', 'balance', 'createdAt', 'amount', 'type', 'transferTo', '_id'];
+exports.PAYMENT_FIELDS_TRANSFER = ['userName', 'balance', 'createdAt', 'amount', 'type', 'transferTo', '_id', 'description'];
 
 exports.PAYMENT_FIELDS_WRITEOFF = ['userName', 'balance', 'host', 'createdAt', 'amount', 'type', 'countUsers', 'description', '_id'];
 

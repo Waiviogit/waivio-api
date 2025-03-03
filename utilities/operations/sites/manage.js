@@ -1,4 +1,6 @@
-const { PAYMENT_TYPES, FEE, INACTIVE_STATUSES } = require('constants/sitesConstants');
+const {
+  PAYMENT_TYPES, FEE, INACTIVE_STATUSES, POSITIVE_SUM_TYPES,
+} = require('constants/sitesConstants');
 const { sitesHelper } = require('utilities/helpers');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
@@ -13,8 +15,8 @@ exports.getManagePage = async ({ userName }) => {
   const accountBalance = {
     paid: 0, avgDau: 0, dailyCost: 0, remainingDays: 0,
   };
-  accountBalance.paid = sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.TRANSFER)
-    .minus(sitesHelper.getSumByPaymentType(payments, PAYMENT_TYPES.WRITE_OFF))
+  accountBalance.paid = sitesHelper.getSumByPaymentType(payments, POSITIVE_SUM_TYPES)
+    .minus(sitesHelper.getSumByPaymentType(payments, [PAYMENT_TYPES.WRITE_OFF]))
     .toNumber();
 
   const dataForPayments = await sitesHelper.getPaymentsData();

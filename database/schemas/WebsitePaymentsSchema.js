@@ -6,8 +6,8 @@ const websiteHistorySchema = new mongoose.Schema({
   type: { type: String, enum: Object.values(PAYMENT_TYPES), required: true },
   amount: { type: Number, required: true },
   host: { type: String },
-  countUsers: { type: Number, default: 0 },
-  blockNum: { type: Number, required: true },
+  countUsers: { type: Number },
+  blockNum: { type: Number },
   description: { type: String },
   transferTo: { type: String },
 }, { timestamps: true });
