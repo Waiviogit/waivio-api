@@ -133,6 +133,7 @@ exports.getPaymentsTable = (payments) => {
   payments = _.map(payments, (payment) => {
     switch (payment.type) {
       case PAYMENT_TYPES.TRANSFER:
+      case PAYMENT_TYPES.CREDIT:
         payment.balance = BigNumber(payable).plus(payment.amount).toNumber();
         payable = payment.balance;
         return _.pick(payment, PAYMENT_FIELDS_TRANSFER);
