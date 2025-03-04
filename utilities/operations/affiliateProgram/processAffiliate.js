@@ -1,14 +1,14 @@
-const { Wobj } = require('models');
+const { Wobj } = require('../../../models');
 const Joi = require('joi');
 const {
   OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS, REMOVE_OBJ_STATUSES,
-} = require('constants/wobjectsData');
+} = require('../../../constants/wobjectsData');
 const {
   WAIVIO_AFFILIATE_HOSTS,
-} = require('constants/affiliateData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const config = require('config');
+} = require('../../../constants/affiliateData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
+const config = require('../../../config');
 const {
   getCachedData,
   setCachedData,

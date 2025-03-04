@@ -1,8 +1,8 @@
-const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('utilities/helpers/commentHelper');
-const { postsUtil } = require('utilities/hiveApi');
-const { Comment, User, mutedUserModel } = require('models');
+const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('../../helpers/commentHelper');
+const { postsUtil } = require('../../hiveApi');
+const { Comment, User, mutedUserModel } = require('../../../models');
 const _ = require('lodash');
-const engineOperations = require('utilities/hiveEngine/engineOperations');
+const engineOperations = require('../../hiveEngine/engineOperations');
 
 module.exports = async ({
   // eslint-disable-next-line camelcase

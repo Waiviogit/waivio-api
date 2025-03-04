@@ -1,4 +1,4 @@
-const { MutedUser } = require('database').models;
+const { MutedUser } = require('../database').models;
 
 exports.findOne = async (condition) => {
   try {

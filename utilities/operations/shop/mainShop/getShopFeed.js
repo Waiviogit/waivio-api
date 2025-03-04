@@ -1,4 +1,4 @@
-const { User } = require('models');
+const { User } = require('../../../../models');
 const _ = require('lodash');
 const getShopDepartments = require('./getShopDepartments');
 const getDepartmentFeed = require('./getDepartmentFeed');

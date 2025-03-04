@@ -1,4 +1,4 @@
-const { GuestMana } = require('database').models;
+const { GuestMana } = require('../database').models;
 
 const create = async ({ account, mana }) => {
   try {

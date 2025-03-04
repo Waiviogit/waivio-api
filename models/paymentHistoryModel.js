@@ -1,4 +1,4 @@
-const { PaymentHistory } = require('database').models;
+const { PaymentHistory } = require('../database').models;
 
 const findByCondition = async (condition) => {
   try {

@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { Post, Wobj, User } = require('models');
-const { wObjectHelper } = require('utilities/helpers');
-const { SHARING_SOCIAL_FIELDS } = require('constants/wobjectsData');
+const { Post, Wobj, User } = require('../../../models');
+const { wObjectHelper } = require('../../helpers');
+const { SHARING_SOCIAL_FIELDS } = require('../../../constants/wobjectsData');
 
 module.exports = async ({ author, permlink, app }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });

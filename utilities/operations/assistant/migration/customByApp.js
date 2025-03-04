@@ -1,5 +1,5 @@
-const { App, WObject } = require('database').models;
-const mongoose = require('database').Mongoose;
+const { App, WObject } = require('../../../../database').models;
+const mongoose = require('../../../../database').Mongoose;
 const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
 const { OpenAIEmbeddings } = require('@langchain/openai');
 const { WeaviateStore } = require('@langchain/weaviate');

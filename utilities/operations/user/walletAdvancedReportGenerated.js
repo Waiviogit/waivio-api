@@ -1,8 +1,8 @@
-const { EngineAdvancedReportModel, EngineAdvancedReportStatusModel } = require('models');
+const { EngineAdvancedReportModel, EngineAdvancedReportStatusModel } = require('../../../models');
 const _ = require('lodash');
 const crypto = require('crypto');
-const { ERROR_OBJ, SERVICE_NOTIFICATION_TYPES } = require('constants/common');
-const notificationsHelper = require('utilities/helpers/notificationsHelper');
+const { ERROR_OBJ, SERVICE_NOTIFICATION_TYPES } = require('../../../constants/common');
+const notificationsHelper = require('../../helpers/notificationsHelper');
 const BigNumber = require('bignumber.js');
 const { getWalletAdvancedReport } = require('./getWalletAdvancedReport');
 

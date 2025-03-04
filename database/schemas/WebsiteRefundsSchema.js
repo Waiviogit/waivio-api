@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { REFUND_TYPES, REFUND_STATUSES } = require('constants/sitesConstants');
+const { REFUND_TYPES, REFUND_STATUSES } = require('../../constants/sitesConstants');
 
 const websiteRefundSchema = new mongoose.Schema({
   userName: { type: String, required: true, index: true },

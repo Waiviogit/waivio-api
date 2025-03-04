@@ -1,6 +1,6 @@
-const { userUtil } = require('utilities/hiveApi');
-const { GUEST_NAME } = require('constants/regExp');
-const { User } = require('models');
+const { userUtil } = require('../../hiveApi');
+const { GUEST_NAME } = require('../../../constants/regExp');
+const { User } = require('../../../models');
 const moment = require('moment');
 
 module.exports = async (name) => {

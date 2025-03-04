@@ -1,13 +1,13 @@
 const {
   Wobj,
-} = require('models');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+} = require('../../../../models');
+const { REMOVE_OBJ_STATUSES } = require('../../../../constants/wobjectsData');
 const _ = require('lodash');
-const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
-const shopHelper = require('utilities/helpers/shopHelper');
-const { getCachedData, getCacheKey, setCachedData } = require('utilities/helpers/cacheHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const { CACHE_KEY, TTL_TIME } = require('constants/common');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../constants/departments');
+const shopHelper = require('../../../helpers/shopHelper');
+const { getCachedData, getCacheKey, setCachedData } = require('../../../helpers/cacheHelper');
+const jsonHelper = require('../../../helpers/jsonHelper');
+const { CACHE_KEY, TTL_TIME } = require('../../../../constants/common');
 
 const getTopDepartments = async ({
   userName,

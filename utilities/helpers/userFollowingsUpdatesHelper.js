@@ -1,4 +1,4 @@
-const { User, WObject } = require('database').models;
+const { User, WObject } = require('../../database').models;
 const _ = require('lodash');
 
 exports.refreshUsersCounts = async () => {

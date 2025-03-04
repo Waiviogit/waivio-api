@@ -1,6 +1,6 @@
 /* eslint-disable func-names */
-const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('constants/referralData');
-const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
+const { REFERRAL_TYPES, REFERRAL_STATUSES } = require('../../constants/referralData');
+const { SUPPORTED_CURRENCIES, LANGUAGES } = require('../../constants/common');
 const mongoose = require('mongoose');
 const asyncLocalStorage = require('../../middlewares/context/context');
 

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { getFollowingsUser } = require('utilities/operations/user');
+const { getFollowingsUser } = require('../../../utilities/operations/user');
 const { schema } = require('../checkFollowers/schema');
 
 const checkForFollowings = async ({ userName, path, followings }) => {

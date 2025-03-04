@@ -1,5 +1,5 @@
-const { getDelegationExpirations } = require('utilities/hiveApi/userUtil');
-const { DelegationModel } = require('models');
+const { getDelegationExpirations } = require('../../hiveApi/userUtil');
+const { DelegationModel } = require('../../../models');
 const _ = require('lodash');
 
 const formatDecimalVestingShares = (number) => (+(number / 1e6).toFixed(6));

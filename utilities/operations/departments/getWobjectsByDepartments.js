@@ -1,9 +1,9 @@
-const { Wobj, User } = require('models');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const shopHelper = require('utilities/helpers/shopHelper');
+const { Wobj, User } = require('../../../models');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const shopHelper = require('../../helpers/shopHelper');
 const _ = require('lodash');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { SHOP_SCHEMA } = require('../../../constants/shop');
 const {
   getAppAuthorities,

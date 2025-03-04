@@ -1,10 +1,10 @@
-const { CAMPAIGN_STATUSES } = require('constants/campaignsData');
-const { Wobj, Campaign } = require('models');
-const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
+const { CAMPAIGN_STATUSES } = require('../../../constants/campaignsData');
+const { Wobj, Campaign } = require('../../../models');
+const { addCampaignsToWobjects } = require('../../helpers/campaignsHelper');
 const _ = require('lodash');
-const searchHelper = require('utilities/helpers/searchHelper');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const { ERROR_OBJ } = require('constants/common');
+const searchHelper = require('../../helpers/searchHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const { ERROR_OBJ } = require('../../../constants/common');
 
 exports.getObjectsByRequired = async ({
   requiredObject, skip, limit, app,

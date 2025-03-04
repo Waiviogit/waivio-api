@@ -1,6 +1,6 @@
-const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('constants/mapConstants');
+const { ZOOM_DISTANCE, EARTH_RADIUS_M, DEFAULT_MAP_VIEW } = require('../../constants/mapConstants');
 const _ = require('lodash');
-const { DEVICE } = require('constants/common');
+const { DEVICE } = require('../../constants/common');
 const asyncLocalStorage = require('../../middlewares/context/context');
 
 exports.getCenterAndZoomOnSeveralBox = (mapCoordinates = []) => {

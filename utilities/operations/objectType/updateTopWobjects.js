@@ -1,5 +1,5 @@
-const { WObject, ObjectType } = require('database').models;
-const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
+const { WObject, ObjectType } = require('../../../database').models;
+const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('../../../constants/wobjectsData');
 
 exports.updateObjectTypes = async (isLog = false) => {
   const cursor = ObjectType.find().cursor({ batchSize: 1000 });

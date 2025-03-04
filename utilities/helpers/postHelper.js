@@ -9,22 +9,22 @@ const {
   CampaignV2,
   SponsorsUpvote,
   blacklistModel,
-} = require('models');
-const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
-const { Post } = require('database').models;
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+} = require('../../models');
+const { addCampaignsToWobjects } = require('./campaignsHelper');
+const { Post } = require('../../database').models;
+const { REQUIREDFIELDS_POST } = require('../../constants/wobjectsData');
 const {
   RESERVATION_STATUSES,
   PAYMENT_HISTORIES_TYPES,
-} = require('constants/campaignsData');
-const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
+} = require('../../constants/campaignsData');
+const { getCurrentNames } = require('./wObjectHelper');
 const {
   redis,
   redisGetter,
   redisSetter,
-} = require('utilities/redis');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const currenciesRequests = require('utilities/requests/currenciesRequests');
+} = require('../redis');
+const jsonHelper = require('./jsonHelper');
+const currenciesRequests = require('../requests/currenciesRequests');
 const crypto = require('node:crypto');
 const BigNumber = require('bignumber.js');
 

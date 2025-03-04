@@ -1,17 +1,17 @@
-const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj } = require('models');
+const shopHelper = require('../../../helpers/shopHelper');
+const { Wobj } = require('../../../../models');
 const _ = require('lodash');
-const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../constants/departments');
 const {
   CACHE_KEY,
   TTL_TIME,
-} = require('constants/common');
+} = require('../../../../constants/common');
 const {
   getCacheKey,
   getCachedData,
   setCachedData,
-} = require('utilities/helpers/cacheHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+} = require('../../../helpers/cacheHelper');
+const jsonHelper = require('../../../helpers/jsonHelper');
 
 const getPipe = ({ condition, excluded = [] }) => {
   const pipeline = [

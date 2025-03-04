@@ -1,6 +1,6 @@
 const {
   Wobj, User, Post, userShopDeselectModel,
-} = require('models');
+} = require('../../../models');
 const _ = require('lodash');
 const { processUserAffiliate } = require('../affiliateProgram/processAffiliate');
 const wObjectHelper = require('../../helpers/wObjectHelper');

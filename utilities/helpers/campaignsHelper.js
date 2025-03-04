@@ -1,8 +1,8 @@
 const {
   User, Wobj, paymentHistory, Campaign, App,
-} = require('models');
-const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
+} = require('../../models');
+const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED, REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
+const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('../../constants/campaignsData');
 const moment = require('moment');
 const _ = require('lodash');
 

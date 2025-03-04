@@ -1,13 +1,13 @@
-const { redisStatisticsKey } = require('constants/sitesConstants');
+const { redisStatisticsKey } = require('../../constants/sitesConstants');
 const {
   URL, REDIS_KEYS, TTL_TIME,
-} = require('constants/common');
+} = require('../../constants/common');
 const { isbot } = require('isbot');
-const config = require('config');
-const { redisSetter } = require('utilities/redis');
-const { App } = require('models');
-const { REPLACE_HOST_WITH_PARENT } = require('constants/regExp');
-const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
+const config = require('../../config');
+const { redisSetter } = require('../../utilities/redis');
+const { App } = require('../../models');
+const { REPLACE_HOST_WITH_PARENT } = require('../../constants/regExp');
+const { getIpFromHeaders } = require('../../utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
 const { REPLACE_ORIGIN } = require('../../constants/regExp');

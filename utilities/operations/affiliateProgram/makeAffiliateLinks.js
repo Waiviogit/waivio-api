@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 const BigNumber = require('bignumber.js');
 const { AFFILIATE_NULL_TYPES } = require('../../../constants/wobjectsData');
 const {

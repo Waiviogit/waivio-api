@@ -1,10 +1,10 @@
-const { Wobj, User, Department } = require('models');
+const { Wobj, User, Department } = require('../../../models');
 const {
   FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST, OBJECT_TYPES,
-} = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+} = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const _ = require('lodash');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');

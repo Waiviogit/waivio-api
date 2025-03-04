@@ -1,5 +1,5 @@
-const manage = require('utilities/operations/sites/manage');
-const { App } = require('models');
+const manage = require('../sites/manage');
+const { App } = require('../../../models');
 const _ = require('lodash');
 
 const sortUserNames = (users) => _.sortBy(users, [

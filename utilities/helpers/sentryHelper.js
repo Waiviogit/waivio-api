@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { telegramApi } = require('constants/requestData');
+const { telegramApi } = require('../../constants/requestData');
 const Sentry = require('@sentry/node');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 

@@ -1,4 +1,4 @@
-const { Department } = require('models');
+const { Department } = require('../../../models');
 const _ = require('lodash');
 
 module.exports = async ({ searchString = '', skip, limit }) => {

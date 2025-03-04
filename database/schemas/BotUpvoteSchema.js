@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { BOT_UPVOTE_STATUSES } = require('constants/campaignsData');
+const { BOT_UPVOTE_STATUSES } = require('../../constants/campaignsData');
 
 const { Schema } = mongoose;
 

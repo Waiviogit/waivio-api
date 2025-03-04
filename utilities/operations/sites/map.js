@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { Wobj, User } = require('models');
-const { campaignsHelper } = require('utilities/helpers');
+const { Wobj, User } = require('../../../models');
+const { campaignsHelper } = require('../../helpers');
 
 exports.getData = async ({
   topPoint, bottomPoint, limit, userName, skip, app,

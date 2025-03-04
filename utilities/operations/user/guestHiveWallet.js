@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { GUEST_WALLET_OPERATIONS, PAYMENT_HISTORIES_TYPES } = require('constants/campaignsData');
-const { paymentHistory } = require('models');
+const { GUEST_WALLET_OPERATIONS, PAYMENT_HISTORIES_TYPES } = require('../../../constants/campaignsData');
+const { paymentHistory } = require('../../../models');
 
 const getGuestBalanceHistory = async ({
   userName, skip, limit, tableView, endDate, startDate,

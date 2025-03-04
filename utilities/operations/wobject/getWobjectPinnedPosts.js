@@ -2,9 +2,9 @@
 const {
   Wobj,
   Post,
-} = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+} = require('../../../models');
+const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const _ = require('lodash');
 
 const getWobjectPinnedPosts = async ({

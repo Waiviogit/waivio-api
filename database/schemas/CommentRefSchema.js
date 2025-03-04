@@ -1,4 +1,4 @@
-const { COMMENT_REF_TYPES } = require('constants/common');
+const { COMMENT_REF_TYPES } = require('../../constants/common');
 const mongoose = require('mongoose');
 
 const { Schema } = mongoose;

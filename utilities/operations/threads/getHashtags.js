@@ -1,4 +1,4 @@
-const { ThreadModel } = require('models');
+const { ThreadModel } = require('../../../models');
 const _ = require('lodash');
 
 const getTrendingHashTagsWithCount = async ({ skip = 0, limit = 50 }) => {

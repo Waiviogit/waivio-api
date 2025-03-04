@@ -1,4 +1,4 @@
-const { Campaign } = require('database').models;
+const { Campaign } = require('../database').models;
 
 const findByCondition = async (condition) => {
   try {

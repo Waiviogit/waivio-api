@@ -1,12 +1,12 @@
 const _ = require('lodash');
-const { OBJECT_BOT } = require('constants/requestData');
+const { OBJECT_BOT } = require('../../../constants/requestData');
 const {
   STATUSES, redisStatisticsKey, CAN_DELETE_STATUSES,
-} = require('constants/sitesConstants');
-const { App, AppAffiliate } = require('models');
-const objectBotRequests = require('utilities/requests/objectBotRequests');
-const { redisGetter } = require('utilities/redis');
-const { WAIVIO_ADMINS_ENV } = require('constants/common');
+} = require('../../../constants/sitesConstants');
+const { App, AppAffiliate } = require('../../../models');
+const objectBotRequests = require('../../requests/objectBotRequests');
+const { redisGetter } = require('../../redis');
+const { WAIVIO_ADMINS_ENV } = require('../../../constants/common');
 
 const getAppToDelete = async ({ host, userName }) => {
   if (WAIVIO_ADMINS_ENV.includes(userName)) {

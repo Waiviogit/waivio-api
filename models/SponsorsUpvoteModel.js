@@ -1,4 +1,4 @@
-const { SponsorsUpvote } = require('database').models;
+const { SponsorsUpvote } = require('../database').models;
 
 const find = async ({ filter, projection = {}, options = {} }) => {
   try {

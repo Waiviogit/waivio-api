@@ -1,8 +1,8 @@
-const { Wobj, App } = require('models');
-const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
-const { setCachedData } = require('utilities/helpers/cacheHelper');
-const { CACHE_KEY, TTL_TIME } = require('constants/common');
-const redisGetter = require('utilities/redis/redisGetter');
+const { Wobj, App } = require('../../../models');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const { setCachedData } = require('../../helpers/cacheHelper');
+const { CACHE_KEY, TTL_TIME } = require('../../../constants/common');
+const redisGetter = require('../../redis/redisGetter');
 const { getItemsCount } = require('./wobjectInfo');
 
 const getPairs = async ({ authorPermlink, setOfPairs }) => {

@@ -1,7 +1,7 @@
-const { importUser } = require('utilities/operations/user/importSteemUserOps');
-const { redisGetter, redisSetter } = require('utilities/redis');
-const { MAX_IMPORTING_USERS } = require('constants/common');
-const { User } = require('models');
+const { importUser } = require('./importSteemUserOps');
+const { redisGetter, redisSetter } = require('../../redis');
+const { MAX_IMPORTING_USERS } = require('../../../constants/common');
+const { User } = require('../../../models');
 const moment = require('moment');
 const _ = require('lodash');
 

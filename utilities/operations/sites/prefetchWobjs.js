@@ -1,5 +1,5 @@
-const { searchHelper, prefetchHelper } = require('utilities/helpers');
-const { App, PrefetchModel } = require('models');
+const { searchHelper, prefetchHelper } = require('../../helpers');
+const { App, PrefetchModel } = require('../../../models');
 const _ = require('lodash');
 
 exports.showAllPrefetches = async (data) => {

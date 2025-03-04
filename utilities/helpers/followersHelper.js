@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { FOLLOWERS_SORT, SORT_CONDITION } = require('constants/sortData');
-const { User, Subscriptions, wobjectSubscriptions } = require('models');
+const { FOLLOWERS_SORT, SORT_CONDITION } = require('../../constants/sortData');
+const { User, Subscriptions, wobjectSubscriptions } = require('../../models');
 
 const getFollowers = async (data) => {
   const { wobjFollowers = [] } = await wobjectSubscriptions

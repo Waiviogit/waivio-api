@@ -1,5 +1,5 @@
-const { customValidationHelper } = require('utilities/helpers');
-const { LANGUAGES } = require('constants/common');
+const { customValidationHelper } = require('../../utilities/helpers');
+const { LANGUAGES } = require('../../constants/common');
 const Joi = require('joi');
 
 exports.showSchema = Joi.object().keys({

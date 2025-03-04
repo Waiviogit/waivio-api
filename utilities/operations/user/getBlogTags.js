@@ -1,4 +1,4 @@
-const { getTagsByUser } = require('utilities/helpers/postHelper');
+const { getTagsByUser } = require('../../helpers/postHelper');
 const _ = require('lodash');
 
 module.exports = async ({ name, skip, limit }) => {

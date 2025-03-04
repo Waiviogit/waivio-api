@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const UserExpertiseModel = require('models/UserExpertiseModel');
+const UserExpertiseModel = require('../../../models/UserExpertiseModel');
 const _ = require('lodash');
 
 const makePipeline = ({

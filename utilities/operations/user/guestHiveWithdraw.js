@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
 const {
   User, withdrawFundsModel, paymentHistory,
-} = require('models');
+} = require('../../../models');
 const axios = require('axios');
-const { ERROR_OBJ } = require('constants/common');
+const { ERROR_OBJ } = require('../../../constants/common');
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
-const { captureException } = require('utilities/helpers/sentryHelper');
+const { captureException } = require('../../helpers/sentryHelper');
 const { transfer } = require('../../hiveApi/broadcastUtil');
 const redisGetter = require('../../redis/redisGetter');
 const { CACHE_KEY } = require('../../../constants/common');

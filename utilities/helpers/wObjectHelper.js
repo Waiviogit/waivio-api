@@ -12,22 +12,22 @@ const {
   INDEPENDENT_FIELDS,
   LIST_TYPES,
   FULL_SINGLE_FIELDS,
-} = require('constants/wobjectsData');
-const { postsUtil } = require('utilities/hiveApi');
-const ObjectTypeModel = require('models/ObjectTypeModel');
-const blacklistModel = require('models/blacklistModel');
-const UserExpertiseModel = require('models/UserExpertiseModel');
+} = require('../../constants/wobjectsData');
+const { postsUtil } = require('../hiveApi');
+const ObjectTypeModel = require('../../models/ObjectTypeModel');
+const blacklistModel = require('../../models/blacklistModel');
+const UserExpertiseModel = require('../../models/UserExpertiseModel');
 const {
   DEVICE,
   LANGUAGES_POPULARITY,
   TTL_TIME,
   REDIS_KEYS,
-} = require('constants/common');
-const Wobj = require('models/wObjectModel');
-const mutedModel = require('models/mutedUserModel');
+} = require('../../constants/common');
+const Wobj = require('../../models/wObjectModel');
+const mutedModel = require('../../models/mutedUserModel');
 const moment = require('moment');
 const _ = require('lodash');
-const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
+const makeAffiliateLinks = require('../operations/affiliateProgram/makeAffiliateLinks');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');

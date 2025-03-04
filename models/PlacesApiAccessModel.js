@@ -1,5 +1,5 @@
-const { PlacesApiAccess } = require('database').models;
-const { getCurrentDateString } = require('utilities/helpers/dateHelper');
+const { PlacesApiAccess } = require('../database').models;
+const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 
 const updateOne = async ({ filter, update, options }) => {
   try {

@@ -1,4 +1,4 @@
-const { WalletExemptions } = require('database').models;
+const { WalletExemptions } = require('../database').models;
 
 exports.find = async (condition, select = {}) => {
   try {

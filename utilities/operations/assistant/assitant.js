@@ -1,5 +1,5 @@
 /* eslint-disable camelcase */
-const { TTL_TIME, REDIS_KEYS } = require('constants/common');
+const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
 const { RedisChatMessageHistory } = require('@langchain/redis');
 const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts');
 const { RunnablePassthrough, RunnableSequence } = require('@langchain/core/runnables');

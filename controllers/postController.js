@@ -2,9 +2,9 @@ const {
   getPostsByCategory, getSinglePost, getPostComments,
   getManyPosts, getPostSocialInfo, likePost,
   cachePreview, getPostsByMention,
-} = require('utilities/operations').post;
-const validators = require('controllers/validators');
-const authoriseUser = require('utilities/authorization/authoriseUser');
+} = require('../utilities/operations').post;
+const validators = require('./validators');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 

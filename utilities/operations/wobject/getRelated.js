@@ -1,12 +1,12 @@
 const _ = require('lodash');
-const { relatedAlbum } = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const { relatedAlbum } = require('../../../models');
+const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const {
   Wobj,
-} = require('models');
+} = require('../../../models');
 const crypto = require('node:crypto');
-const { ERROR_OBJ } = require('constants/common');
+const { ERROR_OBJ } = require('../../../constants/common');
 
 const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
   .compact()

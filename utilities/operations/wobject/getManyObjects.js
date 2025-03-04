@@ -1,12 +1,12 @@
-const { Wobj, User } = require('models');
-const { UserExpertise } = require('database').models;
+const { Wobj, User } = require('../../../models');
+const { UserExpertise } = require('../../../database').models;
 const _ = require('lodash');
-const { redisGetter } = require('utilities/redis');
+const { redisGetter } = require('../../redis');
 const {
   REQUIREDFIELDS, REQUIREDFIELDS_SEARCH, REMOVE_OBJ_STATUSES,
-} = require('constants/wobjectsData');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+} = require('../../../constants/wobjectsData');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 
 const getCondition = (data) => {
   const findParams = {};

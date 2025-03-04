@@ -1,55 +1,50 @@
 #!/usr/bin/env node
-
-/**
- * Module dependencies.
- */
-
-const app = require('../app');
-const redis = require('../utilities/redis/redis');
+require('dotenv').config();
 const http = require('node:http');
+const { getSentryOptions } = require('../constants/sentry');
+const Sentry = require('@sentry/node');
+const redis = require('../utilities/redis/redis');
 const { closeMongoConnections } = require('../database');
-
-/**
- * Get port from environment and store in Express.
- */
+const { sendSentryNotification } = require('../utilities/helpers/sentryHelper');
+Sentry.init(getSentryOptions());
+const app = require('../app');
 
 const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
-
-/**
- * Create HTTP server.
- */
-
 const server = http.createServer(app);
-
-/**
- * Listen on provided port, on all network interfaces.
- */
 
 
 
 (async () => {
-  await redis.setupRedisConnections()
-
+  Sentry.setupExpressErrorHandler(app, {
+    shouldHandleError(error) {
+      return error.status >= 500;
+    },
+  });
+  await redis.setupRedisConnections();
 
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);
-})()
+})();
 
 const signalHandler = async (signal) => {
   console.info(`${signal} signal received.`);
   console.log('Closing http server.');
   await server.close();
   console.log('Sever is closed...');
-  await closeMongoConnections()
-  process.exit(0)
+  await closeMongoConnections();
+  process.exit(0);
 };
 
 process.on('SIGINT', signalHandler);
 process.on('SIGTERM', signalHandler);
 process.on('SIGQUIT', signalHandler);
+process.on('unhandledRejection', (error) => {
+  sendSentryNotification();
+  Sentry.captureException(error);
+});
 
 /**
  * Normalize a port into a number, string, or false.

@@ -1,9 +1,9 @@
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const {
   Wobj, Subscriptions, UserExpertiseModel, User,
-} = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+} = require('../../../models');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('../../../constants/wobjectsData');
+const jsonHelper = require('../../helpers/jsonHelper');
 const _ = require('lodash');
 const moment = require('moment');
 

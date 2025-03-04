@@ -1,4 +1,4 @@
-const { vipTicketsModel } = require('models');
+const { vipTicketsModel } = require('../../../models');
 const _ = require('lodash');
 
 const getVipTickets = async () => {

@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { User, Subscriptions, wobjectSubscriptions } = require('models');
-const { FOLLOWERS_SORT } = require('constants/sortData');
-const { followersHelper } = require('utilities/helpers');
+const { User, Subscriptions, wobjectSubscriptions } = require('../../../models');
+const { FOLLOWERS_SORT } = require('../../../constants/sortData');
+const { followersHelper } = require('../../helpers');
 
 exports.getAll = async ({
   name, skip, limit, sort,

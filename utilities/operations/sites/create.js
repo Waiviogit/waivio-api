@@ -1,7 +1,7 @@
-const objectBotRequests = require('utilities/requests/objectBotRequests');
-const { PAYMENT_TYPES, POSITIVE_SUM_TYPES } = require('constants/sitesConstants');
-const { OBJECT_BOT } = require('constants/requestData');
-const { sitesHelper } = require('utilities/helpers');
+const objectBotRequests = require('../../requests/objectBotRequests');
+const { PAYMENT_TYPES, POSITIVE_SUM_TYPES } = require('../../../constants/sitesConstants');
+const { OBJECT_BOT } = require('../../../constants/requestData');
+const { sitesHelper } = require('../../helpers');
 const _ = require('lodash');
 
 /** Method for validate and create user site */

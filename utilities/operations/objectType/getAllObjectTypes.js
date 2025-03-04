@@ -1,4 +1,4 @@
-const { ObjectType, Wobj } = require('models');
+const { ObjectType, Wobj } = require('../../../models');
 
 // eslint-disable-next-line camelcase
 const objectTypePipeline = ({ limit, skip, wobjects_count }) => {

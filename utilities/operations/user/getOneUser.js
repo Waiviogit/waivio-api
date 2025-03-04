@@ -1,5 +1,5 @@
-const { startImportUser } = require('utilities/operations/user/importSteemUserBalancer');
-const { Subscriptions, mutedUserModel, User } = require('models');
+const { startImportUser } = require('../../operations/user/importSteemUserBalancer');
+const { Subscriptions, mutedUserModel, User } = require('../../../models');
 
 const _ = require('lodash');
 const { getUserCanonical } = require('../../helpers/cannonicalHelper');

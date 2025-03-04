@@ -2,13 +2,13 @@
 const {
   IGNORED_AUTHORS, DAYS_FOR_HOT_FEED, DAYS_FOR_TRENDING_FEED,
   MEDIAN_USER_WAIVIO_RATE, IGNORED_AUTHORS_HOT,
-} = require('constants/postsData');
-const { hiddenPostModel, mutedUserModel } = require('models');
+} = require('../../../constants/postsData');
+const { hiddenPostModel, mutedUserModel } = require('../../../models');
 const { ObjectId } = require('mongoose').Types;
-const { Post } = require('database').models;
-const config = require('config');
+const { Post } = require('../../../database').models;
+const config = require('../../../config');
 const _ = require('lodash');
-const { getCachedPosts, setCachedPosts, getPostCacheKey } = require('utilities/helpers/postHelper');
+const { getCachedPosts, setCachedPosts, getPostCacheKey } = require('../../helpers/postHelper');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');

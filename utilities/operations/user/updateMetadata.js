@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User } = require('../../../models');
 
 // eslint-disable-next-line camelcase
 module.exports = async ({ user_name, user_metadata }) => {

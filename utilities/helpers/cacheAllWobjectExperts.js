@@ -1,6 +1,6 @@
-const { redisSetter, redisGetter } = require('utilities/redis');
-const { UserExpertiseModel, Wobj } = require('models');
 const _ = require('lodash');
+const { redisSetter, redisGetter } = require('../redis');
+const { UserExpertiseModel, Wobj } = require('../../models');
 
 /** cache wobject top users for fast request work */
 exports.cacheAllWobjectExperts = async (limit) => {

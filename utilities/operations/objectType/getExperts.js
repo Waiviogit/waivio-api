@@ -1,4 +1,4 @@
-const { ObjectType } = require('database').models;
+const { ObjectType } = require('../../../database').models;
 
 module.exports = async ({ name, skip, limit }) => {
   try {

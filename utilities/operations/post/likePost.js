@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
 const _ = require('lodash');
-const { Post } = require('models');
-const likePostHelper = require('utilities/helpers/likePostHelper');
+const { Post } = require('../../../models');
+const likePostHelper = require('../../helpers/likePostHelper');
 const moment = require('moment');
-const redisSetter = require('utilities/redis/redisSetter');
-const { ERROR_MESSAGE, REDIS_KEYS } = require('constants/common');
-const { getPostObjects } = require('utilities/helpers/postHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+const redisSetter = require('../../redis/redisSetter');
+const { ERROR_MESSAGE, REDIS_KEYS } = require('../../../constants/common');
+const { getPostObjects } = require('../../helpers/postHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 const { TOKEN_WAIV } = require('../../../constants/hiveEngine');
 
 module.exports = async (value) => {

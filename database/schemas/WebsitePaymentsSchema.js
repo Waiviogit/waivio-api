@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { PAYMENT_TYPES } = require('constants/sitesConstants');
+const { PAYMENT_TYPES } = require('../../constants/sitesConstants');
 
 const websiteHistorySchema = new mongoose.Schema({
   userName: { type: String, required: true, index: true },

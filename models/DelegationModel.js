@@ -1,4 +1,4 @@
-const { Delegation } = require('database').models;
+const { Delegation } = require('../database').models;
 
 const find = async ({ filter, projection, options }) => {
   try {

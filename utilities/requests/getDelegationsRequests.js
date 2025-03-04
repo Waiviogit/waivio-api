@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { KEY_CHAIN_URL } = require('constants/requestData');
+const { KEY_CHAIN_URL } = require('../../constants/requestData');
 const _ = require('lodash');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 

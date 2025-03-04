@@ -1,10 +1,10 @@
-const { Department, Wobj } = require('models');
-const shopHelper = require('utilities/helpers/shopHelper');
+const { Department, Wobj } = require('../../../../models');
+const shopHelper = require('../../../helpers/shopHelper');
 const _ = require('lodash');
 const {
   filterDepartments, mapDepartments, getDepartmentsOnWobject,
-} = require('utilities/operations/departments/departmentsMapper');
-const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
+} = require('../../departments/departmentsMapper');
+const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
 const {
   CACHE_KEY,
   TTL_TIME,

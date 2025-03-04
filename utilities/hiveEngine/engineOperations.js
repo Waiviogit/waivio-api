@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { redisGetter } = require('utilities/redis');
-const { CACHE_KEY } = require('constants/common');
-const { captureException } = require('utilities/helpers/sentryHelper');
+const { redisGetter } = require('../redis');
+const { CACHE_KEY } = require('../../constants/common');
+const { captureException } = require('../helpers/sentryHelper');
 const BigNumber = require('bignumber.js');
 const commentContract = require('./commentContract');
 const tokensContract = require('./tokensContract');

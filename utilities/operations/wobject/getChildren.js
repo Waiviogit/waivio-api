@@ -1,6 +1,6 @@
-const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const { Wobj, User } = require('models');
+const { addCampaignsToWobjects } = require('../../helpers/campaignsHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const { Wobj, User } = require('../../../models');
 
 module.exports = async ({
   skip, limit, authorPermlink, excludeTypes = [], searchString, userName,

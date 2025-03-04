@@ -1,4 +1,4 @@
-const { Post, hiddenPostModel, mutedUserModel } = require('models');
+const { Post, hiddenPostModel, mutedUserModel } = require('../../../models');
 const _ = require('lodash');
 
 module.exports = async ({

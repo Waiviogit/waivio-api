@@ -2,8 +2,8 @@ const {
   hive: {
     getCachedCurrency,
   },
-} = require('utilities/operations');
-const validators = require('controllers/validators');
+} = require('../utilities/operations');
+const validators = require('./validators');
 
 exports.getRewardFund = async (req, res, next) => {
   const { result, error } = await getCachedCurrency.getRewardFund();

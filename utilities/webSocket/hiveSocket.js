@@ -1,6 +1,6 @@
 const WebSocket = require('ws');
 const EventEmitterHIVE = require('events').EventEmitter;
-const jsonHelper = require('utilities/helpers/jsonHelper');
+const jsonHelper = require('../helpers/jsonHelper');
 const _ = require('lodash');
 
 const emitter = new EventEmitterHIVE();

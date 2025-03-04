@@ -1,4 +1,4 @@
-const PageDraftModel = require('database').models.PageDraft;
+const PageDraftModel = require('../database').models.PageDraft;
 
 exports.createOrUpdate = async ({ user, authorPermlink, body }) => {
   try {

@@ -1,6 +1,6 @@
-const { CampaignV2, CampaignPayments, mutedUserModel } = require('models');
+const { CampaignV2, CampaignPayments, mutedUserModel } = require('../../models');
 const _ = require('lodash');
-const redisGetter = require('utilities/redis/redisGetter');
+const redisGetter = require('../redis/redisGetter');
 const moment = require('moment');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CACHE_KEY } = require('../../constants/common');

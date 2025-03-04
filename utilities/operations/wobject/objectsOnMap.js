@@ -1,7 +1,7 @@
-const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const searchHelper = require('utilities/helpers/searchHelper');
-const { Wobj } = require('models');
+const { addCampaignsToWobjectsSites } = require('../../helpers/campaignsHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const searchHelper = require('../../helpers/searchHelper');
+const { Wobj } = require('../../../models');
 const _ = require('lodash');
 
 exports.getExpertsFromArea = async ({

@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { wObjectHelper, jsonHelper } = require('utilities/helpers');
-const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('constants/wobjectsData');
+const { wObjectHelper, jsonHelper } = require('../../helpers');
+const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('../../../constants/wobjectsData');
 const { getPost } = require('../../hiveApi/postsUtil');
 
 module.exports = async ({

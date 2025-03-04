@@ -1,4 +1,4 @@
-const { engineProxy } = require('utilities/hiveEngine/engineQuery');
+const { engineProxy } = require('../hiveEngine/engineQuery');
 const _ = require('lodash');
 
 /**

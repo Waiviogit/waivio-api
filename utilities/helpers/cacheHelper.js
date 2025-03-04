@@ -1,6 +1,6 @@
-const currencyUtil = require('utilities/hiveApi/currencyUtil');
-const redisSetter = require('utilities/redis/redisSetter');
-const { CACHE_KEY } = require('constants/common');
+const currencyUtil = require('../hiveApi/currencyUtil');
+const redisSetter = require('../redis/redisSetter');
+const { CACHE_KEY } = require('../../constants/common');
 const crypto = require('node:crypto');
 const {
   redisGetter,

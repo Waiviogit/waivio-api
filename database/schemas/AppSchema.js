@@ -1,9 +1,9 @@
 const {
   STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE,
-} = require('constants/sitesConstants');
-const { REFERRAL_TYPES } = require('constants/referralData');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
-const { APP_LANGUAGES } = require('constants/common');
+} = require('../../constants/sitesConstants');
+const { REFERRAL_TYPES } = require('../../constants/referralData');
+const { SUPPORTED_CURRENCIES } = require('../../constants/common');
+const { APP_LANGUAGES } = require('../../constants/common');
 const mongoose = require('mongoose');
 const _ = require('lodash');
 

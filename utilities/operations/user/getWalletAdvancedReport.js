@@ -3,7 +3,7 @@ const _ = require('lodash');
 const moment = require('moment');
 const {
   EngineAccountHistory, CurrenciesRate, WalletExemptions, HiveEngineRate,
-} = require('models');
+} = require('../../../models');
 const BigNumber = require('bignumber.js');
 const {
   SUPPORTED_CURRENCIES,

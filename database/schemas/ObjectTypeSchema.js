@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES } = require('../../constants/wobjectsData');
 
 const { Schema } = mongoose;
 

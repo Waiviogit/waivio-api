@@ -1,4 +1,4 @@
-const { User, App, UserExpertiseModel } = require('models');
+const { User, App, UserExpertiseModel } = require('../../../models');
 const moment = require('moment');
 const _ = require('lodash');
 

@@ -1,8 +1,8 @@
-const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('constants/sortData');
-const { SUPPORTED_CURRENCIES, LANGUAGES } = require('constants/common');
-const { customValidationHelper } = require('utilities/helpers');
 const Joi = require('joi');
 const moment = require('moment');
+const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT } = require('../../constants/sortData');
+const { SUPPORTED_CURRENCIES, LANGUAGES } = require('../../constants/common');
+const { customValidationHelper } = require('../../utilities/helpers');
 const { SUPPORTED_CRYPTO_CURRENCIES, GUEST_COINS_TO_WITHDRAW } = require('../../constants/currencyData');
 const { boxScheme } = require('./common');
 

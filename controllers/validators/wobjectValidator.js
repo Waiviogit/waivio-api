@@ -1,8 +1,8 @@
-const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('constants/sortData');
-const { EXPERTS_SORT, VALID_EXPERTS_SORT, FIELDS_SORT } = require('constants/sortData');
-const { customValidationHelper } = require('utilities/helpers');
-const { OBJECT_TYPES } = require('constants/wobjectsData');
-const { LANGUAGES } = require('constants/common');
+const { FOLLOWERS_SORT, VALID_FOLLOWERS_SORT, SEARCH_SORT } = require('../../constants/sortData');
+const { EXPERTS_SORT, VALID_EXPERTS_SORT, FIELDS_SORT } = require('../../constants/sortData');
+const { customValidationHelper } = require('../../utilities/helpers');
+const { OBJECT_TYPES } = require('../../constants/wobjectsData');
+const { LANGUAGES } = require('../../constants/common');
 const Joi = require('joi');
 const { boxScheme } = require('./common');
 

@@ -1,7 +1,7 @@
-const engineOperations = require('utilities/hiveEngine/engineOperations');
-const hiveOperations = require('utilities/hiveApi/hiveOperations');
-const { TOKEN_WAIV } = require('constants/hiveEngine');
-const { Post } = require('models');
+const engineOperations = require('../hiveEngine/engineOperations');
+const hiveOperations = require('../hiveApi/hiveOperations');
+const { TOKEN_WAIV } = require('../../constants/hiveEngine');
+const { Post } = require('../../models');
 
 module.exports = async (
   voteInfo) => {

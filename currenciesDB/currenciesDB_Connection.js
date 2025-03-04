@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const config = require('config');
+const config = require('../config');
 
 const URI = process.env.MONGO_URI_CURRENCIES
   ? process.env.MONGO_URI_CURRENCIES

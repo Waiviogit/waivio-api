@@ -1,4 +1,4 @@
-const { ThreadModel, mutedUserModel } = require('models');
+const { ThreadModel, mutedUserModel } = require('../../../models');
 const _ = require('lodash');
 
 const getSortOrder = (sort) => (sort === 'latest'

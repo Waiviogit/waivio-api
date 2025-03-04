@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { App } = require('models');
-const sitesHelper = require('utilities/helpers/sitesHelper');
+const { App } = require('../../../models');
+const sitesHelper = require('../../helpers/sitesHelper');
 
 exports.getObjectsFilter = async ({ host, userName }) => {
   const { result, error } = await App.findOne({ host, owner: userName, inherited: true });

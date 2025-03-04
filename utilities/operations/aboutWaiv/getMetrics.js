@@ -1,7 +1,7 @@
-const tokensContract = require('utilities/hiveEngine/tokensContract');
-const tokenFunds = require('utilities/hiveEngine/tokenFunds');
-const marketPools = require('utilities/hiveEngine/marketPools');
-const { EngineAccountHistory } = require('models');
+const tokensContract = require('../../hiveEngine/tokensContract');
+const tokenFunds = require('../../hiveEngine/tokenFunds');
+const marketPools = require('../../hiveEngine/marketPools');
+const { EngineAccountHistory } = require('../../../models');
 const BigNumber = require('bignumber.js');
 const _ = require('lodash');
 const currenciesRequests = require('../../requests/currenciesRequests');

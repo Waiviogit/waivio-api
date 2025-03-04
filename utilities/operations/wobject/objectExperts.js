@@ -1,7 +1,7 @@
-const { UserExpertiseModel, User, Wobj } = require('models');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+const { UserExpertiseModel, User, Wobj } = require('../../../models');
+const jsonHelper = require('../../helpers/jsonHelper');
 const _ = require('lodash');
-const { EXPERTS_SORT } = require('constants/sortData');
+const { EXPERTS_SORT } = require('../../../constants/sortData');
 
 // eslint-disable-next-line camelcase
 const getMultipliers = (newsFilter, author_permlink) => {

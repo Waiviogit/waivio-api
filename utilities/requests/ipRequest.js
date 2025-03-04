@@ -1,4 +1,4 @@
-const { GEO_IP_API } = require('constants/requestData');
+const { GEO_IP_API } = require('../../constants/requestData');
 const axios = require('axios');
 const _ = require('lodash');
 const { REQUEST_TIMEOUT } = require('../../constants/common');

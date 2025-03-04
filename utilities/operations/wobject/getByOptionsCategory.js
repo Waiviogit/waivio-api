@@ -1,8 +1,8 @@
-const { Wobj, User } = require('models');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+const { Wobj, User } = require('../../../models');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const _ = require('lodash');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 
 module.exports = async ({
   authorPermlink, category, skip, limit, locale, app, userName = '',

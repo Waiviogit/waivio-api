@@ -1,5 +1,5 @@
-const { userUtil } = require('utilities/hiveApi');
-const { User, Subscriptions } = require('models');
+const { userUtil } = require('../../hiveApi');
+const { User, Subscriptions } = require('../../../models');
 const _ = require('lodash');
 
 /**

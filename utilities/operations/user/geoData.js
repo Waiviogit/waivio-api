@@ -1,5 +1,5 @@
-const ipRequest = require('utilities/requests/ipRequest');
-const { geoIpModel } = require('models');
+const ipRequest = require('../../requests/ipRequest');
+const { geoIpModel } = require('../../../models');
 const _ = require('lodash');
 
 exports.getLocation = async (ip) => {

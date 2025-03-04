@@ -1,4 +1,4 @@
-const { Department, Wobj } = require('models');
+const { Department, Wobj } = require('../../../models');
 const _ = require('lodash');
 
 const MIN_SUB_OBJECTS = 10;
