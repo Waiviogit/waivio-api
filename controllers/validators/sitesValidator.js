@@ -167,3 +167,18 @@ exports.updateAiSchema = Joi.object().keys({
   host: Joi.string().required(),
   key: Joi.string(),
 });
+
+exports.payPalBasicSchema = Joi.object().keys({
+  host: Joi.string().required(),
+  userName: Joi.string().required(),
+});
+
+exports.payPalActivateSchema = Joi.object().keys({
+  host: Joi.string().required(),
+  userName: Joi.string().required(),
+  subscriptionId: Joi.string().required(),
+});
+
+exports.payPalSubCheckSchema = Joi.object().keys({
+  host: Joi.string().required(),
+});

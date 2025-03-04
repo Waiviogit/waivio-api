@@ -72,6 +72,9 @@ models.EngineAdvancedReport = require('./schemas/EngineAdvancedReportSchema');
 models.EngineAdvancedReportStatus = require('./schemas/EngineAdvancedReportStatusSchema');
 models.PlacesApiAccess = require('./schemas/PlacesApiAccess');
 models.WobjectTokens = require('./schemas/WobjectTokensSchema');
+models.PayPalProduct = require('./schemas/PayPalProductSchema');
+models.PayPalPlan = require('./schemas/PayPalPlanSchema');
+models.PayPalSubscription = require('./schemas/PayPalSubscriptionSchema');
 
 module.exports = {
   Mongoose: mongoose,

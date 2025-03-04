@@ -1,5 +1,5 @@
 const {
-  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE,
+  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE, BILLING_TYPE,
 } = require('constants/sitesConstants');
 const { REFERRAL_TYPES } = require('constants/referralData');
 const { SUPPORTED_CURRENCIES } = require('constants/common');
@@ -167,6 +167,7 @@ const AppSchema = new Schema({
   useForCanonical: { type: Boolean, default: false },
   disableOwnerAuthority: { type: Boolean, default: false },
   adSense: { type: AdSense, default: () => ({}) },
+  billingType: { type: String, default: BILLING_TYPE.CRYPTO },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {

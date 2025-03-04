@@ -46,5 +46,8 @@ moduleExports.DelegationModel = require('./DelegationModel');
 moduleExports.EngineAdvancedReportModel = require('./EngineAdvancedReportModel');
 moduleExports.EngineAdvancedReportStatusModel = require('./EngineAdvancedReportStatusModel');
 moduleExports.PlacesApiAccessModel = require('./PlacesApiAccessModel');
+moduleExports.PayPalProductModel = require('./PayPalProductModel');
+moduleExports.PayPalPlanModel = require('./PayPalPlanModel');
+moduleExports.PayPalSubscriptionModel = require('./PayPalSubscriptionModel');
 
 module.exports = moduleExports;
