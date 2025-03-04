@@ -1,5 +1,5 @@
-const { Department, Wobj } = require('../../../models');
 const _ = require('lodash');
+const { Department, Wobj } = require('../../../models');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;

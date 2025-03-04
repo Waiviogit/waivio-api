@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { searchObjectTypes } = require('../../operations/search/searchTypes');
-const { searchUsers } = require('../../operations/search/searchUsers');
-const { searchWobjects } = require('../../operations/search/searchWobjects');
+const { searchObjectTypes } = require('./searchTypes');
+const { searchUsers } = require('./searchUsers');
+const { searchWobjects } = require('./searchWobjects');
 const { getSessionApp } = require('../../helpers/sitesHelper');
 
 exports.getGlobalSearch = async ({

@@ -1,6 +1,6 @@
 const axios = require('axios');
-const { KEY_CHAIN_URL } = require('../../constants/requestData');
 const _ = require('lodash');
+const { KEY_CHAIN_URL } = require('../../constants/requestData');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.getDelegators = async (account, cb = (el) => _.get(el, 'data')) => {

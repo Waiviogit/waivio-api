@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const { Wobj, User } = require('../../../models');
 const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
-const _ = require('lodash');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 

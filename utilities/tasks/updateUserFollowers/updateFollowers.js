@@ -26,9 +26,7 @@ exports.findFollowersCountAndUpdate = async () => {
       const dbResult = await User.find({ users_follow: doc.name });
       guestLength = dbResult.length;
     }
-    const res = await User.updateOne(
-      { name: doc.name }, { $set: { followers_count: counter + guestLength } },
-    );
+    const res = await User.updateOne({ name: doc.name }, { $set: { followers_count: counter + guestLength } });
     if (res.nModified) {
       console.log(`User ${doc.name} "followers_count" updated!`);
     }

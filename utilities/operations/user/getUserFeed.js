@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const {
   User, Post, Subscriptions, wobjectSubscriptions, hiddenPostModel, mutedUserModel, App,
 } = require('../../../models');
-const _ = require('lodash');
 const { postHelper } = require('../../helpers');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { fillPostsSubscriptions } = require('../../helpers/subscriptionHelper');

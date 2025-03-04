@@ -1,4 +1,6 @@
 /* eslint-disable camelcase */
+const moment = require('moment');
+const _ = require('lodash');
 const {
   REQUIREDFIELDS_PARENT,
   MIN_PERCENT_TO_SHOW_UPGATE,
@@ -25,8 +27,6 @@ const {
 } = require('../../constants/common');
 const Wobj = require('../../models/wObjectModel');
 const mutedModel = require('../../models/mutedUserModel');
-const moment = require('moment');
-const _ = require('lodash');
 const makeAffiliateLinks = require('../operations/affiliateProgram/makeAffiliateLinks');
 const { getWaivioAdminsAndOwner } = require('./getWaivioAdminsAndOwnerHelper');
 const jsonHelper = require('./jsonHelper');

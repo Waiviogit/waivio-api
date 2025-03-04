@@ -22,9 +22,7 @@ exports.updateObjectTypes = async (isLog = false) => {
       { $limit: OBJECT_TYPE_TOP_WOBJECTS_COUNT },
     ]);
     const authorPermlinks = wobjsArray.map((p) => p.author_permlink);
-    const res = await ObjectType.updateOne(
-      { _id: doc._id }, { $set: { top_wobjects: authorPermlinks } },
-    );
+    const res = await ObjectType.updateOne({ _id: doc._id }, { $set: { top_wobjects: authorPermlinks } });
 
     if (res.nModified && isLog) {
       console.log(`Object Type ${doc.name} updated! Add ${authorPermlinks.length} wobjects refs!`);

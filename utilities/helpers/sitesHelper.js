@@ -1,3 +1,8 @@
+const BigNumber = require('bignumber.js');
+const Sentry = require('@sentry/node');
+const moment = require('moment');
+const _ = require('lodash');
+const dns = require('dns/promises');
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
@@ -12,12 +17,7 @@ const {
 const { sendSentryNotification } = require('./sentryHelper');
 const { processWobjects } = require('./wObjectHelper');
 const { redisGetter } = require('../redis');
-const BigNumber = require('bignumber.js');
-const Sentry = require('@sentry/node');
-const moment = require('moment');
-const _ = require('lodash');
 const ipRequest = require('../requests/ipRequest');
-const dns = require('dns/promises');
 const asyncLocalStorage = require('../../middlewares/context/context');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 const { parseJson } = require('./jsonHelper');

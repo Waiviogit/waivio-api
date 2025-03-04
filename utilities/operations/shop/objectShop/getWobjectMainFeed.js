@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const { User } = require('../../../../models');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../../constants/usersData');
 const shopHelper = require('../../../helpers/shopHelper');
-const _ = require('lodash');
 const getWobjectDepartments = require('./getWobjectDepartments');
 const getWobjectDepartmentFeed = require('./getWobjectDepartmentFeed');
 

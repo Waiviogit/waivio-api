@@ -1,5 +1,4 @@
 /* eslint-disable camelcase */
-const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
 const { RedisChatMessageHistory } = require('@langchain/redis');
 const { ChatPromptTemplate, MessagesPlaceholder } = require('@langchain/core/prompts');
 const { RunnablePassthrough, RunnableSequence } = require('@langchain/core/runnables');
@@ -9,6 +8,7 @@ const { OpenAI, OpenAIEmbeddings } = require('@langchain/openai');
 const crypto = require('node:crypto');
 const { WeaviateStore } = require('@langchain/weaviate');
 const { default: weaviate } = require('weaviate-ts-client');
+const { TTL_TIME, REDIS_KEYS } = require('../../../constants/common');
 
 const contextualizeQSystemPrompt = `Given a chat history and the latest user question
 which might reference context in the chat history, formulate a standalone question

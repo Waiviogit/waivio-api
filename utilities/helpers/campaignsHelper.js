@@ -1,10 +1,10 @@
+const moment = require('moment');
+const _ = require('lodash');
 const {
   User, Wobj, paymentHistory, Campaign, App,
 } = require('../../models');
 const { REQUIREDFIELDS_POST, REQUIREDFIELDS_SIMPLIFIED, REMOVE_OBJ_STATUSES } = require('../../constants/wobjectsData');
 const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('../../constants/campaignsData');
-const moment = require('moment');
-const _ = require('lodash');
 
 const wobjectHelper = require('./wObjectHelper');
 const campaignsV2Helper = require('./campaignsV2Helper');

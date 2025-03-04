@@ -1,7 +1,7 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
 const { User } = require('../../../models');
 
-// eslint-disable-next-line camelcase
 module.exports = async ({ user_name, user_metadata }) => {
   user_metadata.drafts = _.slice(_.orderBy(user_metadata.drafts, ['lastUpdated'], ['desc']), 0, 20);
   if (user_metadata.settings.hiveBeneficiaryAccount) {

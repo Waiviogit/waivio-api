@@ -51,9 +51,7 @@ exports.updateObjectTypeExperts = async () => {
     const { experts } = await getExpertsByType(doc.name);
 
     if (!_.isEmpty(experts)) {
-      const res = await ObjectType.updateOne(
-        { name: doc.name }, { $set: { top_experts: experts } },
-      );
+      const res = await ObjectType.updateOne({ name: doc.name }, { $set: { top_experts: experts } });
 
       if (res.nModified) {
         successCount++;

@@ -23,4 +23,3 @@ exports.deleteOne = async (condition) => {
     return { error };
   }
 };
-

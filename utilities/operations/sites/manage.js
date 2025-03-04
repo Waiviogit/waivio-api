@@ -1,9 +1,9 @@
+const BigNumber = require('bignumber.js');
+const _ = require('lodash');
 const {
   PAYMENT_TYPES, FEE, INACTIVE_STATUSES, POSITIVE_SUM_TYPES,
 } = require('../../../constants/sitesConstants');
 const { sitesHelper } = require('../../helpers');
-const BigNumber = require('bignumber.js');
-const _ = require('lodash');
 
 /** Get data for manage page. In this method, we generate a report for the site owner,
  * in which we include the average data on users on his sites for the last 7 days,

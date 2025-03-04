@@ -1,5 +1,5 @@
-const UserModel = require('../database').models.User;
 const _ = require('lodash');
+const UserModel = require('../database').models.User;
 
 exports.getOne = async (name, keys) => {
   try {

@@ -1,6 +1,6 @@
 const axios = require('axios');
-const { telegramApi } = require('../../constants/requestData');
 const Sentry = require('@sentry/node');
+const { telegramApi } = require('../../constants/requestData');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.sendSentryNotification = async () => {

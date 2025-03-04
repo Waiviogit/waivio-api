@@ -13,8 +13,10 @@ const getFollowers = async (data) => {
     limit: data.limit,
   });
   return {
-    followers: _.map(followers,
-      (follower) => ({ name: follower.name, weight: follower.wobjects_weight })),
+    followers: _.map(
+      followers,
+      (follower) => ({ name: follower.name, weight: follower.wobjects_weight }),
+    ),
   };
 };
 

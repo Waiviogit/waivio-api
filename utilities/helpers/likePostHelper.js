@@ -4,7 +4,8 @@ const { TOKEN_WAIV } = require('../../constants/hiveEngine');
 const { Post } = require('../../models');
 
 module.exports = async (
-  voteInfo) => {
+  voteInfo,
+) => {
   const requests = await Promise.all([
 
     hiveOperations.calcHiveVote({

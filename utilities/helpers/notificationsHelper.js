@@ -3,7 +3,7 @@ const {
   HOST, BASE_URL, SET_NOTIFICATION, SET_SERVICE_NOTIFICATION,
 } = require('../../constants/requestData').NOTIFICATIONS_API;
 const Sentry = require('@sentry/node');
-const { sendSentryNotification } = require('../helpers/sentryHelper');
+const { sendSentryNotification } = require('./sentryHelper');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.sendNotification = async (reqData) => {

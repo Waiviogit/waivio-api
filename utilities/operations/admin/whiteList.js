@@ -1,7 +1,7 @@
+const moment = require('moment');
 const { redis, redisGetter, redisSetter } = require('../../redis');
 const { WHITE_LIST_KEY } = require('../../../constants/wobjectsData');
 const { User } = require('../../../models');
-const moment = require('moment');
 
 const addWhiteList = async ({ name }) => {
   const { user } = await User.getOne(name);

@@ -1,5 +1,5 @@
-const { Wobj } = require('../../../models');
 const Joi = require('joi');
+const { Wobj } = require('../../../models');
 const {
   OBJECT_TYPES, FIELDS_NAMES, AFFILIATE_FIELDS, REMOVE_OBJ_STATUSES,
 } = require('../../../constants/wobjectsData');

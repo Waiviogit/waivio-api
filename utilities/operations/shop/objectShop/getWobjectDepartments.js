@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const shopHelper = require('../../../helpers/shopHelper');
 const { Wobj } = require('../../../../models');
-const _ = require('lodash');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../constants/departments');
 const {
   CACHE_KEY,

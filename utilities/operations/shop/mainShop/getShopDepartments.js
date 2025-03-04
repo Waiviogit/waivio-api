@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const { Department, Wobj } = require('../../../../models');
 const shopHelper = require('../../../helpers/shopHelper');
-const _ = require('lodash');
 const {
   filterDepartments, mapDepartments, getDepartmentsOnWobject,
 } = require('../../departments/departmentsMapper');

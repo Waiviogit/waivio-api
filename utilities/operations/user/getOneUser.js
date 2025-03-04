@@ -1,7 +1,7 @@
-const { startImportUser } = require('../../operations/user/importSteemUserBalancer');
+const _ = require('lodash');
+const { startImportUser } = require('./importSteemUserBalancer');
 const { Subscriptions, mutedUserModel, User } = require('../../../models');
 
-const _ = require('lodash');
 const { getUserCanonical } = require('../../helpers/cannonicalHelper');
 
 const getOne = async ({

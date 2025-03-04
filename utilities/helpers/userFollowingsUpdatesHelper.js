@@ -24,12 +24,8 @@ exports.refreshUsersCounts = async () => {
 
     const lastHourPosts = findLastHourCount(user.last_posts_counts_by_hours, user.last_posts_count);
 
-    user.last_posts_count = decreasedSummaryCount(
-      user.last_posts_counts_by_hours, user.last_posts_count,
-    );
-    user.last_posts_counts_by_hours = pushLastCountToArray(
-      user.last_posts_counts_by_hours, lastHourPosts,
-    );
+    user.last_posts_count = decreasedSummaryCount(user.last_posts_counts_by_hours, user.last_posts_count);
+    user.last_posts_counts_by_hours = pushLastCountToArray(user.last_posts_counts_by_hours, lastHourPosts);
     const res = await User.updateOne(
       { _id: user._id },
       {
@@ -65,16 +61,10 @@ exports.refreshWobjectsCounts = async () => {
 
   await cursor.eachAsync(async (doc) => {
     const wobject = doc.toObject();
-    const lastHourPosts = findLastHourCount(
-      wobject.last_posts_counts_by_hours, wobject.last_posts_count,
-    );
+    const lastHourPosts = findLastHourCount(wobject.last_posts_counts_by_hours, wobject.last_posts_count);
 
-    wobject.last_posts_count = decreasedSummaryCount(
-      wobject.last_posts_counts_by_hours, wobject.last_posts_count,
-    );
-    wobject.last_posts_counts_by_hours = pushLastCountToArray(
-      wobject.last_posts_counts_by_hours, lastHourPosts,
-    );
+    wobject.last_posts_count = decreasedSummaryCount(wobject.last_posts_counts_by_hours, wobject.last_posts_count);
+    wobject.last_posts_counts_by_hours = pushLastCountToArray(wobject.last_posts_counts_by_hours, lastHourPosts);
     const res = await WObject.updateOne(
       { _id: wobject._id },
       {

@@ -1,5 +1,5 @@
-const { engineProxy } = require('../hiveEngine/engineQuery');
 const _ = require('lodash');
+const { engineProxy } = require('./engineQuery');
 
 /**
  * fields

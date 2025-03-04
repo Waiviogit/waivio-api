@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node --max-old-space-size=400 ./bin/www",
+    "lint": "eslint --fix .",
     "createMissedUsers": "NODE_PATH=. node ./utilities/tasks/createMissedUsers/run.js",
     "migrateFollowers": "NODE_PATH=. node ./utilities/tasks/migrateFollowers/run.js",
     "migrateGuestFollowers": "NODE_PATH=. node ./utilities/tasks/fixGuestFollowers/run.js",

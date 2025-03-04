@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const { UserExpertiseModel, User, Wobj } = require('../../../models');
 const jsonHelper = require('../../helpers/jsonHelper');
-const _ = require('lodash');
 const { EXPERTS_SORT } = require('../../../constants/sortData');
 
 // eslint-disable-next-line camelcase
@@ -12,8 +12,10 @@ const getMultipliers = (newsFilter, author_permlink) => {
   if (_.isEmpty(values)) return [{ author_permlink, multiplier: 1 }];
   return values.map((value) => ({
     author_permlink: value,
-    multiplier: (_.filter(newsFilter.allowList,
-      (items) => _.includes(items, value)).length) / count,
+    multiplier: (_.filter(
+      newsFilter.allowList,
+      (items) => _.includes(items, value),
+    ).length) / count,
   }));
 };
 

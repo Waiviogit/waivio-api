@@ -27,9 +27,7 @@ exports.saveObjectsFilter = async (params) => {
       return { error: errorData };
     }
   }
-  const { result: updatedApp, error: updateError } = await App.findOneAndUpdate(
-    { _id: result._id }, { object_filters: filtersToLowerCase(params.objectsFilter) },
-  );
+  const { result: updatedApp, error: updateError } = await App.findOneAndUpdate({ _id: result._id }, { object_filters: filtersToLowerCase(params.objectsFilter) });
   if (updateError) return { error: updateError };
   await sitesHelper.updateSupportedObjects({ host: result.host, app: updatedApp });
   return { result: updatedApp.object_filters };

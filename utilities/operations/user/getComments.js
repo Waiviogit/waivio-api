@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const { mergeSteemCommentsWithDB, mergeDbCommentsWithSteem } = require('../../helpers/commentHelper');
 const { postsUtil } = require('../../hiveApi');
 const { Comment, User, mutedUserModel } = require('../../../models');
-const _ = require('lodash');
 const engineOperations = require('../../hiveEngine/engineOperations');
 
 module.exports = async ({

@@ -1,8 +1,8 @@
+const _ = require('lodash');
 const objectBotRequests = require('../../requests/objectBotRequests');
 const { PAYMENT_TYPES, POSITIVE_SUM_TYPES } = require('../../../constants/sitesConstants');
 const { OBJECT_BOT } = require('../../../constants/requestData');
 const { sitesHelper } = require('../../helpers');
-const _ = require('lodash');
 
 /** Method for validate and create user site */
 exports.createApp = async (params) => {

@@ -1,7 +1,7 @@
+const _ = require('lodash');
 const { CAMPAIGN_STATUSES } = require('../../../constants/campaignsData');
 const { Wobj, Campaign } = require('../../../models');
 const { addCampaignsToWobjects } = require('../../helpers/campaignsHelper');
-const _ = require('lodash');
 const searchHelper = require('../../helpers/searchHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 const { ERROR_OBJ } = require('../../../constants/common');

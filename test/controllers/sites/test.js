@@ -303,18 +303,24 @@ describe('On sitesController', async () => {
         expect(hosts).to.be.deep.eq([inactiveApp.host, activeApp.host, pendingApp.host]);
       });
       it('should return correct average dau of pending site', async () => {
-        const foundApp = _.find(result.body.websites,
-          { name: pendingApp.name, status: STATUSES.PENDING });
+        const foundApp = _.find(
+          result.body.websites,
+          { name: pendingApp.name, status: STATUSES.PENDING },
+        );
         expect(foundApp.averageDau).to.be.eq(0);
       });
       it('should return correct average dau of active site', async () => {
-        const foundApp = _.find(result.body.websites,
-          { name: activeApp.name, status: STATUSES.ACTIVE });
+        const foundApp = _.find(
+          result.body.websites,
+          { name: activeApp.name, status: STATUSES.ACTIVE },
+        );
         expect(foundApp.averageDau).to.be.eq(activePayment.countUsers);
       });
       it('should return correct average dau of inactive site', async () => {
-        const foundApp = _.find(result.body.websites,
-          { name: inactiveApp.name, status: STATUSES.INACTIVE });
+        const foundApp = _.find(
+          result.body.websites,
+          { name: inactiveApp.name, status: STATUSES.INACTIVE },
+        );
         expect(foundApp.averageDau).to.be.eq(payment.countUsers);
       });
       it('should return correct average DAU', async () => {
@@ -367,8 +373,10 @@ describe('On sitesController', async () => {
           result = await chai.request(app).get(`/api/sites/report?userName=${owner}&host=${activeApp.host}`);
         });
         it('should not return transfer payments', async () => {
-          const payments = _.filter(result.body.payments,
-            (pmnt) => pmnt.type === PAYMENT_TYPES.TRANSFER);
+          const payments = _.filter(
+            result.body.payments,
+            (pmnt) => pmnt.type === PAYMENT_TYPES.TRANSFER,
+          );
           expect(payments).to.have.length(0);
         });
         it('should return only payments for required host', async () => {

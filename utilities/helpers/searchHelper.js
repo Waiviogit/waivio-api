@@ -1,6 +1,6 @@
 const _ = require('lodash');
 const { OBJECT_TYPES } = require('../../constants/wobjectsData');
-const { getSessionApp } = require('../helpers/sitesHelper');
+const { getSessionApp } = require('./sitesHelper');
 
 exports.getAppInfo = async ({ app, addHashtag }) => {
   if (!app) ({ result: app } = await getSessionApp());

@@ -1,8 +1,8 @@
+const { isbot } = require('isbot');
 const { redisStatisticsKey } = require('../../constants/sitesConstants');
 const {
   URL, REDIS_KEYS, TTL_TIME,
 } = require('../../constants/common');
-const { isbot } = require('isbot');
 const config = require('../../config');
 const { redisSetter } = require('../../utilities/redis');
 const { App } = require('../../models');

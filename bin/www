@@ -1,11 +1,12 @@
 #!/usr/bin/env node
 require('dotenv').config();
 const http = require('node:http');
-const { getSentryOptions } = require('../constants/sentry');
 const Sentry = require('@sentry/node');
+const { getSentryOptions } = require('../constants/sentry');
 const redis = require('../utilities/redis/redis');
 const { closeMongoConnections } = require('../database');
 const { sendSentryNotification } = require('../utilities/helpers/sentryHelper');
+
 Sentry.init(getSentryOptions());
 const app = require('../app');
 
@@ -13,8 +14,6 @@ const port = normalizePort(process.env.PORT || '3000');
 
 app.set('port', port);
 const server = http.createServer(app);
-
-
 
 (async () => {
   Sentry.setupExpressErrorHandler(app, {

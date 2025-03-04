@@ -1,6 +1,6 @@
+const { isbot } = require('isbot');
 const redisSetter = require('../../utilities/redis/redisSetter');
 const redisGetter = require('../../utilities/redis/redisGetter');
-const { isbot } = require('isbot');
 const {
   REDIS_KEYS,
   TTL_TIME,

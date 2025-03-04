@@ -1,8 +1,8 @@
+const _ = require('lodash');
 const {
   Wobj,
 } = require('../../../../models');
 const { REMOVE_OBJ_STATUSES } = require('../../../../constants/wobjectsData');
-const _ = require('lodash');
 const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../constants/departments');
 const shopHelper = require('../../../helpers/shopHelper');
 const { getCachedData, getCacheKey, setCachedData } = require('../../../helpers/cacheHelper');

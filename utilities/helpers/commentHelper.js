@@ -1,6 +1,6 @@
+const _ = require('lodash');
 const { postsUtil } = require('../hiveApi');
 const { Comment, User, App } = require('../../models');
-const _ = require('lodash');
 const asyncLocalStorage = require('../../middlewares/context/context');
 
 /**

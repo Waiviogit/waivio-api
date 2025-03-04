@@ -1,5 +1,5 @@
-const { Wobj } = require('../../../models');
 const _ = require('lodash');
+const { Wobj } = require('../../../models');
 const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 
 module.exports = async (authorPermlink) => {

@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
+const axios = require('axios');
+const _ = require('lodash');
+const BigNumber = require('bignumber.js');
+const { ERROR_OBJ } = require('../../../constants/common');
 const {
   User, withdrawFundsModel, paymentHistory,
 } = require('../../../models');
-const axios = require('axios');
-const { ERROR_OBJ } = require('../../../constants/common');
-const _ = require('lodash');
-const BigNumber = require('bignumber.js');
 const { captureException } = require('../../helpers/sentryHelper');
 const { transfer } = require('../../hiveApi/broadcastUtil');
 const redisGetter = require('../../redis/redisGetter');

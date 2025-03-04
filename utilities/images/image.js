@@ -1,11 +1,11 @@
-const {
-  ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE, IMAGES_FORMAT,
-} = require('../../constants/common');
 const sharp = require('sharp');
 const zlib = require('zlib');
 const _ = require('lodash');
 const heicConvert = require('heic-convert');
 const AWS = require('@aws-sdk/client-s3');
+const {
+  ERROR_MESSAGE, AWSS3_IMAGE_PARAMS, IMAGE_SIZE, IMAGES_FORMAT,
+} = require('../../constants/common');
 
 const convertWithHeicLib = async (buffer) => {
   try {

@@ -1,9 +1,9 @@
+const _ = require('lodash');
 const {
   Wobj,
 } = require('../../../../models');
 const { SHOP_ITEM_RATINGS } = require('../../../../constants/shop');
 const shopHelper = require('../../../helpers/shopHelper');
-const _ = require('lodash');
 
 const getObjects = async ({
   authorPermlink, tagCategory, app, path,

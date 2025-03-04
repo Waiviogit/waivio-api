@@ -1,3 +1,4 @@
+const _ = require('lodash');
 const { Wobj, User } = require('../../../models');
 const {
   FIELDS_NAMES, REMOVE_OBJ_STATUSES, OBJECT_TYPES, DEFAULT_LINK_FIELDS, REQUIREDFILDS_WOBJ_LIST,
@@ -6,7 +7,6 @@ const { wObjectHelper } = require('../../helpers');
 const { ERROR_OBJ } = require('../../../constants/common');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
-const _ = require('lodash');
 const shopHelper = require('../../helpers/shopHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 

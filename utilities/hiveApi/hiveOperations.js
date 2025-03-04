@@ -1,9 +1,9 @@
+const _ = require('lodash');
 const userUtil = require('./userUtil');
 const postsUtil = require('./postsUtil');
 const { redisGetter } = require('../redis');
 const { CACHE_KEY } = require('../../constants/common');
 const { Post } = require('../../models');
-const _ = require('lodash');
 
 exports.calcHiveVote = async ({
   userName, weight, author, permlink,

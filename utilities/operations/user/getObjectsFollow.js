@@ -14,8 +14,10 @@ module.exports = async (value) => {
   );
   if (error) return { error };
   result.forEach((wObject) => {
-    wObject.fields = _.filter(wObject.fields,
-      (field) => _.includes(REQUIREDFIELDS_POST, field.name));
+    wObject.fields = _.filter(
+      wObject.fields,
+      (field) => _.includes(REQUIREDFIELDS_POST, field.name),
+    );
   });
   return { wobjects: result };
 };

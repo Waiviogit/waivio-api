@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const jsonHelper = require('../../helpers/jsonHelper');
 const BigNumber = require('bignumber.js');
+const jsonHelper = require('../../helpers/jsonHelper');
 const { AFFILIATE_NULL_TYPES } = require('../../../constants/wobjectsData');
 const {
   COUNTRY_TO_CONTINENT,
@@ -17,7 +17,7 @@ const getAffiliateCode = (codesArr) => {
     const parsedChance = Number(chance);
 
     // Mark as invalid if chance is not a valid number or negative
-    if (isNaN(parsedChance) || parsedChance < 0) return null;
+    if (Number.isNaN(parsedChance) || parsedChance < 0) return null;
     return { value, chance: parsedChance };
   });
 

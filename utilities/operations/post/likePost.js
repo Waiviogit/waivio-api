@@ -1,8 +1,8 @@
 /* eslint-disable camelcase */
 const _ = require('lodash');
+const moment = require('moment');
 const { Post } = require('../../../models');
 const likePostHelper = require('../../helpers/likePostHelper');
-const moment = require('moment');
 const redisSetter = require('../../redis/redisSetter');
 const { ERROR_MESSAGE, REDIS_KEYS } = require('../../../constants/common');
 const { getPostObjects } = require('../../helpers/postHelper');
