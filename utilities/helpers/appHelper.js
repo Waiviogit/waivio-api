@@ -4,10 +4,17 @@ const getAppAuthorities = (app) => {
   const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
   const authorities = [...app.authority];
   if (userShop) {
-    authorities.push(app?.configuration?.shopSettings?.value);
+    const shopUser = app?.configuration?.shopSettings?.value;
+
+    const sameAsOwner = shopUser === app.owner;
+    const pushFalse = sameAsOwner && app.disableOwnerAuthority;
+
+    if (!pushFalse) authorities.push(shopUser);
+
     return authorities;
   }
   if (!app.disableOwnerAuthority) authorities.push(app.owner);
+
   return authorities;
 };
 
