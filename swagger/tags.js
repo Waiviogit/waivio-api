@@ -17,7 +17,7 @@ module.exports = [
   },
   {
     name: 'general-search',
-    description: 'Search on users, objects, object types',
+    description: 'General serarch for users, objects, object types',
   },
   {
     name: 'image',
@@ -37,30 +37,30 @@ module.exports = [
   },
   {
     name: 'hive',
-    description: 'current median history price, reward fund etc.',
+    description: 'Current median history price, reward fund etc.',
   },
   {
     name: 'hiveEngine',
-    description: 'hiveEngine ops',
+    description: 'Hive Engine operations',
   },
   {
     name: 'departments',
-    description: 'departments',
+    description: 'Departments',
   },
   {
     name: 'shop',
-    description: 'shop',
+    description: 'Shop',
   },
   {
     name: 'draft',
-    description: 'draft',
+    description: 'Draft',
   },
   {
     name: 'thread',
-    description: 'thread',
+    description: 'Thread',
   },
   {
     name: 'admins',
-    description: 'admins',
+    description: 'Admins',
   },
 ];
