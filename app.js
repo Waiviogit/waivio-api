@@ -23,5 +23,4 @@ app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use(middlewares.notFoundMiddleware);
 app.use(middlewares.errorMiddleware);
 
-
 module.exports = app;
