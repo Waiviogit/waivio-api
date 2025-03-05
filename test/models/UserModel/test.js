@@ -288,21 +288,27 @@ describe('UserModel', () => {
       }
     });
     it('Should return an array', async () => {
-      const { result } = await UserModel.findWithSelect({},
-        'name, alias');
+      const { result } = await UserModel.findWithSelect(
+        {},
+        'name, alias',
+      );
       expect(result).to.be.an('array');
     });
     it('Should return correct users', async () => {
       await UsersFactory.Create();
-      const { result } = await UserModel.findWithSelect({ name: { $in: [new RegExp('^asdf_')] } },
-        'name, alias');
+      const { result } = await UserModel.findWithSelect(
+        { name: { $in: [new RegExp('^asdf_')] } },
+        'name, alias',
+      );
       expect(result.length).to.be.eq(usersCount);
     });
     it('Should return users with correct fields', async () => {
       const randomUser = _.random(0, usersCount - 1);
       await UsersFactory.Create();
-      const { result } = await UserModel.findWithSelect({ name: { $in: [new RegExp('^asdf_')] } },
-        'alias');
+      const { result } = await UserModel.findWithSelect(
+        { name: { $in: [new RegExp('^asdf_')] } },
+        'alias',
+      );
       expect(result[randomUser].alias).to.be.eq('');
     });
     it('Should check that the error exists', async () => {

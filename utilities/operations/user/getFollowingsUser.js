@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { User, Subscriptions, wobjectSubscriptions } = require('models');
-const { FOLLOWERS_SORT } = require('constants/sortData');
-const { followersHelper } = require('utilities/helpers');
+const { User, Subscriptions, wobjectSubscriptions } = require('../../../models');
+const { FOLLOWERS_SORT } = require('../../../constants/sortData');
+const { followersHelper } = require('../../helpers');
 
 exports.getAll = async ({
   name, skip, limit, sort,
@@ -33,8 +33,10 @@ exports.getFollowingsArray = async (data) => {
       };
     }
     return {
-      users: _.map(data.users,
-        (name) => ({ [name]: _.includes(users, name) })),
+      users: _.map(
+        data.users,
+        (name) => ({ [name]: _.includes(users, name) }),
+      ),
     };
   } if (data.permlinks) {
     const { user, error } = await User.getOne(data.name);
@@ -43,8 +45,10 @@ exports.getFollowingsArray = async (data) => {
     if (!user) return { users: _.map(data.permlinks, (permlink) => ({ [permlink]: false })) };
     const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: data.name });
     return {
-      users: _.map(data.permlinks,
-        (permlink) => ({ [permlink]: _.includes(wobjects, permlink) })),
+      users: _.map(
+        data.permlinks,
+        (permlink) => ({ [permlink]: _.includes(wobjects, permlink) }),
+      ),
     };
   }
 };

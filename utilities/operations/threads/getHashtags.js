@@ -1,5 +1,5 @@
-const { ThreadModel } = require('models');
 const _ = require('lodash');
+const { ThreadModel } = require('../../../models');
 
 const getTrendingHashTagsWithCount = async ({ skip = 0, limit = 50 }) => {
   const threeDaysAgo = new Date();

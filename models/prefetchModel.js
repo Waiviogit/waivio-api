@@ -1,4 +1,4 @@
-const { Prefetch } = require('database').models;
+const { Prefetch } = require('../database').models;
 
 const findOne = async (condition, select) => {
   try {

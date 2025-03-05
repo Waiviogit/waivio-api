@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { SHOP_DEPARTMENTS_TYPE, SHOP_SCHEMA } = require('constants/shop');
+const { SHOP_DEPARTMENTS_TYPE, SHOP_SCHEMA } = require('../../constants/shop');
 
 const options = { stripUnknown: true, convert: true };
 

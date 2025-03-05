@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { SUPPORTED_CURRENCIES, ADVANCED_REPORT_SYMBOLS } = require('constants/common');
+const { SUPPORTED_CURRENCIES, ADVANCED_REPORT_SYMBOLS } = require('../../constants/common');
 
 const { Schema } = mongoose;
 

@@ -1,5 +1,5 @@
-const { WObject, ObjectType, UserExpertiseModel } = require('database').models;
-const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('constants/wobjectsData');
+const { WObject, ObjectType, UserExpertiseModel } = require('../../../database').models;
+const { OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('../../../constants/wobjectsData');
 const _ = require('lodash');
 
 const getObjectTypeWobjects = async (name) => {
@@ -51,9 +51,7 @@ exports.updateObjectTypeExperts = async () => {
     const { experts } = await getExpertsByType(doc.name);
 
     if (!_.isEmpty(experts)) {
-      const res = await ObjectType.updateOne(
-        { name: doc.name }, { $set: { top_experts: experts } },
-      );
+      const res = await ObjectType.updateOne({ name: doc.name }, { $set: { top_experts: experts } });
 
       if (res.nModified) {
         successCount++;

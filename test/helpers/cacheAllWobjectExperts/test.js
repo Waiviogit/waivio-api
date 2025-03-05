@@ -38,9 +38,7 @@ describe('on cacheAllWobjectExperts', async () => {
       redisExpertsNames.push(experts[0]);
     }
 
-    const { result: mongoData } = await UserWobjectsModel.find(
-      { author_permlink: authorPermlink }, { weight: -1 }, 5,
-    );
+    const { result: mongoData } = await UserWobjectsModel.find({ author_permlink: authorPermlink }, { weight: -1 }, 5);
     for (const data of mongoData) {
       mongoExpertsNames.push(data.user_name);
     }

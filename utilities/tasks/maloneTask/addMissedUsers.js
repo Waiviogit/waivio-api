@@ -111,18 +111,21 @@ const followUser = async ({ follower, following }) => {
 
 const anyxRequestFollowings = async ({ name, start, limit }) => {
   try {
-    const result = await axios.post('https://anyx.io', {
-      jsonrpc: '2.0',
-      method: 'call',
-      params: [
-        'follow_api',
-        'get_following',
-        [name, start, 'blog', limit],
-      ],
-    },
-    {
-      timeout: REQUEST_TIMEOUT,
-    });
+    const result = await axios.post(
+      'https://anyx.io',
+      {
+        jsonrpc: '2.0',
+        method: 'call',
+        params: [
+          'follow_api',
+          'get_following',
+          [name, start, 'blog', limit],
+        ],
+      },
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { followings: result.data.result };
   } catch (error) {
     return { error };

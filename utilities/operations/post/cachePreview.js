@@ -1,7 +1,7 @@
-const redisSetter = require('utilities/redis/redisSetter');
-const redisGetter = require('utilities/redis/redisGetter');
-const { mainFeedsCacheClient } = require('utilities/redis/redis');
-const { TTL_TIME } = require('constants/common');
+const redisSetter = require('../../redis/redisSetter');
+const redisGetter = require('../../redis/redisGetter');
+const { mainFeedsCacheClient } = require('../../redis/redis');
+const { TTL_TIME } = require('../../../constants/common');
 
 const REDIS_KEY_PREVIEW = 'preview_tiktok:';
 const getLinks = async ({ urls }) => {

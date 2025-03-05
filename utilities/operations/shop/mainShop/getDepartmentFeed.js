@@ -3,13 +3,13 @@ const {
   REMOVE_OBJ_STATUSES,
   REQUIREDFILDS_WOBJ_LIST,
   SHOP_OBJECT_TYPES,
-} = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const shopHelper = require('utilities/helpers/shopHelper');
-const { Wobj } = require('models');
-const { UNCATEGORIZED_DEPARTMENT } = require('constants/departments');
-const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+} = require('../../../../constants/wobjectsData');
+const wObjectHelper = require('../../../helpers/wObjectHelper');
+const campaignsV2Helper = require('../../../helpers/campaignsV2Helper');
+const shopHelper = require('../../../helpers/shopHelper');
+const { Wobj } = require('../../../../models');
+const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
+const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 
 module.exports = async ({
   countryCode,

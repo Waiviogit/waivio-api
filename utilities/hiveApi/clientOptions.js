@@ -1,7 +1,7 @@
-const { redisGetter } = require('utilities/redis');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const { NODE_URLS } = require('constants/requestData');
 const { Client } = require('@hiveio/dhive');
+const { redisGetter } = require('../redis');
+const jsonHelper = require('../helpers/jsonHelper');
+const { NODE_URLS } = require('../../constants/requestData');
 const { REDIS_KEYS } = require('../../constants/common');
 
 const clients = {}; // An object to store clients by key

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { UserWobjects } = require('database').models;
+const { UserWobjects } = require('../database').models;
 
 const aggregate = async (pipeline) => {
   try {

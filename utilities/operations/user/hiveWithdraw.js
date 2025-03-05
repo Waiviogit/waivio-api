@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
-const { User, withdrawFundsModel } = require('models');
 const axios = require('axios');
-const { ERROR_OBJ } = require('constants/common');
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
+const { ERROR_OBJ } = require('../../../constants/common');
+const { User, withdrawFundsModel } = require('../../../models');
 const { getAccount } = require('../../hiveApi/userUtil');
 const redisGetter = require('../../redis/redisGetter');
 const { CACHE_KEY } = require('../../../constants/common');

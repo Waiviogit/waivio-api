@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User } = require('models');
+const { User } = require('../../../models');
 const { getAccountHistory } = require('../../hiveApi/userUtil');
 const { USER_OPERATIONS, USER_IDENTIFIERS, USER_OPERATIONS_TYPES } = require('../../../constants/usersData');
 

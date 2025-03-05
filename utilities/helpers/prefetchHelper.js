@@ -1,8 +1,8 @@
-const image = require('utilities/images/image');
+const image = require('../images/image');
 const {
   base64ByUrl,
   generateFileName,
-} = require('utilities/helpers/imagesHelper');
+} = require('./imagesHelper');
 
 exports.parseImage = async (data) => {
   const base64 = await base64ByUrl(data.image);

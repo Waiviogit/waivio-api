@@ -1,5 +1,5 @@
 // eslint-disable-next-line camelcase
-const { waivio_auth } = require('config');
+const { waivio_auth } = require('../../../config');
 const axios = require('axios');
 
 const VALIDATE_TOKEN_URL = `https://${waivio_auth.host}/${waivio_auth.baseUrl}/${waivio_auth.validateTokenPath}`;

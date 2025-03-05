@@ -38,19 +38,22 @@ const addUsersToImport = async ({ url, startAcc = '' }) => {
 
 const anyxRequest = async ({ start, limit }) => {
   try {
-    const result = await axios.post('https://anyx.io', {
-      jsonrpc: '2.0',
-      method: 'database_api.list_accounts',
-      params: {
-        start,
-        limit,
-        order: 'by_name',
+    const result = await axios.post(
+      'https://anyx.io',
+      {
+        jsonrpc: '2.0',
+        method: 'database_api.list_accounts',
+        params: {
+          start,
+          limit,
+          order: 'by_name',
+        },
+        id: 1,
       },
-      id: 1,
-    },
-    {
-      timeout: REQUEST_TIMEOUT,
-    });
+      {
+        timeout: REQUEST_TIMEOUT,
+      },
+    );
     return { users: result.data.result.accounts };
   } catch (error) {
     return { error };

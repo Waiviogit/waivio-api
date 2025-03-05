@@ -1,10 +1,10 @@
-const { App, WObject } = require('database').models;
-const mongoose = require('database').Mongoose;
-const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
-const { OpenAIEmbeddings } = require('@langchain/openai');
-const { WeaviateStore } = require('@langchain/weaviate');
-const { default: weaviate } = require('weaviate-ts-client');
 const moment = require('moment');
+const { default: weaviate } = require('weaviate-ts-client');
+const { OpenAIEmbeddings } = require('@langchain/openai');
+const { RecursiveCharacterTextSplitter } = require('langchain/text_splitter');
+const { WeaviateStore } = require('@langchain/weaviate');
+const { App, WObject } = require('../../../../database').models;
+const mongoose = require('../../../../database').Mongoose;
 const { processWobjects } = require('../../../helpers/wObjectHelper');
 const { REQUIREDFILDS_WOBJ_LIST } = require('../../../../constants/wobjectsData');
 const redisGetter = require('../../../redis/redisGetter');

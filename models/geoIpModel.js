@@ -1,4 +1,4 @@
-const { GeoIp } = require('database').models;
+const { GeoIp } = require('../database').models;
 
 exports.findOne = async (ip) => {
   try {

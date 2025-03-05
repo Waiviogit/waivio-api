@@ -1,23 +1,23 @@
-const {
-  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
-  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
-  DEFAULT_REFERRAL,
-} = require('constants/sitesConstants');
-const {
-  App, websitePayments, User, Wobj, geoIpModel,
-} = require('models');
-const {
-  FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ, DEFAULT_COUNTRY_CODE,
-} = require('constants/wobjectsData');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { processWobjects } = require('utilities/helpers/wObjectHelper');
-const { redisGetter } = require('utilities/redis');
 const BigNumber = require('bignumber.js');
 const Sentry = require('@sentry/node');
 const moment = require('moment');
 const _ = require('lodash');
-const ipRequest = require('utilities/requests/ipRequest');
 const dns = require('dns/promises');
+const {
+  PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
+  PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
+  DEFAULT_REFERRAL,
+} = require('../../constants/sitesConstants');
+const {
+  App, websitePayments, User, Wobj, geoIpModel,
+} = require('../../models');
+const {
+  FIELDS_NAMES, REQUIREDFIELDS_SEARCH, PICK_FIELDS_ABOUT_OBJ, DEFAULT_COUNTRY_CODE,
+} = require('../../constants/wobjectsData');
+const { sendSentryNotification } = require('./sentryHelper');
+const { processWobjects } = require('./wObjectHelper');
+const { redisGetter } = require('../redis');
+const ipRequest = require('../requests/ipRequest');
 const asyncLocalStorage = require('../../middlewares/context/context');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 const { parseJson } = require('./jsonHelper');

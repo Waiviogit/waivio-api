@@ -1,4 +1,4 @@
-const { CurrenciesRate } = require('currenciesDB').models;
+const { CurrenciesRate } = require('../currenciesDB').models;
 
 exports.find = async (condition = {}) => {
   try {

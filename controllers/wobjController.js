@@ -1,20 +1,20 @@
-const { Wobj, Post } = require('models');
+const { Wobj, Post } = require('../models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts, objectGroup, getByRating,
-} = require('utilities/operations').wobject;
+} = require('../utilities/operations').wobject;
 const {
   wobjects: {
     searchWobjects, defaultWobjectSearch, addRequestDetails, searchByArea,
   },
-} = require('utilities/operations').search;
-const validators = require('controllers/validators');
+} = require('../utilities/operations').search;
+const validators = require('./validators');
 const {
   getIpFromHeaders,
-} = require('utilities/helpers/sitesHelper');
+} = require('../utilities/helpers/sitesHelper');
 const { checkIfWobjectExists } = require('../utilities/operations/wobject/checkIfWobjectExists');
 const { getFields, getOneField } = require('../utilities/operations/wobject/getFields');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');

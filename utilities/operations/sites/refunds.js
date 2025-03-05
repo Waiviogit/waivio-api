@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const config = require('config');
+const config = require('../../../config');
 const {
   App, websitePayments, websiteRefunds,
-} = require('models');
-const { REFUND_STATUSES } = require('constants/sitesConstants');
-const { sitesHelper } = require('utilities/helpers');
+} = require('../../../models');
+const { REFUND_STATUSES } = require('../../../constants/sitesConstants');
+const { sitesHelper } = require('../../helpers');
 
 exports.refundsList = async (userName) => {
   const { app, error } = await App.getOne({ host: config.appHost });

@@ -1,4 +1,4 @@
-const { Threads } = require('database').models;
+const { Threads } = require('../database').models;
 
 exports.find = async ({ filter, projection, options }) => {
   try {

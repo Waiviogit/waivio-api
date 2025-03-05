@@ -81,7 +81,7 @@ exports.SUPPORTED_COLORS = {
 
 exports.GET_DEFAULT_COLORS = () => {
   const colors = {};
-  Object.values(this.SUPPORTED_COLORS).forEach((color) => colors[color] = null);
+  Object.values(this.SUPPORTED_COLORS).forEach((color) => { colors[color] = null; });
   return colors;
 };
 

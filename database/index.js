@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const config = require('config');
-const currenciesDb = require('currenciesDB/currenciesDB_Connection');
+const config = require('../config');
+const currenciesDb = require('../currenciesDB/currenciesDB_Connection');
 const { cursorTimeout } = require('./plugins/timeoutPlugin');
 
 const URI = process.env.MONGO_URI_WAIVIO

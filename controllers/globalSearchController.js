@@ -1,5 +1,5 @@
-const { global: { getGlobalSearch } } = require('utilities/operations/search');
-const validators = require('controllers/validators');
+const { global: { getGlobalSearch } } = require('../utilities/operations/search');
+const validators = require('./validators');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 

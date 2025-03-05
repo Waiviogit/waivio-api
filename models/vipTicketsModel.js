@@ -1,4 +1,4 @@
-const { VipTicket } = require('database').models;
+const { VipTicket } = require('../database').models;
 
 exports.find = async ({
   condition, sort = {}, skip, limit,

@@ -1,10 +1,10 @@
-const { app: AppOperations } = require('utilities/operations');
-const getMetrics = require('utilities/operations/aboutWaiv/getMetrics');
-const validators = require('controllers/validators');
-const { App } = require('models');
-const config = require('config');
-const redisGetter = require('utilities/redis/redisGetter');
 const _ = require('lodash');
+const { app: AppOperations } = require('../utilities/operations');
+const getMetrics = require('../utilities/operations/aboutWaiv/getMetrics');
+const validators = require('./validators');
+const { App } = require('../models');
+const config = require('../config');
+const redisGetter = require('../utilities/redis/redisGetter');
 const { REDIS_KEYS } = require('../constants/common');
 const { getCurrentDateString } = require('../utilities/helpers/dateHelper');
 const assitant = require('../utilities/operations/assistant/assitant');

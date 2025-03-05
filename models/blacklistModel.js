@@ -1,4 +1,4 @@
-const { Blacklist } = require('database').models;
+const { Blacklist } = require('../database').models;
 
 exports.find = async (condition, select = {}) => {
   try {

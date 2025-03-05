@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { Wobj } = require('models');
-const { redisGetter } = require('utilities/redis');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const { processWobjects } = require('utilities/helpers/wObjectHelper');
+const { Wobj } = require('../../models');
+const { redisGetter } = require('../redis');
+const { FIELDS_NAMES } = require('../../constants/wobjectsData');
+const { processWobjects } = require('./wObjectHelper');
 
 exports.getTagCategory = async (tagCategory = [], filter, type) => {
   const resultArray = [];

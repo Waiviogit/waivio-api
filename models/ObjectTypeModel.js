@@ -1,5 +1,5 @@
-const { ObjectType } = require('database').models;
-const { REQUIREDFIELDS } = require('constants/wobjectsData');
+const { ObjectType } = require('../database').models;
+const { REQUIREDFIELDS } = require('../constants/wobjectsData');
 
 const getAll = async ({ limit, skip, wobjects_count: wobjectsCount = 3 }) => {
   let objectTypes;

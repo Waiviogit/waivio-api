@@ -1,4 +1,4 @@
-const { Post } = require('models');
+const { Post } = require('../../../models');
 
 module.exports = async ({ name, skip = 0, limit = 30 }) => Post.aggregate([
   { $match: { author: name, reblog_to: null } },

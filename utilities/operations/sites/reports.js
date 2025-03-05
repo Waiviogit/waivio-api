@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { PAYMENT_TYPES } = require('constants/sitesConstants');
-const { sitesHelper } = require('utilities/helpers');
-const { CurrenciesRate } = require('models');
 const moment = require('moment');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
+const { PAYMENT_TYPES } = require('../../../constants/sitesConstants');
+const { sitesHelper } = require('../../helpers');
+const { CurrenciesRate } = require('../../../models');
+const { SUPPORTED_CURRENCIES } = require('../../../constants/common');
 
 const addCurrencyRates = async ({ payments, currency }) => {
   if (currency === SUPPORTED_CURRENCIES.USD) {

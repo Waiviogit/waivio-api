@@ -1,14 +1,14 @@
 /* eslint-disable camelcase */
-const { addCampaignsToWobjectsSites } = require('utilities/helpers/campaignsHelper');
-const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
-const searchHelper = require('utilities/helpers/searchHelper');
-const geoHelper = require('utilities/helpers/geoHelper');
+const _ = require('lodash');
+const { addCampaignsToWobjectsSites } = require('../../helpers/campaignsHelper');
+const { FIELDS_NAMES, REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const searchHelper = require('../../helpers/searchHelper');
+const geoHelper = require('../../helpers/geoHelper');
 const {
   Wobj, ObjectType, User, Post, userShopDeselectModel,
-} = require('models');
-const _ = require('lodash');
-const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
-const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
+} = require('../../../models');
+const { checkForSocialSite } = require('../../helpers/sitesHelper');
+const { SHOP_SETTINGS_TYPE } = require('../../../constants/sitesConstants');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 
 const getObjectPermlinksFromUrl = (link) => {

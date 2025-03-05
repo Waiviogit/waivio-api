@@ -4,7 +4,7 @@ const {
 } = require('../utilities/helpers/cacheHelper');
 const jsonHelper = require('../utilities/helpers/jsonHelper');
 const { TTL_TIME, REDIS_KEYS } = require('../constants/common');
-const { App } = require('database').models;
+const { App } = require('../database').models;
 
 const getOne = async ({ host, bots }) => {
   try {

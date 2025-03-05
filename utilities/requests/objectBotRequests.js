@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const axios = require('axios');
 const Sentry = require('@sentry/node');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
+const { sendSentryNotification } = require('../helpers/sentryHelper');
 
 exports.sendCustomJson = async (data, url, sendSentry = true) => {
   try {

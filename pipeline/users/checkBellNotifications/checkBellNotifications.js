@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Subscriptions, wobjectSubscriptions } = require('models');
+const { Subscriptions, wobjectSubscriptions } = require('../../../models');
 const { schema } = require('./schema');
 
 const checkUserBell = async ({ result, follower, path }) => {
