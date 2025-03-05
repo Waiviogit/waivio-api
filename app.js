@@ -22,7 +22,7 @@ app.get('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
-  res.status(res?.result?.status || 200).json(res?.result?.json);
+  res.status(res?.result?.status || 404).json(res?.result?.json);
 });
 
 // middleware for handle error for each request
