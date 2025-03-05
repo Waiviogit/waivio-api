@@ -18,7 +18,7 @@ app.use(middlewares.contextMiddleware);
 app.use(middlewares.reqRates.incrRate);
 app.use(middlewares.siteUserStatistics.saveUserIp);
 app.use(routes);
-app.get('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
