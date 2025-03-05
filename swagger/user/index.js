@@ -11,13 +11,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'limit',
           in: 'query',
           description: 'count of users to return',
@@ -77,13 +70,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -170,13 +156,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           in: 'body',
           name: 'params',
           description: 'List of user names',
@@ -207,13 +186,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'username',
           in: 'path',
@@ -395,13 +367,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'username',
           in: 'path',
           description: 'Name of user',
@@ -461,13 +426,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'username',
           in: 'path',
           description: 'Name of user to return',
@@ -510,13 +468,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'searchString',
           in: 'query',
@@ -637,20 +588,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check for following in wobjects',
@@ -697,13 +634,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -773,20 +703,6 @@ module.exports = {
       description: 'Get list posts depends on user followings (on users and wobjects)',
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio wobject and posts moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check following',
@@ -834,20 +750,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check for following in wobjects',
@@ -892,13 +794,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'userName',
           in: 'path',
           description: 'user name which expertise-counters needs to return',
@@ -933,20 +828,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
         {
           name: 'follower',
           in: 'header',
@@ -1061,13 +942,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'userName',
           in: 'path',
           description: 'user name',
@@ -1127,13 +1001,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -1206,13 +1073,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'username',
           in: 'path',
           description: 'Name of specified user',
@@ -1256,13 +1116,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'username',
           in: 'path',
           description: 'Name of user to return',
@@ -1305,13 +1158,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'username',
           in: 'path',
@@ -1363,13 +1209,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'userName',
           in: 'query',
           description: 'Name of specified user',
@@ -1416,13 +1255,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -1485,13 +1317,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -1628,13 +1453,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'userName',
           in: 'path',
           description: 'user name',
@@ -1677,13 +1495,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'userName',
           in: 'path',
@@ -2258,13 +2069,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
           name: 'x-forwarded-for',
           in: 'header',
           description: 'ip header prod',
@@ -2305,13 +2109,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'x-forwarded-for',
           in: 'header',
@@ -2361,6 +2158,730 @@ module.exports = {
               message: 'Validation Error',
             },
           },
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/draft': {
+    post: {
+      tags: [
+        'user',
+      ],
+      summary: 'Creates or updates draft on wobject of type page',
+      description: 'Authorized user may have one draft on wobject of type page',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'access-token',
+          in: 'header',
+          type: 'string',
+        },
+        {
+          name: 'user',
+          in: 'path',
+          description: 'Name of authorized user',
+          required: true,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              authorPermlink: {
+                type: 'string',
+              },
+              body: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'string',
+              },
+              author_permlink: {
+                type: 'string',
+              },
+              body: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        401: {
+          description: 'Token not valid!',
+        },
+        404: {
+          description: 'Not found',
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/draft/?{authorPermlink}': {
+    get: {
+      tags: [
+        'user',
+      ],
+      summary: 'Gets draft by authorized author on wobject of type page',
+      description: 'Returns draft of wobject of type page',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'access-token',
+          in: 'header',
+          type: 'string',
+        },
+        {
+          name: 'user',
+          in: 'path',
+          description: 'Name of authorized user',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'authorPermlink',
+          in: 'query',
+          description: 'author_permlink of wobject of type page',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              user: {
+                type: 'string',
+              },
+              author_permlink: {
+                type: 'string',
+              },
+              body: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        401: {
+          description: 'Token not valid!',
+        },
+        404: {
+          description: 'Not found',
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/users/guest-wallet/hive-withdraw': {
+    post: {
+      tags: ['user'],
+      description: 'create withdraw for guest user',
+      produces: ['application/json'],
+      parameters: [{
+        name: 'waivio-auth',
+        in: 'header',
+        description: 'send if it is guest',
+        required: true,
+        type: 'boolean',
+      },
+      {
+        name: 'access-token',
+        in: 'header',
+        description: 'SteemConnect Access Token to identify user identity',
+        required: true,
+        type: 'string',
+      },
+      {
+        name: 'params',
+        in: 'body',
+        description: 'no params',
+        required: true,
+        schema: {
+          type: 'object',
+          properties: {
+            amount: {
+              type: 'number',
+            },
+            outputCoinType: {
+              type: 'string',
+            },
+            userName: {
+              type: 'string',
+            },
+            address: {
+              type: 'string',
+            },
+          },
+        },
+      }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              id: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/users/hive-withdraw': {
+    post: {
+      tags: ['user'],
+      description: 'create withdraw for hive user',
+      produces: ['application/json'],
+      parameters: [{
+        name: 'waivio-auth',
+        in: 'header',
+        description: 'send if it is guest',
+        required: true,
+        type: 'boolean',
+      },
+      {
+        name: 'access-token',
+        in: 'header',
+        description: 'Access Token to identify user identity',
+        required: true,
+        type: 'string',
+      },
+      {
+        name: 'params',
+        in: 'body',
+        description: 'no params',
+        required: true,
+        schema: {
+          type: 'object',
+          properties: {
+            amount: {
+              type: 'number',
+            },
+            outputCoinType: {
+              type: 'string',
+            },
+            userName: {
+              type: 'string',
+            },
+            address: {
+              type: 'string',
+            },
+          },
+        },
+      }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                $ref: '#/definitions/withdrawHiveTransaction',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/users/guest-wallet/hive-withdraw-estimates': {
+    post: {
+      tags: ['user'],
+      description: 'estimate amount outputCoinType',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'params',
+          in: 'body',
+          description: 'no params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              amount: {
+                type: 'number',
+              },
+              outputCoinType: {
+                type: 'string',
+              },
+            },
+          },
+        }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/users/guest-wallet/hive-withdraw-range': {
+    post: {
+      tags: ['user'],
+      description: 'range min max amount',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'params',
+          in: 'body',
+          description: 'no params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              outputCoinType: {
+                type: 'string',
+              },
+            },
+          },
+        }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              min: {
+                type: 'string',
+              },
+              max: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/users/min-reject': {
+    post: {
+      tags: ['user'],
+      description: 'min reject amount on updates',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'params',
+          in: 'body',
+          description: 'no params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              userName: {
+                type: 'string',
+              },
+              author: {
+                type: 'string',
+              },
+              permlink: {
+                type: 'string',
+              },
+              authorPermlink: {
+                type: 'string',
+              },
+            },
+          },
+        }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'number',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/users/avatar': {
+    post: {
+      tags: ['user'],
+      description: 'get users avatar',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'params',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              names: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        }],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                image: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/user/{userName}/affiliate': {
+    post: {
+      tags: [
+        'user',
+      ],
+      summary: 'get affiliate objects',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of authorized user',
+          required: true,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              host: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            $ref: '#/definitions/wobjectonlist',
+          },
+        },
+        401: {
+          description: 'Token not valid!',
+        },
+        404: {
+          description: 'Not found',
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/favorites': {
+    post: {
+      tags: ['user'],
+      summary: 'get favorite objects',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of user',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'follower',
+          in: 'header',
+          description: 'Name of authorized user',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'locale',
+          in: 'header',
+          description: 'locale',
+          required: true,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              objectType: {
+                type: 'string',
+              },
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/wobjectonlist',
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/favorites/list': {
+    get: {
+      tags: ['user'],
+      summary: 'get favorite objects',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of user',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/favorites/map': {
+    post: {
+      tags: ['user'],
+      summary: 'get favorite objects',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of user',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'follower',
+          in: 'header',
+          description: 'Name of authorized user',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'locale',
+          in: 'header',
+          description: 'locale',
+          required: true,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              objectTypes: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              box: {
+                $ref: '#/definitions/box_params',
+              },
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/wobjectonlist',
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
+  '/api/user/{userName}/hive-exist': {
+    get: {
+      tags: ['user'],
+      summary: 'check if hive user exists',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of user',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Validation error',
         },
       },
     },

@@ -10,20 +10,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check for following',
@@ -72,13 +58,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'author',
           in: 'query',
@@ -129,20 +108,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject and posts moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check for following',
@@ -186,20 +151,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
         {
           in: 'body',
           name: 'params',
@@ -382,20 +333,6 @@ module.exports = {
       ],
       parameters: [
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           in: 'query',
           name: 'author',
           description: 'author of post',
@@ -478,13 +415,6 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
         {
           name: 'access-token',
           in: 'header',

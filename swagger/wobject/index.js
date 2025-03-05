@@ -377,20 +377,6 @@ module.exports = {
           type: 'string',
         },
         {
-          name: 'Origin',
-          in: 'header',
-          description: 'Domain of website',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           in: 'body',
           name: 'params',
           description: '**limit** - limit of returned wobjects(by default - 30),\n**skip** - count of skipping wobjects(for infinite scroll, default 0),\n**user_limit** - count of users to show(by default 5), \n**locale** - locale of fields(by default - *en-US*.), \n**author_permlinks** - return wobjects by specified author_permlinks,\n**object_types** - list object types with witch objects to returning,\n**exclude_object_types** - list object types without witch objects to returning, (if use **object_types** then ignore **exclude_object_types**)\n**required_fields** - which fields add to returning objects,\n**sample** - boolean flag, to return only 5 from top 100 wobjects\n**map** - object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n',
@@ -444,13 +430,6 @@ module.exports = {
           name: 'fieldId',
           in: 'query',
           description: '_id of field',
-          required: true,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'name of app',
           required: true,
           type: 'string',
         },
@@ -577,13 +556,6 @@ module.exports = {
           type: 'string',
         },
         {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject and posts moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'follower',
           in: 'header',
           description: 'Name of user to check for following',
@@ -685,13 +657,6 @@ module.exports = {
           name: 'Access-Host',
           in: 'header',
           description: 'To get the object as it appears on the desired site, add the host to this header. \n No need to add https://',
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject and posts moderation',
-          required: false,
           type: 'string',
         },
         {
@@ -890,13 +855,6 @@ module.exports = {
           type: 'string',
         },
         {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           name: 'locale',
           in: 'header',
           description: 'User locale',
@@ -939,13 +897,6 @@ module.exports = {
           name: 'Access-Host',
           in: 'header',
           description: 'To get the object as it appears on the desired site, add the host to this header. \n No need to add https://',
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
           type: 'string',
         },
         {
@@ -1020,13 +971,6 @@ module.exports = {
           name: 'userName',
           in: 'query',
           required: false,
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          required: false,
-          description: 'app for filling objects',
           type: 'string',
         },
         {
@@ -1185,13 +1129,6 @@ module.exports = {
           type: 'string',
         },
         {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
-          type: 'string',
-        },
-        {
           in: 'body',
           name: 'params',
           description: '**search_string** - pattern for search wobjects, \n**object_type** - filter to search only specified type,\n**locale** - locale for end formatting wobject fields(by default - en-US), \n**limit** - limit of returned wobjects,\n**skip** - count of skipping wobjects,\n**sortByApp** - change priority for cruical wobjects by specified App,\n**required_fields** - array of filds to include in result wobjects\n**tagCategory** - for filter by tags\n **userName** - name of user for fill campaigns \n **simplified** - flag for simplified response\n **map** -  object with coordinates and radius, need to display restaurants at map. Map includes property coordinates - it is array with numbers [longitude, latitude]\n **sort** - field for sort wobjects - valid: createdAt, weight, default - weight\n \n**topPoint** (it is array with numbers [longitude, latitude])- upper right coordinates \n **bottomPoint**(it is array with numbers [longitude, latitude]) - bottom left coordinates\n **addHashtag** - boolean - if true add hashtag on wobj search(for sites)',
@@ -1283,13 +1220,6 @@ module.exports = {
           name: 'Access-Host',
           in: 'header',
           description: 'To get the object as it appears on the desired site, add the host to this header. \n No need to add https://',
-          type: 'string',
-        },
-        {
-          name: 'app',
-          in: 'header',
-          description: 'Specify app to enable waivio-wobject moderation',
-          required: false,
           type: 'string',
         },
         {
