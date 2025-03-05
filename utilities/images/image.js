@@ -140,7 +140,6 @@ class Image {
     return sharp(buffer)
       .resize(width)
       .withMetadata()
-      .withExif({ IFD0: exifMetadata })
       .toFormat(format)
       .toBuffer();
   }
