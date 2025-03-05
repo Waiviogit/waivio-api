@@ -50,16 +50,16 @@ process.on('unhandledRejection', (error) => {
  */
 
 function normalizePort(val) {
-  const port = parseInt(val, 10);
+  const portParsed = parseInt(val, 10);
 
-  if (isNaN(port)) {
+  if (Number.isNaN(portParsed)) {
     // named pipe
     return val;
   }
 
-  if (port >= 0) {
+  if (portParsed >= 0) {
     // port number
-    return port;
+    return portParsed;
   }
 
   return false;
