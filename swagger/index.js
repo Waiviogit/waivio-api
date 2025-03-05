@@ -1,5 +1,5 @@
 const config = require('../config');
-const jsonDocFile = require('./swagger.json');
+const jsonDocFile = require('./mainDoc');
 
 jsonDocFile.host = config.swaggerHost;
 // ////////////////////////////////// //
