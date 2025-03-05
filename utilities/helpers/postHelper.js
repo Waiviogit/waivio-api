@@ -373,9 +373,7 @@ const sponsorObligationsNewReview = async ({
           key: `total_payout_${payoutToken}`,
           reward: sponsorPayout,
         });
-      }
-
-      if (!totalPayout && !_.isEmpty(bots)) {
+      } else if (!totalPayout && !_.isEmpty(bots)) {
         updateTotalRewards({
           post,
           key: `total_rewards_${payoutToken}`,
@@ -388,6 +386,7 @@ const sponsorObligationsNewReview = async ({
           reward: sponsorPayout,
         });
       }
+
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === guideName);
 
       if (hasSponsor) {
