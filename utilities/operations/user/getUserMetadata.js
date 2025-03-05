@@ -1,4 +1,4 @@
-const { User } = require('models');
+const { User } = require('../../../models');
 
 module.exports = async (userName) => {
   const { user, error } = await User.getOne(userName, { user_metadata: 1, privateEmail: 1 });

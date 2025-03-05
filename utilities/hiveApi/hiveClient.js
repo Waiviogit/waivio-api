@@ -1,5 +1,5 @@
-const { NODE_URLS } = require('constants/requestData');
 const { Client } = require('@hiveio/dhive');
+const { NODE_URLS } = require('../../constants/requestData');
 
 const options = { failoverThreshold: 0, consoleOnFailover: true, timeout: 10 * 1000 };
 

@@ -1,8 +1,8 @@
-const whiteList = require('utilities/operations/admin/whiteList');
-const vipTickets = require('utilities/operations/admin/vipTickets');
-const sites = require('utilities/operations/admin/sites');
-const credits = require('utilities/operations/admin/credits');
-const authoriseUser = require('utilities/authorization/authoriseUser');
+const whiteList = require('../utilities/operations/admin/whiteList');
+const vipTickets = require('../utilities/operations/admin/vipTickets');
+const sites = require('../utilities/operations/admin/sites');
+const credits = require('../utilities/operations/admin/credits');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
 const validators = require('./validators');
 const { WAIVIO_ADMINS_ENV } = require('../constants/common');
 

@@ -1,5 +1,5 @@
-const { vipTicketsModel } = require('models');
 const _ = require('lodash');
+const { vipTicketsModel } = require('../../../models');
 
 const getVipTickets = async () => {
   const { result } = await vipTicketsModel.aggregate([

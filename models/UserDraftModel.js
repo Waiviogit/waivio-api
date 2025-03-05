@@ -1,4 +1,4 @@
-const { UserDraft } = require('database').models;
+const { UserDraft } = require('../database').models;
 
 exports.createOrUpdate = async ({
   author, draftId, updateData,

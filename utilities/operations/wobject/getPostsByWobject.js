@@ -1,12 +1,12 @@
 /* eslint-disable camelcase */
+const _ = require('lodash');
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
-} = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('constants/wobjectsData');
-const { TOKEN } = require('constants/common');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const _ = require('lodash');
+} = require('../../../models');
+const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('../../../constants/wobjectsData');
+const { TOKEN } = require('../../../constants/common');
+const wObjectHelper = require('../../helpers/wObjectHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const getRelistedLinks = async (authorPermlink) => {
   const relisted = await Wobj.findRelistedObjectsByPermlink(authorPermlink);

@@ -1,18 +1,18 @@
-const engineOperations = require('utilities/hiveEngine/engineOperations');
-const hiveOperations = require('utilities/hiveApi/hiveOperations');
-const postsUtil = require('utilities/hiveApi/postsUtil');
-const { TOKEN_WAIV } = require('constants/hiveEngine');
-const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
+const engineOperations = require('../../hiveEngine/engineOperations');
+const hiveOperations = require('../../hiveApi/hiveOperations');
+const postsUtil = require('../../hiveApi/postsUtil');
+const { TOKEN_WAIV } = require('../../../constants/hiveEngine');
+const jsonHelper = require('../../helpers/jsonHelper');
 const {
   Post, Comment, Wobj, UserExpertiseModel,
-} = require('models');
-const { redisGetter } = require('utilities/redis');
-const { WHITE_LIST_KEY, VOTE_COST } = require('constants/wobjectsData');
-const { roundToEven } = require('utilities/helpers/calcHelper');
-const userUtil = require('utilities/hiveApi/userUtil');
-const commentContract = require('utilities/hiveEngine/commentContract');
-const tokensContract = require('utilities/hiveEngine/tokensContract');
+} = require('../../../models');
+const { redisGetter } = require('../../redis');
+const { WHITE_LIST_KEY, VOTE_COST } = require('../../../constants/wobjectsData');
+const { roundToEven } = require('../../helpers/calcHelper');
+const userUtil = require('../../hiveApi/userUtil');
+const commentContract = require('../../hiveEngine/commentContract');
+const tokensContract = require('../../hiveEngine/tokensContract');
 
 const MAX_REJECT_WEIGHT = 9999;
 

@@ -1,4 +1,4 @@
-const { WebsitePayments } = require('database').models;
+const { WebsitePayments } = require('../database').models;
 
 exports.find = async ({ condition, sort }) => {
   try {

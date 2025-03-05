@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 const _ = require('lodash');
 const { getRegularClient } = require('./clientOptions');
 

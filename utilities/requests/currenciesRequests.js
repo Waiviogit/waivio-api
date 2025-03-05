@@ -1,7 +1,7 @@
-const { CURRENCIES_API } = require('constants/requestData');
-const redisGetter = require('utilities/redis/redisGetter');
-const cacheHelper = require('utilities/helpers/cacheHelper');
 const axios = require('axios');
+const { CURRENCIES_API } = require('../../constants/requestData');
+const redisGetter = require('../redis/redisGetter');
+const cacheHelper = require('../helpers/cacheHelper');
 const { REQUEST_TIMEOUT, TTL_TIME, REDIS_KEYS } = require('../../constants/common');
 
 exports.getCurrencyLatestRate = async (params) => {

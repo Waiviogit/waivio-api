@@ -1,5 +1,5 @@
-const redisSetter = require('utilities/redis/redisSetter');
-const { importUserClient } = require('utilities/redis/redis');
+const redisSetter = require('../../utilities/redis/redisSetter');
+const { importUserClient } = require('../../utilities/redis/redis');
 const {
   REDIS_KEYS,
   TTL_TIME,

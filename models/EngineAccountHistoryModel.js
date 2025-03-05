@@ -1,4 +1,4 @@
-const { EngineAccountHistory } = require('database').models;
+const { EngineAccountHistory } = require('../database').models;
 
 exports.find = async ({
   condition, skip, limit, sort,

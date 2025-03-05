@@ -1,9 +1,9 @@
 /* eslint-disable camelcase */
 const {
   User: UserService, Wobj: WobjectService, wobjectSubscriptions,
-} = require('models');
-const { FOLLOWERS_SORT } = require('constants/sortData');
-const { followersHelper } = require('utilities/helpers');
+} = require('../../../models');
+const { FOLLOWERS_SORT } = require('../../../constants/sortData');
+const { followersHelper } = require('../../helpers');
 
 const getUpdatesSummary = async ({ name, users_count = 3, wobjects_count = 3 }) => {
   const { user, error: getUserError } = await UserService.getOne(name);

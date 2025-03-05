@@ -1,4 +1,4 @@
-const { BotUpvote } = require('database').models;
+const { BotUpvote } = require('../database').models;
 
 const find = async (condition = {}, select = {}) => {
   try {

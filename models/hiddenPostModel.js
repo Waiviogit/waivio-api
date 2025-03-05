@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { HiddenPost } = require('database').models;
+const { HiddenPost } = require('../database').models;
 
 exports.getHiddenPosts = async (userName, sort = {}) => {
   try {

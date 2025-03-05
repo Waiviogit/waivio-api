@@ -1,4 +1,4 @@
-const { authorise } = require('utilities/authorization/authoriseUser');
+const { authorise } = require('../utilities/authorization/authoriseUser');
 const {
   getManyUsers, objectsShares, getOneUser, getUserFeed, updateMetadata,
   getComments, getMetadata, getBlog, getFollowingUpdates, getPostFilters,
@@ -6,11 +6,11 @@ const {
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
   guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana, hiveWithdraw,
   getProfileImages,
-} = require('utilities/operations/user');
-const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('utilities/operations/search');
-const { getIpFromHeaders } = require('utilities/helpers/sitesHelper');
-const validators = require('controllers/validators');
-const authoriseUser = require('utilities/authorization/authoriseUser');
+} = require('../utilities/operations/user');
+const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('../utilities/operations/search');
+const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
+const validators = require('./validators');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
 const generatedReport = require('../utilities/operations/user/walletAdvancedReportGenerated');

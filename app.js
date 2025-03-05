@@ -1,23 +1,13 @@
-const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
-const Sentry = require('@sentry/node');
+const express = require('express');
 const swaggerUi = require('swagger-ui-express');
-const routes = require('routes');
-const middlewares = require('middlewares');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-
+const routes = require('./routes');
+const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
 require('./utilities');
-const { getSentryOptions } = require('./constants/sentry');
 
 const app = express();
-Sentry.init(getSentryOptions());
-Sentry.setupExpressErrorHandler(app, {
-  shouldHandleError(error) {
-    return error.status >= 500;
-  },
-});
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -25,20 +15,14 @@ app.use(cors());
 if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
 if (process.env.NODE_ENV === 'staging') app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
 app.use(middlewares.contextMiddleware);
-app.use('/', middlewares.reqRates.incrRate);
-app.use('/', middlewares.siteUserStatistics.saveUserIp);
-app.use('/', routes);
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-process.on('unhandledRejection', (error) => {
-  sendSentryNotification();
-  Sentry.captureException(error);
-});
-
+app.use(middlewares.reqRates.incrRate);
+app.use(middlewares.siteUserStatistics.saveUserIp);
+app.use(routes);
+app.get('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 // Last middleware which send data from "res.result.json" to client
 // eslint-disable-next-line no-unused-vars
 app.use((req, res, next) => {
-  res.status(res.result.status || 200).json(res.result.json);
+  res.status(res?.result?.status || 404).json(res?.result?.json);
 });
 
 // middleware for handle error for each request

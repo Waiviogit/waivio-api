@@ -1,4 +1,4 @@
-const { Comment } = require('database').models;
+const { Comment } = require('../database').models;
 
 exports.getOne = async ({ author, permlink, userId }) => {
   try {

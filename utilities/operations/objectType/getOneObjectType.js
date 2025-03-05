@@ -1,11 +1,10 @@
-const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const {
   Wobj, ObjectType, User,
-} = require('models');
-const _ = require('lodash');
-const { campaignsHelper, objectTypeHelper } = require('utilities/helpers');
-const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
-const { SHOP_SETTINGS_TYPE } = require('../../../constants/sitesConstants');
+} = require('../../../models');
+const { campaignsHelper, objectTypeHelper } = require('../../helpers');
+const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 
 const validateInput = ({ filter, sort }) => {

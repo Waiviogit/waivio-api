@@ -1,5 +1,5 @@
-const { WObject, ObjectType } = require('database').models;
-const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('constants/wobjectsData');
+const { WObject, ObjectType } = require('../../../database').models;
+const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, LOW_PRIORITY_STATUS_FLAGS } = require('../../../constants/wobjectsData');
 
 exports.updateObjectTypes = async (isLog = false) => {
   const cursor = ObjectType.find().cursor({ batchSize: 1000 });
@@ -22,9 +22,7 @@ exports.updateObjectTypes = async (isLog = false) => {
       { $limit: OBJECT_TYPE_TOP_WOBJECTS_COUNT },
     ]);
     const authorPermlinks = wobjsArray.map((p) => p.author_permlink);
-    const res = await ObjectType.updateOne(
-      { _id: doc._id }, { $set: { top_wobjects: authorPermlinks } },
-    );
+    const res = await ObjectType.updateOne({ _id: doc._id }, { $set: { top_wobjects: authorPermlinks } });
 
     if (res.nModified && isLog) {
       console.log(`Object Type ${doc.name} updated! Add ${authorPermlinks.length} wobjects refs!`);

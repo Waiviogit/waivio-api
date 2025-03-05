@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { Wobj } = require('models');
-const { wObjectHelper } = require('utilities/helpers');
-const { FIELDS_NAMES, DEFAULT_LINK_FIELDS } = require('constants/wobjectsData');
+const { Wobj } = require('../../../models');
+const { wObjectHelper } = require('../../helpers');
+const { FIELDS_NAMES, DEFAULT_LINK_FIELDS } = require('../../../constants/wobjectsData');
 
 module.exports = async ({ links, app, locale }) => {
   const { result, error } = await Wobj.findObjects({ filter: { author_permlink: { $in: links } } });

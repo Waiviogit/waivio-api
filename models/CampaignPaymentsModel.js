@@ -1,4 +1,4 @@
-const { CampaignPayments } = require('database').models;
+const { CampaignPayments } = require('../database').models;
 
 exports.find = async ({ filter, projection = {}, options = {} }) => {
   try {

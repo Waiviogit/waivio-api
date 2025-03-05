@@ -1,11 +1,11 @@
 /* eslint-disable camelcase */
+const _ = require('lodash');
 const {
   Wobj,
   Post,
-} = require('models');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const _ = require('lodash');
+} = require('../../../models');
+const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 
 const getWobjectPinnedPosts = async ({
   follower,

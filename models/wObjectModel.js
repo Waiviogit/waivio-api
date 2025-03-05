@@ -1,10 +1,9 @@
+const _ = require('lodash');
 const {
   FIELDS_NAMES, REMOVE_OBJ_STATUSES, STATUSES, FAVORITES_OBJECT_TYPES,
-} = require('constants/wobjectsData');
-const { AGGREGATION_MAX_TIME } = require('constants/common');
-const WObjectModel = require('database').models.WObject;
-
-const _ = require('lodash');
+} = require('../constants/wobjectsData');
+const { AGGREGATION_MAX_TIME } = require('../constants/common');
+const WObjectModel = require('../database').models.WObject;
 
 const getOne = async (authorPermlink, objectType, unavailable, onlyObjectTypes) => {
   try {

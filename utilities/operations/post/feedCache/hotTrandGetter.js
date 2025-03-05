@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const config = require('config');
-const { redisGetter } = require('utilities/redis');
-const { Post } = require('database').models;
-const { IGNORED_AUTHORS } = require('constants/postsData');
+const config = require('../../../../config');
+const { redisGetter } = require('../../../redis');
+const { Post } = require('../../../../database').models;
+const { IGNORED_AUTHORS } = require('../../../../constants/postsData');
 const asyncLocalStorage = require('../../../../middlewares/context/context');
 
 /**

@@ -1,4 +1,4 @@
-const departments = require('utilities/operations/departments');
+const departments = require('../utilities/operations/departments');
 const validators = require('./validators');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');

@@ -1,5 +1,5 @@
-const { App, Wobj } = require('models');
 const _ = require('lodash');
+const { App, Wobj } = require('../../../models');
 const asyncLocalStorage = require('../../../middlewares/context/context');
 
 /**

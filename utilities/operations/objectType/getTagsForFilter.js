@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { ObjectType } = require('models');
-const { objectTypeHelper } = require('utilities/helpers');
+const { ObjectType } = require('../../../models');
+const { objectTypeHelper } = require('../../helpers');
 
 module.exports = async ({ objectType, wobjectLinks, app }) => {
   let tagCategory = [];

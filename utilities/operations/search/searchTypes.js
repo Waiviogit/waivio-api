@@ -1,5 +1,5 @@
-const { ObjectType } = require('models');
-const { getSessionApp } = require('utilities/helpers/sitesHelper');
+const { ObjectType } = require('../../../models');
+const { getSessionApp } = require('../../helpers/sitesHelper');
 
 const makeCountPipeline = (string, supportedTypes) => {
   const condition = { $and: [{ name: { $regex: `${string}`, $options: 'i' } }] };

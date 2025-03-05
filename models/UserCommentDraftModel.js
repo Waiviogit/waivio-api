@@ -1,4 +1,4 @@
-const { UserCommentDraft } = require('database').models;
+const { UserCommentDraft } = require('../database').models;
 
 exports.createOrUpdate = async ({
   user, author, permlink, body,

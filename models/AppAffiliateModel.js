@@ -1,4 +1,4 @@
-const { AppAffiliate } = require('database').models;
+const { AppAffiliate } = require('../database').models;
 
 exports.find = async ({ filter, projection = {}, options = {} }) => {
   try {

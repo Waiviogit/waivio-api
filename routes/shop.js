@@ -1,5 +1,5 @@
-const ShopController = require('controllers/shopController');
 const { Router } = require('express');
+const ShopController = require('../controllers/shopController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const shopRoutes = new Router();

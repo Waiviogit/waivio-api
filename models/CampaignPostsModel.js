@@ -1,4 +1,4 @@
-const { CampaignPosts } = require('database').models;
+const { CampaignPosts } = require('../database').models;
 
 const findOne = async ({ filter, projection = {}, options = {} }) => {
   try {

@@ -1,16 +1,15 @@
 const _ = require('lodash');
 const {
   FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
-} = require('constants/wobjectsData');
+} = require('../../constants/wobjectsData');
 const {
   Wobj, ObjectType, User, Post, userShopDeselectModel,
-} = require('models');
-const { OTHERS_DEPARTMENT } = require('constants/departments');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
-const { SHOP_SCHEMA } = require('constants/shop');
+} = require('../../models');
+const { OTHERS_DEPARTMENT } = require('../../constants/departments');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../constants/usersData');
+const { SHOP_SCHEMA } = require('../../constants/shop');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
-const { checkForSocialSite } = require('./sitesHelper');
 const sitesHelper = require('./sitesHelper');
 const { getAppAuthorities } = require('./appHelper');
 

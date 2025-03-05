@@ -1,7 +1,7 @@
-const { validateTicketRequest } = require('utilities/requests/hiveOnBoardRequests');
-const { VIP_TICKET_PRICE } = require('constants/common');
-const { vipTicketsModel } = require('models');
 const _ = require('lodash');
+const { validateTicketRequest } = require('../../requests/hiveOnBoardRequests');
+const { VIP_TICKET_PRICE } = require('../../../constants/common');
+const { vipTicketsModel } = require('../../../models');
 
 module.exports = async ({
   userName, activeSkip, consumedSkip, activeLimit, consumedLimit,

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { App, User } = require('models');
+const { App, User } = require('../../../models');
 
 exports.getSiteAuthorities = async (params, path) => {
   const { result, error } = await App.findOne({ host: params.host, owner: params.userName });

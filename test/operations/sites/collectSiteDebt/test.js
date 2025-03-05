@@ -44,14 +44,16 @@ describe('on collectSiteDebts', async () => {
           });
           it('should call object bot method with correct params', async () => {
             await collectSiteDebts.dailyDebt(1);
-            expect(objectBotRequests.sendCustomJson.calledWith({
-              description: PAYMENT_DESCRIPTION.HOSTING_FEE,
-              amount: FEE.minimumValue,
-              userName: app.owner,
-              countUsers: 0,
-              host: app.host,
-            },
-            `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+            expect(objectBotRequests.sendCustomJson.calledWith(
+              {
+                description: PAYMENT_DESCRIPTION.HOSTING_FEE,
+                amount: FEE.minimumValue,
+                userName: app.owner,
+                countUsers: 0,
+                host: app.host,
+              },
+              `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+            )).to.be.true;
           });
         });
         describe('With many users', async () => {
@@ -66,14 +68,16 @@ describe('on collectSiteDebts', async () => {
           });
           it('should call object bot method with correct params ', async () => {
             await collectSiteDebts.dailyDebt(1);
-            expect(objectBotRequests.sendCustomJson.calledWith({
-              description: PAYMENT_DESCRIPTION.HOSTING_FEE,
-              amount: FEE.perUser * counter,
-              userName: app.owner,
-              countUsers: counter,
-              host: app.host,
-            },
-            `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+            expect(objectBotRequests.sendCustomJson.calledWith(
+              {
+                description: PAYMENT_DESCRIPTION.HOSTING_FEE,
+                amount: FEE.perUser * counter,
+                userName: app.owner,
+                countUsers: counter,
+                host: app.host,
+              },
+              `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+            )).to.be.true;
           });
           it('should delete keys from redis', async () => {
             await collectSiteDebts.dailyDebt(1);
@@ -94,14 +98,16 @@ describe('on collectSiteDebts', async () => {
         });
         it('should call objects bot method with correct params if site deactivated or pending', async () => {
           await collectSiteDebts.dailyDebt(1);
-          expect(objectBotRequests.sendCustomJson.calledWith({
-            description: PAYMENT_DESCRIPTION.RESERVATION,
-            amount: FEE.perInactive,
-            userName: app.owner,
-            countUsers: 0,
-            host: app.host,
-          },
-          `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+          expect(objectBotRequests.sendCustomJson.calledWith(
+            {
+              description: PAYMENT_DESCRIPTION.RESERVATION,
+              amount: FEE.perInactive,
+              userName: app.owner,
+              countUsers: 0,
+              host: app.host,
+            },
+            `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+          )).to.be.true;
         });
       });
     });
@@ -165,14 +171,16 @@ describe('on collectSiteDebts', async () => {
 
       it('should call object bot method with correct params', async () => {
         await collectSiteDebts.dailySuspendedDebt(1);
-        expect(objectBotRequests.sendCustomJson.calledWith({
-          description: PAYMENT_DESCRIPTION.RESERVATION,
-          amount: FEE.perInactive,
-          userName: app.owner,
-          countUsers: 0,
-          host: app.host,
-        },
-        `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`)).to.be.true;
+        expect(objectBotRequests.sendCustomJson.calledWith(
+          {
+            description: PAYMENT_DESCRIPTION.RESERVATION,
+            amount: FEE.perInactive,
+            userName: app.owner,
+            countUsers: 0,
+            host: app.host,
+          },
+          `${OBJECT_BOT.HOST}${OBJECT_BOT.BASE_URL}${OBJECT_BOT.SEND_INVOICE}`,
+        )).to.be.true;
       });
     });
 

@@ -1,4 +1,4 @@
-const { App, Post } = require('models');
+const { App, Post } = require('../../models');
 const {
   getCachedData,
   setCachedData,

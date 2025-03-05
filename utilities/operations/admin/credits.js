@@ -1,5 +1,5 @@
-const { websitePayments } = require('models');
-const { PAYMENT_TYPES } = require('constants/sitesConstants');
+const { websitePayments } = require('../../../models');
+const { PAYMENT_TYPES } = require('../../../constants/sitesConstants');
 
 const createCreditsUser = async ({ userName, amount, admin }) => {
   const { result, error } = await websitePayments.create({

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { User, Subscriptions } = require('models');
+const { User, Subscriptions } = require('../../../models');
 
 const getUsers = async ({ limit, skip, sample }) => {
   if (sample) limit = 100;

@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { postHelper } = require('utilities/helpers');
+const { postHelper } = require('../../../utilities/helpers');
 const { schema } = require('./schema');
 /**
  * Middleware which fill some specific info on each post before send those to client.

@@ -1,4 +1,4 @@
-const { App } = require('models');
+const { App } = require('../../../../models');
 const { createVectorStoreFromAppObjects } = require('./customByApp');
 const redis = require('../../../redis/redis');
 

@@ -1,8 +1,8 @@
-const { Department } = require('models');
 const _ = require('lodash');
+const { Department } = require('../../../models');
 const {
   filterDepartments, mapDepartments, getDepartmentsOnWobject, makeConditions,
-} = require('utilities/operations/departments/departmentsMapper');
+} = require('./departmentsMapper');
 
 // we can add host in future for sites
 module.exports = async ({ name, names = [], excluded = [] }) => {
@@ -21,7 +21,7 @@ module.exports = async ({ name, names = [], excluded = [] }) => {
   if (name) {
     return {
       result: await mapDepartments(
-       await filterDepartments(departments, [...excluded, name]),
+        await filterDepartments(departments, [...excluded, name]),
         [...excluded, name],
       ),
     };

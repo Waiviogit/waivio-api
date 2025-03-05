@@ -1,7 +1,7 @@
-const PostModel = require('database').models.Post;
-const AppModel = require('models/AppModel');
+const PostModel = require('../database').models.Post;
+const AppModel = require('./AppModel');
 const _ = require('lodash');
-const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('constants/wobjectsData');
+const { OBJECT_TYPES, FAVORITES_OBJECT_TYPES } = require('../constants/wobjectsData');
 const asyncLocalStorage = require('../middlewares/context/context');
 const { getCollectionName } = require('../utilities/helpers/namesHelper');
 

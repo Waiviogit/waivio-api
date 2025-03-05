@@ -1,5 +1,5 @@
-const { hiddenPostModel, mutedUserModel, Post } = require('models');
 const _ = require('lodash');
+const { hiddenPostModel, mutedUserModel, Post } = require('../../../models');
 
 const getPostsByMention = async ({
   account, skip, limit, follower, app,
