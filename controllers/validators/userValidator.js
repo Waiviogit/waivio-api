@@ -180,6 +180,7 @@ exports.blogTagsSchema = Joi.object().keys({
   name: Joi.string().required(),
   limit: Joi.number().integer().min(0).default(20),
   skip: Joi.number().integer().min(0).default(0),
+  checkedTags: Joi.array().items(Joi.string()),
 });
 
 exports.followingUpdates = Joi.object().keys({
