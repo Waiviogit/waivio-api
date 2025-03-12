@@ -906,6 +906,12 @@ module.exports = {
                 type: 'number',
                 default: 20,
               },
+              checkedTags: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
             },
           },
         },
