@@ -183,7 +183,7 @@ const withdrawEstimates = async ({ outputCoinType, amount }) => {
 
 // {min: string, max: string}
 const withdrawRange = async ({ outputCoinType }) => {
-  const { result, error } = await changellyAPI.getExchangeAmount({
+  const { result, error } = await changellyAPI.getPairParams({
     to: outputCoinType,
   });
   if (error) return { error };
