@@ -515,7 +515,18 @@ const getTagsByUser = async ({
     };
   });
 
-  return { tags: result.sort((a, b) => b.counter - a.counter) };
+  let resp = result.sort((a, b) => b.counter - a.counter);
+  if (checkedTags?.length) {
+    resp = result.sort((a, b) => {
+      const aIndex = checkedTags.indexOf(a.author_permlink);
+      const bIndex = checkedTags.indexOf(b.author_permlink);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
+  }
+
+  return { tags: resp };
 };
 
 const getCachedPosts = async (key) => {
