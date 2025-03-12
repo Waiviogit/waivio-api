@@ -471,8 +471,10 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
   return posts;
 };
 
-const getTagsByUser = async ({ author, skip, limit }) => {
-  const tags = [];
+const getTagsByUser = async ({
+  author, skip, limit, checkedTags,
+}) => {
+  let tags = [];
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
 
   for (const post of posts) {
@@ -489,6 +491,16 @@ const getTagsByUser = async ({ author, skip, limit }) => {
     }
   }
   tags.sort((a, b) => b.counter - a.counter);
+
+  if (checkedTags?.length) {
+    tags = tags.sort((a, b) => {
+      const aIndex = checkedTags.indexOf(a.author_permlink);
+      const bIndex = checkedTags.indexOf(b.author_permlink);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
+  }
 
   const process = _.slice(tags, skip, skip + limit + 1);
 
