@@ -6,8 +6,6 @@ services:
     build: .
     command: npm run start
     restart: always
-    environment:
-      - PORT=10010
     network_mode: host
     logging:
       driver: 'json-file'
@@ -21,8 +19,6 @@ services:
     build: .
     command: npm run start
     restart: always
-    environment:
-      - PORT=10000
     network_mode: host
     logging:
       driver: 'json-file'
@@ -30,14 +26,12 @@ services:
         max-file: '5'
         max-size: '10m'
     env_file:
-      - .env
+      - .secondary.env
   waivio-api-3:
     container_name: waivio-api-3
     build: .
     command: npm run start
     restart: always
-    environment:
-      - PORT=10005
     network_mode: host
     logging:
       driver: 'json-file'
@@ -45,14 +39,12 @@ services:
         max-file: '5'
         max-size: '10m'
     env_file:
-      - .env
+      - .third.env
   waivio-api-4:
     container_name: waivio-api-4
     build: .
     command: npm run start
     restart: always
-    environment:
-      - PORT=10006
     network_mode: host
     logging:
       driver: 'json-file'
@@ -60,5 +52,5 @@ services:
         max-file: '5'
         max-size: '10m'
     env_file:
-      - .env
+      - .forth.env
 
