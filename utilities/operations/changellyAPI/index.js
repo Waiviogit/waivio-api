@@ -14,16 +14,7 @@ const publicKey = crypto.createPublicKey(privateKey).export({
   format: 'der',
 });
 
-// const message = {
-//   jsonrpc: '2.0',
-//   id: 'test',
-//   method: 'getStatus',
-//   params: {
-//     id: 'psj42e728a572mtkz',
-//   },
-// };
-
-const formRequest = (message, endpoint) => {
+const formRequest = (message) => {
   const signature = crypto.sign('sha256', Buffer.from(JSON.stringify(message)), {
     key: privateKey,
     type: 'pkcs8',
@@ -75,12 +66,12 @@ const getHivePairs = async ({ from = 'hive', txType = 'fixed' }) => {
   return { result };
 };
 
-// get min and max amount from currency
+// 1 get min and max amount from currency
 const getPairParams = async ({ from = 'hive', to }) => {
   const requestData = formRequest({
     jsonrpc: '2.0',
     id: 'test',
-    method: 'createTransaction',
+    method: 'getPairsParams',
     params:
       {
         from,
@@ -93,6 +84,7 @@ const getPairParams = async ({ from = 'hive', to }) => {
   return { result: result[0] };
 };
 
+// 2
 const getExchangeAmount = async ({ from = 'hive', to, amountFrom }) => {
   const requestData = formRequest({
     jsonrpc: '2.0',
@@ -111,20 +103,63 @@ const getExchangeAmount = async ({ from = 'hive', to, amountFrom }) => {
   return { result: result[0] };
 };
 
-// (async () => {
-//   const requestData = formRequest({
-//     jsonrpc: '2.0',
-//     id: 'test',
-//     method: 'getExchangeAmount',
-//     params:
-//       {
-//         from: 'hive',
-//         to: 'eth',
-//         amountFrom: 180,
-//       },
-//   });
-//
-//   const { result, error } = await fetchData(requestData);
-//
-//   console.log();
-// })();
+// 3
+const createTransaction = async ({
+  from = 'hive',
+  to,
+  amountFrom,
+  address,
+  refundAddress,
+}) => {
+  const requestData = formRequest({
+    jsonrpc: '2.0',
+    id: 'test',
+    method: 'createTransaction',
+    params:
+      {
+        from,
+        to,
+        amountFrom,
+        address,
+        refundAddress,
+      },
+  });
+
+  const { result, error } = await fetchData(requestData);
+  if (error) return { error };
+  return { result };
+};
+
+const createExchangeWrapper = async ({
+  address, amount, outputCoinType, refundAddress,
+}) => {
+  const { result, error } = await createTransaction({
+    from: 'hive',
+    to: outputCoinType,
+    amountFrom: amount,
+    address,
+    refundAddress,
+  });
+  if (error) return { error };
+
+  const {
+    payinExtraId, payinAddress, id, amountExpectedTo, trackUrl,
+  } = result;
+
+  return {
+    result: {
+      memo: payinExtraId,
+      receiver: payinAddress,
+      exchangeId: id,
+      outputAmount: amountExpectedTo,
+      trackUrl,
+    },
+  };
+};
+
+module.exports = {
+  createTransaction,
+  getExchangeAmount,
+  getPairParams,
+  createExchangeWrapper,
+};
