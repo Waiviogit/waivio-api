@@ -44,6 +44,9 @@ const fetchData = async ({
     });
 
     const data = await response.json();
+    if (data.error) {
+      return { error: { status: 422, message: data.error.message } };
+    }
     return { result: data.result };
   } catch (error) {
     return { error };
