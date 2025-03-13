@@ -188,10 +188,16 @@ const withdrawRange = async ({ outputCoinType }) => {
   });
   if (error) return { error };
 
+  const { result: amount } = await changellyAPI.getExchangeAmount({
+    to: outputCoinType,
+    amountFrom: parseFloat(result.minAmountFixed),
+  });
+
   return {
     result: {
       min: result.minAmountFloat,
       max: result.maxAmountFloat,
+      rate: amount?.rate,
     },
   };
 
