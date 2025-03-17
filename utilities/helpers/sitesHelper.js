@@ -171,6 +171,7 @@ exports.getWebsiteData = (payments, site) => {
     parent: site?.parentHost ?? '',
     createdAt: site.createdAt,
     useForCanonical: !!site.useForCanonical,
+    billingType: site.billingType,
     averageDau: lastWriteOff.length
       ? Math.trunc(_.meanBy(lastWriteOff, (writeOff) => writeOff.countUsers))
       : 0,
