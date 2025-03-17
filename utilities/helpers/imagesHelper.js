@@ -24,8 +24,10 @@ const prepareImage = async (req) => {
     });
   });
   let base64 = null;
+  let originalFilename = null;
 
   if (blobImage) {
+    originalFilename = blobImage.originalFilename;
     const options = { quality: 70 };
     try {
       const { buffer } = await jo.rotate(blobImage.filepath, options);
@@ -36,10 +38,18 @@ const prepareImage = async (req) => {
     }
   } else if (imageUrl) {
     base64 = await base64ByUrl(imageUrl);
+    // Extract filename from URL if available
+    try {
+      originalFilename = new URL(imageUrl).pathname.split('/').pop();
+    } catch (error) {
+      originalFilename = null;
+    }
   }
 
   const fileName = generateFileName({ type, userName, base64 });
-  return { base64, fileName, size };
+  return {
+    base64, fileName, size, originalFilename,
+  };
 };
 
 const createHashFromBase64 = (base64Str, algorithm = 'sha256') => {

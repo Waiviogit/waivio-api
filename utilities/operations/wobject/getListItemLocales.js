@@ -1,4 +1,4 @@
-const { Wobj } = require('models');
+const { Wobj } = require('../../../models');
 const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 
 const getListItemLocales = async ({ authorPermlink, itemLink }) => {

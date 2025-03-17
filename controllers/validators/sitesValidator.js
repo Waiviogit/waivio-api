@@ -1,8 +1,8 @@
 const Joi = require('joi');
-const { MAIN_OBJECT_TYPES, AFFILIATE_TYPE, COUNTRY_CODES } = require('constants/wobjectsData');
-const { customJoi } = require('controllers/validators/customSchema');
-const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('constants/sitesConstants');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
+const { MAIN_OBJECT_TYPES, AFFILIATE_TYPE, COUNTRY_CODES } = require('../../constants/wobjectsData');
+const { customJoi } = require('./customSchema');
+const { SITE_NAME_REGEX, CATEGORY_ITEMS } = require('../../constants/sitesConstants');
+const { SUPPORTED_CURRENCIES } = require('../../constants/common');
 
 const options = { allowUnknown: true, stripUnknown: true };
 

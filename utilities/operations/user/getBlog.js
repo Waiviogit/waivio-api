@@ -1,5 +1,5 @@
-const { Post, hiddenPostModel, mutedUserModel } = require('models');
 const _ = require('lodash');
+const { Post, hiddenPostModel, mutedUserModel } = require('../../../models');
 
 module.exports = async ({
   name, limit, skip, userName, app, tagsArray,

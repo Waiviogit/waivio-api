@@ -1,14 +1,15 @@
-const { Wobj, User, Department } = require('models');
+const _ = require('lodash');
+const { Wobj, User, Department } = require('../../../models');
 const {
   FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST, OBJECT_TYPES,
-} = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const _ = require('lodash');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
+} = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
+const { getAppAuthorities } = require('../../helpers/appHelper');
 
 const searchObjectTypes = [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE];
 
@@ -77,7 +78,7 @@ const getRelated = async ({
   const response = [];
 
   const social = checkForSocialSite(app?.parentHost ?? '');
-  const authorities = [app.owner, ...app.authority];
+  const authorities = getAppAuthorities(app);
 
   const { wobjects: relatedObjects = [] } = await Wobj.fromAggregation([
     {
@@ -151,7 +152,7 @@ const getSimilar = async ({
   if (_.isEmpty(departments) && _.isEmpty(similar)) return { wobjects: [], hasMore: false };
 
   const social = checkForSocialSite(app?.parentHost ?? '');
-  const authorities = [app.owner, ...app.authority];
+  const authorities = getAppAuthorities(app);
 
   const objectsForResponse = [];
 
@@ -262,7 +263,7 @@ const getAddOn = async ({
   const permlinks = _.map(object?.addOn, 'body');
 
   const social = checkForSocialSite(app?.parentHost ?? '');
-  const authorities = [app.owner, ...app.authority];
+  const authorities = getAppAuthorities(app);
 
   const { wobjects: similarObjects = [] } = await Wobj.fromAggregation([
     {

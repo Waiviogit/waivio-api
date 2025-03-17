@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { App, Wobj } = require('models');
-const { sitesHelper } = require('utilities/helpers');
-const redisSetter = require('utilities/redis/redisSetter');
-const { mainFeedsCacheClient } = require('utilities/redis/redis');
+const { App, Wobj } = require('../../../models');
+const { sitesHelper } = require('../../helpers');
+const redisSetter = require('../../redis/redisSetter');
+const { mainFeedsCacheClient } = require('../../redis/redis');
 const {
   getCachedData,
   setCachedData,

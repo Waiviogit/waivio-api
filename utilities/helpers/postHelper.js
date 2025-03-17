@@ -9,22 +9,22 @@ const {
   CampaignV2,
   SponsorsUpvote,
   blacklistModel,
-} = require('models');
-const { addCampaignsToWobjects } = require('utilities/helpers/campaignsHelper');
-const { Post } = require('database').models;
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData');
+} = require('../../models');
+const { addCampaignsToWobjects } = require('./campaignsHelper');
+const { Post } = require('../../database').models;
+const { REQUIREDFIELDS_POST } = require('../../constants/wobjectsData');
 const {
   RESERVATION_STATUSES,
   PAYMENT_HISTORIES_TYPES,
-} = require('constants/campaignsData');
-const { getCurrentNames } = require('utilities/helpers/wObjectHelper');
+} = require('../../constants/campaignsData');
+const { getCurrentNames } = require('./wObjectHelper');
 const {
   redis,
   redisGetter,
   redisSetter,
-} = require('utilities/redis');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const currenciesRequests = require('utilities/requests/currenciesRequests');
+} = require('../redis');
+const jsonHelper = require('./jsonHelper');
+const currenciesRequests = require('../requests/currenciesRequests');
 const crypto = require('node:crypto');
 const BigNumber = require('bignumber.js');
 
@@ -373,9 +373,7 @@ const sponsorObligationsNewReview = async ({
           key: `total_payout_${payoutToken}`,
           reward: sponsorPayout,
         });
-      }
-
-      if (!totalPayout && !_.isEmpty(bots)) {
+      } else if (!totalPayout && !_.isEmpty(bots)) {
         updateTotalRewards({
           post,
           key: `total_rewards_${payoutToken}`,
@@ -388,6 +386,7 @@ const sponsorObligationsNewReview = async ({
           reward: sponsorPayout,
         });
       }
+
       const hasSponsor = _.find(post.active_votes, (el) => el.voter === guideName);
 
       if (hasSponsor) {
@@ -472,8 +471,10 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
   return posts;
 };
 
-const getTagsByUser = async ({ author, skip, limit }) => {
-  const tags = [];
+const getTagsByUser = async ({
+  author, skip, limit, checkedTags,
+}) => {
+  let tags = [];
   const { posts } = await PostRepository.findByCondition({ author }, { wobjects: 1 });
 
   for (const post of posts) {
@@ -491,6 +492,16 @@ const getTagsByUser = async ({ author, skip, limit }) => {
   }
   tags.sort((a, b) => b.counter - a.counter);
 
+  if (checkedTags?.length) {
+    tags = tags.sort((a, b) => {
+      const aIndex = checkedTags.indexOf(a.author_permlink);
+      const bIndex = checkedTags.indexOf(b.author_permlink);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
+  }
+
   const process = _.slice(tags, skip, skip + limit + 1);
 
   const { result: wobjects } = await getCurrentNames(_.map(process, 'author_permlink'));
@@ -504,7 +515,18 @@ const getTagsByUser = async ({ author, skip, limit }) => {
     };
   });
 
-  return { tags: result.sort((a, b) => b.counter - a.counter) };
+  let resp = result.sort((a, b) => b.counter - a.counter);
+  if (checkedTags?.length) {
+    resp = result.sort((a, b) => {
+      const aIndex = checkedTags.indexOf(a.author_permlink);
+      const bIndex = checkedTags.indexOf(b.author_permlink);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    });
+  }
+
+  return { tags: resp };
 };
 
 const getCachedPosts = async (key) => {

@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const {
   Wobj, Post, ObjectType, CommentRef,
-} = require('models');
+} = require('../../models');
 
 const restore = async () => {
   const { postsCount } = await restorePostsRefs();

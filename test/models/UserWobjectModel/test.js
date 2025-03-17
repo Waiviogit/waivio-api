@@ -55,14 +55,18 @@ describe('UserWobjects', async () => {
     });
     it('Shoud check that userWobject has keys _id and author_permlink', async () => {
       await UserWobjectsFactory.Create({ userName, authorPermlink: faker.random.string() });
-      const { result } = await UserWobjectsModel.findOne({ user_name: userName },
-        { author_permlink: 1 });
+      const { result } = await UserWobjectsModel.findOne(
+        { user_name: userName },
+        { author_permlink: 1 },
+      );
       expect(result).to.have.keys('_id', 'author_permlink');
     });
     it('Shoud check that userWobject does not have key author_permlink', async () => {
       await UserWobjectsFactory.Create({ userName, authorPermlink: faker.random.string() });
-      const { result } = await UserWobjectsModel.findOne({ user_name: userName },
-        { author_permlink: 0 });
+      const { result } = await UserWobjectsModel.findOne(
+        { user_name: userName },
+        { author_permlink: 0 },
+      );
       expect(result).to.not.have.keys('author_permlink');
     });
 

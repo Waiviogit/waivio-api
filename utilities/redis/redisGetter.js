@@ -1,11 +1,11 @@
 const {
   wobjRefsClient, importUserClient, mainFeedsCacheClient, tagCategoriesClient, appUsersStatistics, processedPostClient,
-} = require('utilities/redis/redis');
+} = require('./redis');
 const {
   HOT_NEWS_CACHE_PREFIX, HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_PREFIX,
-} = require('constants/postsData');
-const { TOP_WOBJ_USERS_KEY } = require('constants/wobjectsData');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+} = require('../../constants/postsData');
+const { TOP_WOBJ_USERS_KEY } = require('../../constants/wobjectsData');
+const jsonHelper = require('../helpers/jsonHelper');
 
 exports.removeTopWobjUsers = async (key) => mainFeedsCacheClient.DEL(`${TOP_WOBJ_USERS_KEY}:${key}`);
 exports.getTopWobjUsers = async (key) => mainFeedsCacheClient.SMEMBERS(`${TOP_WOBJ_USERS_KEY}:${key}`);

@@ -1,11 +1,11 @@
 const _ = require('lodash');
-const { App } = require('models');
-const wobjectHelper = require('utilities/helpers/wObjectHelper');
-const { REQUIREDFILDS_WOBJ_LIST } = require('constants/wobjectsData');
-const config = require('config');
-const { getIpFromHeaders, getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
-const { processAppAffiliate, processUserAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
-const { WAIVIO_AFFILIATE_HOSTS } = require('constants/affiliateData');
+const { App } = require('../../../models');
+const wobjectHelper = require('../../../utilities/helpers/wObjectHelper');
+const { REQUIREDFILDS_WOBJ_LIST } = require('../../../constants/wobjectsData');
+const config = require('../../../config');
+const { getIpFromHeaders, getCountryCodeFromIp } = require('../../../utilities/helpers/sitesHelper');
+const { processAppAffiliate, processUserAffiliate } = require('../../../utilities/operations/affiliateProgram/processAffiliate');
+const { WAIVIO_AFFILIATE_HOSTS } = require('../../../constants/affiliateData');
 const { schema } = require('./schema');
 
 const newValidationArray = async ({

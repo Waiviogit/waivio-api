@@ -1,4 +1,4 @@
-const { engineProxy } = require('utilities/hiveEngine/engineQuery');
+const { engineProxy } = require('./engineQuery');
 
 exports.getMarketPools = async ({ query }) => engineProxy({
   params: {

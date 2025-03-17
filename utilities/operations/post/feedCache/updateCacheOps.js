@@ -1,12 +1,12 @@
-const { HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, APPS_FOR_FEED_CACHE } = require('constants/postsData');
-const getPostsByCategory = require('utilities/operations/post/getPostsByCategory');
-const { redisSetter } = require('utilities/redis');
-const { LANGUAGES } = require('constants/common');
-const { find } = require('models/AppModel');
-const Wobj = require('models/wObjectModel');
-const Post = require('models/PostModel');
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const { redisSetter } = require('../../../redis');
+const { find } = require('../../../../models/AppModel');
+const Wobj = require('../../../../models/wObjectModel');
+const Post = require('../../../../models/PostModel');
+const { LANGUAGES } = require('../../../../constants/common');
+const getPostsByCategory = require('../getPostsByCategory');
+const { HOT_NEWS_CACHE_SIZE, TREND_NEWS_CACHE_SIZE, APPS_FOR_FEED_CACHE } = require('../../../../constants/postsData');
 
 async function getDbPostsIds(type, appName) {
   let idsByWithLocales = [];

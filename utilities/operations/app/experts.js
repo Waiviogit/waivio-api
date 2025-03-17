@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { App, UserExpertiseModel } = require('models');
+const { App, UserExpertiseModel } = require('../../../models');
 const asyncLocalStorage = require('../../../middlewares/context/context');
 
 exports.collect = async ({ limit }) => {

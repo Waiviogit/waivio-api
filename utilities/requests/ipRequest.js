@@ -1,6 +1,6 @@
-const { GEO_IP_API } = require('constants/requestData');
 const axios = require('axios');
 const _ = require('lodash');
+const { GEO_IP_API } = require('../../constants/requestData');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.getIp = async (ip) => {

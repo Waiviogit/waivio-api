@@ -1,17 +1,18 @@
 /* eslint-disable camelcase */
-const {
-  User, withdrawFundsModel, paymentHistory,
-} = require('models');
 const axios = require('axios');
-const { ERROR_OBJ } = require('constants/common');
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
-const { captureException } = require('utilities/helpers/sentryHelper');
+const { ERROR_OBJ } = require('../../../constants/common');
+const {
+  User, withdrawFundsModel, paymentHistory,
+} = require('../../../models');
+const { captureException } = require('../../helpers/sentryHelper');
 const { transfer } = require('../../hiveApi/broadcastUtil');
 const redisGetter = require('../../redis/redisGetter');
 const { CACHE_KEY } = require('../../../constants/common');
 const { getGuestBalanceHistory } = require('./guestHiveWallet');
 const { PAYMENT_HISTORIES_TYPES } = require('../../../constants/campaignsData');
+const changellyAPI = require('../changellyAPI');
 
 const HIVE_BANK_ACCOUNT = process.env.WALLET_ACC_NAME;
 const API_KEY = process.env.SIMPLESWAP_API_KEY;
@@ -23,6 +24,7 @@ const SWAP_ENDPOINT = {
   GET_RANGES: '/get_ranges',
 };
 
+// memo: string, receiver: string, exchangeId: string, outputAmount
 const createExchange = async ({
   address, outputCoinType, amount,
 }) => {
@@ -77,16 +79,19 @@ const withdrawFromHive = async ({
   const { result, error: balanceError } = await validateWithdrawAmount({ amount, userName });
   if (balanceError) return { error: balanceError };
   // validate funds amount
-  const { result: exchange, error: createExchangeError } = await createExchange({
-    address, amount, outputCoinType,
-  });
+  const { result: exchange, error: createExchangeError } = await changellyAPI
+    .createExchangeWrapper({
+      address, amount, outputCoinType, refundAddress: HIVE_BANK_ACCOUNT,
+    });
+
   if (createExchangeError) {
     return { error: ERROR_OBJ.UNPROCESSABLE };
   }
 
   const {
-    extra_id_from: memo, address_from: receiver, id: exchangeId, amount_to: outputAmount,
+    memo, receiver, exchangeId, outputAmount,
   } = exchange;
+
   const usdValue = await getUsdValue({ amountHive: amount });
 
   const { withdraw, error: createWithdrawErr } = await withdrawFundsModel.create({
@@ -131,54 +136,91 @@ const withdrawFromHive = async ({
     withdraw: withdraw._id,
   });
 
+  await paymentHistory.addPaymentHistory({
+    userName,
+    type: PAYMENT_HISTORIES_TYPES.DEMO_USER_TRANSFER,
+    amount: 0,
+    sponsor: userName,
+    memo: `Withdrawal transaction ID for the HIVE-${outputCoinType} pair via Changelly.com: https://changelly.com/track/${exchangeId}`,
+    withdraw: withdraw._id,
+  });
+
   return { result: exchangeId };
 };
 
+// result : string
 const withdrawEstimates = async ({ outputCoinType, amount }) => {
-  try {
-    const url = `${SWAP_ENDPOINT.HOST}${SWAP_ENDPOINT.GET_ESTIMATED}`;
-    const result = await axios.get(
-      url,
-      {
-        params: {
-          api_key: API_KEY,
-          fixed: false,
-          currency_from: 'hive',
-          currency_to: outputCoinType,
-          amount,
-        },
-      },
-    );
+  const { result, error } = await changellyAPI.getExchangeAmount({
+    to: outputCoinType,
+    amountFrom: amount,
+  });
+  if (error) return { error };
 
-    return {
-      result: result?.data,
-    };
-  } catch (error) {
-    return { error };
-  }
+  return { result: result.amountTo };
+
+  // try {
+  //   const url = `${SWAP_ENDPOINT.HOST}${SWAP_ENDPOINT.GET_ESTIMATED}`;
+  //   const result = await axios.get(
+  //     url,
+  //     {
+  //       params: {
+  //         api_key: API_KEY,
+  //         fixed: false,
+  //         currency_from: 'hive',
+  //         currency_to: outputCoinType,
+  //         amount,
+  //       },
+  //     },
+  //   );
+  //
+  //   return {
+  //     result: result?.data,
+  //   };
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
+// {min: string, max: string}
 const withdrawRange = async ({ outputCoinType }) => {
-  try {
-    const url = `${SWAP_ENDPOINT.HOST}${SWAP_ENDPOINT.GET_RANGES}`;
-    const result = await axios.get(
-      url,
-      {
-        params: {
-          api_key: API_KEY,
-          fixed: false,
-          currency_from: 'hive',
-          currency_to: outputCoinType,
-        },
-      },
-    );
+  const { result, error } = await changellyAPI.getPairParams({
+    to: outputCoinType,
+  });
+  if (error) return { error };
 
-    return {
-      result: result?.data,
-    };
-  } catch (error) {
-    return { error };
-  }
+  const { result: amount } = await changellyAPI.getExchangeAmount({
+    to: outputCoinType,
+    amountFrom: parseFloat(result.minAmountFixed),
+  });
+
+  return {
+    result: {
+      min: result.minAmountFloat,
+      max: result.maxAmountFloat,
+      rate: amount?.rate,
+    },
+  };
+
+  // try {
+  //   const url = `${SWAP_ENDPOINT.HOST}${SWAP_ENDPOINT.GET_RANGES}`;
+  //   const result = await axios.get(
+  //     url,
+  //     {
+  //       params: {
+  //         api_key: API_KEY,
+  //         fixed: false,
+  //         currency_from: 'hive',
+  //         currency_to: outputCoinType,
+  //       },
+  //     },
+  //   );
+  //
+  //   return {
+  //     result: result?.data,
+  //   };
+  // } catch (error) {
+  //   return { error };
+  // }
 };
 
 module.exports = {

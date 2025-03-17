@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const {
   mutedUserModel, blacklistModel, User, App,
-} = require('models');
+} = require('../../../models');
 
 exports.get = async ({ host }) => {
   const { app } = await App.getOne({ host });

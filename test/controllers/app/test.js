@@ -58,7 +58,7 @@ describe('On appController', async () => {
       describe('On database errors', async () => {
         let result, errorString, currentApp;
         beforeEach(async () => {
-          await dropDatabase()
+          await dropDatabase();
           currentApp = await AppFactory.Create({ status: STATUSES.ACTIVE });
           errorString = 'test Error';
           sinon.stub(App, 'findOne').throws({ message: errorString });

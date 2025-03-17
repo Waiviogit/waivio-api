@@ -1,5 +1,5 @@
 const Joi = require('joi');
-const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('constants/wobjectsData');
+const { OBJECT_TYPE_TOP_WOBJECTS_COUNT, OBJECT_TYPE_TOP_EXPERTS_COUNT } = require('../../constants/wobjectsData');
 
 exports.indexSchema = Joi.object().keys({
   limit: Joi.number().integer().min(0),

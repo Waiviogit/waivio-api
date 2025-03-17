@@ -1,5 +1,5 @@
-const { User } = require('models');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+const { User } = require('../../../models');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const getProfileImages = async ({ names }) => {
   const { usersData = [] } = await User.find({

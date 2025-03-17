@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 
-const { RESERVATION_STATUSES, CAMPAIGN_STATUSES, CAMPAIGN_TYPES } = require('constants/campaignsData');
+const { RESERVATION_STATUSES, CAMPAIGN_STATUSES, CAMPAIGN_TYPES } = require('../../constants/campaignsData');
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true },

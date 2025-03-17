@@ -1,14 +1,14 @@
-const validators = require('controllers/validators');
-const authoriseUser = require('utilities/authorization/authoriseUser');
-const { sitesHelper } = require('utilities/helpers');
-const prefetchWobjs = require('utilities/operations/sites/prefetchWobjs');
-const affiliateShop = require('utilities/operations/sites/affiliateShop');
+const validators = require('./validators');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
+const { sitesHelper } = require('../utilities/helpers');
+const prefetchWobjs = require('../utilities/operations/sites/prefetchWobjs');
+const affiliateShop = require('../utilities/operations/sites/affiliateShop');
 const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
     manage, create, configurations, remove, map, mapCoordinates,
   },
-} = require('utilities/operations');
+} = require('../utilities/operations');
 const { cacheWrapper } = require('../utilities/helpers/cacheHelper');
 const {
   REDIS_KEYS,

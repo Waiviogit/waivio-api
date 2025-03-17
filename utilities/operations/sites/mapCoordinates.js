@@ -1,11 +1,9 @@
-const { App } = require('models');
-const siteHelper = require('utilities/helpers/sitesHelper');
-const geoHelper = require('utilities/helpers/geoHelper');
+const { App } = require('../../../models');
+const siteHelper = require('../../helpers/sitesHelper');
+const geoHelper = require('../../helpers/geoHelper');
 
 exports.set = async ({ userName, host, mapCoordinates }) => {
-  const { result, error } = await App.findOneAndUpdate(
-    { owner: userName, inherited: true, host }, { $set: { mapCoordinates } },
-  );
+  const { result, error } = await App.findOneAndUpdate({ owner: userName, inherited: true, host }, { $set: { mapCoordinates } });
   if (error) return { error };
   if (!result) return { error: { status: 404, message: 'App not found!' } };
 

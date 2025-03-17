@@ -1,8 +1,8 @@
-const { searchObjectTypes } = require('utilities/operations/search/searchTypes');
+const { searchObjectTypes } = require('../utilities/operations/search/searchTypes');
 const {
   getAll, getOne, getExperts, showTags, getTagsForFilter,
-} = require('utilities/operations/objectType');
-const validators = require('controllers/validators');
+} = require('../utilities/operations/objectType');
+const validators = require('./validators');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 

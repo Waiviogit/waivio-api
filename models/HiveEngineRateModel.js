@@ -1,4 +1,4 @@
-const { HiveEngineRate } = require('currenciesDB').models;
+const { HiveEngineRate } = require('../currenciesDB').models;
 
 exports.find = async ({
   condition, projection, sort = {}, limit, skip = 0,

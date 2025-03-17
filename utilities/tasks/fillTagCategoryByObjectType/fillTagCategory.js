@@ -45,9 +45,7 @@ const fillTagCategory = async (params) => {
   if (_.isEmpty(objects)) return;
 
   for (const object of objects) {
-    const fields = _.filter(
-      object.fields, (f) => _.includes(tagCategories[object.object_type], f.tagCategory),
-    );
+    const fields = _.filter(object.fields, (f) => _.includes(tagCategories[object.object_type], f.tagCategory));
     for (const field of fields) {
       await incrementTag({
         objectType: object.object_type,

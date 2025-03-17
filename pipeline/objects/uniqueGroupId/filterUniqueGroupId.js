@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const { schema } = require('./schema');
 
 const unwindByGroupId = (arr, f) => arr.reduce(

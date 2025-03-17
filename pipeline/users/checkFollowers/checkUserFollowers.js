@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { Subscriptions } = require('models');
+const { Subscriptions } = require('../../../models');
 const { schema } = require('./schema');
 
 const checkForFollowers = async ({ userName, followers, path }) => {

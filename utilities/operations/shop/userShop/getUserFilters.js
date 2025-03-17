@@ -1,12 +1,12 @@
 const _ = require('lodash');
 const {
   Wobj,
-} = require('models');
+} = require('../../../../models');
 const {
   REMOVE_OBJ_STATUSES,
-} = require('constants/wobjectsData');
-const shopHelper = require('utilities/helpers/shopHelper');
-const { SHOP_ITEM_RATINGS } = require('constants/shop');
+} = require('../../../../constants/wobjectsData');
+const shopHelper = require('../../../helpers/shopHelper');
+const { SHOP_ITEM_RATINGS } = require('../../../../constants/shop');
 const {
   UNCATEGORIZED_DEPARTMENT,
   OTHERS_DEPARTMENT,

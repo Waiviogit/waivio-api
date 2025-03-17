@@ -1,6 +1,6 @@
-const { Wobj } = require('models');
 const _ = require('lodash');
-const { FIELDS_NAMES } = require('constants/wobjectsData');
+const { Wobj } = require('../../../models');
+const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 
 module.exports = async (authorPermlink) => {
   const { result, error } = await Wobj.findOne({ author_permlink: authorPermlink }, { fields: 1 });

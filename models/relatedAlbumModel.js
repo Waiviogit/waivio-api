@@ -1,4 +1,4 @@
-const { RelatedAlbum } = require('database').models;
+const { RelatedAlbum } = require('../database').models;
 
 exports.aggregate = async (pipeline) => {
   try {

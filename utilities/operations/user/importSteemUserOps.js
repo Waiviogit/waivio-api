@@ -1,6 +1,6 @@
-const { userUtil } = require('utilities/hiveApi');
-const { User, Subscriptions } = require('models');
 const _ = require('lodash');
+const { userUtil } = require('../../hiveApi');
+const { User, Subscriptions } = require('../../../models');
 
 /**
  * Import full user info from STEEM to mongodb:

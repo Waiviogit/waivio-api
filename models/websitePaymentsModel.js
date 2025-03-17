@@ -1,4 +1,4 @@
-const { WebsitePayments } = require('database').models;
+const { WebsitePayments } = require('../database').models;
 
 exports.find = async ({ condition, sort }) => {
   try {
@@ -27,6 +27,14 @@ exports.findOne = async (condition) => {
 exports.distinct = async ({ field, query = {} }) => {
   try {
     return { result: await WebsitePayments.distinct(field, query).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
+exports.create = async (doc) => {
+  try {
+    return { result: await WebsitePayments.create(doc) };
   } catch (error) {
     return { error };
   }

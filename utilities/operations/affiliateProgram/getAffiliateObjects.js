@@ -1,11 +1,11 @@
-const { Wobj } = require('models');
+const { Wobj } = require('../../../models');
 const {
   OBJECT_TYPES,
   REMOVE_OBJ_STATUSES,
   FIELDS_NAMES,
   AFFILIATE_FIELDS,
-} = require('constants/wobjectsData');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+} = require('../../../constants/wobjectsData');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 
 const getAffiliateObjects = async ({ userName, app, host = '' }) => {
   const regexHost = `\\["${host.replace(/\./g, '\\.')}`;

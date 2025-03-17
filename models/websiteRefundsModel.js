@@ -1,4 +1,4 @@
-const { WebsiteRefunds } = require('database').models;
+const { WebsiteRefunds } = require('../database').models;
 
 exports.find = async (condition) => {
   try {
@@ -23,4 +23,3 @@ exports.deleteOne = async (condition) => {
     return { error };
   }
 };
-

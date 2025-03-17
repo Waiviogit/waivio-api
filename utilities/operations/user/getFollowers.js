@@ -1,5 +1,5 @@
-const { followersHelper } = require('utilities/helpers');
-const { FOLLOWERS_SORT } = require('constants/sortData');
+const { followersHelper } = require('../../helpers');
+const { FOLLOWERS_SORT } = require('../../../constants/sortData');
 
 module.exports = async ({
   name, skip, limit, sort,

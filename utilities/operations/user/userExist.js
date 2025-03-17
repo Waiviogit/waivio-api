@@ -1,4 +1,4 @@
-const { User } = require('models');
+const { User } = require('../../../models');
 
 const hiveUserExist = async ({ userName = '' }) => {
   if (userName.includes('_')) return { result: false };

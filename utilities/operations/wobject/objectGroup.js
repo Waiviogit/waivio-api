@@ -1,11 +1,11 @@
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const {
-  Wobj, Subscriptions, UserExpertiseModel, User,
-} = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES } = require('constants/wobjectsData');
-const jsonHelper = require('utilities/helpers/jsonHelper');
 const _ = require('lodash');
 const moment = require('moment');
+const wObjectHelper = require('../../helpers/wObjectHelper');
+const {
+  Wobj, Subscriptions, UserExpertiseModel, User,
+} = require('../../../models');
+const { FIELDS_NAMES, OBJECT_TYPES } = require('../../../constants/wobjectsData');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const USER_PROJECTION = {
   _id: 1,

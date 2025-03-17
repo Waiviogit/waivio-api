@@ -1,6 +1,6 @@
-const { User, App, UserExpertiseModel } = require('models');
 const moment = require('moment');
 const _ = require('lodash');
+const { User, App, UserExpertiseModel } = require('../../../models');
 
 const SEARCH_STRATEGY = {
   EXPERTISE: 'EXPERTISE',

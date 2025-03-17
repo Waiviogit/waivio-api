@@ -1,18 +1,18 @@
-const shopHelper = require('utilities/helpers/shopHelper');
+const _ = require('lodash');
+const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../constants/departments');
 const {
   Wobj,
   User,
-} = require('models');
-const _ = require('lodash');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+} = require('../../../../models');
+const shopHelper = require('../../../helpers/shopHelper');
+const wObjectHelper = require('../../../helpers/wObjectHelper');
 const {
   REQUIREDFILDS_WOBJ_LIST,
   REMOVE_OBJ_STATUSES,
-} = require('constants/wobjectsData');
-const campaignsV2Helper = require('utilities/helpers/campaignsV2Helper');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
-const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('constants/departments');
-const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
+} = require('../../../../constants/wobjectsData');
+const campaignsV2Helper = require('../../../helpers/campaignsV2Helper');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../../constants/usersData');
+const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 const getWobjectDepartments = require('./getWobjectDepartments');
 
 const getObjectDepartmentCondition = async ({

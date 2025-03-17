@@ -1,10 +1,10 @@
 const { ObjectId } = require('mongoose').Types;
 const _ = require('lodash');
 const moment = require('moment');
+const BigNumber = require('bignumber.js');
 const {
   EngineAccountHistory, CurrenciesRate, WalletExemptions, HiveEngineRate,
-} = require('models');
-const BigNumber = require('bignumber.js');
+} = require('../../../models');
 const {
   SUPPORTED_CURRENCIES,
   TTL_TIME,

@@ -1,6 +1,6 @@
-const { getTickets, addNote } = require('utilities/operations').vipTickets;
-const authoriseUser = require('utilities/authorization/authoriseUser');
-const validators = require('controllers/validators');
+const { getTickets, addNote } = require('../utilities/operations').vipTickets;
+const authoriseUser = require('../utilities/authorization/authoriseUser');
+const validators = require('./validators');
 
 exports.getVipTickets = async (req, res, next) => {
   const value = validators.validate(req.query, validators.vipTickets.getTicketsSchema, next);
