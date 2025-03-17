@@ -1,7 +1,7 @@
 const _ = require('lodash');
-const { Wobj } = require('models');
-const searchHelper = require('utilities/helpers/searchHelper');
-const { REMOVE_OBJ_STATUSES } = require('constants/wobjectsData');
+const { Wobj } = require('../../../models');
+const searchHelper = require('../../helpers/searchHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 
 module.exports = async ({
   authorPermlink, app, skip, limit, radius,

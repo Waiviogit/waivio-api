@@ -1,6 +1,6 @@
-const { GuestWalletModel } = require('models');
 const _ = require('lodash');
-const { GUEST_WALLET_TYPE } = require('constants/common');
+const { GuestWalletModel } = require('../../../models');
+const { GUEST_WALLET_TYPE } = require('../../../constants/common');
 
 exports.getWallet = async ({
   account, symbol, skip, limit,

@@ -1,4 +1,4 @@
-const { GuestManaModel } = require('models');
+const { GuestManaModel } = require('../../../models');
 
 // if become global set to redis
 const maxMana = 1000;

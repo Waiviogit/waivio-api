@@ -1,17 +1,17 @@
 const _ = require('lodash');
 const {
   FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES, SHOP_OBJECT_TYPES,
-} = require('constants/wobjectsData');
+} = require('../../constants/wobjectsData');
 const {
   Wobj, ObjectType, User, Post, userShopDeselectModel,
-} = require('models');
-const { OTHERS_DEPARTMENT } = require('constants/departments');
-const { SELECT_USER_CAMPAIGN_SHOP } = require('constants/usersData');
-const { SHOP_SCHEMA } = require('constants/shop');
+} = require('../../models');
+const { OTHERS_DEPARTMENT } = require('../../constants/departments');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../constants/usersData');
+const { SHOP_SCHEMA } = require('../../constants/shop');
 const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
-const { checkForSocialSite } = require('./sitesHelper');
 const sitesHelper = require('./sitesHelper');
+const { getAppAuthorities } = require('./appHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -117,11 +117,7 @@ const getMongoFilterForShop = ({ field, tagFilter, authority = [] }) => {
 };
 
 const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
-  const authority = [];
-  const social = checkForSocialSite(app?.parentHost ?? '');
-  if (social) {
-    authority.push(...[app.owner, ...app.authority]);
-  }
+  const authority = getAppAuthorities(app);
   const { result } = await Wobj.findOne({
     author_permlink: authorPermlink,
     object_type: OBJECT_TYPES.SHOP,

@@ -1,6 +1,6 @@
-const manage = require('utilities/operations/sites/manage');
-const { App } = require('models');
 const _ = require('lodash');
+const manage = require('../sites/manage');
+const { App } = require('../../../models');
 
 const sortUserNames = (users) => _.sortBy(users, [
   (user) => user.userName.includes('_'),

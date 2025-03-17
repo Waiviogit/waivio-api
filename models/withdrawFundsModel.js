@@ -1,4 +1,4 @@
-const { WithdrawFunds } = require('database').models;
+const { WithdrawFunds } = require('../database').models;
 
 exports.create = async (data) => {
   const newWithdraw = new WithdrawFunds(data);

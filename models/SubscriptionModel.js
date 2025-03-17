@@ -1,4 +1,4 @@
-const { Subscriptions } = require('database').models;
+const { Subscriptions } = require('../database').models;
 
 exports.followUser = async ({ follower, following }) => {
   const newSubscribe = new Subscriptions({

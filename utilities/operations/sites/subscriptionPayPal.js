@@ -1,13 +1,13 @@
-const {
-  App, PayPalProductModel, PayPalPlanModel, PayPalSubscriptionModel,
-} = require('models');
-const {
-  STATUSES, BILLING_TYPE,
-} = require('constants/sitesConstants');
 const _ = require('lodash');
 const moment = require('moment');
-const { createPayPalProduct } = require('utilities/operations/paypal/products');
-const { createPayPalPlan, getPayPalSubscriptionDetails } = require('utilities/operations/paypal/subscriptions');
+const {
+  App, PayPalProductModel, PayPalPlanModel, PayPalSubscriptionModel,
+} = require('../../../models');
+const {
+  STATUSES, BILLING_TYPE,
+} = require('../../../constants/sitesConstants');
+const { createPayPalProduct } = require('../paypal/products');
+const { createPayPalPlan, getPayPalSubscriptionDetails } = require('../paypal/subscriptions');
 
 const generateRequestId = () => `REQ-${crypto.randomUUID()}`;
 

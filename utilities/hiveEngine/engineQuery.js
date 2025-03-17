@@ -1,6 +1,6 @@
 const axios = require('axios');
 const _ = require('lodash');
-const { HIVE_ENGINE_NODES } = require('constants/hiveEngine');
+const { HIVE_ENGINE_NODES } = require('../../constants/hiveEngine');
 const { REQUEST_TIMEOUT } = require('../../constants/common');
 
 exports.engineQuery = async ({
@@ -26,6 +26,7 @@ exports.engineQuery = async ({
     );
     return _.get(resp, 'data.result');
   } catch (error) {
+    console.log(`Engine request error ${hostUrl}`);
     return { error };
   }
 };

@@ -1,4 +1,4 @@
-const { GuestWallet } = require('database').models;
+const { GuestWallet } = require('../database').models;
 
 exports.aggregate = async (pipeline) => {
   try {

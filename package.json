@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node --max-old-space-size=400 ./bin/www",
+    "lint": "eslint --fix .",
     "createMissedUsers": "NODE_PATH=. node ./utilities/tasks/createMissedUsers/run.js",
     "migrateFollowers": "NODE_PATH=. node ./utilities/tasks/migrateFollowers/run.js",
     "migrateGuestFollowers": "NODE_PATH=. node ./utilities/tasks/fixGuestFollowers/run.js",
@@ -42,6 +43,7 @@
     "cors": "^2.8.4",
     "cron": "^2.0.0",
     "crypto-js": "^4.2.0",
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "formidable": "^3.5.1",
     "franc-min": "^6.0.0",

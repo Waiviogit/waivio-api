@@ -1,15 +1,15 @@
-const redisGetter = require('utilities/redis/redisGetter');
-const { CACHE_KEY } = require('constants/common');
-const { getDynamicGlobalProperties } = require('utilities/hiveApi/currencyUtil');
+const redisGetter = require('../../redis/redisGetter');
+const { CACHE_KEY } = require('../../../constants/common');
+const { getDynamicGlobalProperties } = require('../../hiveApi/currencyUtil');
 const {
   REDIS_KEYS,
   TTL_TIME,
-} = require('constants/common');
+} = require('../../../constants/common');
 const {
   getCachedData,
   setCachedData,
-} = require('utilities/helpers/cacheHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+} = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 exports.getRewardFund = async () => {
   const { result, error } = await redisGetter.getHashAll({ key: CACHE_KEY.REWARD_FUND });

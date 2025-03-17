@@ -1,4 +1,4 @@
-const { WAIVIO_ADMINS_ENV } = require('constants/common');
+const { WAIVIO_ADMINS_ENV } = require('../../constants/common');
 const authoriseSteemconnect = require('./steemconnect/authorise');
 const waivioAuthorise = require('./waivioAuth/authorise');
 const hiveAuthorise = require('./hiveAuth/authorise');

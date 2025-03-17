@@ -1,4 +1,4 @@
-const { HiddenComment } = require('database').models;
+const { HiddenComment } = require('../database').models;
 
 exports.getHiddenComments = async (...userNames) => {
   try {

@@ -1,12 +1,13 @@
 /* eslint-disable camelcase */
-const { User, withdrawFundsModel } = require('models');
 const axios = require('axios');
-const { ERROR_OBJ } = require('constants/common');
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
+const { ERROR_OBJ } = require('../../../constants/common');
+const { User, withdrawFundsModel } = require('../../../models');
 const { getAccount } = require('../../hiveApi/userUtil');
 const redisGetter = require('../../redis/redisGetter');
 const { CACHE_KEY } = require('../../../constants/common');
+const changellyAPI = require('../changellyAPI');
 
 const API_KEY = process.env.SIMPLESWAP_API_KEY;
 
@@ -74,14 +75,19 @@ const withdrawFromHive = async ({
   const { result, error: balanceError } = await validateWithdrawAmount({ amount, userName });
   if (balanceError) return { error: balanceError };
 
-  const { result: exchange, error: createExchangeError } = await createExchange({
-    address, amount, outputCoinType, userName,
-  });
+  const { result: exchange, error: createExchangeError } = await changellyAPI
+    .createExchangeWrapper({
+      address, amount, outputCoinType, refundAddress: userName,
+    });
+
+  // const { result: exchange, error: createExchangeError } = await createExchange({
+  //   address, amount, outputCoinType, userName,
+  // });
 
   if (createExchangeError) return { error: ERROR_OBJ.UNPROCESSABLE };
 
   const {
-    extra_id_from: memo, address_from: receiver, id: exchangeId, amount_to: outputAmount,
+    memo, receiver, exchangeId, outputAmount,
   } = exchange;
 
   const usdValue = await getUsdValue({ amountHive: amount });

@@ -1,5 +1,5 @@
-const { Department } = require('models');
 const _ = require('lodash');
+const { Department } = require('../../../models');
 
 module.exports = async ({ searchString = '', skip, limit }) => {
   const { result, error } = await Department.find({

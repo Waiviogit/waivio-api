@@ -1,6 +1,6 @@
-const { searchHelper, prefetchHelper } = require('utilities/helpers');
-const { App, PrefetchModel } = require('models');
 const _ = require('lodash');
+const { searchHelper, prefetchHelper } = require('../../helpers');
+const { App, PrefetchModel } = require('../../../models');
 
 exports.showAllPrefetches = async (data) => {
   const { result, error } = await PrefetchModel.find({
@@ -29,9 +29,7 @@ exports.updatePrefetchList = async (data) => {
   if (!_.includes([app.owner, ...app.admins, ...app.moderators], data.userName)) {
     return { error: { status: 403, message: 'Access denied' } };
   }
-  const { result } = await App.findOneAndUpdate(
-    { host: app.host }, { prefetches: data.names },
-  );
+  const { result } = await App.findOneAndUpdate({ host: app.host }, { prefetches: data.names });
   return { result: { names: result.prefetches } };
 };
 

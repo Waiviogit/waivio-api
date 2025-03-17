@@ -1,4 +1,5 @@
-const { Wobj } = require('models');
+const _ = require('lodash');
+const { Wobj } = require('../../../models');
 const {
   OBJECT_TYPES,
   FIELDS_NAMES,
@@ -6,10 +7,9 @@ const {
   MAP_OBJECT_SEARCH_FIELDS,
   REMOVE_OBJ_STATUSES,
   MAP_OBJECT_TYPES,
-} = require('constants/wobjectsData');
-const { SHOP_SETTINGS_TYPE } = require('constants/sitesConstants');
-const { ERROR_OBJ, REDIS_KEYS, TTL_TIME } = require('constants/common');
-const _ = require('lodash');
+} = require('../../../constants/wobjectsData');
+const { SHOP_SETTINGS_TYPE } = require('../../../constants/sitesConstants');
+const { ERROR_OBJ, REDIS_KEYS, TTL_TIME } = require('../../../constants/common');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { User } = require('../../../models');

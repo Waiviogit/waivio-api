@@ -14,8 +14,10 @@ exports.updateImagesOnPages = async () => {
 };
 
 const updatePageContent = async (wobject) => {
-  const pageContents = _.filter(wobject.fields,
-    (field) => field.name === FIELDS_NAMES.PAGE_CONTENT);
+  const pageContents = _.filter(
+    wobject.fields,
+    (field) => field.name === FIELDS_NAMES.PAGE_CONTENT,
+  );
   for (const pageContent of pageContents) {
     await updateImageLinks(pageContent);
   }

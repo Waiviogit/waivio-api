@@ -1,6 +1,6 @@
-const { App, AppAffiliate } = require('models');
-const { ERROR_OBJ } = require('constants/common');
-const { AMAZON_LINKS_BY_COUNTRY } = require('constants/wobjectsData');
+const { App, AppAffiliate } = require('../../../models');
+const { ERROR_OBJ } = require('../../../constants/common');
+const { AMAZON_LINKS_BY_COUNTRY } = require('../../../constants/wobjectsData');
 
 const AFFILIATE_COUNTRY_TYPES = [
   ...Object.keys(AMAZON_LINKS_BY_COUNTRY).map((c) => ({ countryCode: c, type: 'amazon' })),

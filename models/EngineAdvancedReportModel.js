@@ -1,4 +1,4 @@
-const { EngineAdvancedReport } = require('database').models;
+const { EngineAdvancedReport } = require('../database').models;
 
 const insertMany = async (docs) => {
   try {

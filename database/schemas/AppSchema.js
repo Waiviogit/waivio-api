@@ -1,11 +1,11 @@
-const {
-  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE, BILLING_TYPE,
-} = require('constants/sitesConstants');
-const { REFERRAL_TYPES } = require('constants/referralData');
-const { SUPPORTED_CURRENCIES } = require('constants/common');
-const { APP_LANGUAGES } = require('constants/common');
 const mongoose = require('mongoose');
 const _ = require('lodash');
+const {
+  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE, BILLING_TYPE,
+} = require('../../constants/sitesConstants');
+const { REFERRAL_TYPES } = require('../../constants/referralData');
+const { SUPPORTED_CURRENCIES } = require('../../constants/common');
+const { APP_LANGUAGES } = require('../../constants/common');
 
 const { Schema } = mongoose;
 
@@ -165,6 +165,7 @@ const AppSchema = new Schema({
   prefetches: { type: [String] },
   objectControl: { type: Boolean, default: false },
   useForCanonical: { type: Boolean, default: false },
+  disableOwnerAuthority: { type: Boolean, default: false },
   adSense: { type: AdSense, default: () => ({}) },
   billingType: { type: String, default: BILLING_TYPE.CRYPTO },
 }, { timestamps: true });

@@ -1,4 +1,4 @@
-const { PAYPAL_HOST, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = require('constants/paypal');
+const { PAYPAL_HOST, PAYPAL_CLIENT_ID, PAYPAL_SECRET } = require('../../../constants/paypal');
 
 const getPayPalAccessTokenRest = async ({ clientId, clientSecret }) => {
   const url = `https://${PAYPAL_HOST}/v1/oauth2/token`;

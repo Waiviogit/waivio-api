@@ -1,11 +1,11 @@
-const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('constants/wobjectsData');
+const _ = require('lodash');
+const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const {
   Wobj, ObjectType, User,
-} = require('models');
-const _ = require('lodash');
-const { campaignsHelper, objectTypeHelper } = require('utilities/helpers');
-const { checkForSocialSite } = require('utilities/helpers/sitesHelper');
-const { SHOP_SETTINGS_TYPE } = require('../../../constants/sitesConstants');
+} = require('../../../models');
+const { campaignsHelper, objectTypeHelper } = require('../../helpers');
+const { checkForSocialSite } = require('../../helpers/sitesHelper');
+const { getAppAuthorities } = require('../../helpers/appHelper');
 
 const validateInput = ({ filter, sort }) => {
   if (filter) {
@@ -107,11 +107,7 @@ const getWobjWithFilters = async ({
     }
   }
   if (social) {
-    const authorities = [...app.authority];
-    const userShop = app?.configuration?.shopSettings?.type === SHOP_SETTINGS_TYPE.USER;
-    userShop
-      ? authorities.push(app?.configuration?.shopSettings?.value)
-      : authorities.push(app.owner);
+    const authorities = getAppAuthorities(app);
     aggregationPipeline.push({
       $match: {
         'authority.administrative': { $in: authorities },

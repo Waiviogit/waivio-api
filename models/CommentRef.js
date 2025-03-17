@@ -1,4 +1,4 @@
-const { CommentRef } = require('database').models;
+const { CommentRef } = require('../database').models;
 
 exports.create = async (data) => {
   const newCommentRef = new CommentRef(data);

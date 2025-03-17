@@ -1,8 +1,8 @@
 const _ = require('lodash');
-const { searchObjectTypes } = require('utilities/operations/search/searchTypes');
-const { searchUsers } = require('utilities/operations/search/searchUsers');
-const { searchWobjects } = require('utilities/operations/search/searchWobjects');
-const { getSessionApp } = require('utilities/helpers/sitesHelper');
+const { searchObjectTypes } = require('./searchTypes');
+const { searchUsers } = require('./searchUsers');
+const { searchWobjects } = require('./searchWobjects');
+const { getSessionApp } = require('../../helpers/sitesHelper');
 
 exports.getGlobalSearch = async ({
   searchString, userLimit, wobjectsLimit, objectsTypeLimit, sortByApp, onlyObjectTypes,

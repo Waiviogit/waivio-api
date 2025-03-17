@@ -1,4 +1,4 @@
-const { PayPalProduct } = require('database').models;
+const { PayPalProduct } = require('../database').models;
 
 const findOne = async ({ filter, projection, options }) => {
   try {

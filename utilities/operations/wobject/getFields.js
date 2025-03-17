@@ -1,15 +1,15 @@
 const _ = require('lodash');
-const { addDataToFields } = require('utilities/helpers/wObjectHelper');
-const engineOperations = require('utilities/hiveEngine/engineOperations');
-const { getWaivioAdminsAndOwner } = require('utilities/helpers/getWaivioAdminsAndOwnerHelper');
-const { getBlacklist, getWobjectFields, calculateApprovePercent } = require('utilities/helpers/wObjectHelper');
-const ObjectTypeModel = require('models/ObjectTypeModel');
-const wObjectModel = require('models/wObjectModel');
+const { addDataToFields } = require('../../helpers/wObjectHelper');
+const engineOperations = require('../../hiveEngine/engineOperations');
+const { getWaivioAdminsAndOwner } = require('../../helpers/getWaivioAdminsAndOwnerHelper');
+const { getBlacklist, getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
+const ObjectTypeModel = require('../../../models/ObjectTypeModel');
+const wObjectModel = require('../../../models/wObjectModel');
 const {
   FIELDS_NAMES, LIST_TYPES,
-} = require('constants/wobjectsData');
-const { postsUtil } = require('utilities/hiveApi');
-const { ERROR_OBJ } = require('constants/common');
+} = require('../../../constants/wobjectsData');
+const { postsUtil } = require('../../hiveApi');
+const { ERROR_OBJ } = require('../../../constants/common');
 
 const getOneField = async ({
   authorPermlink, body, name, locale = 'en-US',

@@ -1,4 +1,4 @@
-const { UserShopDeselect } = require('database').models;
+const { UserShopDeselect } = require('../database').models;
 
 const find = async ({ filter, projection, options }) => {
   try {

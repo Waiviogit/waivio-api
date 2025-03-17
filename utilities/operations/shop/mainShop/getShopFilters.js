@@ -1,11 +1,11 @@
-const { ObjectType } = require('models');
 const _ = require('lodash');
-const { objectTypeHelper } = require('utilities/helpers');
-const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
-const { SHOP_ITEM_RATINGS } = require('constants/shop');
-const shopHelper = require('utilities/helpers/shopHelper');
-const { redisGetter } = require('utilities/redis');
-const showTags = require('utilities/operations/objectType/showTags');
+const { ObjectType } = require('../../../../models');
+const { objectTypeHelper } = require('../../../helpers');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('../../../../constants/wobjectsData');
+const { SHOP_ITEM_RATINGS } = require('../../../../constants/shop');
+const shopHelper = require('../../../helpers/shopHelper');
+const { redisGetter } = require('../../../redis');
+const showTags = require('../../objectType/showTags');
 
 const getMainFilter = async () => {
   const tagCategoryFilters = [];

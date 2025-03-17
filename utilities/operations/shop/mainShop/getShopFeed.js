@@ -1,5 +1,5 @@
-const { User } = require('models');
 const _ = require('lodash');
+const { User } = require('../../../../models');
 const getShopDepartments = require('./getShopDepartments');
 const getDepartmentFeed = require('./getDepartmentFeed');
 

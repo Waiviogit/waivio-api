@@ -1,14 +1,14 @@
 const _ = require('lodash');
 const {
   Wobj, Campaign, User, wobjectSubscriptions,
-} = require('models');
+} = require('../../../models');
 const {
   REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
-} = require('constants/wobjectsData');
-const { CACHE_KEY, TTL_TIME } = require('constants/common');
-const { campaignsHelper, wObjectHelper } = require('utilities/helpers');
-const { getCountryCodeFromIp } = require('utilities/helpers/sitesHelper');
-const { getCachedData, setCachedData } = require('utilities/helpers/cacheHelper');
+} = require('../../../constants/wobjectsData');
+const { CACHE_KEY, TTL_TIME } = require('../../../constants/common');
+const { campaignsHelper, wObjectHelper } = require('../../helpers');
+const { getCountryCodeFromIp } = require('../../helpers/sitesHelper');
+const { getCachedData, setCachedData } = require('../../helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');

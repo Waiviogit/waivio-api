@@ -1,4 +1,4 @@
-const { PAYPAL_HOST } = require('constants/paypal');
+const { PAYPAL_HOST } = require('../../../constants/paypal');
 const { getPayPalAccessToken } = require('./auth');
 
 const createPayPalPlan = async ({

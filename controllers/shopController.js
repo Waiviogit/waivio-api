@@ -1,9 +1,9 @@
-const shop = require('utilities/operations/shop');
+const shop = require('../utilities/operations/shop');
 const {
   getCountryCodeFromIp,
   getIpFromHeaders,
-} = require('utilities/helpers/sitesHelper');
-const { User } = require('models');
+} = require('../utilities/helpers/sitesHelper');
+const { User } = require('../models');
 const validators = require('./validators');
 
 const getDepartments = async (req, res, next) => {

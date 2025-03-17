@@ -1,4 +1,4 @@
-const { vipTicketsModel } = require('models');
+const { vipTicketsModel } = require('../../../models');
 
 module.exports = async ({ ticket, note }) => {
   const { result, error } = await vipTicketsModel.updateTicket({ ticket, data: { note } });

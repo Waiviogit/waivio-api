@@ -1,10 +1,12 @@
-const image = require('utilities/images/image');
-const { prepareImage } = require('utilities/helpers/imagesHelper');
-const { ERROR_MESSAGE, IMAGE_SIZE } = require('constants/common');
+const image = require('../utilities/images/image');
+const { prepareImage } = require('../utilities/helpers/imagesHelper');
+const { ERROR_MESSAGE, IMAGE_SIZE } = require('../constants/common');
 
 const saveImage = async (req, res) => {
-  const { base64, fileName, size } = await prepareImage(req);
-  const { imageUrl, error } = await image.uploadInS3(base64, fileName, size);
+  const {
+    base64, fileName, size, originalFilename,
+  } = await prepareImage(req);
+  const { imageUrl, error } = await image.uploadInS3(base64, fileName, size, { originalFilename });
 
   if (error) {
     if (error === ERROR_MESSAGE.UNAVAILABLE) {

@@ -1,11 +1,11 @@
+const _ = require('lodash');
 const {
   Post, Comment, App, hiddenPostModel, mutedUserModel,
-} = require('models');
-const { getPostObjects } = require('utilities/helpers/postHelper');
-const { checkBlackListedComment } = require('utilities/helpers/commentHelper');
-const engineOperations = require('utilities/hiveEngine/engineOperations');
-const { postsUtil } = require('utilities/hiveApi');
-const _ = require('lodash');
+} = require('../../../models');
+const { getPostObjects } = require('../../helpers/postHelper');
+const { checkBlackListedComment } = require('../../helpers/commentHelper');
+const engineOperations = require('../../hiveEngine/engineOperations');
+const { postsUtil } = require('../../hiveApi');
 const asyncLocalStorage = require('../../../middlewares/context/context');
 
 /**

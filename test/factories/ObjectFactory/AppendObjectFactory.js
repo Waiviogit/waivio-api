@@ -6,7 +6,7 @@ const ObjectFactory = require('test/factories/ObjectFactory/ObjectFactory');
 
 const Create = async ({
   creator, name, weight, body, rootWobj, additionalFields = {}, tagCategory,
-  activeVotes, id, administrative, ownership, timestamp, objectType, map, permlink, startDate, endDate
+  activeVotes, id, administrative, ownership, timestamp, objectType, map, permlink, startDate, endDate,
 } = {}) => {
   const appendObject = {
     _id: objectIdFromDateString(timestamp || moment.utc().valueOf()),

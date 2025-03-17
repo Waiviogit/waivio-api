@@ -13,9 +13,7 @@ const Create = async ({
   if (updatesBlacklist) data.updates_blacklist = updatesBlacklist;
   if (supposedUpdates) data.supposed_updates = supposedUpdates;
 
-  const objectType = await ObjectType.findOneAndUpdate(
-    { name: data.name }, data, { upsert: true, new: true, setDefaultsOnInsert: true },
-  );
+  const objectType = await ObjectType.findOneAndUpdate({ name: data.name }, data, { upsert: true, new: true, setDefaultsOnInsert: true });
   return objectType._doc;
 };
 

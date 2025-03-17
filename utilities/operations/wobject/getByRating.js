@@ -1,15 +1,15 @@
-const { Wobj } = require('models');
-const { redis, redisGetter, redisSetter } = require('utilities/redis');
-const { OBJECT_TYPES, FIELDS_NAMES } = require('constants/wobjectsData');
-const { REDIS_KEYS, TTL_TIME } = require('constants/common');
 const axios = require('axios');
 const moment = require('moment/moment');
 const _ = require('lodash');
+const { Wobj } = require('../../../models');
+const { redis, redisGetter, redisSetter } = require('../../redis');
+const { OBJECT_TYPES, FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const { REDIS_KEYS, TTL_TIME } = require('../../../constants/common');
 const {
   getCachedData,
   setCachedData,
-} = require('utilities/helpers/cacheHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
+} = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const DAYS_TO_UPDATE_SITES_SET = 10;
 

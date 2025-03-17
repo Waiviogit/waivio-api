@@ -1,9 +1,9 @@
 const _ = require('lodash');
-const { App } = require('models');
-const { redisSetter } = require('utilities/redis');
-const { NOTIFICATION } = require('constants/sitesConstants');
-const manage = require('utilities/operations/sites/manage');
-const notificationsHelper = require('utilities/helpers/notificationsHelper');
+const { App } = require('../../../models');
+const { redisSetter } = require('../../redis');
+const { NOTIFICATION } = require('../../../constants/sitesConstants');
+const manage = require('./manage');
+const notificationsHelper = require('../../helpers/notificationsHelper');
 
 exports.balanceNotification = async () => {
   const { result } = await App.find({ inherited: true, canBeExtended: false });

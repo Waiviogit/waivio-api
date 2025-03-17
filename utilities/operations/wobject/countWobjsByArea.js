@@ -1,5 +1,5 @@
-const { Wobj } = require('models');
-const searchHelper = require('utilities/helpers/searchHelper');
+const { Wobj } = require('../../../models');
+const searchHelper = require('../../helpers/searchHelper');
 
 module.exports = async ({
   objectType,

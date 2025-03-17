@@ -1,16 +1,21 @@
 /* eslint-disable camelcase */
+const _ = require('lodash');
 const {
   Wobj, hiddenPostModel, mutedUserModel, Post,
-} = require('models');
-const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('constants/wobjectsData');
-const { TOKEN } = require('constants/common');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
-const jsonHelper = require('utilities/helpers/jsonHelper');
-const _ = require('lodash');
+} = require('../../../models');
+const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('../../../constants/wobjectsData');
+const { TOKEN } = require('../../../constants/common');
+const wObjectHelper = require('../../helpers/wObjectHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
 
 const getRelistedLinks = async (authorPermlink) => {
   const relisted = await Wobj.findRelistedObjectsByPermlink(authorPermlink);
   return relisted.map((el) => el?.author_permlink);
+};
+
+const makeEscapedRegex = (link) => {
+  const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
+  return new RegExp(`^${escapedLink}`);
 };
 
 const POST_RETRIEVER = {
@@ -158,17 +163,17 @@ const makeConditionForLink = ({ condition, wObject }) => {
   if (!urlField) return { condition };
   const { body } = urlField;
 
-  const escapedLink = body.slice(0, -1).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-  const regex = new RegExp(`^${escapedLink}`);
-
-  // when body ends with * it means that al path after * is valid, if no * - strict eq
-  const condition2 = {
-    links: body.endsWith('*') ? { $regex: regex } : body,
-  };
+  const initialLink = body.endsWith('*') ? body.slice(0, -1) : body;
+  const regex = makeEscapedRegex(initialLink);
 
   return {
     condition: {
-      $or: [_.pick(condition, 'wobjects.author_permlink'), condition2],
+      $or: [
+        _.pick(condition, 'wobjects.author_permlink'),
+        {
+          links: { $regex: regex },
+        },
+      ],
       ..._.omit(condition, 'wobjects.author_permlink'),
     },
   };
@@ -197,11 +202,12 @@ const makeConditionSocialLink = ({ processedObj }) => {
     const keyExist = !!socialLinksMap[parsedConditionKey];
     if (id && keyExist) {
       const link = makeSocialLink(parsedConditionKey, id);
-
-      const escapedLink = link.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // Escape special regex characters
-      const regex = new RegExp(`^${escapedLink}`);
+      const regex = makeEscapedRegex(link);
 
       conditionArr.push({ links: { $regex: regex } });
+      if (socialLinksMap[parsedConditionKey] === socialLinksMap.linkFacebook) {
+        conditionArr.push({ links: { $regex: makeEscapedRegex(`https://www.facebook.com/${id}`) } });
+      }
     }
   }
 

@@ -1,4 +1,4 @@
-const { WobjectSubscriptions } = require('database').models;
+const { WobjectSubscriptions } = require('../database').models;
 
 exports.populate = async ({
   condition, select, sort, skip, limit, populate,

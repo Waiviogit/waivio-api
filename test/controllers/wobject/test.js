@@ -360,8 +360,10 @@ describe('On wobjController', async () => {
           expect(result.body).to.be.an('array').that.is.empty;
         });
         it('should not return post not in supported types', async () => {
-          await App.updateOne({ host: inheritedApp.host },
-            { $set: { supported_object_types: [faker.random.string()] } });
+          await App.updateOne(
+            { host: inheritedApp.host },
+            { $set: { supported_object_types: [faker.random.string()] } },
+          );
           result = await chai.request(app)
             .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
             .send({
@@ -477,8 +479,10 @@ describe('On wobjController', async () => {
           expect(result.body).to.be.an('array').that.is.empty;
         });
         it('should not return post not in supported types', async () => {
-          await App.updateOne({ host: extendededApp.host },
-            { $set: { supported_object_types: [faker.random.string()] } });
+          await App.updateOne(
+            { host: extendededApp.host },
+            { $set: { supported_object_types: [faker.random.string()] } },
+          );
           result = await chai.request(app)
             .post(`/api/wobject/${wobj.wobject.author_permlink}/posts`)
             .send({

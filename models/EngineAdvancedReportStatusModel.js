@@ -1,4 +1,4 @@
-const { EngineAdvancedReportStatus } = require('database').models;
+const { EngineAdvancedReportStatus } = require('../database').models;
 
 const create = async (doc) => {
   try {

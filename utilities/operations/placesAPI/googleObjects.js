@@ -1,7 +1,7 @@
 const axios = require('axios');
 const _ = require('lodash');
-const image = require('utilities/images/image');
-const { PlacesApiAccessModel } = require('models');
+const image = require('../../images/image');
+const { PlacesApiAccessModel } = require('../../../models');
 const { createHashFromBase64 } = require('../../helpers/imagesHelper');
 
 const ACCESS_TYPE = {

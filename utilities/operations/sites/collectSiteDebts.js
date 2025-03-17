@@ -1,13 +1,13 @@
 const _ = require('lodash');
 const Sentry = require('@sentry/node');
-const { sendSentryNotification } = require('utilities/helpers/sentryHelper');
-const { App } = require('models');
-const { redisGetter } = require('utilities/redis');
-const objectBotRequests = require('utilities/requests/objectBotRequests');
-const { OBJECT_BOT } = require('constants/requestData');
+const { sendSentryNotification } = require('../../helpers/sentryHelper');
+const { App } = require('../../../models');
+const { redisGetter } = require('../../redis');
+const objectBotRequests = require('../../requests/objectBotRequests');
+const { OBJECT_BOT } = require('../../../constants/requestData');
 const {
   redisStatisticsKey, FEE, STATUSES, TEST_DOMAINS, PAYMENT_DESCRIPTION,
-} = require('constants/sitesConstants');
+} = require('../../../constants/sitesConstants');
 
 exports.dailyDebt = async (timeout = 200) => {
   const { result: apps, error } = await App.find(

@@ -1,7 +1,7 @@
-const { userUtil } = require('utilities/hiveApi');
-const { GUEST_NAME } = require('constants/regExp');
-const { User } = require('models');
 const moment = require('moment');
+const { userUtil } = require('../../hiveApi');
+const { GUEST_NAME } = require('../../../constants/regExp');
+const { User } = require('../../../models');
 
 module.exports = async (name) => {
   if (!name) return { error: { status: 404, message: 'Not Found' } };

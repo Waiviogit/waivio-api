@@ -1,4 +1,4 @@
-const { PageDraft } = require('models');
+const { PageDraft } = require('../../../models');
 
 exports.createOrUpdateDraft = async ({
   user, authorPermlink, body,

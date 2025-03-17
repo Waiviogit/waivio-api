@@ -2,8 +2,8 @@ const _ = require('lodash');
 const {
   App,
   Wobj,
-} = require('models');
-const wObjectHelper = require('utilities/helpers/wObjectHelper');
+} = require('../../../models');
+const wObjectHelper = require('../../helpers/wObjectHelper');
 const asyncLocalStorage = require('../../../middlewares/context/context');
 
 module.exports = async (data) => {

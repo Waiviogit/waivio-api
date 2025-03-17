@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { REQUIREDFIELDS_POST } = require('constants/wobjectsData.js');
-const { wobjectSubscriptions, Wobj } = require('models');
+const { REQUIREDFIELDS_POST } = require('../../../constants/wobjectsData');
+const { wobjectSubscriptions, Wobj } = require('../../../models');
 
 module.exports = async (value) => {
   const { wobjects = [] } = await wobjectSubscriptions.getFollowings({ follower: value.name });
@@ -14,8 +14,10 @@ module.exports = async (value) => {
   );
   if (error) return { error };
   result.forEach((wObject) => {
-    wObject.fields = _.filter(wObject.fields,
-      (field) => _.includes(REQUIREDFIELDS_POST, field.name));
+    wObject.fields = _.filter(
+      wObject.fields,
+      (field) => _.includes(REQUIREDFIELDS_POST, field.name),
+    );
   });
   return { wobjects: result };
 };

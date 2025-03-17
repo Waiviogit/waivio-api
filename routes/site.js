@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const SitesController = require('controllers/sitesController');
+const SitesController = require('../controllers/sitesController');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
 
 const sitesRoutes = new Router();

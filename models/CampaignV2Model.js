@@ -1,4 +1,4 @@
-const { CampaignV2 } = require('database').models;
+const { CampaignV2 } = require('../database').models;
 
 const find = async ({ filter, projection = {}, options = {} }) => {
   try {

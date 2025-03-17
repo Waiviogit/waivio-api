@@ -26,9 +26,7 @@ const getDepartments = async () => {
 
 const pullRelated = async ({ name, relate }) => {
   try {
-    return Department.updateOne(
-      { name }, { $pull: { related: relate } },
-    ).lean();
+    return Department.updateOne({ name }, { $pull: { related: relate } }).lean();
   } catch (error) {
     return [];
   }
