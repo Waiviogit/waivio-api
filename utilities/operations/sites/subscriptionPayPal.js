@@ -87,7 +87,7 @@ const createBasicSubscriptionForWebsite = async ({ host }) => {
 };
 
 const payPalBasicSubscription = async ({ userName, host }) => {
-  const { result: app } = App.findOne({ host, owner: userName, status: STATUSES.ACTIVE });
+  const { result: app } = await App.findOne({ host, owner: userName, status: STATUSES.ACTIVE });
   if (!app) return { error: { status: 401, message: 'Not Authorized' } };
 
   const { result, error } = await createBasicSubscriptionForWebsite({ host });
