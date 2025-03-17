@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 const _ = require('lodash');
 const {
-  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE,
+  STATUSES, SUPPORTED_COLORS, SHOP_SETTINGS_TYPE, BILLING_TYPE,
 } = require('../../constants/sitesConstants');
 const { REFERRAL_TYPES } = require('../../constants/referralData');
 const { SUPPORTED_CURRENCIES } = require('../../constants/common');
@@ -51,9 +51,9 @@ const AppCommissions = new Schema({
 }, { _id: false });
 
 const MapPoints = new Schema({
-  topPoint: { type: [Number], required: true }, //  longitude(-180..180),  latitude(-90..90)
-  bottomPoint: { type: [Number], required: true }, //  longitude(-180..180),  latitude(-90..90)
-  center: { type: [Number], required: true }, // longitude(-180..180), latitude(-90..90)
+  topPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  bottomPoint: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
+  center: { type: [Number], required: true }, // First element - longitude(-180..180), second element - latitude(-90..90)
   zoom: { type: Number, required: true },
 }, { _id: false });
 
@@ -167,6 +167,7 @@ const AppSchema = new Schema({
   useForCanonical: { type: Boolean, default: false },
   disableOwnerAuthority: { type: Boolean, default: false },
   adSense: { type: AdSense, default: () => ({}) },
+  billingType: { type: String, default: BILLING_TYPE.CRYPTO },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {
