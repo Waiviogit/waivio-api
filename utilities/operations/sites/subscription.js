@@ -35,64 +35,6 @@ const payPalBasicSubscription = async ({ userName, host }) => {
   return { result };
 };
 
-// {
-//   "id": "PROD-4TM73819GL539972D",
-//   "name": "myhost.com",
-//   "description": "web hosting",
-//   "create_time": "2025-02-12T13:39:46Z",
-//   "links": [
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4TM73819GL539972D",
-//     "rel": "self",
-//     "method": "GET"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/catalogs/products/PROD-4TM73819GL539972D",
-//     "rel": "edit",
-//     "method": "PATCH"
-//   }
-// ]
-// }
-
-// {
-//   "id": "P-3ES3921951582440TM6WKJMY",
-//   "product_id": "PROD-4TM73819GL539972D",
-//   "name": "Standard Monthly Subscription",
-//   "status": "ACTIVE",
-//   "description": "A standard subscription for $30 per month",
-//   "usage_type": "LICENSED",
-//   "create_time": "2025-02-12T13:40:03Z",
-//   "links": [
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY",
-//     "rel": "self",
-//     "method": "GET",
-//     "encType": "application/json"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY",
-//     "rel": "edit",
-//     "method": "PATCH",
-//     "encType": "application/json"
-//   },
-//   {
-//     "href": "https://api.sandbox.paypal.com/v1/billing/plans/P-3ES3921951582440TM6WKJMY/deactivate",
-//     "rel": "self",
-//     "method": "POST",
-//     "encType": "application/json"
-//   }
-// ]
-// }
-
-/// SUCSESS
-
-// {
-//   "orderID": "35N70380LR5035843",
-//   "subscriptionID": "I-R78NHMNWKV04",
-//   "facilitatorAccessToken": "A21AAJFoULalrnJ5Gpzl4QTE7Kz-XtX5dvu4JZtqKnC067jUrKfn1X2KiJ56QEkGXINMeE96WqVXv7-PjIBzVy5tGJHjVfEjA",
-//   "paymentSource": "paypal"
-// }
-
 module.exports = {
   payPalBasicSubscription,
 };
