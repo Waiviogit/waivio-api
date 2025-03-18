@@ -152,7 +152,7 @@ const getSubscriptionByHost = async ({ host }) => {
   if (!subscription) return { error: { status: 404, message: 'Subscription not found' } };
 
   const { result, error } = await getPayPalSubscriptionDetails({ subscriptionId: subscription.id });
-  if (!error) return { error };
+  if (error) return { error };
   return { result };
 };
 
