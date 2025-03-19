@@ -85,6 +85,7 @@ exports.FIELDS_NAMES = {
   PROMOTION: 'promotion',
   GROUP_LAST_ACTIVITY: 'groupLastActivity',
   GROUP_MIN_EXPERTISE: 'groupMinExpertise',
+  NUTRITION: 'nutrition',
 };
 
 exports.LIST_TYPES = {
