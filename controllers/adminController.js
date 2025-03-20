@@ -81,8 +81,10 @@ const createCredits = async (req, res, next) => {
 
   if (!value) return;
   const { admin } = req.headers;
-  const { error: authError } = await authoriseUser.authorise(admin);
+  const { error: adminError } = await authoriseUser.checkAdmin(admin);
+  if (adminError) return next(adminError);
 
+  const { error: authError } = await authoriseUser.authorise(admin);
   if (authError) return next(authError);
   const { result, error } = await credits.createCreditsUser({ ...value, admin });
 

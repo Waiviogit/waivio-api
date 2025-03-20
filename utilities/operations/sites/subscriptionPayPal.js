@@ -8,6 +8,7 @@ const {
 } = require('../../../constants/sitesConstants');
 const { createPayPalProduct } = require('../paypal/products');
 const { createPayPalPlan, getPayPalSubscriptionDetails, cancelPayPalSubscription } = require('../paypal/subscriptions');
+const authoriseUser = require('../../authorization/authoriseUser');
 
 const generateRequestId = () => `REQ-${crypto.randomUUID()}`;
 
@@ -185,7 +186,11 @@ const checkActiveSubscriptionByHost = async ({ host }) => {
   return { result: valid };
 };
 
-const cancelSubscriptionByHost = async ({ host, reason }) => {
+const cancelSubscriptionByHost = async ({ host, reason, userName }) => {
+  const { valid: adminUser } = await authoriseUser.checkAdmin(userName);
+  const { result: app } = await App.findOne({ host, owner: userName });
+  if (!adminUser && !app) return { error: { status: 401, message: 'Not Authorised' } };
+
   const { result: product } = await PayPalProductModel.findOneByName(host);
   if (!product) return { error: { status: 404, message: 'Subscription product not found' } };
   const { result: subscription } = await PayPalSubscriptionModel.findOne({
