@@ -13,7 +13,7 @@ const createPayPalPlan = async ({
     billing_cycles: [
       {
         frequency: {
-          interval_unit: 'MONTH',
+          interval_unit: process.env.NODE_ENV === 'staging' ? 'DAY' : 'MONTH',
           interval_count: 1,
         },
         tenure_type: 'REGULAR',
