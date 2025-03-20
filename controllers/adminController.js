@@ -74,6 +74,18 @@ const manageView = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const subscriptionsView = async (req, res, next) => {
+  const { admin } = req.headers;
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { error } = await authoriseUser.checkAdmin(admin);
+  if (error) return next(error);
+
+  const result = await sites.subscriptionView();
+
+  return res.status(200).json(result);
+};
+
 const getAdmins = async (req, res, next) => res.status(200).json(WAIVIO_ADMINS_ENV);
 
 const createCredits = async (req, res, next) => {
@@ -100,4 +112,5 @@ module.exports = {
   manageView,
   getAdmins,
   createCredits,
+  subscriptionsView
 };

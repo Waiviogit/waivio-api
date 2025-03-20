@@ -67,6 +67,57 @@ module.exports = {
       },
     },
   },
+  '/api/admins/sites/subscriptions': {
+    get: {
+      tags: ['admins'],
+      description: 'get manage view',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                userName: {
+                  type: 'string',
+                },
+                host: {
+                  type: 'string',
+                },
+                status: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
   '/api/admins/vip-tickets': {
     get: {
       tags: ['admins'],

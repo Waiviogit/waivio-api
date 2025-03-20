@@ -15,6 +15,8 @@ adminRoutes.route('/admins/vip-tickets')
 
 adminRoutes.route('/admins/sites')
   .get(reqTimeMonitor, adminController.manageView);
+adminRoutes.route('/admins/sites/subscriptions')
+  .get(reqTimeMonitor, adminController.subscriptionsView);
 
 adminRoutes.route('/admins')
   .get(reqTimeMonitor, adminController.getAdmins);
