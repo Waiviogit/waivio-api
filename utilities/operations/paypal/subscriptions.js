@@ -113,7 +113,7 @@ const cancelPayPalSubscription = async ({ subscriptionId, requestId, reason }) =
       throw new Error(`HTTP error! Status: ${response.status}`);
     }
 
-    return { result: { success: true, requestId } };
+    return { result: { success: true, subscriptionId } };
   } catch (error) {
     console.error('Error cancel PayPal subscription:', error);
     return { error };

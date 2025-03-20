@@ -2,6 +2,7 @@ const BigNumber = require('bignumber.js');
 const _ = require('lodash');
 const {
   PAYMENT_TYPES, FEE, INACTIVE_STATUSES, POSITIVE_SUM_TYPES,
+  BILLING_TYPE,
 } = require('../../../constants/sitesConstants');
 const { sitesHelper } = require('../../helpers');
 
@@ -64,6 +65,7 @@ exports.getManagePage = async ({ userName }) => {
 const getDailyCost = (websites) => _
   .reduce(websites, (acc, site) => {
     if (_.includes(INACTIVE_STATUSES, site.status)) return BigNumber(FEE.perInactive).plus(acc);
+    if (site.billingType === BILLING_TYPE.PAYPAL_SUBSCRIPTION) return acc;
     return site.averageDau < FEE.minimumValue / FEE.perUser
       ? BigNumber(FEE.minimumValue).plus(acc)
       : BigNumber(site.averageDau).multipliedBy(FEE.perUser).plus(acc);
