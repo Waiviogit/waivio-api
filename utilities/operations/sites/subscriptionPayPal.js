@@ -7,7 +7,7 @@ const {
   STATUSES, BILLING_TYPE,
 } = require('../../../constants/sitesConstants');
 const { createPayPalProduct } = require('../paypal/products');
-const { createPayPalPlan, getPayPalSubscriptionDetails } = require('../paypal/subscriptions');
+const { createPayPalPlan, getPayPalSubscriptionDetails, cancelPayPalSubscription } = require('../paypal/subscriptions');
 
 const generateRequestId = () => `REQ-${crypto.randomUUID()}`;
 
@@ -185,10 +185,31 @@ const checkActiveSubscriptionByHost = async ({ host }) => {
   return { result: valid };
 };
 
+const cancelSubscriptionByHost = async ({ host, reason }) => {
+  const { result: product } = await PayPalProductModel.findOneByName(host);
+  if (!product) return { error: { status: 404, message: 'Subscription product not found' } };
+  const { result: subscription } = await PayPalSubscriptionModel.findOne({
+    filter: {
+      status: SUBSCRIPTION_STATUS.ACTIVE,
+      product_id: product.id,
+    },
+  });
+  if (!subscription) return { error: { status: 404, message: 'Subscription not found' } };
+
+  const { result, error } = await cancelPayPalSubscription({
+    subscriptionId: subscription.id,
+    reason,
+    requestId: generateRequestId(),
+  });
+  if (error) return { error };
+  return { result };
+};
+
 module.exports = {
   payPalBasicSubscription,
   activeSubscription,
   getSubscriptionIdByHost,
   checkActiveSubscriptionByHost,
   getSubscriptionByHost,
+  cancelSubscriptionByHost,
 };

@@ -182,3 +182,9 @@ exports.payPalActivateSchema = Joi.object().keys({
 exports.payPalSubCheckSchema = Joi.object().keys({
   host: Joi.string().required(),
 });
+
+exports.payPalCanselSubscriptionSchema = Joi.object().keys({
+  host: Joi.string().required(),
+  userName: Joi.string().required(),
+  reason: Joi.string().min(1).max(128).required(),
+});

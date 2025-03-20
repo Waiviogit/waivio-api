@@ -505,3 +505,18 @@ exports.checkPayPalSubscription = async (req, res, next) => {
   if (error) return next(error);
   return res.status(200).json({ result });
 };
+
+exports.payPalCancelSubscription = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.payPalCanselSubscriptionSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, error } = await subscription.cancelSubscriptionByHost(value);
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};

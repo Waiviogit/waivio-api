@@ -71,6 +71,8 @@ sitesRoutes.route('/sites/paypal/subscription/id')
   .post(reqTimeMonitor, SitesController.payPalSubscriptionId);
 sitesRoutes.route('/sites/paypal/subscription/details')
   .post(reqTimeMonitor, SitesController.payPalSubscription);
+sitesRoutes.route('/sites/paypal/subscription/cancel')
+  .post(reqTimeMonitor, SitesController.payPalCancelSubscription);
 sitesRoutes.route('/sites/paypal/subscription/check')
   .post(reqTimeMonitor, SitesController.checkPayPalSubscription);
 

@@ -55,7 +55,6 @@ const createPayPalPlan = async ({
     }
 
     const data = await response.json();
-    console.log('PayPal Plan Created:', data);
     return { result: data };
   } catch (error) {
     console.error('Error creating PayPal plan:', error);
@@ -90,7 +89,40 @@ const getPayPalSubscriptionDetails = async ({ subscriptionId }) => {
   }
 };
 
+const cancelPayPalSubscription = async ({ subscriptionId, requestId, reason }) => {
+  const url = `https://${PAYPAL_HOST}/v1/billing/subscriptions/${subscriptionId}/cancel`;
+
+  const payload = {
+    reason,
+  };
+
+  try {
+    const accessToken = await getPayPalAccessToken();
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+        'PayPal-Request-Id': requestId,
+      },
+      body: JSON.stringify(payload),
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    return { result: data };
+  } catch (error) {
+    console.error('Error cancel PayPal subscription:', error);
+    return { error };
+  }
+};
+
 module.exports = {
   createPayPalPlan,
   getPayPalSubscriptionDetails,
+  cancelPayPalSubscription,
 };

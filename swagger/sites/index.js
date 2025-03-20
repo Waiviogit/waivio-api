@@ -2051,4 +2051,56 @@ module.exports = {
       },
     },
   },
+  '/api/sites/paypal/subscription/cancel': {
+    post: {
+      tags: [
+        'sites',
+      ],
+      summary: 'subscription cancel',
+      description: 'subscription cancel by host',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'access-token',
+          in: 'header',
+          description: 'access-token',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'params',
+          in: 'body',
+          schema: {
+            type: 'object',
+            properties: {
+              host: {
+                type: 'string',
+              },
+              userName: {
+                type: 'string',
+              },
+              reason: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'object',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
