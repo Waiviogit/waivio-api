@@ -67,7 +67,7 @@ module.exports = {
       },
     },
   },
-  '/api/admins/sites/creits': {
+  '/api/admins/sites/credits': {
     get: {
       tags: ['admins'],
       description: 'get manage view',
