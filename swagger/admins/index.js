@@ -67,6 +67,66 @@ module.exports = {
       },
     },
   },
+  '/api/admins/sites/creits': {
+    get: {
+      tags: ['admins'],
+      description: 'get manage view',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'skip',
+          in: 'query',
+          required: false,
+          type: 'number',
+        },
+        {
+          name: 'limit',
+          in: 'query',
+          required: false,
+          type: 'number',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  $ref: '#/definitions/WebsitePayments',
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
   '/api/admins/sites/subscriptions': {
     get: {
       tags: ['admins'],

@@ -104,6 +104,19 @@ const createCredits = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const creditsView = async (req, res, next) => {
+  const value = validators.validate(req.query, validators.admin.creditsView, next);
+  const { admin } = req.headers;
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { error } = await authoriseUser.checkAdmin(admin);
+  if (error) return next(error);
+
+  const result = await sites.creditsView(value);
+
+  return res.status(200).json(result);
+};
+
 module.exports = {
   getWhitelist,
   setWhitelist,
@@ -112,5 +125,6 @@ module.exports = {
   manageView,
   getAdmins,
   createCredits,
-  subscriptionsView
+  subscriptionsView,
+  creditsView,
 };

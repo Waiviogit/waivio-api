@@ -1,4 +1,27 @@
 module.exports = {
+  WebsitePayments: {
+    type: 'object',
+    properties: {
+      userName: {
+        type: 'string',
+      },
+      amount: {
+        type: 'number',
+      },
+      type: {
+        type: 'string',
+      },
+      description: {
+        type: 'string',
+      },
+      createdAt: {
+        type: 'string',
+      },
+      updatedAt: {
+        type: 'string',
+      },
+    },
+  },
   hashtagCount: {
     type: 'object',
     properties: {

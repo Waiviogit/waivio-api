@@ -1,7 +1,10 @@
 const _ = require('lodash');
 const manage = require('../sites/manage');
-const { App } = require('../../../models');
-const { BILLING_TYPE } = require('../../../constants/sitesConstants');
+const { App, websitePayments } = require('../../../models');
+const {
+  BILLING_TYPE,
+  PAYMENT_TYPES,
+} = require('../../../constants/sitesConstants');
 
 const sortUserNames = (users) => _.sortBy(users, [
   (user) => user.userName.includes('_'),
@@ -75,7 +78,23 @@ const subscriptionView = async () => {
   return sortUserNames(users);
 };
 
+const creditsView = async ({ skip, limit }) => {
+
+  const { result } = await websitePayments.aggregate([
+    { $match: { type: PAYMENT_TYPES.CREDIT } },
+    { $sort: { _id: -1 } },
+    { $skip: skip },
+    { $limit: limit + 1 },
+  ]);
+
+  return {
+    result: _.take(result, limit),
+    hasMore: result?.length > limit,
+  };
+};
+
 module.exports = {
   manageView,
   subscriptionView,
+  creditsView,
 };
