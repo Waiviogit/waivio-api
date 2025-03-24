@@ -61,11 +61,15 @@ const subscriptionView = async () => {
 
     },
     {
+      $group: {
+        _id: '$owner',
+        websites: { $push: { status: '$status', host: '$host' } },
+      },
+    },
+    {
       $project: {
-        userName: '$owner',
-        status: 1,
-        host: 1,
-        _id: 0,
+        userName: '$_id',
+        websites: 1,
       },
     },
     {
@@ -79,7 +83,6 @@ const subscriptionView = async () => {
 };
 
 const creditsView = async ({ skip, limit }) => {
-
   const { result } = await websitePayments.aggregate([
     { $match: { type: PAYMENT_TYPES.CREDIT } },
     { $sort: { _id: -1 } },
