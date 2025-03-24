@@ -7,7 +7,9 @@ const {
   STATUSES, BILLING_TYPE,
 } = require('../../../constants/sitesConstants');
 const { createPayPalProduct } = require('../paypal/products');
-const { createPayPalPlan, getPayPalSubscriptionDetails, cancelPayPalSubscription } = require('../paypal/subscriptions');
+const {
+  createPayPalPlan, getPayPalSubscriptionDetails, cancelPayPalSubscription, showPlanDetails,
+} = require('../paypal/subscriptions');
 const authoriseUser = require('../../authorization/authoriseUser');
 
 const generateRequestId = () => `REQ-${crypto.randomUUID()}`;
@@ -17,9 +19,19 @@ const SUBSCRIPTION_STATUS = {
   EXPIRED: 'EXPIRED',
 };
 
-const validateSubscription = (subscription) => {
+const validateSubscription = async (subscription) => {
   if (subscription.status === SUBSCRIPTION_STATUS.ACTIVE) return true;
-  return moment(subscription?.billing_info?.last_payment?.time).add(30, 'days').isAfter(moment());
+
+  const { result } = await showPlanDetails(subscription.plan_id);
+  if (!result) return false;
+
+  const billing = _.find(result.billing_cycles, { tenure_type: 'REGULAR' });
+  if (!billing) return false;
+  const { interval_unit: unit, interval_count: amount } = billing.frequency;
+
+  return moment(subscription?.billing_info?.last_payment?.time)
+    .add(amount, unit.toLocaleLowerCase())
+    .isAfter(moment());
 };
 
 const findOrCreateProduct = async ({ host, requestId }) => {
@@ -103,7 +115,7 @@ const activeSubscription = async ({ subscriptionId, host, userName }) => {
 
   const { result, error } = await getPayPalSubscriptionDetails({ subscriptionId });
   if (error) return { error };
-  const valid = validateSubscription(result);
+  const valid = await validateSubscription(result);
   if (!valid) return { error: { status: 401, message: 'Subscription expired' } };
 
   const { result: plan } = await PayPalPlanModel.findOneById(result.plan_id);
@@ -174,7 +186,7 @@ const checkActiveSubscriptionByHost = async ({ host }) => {
   const { result, error } = await getPayPalSubscriptionDetails({ subscriptionId: subscription.id });
   if (error) return { result: false };
 
-  const valid = validateSubscription(result);
+  const valid = await validateSubscription(result);
   if (!valid) {
     await PayPalSubscriptionModel.updateOne({
       filter: { id: subscription.id },

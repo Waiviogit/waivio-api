@@ -120,8 +120,36 @@ const cancelPayPalSubscription = async ({ subscriptionId, requestId, reason }) =
   }
 };
 
+const showPlanDetails = async (id) => {
+  const url = `https://${PAYPAL_HOST}/v1/billing/plans/${id}`;
+
+  try {
+    const accessToken = await getPayPalAccessToken();
+    const response = await fetch(url, {
+      method: 'GET',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+
+    const data = await response.json();
+
+    return { result: data };
+  } catch (error) {
+    console.error('Error fetching PayPal subscription:', error);
+    return { error };
+  }
+};
+
 module.exports = {
   createPayPalPlan,
   getPayPalSubscriptionDetails,
   cancelPayPalSubscription,
+  showPlanDetails,
 };
