@@ -70,6 +70,7 @@ const subscriptionView = async () => {
       $project: {
         userName: '$_id',
         websites: 1,
+        _id: 0,
       },
     },
     {
