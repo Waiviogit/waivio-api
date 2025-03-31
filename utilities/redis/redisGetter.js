@@ -70,7 +70,7 @@ exports.getTrendFeedCache = async ({
 
 exports.getTagCategories = async ({ key, start, end }) => {
   try {
-    return { tags: await tagCategoriesClient.zrange(key, start, end, 'REV') };
+    return { tags: await tagCategoriesClient.zrevrange(key, start, end) };
   } catch (error) {
     return { error };
   }
