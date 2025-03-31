@@ -16,7 +16,6 @@ const setSiteActiveUser = async ({ userAgent, host, ip }) => {
   });
 
   if (bot) return;
-  // todo waivio and social sites statistic overcount
   await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
 };
 
