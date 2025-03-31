@@ -12,19 +12,19 @@ const {
 const { TOP_WOBJ_USERS_KEY, FIELDS_NAMES } = require('../../constants/wobjectsData');
 const { LANGUAGES } = require('../../constants/common');
 
-exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.SADD(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
+exports.addTopWobjUsers = async (permlink, ids) => mainFeedsCacheClient.sadd(`${TOP_WOBJ_USERS_KEY}:${permlink}`, ...ids);
 
 /**
  * Set active users to redis for collect statistics and invoicing
  */
-exports.addSiteActiveUser = async (key, ip) => appUsersStatistics.SADD(key, ip);
+exports.addSiteActiveUser = async (key, ip) => appUsersStatistics.sadd(key, ip);
 
 /**
  * Add user name to namespace of currently importing users
  * @param userName {String}
  * @returns {Promise<void>}
  */
-exports.addImportedUser = async (userName) => importUserClient.SET(`import_user:${userName}`, new Date().toISOString());
+exports.addImportedUser = async (userName) => importUserClient.set(`import_user:${userName}`, new Date().toISOString());
 
 /**
  * Add user name to namespace of currently importing users
@@ -32,13 +32,13 @@ exports.addImportedUser = async (userName) => importUserClient.SET(`import_user:
  * @param errorMessage {String}
  * @returns {Promise<void>}
  */
-exports.setImportedUserError = async (userName, errorMessage) => importUserClient.SET(`import_user_error:${userName}`, errorMessage);
+exports.setImportedUserError = async (userName, errorMessage) => importUserClient.set(`import_user_error:${userName}`, errorMessage);
 
 /**
  * @param key {String}
  * @param client {}
  */
-exports.deleteKey = async ({ key, client = importUserClient }) => client.DEL(key);
+exports.deleteKey = async ({ key, client = importUserClient }) => client.del(key);
 
 /**
  * Update list of TRENDING feed cache for specified locale
@@ -51,14 +51,14 @@ exports.updateTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache({ prefix: TREND_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.RPUSH([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.rpush([`${appPrefix}${TREND_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 exports.updateFilteredTrendLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale) || !ids.length) return;
   await clearFeedLocaleCache({ prefix: TREND_FILTERED_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.RPUSH([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.rpush([`${appPrefix}${TREND_FILTERED_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
@@ -72,7 +72,7 @@ exports.updateHotLocaleFeedCache = async ({ ids, locale, app }) => {
   if (!validateUpdateNewsCache(ids, locale)) return;
   await clearFeedLocaleCache({ prefix: HOT_NEWS_CACHE_PREFIX, app, locale });
   const appPrefix = app ? `${app}:` : '';
-  return mainFeedsCacheClient.RPUSH([`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
+  return mainFeedsCacheClient.rpush([`${appPrefix}${HOT_NEWS_CACHE_PREFIX}:${locale}`, ...ids]);
 };
 
 /**
@@ -94,7 +94,7 @@ async function clearFeedLocaleCache({ app, prefix, locale }) {
   else {
     keys = LANGUAGES.map((lang) => `${keyTemplate}:${lang}`);
   }
-  return mainFeedsCacheClient.DEL(...keys);
+  return mainFeedsCacheClient.del(...keys);
 }
 
 function validateUpdateNewsCache(ids, locale) {
@@ -113,24 +113,24 @@ function validateUpdateNewsCache(ids, locale) {
   return true;
 }
 
-exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.ZADD(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
-exports.incrementTag = async ({ categoryName, tag, objectType }) => tagCategoriesClient.ZINCRBY(`${FIELDS_NAMES.TAG_CATEGORY}:${objectType}:${categoryName}`, 1, tag);
-exports.incrementDepartmentTag = async ({ categoryName, tag, department }) => tagCategoriesClient.ZINCRBY(`${FIELDS_NAMES.DEPARTMENTS}:${department}:${categoryName}`, 1, tag);
+exports.addTagCategory = async ({ categoryName, tags }) => tagCategoriesClient.zadd(`${FIELDS_NAMES.TAG_CATEGORY}:${categoryName}`, tags);
+exports.incrementTag = async ({ categoryName, tag, objectType }) => tagCategoriesClient.zincrby(`${FIELDS_NAMES.TAG_CATEGORY}:${objectType}:${categoryName}`, 1, tag);
+exports.incrementDepartmentTag = async ({ categoryName, tag, department }) => tagCategoriesClient.zincrby(`${FIELDS_NAMES.DEPARTMENTS}:${department}:${categoryName}`, 1, tag);
 
 exports.incrementWebsitesSuspended = async ({ key, expire }) => {
-  const counter = await appUsersStatistics.INCR(`${WEBSITE_SUSPENDED_COUNT}:${key}`);
-  await appUsersStatistics.EXPIRE(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
+  const counter = await appUsersStatistics.incr(`${WEBSITE_SUSPENDED_COUNT}:${key}`);
+  await appUsersStatistics.expire(`${WEBSITE_SUSPENDED_COUNT}:${key}`, expire);
   return counter;
 };
 
 exports.importUserClientHMSet = async ({ key, data, expire }) => {
-  await importUserClient.HSET(key, data);
-  await importUserClient.EXPIRE(key, expire);
+  await importUserClient.hset(key, data);
+  await importUserClient.expire(key, expire);
 };
 
 exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
   try {
-    return { result: await client.HSET(key, data) };
+    return { result: await client.hset(key, data) };
   } catch (error) {
     return { error };
   }
@@ -138,33 +138,33 @@ exports.hmsetAsync = async ({ key, data, client = importUserClient }) => {
 
 exports.zadd = async ({
   key, now, keyValue, client = processedPostClient,
-}) => client.ZADD(key, {
+}) => client.zadd(key, {
   score: now, value: keyValue,
 });
 
-exports.saddAsync = async ({ key, values, client }) => client.SADD(key, values);
+exports.saddAsync = async ({ key, values, client }) => client.sadd(key, values);
 
-exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.SET(key, value);
+exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.set(key, value);
 
 exports.setEx = ({
   key, ttl, value, client = mainFeedsCacheClient,
-}) => client.SET(key, value, { EX: ttl });
+}) => client.setex(key, value, ttl);
 
-exports.incr = ({ key, client = mainFeedsCacheClient }) => client.INCR(key);
+exports.incr = ({ key, client = mainFeedsCacheClient }) => client.incr(key);
 
 exports.zincrby = ({
   key, increment, member, client = mainFeedsCacheClient,
-}) => client.ZINCRBY(key, increment, member);
+}) => client.zincrby(key, increment, member);
 
-exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.EXPIRE(key, ttl);
+exports.expire = ({ key, ttl, client = mainFeedsCacheClient }) => client.expire(key, ttl);
 
 exports.zincrbyExpire = async ({
   key, increment, member, ttl, client = appUsersStatistics,
 }) => {
   try {
     await client.multi()
-      .ZINCRBY(key, increment, member)
-      .EXPIRE(key, ttl)
+      .zincrby(key, increment, member)
+      .expire(key, ttl)
       .exec();
   } catch (error) {
     console.log(error.message);
@@ -174,12 +174,12 @@ exports.zincrbyExpire = async ({
 exports.incrExpire = async ({ key, ttl, client = importUserClient }) => {
   try {
     await client.multi()
-      .INCR(key)
-      .EXPIRE(key, ttl)
+      .incr(key)
+      .expire(key, ttl)
       .exec();
   } catch (error) {
     console.log(error.message);
   }
 };
 
-exports.sremAsync = async ({ key, value, client }) => client.SREM(key, value);
+exports.sremAsync = async ({ key, value, client }) => client.sremAsync({ key, value });

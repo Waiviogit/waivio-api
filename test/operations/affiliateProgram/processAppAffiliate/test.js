@@ -17,7 +17,6 @@ const {
   createAffiliateUrlTemplate,
   createAffiliateProductIdTypes,
 } = require('../helper');
-const redis = require('../../../../utilities/redis/redis');
 const asyncLocalStorage = require('../../../../middlewares/context/context');
 
 const myModule = rewire('utilities/operations/affiliateProgram/makeAffiliateLinks');
@@ -26,9 +25,6 @@ const getAffiliateCode = myModule.__get__('getAffiliateCode');
 describe('On affiliate program', async () => {
   let currentApp, result, storeStub;
 
-  before(async () => {
-    await redis.setupRedisConnections();
-  });
 
   beforeEach(async () => {
     await dropDatabase();

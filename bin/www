@@ -3,7 +3,6 @@ require('dotenv').config();
 const http = require('node:http');
 const Sentry = require('@sentry/node');
 const { getSentryOptions } = require('../constants/sentry');
-const redis = require('../utilities/redis/redis');
 const { closeMongoConnections } = require('../database');
 const { sendSentryNotification } = require('../utilities/helpers/sentryHelper');
 
@@ -21,7 +20,6 @@ const server = http.createServer(app);
       return error.status >= 500;
     },
   });
-  await redis.setupRedisConnections();
 
   server.listen(port);
   server.on('error', onError);
