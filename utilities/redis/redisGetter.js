@@ -127,7 +127,7 @@ exports.zrangeWithScores = async ({
   const formattedResult = [];
   for (let i = 0; i < result.length; i += 2) {
     formattedResult.push({
-      member: result[i],
+      value: result[i],
       score: parseFloat(result[i + 1]),
     });
   }
