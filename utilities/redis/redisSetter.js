@@ -148,7 +148,7 @@ exports.set = ({ key, value, client = mainFeedsCacheClient }) => client.set(key,
 
 exports.setEx = ({
   key, ttl, value, client = mainFeedsCacheClient,
-}) => client.setex(key, value, ttl);
+}) => client.setex(key, ttl, value);
 
 exports.incr = ({ key, client = mainFeedsCacheClient }) => client.incr(key);
 
