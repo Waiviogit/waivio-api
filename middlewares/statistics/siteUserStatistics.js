@@ -1,30 +1,14 @@
-const { isbot } = require('isbot');
-const { redisStatisticsKey } = require('../../constants/sitesConstants');
 const {
-  URL, REDIS_KEYS, TTL_TIME,
+  URL,
 } = require('../../constants/common');
 const config = require('../../config');
-const { redisSetter } = require('../../utilities/redis');
 const { App } = require('../../models');
 const { REPLACE_HOST_WITH_PARENT } = require('../../constants/regExp');
 const { getIpFromHeaders } = require('../../utilities/helpers/sitesHelper');
 const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
-const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
 const { REPLACE_ORIGIN } = require('../../constants/regExp');
 const asyncLocalStorage = require('../context/context');
-
-const setSiteActiveUser = async ({ userAgent, host, ip }) => {
-  const bot = isbot(userAgent);
-  const key = `${REDIS_KEYS.API_VISIT_STATISTIC}:${getCurrentDateString()}:${host}:${bot ? 'bot' : 'user'}`;
-
-  await redisSetter.zincrbyExpire({
-    key, ttl: TTL_TIME.THIRTY_DAYS, member: ip, increment: 1,
-  });
-
-  if (bot) return;
-
-  await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
-};
+const { setSiteActiveUser } = require('../../utilities/operations/sites/sitesStatistic');
 
 const getHost = (req) => {
   const store = asyncLocalStorage.getStore();
