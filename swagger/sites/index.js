@@ -2203,6 +2203,9 @@ module.exports = {
                   },
                 },
               },
+              hasMore: {
+                type: 'boolean',
+              },
             },
           },
         },
