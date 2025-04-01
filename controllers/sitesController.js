@@ -7,6 +7,7 @@ const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
     manage, create, configurations, remove, map, mapCoordinates,
+    sitesStatistic,
   },
 } = require('../utilities/operations');
 const { cacheWrapper } = require('../utilities/helpers/cacheHelper');
@@ -18,6 +19,7 @@ const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 const { updateAiCustomStore } = require('../utilities/operations/assistant/migration/customByApp');
 const subscription = require('../utilities/operations/sites/subscriptionPayPal');
+const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
 
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
@@ -519,4 +521,31 @@ exports.payPalCancelSubscription = async (req, res, next) => {
   const { result, error } = await subscription.cancelSubscriptionByHost(value);
   if (error) return next(error);
   return res.status(200).json({ result });
+};
+
+exports.getStatisticReport = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.statisiticReportSchema,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.userName);
+  if (authError) return next(authError);
+
+  const { result, hasMore, error } = await sitesStatistic.getStatisticReport(value);
+  if (error) return next(error);
+  return res.status(200).json({ result, hasMore });
+};
+
+exports.setBuyAction = async (req, res, next) => {
+  const ip = getIpFromHeaders(req);
+  const host = req?.appData?.host;
+  const userAgent = req.get('User-Agent');
+
+  const { result, hasMore, error } = await sitesStatistic.setSiteAction({
+    ip, host, userAgent,
+  });
+  if (error) return next(error);
+  return res.status(200).json({ result, hasMore });
 };

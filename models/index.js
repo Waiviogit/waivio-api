@@ -49,5 +49,6 @@ moduleExports.PlacesApiAccessModel = require('./PlacesApiAccessModel');
 moduleExports.PayPalProductModel = require('./PayPalProductModel');
 moduleExports.PayPalPlanModel = require('./PayPalPlanModel');
 moduleExports.PayPalSubscriptionModel = require('./PayPalSubscriptionModel');
+moduleExports.WebsiteStatisticModel = require('./WebsiteStatisticModel');
 
 module.exports = moduleExports;

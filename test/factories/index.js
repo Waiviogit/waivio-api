@@ -19,4 +19,5 @@ module.exports = {
   HiddenPostsFactory: require('./HiddenPosts/HiddenPostsFactory'),
   MutedUsersFactory: require('./MutedUsers/MutedUsersFactory'),
   PrefetchFactory: require('./PrefetchFactory/PrefetchFactory'),
+  WebsiteStatisticFactory: require('./WebsiteStatisticFactory/WebsiteStatisticFactory'),
 };

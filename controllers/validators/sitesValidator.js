@@ -188,3 +188,16 @@ exports.payPalCanselSubscriptionSchema = Joi.object().keys({
   userName: Joi.string().required(),
   reason: Joi.string().min(1).max(128).required(),
 });
+
+exports.statisiticReportSchema = Joi.object().keys({
+  host: Joi.string(),
+  userName: Joi.string().required(),
+  endDate: Joi.date().timestamp('unix').less('now'),
+  startDate: Joi.when('endDate', {
+    is: Joi.exist(),
+    then: Joi.date().timestamp('unix').less(Joi.ref('endDate')),
+    otherwise: Joi.date().timestamp('unix').less(new Date()),
+  }),
+  limit: Joi.number().min(0).default(20),
+  skip: Joi.number().min(0).default(0),
+});
