@@ -23,7 +23,7 @@
     "addDataToCampaignPosts": "NODE_PATH=. node utilities/tasks/addDataToCampaignPosts/run.js",
     "updateListAvatars": "NODE_PATH=. node utilities/tasks/updateListAvatars/run.js",
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
-    "test": "nyc --reporter=html mocha",
+    "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha",
     "addVectorStore": "node utilities/operations/assistant/migration/cliCustomStore.js",
     "addWobjectTokens": "node utilities/tasks/addWobjectTokens/run.js"
   },
@@ -59,7 +59,6 @@
     "mongoose-lean-virtuals": "^0.3.4",
     "morgan": "~1.9.0",
     "noroutine": "^0.0.7",
-    "redis": "^4.6.12",
     "sharp": "0.33.1",
     "swagger-ui-express": "^5.0.0",
     "weaviate-ts-client": "^2.1.1",
