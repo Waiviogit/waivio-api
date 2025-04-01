@@ -1,18 +1,24 @@
 const crypto = require('crypto');
 
-const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY;
+const privateKeyString = process.env.CHANGELLY_PRIVATE_KEY || '';
 
-const privateKey = crypto.createPrivateKey({
-  key: privateKeyString,
-  format: 'der',
-  type: 'pkcs8',
-  encoding: 'hex',
-});
+let privateKey, publicKey;
 
-const publicKey = crypto.createPublicKey(privateKey).export({
-  type: 'pkcs1',
-  format: 'der',
-});
+try {
+  privateKey = crypto.createPrivateKey({
+    key: privateKeyString,
+    format: 'der',
+    type: 'pkcs8',
+    encoding: 'hex',
+  });
+
+  publicKey = crypto.createPublicKey(privateKey).export({
+    type: 'pkcs1',
+    format: 'der',
+  });
+} catch (error) {
+  console.log(error.message);
+}
 
 const formRequest = (message) => {
   const signature = crypto.sign('sha256', Buffer.from(JSON.stringify(message)), {

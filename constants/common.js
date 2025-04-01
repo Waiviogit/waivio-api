@@ -145,6 +145,8 @@ exports.REDIS_KEYS = {
   UPDATE_AI_STORE: 'updateAiStore',
   FISHING_SITES_SET: 'fishing_sites_set',
   FISHING_SITES_LAST_UPDATE: 'fishing_sites_last_update',
+  SITES_ACTION_UNIQ: 'sites_action_uniq',
+  SITES_ACTION_TOTAL: 'sites_action_total',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

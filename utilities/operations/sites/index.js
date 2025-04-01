@@ -13,4 +13,5 @@ module.exports = {
   sitesNotifications: require('./sitesNotifications'),
   restrictions: require('./restrictions'),
   prefetchWobjs: require('./prefetchWobjs'),
+  sitesStatistic: require('./sitesStatistic'),
 };

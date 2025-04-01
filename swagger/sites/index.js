@@ -2103,4 +2103,113 @@ module.exports = {
       },
     },
   },
+  '/api/sites/statistics/buy-actions': {
+    post: {
+      tags: [
+        'sites',
+      ],
+      summary: 'write buy action',
+      description: 'write buy action',
+      produces: [
+        'application/json',
+      ],
+      parameters: [],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/sites/statistics/report': {
+    post: {
+      tags: [
+        'sites',
+      ],
+      summary: 'get report',
+      description: 'get report',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'params',
+          in: 'body',
+          schema: {
+            type: 'object',
+            properties: {
+              host: {
+                type: 'string',
+              },
+              userName: {
+                type: 'string',
+              },
+              startDate: {
+                type: 'string',
+              },
+              endDate: {
+                type: 'string',
+              },
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    host: {
+                      type: 'string',
+                    },
+                    visits: {
+                      type: 'number',
+                    },
+                    buyAction: {
+                      type: 'number',
+                    },
+                    buyActionUniq: {
+                      type: 'number',
+                    },
+                    conversion: {
+                      type: 'number',
+                    },
+                    createdAt: {
+                      type: 'string',
+                    },
+                    updatedAt: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

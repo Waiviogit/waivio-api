@@ -17,14 +17,11 @@ const {
   FIELDS_NAMES,
   OBJECT_TYPES,
 } = require('constants/wobjectsData');
-const redis = require('../../../../utilities/redis/redis');
 const { getObjectGroup } = require('../../../../utilities/operations/wobject/objectGroup');
 
 describe('On getObjectGroup', async () => {
   let app, admin, admin2, administrative, ownership, ownershipObject, objectType;
-  before(async () => {
-    await redis.setupRedisConnections();
-  });
+
 
   beforeEach(async () => {
     await dropDatabase();
