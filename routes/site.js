@@ -79,7 +79,7 @@ sitesRoutes.route('/sites/paypal/subscription/check')
 
 sitesRoutes.route('/sites/statistics/report')
   .post(reqTimeMonitor, SitesController.getStatisticReport);
-sitesRoutes.route('/sites/statistics/buy-action')
+sitesRoutes.route('/sites/statistics/buy-actions')
   .post(reqTimeMonitor, SitesController.setBuyAction);
 
 module.exports = sitesRoutes;
