@@ -97,4 +97,6 @@ userRoutes.route('/users/guest-wallet/hive-withdraw-range').post(reqTimeMonitor,
 userRoutes.route('/users/min-reject').post(reqTimeMonitor, UserController.getMinReject);
 userRoutes.route('/users/avatar').post(reqTimeMonitor, UserController.getAvatars);
 
+userRoutes.route('/users/rc-delegations/incoming').get(reqTimeMonitor, UserController.getIncomingRcDelegations);
+
 module.exports = userRoutes;

@@ -2892,4 +2892,47 @@ module.exports = {
       },
     },
   },
+  '/api/users/rc-delegations/incoming': {
+    get: {
+      tags: ['user'],
+      summary: 'get incoming rc delegations',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'delegatee',
+          in: 'query',
+          description: 'Name of user',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                delegatee: {
+                  type: 'string',
+                },
+                delegator: {
+                  type: 'string',
+                },
+                rc: {
+                  type: 'number',
+                },
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Validation error',
+        },
+      },
+    },
+  },
 };

@@ -5,7 +5,7 @@ const {
   getFollowers, getFollowingsUser, importSteemUserBalancer, calcVoteValue,
   setMarkers, getObjectsFollow, geoData, getUserCreationDate, getUserDelegation,
   guestWalletOperations, getBlogTags, guestHiveWithdraw, favorites, userExist, guestMana, hiveWithdraw,
-  getProfileImages,
+  getProfileImages, getUserRcDelegations,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('../utilities/operations/search');
 const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
@@ -818,6 +818,19 @@ const getAvatars = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const getIncomingRcDelegations = async (req, res, next) => {
+  const value = validators.validate(
+    req.query,
+    validators.user.rcIncomingSchema,
+    next,
+  );
+  if (!value) return;
+
+  const result = await getUserRcDelegations.getIncomingDelegations(value);
+
+  return res.status(200).json(result);
+};
+
 module.exports = {
   index,
   show,
@@ -874,4 +887,5 @@ module.exports = {
   getFavouritesMap,
   searchUsersByHost,
   withdrawHive,
+  getIncomingRcDelegations,
 };

@@ -50,5 +50,6 @@ moduleExports.PayPalProductModel = require('./PayPalProductModel');
 moduleExports.PayPalPlanModel = require('./PayPalPlanModel');
 moduleExports.PayPalSubscriptionModel = require('./PayPalSubscriptionModel');
 moduleExports.WebsiteStatisticModel = require('./WebsiteStatisticModel');
+moduleExports.UserRcDelegationsModel = require('./UserRcDelegationsModel');
 
 module.exports = moduleExports;

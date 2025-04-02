@@ -31,5 +31,6 @@ moduleExports.favorites = require('./favorites');
 moduleExports.userExist = require('./userExist');
 moduleExports.guestMana = require('./guestMana');
 moduleExports.getProfileImages = require('./getProfileImages');
+moduleExports.getUserRcDelegations = require('./getUserRcDelegations');
 
 module.exports = moduleExports;

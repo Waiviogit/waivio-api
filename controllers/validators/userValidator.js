@@ -388,3 +388,7 @@ exports.getFavoritesMapSchema = Joi.object().keys({
 exports.getAvatarsSchema = Joi.object().keys({
   names: Joi.array().items(Joi.string()).min(1).max(30),
 });
+
+exports.rcIncomingSchema = Joi.object().keys({
+  delegatee: Joi.string().required(),
+});
