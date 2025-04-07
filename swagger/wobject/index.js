@@ -1834,4 +1834,50 @@ module.exports = {
       },
     },
   },
+  '/api/wobjects/active-campaigns': {
+    post: {
+      tags: [
+        'wobject',
+      ],
+      summary: 'Return list of wobjects with active campaigns',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'Access-Host',
+          in: 'header',
+          description: 'To get the object as it appears on the desired site, add the host to this header. \n No need to add https://',
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              objectType: {
+                type: 'string',
+              },
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            $ref: '#/definitions/inline_response_200_12',
+          },
+        },
+      },
+    },
+  },
 };

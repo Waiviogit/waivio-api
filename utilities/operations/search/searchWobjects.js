@@ -65,7 +65,6 @@ const searchWobjects = async (data) => {
 
   if (appInfo.forExtended || appInfo.forSites) {
     const social = checkForSocialSite(appInfo?.app?.parentHost ?? '');
-
     if (social) return socialSearch({ ...data, ...appInfo });
     return sitesWobjectSearch({ ...data, ...appInfo });
   }

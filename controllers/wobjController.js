@@ -4,7 +4,7 @@ const {
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
   getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
-  getWobjectPinnedPosts, objectGroup, getByRating,
+  getWobjectPinnedPosts, objectGroup, getByRating, getWithActiveCampaigns,
 } = require('../utilities/operations').wobject;
 const {
   wobjects: {
@@ -789,6 +789,28 @@ const checkLinkSafety = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const getWobjectsWithCampaigns = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.wobject.activeCampaignsScheme,
+    next,
+  );
+
+  if (!value) return;
+
+  const { wobjects, hasMore } = await getWithActiveCampaigns({
+    ...value,
+    app: req.appData,
+  });
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.moderateObjects)
+    .execute({ wobjects, hasMore }, req);
+
+  return res.status(200).json(processedData);
+};
+
 module.exports = {
   index,
   show,
@@ -830,4 +852,5 @@ module.exports = {
   getGroupByPermlink,
   searchArea,
   checkLinkSafety,
+  getWobjectsWithCampaigns,
 };
