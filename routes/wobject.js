@@ -86,5 +86,7 @@ wobjRoutes.route('/wobjects/group')
   .post(reqTimeMonitor, WobjController.getGroupByPermlink);
 wobjRoutes.route('/wobjects/link/safety')
   .post(reqTimeMonitor, WobjController.checkLinkSafety);
+wobjRoutes.route('/wobjects/active-campaigns')
+  .post(reqTimeMonitor, WobjController.getWobjectsWithCampaigns);
 
 module.exports = wobjRoutes;

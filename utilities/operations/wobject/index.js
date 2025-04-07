@@ -23,5 +23,6 @@ moduleExports.getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
 moduleExports.mapObject = require('./mapObject');
 moduleExports.objectGroup = require('./objectGroup');
 moduleExports.getByRating = require('./getByRating');
+moduleExports.getWithActiveCampaigns = require('./getWithActiveCampaigns');
 
 module.exports = moduleExports;

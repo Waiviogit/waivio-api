@@ -302,3 +302,10 @@ exports.searchAreaSchema = Joi.object().keys({
 exports.linkSafetyScheme = Joi.object().keys({
   url: Joi.string().uri().required(),
 });
+
+exports.activeCampaignsScheme = Joi.object().keys({
+  limit: Joi.number().integer().min(1).max(100)
+    .default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  objectType: Joi.string().valid(...Object.values(OBJECT_TYPES)),
+});
