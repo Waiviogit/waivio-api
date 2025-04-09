@@ -9,6 +9,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const BUSINESS_FIELDS = [
   FIELDS_NAMES.MERCHANT, FIELDS_NAMES.MANUFACTURER, FIELDS_NAMES.BRAND, FIELDS_NAMES.PUBLISHER,
@@ -111,6 +112,7 @@ const getAll = async ({
       locale,
       affiliateCodes,
       countryCode,
+      mobile: isMobileDevice(),
     });
   }
 
@@ -159,6 +161,7 @@ const getByType = async ({
     countryCode,
     reqUserName: userName,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   return {

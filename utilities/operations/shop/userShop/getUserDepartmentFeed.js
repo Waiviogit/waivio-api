@@ -14,6 +14,7 @@ const { UNCATEGORIZED_DEPARTMENT, OTHERS_DEPARTMENT } = require('../../../../con
 const { processUserAffiliate, processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 const getUserDepartments = require('./getUserDepartments');
 const { SHOP_SCHEMA } = require('../../../../constants/shop');
+const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
 
 const getUserDepartmentCondition = async ({
   department, path, userName, userFilter, app, schema,
@@ -112,6 +113,7 @@ module.exports = async ({
     locale,
     countryCode,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });

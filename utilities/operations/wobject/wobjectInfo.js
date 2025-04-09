@@ -14,6 +14,7 @@ const redisSetter = require('../../redis/redisSetter');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -39,6 +40,7 @@ const getItemsCount = async ({
       fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
       app,
       returnArray: false,
+      mobile: isMobileDevice(),
     });
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
 
@@ -82,6 +84,7 @@ const getAllObjectsInList = async ({
       fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
       app,
       returnArray: false,
+      mobile: isMobileDevice(),
     });
 
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
@@ -145,6 +148,7 @@ const getAllObjectsInListForImport = async ({
       fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM],
       app,
       returnArray: false,
+      mobile: isMobileDevice(),
     });
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
 
@@ -196,6 +200,7 @@ const getListDepartments = async ({
       fields: [FIELDS_NAMES.LIST_ITEM, FIELDS_NAMES.MENU_ITEM, FIELDS_NAMES.NAME],
       app,
       returnArray: false,
+      mobile: isMobileDevice(),
     });
     localDepartments.push(wobj?.name ?? wobj.default_name);
     const listWobjects = _.map(_.get(wobj, FIELDS_NAMES.LIST_ITEM, []), 'body');
@@ -274,6 +279,7 @@ const getListItems = async ({
     wobjects: [newObject],
     returnArray: false,
     app,
+    mobile: isMobileDevice(),
   }))[FIELDS_NAMES.LIST_ITEM];
 
   let { result: wobjects } = await Wobj.find(
@@ -305,6 +311,7 @@ const getListItems = async ({
       countryCode,
       reqUserName: userName,
       affiliateCodes,
+      mobile: isMobileDevice(),
     });
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
@@ -368,6 +375,7 @@ const getOne = async ({
     countryCode,
     reqUserName: user,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   wobjectData.canonical = await getWobjectCanonical({

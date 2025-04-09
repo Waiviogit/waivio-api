@@ -7,6 +7,7 @@ const {
   Wobj,
 } = require('../../../models');
 const { ERROR_OBJ } = require('../../../constants/common');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const getRemoveFilter = (processedObj) => _.chain(processedObj.remove || [])
   .compact()
@@ -29,6 +30,7 @@ module.exports = async ({
     fields: [FIELDS_NAMES.REMOVE],
     returnArray: false,
     app,
+    mobile: isMobileDevice(),
   });
   const removeFilter = getRemoveFilter(processedObj);
 

@@ -22,6 +22,7 @@ const {
   setCachedData,
 } = require('../../helpers/cacheHelper');
 const jsonHelper = require('../../helpers/jsonHelper');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const adjustRectangles = (rectangles, clientArea) => rectangles.map((rectangle) => {
   const [bottomLeft, topRight] = rectangle;
@@ -162,6 +163,7 @@ const getMapObjectCondition = async ({
     app,
     locale,
     returnArray: false,
+    mobile: isMobileDevice(),
   });
 
   const boxCoordinates = parseJson(objectWithMap[FIELDS_NAMES.MAP_RECTANGLES], null);
@@ -336,6 +338,7 @@ const getObjectsFromAdvancedMap = async ({
     reqUserName: follower,
     app,
     locale,
+    mobile: isMobileDevice(),
   });
 
   return {
@@ -419,6 +422,7 @@ const getMapObjectFromObjectLink = async ({ authorPermlink, app }) => {
     fields: REQUIREDFILDS_WOBJ_LIST,
     app,
     returnArray: false,
+    mobile: isMobileDevice(),
   });
 
   const links = _.reduce(processed[FIELDS_NAMES.MENU_ITEM], (acc, el) => {

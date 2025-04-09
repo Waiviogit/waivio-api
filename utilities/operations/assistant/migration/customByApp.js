@@ -12,6 +12,7 @@ const redisSetter = require('../../../redis/redisSetter');
 const { REDIS_KEYS, TTL_TIME } = require('../../../../constants/common');
 const { mainFeedsCacheClient } = require('../../../redis/redis');
 const { getCollectionName } = require('../../../helpers/namesHelper');
+const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
 
 const OBJECTS_LIMIT = 50000;
 
@@ -180,6 +181,7 @@ const createVectorStoreFromAppObjects = async ({ host, app }) => {
       fields: REQUIREDFILDS_WOBJ_LIST,
       returnArray: false,
       app,
+      mobile: isMobileDevice(),
     });
     textArray.push(getLine({ processed, host }));
     if (textArray.length >= 100) {

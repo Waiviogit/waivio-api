@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { Post, Wobj, User } = require('../../../models');
 const { wObjectHelper } = require('../../helpers');
 const { SHARING_SOCIAL_FIELDS } = require('../../../constants/wobjectsData');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 module.exports = async ({ author, permlink, app }) => {
   const { post, error: postError } = await Post.getOne({ author, permlink });
@@ -36,6 +37,7 @@ const getWobjectInfo = async ({ post, app }) => {
     wobjects: result,
     topTagsLimit: 3,
     app,
+    mobile: isMobileDevice(),
   });
 
   const tags = addTags(wobjects);

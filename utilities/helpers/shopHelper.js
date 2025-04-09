@@ -12,6 +12,7 @@ const wObjectHelper = require('./wObjectHelper');
 const jsonHelper = require('./jsonHelper');
 const sitesHelper = require('./sitesHelper');
 const { getAppAuthorities } = require('./appHelper');
+const { isMobileDevice } = require('../../middlewares/context/contextHelper');
 
 const MIN_SUB_OBJECTS = 10;
 const TOP_LINE_PERCENT = 0.3;
@@ -128,6 +129,7 @@ const getWobjectFilter = async ({ authorPermlink, app, tagFilter }) => {
     returnArray: false,
     app,
     fields: [FIELDS_NAMES.SHOP_FILTER],
+    mobile: isMobileDevice(),
   });
 
   if (!processedObject[FIELDS_NAMES.SHOP_FILTER]) return { error: { status: 404, message: 'Not Found' } };

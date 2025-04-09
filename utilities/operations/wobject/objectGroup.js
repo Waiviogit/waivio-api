@@ -6,6 +6,7 @@ const {
 } = require('../../../models');
 const { FIELDS_NAMES, OBJECT_TYPES } = require('../../../constants/wobjectsData');
 const jsonHelper = require('../../helpers/jsonHelper');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const USER_PROJECTION = {
   _id: 1,
@@ -285,6 +286,7 @@ const getObjectGroup = async ({
     app,
     returnArray: false,
     fields: GROUP_FIELDS,
+    mobile: isMobileDevice(),
   });
 
   const followers = jsonHelper.parseJson(processed[FIELDS_NAMES.GROUP_FOLLOWERS], []);

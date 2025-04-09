@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { wObjectHelper, jsonHelper } = require('../../helpers');
 const { SPECIFIC_FIELDS_MAPPINGS, FIELDS_NAMES, FIELDS_TO_PARSE } = require('../../../constants/wobjectsData');
 const { getPost } = require('../../hiveApi/postsUtil');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 module.exports = async ({
   authorPermlink, author, fieldName, locale, permlink, reqUserName, app,
@@ -17,6 +18,7 @@ module.exports = async ({
     returnArray: false,
     hiveData: true,
     reqUserName,
+    mobile: isMobileDevice(),
   });
 
   if (fieldName === 'avatar' && !filteredObject.avatar) {

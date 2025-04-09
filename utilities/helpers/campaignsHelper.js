@@ -9,6 +9,7 @@ const { RESERVATION_STATUSES, PAYMENT_HISTORIES_TYPES } = require('../../constan
 const wobjectHelper = require('./wObjectHelper');
 const campaignsV2Helper = require('./campaignsV2Helper');
 const asyncLocalStorage = require('../../middlewares/context/context');
+const { isMobileDevice } = require('../../middlewares/context/contextHelper');
 
 exports.campaignValidation = (campaign) => !!(campaign.reservation_timetable[moment().format('dddd').toLowerCase()]
     && _.floor(campaign.budget / campaign.reward) > _.filter(
@@ -55,7 +56,7 @@ exports.campaignFilter = async (campaigns, user, app) => {
       const result = _.find(wobjects, { author_permlink: campaign.requiredObject });
       if (!result) return;
       campaign.required_object = await wobjectHelper.processWobjects({
-        wobjects: [result], app, returnArray: false, fields: REQUIREDFIELDS_POST,
+        wobjects: [result], app, returnArray: false, fields: REQUIREDFIELDS_POST, mobile: isMobileDevice(),
       });
       const { user: guide, error: guideError } = await User.getOne(campaign.guideName);
       if (guideError || !guide) return;
