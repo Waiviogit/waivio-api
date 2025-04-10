@@ -79,7 +79,11 @@ const getTrustedUsers = async ({ host, owner }) => {
     };
   });
 
-  const result = _.orderBy(mappedData, ['guideName', 'name'], ['asc', 'asc']);
+  const result = _.orderBy(mappedData, [
+    (user) => !user.guideName, // true values (no guideName) come first
+    'guideName',
+    'name',
+  ], ['desc', 'asc', 'asc']);
 
   return { result };
 };

@@ -7,7 +7,7 @@ const {
   sites: {
     objectsFilter, refunds, authorities, reports, restrictions,
     manage, create, configurations, remove, map, mapCoordinates,
-    sitesStatistic,
+    sitesStatistic, trustedUsers,
   },
 } = require('../utilities/operations');
 const { cacheWrapper } = require('../utilities/helpers/cacheHelper');
@@ -548,4 +548,19 @@ exports.setBuyAction = async (req, res, next) => {
   });
   if (error) return next(error);
   return res.status(200).json({ result, hasMore });
+};
+
+exports.getTrustedUsers = async (req, res, next) => {
+  const value = validators.validate(
+    req.body,
+    validators.sites.trustedSchema,
+    next,
+  );
+  //
+  // const { error: authError } = await authoriseUser.authorise(value.owner);
+  // if (authError) return next(authError);
+
+  const { result, error } = await trustedUsers.getTrustedUsers(value);
+  if (error) return next(error);
+  return res.status(200).json(result);
 };

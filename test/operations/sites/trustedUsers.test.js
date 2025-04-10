@@ -1,309 +1,299 @@
 const { expect } = require('chai');
-const sinon = require('sinon');
-const { App, User } = require('../../../models');
-const { getTrusted } = require('../../../utilities/operations/sites/trustedUsers');
+const { App } = require('../../../models');
+const { getTrusted, getTrustedUsers } = require('../../../utilities/operations/sites/trustedUsers');
+const { dropDatabase } = require('../../testHelper');
+const { UsersFactory } = require('../../factories');
 
 describe('getTrusted', () => {
-  let sandbox;
+  const trustedUser1 = 'trusteduser1';
+  const trustedUser2 = 'trusteduser2';
+  const nestedTrustedUser = 'nestedtrusteduser';
 
-  beforeEach(() => {
-    sandbox = sinon.createSandbox();
+  beforeEach(async () => {
+    await dropDatabase();
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should return empty array when no trusted users are provided', async () => {
+  it('returns empty array when no trusted users provided', async () => {
     const result = await getTrusted({ trusted: [] });
     expect(result).to.be.an('array').that.is.empty;
   });
 
-  it('should return trusted users without duplicates', async () => {
-    const trustedUsers = ['user1', 'user2', 'user1', 'user3'];
-    const result = await getTrusted({ trusted: trustedUsers });
+  it('returns trusted users with correct guideName for initial trusted users', async () => {
+    const result = await getTrusted({ trusted: [trustedUser1, trustedUser2] });
 
-    expect(result).to.be.an('array').with.lengthOf(3);
-    expect(result.map((user) => user.name)).to.include.members(['user1', 'user2', 'user3']);
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: trustedUser2, guideName: trustedUser2 });
   });
 
-  it('should set guideName to the user itself for initial trusted users', async () => {
-    const trustedUsers = ['user1', 'user2'];
+  it('removes duplicate trusted users', async () => {
+    const result = await getTrusted({ trusted: [trustedUser1, trustedUser1, trustedUser2] });
 
-    // Mock App.find to return no apps
-    sandbox.stub(App, 'find').resolves({ result: [] });
-
-    const result = await getTrusted({ trusted: trustedUsers });
-
-    expect(result).to.be.an('array').with.lengthOf(2);
-    expect(result.find((user) => user.name === 'user1').guideName).to.equal('user1');
-    expect(result.find((user) => user.name === 'user2').guideName).to.equal('user2');
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: trustedUser2, guideName: trustedUser2 });
   });
 
-  it('should fetch nested trusted users from apps', async () => {
-    const initialTrusted = ['user1'];
-    const nestedTrusted = ['user2', 'user3'];
-
-    // Mock App.find to return apps with nested trusted users
-    sandbox.stub(App, 'find').resolves({
-      result: [
-        { owner: 'user1', trusted: nestedTrusted },
-      ],
+  it('respects maxDepth parameter', async () => {
+    // Create an app with trusted users
+    await App.create({
+      owner: trustedUser1,
+      host: 'app1.com',
+      trusted: [nestedTrustedUser],
     });
 
-    const result = await getTrusted({ trusted: initialTrusted });
+    // Create a nested app with another trusted user
+    await App.create({
+      owner: nestedTrustedUser,
+      host: 'app2.com',
+      trusted: ['deepnesteduser'],
+    });
 
-    expect(result).to.be.an('array').with.lengthOf(3);
-    expect(result.map((user) => user.name)).to.include.members(['user1', 'user2', 'user3']);
+    // Test with maxDepth = 1
+    const result = await getTrusted({
+      trusted: [trustedUser1],
+      maxDepth: 1,
+    });
 
-    // Check that nested users have the correct guideName
-    expect(result.find((user) => user.name === 'user2').guideName).to.equal('user1');
-    expect(result.find((user) => user.name === 'user3').guideName).to.equal('user1');
+    // Should include trustedUser1 and nestedTrustedUser, but not deepnesteduser
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: nestedTrustedUser, guideName: trustedUser1 });
   });
 
-  it('should handle multiple levels of nested trusted users', async () => {
-    const initialTrusted = ['user1'];
-    const firstLevelNested = ['user2'];
-    const secondLevelNested = ['user3'];
-
-    // Mock App.find to return different results based on the query
-    const findStub = sandbox.stub(App, 'find');
-
-    // First call - for initial trusted users
-    findStub.onFirstCall().resolves({
-      result: [{ owner: 'user1', trusted: firstLevelNested }],
+  it('correctly sets guideName for nested trusted users', async () => {
+    // Create an app with trusted users
+    await App.create({
+      owner: trustedUser1,
+      host: 'app1.com',
+      trusted: [nestedTrustedUser],
     });
 
-    // Second call - for first level nested users
-    findStub.onSecondCall().resolves({
-      result: [{ owner: 'user2', trusted: secondLevelNested }],
-    });
+    const result = await getTrusted({ trusted: [trustedUser1] });
 
-    // Third call - for second level nested users
-    findStub.onThirdCall().resolves({
-      result: [],
-    });
-
-    const result = await getTrusted({ trusted: initialTrusted });
-
-    expect(result).to.be.an('array').with.lengthOf(3);
-    expect(result.map((user) => user.name)).to.include.members(['user1', 'user2', 'user3']);
-
-    // Check that all nested users have the correct guideName
-    expect(result.find((user) => user.name === 'user2').guideName).to.equal('user1');
-    expect(result.find((user) => user.name === 'user3').guideName).to.equal('user1');
+    // The nested trusted user should have the initial trusted user as guideName
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: nestedTrustedUser, guideName: trustedUser1 });
   });
 
-  it('should respect maxDepth parameter', async () => {
-    const initialTrusted = ['user1'];
-    const firstLevelNested = ['user2'];
-    const secondLevelNested = ['user3'];
-
-    // Mock App.find to return different results based on the query
-    const findStub = sandbox.stub(App, 'find');
-
-    // First call - for initial trusted users
-    findStub.onFirstCall().resolves({
-      result: [{ owner: 'user1', trusted: firstLevelNested }],
+  it('handles multiple levels of nested trusted users', async () => {
+    // Create apps with nested trusted users
+    await App.create({
+      owner: trustedUser1,
+      host: 'app1.com',
+      trusted: [trustedUser2],
     });
 
-    // Second call - for first level nested users
-    findStub.onSecondCall().resolves({
-      result: [{ owner: 'user2', trusted: secondLevelNested }],
+    await App.create({
+      owner: trustedUser2,
+      host: 'app2.com',
+      trusted: [nestedTrustedUser],
     });
 
-    const result = await getTrusted({ trusted: initialTrusted, maxDepth: 1 });
+    const result = await getTrusted({ trusted: [trustedUser1] });
 
-    // Should only include initial and first level nested users
-    expect(result).to.be.an('array').with.lengthOf(2);
-    expect(result.map((user) => user.name)).to.include.members(['user1', 'user2']);
-    expect(result.map((user) => user.name)).to.not.include('user3');
+    // Should include all three users with correct guideName
+    expect(result).to.have.length(3);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: trustedUser2, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: nestedTrustedUser, guideName: trustedUser1 });
   });
 
-  it('should handle circular references in trusted users', async () => {
-    const initialTrusted = ['user1'];
-    const firstLevelNested = ['user2'];
-    const secondLevelNested = ['user1']; // Circular reference back to user1
-
-    // Mock App.find to return different results based on the query
-    const findStub = sandbox.stub(App, 'find');
-
-    // First call - for initial trusted users
-    findStub.onFirstCall().resolves({
-      result: [{ owner: 'user1', trusted: firstLevelNested }],
+  it('handles circular trusted user relationships', async () => {
+    // Create apps with circular trusted users
+    await App.create({
+      owner: trustedUser1,
+      host: 'app1.com',
+      trusted: [trustedUser2],
     });
 
-    // Second call - for first level nested users
-    findStub.onSecondCall().resolves({
-      result: [{ owner: 'user2', trusted: secondLevelNested }],
+    await App.create({
+      owner: trustedUser2,
+      host: 'app2.com',
+      trusted: [trustedUser1],
     });
 
-    const result = await getTrusted({ trusted: initialTrusted });
+    const result = await getTrusted({ trusted: [trustedUser1] });
 
-    // Should handle circular reference without infinite recursion
-    expect(result).to.be.an('array').with.lengthOf(2);
-    expect(result.map((user) => user.name)).to.include.members(['user1', 'user2']);
+    // Should include both users without infinite recursion
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: trustedUser1 });
+    expect(result).to.deep.include({ name: trustedUser2, guideName: trustedUser1 });
+  });
+
+  it('returns existing trusted users from trustedUsersMap', async () => {
+    const trustedUsersMap = {
+      [trustedUser1]: { name: trustedUser1, guideName: 'existingguide' },
+    };
+
+    const result = await getTrusted({
+      trusted: [trustedUser1, trustedUser2],
+      trustedUsersMap,
+    });
+
+    // Should include the existing user with its guideName and the new user
+    expect(result).to.have.length(2);
+    expect(result).to.deep.include({ name: trustedUser1, guideName: 'existingguide' });
+    expect(result).to.deep.include({ name: trustedUser2, guideName: trustedUser2 });
   });
 });
 
 describe('getTrustedUsers', () => {
-  let sandbox;
+  const owner = 'testowner';
+  const host = 'test.com';
+  const trustedUser1 = 'trusteduser1';
+  const trustedUser2 = 'trusteduser2';
+  const nestedTrustedUser = 'nestedtrusteduser';
 
-  beforeEach(() => {
-    sandbox = sinon.createSandbox();
+  beforeEach(async () => {
+    await dropDatabase();
   });
 
-  afterEach(() => {
-    sandbox.restore();
-  });
-
-  it('should return error when app is not found', async () => {
-    // Mock App.findOne to return no app
-    sandbox.stub(App, 'findOne').resolves({ result: null });
-
-    // Mock getTrusted to avoid actual execution
-    sandbox.stub(require('../../../utilities/operations/sites/trustedUsers'), 'getTrusted').resolves([]);
-
-    const result = await require('../../../utilities/operations/sites/trustedUsers').getTrustedUsers({
-      host: 'test.com',
-      owner: 'testuser',
-    });
-
+  it('returns error when app not found', async () => {
+    const result = await getTrustedUsers({ host, owner });
     expect(result).to.deep.equal({ error: { status: 401 } });
   });
 
-  it('should return trusted users with their data', async () => {
-    // Mock App.findOne to return an app with trusted users
-    sandbox.stub(App, 'findOne').resolves({
-      result: {
-        host: 'test.com',
-        owner: 'testuser',
-        trusted: ['user1', 'user2'],
-      },
-    });
+  it('returns empty result when app has no trusted users', async () => {
+    await App.create({ owner, host, trusted: [] });
 
-    // Mock getTrusted to return trusted users
-    const trustedUsers = [
-      { name: 'user1', guideName: 'user1' },
-      { name: 'user2', guideName: 'user1' },
-    ];
-    sandbox.stub(require('../../../utilities/operations/sites/trustedUsers'), 'getTrusted').resolves(trustedUsers);
-
-    // Mock User.find to return user data
-    const userData = [
-      { name: 'user1', json_metadata: { profile: { name: 'User One' } }, wobjects_weight: 10 },
-      { name: 'user2', json_metadata: { profile: { name: 'User Two' } }, wobjects_weight: 5 },
-    ];
-    sandbox.stub(User, 'find').resolves({ usersData: userData });
-
-    // Get the getTrustedUsers function
-    const { getTrustedUsers } = require('../../../utilities/operations/sites/trustedUsers');
-
-    // Call the function
-    const result = await getTrustedUsers({
-      host: 'test.com',
-      owner: 'testuser',
-    });
-
-    // Check that the result is ordered by guideName and name
-    expect(result.result).to.be.an('array').with.lengthOf(2);
-    expect(result.result[0].name).to.equal('user1');
-    expect(result.result[1].name).to.equal('user2');
-
-    // Based on the actual implementation, neither user has a guideName property
-    expect(result.result[0].guideName).to.be.undefined;
-    expect(result.result[1].guideName).to.be.undefined;
-  });
-
-  it('should handle empty trusted users list', async () => {
-    // Mock App.findOne to return an app with no trusted users
-    sandbox.stub(App, 'findOne').resolves({
-      result: {
-        host: 'test.com',
-        owner: 'testuser',
-        trusted: [],
-      },
-    });
-
-    // Mock getTrusted to return empty array
-    sandbox.stub(require('../../../utilities/operations/sites/trustedUsers'), 'getTrusted').resolves([]);
-
-    // Mock User.find to return empty array
-    sandbox.stub(User, 'find').resolves({ usersData: [] });
-
-    const result = await require('../../../utilities/operations/sites/trustedUsers').getTrustedUsers({
-      host: 'test.com',
-      owner: 'testuser',
-    });
-
+    const result = await getTrustedUsers({ host, owner });
     expect(result.result).to.be.an('array').that.is.empty;
   });
 
-  it('should handle case when user data is not found for trusted users', async () => {
-    // Mock App.findOne to return an app with trusted users
-    sandbox.stub(App, 'findOne').resolves({
-      result: {
-        host: 'test.com',
-        owner: 'testuser',
-        trusted: ['user1', 'user2'],
-      },
+  it('returns trusted users with correct guideName', async () => {
+    // Create app with trusted users
+    await App.create({
+      owner,
+      host,
+      trusted: [trustedUser1, trustedUser2],
     });
 
-    // Mock getTrusted to return trusted users
-    const trustedUsers = [
-      { name: 'user1', guideName: 'user1' },
-      { name: 'user2', guideName: 'user1' },
-    ];
-    sandbox.stub(require('../../../utilities/operations/sites/trustedUsers'), 'getTrusted').resolves(trustedUsers);
-
-    // Mock User.find to return empty array (no user data found)
-    sandbox.stub(User, 'find').resolves({ usersData: [] });
-
-    const result = await require('../../../utilities/operations/sites/trustedUsers').getTrustedUsers({
-      host: 'test.com',
-      owner: 'testuser',
+    // Create user data using factory
+    await UsersFactory.Create({
+      name: trustedUser1,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 1' } }),
+      wobjects_weight: 10,
     });
 
-    expect(result.result).to.be.an('array').that.is.empty;
+    await UsersFactory.Create({
+      name: trustedUser2,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 2' } }),
+      wobjects_weight: 20,
+    });
+
+    const result = await getTrustedUsers({ host, owner });
+
+    expect(result.result).to.have.length(2);
+    expect(result.result[0]).to.have.property('name', trustedUser1);
+    expect(result.result[1]).to.have.property('name', trustedUser2);
+    // First-level trusted users don't have guideName property
   });
 
-  it('should handle guideName correctly', async () => {
-    // Mock App.findOne to return an app with trusted users
-    sandbox.stub(App, 'findOne').resolves({
-      result: {
-        host: 'test.com',
-        owner: 'testuser',
-        trusted: ['user1', 'user2'],
-      },
+  it('returns nested trusted users with correct guideName', async () => {
+    // Create app with trusted users
+    await App.create({
+      owner,
+      host,
+      trusted: [trustedUser1],
     });
 
-    // Mock getTrusted to return trusted users
-    const trustedUsers = [
-      { name: 'user1', guideName: 'user1' },
-      { name: 'user2', guideName: 'user1' },
-    ];
-    sandbox.stub(require('../../../utilities/operations/sites/trustedUsers'), 'getTrusted').resolves(trustedUsers);
-
-    // Mock User.find to return user data
-    const userData = [
-      { name: 'user1', json_metadata: { profile: { name: 'User One' } }, wobjects_weight: 10 },
-      { name: 'user2', json_metadata: { profile: { name: 'User Two' } }, wobjects_weight: 5 },
-    ];
-    sandbox.stub(User, 'find').resolves({ usersData: userData });
-
-    // Get the getTrustedUsers function
-    const { getTrustedUsers } = require('../../../utilities/operations/sites/trustedUsers');
-
-    // Call the function
-    const result = await getTrustedUsers({
-      host: 'test.com',
-      owner: 'testuser',
+    // Create app owned by trusted user with nested trusted users
+    await App.create({
+      owner: trustedUser1,
+      host: 'app1.com',
+      trusted: [trustedUser2, nestedTrustedUser],
     });
-    // Check that the result is ordered by guideName and name
-    expect(result.result).to.be.an('array').with.lengthOf(2);
 
-    // Based on the actual implementation, neither user has a guideName property
-    expect(result.result[0].guideName).to.be.undefined;
-    expect(result.result[1].guideName).to.be.undefined;
+    // Create user data using factory
+    await UsersFactory.Create({
+      name: trustedUser1,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 1' } }),
+      wobjects_weight: 10,
+    });
+
+    await UsersFactory.Create({
+      name: trustedUser2,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 2' } }),
+      wobjects_weight: 20,
+    });
+
+    await UsersFactory.Create({
+      name: nestedTrustedUser,
+      json_metadata: JSON.stringify({ profile: { name: 'Nested Trusted User' } }),
+      wobjects_weight: 30,
+    });
+
+    const result = await getTrustedUsers({ host, owner });
+
+    expect(result.result).to.have.length(3);
+
+    // Check that all users are included and have correct guideName
+    const user2 = result.result.find((u) => u.name === trustedUser2);
+    const nestedUser = result.result.find((u) => u.name === nestedTrustedUser);
+
+    // First-level trusted users don't have guideName property
+    expect(user2).to.have.property('guideName', trustedUser1);
+    expect(nestedUser).to.have.property('guideName', trustedUser1);
+  });
+
+  it('orders results by guideName and name', async () => {
+    // Create app with trusted users
+    await App.create({
+      owner,
+      host,
+      trusted: [trustedUser1, trustedUser2, nestedTrustedUser],
+    });
+
+    // Create user data using factory
+    await UsersFactory.Create({
+      name: trustedUser1,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 1' } }),
+      wobjects_weight: 10,
+    });
+
+    await UsersFactory.Create({
+      name: trustedUser2,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 2' } }),
+      wobjects_weight: 20,
+    });
+
+    await UsersFactory.Create({
+      name: nestedTrustedUser,
+      json_metadata: JSON.stringify({ profile: { name: 'Nested Trusted User' } }),
+      wobjects_weight: 30,
+    });
+
+    const result = await getTrustedUsers({ host, owner });
+
+    expect(result.result).to.have.length(3);
+
+    // Check that results are ordered by guideName and name
+    expect(result.result[0].name).to.equal(nestedTrustedUser);
+    expect(result.result[1].name).to.equal(trustedUser1);
+    expect(result.result[2].name).to.equal(trustedUser2);
+  });
+
+  it('handles users not found in database', async () => {
+    // Create app with trusted users
+    await App.create({
+      owner,
+      host,
+      trusted: [trustedUser1, 'nonexistentuser'],
+    });
+
+    // Create user data for only one of the trusted users using factory
+    await UsersFactory.Create({
+      name: trustedUser1,
+      json_metadata: JSON.stringify({ profile: { name: 'Trusted User 1' } }),
+      wobjects_weight: 10,
+    });
+
+    const result = await getTrustedUsers({ host, owner });
+
+    // Should only return the user that exists in the database
+    expect(result.result).to.have.length(1);
+    expect(result.result[0]).to.have.property('name', trustedUser1);
   });
 });
