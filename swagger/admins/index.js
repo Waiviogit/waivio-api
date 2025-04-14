@@ -467,4 +467,100 @@ module.exports = {
       },
     },
   },
+  '/api/admins/statistics/report': {
+    post: {
+      tags: ['admins'],
+      description: 'get statistic reports',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'body',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              host: {
+                type: 'string',
+              },
+              startDate: {
+                type: 'string',
+              },
+              endDate: {
+                type: 'string',
+              },
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          }
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    host: {
+                      type: 'string',
+                    },
+                    visits: {
+                      type: 'number',
+                    },
+                    buyAction: {
+                      type: 'number',
+                    },
+                    buyActionUniq: {
+                      type: 'number',
+                    },
+                    conversion: {
+                      type: 'number',
+                    },
+                    createdAt: {
+                      type: 'string',
+                    },
+                    updatedAt: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
 };
