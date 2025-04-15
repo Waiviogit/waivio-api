@@ -25,5 +25,7 @@ adminRoutes.route('/admins')
 
 adminRoutes.route('/admins/credits')
   .post(reqTimeMonitor, adminController.createCredits);
+adminRoutes.route('/admins/statistics/report')
+  .post(reqTimeMonitor, adminController.statisticReportAdmin);
 
 module.exports = adminRoutes;

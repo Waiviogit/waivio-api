@@ -95,8 +95,39 @@ const getStatisticReport = async ({
   };
 };
 
+const getStatisticReportAdmin = async ({
+  startDate, endDate, host, skip, limit,
+}) => {
+  const { result, error } = await WebsiteStatisticModel.aggregate([
+    {
+      $match: {
+        ...(host && { host }),
+        $and: [
+          { createdAt: { $gt: startDate || moment.utc(1).toDate() } },
+          { createdAt: { $lt: endDate || moment.utc().toDate() } }],
+      },
+    },
+    {
+      $sort: { createdAt: -1 },
+    },
+    {
+      $skip: skip,
+    },
+    {
+      $limit: limit + 1,
+    },
+  ]);
+  if (error) return { error };
+
+  return {
+    result: _.take(result, limit),
+    hasMore: result.length > limit,
+  };
+};
+
 module.exports = {
   setSiteActiveUser,
   setSiteAction,
   getStatisticReport,
+  getStatisticReportAdmin,
 };
