@@ -71,24 +71,31 @@ const checkPostForRewards = async ({ postDb, author, permlink }) => {
 };
 
 exports.userInfoCalc = async ({ userName }) => {
-  const requests = await Promise.all([
-    hiveOperations.calcHiveVoteValue({
-      userName,
-    }),
-    engineOperations.calculateHiveEngineVote({
-      symbol: TOKEN_WAIV.SYMBOL,
-      account: userName,
-      poolId: TOKEN_WAIV.POOL_ID,
-      dieselPoolId: TOKEN_WAIV.DIESEL_POOL_ID,
-      weight: 10000,
-    }),
-  ]);
-  const [hive, waiv] = requests;
+  try {
+    const requests = await Promise.all([
+      hiveOperations.calcHiveVoteValue({
+        userName,
+      }),
+      engineOperations.calculateHiveEngineVote({
+        symbol: TOKEN_WAIV.SYMBOL,
+        account: userName,
+        poolId: TOKEN_WAIV.POOL_ID,
+        dieselPoolId: TOKEN_WAIV.DIESEL_POOL_ID,
+        weight: 10000,
+      }),
+    ]);
+    const [hive, waiv] = requests;
 
-  return {
-    estimatedHIVE: hive.estimatedHIVE,
-    estimatedWAIV: waiv.engineVotePrice,
-  };
+    return {
+      estimatedHIVE: hive.estimatedHIVE,
+      estimatedWAIV: waiv.engineVotePrice,
+    };
+  } catch (error) {
+    return {
+      estimatedHIVE: 0,
+      estimatedWAIV: 0,
+    };
+  }
 };
 
 exports.waivVoteUSD = async ({ userName, weight }) => {
