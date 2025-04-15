@@ -10,6 +10,7 @@ const shopHelper = require('../../../helpers/shopHelper');
 const { Wobj } = require('../../../../models');
 const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
 const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
+const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
 
 module.exports = async ({
   countryCode,
@@ -59,6 +60,7 @@ module.exports = async ({
     locale,
     countryCode,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });

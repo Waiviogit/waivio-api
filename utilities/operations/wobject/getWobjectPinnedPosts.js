@@ -6,6 +6,7 @@ const {
 } = require('../../../models');
 const { FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const wObjectHelper = require('../../helpers/wObjectHelper');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const getWobjectPinnedPosts = async ({
   follower,
@@ -25,6 +26,7 @@ const getWobjectPinnedPosts = async ({
     fields: [FIELDS_NAMES.PIN, FIELDS_NAMES.REMOVE],
     returnArray: false,
     app,
+    mobile: isMobileDevice(),
   });
 
   const pinnedLinksCurrentUser = wObjectHelper

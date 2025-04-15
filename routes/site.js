@@ -82,4 +82,7 @@ sitesRoutes.route('/sites/statistics/report')
 sitesRoutes.route('/sites/statistics/buy-actions')
   .post(reqTimeMonitor, SitesController.setBuyAction);
 
+sitesRoutes.route('/sites/trusted')
+  .post(reqTimeMonitor, SitesController.getTrustedUsers);
+
 module.exports = sitesRoutes;

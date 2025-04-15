@@ -14,6 +14,7 @@ const campaignsV2Helper = require('../../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../../constants/usersData');
 const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 const getWobjectDepartments = require('./getWobjectDepartments');
+const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
 
 const getObjectDepartmentCondition = async ({
   department, path, authorPermlink, app, wobjectFilter,
@@ -101,6 +102,7 @@ const getWobjectDepartmentFeed = async ({
     locale,
     countryCode,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   await campaignsV2Helper.addNewCampaignsToObjects({

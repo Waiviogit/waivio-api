@@ -3,6 +3,7 @@ const { Wobj, User } = require('../../../models');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 module.exports = async ({
   authorPermlink, category, skip, limit, locale, app, userName = '',
@@ -17,6 +18,7 @@ module.exports = async ({
     app,
     locale,
     returnArray: false,
+    mobile: isMobileDevice(),
   });
 
   const optionsCategory = _.get(processed, `options.${category}`);

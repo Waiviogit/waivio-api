@@ -7,6 +7,7 @@ const { getIpFromHeaders, getCountryCodeFromIp } = require('../../../utilities/h
 const { processAppAffiliate, processUserAffiliate } = require('../../../utilities/operations/affiliateProgram/processAffiliate');
 const { WAIVIO_AFFILIATE_HOSTS } = require('../../../constants/affiliateData');
 const { schema } = require('./schema');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const newValidationArray = async ({
   posts, app, locale, path, countryCode, reqUserName, affiliateCodes,
@@ -23,6 +24,7 @@ const newValidationArray = async ({
         countryCode,
         reqUserName,
         affiliateCodes,
+        mobile: isMobileDevice(),
       });
     }
   }));
@@ -41,6 +43,7 @@ const newValidation = async ({
   countryCode,
   reqUserName,
   affiliateCodes,
+  mobile: isMobileDevice(),
 });
 
 const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
@@ -69,6 +72,7 @@ const singleObjectProcessor = async ({
     countryCode,
     reqUserName,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
   wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
   data = _.omit(wobject, ['fields']);

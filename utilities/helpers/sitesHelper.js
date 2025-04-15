@@ -21,6 +21,7 @@ const ipRequest = require('../requests/ipRequest');
 const asyncLocalStorage = require('../../middlewares/context/context');
 const { SHOP_SETTINGS_TYPE } = require('../../constants/sitesConstants');
 const { parseJson } = require('./jsonHelper');
+const { isMobileDevice } = require('../../middlewares/context/contextHelper');
 
 /** Check for available domain for user site */
 exports.availableCheck = async ({ parentId, name, host }) => {
@@ -341,7 +342,7 @@ exports.aboutObjectFormat = async (app) => {
     .findObjects({ filter: { author_permlink: { $in: [aboutObject, defaultHashtag] } } });
 
   const processed = await processWobjects({
-    wobjects, returnArray: true, fields: REQUIREDFIELDS_SEARCH, app,
+    wobjects, returnArray: true, fields: REQUIREDFIELDS_SEARCH, app, mobile: isMobileDevice(),
   });
   if (!processed.length) return app;
   const aboutObjectProcessed = processed.find((el) => el.author_permlink === aboutObject);
@@ -429,7 +430,7 @@ exports.getDescription = async ({ app }) => {
   if (!wObject) return { result: '' };
 
   const processed = await processWobjects({
-    wobjects: [wObject], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app,
+    wobjects: [wObject], returnArray: false, fields: REQUIREDFIELDS_SEARCH, app, mobile: isMobileDevice(),
   });
 
   return { result: processed.description ?? '' };

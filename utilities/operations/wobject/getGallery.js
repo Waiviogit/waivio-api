@@ -5,6 +5,7 @@ const {
 } = require('../../../models');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const asyncLocalStorage = require('../../../middlewares/context/context');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 module.exports = async (data) => {
   const {
@@ -20,6 +21,7 @@ module.exports = async (data) => {
     locale: data.locale,
     wobjects: [_.cloneDeep(wObject)],
     returnArray: false,
+    mobile: isMobileDevice(),
   });
   const defaultPhotosAlbum = _.find(processedObject.galleryAlbum, (a) => a.body === 'Photos');
   const albumsId = _.map(processedObject.galleryAlbum, (a) => a.id);

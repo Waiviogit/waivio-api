@@ -14,4 +14,5 @@ module.exports = {
   restrictions: require('./restrictions'),
   prefetchWobjs: require('./prefetchWobjs'),
   sitesStatistic: require('./sitesStatistic'),
+  trustedUsers: require('./trustedUsers'),
 };

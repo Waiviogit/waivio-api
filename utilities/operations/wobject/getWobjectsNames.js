@@ -2,6 +2,7 @@ const _ = require('lodash');
 const { Wobj } = require('../../../models');
 const { wObjectHelper } = require('../../helpers');
 const { FIELDS_NAMES, DEFAULT_LINK_FIELDS } = require('../../../constants/wobjectsData');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 module.exports = async ({ links, app, locale }) => {
   const { result, error } = await Wobj.findObjects({ filter: { author_permlink: { $in: links } } });
@@ -12,6 +13,7 @@ module.exports = async ({ links, app, locale }) => {
     app,
     returnArray: true,
     locale,
+    mobile: isMobileDevice(),
   });
 
   return {

@@ -2212,4 +2212,68 @@ module.exports = {
       },
     },
   },
+  '/api/sites/trusted': {
+    post: {
+      tags: [
+        'sites',
+      ],
+      summary: 'get report',
+      description: 'get report',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'access-token',
+          in: 'header',
+          description: 'access token',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'params',
+          in: 'body',
+          schema: {
+            type: 'object',
+            properties: {
+              host: {
+                type: 'string',
+              },
+              owner: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: {
+                  type: 'string',
+                },
+                guideName: {
+                  type: 'string',
+                },
+                json_metadata: {
+                  type: 'string',
+                },
+                wobjects_weight: {
+                  type: 'number',
+                },
+                objects_following_count: {
+                  type: 'number',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

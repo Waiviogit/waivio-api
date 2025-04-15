@@ -10,6 +10,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { getAppAuthorities } = require('../../helpers/appHelper');
+const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 
 const searchObjectTypes = [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE];
 
@@ -32,6 +33,7 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
     app,
     returnArray: false,
     locale,
+    mobile: isMobileDevice(),
   });
 
   const names = _.map(object?.departments, 'body');
@@ -136,6 +138,7 @@ const getRelated = async ({
     countryCode,
     reqUserName: userName,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   return {
@@ -234,6 +237,7 @@ const getSimilar = async ({
     countryCode,
     reqUserName: userName,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   return {
@@ -258,6 +262,7 @@ const getAddOn = async ({
     app,
     returnArray: false,
     locale,
+    mobile: isMobileDevice(),
   });
 
   const permlinks = _.map(object?.addOn, 'body');
@@ -299,6 +304,7 @@ const getAddOn = async ({
     countryCode,
     reqUserName: userName,
     affiliateCodes,
+    mobile: isMobileDevice(),
   });
 
   return {
