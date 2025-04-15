@@ -1112,6 +1112,58 @@ module.exports = {
       },
     },
   },
+  '/api/wobject/{authorPermlink}/featured': {
+    post: {
+      tags: [
+        'wobject',
+      ],
+      summary: 'Return featured objects',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'authorPermlink',
+          in: 'path',
+          description: 'author_permlink of specified wobject',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'locale',
+          in: 'header',
+          description: 'Users locale',
+          required: false,
+          type: 'string',
+          default: 'en-US',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            $ref: '#/definitions/inline_response_200_12',
+          },
+        },
+      },
+    },
+  },
   '/api/wobjectSearch': {
     post: {
       tags: [

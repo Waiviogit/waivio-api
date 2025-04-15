@@ -309,3 +309,11 @@ exports.activeCampaignsScheme = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   objectType: Joi.string().valid(...Object.values(OBJECT_TYPES)),
 });
+
+exports.getFeaturedObjectsScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+  limit: Joi.number().integer().min(1).max(100)
+    .default(10),
+  skip: Joi.number().integer().min(0).default(0),
+  locale: Joi.string().default('en-US'),
+});

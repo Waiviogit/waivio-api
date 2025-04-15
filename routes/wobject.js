@@ -52,6 +52,8 @@ wobjRoutes.route('/wobject/:authorPermlink/map/list')
   .post(reqTimeMonitor, WobjController.getObjectsLinksOnMap);
 wobjRoutes.route('/wobject/:authorPermlink/raw-field')
   .post(reqTimeMonitor, WobjController.getRawField);
+wobjRoutes.route('/wobject/:authorPermlink/featured')
+  .post(reqTimeMonitor, WobjController.getFeaturedObjects);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(reqTimeMonitor, WobjController.getMapObjectExperts);

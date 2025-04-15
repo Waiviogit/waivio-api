@@ -24,5 +24,6 @@ moduleExports.mapObject = require('./mapObject');
 moduleExports.objectGroup = require('./objectGroup');
 moduleExports.getByRating = require('./getByRating');
 moduleExports.getWithActiveCampaigns = require('./getWithActiveCampaigns');
+moduleExports.getFeatured = require('./getFeatured');
 
 module.exports = moduleExports;

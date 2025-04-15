@@ -2,7 +2,8 @@ const { Wobj, Post } = require('../models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
-  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, getWobjectsNames, getByOptionsCategory,
+  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, 
+  getWobjectsNames, getByOptionsCategory, getFeatured,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts, objectGroup, getByRating, getWithActiveCampaigns,
 } = require('../utilities/operations').wobject;
@@ -811,6 +812,25 @@ const getWobjectsWithCampaigns = async (req, res, next) => {
   return res.status(200).json(processedData);
 };
 
+const getFeaturedObjects = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.params, ...req.body, locale: req.headers.locale },
+    validators.wobject.getFeaturedObjectsScheme,
+    next,
+  );
+  if (!value) return;
+  const ip = await getIpFromHeaders(req);
+  const countryCode = await getCountryCodeFromIp(ip);
+
+  const { wobjects, hasMore } = await getFeatured({
+    ...value,
+    app: req.appData,
+    countryCode,
+  });
+
+  return res.status(200).json({ wobjects, hasMore });
+};
+
 module.exports = {
   index,
   show,
@@ -853,4 +873,5 @@ module.exports = {
   searchArea,
   checkLinkSafety,
   getWobjectsWithCampaigns,
+  getFeaturedObjects,
 };
