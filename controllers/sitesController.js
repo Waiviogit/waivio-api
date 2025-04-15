@@ -556,9 +556,9 @@ exports.getTrustedUsers = async (req, res, next) => {
     validators.sites.trustedSchema,
     next,
   );
-  //
-  // const { error: authError } = await authoriseUser.authorise(value.owner);
-  // if (authError) return next(authError);
+
+  const { error: authError } = await authoriseUser.authorise(value.owner);
+  if (authError) return next(authError);
 
   const { result, error } = await trustedUsers.getTrustedUsers(value);
   if (error) return next(error);
