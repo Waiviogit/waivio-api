@@ -84,5 +84,7 @@ sitesRoutes.route('/sites/statistics/buy-actions')
 
 sitesRoutes.route('/sites/trusted')
   .post(reqTimeMonitor, SitesController.getTrustedUsers);
+sitesRoutes.route('/sites/active/list')
+  .get(reqTimeMonitor, SitesController.getActiveList);
 
 module.exports = sitesRoutes;

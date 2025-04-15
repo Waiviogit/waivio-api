@@ -564,3 +564,9 @@ exports.getTrustedUsers = async (req, res, next) => {
   if (error) return next(error);
   return res.status(200).json(result);
 };
+
+exports.getActiveList = async (req, res, next) => {
+  const { result, error } = await sitesHelper.getAllActiveSites();
+  if (error) return next(error);
+  return res.status(200).json(result);
+};

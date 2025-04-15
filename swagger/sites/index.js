@@ -2276,4 +2276,35 @@ module.exports = {
       },
     },
   },
+  '/api/sites/active/list': {
+    get: {
+      tags: [
+        'sites',
+      ],
+      summary: 'get hosts list',
+      description: 'get hosts list',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                host: {
+                  type: 'string',
+                },
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

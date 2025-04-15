@@ -6,7 +6,7 @@ const dns = require('dns/promises');
 const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
-  DEFAULT_REFERRAL,
+  DEFAULT_REFERRAL, STATUSES,
 } = require('../../constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj, geoIpModel,
@@ -434,4 +434,21 @@ exports.getDescription = async ({ app }) => {
   });
 
   return { result: processed.description ?? '' };
+};
+
+exports.getAllActiveSites = async () => {
+  const { result, error } = await App.find(
+    {
+      status: STATUSES.ACTIVE,
+      host: { $not: { $regex: /^localhost/ } },
+    },
+    { _id: -1 },
+    {
+      host: 1,
+      _id: 0,
+    },
+  );
+  if (error) return { error };
+
+  return { result };
 };
