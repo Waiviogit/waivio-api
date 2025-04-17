@@ -27,23 +27,23 @@ noroutine.init({
 });
 
 // we use this because noroutine throw an error on timeout in wrapper
-const wrapModule = (module) => {
-  for (const key of Object.keys(module)) {
-    if (typeof module[key] !== 'function') continue;
-    const originalFunction = module[key];
-    module[key] = async (...args) => {
-      try {
-        return await originalFunction(...args);
-      } catch (error) {
-        return { error };
-      }
-    };
-  }
-};
-
-for (const module of noroutineModules) {
-  wrapModule(module);
-}
+// const wrapModule = (module) => {
+//   for (const key of Object.keys(module)) {
+//     if (typeof module[key] !== 'function') continue;
+//     const originalFunction = module[key];
+//     module[key] = async (...args) => {
+//       try {
+//         return await originalFunction(...args);
+//       } catch (error) {
+//         return { error };
+//       }
+//     };
+//   }
+// };
+//
+// for (const module of noroutineModules) {
+//   wrapModule(module);
+// }
 
 const moduleExports = {};
 
