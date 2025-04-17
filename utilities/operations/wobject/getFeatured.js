@@ -2,12 +2,13 @@ const { FIELDS_NAMES, OBJECT_TYPES } = require('@waivio/objects-processor');
 const _ = require('lodash');
 const { Wobj, User } = require('../../../models');
 const wObjectHelper = require('../../helpers/wObjectHelper');
-const { checkForSocialSite, getAppAuthorities } = require('../../helpers/appHelper');
+const { getAppAuthorities } = require('../../helpers/appHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 const { REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST } = require('../../../constants/wobjectsData');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
+const { checkForSocialSite } = require('../../helpers/sitesHelper');
 
 const getFeatured = async ({
   app,
