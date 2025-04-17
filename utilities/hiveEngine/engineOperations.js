@@ -13,6 +13,16 @@ const {
   TOKEN_WAIV,
 } = require('../../constants/hiveEngine');
 
+// we use this because noroutine throw an error on timeout
+const getCommentsWithWaiv = async ({ query }) => {
+  try {
+    return await commentContract
+      .getPosts({ query });
+  } catch (error) {
+    return [];
+  }
+};
+
 exports.calculateMana = (
   votingPower = {
     votingPower: MAX_VOTING_POWER,
@@ -81,8 +91,11 @@ exports.calculateHiveEngineVote = async ({
 
 exports.addWAIVToCommentsArray = async (content) => {
   const reqData = _.map(content, (c) => `@${c.author}/${c.permlink}`);
-  const commentsWithWaiv = await commentContract
-    .getPosts({ query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+
+  const commentsWithWaiv = await getCommentsWithWaiv({
+    query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } },
+  });
+
   const { rewardPool, pendingClaims } = await redisGetter
     .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${TOKEN_WAIV.SYMBOL}`);
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
@@ -99,7 +112,11 @@ exports.addWAIVToCommentsArray = async (content) => {
 
 exports.addWAIVToCommentsObject = async (content) => {
   const reqData = _.map(Object.keys(content), (c) => `@${c}`);
-  const commentsWithWaiv = await commentContract.getPosts({ query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+
+  const commentsWithWaiv = await getCommentsWithWaiv({
+    query: { authorperm: { $in: reqData }, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } },
+  });
+
   const { rewardPool, pendingClaims } = await redisGetter
     .importUserClientHGetAll(`${CACHE_KEY.SMT_POOL}:${TOKEN_WAIV.SYMBOL}`);
   const rewards = parseFloat(rewardPool) / parseFloat(pendingClaims);
@@ -113,9 +130,9 @@ exports.addWAIVToCommentsObject = async (content) => {
 
 exports.addWAIVToSingleComment = async (content) => {
   if (!content && !content.author && !content.permlink) return;
-
-  const commentsWithWaiv = await commentContract
-    .getPosts({ query: { authorperm: `@${content.author}/${content.permlink}`, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } } });
+  const commentsWithWaiv = await getCommentsWithWaiv({
+    query: { authorperm: `@${content.author}/${content.permlink}`, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } },
+  });
 
   if (_.isEmpty(commentsWithWaiv)) return;
   const { rewardPool, pendingClaims } = await redisGetter
