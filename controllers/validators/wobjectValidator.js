@@ -316,4 +316,5 @@ exports.getFeaturedObjectsScheme = Joi.object().keys({
     .default(10),
   skip: Joi.number().integer().min(0).default(0),
   locale: Joi.string().default('en-US'),
+  userName: Joi.string(),
 });

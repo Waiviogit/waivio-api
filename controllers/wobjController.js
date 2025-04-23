@@ -2,7 +2,7 @@ const { Wobj, Post } = require('../models');
 const {
   objectExperts, wobjectInfo, getManyObjects,
   getPostsByWobject, getGallery, getWobjField, sortFollowers, getRelated,
-  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps, 
+  getWobjsNearby, countWobjsByArea, getChildren, objectsOnMap, campaignOps,
   getWobjectsNames, getByOptionsCategory, getFeatured,
   getWobjectAuthorities, getByGroupId, recountListItems, getListItemLocales, mapObject,
   getWobjectPinnedPosts, objectGroup, getByRating, getWithActiveCampaigns,
@@ -814,7 +814,12 @@ const getWobjectsWithCampaigns = async (req, res, next) => {
 
 const getFeaturedObjects = async (req, res, next) => {
   const value = validators.validate(
-    { ...req.params, ...req.body, locale: req.headers.locale },
+    {
+      ...req.params,
+      ...req.body,
+      locale: req.headers.locale,
+      userName: req.headers.follower,
+    },
     validators.wobject.getFeaturedObjectsScheme,
     next,
   );
