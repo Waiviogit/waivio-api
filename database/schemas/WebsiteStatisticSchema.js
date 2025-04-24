@@ -6,6 +6,7 @@ const websiteStatisticSchema = new mongoose.Schema({
   buyAction: { type: Number },
   buyActionUniq: { type: Number },
   conversion: { type: Number },
+  conversionUniq: { type: Number },
 }, { timestamps: true });
 
 const websiteStatistic = mongoose.model('website_statistic', websiteStatisticSchema, 'website_statistic');

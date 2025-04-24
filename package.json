@@ -25,7 +25,8 @@
     "postDraftsToCollection": "NODE_PATH=. node utilities/tasks/postDraftsToCollection/run.js",
     "test": "NODE_PATH=. NODE_ENV=test nyc --reporter=html mocha",
     "addVectorStore": "node utilities/operations/assistant/migration/cliCustomStore.js",
-    "addWobjectTokens": "node utilities/tasks/addWobjectTokens/run.js"
+    "addWobjectTokens": "node utilities/tasks/addWobjectTokens/run.js",
+    "websiteStatisticConversion": "node utilities/tasks/websiteStatisticConversion/run.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.485.0",
