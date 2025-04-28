@@ -206,7 +206,7 @@ const generateReportTask = async ({
   });
   if (error) return { error };
 
-  await generateReport({
+  generateReport({
     accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
   });
 
