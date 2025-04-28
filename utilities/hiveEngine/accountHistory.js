@@ -5,7 +5,7 @@ exports.accountHistory = async (params) => {
   try {
     return {
       response: await axios.get(
-        'https://accounts.hive-engine.com/accountHistory',
+        'https://history.hive-engine.com/accountHistory',
         {
           params,
           timeout: REQUEST_TIMEOUT,

@@ -2972,6 +2972,9 @@ module.exports = {
         type: 'string',
         example: 'WAIV',
       },
+      addSwaps: {
+        type: 'boolean',
+      },
     },
   },
   engineReportWallet: {

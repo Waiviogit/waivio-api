@@ -17,3 +17,7 @@ exports.ADVANCED_WALLET_TYPES = [
 ];
 
 exports.AIRDROP = 'airdrops_newAirdrop';
+
+exports.WAIV_DB_OPERATIONS = {
+  SWAP: 'marketpools_swapTokens',
+};

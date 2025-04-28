@@ -260,6 +260,7 @@ exports.advancedWalletSchema = Joi.object().keys({
     name: Joi.string().required(),
     lastId: Joi.string().default('').allow(''),
     offset: Joi.number().default(0),
+    offsetSwap: Joi.number().default(0),
   })).single().min(1)
     .required(),
   endDate: Joi.date().timestamp('unix').less('now').default(() => new Date()),
@@ -270,6 +271,7 @@ exports.advancedWalletSchema = Joi.object().keys({
   currency: Joi.string()
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
+  addSwaps: Joi.boolean().default(false),
 });
 
 exports.advancedWalletGenerateSchema = Joi.object().keys({
@@ -285,6 +287,7 @@ exports.advancedWalletGenerateSchema = Joi.object().keys({
   currency: Joi.string()
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
+  addSwaps: Joi.boolean().default(false),
 });
 
 exports.getGeneratedReportSchema = Joi.object().keys({

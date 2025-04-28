@@ -7,27 +7,20 @@ const {
 } = require('../../../models');
 const {
   SUPPORTED_CURRENCIES,
-  TTL_TIME,
 } = require('../../../constants/common');
-const { ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP } = require('../../../constants/walletData');
+const {
+  ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP,
+  WAIV_DB_OPERATIONS,
+} = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
-const { getCachedData, getCacheKey, setCachedData } = require('../../helpers/cacheHelper');
-const jsonHelper = require('../../helpers/jsonHelper');
 
 exports.getWalletAdvancedReport = async ({
-  accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
+  accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol, addSwaps,
 }) => {
-  // const key = getCacheKey({
-  //   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol,
-  // });
-
-  // const cache = await getCachedData(key);
-  // if (cache) return jsonHelper.parseJson(cache, {});
-
   accounts = await addWalletDataToAccounts({
-    filterAccounts, startDate, accounts, endDate, limit, symbol,
+    filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
   });
 
   const error = _.find(accounts, (account) => account.error);
@@ -73,14 +66,14 @@ exports.getWalletAdvancedReport = async ({
     ...depositWithdrawals,
   };
 
-  //  await setCachedData({ key, data: { result }, ttl: TTL_TIME.SEVEN_DAYS });
-
   return { result };
 };
 
 const addWalletDataToAccounts = async ({
-  accounts, startDate, endDate, limit, filterAccounts, symbol,
+  accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
 }) => Promise.all(accounts.map(async (account) => {
+  // todo add cached requests with ttl ttl increase when requested with same key
+
   const { wallet, error } = await getWalletData({
     types: ADVANCED_WALLET_TYPES,
     userName: account.name,
@@ -98,23 +91,25 @@ const addWalletDataToAccounts = async ({
       timestampEnd: moment(endDate).unix(),
       timestampStart: moment(startDate).unix(),
       symbol,
+      addSwaps,
     }),
     sort: { timestamp: -1 },
+    limit,
+    skip: account.offsetSwap || 0,
   });
+
   if (dbError) return { error: dbError };
 
-  account.wallet = wallet;
-  if (account.wallet.length < limit) {
-    account.wallet.push(...result);
-  }
+  // we filter mutual transaction withdrawDeposit return empty string on mutual
+  account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
+    .reduce((acc, el) => {
+      const wd = withdrawDeposit({
+        type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
+      });
+      if (!wd) return acc;
+      return [...acc, { ...el, withdrawDeposit: wd }];
+    }, []);
   account.hasMore = account.wallet.length >= limit;
-
-  _.forEach(account.wallet, (el) => {
-    el.withdrawDeposit = withdrawDeposit({
-      type: el.operation, record: el, userName: account.name, filterAccounts,
-    });
-  });
-  account.wallet = account.wallet.filter((el) => el.withdrawDeposit);
 
   return account;
 }));
@@ -140,7 +135,7 @@ const getWalletData = async ({
 };
 
 const withdrawDeposit = ({
-  type, record, filterAccounts, userName,
+  type, record, filterAccounts, userName, symbol,
 }) => {
   const isMutual = multiAccountFilter({ record, filterAccounts, userName });
   if (isMutual) return '';
@@ -153,17 +148,40 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.BENEFICIARY_REWARD]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
+    [WAIV_DB_OPERATIONS.SWAP]: record?.symbolOut === symbol ? 'd' : 'w',
     [AIRDROP]: 'd',
   };
 
   return result[type] || '';
 };
 
-const constructDbQuery = (params) => ({
-  account: params.account,
-  timestamp: { $lte: params.timestampEnd, $gte: params.timestampStart },
-  operation: AIRDROP,
-});
+const constructDbQuery = ({
+  account,
+  timestampEnd,
+  timestampStart,
+  symbol,
+  addSwaps,
+}) => {
+  if (!addSwaps) {
+    return {
+      account,
+      timestamp: { $lte: timestampEnd, $gte: timestampStart },
+      operation: AIRDROP,
+      symbol,
+    };
+  }
+
+  return {
+    account,
+    timestamp: { $lte: timestampEnd, $gte: timestampStart },
+    operation: { $in: [AIRDROP, WAIV_DB_OPERATIONS.SWAP] },
+    $or: [
+      { symbol },
+      { symbolOut: symbol },
+      { symbolIn: symbol },
+    ],
+  };
+};
 
 const multiAccountFilter = ({ record, filterAccounts, userName }) => {
   filterAccounts = _.filter(filterAccounts, (el) => el !== userName);
@@ -337,12 +355,17 @@ const accumulateAcc = ({ resultArray, account, acc }) => {
 
   // total records in result array by account
   if (_.isEmpty(filterWallet) && account.hasMore === false) return acc;
-
-  const accountRecords = _.filter(resultArray, (el) => el.account === account.name);
-
-  const offset = accountRecords.length;
+  const offset = _.filter(
+    resultArray,
+    (el) => el.account === account.name && !el.swDb,
+  ).length;
+  const offsetSwap = _.filter(
+    resultArray,
+    (el) => el.account === account.name && el.swDb,
+  ).length;
 
   account.offset = account.offset ? account.offset + offset : offset;
+  account.offsetSwap = account.offsetSwap ? account.offsetSwap + offsetSwap : offsetSwap;
 
   acc.push(_.omit(account, ['wallet', 'hasMore']));
 
