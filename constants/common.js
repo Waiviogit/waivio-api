@@ -105,6 +105,7 @@ exports.CACHE_KEY = {
 };
 
 exports.TTL_TIME = {
+  THIRTY_SECONDS: 30,
   ONE_MINUTE: 60,
   FIVE_MINUTES: 60 * 5,
   TEN_MINUTES: 60 * 10,
@@ -147,6 +148,7 @@ exports.REDIS_KEYS = {
   FISHING_SITES_LAST_UPDATE: 'fishing_sites_last_update',
   SITES_ACTION_UNIQ: 'sites_action_uniq',
   SITES_ACTION_TOTAL: 'sites_action_total',
+  ADVANCED_REPORT: 'advanced_report_cache',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

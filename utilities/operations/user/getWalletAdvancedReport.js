@@ -7,6 +7,8 @@ const {
 } = require('../../../models');
 const {
   SUPPORTED_CURRENCIES,
+  REDIS_KEYS,
+  TTL_TIME,
 } = require('../../../constants/common');
 const {
   ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP,
@@ -15,6 +17,7 @@ const {
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
+const { cacheWrapperWithTTLRefresh, getCacheKey } = require('../../helpers/cacheHelper');
 
 exports.getWalletAdvancedReport = async ({
   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol, addSwaps,
@@ -69,51 +72,6 @@ exports.getWalletAdvancedReport = async ({
   return { result };
 };
 
-const addWalletDataToAccounts = async ({
-  accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
-}) => Promise.all(accounts.map(async (account) => {
-  // todo add cached requests with ttl ttl increase when requested with same key
-
-  const { wallet, error } = await getWalletData({
-    types: ADVANCED_WALLET_TYPES,
-    userName: account.name,
-    startDate,
-    endDate,
-    symbol,
-    limit,
-    offset: account.offset || 0,
-  });
-  if (error) return { error };
-
-  const { result, error: dbError } = await EngineAccountHistory.find({
-    condition: constructDbQuery({
-      account: account.name,
-      timestampEnd: moment(endDate).unix(),
-      timestampStart: moment(startDate).unix(),
-      symbol,
-      addSwaps,
-    }),
-    sort: { timestamp: -1 },
-    limit,
-    skip: account.offsetSwap || 0,
-  });
-
-  if (dbError) return { error: dbError };
-
-  // we filter mutual transaction withdrawDeposit return empty string on mutual
-  account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
-    .reduce((acc, el) => {
-      const wd = withdrawDeposit({
-        type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
-      });
-      if (!wd) return acc;
-      return [...acc, { ...el, withdrawDeposit: wd }];
-    }, []);
-  account.hasMore = account.wallet.length >= limit;
-
-  return account;
-}));
-
 const getWalletData = async ({
   userName, types, endDate, startDate, symbol, offset, limit,
 }) => {
@@ -133,6 +91,73 @@ const getWalletData = async ({
 
   return { wallet: walletOperations };
 };
+
+const cachedGetWalletData = cacheWrapperWithTTLRefresh(getWalletData);
+const cachedGetSwapData = cacheWrapperWithTTLRefresh(EngineAccountHistory.find);
+
+const addWalletDataToAccounts = async ({
+  accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
+}) => Promise.all(accounts.map(async (account) => {
+  // cached requests with ttl ttl increase when requested with same key
+
+  const walletKey = getCacheKey({
+    name: account.name,
+    startDate,
+    endDate,
+    symbol,
+    limit,
+    offset: account.offset || 0,
+  });
+  const swapKey = getCacheKey({
+    name: account.name,
+    startDate,
+    endDate,
+    symbol,
+    limit,
+    addSwaps,
+    skip: account.offsetSwap || 0,
+  });
+
+  const walletData = cachedGetWalletData({
+    types: ADVANCED_WALLET_TYPES,
+    userName: account.name,
+    startDate,
+    endDate,
+    symbol,
+    limit,
+    offset: account.offset || 0,
+  })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${walletKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+  const swapData = cachedGetSwapData({
+    condition: constructDbQuery({
+      account: account.name,
+      timestampEnd: moment(endDate).unix(),
+      timestampStart: moment(startDate).unix(),
+      symbol,
+      addSwaps,
+    }),
+    sort: { timestamp: -1 },
+    limit,
+    skip: account.offsetSwap || 0,
+  })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${swapKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+
+  const responses = await Promise.all([walletData, swapData]);
+  const errorResponse = responses.find((v) => v.error);
+  if (errorResponse) return { error: errorResponse.error };
+  const [{ wallet }, { result }] = responses;
+
+  // we filter mutual transaction withdrawDeposit return empty string on mutual
+  account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
+    .reduce((acc, el) => {
+      const wd = withdrawDeposit({
+        type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
+      });
+      if (!wd) return acc;
+      return [...acc, { ...el, withdrawDeposit: wd }];
+    }, []);
+  account.hasMore = account.wallet.length >= limit;
+
+  return account;
+}));
 
 const withdrawDeposit = ({
   type, record, filterAccounts, userName, symbol,

@@ -67,6 +67,24 @@ const cacheWrapper = (fn) => (...args) => async ({ key, ttl }) => {
   return result;
 };
 
+const cacheWrapperWithTTLRefresh = (fn) => (...args) => async ({ key, ttl }) => {
+  const cache = await getCachedData(key);
+  if (cache) {
+    const parsed = jsonHelper.parseJson(cache, null);
+    if (parsed) {
+      console.log('FROM CACHE');
+      await redisSetter.expire({ key, ttl });
+      return parsed;
+    }
+  }
+  const result = await fn(...args);
+
+  if (!result?.error) {
+    await setCachedData({ key, data: result, ttl });
+  }
+  return result;
+};
+
 module.exports = {
   setCachedData,
   getCachedData,
@@ -74,5 +92,6 @@ module.exports = {
   cacheCurrentMedianHistoryPrice,
   cacheRewardFund,
   cacheWrapper,
+  cacheWrapperWithTTLRefresh,
   getCache,
 };
