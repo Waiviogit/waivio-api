@@ -1,6 +1,7 @@
 const _ = require('lodash');
 const crypto = require('crypto');
 const BigNumber = require('bignumber.js');
+const moment = require('moment');
 const { EngineAdvancedReportModel, EngineAdvancedReportStatusModel } = require('../../../models');
 const { ERROR_OBJ, SERVICE_NOTIFICATION_TYPES } = require('../../../constants/common');
 const notificationsHelper = require('../../helpers/notificationsHelper');
@@ -43,10 +44,60 @@ const checkGenerationForPause = async ({ reportId }) => {
   return !!result;
 };
 
+const getFoldCountObject = () => ({
+  quantity: 0, // string add
+  recordsNum: 0, // add
+  timestamp: 0, // check  30 days from first
+  USD: 0, // number add
+  WAIV_USD: 0, // when count add when save  WAIV_USD / recordsNum
+  doc: null,
+});
+
+const setInitialDoc = ({ foldObject, record }) => {
+  foldObject.quantity = BigNumber(record?.quantity || 0);
+  foldObject.recordsNum = 1;
+  foldObject.timestamp = record.timestamp;
+  foldObject.USD = BigNumber(record?.USD || 0);
+  foldObject.WAIV_USD = BigNumber(record?.WAIV?.USD || 0);
+  foldObject.doc = record;
+};
+
+const updateFoldObject = ({ foldObject, record }) => {
+  foldObject.quantity = foldObject.quantity.plus(record?.quantity || 0);
+  foldObject.recordsNum += 1;
+  foldObject.USD = foldObject.USD.plus(record?.USD || 0);
+  foldObject.WAIV_USD = foldObject.WAIV_USD.plus(record?.WAIV?.USD || 0);
+};
+
+const createObjectForSave = (foldObject) => ({
+  ...foldObject.doc,
+  quantity: foldObject.quantity.toFixed(),
+  USD: foldObject.USD.toNumber(),
+  WAIV: {
+    USD: foldObject.WAIV_USD.dividedBy(foldObject.recordsNum),
+  },
+  authorperm: '',
+});
+
+const saveObjectsAndResetState = async (state) => {
+  for (const stateKey in state) {
+    const object = state[stateKey];
+    if (!object.doc) continue;
+    await EngineAdvancedReportModel.insert(createObjectForSave(object));
+    state[stateKey] = getFoldCountObject();
+  }
+};
+
 const generateReport = async ({
   accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
 }) => {
   let hasMore = true;
+  const rewards = {
+    comments_authorReward: getFoldCountObject(),
+    comments_curationReward: getFoldCountObject(),
+    comments_beneficiaryReward: getFoldCountObject(),
+  };
+
   do {
     const [stop, pause] = await Promise.all([
       checkGenerationForStop({ reportId }),
@@ -72,12 +123,39 @@ const generateReport = async ({
     hasMore = result.hasMore;
     accounts = result.accounts;
 
-    const docs = result.wallet.map((el) => ({
-      ..._.omit(el, '_id'),
-      reportId,
-    }));
+    // map docs and fold rewards
+    const docs = [];
 
-    await EngineAdvancedReportModel.insertMany(docs);
+    for (const el of result.wallet) {
+      const rewardsObj = rewards[el.operation];
+      if (!rewardsObj) {
+        // save all previous objects
+        await saveObjectsAndResetState(rewards);
+        docs.push({ ..._.omit(el, '_id'), reportId });
+        continue;
+      }
+      if (!rewardsObj.doc) {
+        setInitialDoc({ foldObject: rewardsObj, record: el });
+        continue;
+      }
+
+      const monthBeforeFirstRecord = moment.unix(el.timestamp)
+        .isBefore(moment.unix(rewardsObj.timestamp)
+          .subtract(30, 'days'));
+
+      if (monthBeforeFirstRecord) {
+        // save previous object with certain type
+        // todo check id duplication
+        await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj));
+        // reset current fold
+        rewards[el.operation] = getFoldCountObject();
+        continue;
+      }
+
+      updateFoldObject({ foldObject: rewardsObj, record: el });
+    }
+    if (docs.length) await EngineAdvancedReportModel.insertMany(docs);
+
     await EngineAdvancedReportStatusModel.updateOne({
       filter: { reportId, user },
       update: {
@@ -96,6 +174,8 @@ const generateReport = async ({
         : SERVICE_NOTIFICATION_TYPES.FINISH_REPORT,
       data: { account: user },
     });
+
+    if (!hasMore) await saveObjectsAndResetState(rewards);
   } while (hasMore);
 };
 
@@ -126,7 +206,7 @@ const generateReportTask = async ({
   });
   if (error) return { error };
 
-  generateReport({
+  await generateReport({
     accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
   });
 

@@ -9,6 +9,15 @@ const insertMany = async (docs) => {
   }
 };
 
+const insert = async (doc) => {
+  try {
+    const result = await EngineAdvancedReport.create(doc);
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 const find = async ({ filter, projection, options }) => {
   try {
     const result = await EngineAdvancedReport.find(filter, projection, options).lean();
@@ -51,4 +60,5 @@ module.exports = {
   updateOne,
   findOne,
   findOneAndUpdate,
+  insert,
 };
