@@ -44,7 +44,7 @@ const checkGenerationForPause = async ({ reportId }) => {
 };
 
 const generateReport = async ({
-  accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId,
+  accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
 }) => {
   let hasMore = true;
   do {
@@ -56,7 +56,7 @@ const generateReport = async ({
     if (stop || pause) break;
 
     const { result, error } = await getWalletAdvancedReport({
-      accounts, startDate, endDate, filterAccounts, user, currency, symbol, limit: 500,
+      accounts, startDate, endDate, filterAccounts, user, currency, symbol, limit: 500, addSwaps,
     });
 
     if (error) {
@@ -100,7 +100,7 @@ const generateReport = async ({
 };
 
 const generateReportTask = async ({
-  accounts, startDate, endDate, filterAccounts, user, currency, symbol,
+  accounts, startDate, endDate, filterAccounts, user, currency, symbol, addSwaps,
 }) => {
   const { result: inProgress } = await EngineAdvancedReportStatusModel.countDocuments({
     filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
@@ -121,12 +121,13 @@ const generateReportTask = async ({
     user,
     currency,
     symbol,
+    addSwaps,
     status: GENERATE_STATUS.IN_PROGRESS,
   });
   if (error) return { error };
 
   generateReport({
-    accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId,
+    accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
   });
 
   return {
@@ -162,6 +163,7 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
       withdrawals: BigNumber(result.withdrawals).toString(),
       currency: result.currency,
       filterAccounts: result.filterAccounts,
+      addSwaps: !!result.addSwaps,
     },
   };
 };

@@ -19,6 +19,7 @@ const EngineAdvancedReportStatusSchema = new Schema({
   withdrawals: { type: mongoose.Schema.Types.Decimal128, default: 0 },
   status: { type: String },
   symbol: { type: String },
+  addSwaps: { type: Boolean },
 }, { versionKey: false });
 
 module.exports = mongoose.model(
