@@ -110,6 +110,10 @@ const generateReport = async ({
       accounts, startDate, endDate, filterAccounts, user, currency, symbol, limit: 500, addSwaps,
     });
 
+    console.log(reportId);
+    console.log(user);
+    console.log('items:', result.wallet?.length);
+
     if (error) {
       await EngineAdvancedReportStatusModel.updateOne({
         filter: { reportId, user },
@@ -129,6 +133,8 @@ const generateReport = async ({
     for (const el of result.wallet) {
       const rewardsObj = rewards[el.operation];
       if (!rewardsObj) {
+        console.log(reportId);
+        console.log('!rewardsObj save');
         // save all previous objects
         await saveObjectsAndResetState(rewards);
         docs.push({ ..._.omit(el, '_id'), reportId });
@@ -144,6 +150,8 @@ const generateReport = async ({
           .subtract(30, 'days'));
 
       if (monthBeforeFirstRecord) {
+        console.log(reportId);
+        console.log('monthBeforeFirstRecord save');
         // save previous object with certain type
         await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj));
         // reset current fold
@@ -174,7 +182,11 @@ const generateReport = async ({
       data: { account: user },
     });
 
-    if (!hasMore) await saveObjectsAndResetState(rewards);
+    if (!hasMore) {
+      console.log(reportId);
+      console.log('!hasMore save');
+      await saveObjectsAndResetState(rewards);
+    }
   } while (hasMore);
 };
 
