@@ -145,7 +145,6 @@ const generateReport = async ({
 
       if (monthBeforeFirstRecord) {
         // save previous object with certain type
-        // todo check id duplication
         await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj));
         // reset current fold
         rewards[el.operation] = getFoldCountObject();
