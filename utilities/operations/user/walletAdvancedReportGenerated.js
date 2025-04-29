@@ -69,7 +69,7 @@ const updateFoldObject = ({ foldObject, record }) => {
   foldObject.WAIV_USD = foldObject.WAIV_USD.plus(record?.WAIV?.USD || 0);
 };
 
-const createObjectForSave = (foldObject) => (_.omit({
+const createObjectForSave = (foldObject, reportId) => (_.omit({
   ...foldObject.doc,
   quantity: foldObject.quantity.toFixed(),
   USD: foldObject.USD.toNumber(),
@@ -77,13 +77,14 @@ const createObjectForSave = (foldObject) => (_.omit({
     USD: foldObject.WAIV_USD.dividedBy(foldObject.recordsNum),
   },
   authorperm: '',
+  reportId,
 }, '_id'));
 
-const saveObjectsAndResetState = async (state) => {
+const saveObjectsAndResetState = async (state, reportId) => {
   for (const stateKey in state) {
     const object = state[stateKey];
     if (!object.doc) continue;
-    await EngineAdvancedReportModel.insert(createObjectForSave(object));
+    await EngineAdvancedReportModel.insert(createObjectForSave(object, reportId));
     state[stateKey] = getFoldCountObject();
   }
 };
@@ -130,7 +131,7 @@ const generateReport = async ({
       const rewardsObj = rewards[el.operation];
       if (!rewardsObj) {
         // save all previous objects
-        await saveObjectsAndResetState(rewards);
+        await saveObjectsAndResetState(rewards, reportId);
         docs.push({ ..._.omit(el, '_id'), reportId });
         continue;
       }
@@ -145,7 +146,7 @@ const generateReport = async ({
 
       if (monthBeforeFirstRecord) {
         // save previous object with certain type
-        await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj));
+        await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj, reportId));
         // reset current fold
         rewards[el.operation] = getFoldCountObject();
         continue;
@@ -174,7 +175,7 @@ const generateReport = async ({
       data: { account: user },
     });
 
-    if (!hasMore) await saveObjectsAndResetState(rewards);
+    if (!hasMore) await saveObjectsAndResetState(rewards, reportId);
   } while (hasMore);
 };
 
