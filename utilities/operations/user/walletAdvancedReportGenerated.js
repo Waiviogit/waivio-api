@@ -46,27 +46,21 @@ const checkGenerationForPause = async ({ reportId }) => {
 
 const getFoldCountObject = () => ({
   quantity: 0, // string add
-  recordsNum: 0, // add
   timestamp: 0, // check  30 days from first
   USD: 0, // number add
-  WAIV_USD: 0, // when count add when save  WAIV_USD / recordsNum
   doc: null,
 });
 
 const setInitialDoc = ({ foldObject, record }) => {
   foldObject.quantity = BigNumber(record?.quantity || 0);
-  foldObject.recordsNum = 1;
   foldObject.timestamp = record.timestamp;
   foldObject.USD = BigNumber(record?.USD || 0);
-  foldObject.WAIV_USD = BigNumber(record?.WAIV?.USD || 0);
   foldObject.doc = record;
 };
 
 const updateFoldObject = ({ foldObject, record }) => {
   foldObject.quantity = foldObject.quantity.plus(record?.quantity || 0);
-  foldObject.recordsNum += 1;
   foldObject.USD = foldObject.USD.plus(record?.USD || 0);
-  foldObject.WAIV_USD = foldObject.WAIV_USD.plus(record?.WAIV?.USD || 0);
 };
 
 const createObjectForSave = (foldObject, reportId) => (_.omit({
@@ -74,7 +68,7 @@ const createObjectForSave = (foldObject, reportId) => (_.omit({
   quantity: foldObject.quantity.toFixed(),
   USD: foldObject.USD.toNumber(),
   WAIV: {
-    USD: foldObject.WAIV_USD.dividedBy(foldObject.recordsNum),
+    USD: foldObject.USD.dividedBy(foldObject.quantity).toNumber(),
   },
   authorperm: '',
   reportId,
@@ -145,6 +139,8 @@ const generateReport = async ({
           .subtract(30, 'days'));
 
       if (monthBeforeFirstRecord) {
+        // update
+        updateFoldObject({ foldObject: rewardsObj, record: el });
         // save previous object with certain type
         await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj, reportId));
         // reset current fold
