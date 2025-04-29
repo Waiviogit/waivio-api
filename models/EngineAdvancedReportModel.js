@@ -12,6 +12,8 @@ const insertMany = async (docs) => {
 const insert = async (doc) => {
   try {
     const result = await EngineAdvancedReport.create(doc);
+    console.log('INSERT RESULT');
+    console.log(JSON.stringify(result));
     return { result };
   } catch (error) {
     console.log(`error on save: ${error.message}`);
