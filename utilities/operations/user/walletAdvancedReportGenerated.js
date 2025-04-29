@@ -82,7 +82,11 @@ const createObjectForSave = (foldObject) => (_.omit({
 const saveObjectsAndResetState = async (state) => {
   for (const stateKey in state) {
     const object = state[stateKey];
-    if (!object.doc) continue;
+    if (!object.doc) {
+      console.log('NO DOC');
+      continue;
+    }
+    console.log(JSON.stringify(createObjectForSave(object)));
     await EngineAdvancedReportModel.insert(createObjectForSave(object));
     state[stateKey] = getFoldCountObject();
   }
