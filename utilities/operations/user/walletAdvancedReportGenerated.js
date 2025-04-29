@@ -69,7 +69,7 @@ const updateFoldObject = ({ foldObject, record }) => {
   foldObject.WAIV_USD = foldObject.WAIV_USD.plus(record?.WAIV?.USD || 0);
 };
 
-const createObjectForSave = (foldObject) => ({
+const createObjectForSave = (foldObject) => (_.omit({
   ...foldObject.doc,
   quantity: foldObject.quantity.toFixed(),
   USD: foldObject.USD.toNumber(),
@@ -77,7 +77,7 @@ const createObjectForSave = (foldObject) => ({
     USD: foldObject.WAIV_USD.dividedBy(foldObject.recordsNum),
   },
   authorperm: '',
-});
+}, '_id'));
 
 const saveObjectsAndResetState = async (state) => {
   for (const stateKey in state) {
