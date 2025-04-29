@@ -14,6 +14,7 @@ const insert = async (doc) => {
     const result = await EngineAdvancedReport.create(doc);
     return { result };
   } catch (error) {
+    console.log(`error on save: ${error.message}`);
     return { error };
   }
 };

@@ -112,7 +112,7 @@ const generateReport = async ({
 
     console.log(reportId);
     console.log(user);
-    console.log('items:', result.wallet?.length);
+    console.log(`items: ${result.wallet?.length}`);
 
     if (error) {
       await EngineAdvancedReportStatusModel.updateOne({
