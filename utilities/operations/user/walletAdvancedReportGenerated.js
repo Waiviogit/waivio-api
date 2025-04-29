@@ -51,16 +51,16 @@ const getFoldCountObject = () => ({
   doc: null,
 });
 
-const setInitialDoc = ({ foldObject, record }) => {
-  foldObject.quantity = BigNumber(record?.quantity || 0);
-  foldObject.timestamp = record.timestamp;
-  foldObject.USD = BigNumber(record?.USD || 0);
-  foldObject.doc = record;
+const setInitialDoc = ({ rewardObject, record }) => {
+  rewardObject.quantity = BigNumber(record?.quantity || 0);
+  rewardObject.timestamp = record.timestamp;
+  rewardObject.USD = BigNumber(record?.USD || 0);
+  rewardObject.doc = record;
 };
 
-const updateFoldObject = ({ foldObject, record }) => {
-  foldObject.quantity = foldObject.quantity.plus(record?.quantity || 0);
-  foldObject.USD = foldObject.USD.plus(record?.USD || 0);
+const updateFoldObject = ({ rewardObject, record }) => {
+  rewardObject.quantity = rewardObject.quantity.plus(record?.quantity || 0);
+  rewardObject.USD = rewardObject.USD.plus(record?.USD || 0);
 };
 
 const createObjectForSave = (foldObject, reportId) => (_.omit({
@@ -72,26 +72,21 @@ const createObjectForSave = (foldObject, reportId) => (_.omit({
   },
   authorperm: '',
   reportId,
+  operation: 'comment_rewards',
 }, '_id'));
 
-const saveObjectsAndResetState = async (state, reportId) => {
-  for (const stateKey in state) {
-    const object = state[stateKey];
-    if (!object.doc) continue;
-    await EngineAdvancedReportModel.insert(createObjectForSave(object, reportId));
-    state[stateKey] = getFoldCountObject();
-  }
+const saveRewardObject = async (object, reportId) => {
+  if (!object.doc) return;
+  await EngineAdvancedReportModel.insert(createObjectForSave(object, reportId));
 };
+
+const REWARDS_OPS = ['comments_authorReward', 'comments_curationReward', 'comments_beneficiaryReward'];
 
 const generateReport = async ({
   accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
 }) => {
   let hasMore = true;
-  const rewards = {
-    comments_authorReward: getFoldCountObject(),
-    comments_curationReward: getFoldCountObject(),
-    comments_beneficiaryReward: getFoldCountObject(),
-  };
+  let rewardObject = getFoldCountObject();
 
   do {
     const [stop, pause] = await Promise.all([
@@ -121,34 +116,39 @@ const generateReport = async ({
     // map docs and fold rewards
     const docs = [];
 
-    for (const el of result.wallet) {
-      const rewardsObj = rewards[el.operation];
-      if (!rewardsObj) {
-        // save all previous objects
-        await saveObjectsAndResetState(rewards, reportId);
-        docs.push({ ..._.omit(el, '_id'), reportId });
+    for (const record of result.wallet) {
+      const { operation, timestamp } = record;
+
+      const isRewardOp = REWARDS_OPS.includes(operation);
+      if (!isRewardOp) {
+        // save previous object
+        await saveRewardObject(rewardObject, reportId);
+        // reset state
+        rewardObject = getFoldCountObject();
+        docs.push({ ..._.omit(record, '_id'), reportId });
+        // reset state
         continue;
       }
-      if (!rewardsObj.doc) {
-        setInitialDoc({ foldObject: rewardsObj, record: el });
+      if (!rewardObject.doc) {
+        setInitialDoc({ rewardObject, record });
         continue;
       }
 
-      const monthBeforeFirstRecord = moment.unix(el.timestamp)
-        .isBefore(moment.unix(rewardsObj.timestamp)
+      const monthBeforeFirstRecord = moment.unix(timestamp)
+        .isBefore(moment.unix(rewardObject.timestamp)
           .subtract(30, 'days'));
 
       if (monthBeforeFirstRecord) {
         // update
-        updateFoldObject({ foldObject: rewardsObj, record: el });
-        // save previous object with certain type
-        await EngineAdvancedReportModel.insert(createObjectForSave(rewardsObj, reportId));
-        // reset current fold
-        rewards[el.operation] = getFoldCountObject();
+        updateFoldObject({ rewardObject, record });
+        // save previous object
+        await saveRewardObject(rewardObject, reportId);
+        // reset state
+        rewardObject = getFoldCountObject();
         continue;
       }
 
-      updateFoldObject({ foldObject: rewardsObj, record: el });
+      updateFoldObject({ rewardObject, record });
     }
     if (docs.length) await EngineAdvancedReportModel.insertMany(docs);
 
@@ -171,7 +171,10 @@ const generateReport = async ({
       data: { account: user },
     });
 
-    if (!hasMore) await saveObjectsAndResetState(rewards, reportId);
+    if (!hasMore) {
+      // save previous object with certain type
+      await saveRewardObject(rewardObject, reportId);
+    }
   } while (hasMore);
 };
 
