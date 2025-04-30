@@ -63,7 +63,7 @@ const updateFoldObject = ({ rewardObject, record }) => {
   rewardObject.USD = rewardObject.USD.plus(record?.USD || 0);
 };
 
-const createObjectForSave = (foldObject, reportId) => (_.omit({
+const createObjectForSave = (foldObject, reportId, rewardAccounts) => (_.omit({
   ...foldObject.doc,
   quantity: foldObject.quantity.toFixed(),
   USD: foldObject.USD.toNumber(),
@@ -73,11 +73,12 @@ const createObjectForSave = (foldObject, reportId) => (_.omit({
   authorperm: '',
   reportId,
   operation: 'comment_rewards',
+  account: rewardAccounts,
 }, '_id'));
 
-const saveRewardObject = async (object, reportId) => {
+const saveRewardObject = async (object, reportId, rewardAccounts) => {
   if (!object.doc) return;
-  await EngineAdvancedReportModel.insert(createObjectForSave(object, reportId));
+  await EngineAdvancedReportModel.insert(createObjectForSave(object, reportId, rewardAccounts));
 };
 
 const REWARDS_OPS = ['comments_authorReward', 'comments_curationReward', 'comments_beneficiaryReward'];
@@ -87,6 +88,8 @@ const generateReport = async ({
 }) => {
   let hasMore = true;
   let rewardObject = getFoldCountObject();
+
+  const rewardAccounts = accounts.map((el) => el.name).join(', ');
 
   do {
     const [stop, pause] = await Promise.all([
@@ -122,7 +125,7 @@ const generateReport = async ({
       const isRewardOp = REWARDS_OPS.includes(operation);
       if (!isRewardOp) {
         // save previous object
-        await saveRewardObject(rewardObject, reportId);
+        await saveRewardObject(rewardObject, reportId, rewardAccounts);
         // reset state
         rewardObject = getFoldCountObject();
         docs.push({ ..._.omit(record, '_id'), reportId });
@@ -142,7 +145,7 @@ const generateReport = async ({
         // update
         updateFoldObject({ rewardObject, record });
         // save previous object
-        await saveRewardObject(rewardObject, reportId);
+        await saveRewardObject(rewardObject, reportId, rewardAccounts);
         // reset state
         rewardObject = getFoldCountObject();
         continue;
@@ -173,7 +176,7 @@ const generateReport = async ({
 
     if (!hasMore) {
       // save previous object with certain type
-      await saveRewardObject(rewardObject, reportId);
+      await saveRewardObject(rewardObject, reportId, rewardAccounts);
     }
   } while (hasMore);
 };
