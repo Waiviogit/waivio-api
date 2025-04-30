@@ -43,7 +43,7 @@ module.exports = async ({
   field.fullBody = post.body;
 
   return {
-    toDisplay: _.includes(FIELDS_TO_PARSE, fieldName) ? jsonHelper.parseJson(toDisplay) : toDisplay,
+    toDisplay,
     field,
   };
 };
