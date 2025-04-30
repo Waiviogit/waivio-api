@@ -228,7 +228,7 @@ const getGeneratedReport = async ({ reportId, skip = 0, limit }) => {
   const { result: report } = await EngineAdvancedReportModel.find({
     filter: { reportId },
     options: {
-      sort: { _id: 1 },
+      sort: { timestamp: -1, _id: 1 },
       skip,
       limit: limit + 1,
     },
