@@ -2975,6 +2975,9 @@ module.exports = {
       addSwaps: {
         type: 'boolean',
       },
+      mergeRewards: {
+        type: 'boolean',
+      },
     },
   },
   engineReportWallet: {

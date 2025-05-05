@@ -20,6 +20,7 @@ const EngineAdvancedReportStatusSchema = new Schema({
   status: { type: String },
   symbol: { type: String },
   addSwaps: { type: Boolean },
+  mergeRewards: { type: Boolean },
 }, { versionKey: false });
 
 module.exports = mongoose.model(

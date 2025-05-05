@@ -288,6 +288,7 @@ exports.advancedWalletGenerateSchema = Joi.object().keys({
     .valid(...Object.values(SUPPORTED_CURRENCIES)).default(SUPPORTED_CURRENCIES.USD),
   symbol: Joi.string().valid(SUPPORTED_CRYPTO_CURRENCIES.WAIV).default(SUPPORTED_CRYPTO_CURRENCIES.WAIV),
   addSwaps: Joi.boolean().default(false),
+  mergeRewards: Joi.boolean().default(true),
 });
 
 exports.getGeneratedReportSchema = Joi.object().keys({

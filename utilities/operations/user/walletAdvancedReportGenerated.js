@@ -84,7 +84,7 @@ const saveRewardObject = async (object, reportId, rewardAccounts) => {
 const REWARDS_OPS = ['comments_authorReward', 'comments_curationReward', 'comments_beneficiaryReward'];
 
 const generateReport = async ({
-  accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
+  accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps, mergeRewards,
 }) => {
   let hasMore = true;
   let rewardObject = getFoldCountObject();
@@ -121,6 +121,10 @@ const generateReport = async ({
 
     for (const record of result.wallet) {
       const { operation, timestamp } = record;
+      if (!mergeRewards) {
+        docs.push({ ..._.omit(record, '_id'), reportId });
+        continue;
+      }
 
       const isRewardOp = REWARDS_OPS.includes(operation);
       if (!isRewardOp) {
@@ -182,7 +186,7 @@ const generateReport = async ({
 };
 
 const generateReportTask = async ({
-  accounts, startDate, endDate, filterAccounts, user, currency, symbol, addSwaps,
+  accounts, startDate, endDate, filterAccounts, user, currency, symbol, addSwaps, mergeRewards,
 }) => {
   const { result: inProgress } = await EngineAdvancedReportStatusModel.countDocuments({
     filter: { user, status: GENERATE_STATUS.IN_PROGRESS },
@@ -204,12 +208,13 @@ const generateReportTask = async ({
     currency,
     symbol,
     addSwaps,
+    mergeRewards,
     status: GENERATE_STATUS.IN_PROGRESS,
   });
   if (error) return { error };
 
   generateReport({
-    accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps,
+    accounts, startDate, endDate, filterAccounts, user, currency, symbol, reportId, addSwaps, mergeRewards,
   });
 
   return {
