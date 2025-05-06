@@ -304,7 +304,7 @@ const getListItems = async ({
     }
     wobj = await wObjectHelper.processWobjects({
       locale,
-      fields: REQUIREDFIELDS,
+      fields: [...REQUIREDFIELDS, FIELDS_NAMES.PROMOTION],
       wobjects: [wobj],
       returnArray: false,
       app,
