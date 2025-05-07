@@ -7,6 +7,11 @@ exports.WAIV_OPERATIONS_TYPES = {
   MINING_LOTTERY: 'mining_lottery',
 };
 
+exports.MARKET_OPERATIONS = {
+  MARKET_SELL: 'market_sell',
+  MARKET_BUY: 'market_buy',
+};
+
 exports.ADVANCED_WALLET_TYPES = [
   this.WAIV_OPERATIONS_TYPES.TOKENS_TRANSFER,
   this.WAIV_OPERATIONS_TYPES.TOKENS_STAKE,

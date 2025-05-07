@@ -12,7 +12,7 @@ const {
 } = require('../../../constants/common');
 const {
   ADVANCED_WALLET_TYPES, WAIV_OPERATIONS_TYPES, AIRDROP,
-  WAIV_DB_OPERATIONS,
+  WAIV_DB_OPERATIONS, MARKET_OPERATIONS,
 } = require('../../../constants/walletData');
 const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
@@ -118,8 +118,10 @@ const addWalletDataToAccounts = async ({
     skip: account.offsetSwap || 0,
   });
 
+  const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...MARKET_OPERATIONS] : ADVANCED_WALLET_TYPES;
+
   const walletData = cachedGetWalletData({
-    types: ADVANCED_WALLET_TYPES,
+    types,
     userName: account.name,
     startDate,
     endDate,
@@ -174,6 +176,8 @@ const withdrawDeposit = ({
     [WAIV_OPERATIONS_TYPES.CURATION_REWARDS]: _.get(record, 'to') === userName ? 'd' : 'w',
     [WAIV_OPERATIONS_TYPES.MINING_LOTTERY]: 'd',
     [WAIV_DB_OPERATIONS.SWAP]: record?.symbolOut === symbol ? 'd' : 'w',
+    [MARKET_OPERATIONS.MARKET_SELL]: 'w',
+    [MARKET_OPERATIONS.MARKET_BUY]: 'd',
     [AIRDROP]: 'd',
   };
 
