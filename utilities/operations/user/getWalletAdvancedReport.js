@@ -118,7 +118,7 @@ const addWalletDataToAccounts = async ({
     skip: account.offsetSwap || 0,
   });
 
-  const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...MARKET_OPERATIONS] : ADVANCED_WALLET_TYPES;
+  const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...Object.values(MARKET_OPERATIONS)] : ADVANCED_WALLET_TYPES;
 
   const walletData = cachedGetWalletData({
     types,
