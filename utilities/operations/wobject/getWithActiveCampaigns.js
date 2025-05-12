@@ -10,7 +10,7 @@ const SEARCH_TYPE = {
 };
 
 const getSearchType = (app) => {
-  if (!app.inherited) return SEARCH_TYPE.GENERAL;
+  if (!app?.inherited) return SEARCH_TYPE.GENERAL;
   const social = checkForSocialSite(app?.parentHost ?? '');
   if (social) return SEARCH_TYPE.SOCIAL;
   return SEARCH_TYPE.DINING;
