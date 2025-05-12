@@ -1,7 +1,12 @@
-const { Wobj } = require('../../../models');
+const {
+  Wobj,
+  User,
+} = require('../../../models');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
+const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 
 const SEARCH_TYPE = {
   GENERAL: 'GENERAL',
@@ -31,6 +36,7 @@ const getWithActiveCampaigns = async ({
   limit,
   app,
   objectType,
+  userName,
 }) => {
   const searchType = getSearchType(app);
   const condition = searchCondition[searchType](app);
@@ -61,6 +67,9 @@ const getWithActiveCampaigns = async ({
   const { wobjects, error } = await Wobj.fromAggregation(pipe);
 
   if (error) return { wobjects: [], hasMore: false };
+
+  const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
+  await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects });
 
   return { wobjects: wobjects.slice(0, limit), hasMore: wobjects?.length > limit };
 };

@@ -792,7 +792,7 @@ const checkLinkSafety = async (req, res, next) => {
 
 const getWobjectsWithCampaigns = async (req, res, next) => {
   const value = validators.validate(
-    req.body,
+    { ...req.body, userName: req.headers.follower },
     validators.wobject.activeCampaignsScheme,
     next,
   );

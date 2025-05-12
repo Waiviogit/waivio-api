@@ -308,6 +308,7 @@ exports.activeCampaignsScheme = Joi.object().keys({
     .default(10),
   skip: Joi.number().integer().min(0).default(0),
   objectType: Joi.string().valid(...Object.values(OBJECT_TYPES)),
+  userName: Joi.string(),
 });
 
 exports.getFeaturedObjectsScheme = Joi.object().keys({
