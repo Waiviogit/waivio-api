@@ -50,7 +50,7 @@ const createRecipeInstacart = async (payload) => {
 const getInstacartLinkByObject = async ({ app, authorPermlink }) => {
   if (!app.host) return { error: { status: 422, message: 'App not found' } };
   const key = `${REDIS_KEYS.INSTACART_LINKS}:${app.host}:${authorPermlink}`;
-  const link = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
+  const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
   if (link) return { result: link };
 
   const { wObject, error } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.RECIPE);

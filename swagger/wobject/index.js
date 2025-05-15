@@ -1820,6 +1820,45 @@ module.exports = {
       },
     },
   },
+  '/api/wobject/{authorPermlink}/instacart-link': {
+    get: {
+      tags: [
+        'wobject',
+      ],
+      summary: 'get link for instacart',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'authorPermlink',
+          in: 'path',
+          description: 'author_permlink of object to return',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        404: {
+          description: 'Not Found',
+        },
+        422: {
+          description: 'Unprocessable',
+        },
+      },
+    },
+  },
   '/api/wobjects/group': {
     post: {
       tags: [
