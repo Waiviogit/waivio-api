@@ -54,6 +54,8 @@ wobjRoutes.route('/wobject/:authorPermlink/raw-field')
   .post(reqTimeMonitor, WobjController.getRawField);
 wobjRoutes.route('/wobject/:authorPermlink/featured')
   .post(reqTimeMonitor, WobjController.getFeaturedObjects);
+wobjRoutes.route('/wobject/:authorPermlink/instacart-link')
+  .get(reqTimeMonitor, WobjController.getInstacartLink);
 
 wobjRoutes.route('/wobjects/map/experts')
   .post(reqTimeMonitor, WobjController.getMapObjectExperts);

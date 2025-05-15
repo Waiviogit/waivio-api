@@ -149,6 +149,7 @@ exports.REDIS_KEYS = {
   SITES_ACTION_UNIQ: 'sites_action_uniq',
   SITES_ACTION_TOTAL: 'sites_action_total',
   ADVANCED_REPORT: 'advanced_report_cache',
+  INSTACART_LINKS: 'instacart_links',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

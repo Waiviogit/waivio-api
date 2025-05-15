@@ -21,6 +21,7 @@ const { getFields, getOneField } = require('../utilities/operations/wobject/getF
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
+const { getInstacartLinkByObject } = require('../utilities/operations/wobject/instacartLinkByObject');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -836,6 +837,25 @@ const getFeaturedObjects = async (req, res, next) => {
   return res.status(200).json({ wobjects, hasMore });
 };
 
+const getInstacartLink = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.params,
+    },
+    validators.wobject.instacartLinkScheme,
+    next,
+  );
+  if (!value) return;
+
+  const { result, error } = await getInstacartLinkByObject({
+    app: req.appData,
+    ...value,
+  });
+  if (error) return next(error);
+
+  return res.status(200).json({ result });
+};
+
 module.exports = {
   index,
   show,
@@ -879,4 +899,5 @@ module.exports = {
   checkLinkSafety,
   getWobjectsWithCampaigns,
   getFeaturedObjects,
+  getInstacartLink,
 };

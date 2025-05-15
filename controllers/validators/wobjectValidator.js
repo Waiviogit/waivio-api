@@ -319,3 +319,7 @@ exports.getFeaturedObjectsScheme = Joi.object().keys({
   locale: Joi.string().default('en-US'),
   userName: Joi.string(),
 });
+
+exports.instacartLinkScheme = Joi.object().keys({
+  authorPermlink: Joi.string().required(),
+});
