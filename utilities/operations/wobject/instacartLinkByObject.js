@@ -77,7 +77,7 @@ const getInstacartLinkByObject = async ({ app, authorPermlink }) => {
   };
   const { value, error: validationError } = instacartPayloadSchema.validate(payload);
 
-  if (validationError) return { error: { status: 422, message: error.message } };
+  if (validationError) return { error: { status: 422, message: validationError.message } };
 
   const { result, error: createError } = await createRecipeInstacart(value);
   if (createError) return { error: createError };
