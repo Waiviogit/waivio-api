@@ -70,10 +70,10 @@ const getInstacartLinkByObject = async ({ app, authorPermlink }) => {
 
   const payload = {
     title: processed.name,
-    image_url: processed.avatar,
     link_type: 'recipe',
     ingredients: jsonHelper.parseJson(processed.recipeIngredients).map((el) => ({ name: el })),
-    instructions: processed.description.split('\n'),
+    ...(processed.avatar && { image_url: processed.avatar }),
+    ...(processed.description && { instructions: [processed.description] }),
   };
   const { value, error: validationError } = instacartPayloadSchema.validate(payload);
 
