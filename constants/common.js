@@ -150,6 +150,7 @@ exports.REDIS_KEYS = {
   SITES_ACTION_TOTAL: 'sites_action_total',
   ADVANCED_REPORT: 'advanced_report_cache',
   INSTACART_LINKS: 'instacart_links',
+  CHALLENGES_OBJECT_TYPES: 'challenges_object_types',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

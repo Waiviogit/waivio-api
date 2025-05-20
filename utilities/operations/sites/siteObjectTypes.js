@@ -1,6 +1,15 @@
 const { OBJECT_TYPES } = require('@waivio/objects-processor');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 const { Wobj } = require('../../../models');
+const {
+  getCachedData,
+  setCachedData,
+} = require('../../helpers/cacheHelper');
+const jsonHelper = require('../../helpers/jsonHelper');
+const {
+  REDIS_KEYS,
+  TTL_TIME,
+} = require('../../../constants/common');
 
 const TYPES_FOR_SITE = [
   OBJECT_TYPES.PRODUCT,
@@ -12,11 +21,10 @@ const TYPES_FOR_SITE = [
   OBJECT_TYPES.BUSINESS,
 ];
 
-const getSocialSiteObjectTypes = async ({ app }) => {
-  if (!app) return [];
+const getObjectTypes = async (app) => {
   const authorities = getAppAuthorities(app);
 
-  const { result = [] } = await Wobj.fromAggregation([
+  const { wobjects = [] } = await Wobj.fromAggregation([
     {
       $match: {
         object_type: { $in: TYPES_FOR_SITE },
@@ -36,7 +44,32 @@ const getSocialSiteObjectTypes = async ({ app }) => {
     },
   ]);
 
-  return result.map((r) => r.object_type);
+  const result = wobjects.map((r) => r.object_type);
+
+  await setCachedData({
+    key: `${REDIS_KEYS.CHALLENGES_OBJECT_TYPES}:${app.host}`,
+    data: result,
+    ttl: TTL_TIME.THIRTY_DAYS,
+  });
+
+  return result;
+};
+
+/**
+ * here we have long request with data that can dynamically change
+ * so we give data from cache and update cache in background
+  */
+
+const getSocialSiteObjectTypes = async ({ app }) => {
+  if (!app) return [];
+  const key = `${REDIS_KEYS.CHALLENGES_OBJECT_TYPES}:${app.host}`;
+  const cache = await getCachedData(key);
+  if (cache) {
+    getObjectTypes(app);
+    return jsonHelper.parseJson(cache, []);
+  }
+
+  return getObjectTypes(app);
 };
 
 module.exports = {
