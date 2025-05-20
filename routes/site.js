@@ -86,5 +86,7 @@ sitesRoutes.route('/sites/trusted')
   .post(reqTimeMonitor, SitesController.getTrustedUsers);
 sitesRoutes.route('/sites/active/list')
   .get(reqTimeMonitor, SitesController.getActiveList);
+sitesRoutes.route('/sites/challenges/object-types')
+  .get(reqTimeMonitor, SitesController.getSiteObjectTypes);
 
 module.exports = sitesRoutes;

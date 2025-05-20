@@ -20,6 +20,7 @@ const RequestPipeline = require('../pipeline/requestPipeline');
 const { updateAiCustomStore } = require('../utilities/operations/assistant/migration/customByApp');
 const subscription = require('../utilities/operations/sites/subscriptionPayPal');
 const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
+const { getSocialSiteObjectTypes } = require('../utilities/operations/sites/siteObjectTypes');
 
 // cached controllers
 const cachedFirstLoad = cacheWrapper(sitesHelper.firstLoad);
@@ -568,5 +569,12 @@ exports.getTrustedUsers = async (req, res, next) => {
 exports.getActiveList = async (req, res, next) => {
   const { result, error } = await sitesHelper.getAllActiveSites();
   if (error) return next(error);
+  return res.status(200).json(result);
+};
+
+exports.getSiteObjectTypes = async (req, res, next) => {
+  const result = await getSocialSiteObjectTypes({
+    app: req.appData,
+  });
   return res.status(200).json(result);
 };

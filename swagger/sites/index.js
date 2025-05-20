@@ -2307,4 +2307,30 @@ module.exports = {
       },
     },
   },
+  '/api/sites/challenges/object-types': {
+    get: {
+      tags: [
+        'sites',
+      ],
+      summary: 'get object-types for challenge tab',
+      description: 'get object-types for challenge tab',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'string',
+            },
+          },
+        },
+      },
+    },
+  },
 };
