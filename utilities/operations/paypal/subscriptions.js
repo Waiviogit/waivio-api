@@ -2,14 +2,14 @@ const { PAYPAL_HOST } = require('../../../constants/paypal');
 const { getPayPalAccessToken } = require('./auth');
 
 const createPayPalPlan = async ({
-  requestId, productId, priceUSD = '30',
+  requestId, productId, priceUSD = '39',
 }) => {
   const url = `https://${PAYPAL_HOST}/v1/billing/plans`;
 
   const payload = {
     product_id: productId,
     name: 'Standard Monthly Subscription',
-    description: `A standard subscription for $${priceUSD} per month`,
+    description: `A standard subscription for ${priceUSD} CAD per month`,
     billing_cycles: [
       {
         frequency: {
@@ -22,7 +22,7 @@ const createPayPalPlan = async ({
         pricing_scheme: {
           fixed_price: {
             value: priceUSD,
-            currency_code: 'USD',
+            currency_code: 'CAD',
           },
         },
       },

@@ -6,6 +6,7 @@ const {
   setCachedData,
 } = require('../../helpers/cacheHelper');
 const jsonHelper = require('../../helpers/jsonHelper');
+const { redisGetter, redis } = require('../../redis');
 const {
   REDIS_KEYS,
   TTL_TIME,
@@ -65,7 +66,14 @@ const getSocialSiteObjectTypes = async ({ app }) => {
   const key = `${REDIS_KEYS.CHALLENGES_OBJECT_TYPES}:${app.host}`;
   const cache = await getCachedData(key);
   if (cache) {
-    getObjectTypes(app);
+    const { result: ttl } = await redisGetter.ttlAsync({
+      key,
+      client: redis.mainFeedsCacheClient,
+    });
+
+    const updateCache = TTL_TIME.THIRTY_DAYS - TTL_TIME.FIVE_MINUTES > ttl;
+    if (updateCache) getObjectTypes(app);
+
     return jsonHelper.parseJson(cache, []);
   }
 
