@@ -25,3 +25,19 @@ exports.statisiticReportSchema = Joi.object().keys({
   limit: Joi.number().min(0).default(20),
   skip: Joi.number().min(0).default(0),
 });
+
+exports.getGuestUsersSchema = Joi.object().keys({
+  limit: Joi.number().min(0).default(20),
+  skip: Joi.number().min(0).default(0),
+});
+
+exports.blockGuestUsersSchema = Joi.object().keys({
+  name: Joi.string().required(),
+  blocked: Joi.boolean().required(),
+});
+
+exports.getGuestUserSpamSchema = Joi.object().keys({
+  name: Joi.string().required(),
+  limit: Joi.number().min(0).default(20),
+  skip: Joi.number().min(0).default(0),
+});

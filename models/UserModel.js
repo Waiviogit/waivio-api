@@ -144,3 +144,13 @@ exports.getCustomCount = async (condition) => {
     return { error };
   }
 };
+
+exports.findOneAndUpdate = async ({ filter, update, options }) => {
+  try {
+    return {
+      result: await UserModel.findOneAndUpdate(filter, update, options),
+    };
+  } catch (error) {
+    return { error };
+  }
+};

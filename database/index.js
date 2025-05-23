@@ -77,6 +77,7 @@ models.PayPalPlan = require('./schemas/PayPalPlanSchema');
 models.PayPalSubscription = require('./schemas/PayPalSubscriptionSchema');
 models.WebsiteStatistic = require('./schemas/WebsiteStatisticSchema');
 models.UserRcDelegations = require('./schemas/UserRcDelegations');
+models.GuestSpam = require('./schemas/GuestSpamSchema');
 
 module.exports = {
   Mongoose: mongoose,
