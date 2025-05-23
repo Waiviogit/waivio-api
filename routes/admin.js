@@ -28,4 +28,13 @@ adminRoutes.route('/admins/credits')
 adminRoutes.route('/admins/statistics/report')
   .post(reqTimeMonitor, adminController.statisticReportAdmin);
 
+adminRoutes.route('/admins/guests/users')
+  .post(reqTimeMonitor, adminController.getGuestUsers);
+adminRoutes.route('/admins/guests/spam')
+  .post(reqTimeMonitor, adminController.getGuestUsersSpam);
+adminRoutes.route('/admins/guests/spam/:name')
+  .post(reqTimeMonitor, adminController.getGuestUsersSpamList);
+adminRoutes.route('/admins/guests/block')
+  .post(reqTimeMonitor, adminController.blockGuest);
+
 module.exports = adminRoutes;
