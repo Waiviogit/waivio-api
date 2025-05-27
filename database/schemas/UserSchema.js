@@ -133,6 +133,8 @@ const UserSchema = new Schema({
   lastActivity: { type: Date, index: true },
   canonical: { type: String },
   whiteListTimestamp: { type: Number },
+  spamDetected: { type: Boolean },
+  blocked: { type: Boolean },
 }, { timestamps: true, toJSON: { virtuals: true }, toObject: { virtuals: true } });
 
 UserSchema.index({ wobjects_weight: -1 });

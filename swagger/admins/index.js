@@ -508,7 +508,7 @@ module.exports = {
                 type: 'number',
               },
             },
-          }
+          },
         },
       ],
       responses: {
@@ -548,6 +548,294 @@ module.exports = {
               },
               hasMore: {
                 type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/admins/guests/users': {
+    post: {
+      tags: ['admins'],
+      description: 'Get guest users list',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'body',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    alias: { type: 'string' },
+                    last_posts_count: { type: 'number' },
+                    followers_count: { type: 'number' },
+                    wobjects_weight: { type: 'number' },
+                    last_root_post: { type: 'string' },
+                    posting_json_metadata: { type: 'string' },
+                    blocked: { type: 'boolean' },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/admins/guests/spam': {
+    post: {
+      tags: ['admins'],
+      description: 'Get guest users spam list',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'body',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    name: { type: 'string' },
+                    alias: { type: 'string' },
+                    last_posts_count: { type: 'number' },
+                    followers_count: { type: 'number' },
+                    wobjects_weight: { type: 'number' },
+                    last_root_post: { type: 'string' },
+                    posting_json_metadata: { type: 'string' },
+                    blocked: { type: 'boolean' },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/admins/guests/spam/{name}': {
+    post: {
+      tags: ['admins'],
+      description: 'Get guest user spam details',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'name',
+          in: 'path',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'body',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              skip: {
+                type: 'number',
+              },
+              limit: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              spam: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    account: { type: 'string' },
+                    body: { type: 'string' },
+                    reason: { type: 'string' },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'ValidationError',
+          schema: {
+            example: {
+              message: 'Validation Error',
+            },
+          },
+        },
+      },
+    },
+  },
+  '/api/admins/guests/block': {
+    post: {
+      tags: ['admins'],
+      description: 'Block guest user',
+      produces: ['application/json'],
+      parameters: [
+        {
+          name: 'admin',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'access-token',
+          in: 'header',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'body',
+          in: 'body',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              name: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              result: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  alias: { type: 'string' },
+                  last_posts_count: { type: 'number' },
+                  followers_count: { type: 'number' },
+                  wobjects_weight: { type: 'number' },
+                  last_root_post: { type: 'string' },
+                  posting_json_metadata: { type: 'string' },
+                  blocked: { type: 'boolean' },
+                },
               },
             },
           },

@@ -3,6 +3,7 @@ const vipTickets = require('../utilities/operations/admin/vipTickets');
 const sitesStatistic = require('../utilities/operations/sites/sitesStatistic');
 const sites = require('../utilities/operations/admin/sites');
 const credits = require('../utilities/operations/admin/credits');
+const guests = require('../utilities/operations/admin/guests');
 const authoriseUser = require('../utilities/authorization/authoriseUser');
 const validators = require('./validators');
 const { WAIVIO_ADMINS_ENV } = require('../constants/common');
@@ -132,6 +133,73 @@ const statisticReportAdmin = async (req, res, next) => {
   return res.status(200).json({ result, hasMore });
 };
 
+const getGuestUsers = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.admin.getGuestUsersSchema, next);
+  if (!value) return;
+  const { admin } = req.headers;
+  const { error: adminError } = await authoriseUser.checkAdmin(admin);
+  if (adminError) return next(adminError);
+
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { result, hasMore, error } = await guests.getGuestUsersList(value);
+
+  if (error) return next(error);
+  return res.status(200).json({ result, hasMore });
+};
+
+const getGuestUsersSpam = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.admin.getGuestUsersSchema, next);
+  if (!value) return;
+  const { admin } = req.headers;
+  const { error: adminError } = await authoriseUser.checkAdmin(admin);
+  if (adminError) return next(adminError);
+
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { result, hasMore, error } = await guests.getGuestUsersList({
+    ...value,
+    spamDetected: true,
+  });
+
+  if (error) return next(error);
+  return res.status(200).json({ result, hasMore });
+};
+
+const blockGuest = async (req, res, next) => {
+  const value = validators.validate(req.body, validators.admin.blockGuestUsersSchema, next);
+  if (!value) return;
+  const { admin } = req.headers;
+  const { error: adminError } = await authoriseUser.checkAdmin(admin);
+  if (adminError) return next(adminError);
+
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { result, error } = await guests.blockGuestUser(value);
+
+  if (error) return next(error);
+  return res.status(200).json({ result });
+};
+
+const getGuestUsersSpamList = async (req, res, next) => {
+  const value = validators.validate(
+    { ...req.body, ...req.params },
+    validators.admin.getGuestUserSpamSchema,
+    next,
+  );
+  if (!value) return;
+  const { admin } = req.headers;
+  const { error: adminError } = await authoriseUser.checkAdmin(admin);
+  if (adminError) return next(adminError);
+
+  const { error: authError } = await authoriseUser.authorise(admin);
+  if (authError) return next(authError);
+  const { result, hasMore, error } = await guests.getSpamDetectionsByUserName(value);
+
+  if (error) return next(error);
+  return res.status(200).json({ result, hasMore });
+};
+
 module.exports = {
   getWhitelist,
   setWhitelist,
@@ -143,4 +211,8 @@ module.exports = {
   subscriptionsView,
   creditsView,
   statisticReportAdmin,
+  getGuestUsers,
+  getGuestUsersSpam,
+  blockGuest,
+  getGuestUsersSpamList,
 };
