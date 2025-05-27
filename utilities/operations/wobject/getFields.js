@@ -1,13 +1,11 @@
 const _ = require('lodash');
+const { EXPOSED_FIELDS_FOR_OBJECT_TYPE, FIELDS_NAMES } = require('@waivio/objects-processor');
 const { addDataToFields } = require('../../helpers/wObjectHelper');
 const engineOperations = require('../../hiveEngine/engineOperations');
 const { getWaivioAdminsAndOwner } = require('../../helpers/getWaivioAdminsAndOwnerHelper');
 const { getBlacklist, getWobjectFields, calculateApprovePercent } = require('../../helpers/wObjectHelper');
-const ObjectTypeModel = require('../../../models/ObjectTypeModel');
 const wObjectModel = require('../../../models/wObjectModel');
-const {
-  FIELDS_NAMES, LIST_TYPES,
-} = require('../../../constants/wobjectsData');
+const { LIST_TYPES } = require('../../../constants/wobjectsData');
 const { postsUtil } = require('../../hiveApi');
 const { ERROR_OBJ } = require('../../../constants/common');
 
@@ -104,8 +102,9 @@ const getFields = async ({
   const { wobject, error } = await getWobjectFields(authorPermlink);
   if (error) return { error };
 
-  const { objectType } = await ObjectTypeModel.getOne({ name: wobject.object_type });
-  const exposedFields = _.get(objectType, 'exposedFields', Object.values(FIELDS_NAMES));
+  const exposedFields = EXPOSED_FIELDS_FOR_OBJECT_TYPE[wobject.object_type]
+    || Object.values(FIELDS_NAMES);
+
   const updates = filterExposedFields({
     fields: wobject.fields,
     exposedFields,
