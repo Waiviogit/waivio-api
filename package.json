@@ -47,7 +47,7 @@
     "cron": "^2.0.0",
     "crypto-js": "^4.2.0",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2",
+    "express": "^5.1.0",
     "formidable": "^3.5.1",
     "franc-min": "^6.0.0",
     "heic-convert": "^1.2.4",
