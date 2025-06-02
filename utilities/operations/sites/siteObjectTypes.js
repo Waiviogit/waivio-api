@@ -11,6 +11,7 @@ const {
   REDIS_KEYS,
   TTL_TIME,
 } = require('../../../constants/common');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 
 const TYPES_FOR_SITE = [
   OBJECT_TYPES.PRODUCT,
@@ -30,6 +31,8 @@ const getObjectTypes = async (app) => {
       $match: {
         object_type: { $in: TYPES_FOR_SITE },
         'authority.administrative': { $in: authorities },
+        activeCampaignsCount: { $gt: 0 },
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
     },
     {
