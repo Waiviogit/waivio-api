@@ -7,6 +7,7 @@ const {
   PAYMENT_TYPES, FEE, TEST_DOMAINS, PAYMENT_FIELDS_TRANSFER, SOCIAL_HOSTS,
   PAYMENT_FIELDS_WRITEOFF, REQUIRED_FIELDS_UPD_WOBJ, FIRST_LOAD_FIELDS,
   DEFAULT_REFERRAL, STATUSES,
+  POSITIVE_SUM_TYPES,
 } = require('../../constants/sitesConstants');
 const {
   App, websitePayments, User, Wobj, geoIpModel,
@@ -451,4 +452,15 @@ exports.getAllActiveSites = async () => {
   if (error) return { error };
 
   return { result };
+};
+
+exports.checkOwnerBalance = async (owner) => {
+  const { error, payments } = await this.getWebsitePayments({ owner });
+  if (error) return { error };
+
+  const balance = this.getSumByPaymentType(payments, POSITIVE_SUM_TYPES)
+    .minus(this.getSumByPaymentType(payments, [PAYMENT_TYPES.WRITE_OFF]))
+    .toNumber();
+
+  return { balance };
 };
