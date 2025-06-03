@@ -151,6 +151,15 @@ const findOneCanonicalByOwner = async ({ owner }) => {
   }
 };
 
+const updateStatusById = async ({ status, _id }) => {
+  try {
+    const result = await App.updateOne({ _id }, { status });
+    return { result: !!result.nModified };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   getOne,
   aggregate,
@@ -164,4 +173,5 @@ module.exports = {
   findOneAndUpdate,
   getAppFromCache,
   findOneCanonicalByOwner,
+  updateStatusById,
 };

@@ -39,7 +39,7 @@ const createCreditsUser = async ({
       let status = STATUSES.PENDING;
       app.activatedAt ? status = STATUSES.ACTIVE : null;
       app.deactivatedAt ? status = STATUSES.INACTIVE : null;
-      await App.updateOne({ _id: app._id }, { status });
+      await App.updateStatusById({ _id: app._id, status });
     }
   }
 
