@@ -1,5 +1,6 @@
 const _ = require('lodash');
-const { User, GuestSpamModel } = require('../../../models');
+const { User, GuestSpamModel, mutedUserModel } = require('../../../models');
+const { WAIVIO_ADMINS_ENV } = require('../../../constants/common');
 
 const USER_KEYS = {
   name: 1,
@@ -24,6 +25,17 @@ const getGuestUsersList = async ({ skip, limit, spamDetected = false }) => {
       name: 1,
     },
     select: USER_KEYS,
+  });
+
+  const { result: mutedList } = await mutedUserModel.find({
+    condition: {
+      mutedBy: { $in: WAIVIO_ADMINS_ENV },
+      userName: { $in: usersData.map((v) => v.name) },
+    },
+  });
+
+  usersData.forEach((v) => {
+    v.mutedBy = mutedList.filter((m) => m.userName === v.name).map((el) => el.mutedBy);
   });
 
   return {
