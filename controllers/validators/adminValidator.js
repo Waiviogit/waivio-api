@@ -29,6 +29,7 @@ exports.statisiticReportSchema = Joi.object().keys({
 exports.getGuestUsersSchema = Joi.object().keys({
   limit: Joi.number().min(0).default(20),
   skip: Joi.number().min(0).default(0),
+  searchString: Joi.string().default(''),
 });
 
 exports.blockGuestUsersSchema = Joi.object().keys({

@@ -594,6 +594,9 @@ module.exports = {
               limit: {
                 type: 'number',
               },
+              searchString: {
+                type: 'string',
+              },
             },
           },
         },
@@ -667,6 +670,9 @@ module.exports = {
               },
               limit: {
                 type: 'number',
+              },
+              searchString: {
+                type: 'string',
               },
             },
           },

@@ -13,10 +13,20 @@ const USER_KEYS = {
   blocked: 1,
 };
 
-const getGuestUsersList = async ({ skip, limit, spamDetected = false }) => {
+const getGuestUsersList = async ({
+  skip, limit, spamDetected = false, searchString = '',
+}) => {
+  const nameToSearch = searchString.startsWith('waivio_')
+    ? searchString
+    : `waivio_${searchString}`;
+
+  const condition = searchString
+    ? { name: { $regex: `^${nameToSearch}` } }
+    : { name: { $regex: /^waivio_/ } };
+
   const { usersData } = await User.find({
     condition: {
-      name: { $regex: /^waivio_/ },
+      ...condition,
       ...spamDetected && { spamDetected },
     },
     skip,
