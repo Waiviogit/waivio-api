@@ -255,4 +255,5 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
 module.exports = {
   processAppAffiliate,
   processUserAffiliate,
+  processObjectsToAffiliateArray,
 };
