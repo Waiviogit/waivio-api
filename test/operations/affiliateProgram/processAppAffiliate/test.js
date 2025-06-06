@@ -1,5 +1,5 @@
 const { processAppAffiliate } = require('utilities/operations/affiliateProgram/processAffiliate');
-const makeAffiliateLinks = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
+const { makeAffiliateLinks } = require('utilities/operations/affiliateProgram/makeAffiliateLinks');
 const {
   expect, dropDatabase, sinon, faker, dropRedisDb,
 } = require('test/testHelper');
