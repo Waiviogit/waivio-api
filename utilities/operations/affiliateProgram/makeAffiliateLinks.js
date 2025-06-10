@@ -88,7 +88,7 @@ const makeFromExactMatched = ({
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
-    const affiliateCode = removeCode ? '' : getAffiliateCode(affiliate.affiliateCode);
+    const affiliateCode = getAffiliateCode(affiliate.affiliateCode);
     if (!affiliateCode) return acc;
 
     const link = createAffiliateLink({
@@ -101,7 +101,7 @@ const makeFromExactMatched = ({
     acc.push({
       link,
       image: affiliate.affiliateButton,
-      affiliateCode,
+      affiliateCode: removeCode ? '' : affiliateCode,
       type: el.productIdType,
     });
     return acc;
@@ -202,7 +202,7 @@ const makeAffiliateLinks = ({
       if (usedAffiliate.some((used) => _.isEqual(used, affiliateCodeEl))) continue;
 
       if (objectType !== OBJECT_TYPES.RECIPE) usedAffiliate.push(affiliateCodeEl);
-      const affiliateCode = removeCode ? '' : getAffiliateCode(affiliate.affiliateCode);
+      const affiliateCode = getAffiliateCode(affiliateCodeEl.affiliateCode);
       if (!affiliateCode) continue;
 
       const link = createAffiliateLink({
@@ -215,7 +215,7 @@ const makeAffiliateLinks = ({
       acc.push({
         link,
         image: affiliateCodeEl.affiliateButton,
-        affiliateCode,
+        affiliateCode: removeCode ? '' : affiliateCode,
         type: el.productIdType,
       });
     }
