@@ -1,9 +1,10 @@
 const _ = require('lodash');
+const { FIELDS_NAMES } = require('@waivio/objects-processor');
 const {
   Wobj, Campaign, User, wobjectSubscriptions,
 } = require('../../../models');
 const {
-  REQUIREDFIELDS, FIELDS_NAMES, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
+  REQUIREDFIELDS, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
 } = require('../../../constants/wobjectsData');
 const { CACHE_KEY, TTL_TIME } = require('../../../constants/common');
 const { campaignsHelper, wObjectHelper } = require('../../helpers');
@@ -11,10 +12,17 @@ const { getCountryCodeFromIp } = require('../../helpers/sitesHelper');
 const { getCachedData, setCachedData } = require('../../helpers/cacheHelper');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const redisSetter = require('../../redis/redisSetter');
-const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
+const {
+  processAppAffiliate,
+} = require('../affiliateProgram/processAffiliate');
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
+const { WAIVIO_AFFILIATE_HOSTS } = require('../../../constants/affiliateData');
+const {
+  reMakeAffiliateLinksOnList,
+  makeAffiliateLinks,
+} = require('../affiliateProgram/makeAffiliateLinks');
 
 /**
  * Method for get count of all included items(using recursive call)
@@ -361,22 +369,41 @@ const getOne = async ({
     if (wobjects && wobjects.length) wObject[keyName] = wobjects;
   }
 
-  const affiliateCodes = await processAppAffiliate({
-    app,
-    locale,
+  // eslint-disable-next-line prefer-const
+  let [affiliateCodes, wobjectData] = await Promise.all([
+    processAppAffiliate({ app, locale }),
+    wobjectHelper.processWobjects({
+      wobjects: [wObject],
+      app,
+      hiveData: true,
+      returnArray: false,
+      locale,
+      countryCode,
+      reqUserName: user,
+      mobile: isMobileDevice(),
+    }),
+  ]);
+
+  wobjectData.affiliateLinks = makeAffiliateLinks({
+    productIds: wobjectData.productId,
+    affiliateCodes,
+    countryCode,
+    objectType: wobjectData.object_type,
   });
 
-  const wobjectData = await wobjectHelper.processWobjects({
-    wobjects: [wObject],
-    app,
-    hiveData: true,
-    returnArray: false,
-    locale,
-    countryCode,
-    reqUserName: user,
-    affiliateCodes,
-    mobile: isMobileDevice(),
-  });
+  const conditionToRemakeLinks = !wobjectData?.affiliateLinks?.length
+    && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)
+    && wobjectData?.productId?.length;
+
+  if (conditionToRemakeLinks) {
+    const [object] = await reMakeAffiliateLinksOnList({
+      objects: [wobjectData],
+      app,
+      locale,
+      countryCode,
+    });
+    wobjectData = object;
+  }
 
   wobjectData.canonical = await getWobjectCanonical({
     owner: wobjectData.descriptionCreator,
