@@ -820,6 +820,9 @@ module.exports = {
               name: {
                 type: 'string',
               },
+              blocked: {
+                type: 'boolean',
+              },
             },
           },
         },
