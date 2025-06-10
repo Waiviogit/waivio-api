@@ -88,7 +88,7 @@ const makeFromExactMatched = ({
     if (!affiliate) return acc;
     if (usedAffiliate.some((used) => _.isEqual(used, affiliate))) return acc;
     usedAffiliate.push(affiliate);
-    const affiliateCode = getAffiliateCode(affiliate.affiliateCode);
+    const affiliateCode = removeCode ? '' : getAffiliateCode(affiliate.affiliateCode);
     if (!affiliateCode) return acc;
 
     const link = createAffiliateLink({
@@ -202,7 +202,7 @@ const makeAffiliateLinks = ({
       if (usedAffiliate.some((used) => _.isEqual(used, affiliateCodeEl))) continue;
 
       if (objectType !== OBJECT_TYPES.RECIPE) usedAffiliate.push(affiliateCodeEl);
-      const affiliateCode = getAffiliateCode(affiliateCodeEl.affiliateCode);
+      const affiliateCode = removeCode ? '' : getAffiliateCode(affiliate.affiliateCode);
       if (!affiliateCode) continue;
 
       const link = createAffiliateLink({
