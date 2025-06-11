@@ -106,6 +106,7 @@ const makeFilterUserCondition = ({ app, creator, usePersonal = false }) => {
         $elemMatch: {
           name: FIELDS_NAMES.AFFILIATE_CODE,
           body: { $regex: regex },
+          weight: { $gt: 0 },
           creator,
         },
       },
