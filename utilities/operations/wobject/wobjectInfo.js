@@ -275,7 +275,6 @@ const getListItems = async ({
   newObject.fields = fieldsToProcess;
 
   const countryCode = await getCountryCodeFromIp(ip);
-
   const affiliateCodes = await processAppAffiliate({
     app,
     locale,
@@ -316,11 +315,16 @@ const getListItems = async ({
       wobjects: [wobj],
       returnArray: false,
       app,
-      countryCode,
       reqUserName: userName,
-      affiliateCodes,
       mobile: isMobileDevice(),
     });
+    wobj.affiliateLinks = makeAffiliateLinks({
+      productIds: wobj.productId,
+      affiliateCodes,
+      countryCode,
+      objectType: wobj.object_type,
+    });
+
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
     const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app?.host}`;
@@ -378,7 +382,6 @@ const getOne = async ({
       hiveData: true,
       returnArray: false,
       locale,
-      countryCode,
       reqUserName: user,
       mobile: isMobileDevice(),
     }),

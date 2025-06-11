@@ -9,6 +9,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { addNewCampaignsToObjects } = require('../../helpers/campaignsV2Helper');
 const { checkForSocialSite } = require('../../helpers/sitesHelper');
+const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
 
 const getFeatured = async ({
   app,
@@ -65,14 +66,18 @@ const getFeatured = async ({
     app,
     returnArray: true,
     locale,
-    countryCode,
     reqUserName: userName,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    wobjects: _.take(processed, limit),
+    wobjects: _.take(objectsWithCodes, limit),
     hasMore: featuredObjects.length > limit,
   };
 };

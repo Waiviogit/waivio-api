@@ -273,7 +273,7 @@ const reMakeAffiliateLinksOnList = async ({
 };
 
 // we can use this instead of processing inside processWobjects
-const makeAffiliateLinksOnList = async ({
+const makeAffiliateLinksOnList = ({
   objects = [],
   countryCode,
   affiliateCodes,

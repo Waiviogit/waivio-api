@@ -11,6 +11,7 @@ const { Wobj } = require('../../../../models');
 const { UNCATEGORIZED_DEPARTMENT } = require('../../../../constants/departments');
 const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../../affiliateProgram/makeAffiliateLinks');
 
 module.exports = async ({
   countryCode,
@@ -58,16 +59,20 @@ module.exports = async ({
     reqUserName: userName,
     app,
     locale,
-    countryCode,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
     department,
-    wobjects: processed,
+    wobjects: objectsWithCodes,
     hasMore: result.length > limit,
   };
 };

@@ -15,6 +15,7 @@ const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../../constants/usersData')
 const { processAppAffiliate } = require('../../affiliateProgram/processAffiliate');
 const getWobjectDepartments = require('./getWobjectDepartments');
 const { isMobileDevice } = require('../../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../../affiliateProgram/makeAffiliateLinks');
 
 const getObjectDepartmentCondition = async ({
   department, path, authorPermlink, app, wobjectFilter,
@@ -100,8 +101,6 @@ const getWobjectDepartmentFeed = async ({
     reqUserName: follower,
     app,
     locale,
-    countryCode,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
@@ -110,9 +109,15 @@ const getWobjectDepartmentFeed = async ({
     wobjects: processed,
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
     department,
-    wobjects: processed,
+    wobjects: objectsWithCodes,
     hasMore: result.length > limit,
   };
 };

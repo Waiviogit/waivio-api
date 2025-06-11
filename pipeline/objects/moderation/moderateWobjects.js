@@ -8,23 +8,26 @@ const { processAppAffiliate, processUserAffiliate } = require('../../../utilitie
 const { WAIVIO_AFFILIATE_HOSTS } = require('../../../constants/affiliateData');
 const { schema } = require('./schema');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../../../utilities/operations/affiliateProgram/makeAffiliateLinks');
 
 const newValidationArray = async ({
   posts, app, locale, path, countryCode, reqUserName, affiliateCodes,
 }) => {
   await Promise.all(posts.map(async (post) => {
     if (post[path]) {
-      post[path] = await wobjectHelper.processWobjects({
-        wobjects: post[path],
-        app,
-        hiveData: false,
-        returnArray: true,
-        locale,
-        fields: REQUIREDFILDS_WOBJ_LIST,
+      post[path] = makeAffiliateLinksOnList({
+        objects: await wobjectHelper.processWobjects({
+          wobjects: post[path],
+          app,
+          hiveData: false,
+          returnArray: true,
+          locale,
+          fields: REQUIREDFILDS_WOBJ_LIST,
+          reqUserName,
+          mobile: isMobileDevice(),
+        }),
         countryCode,
-        reqUserName,
         affiliateCodes,
-        mobile: isMobileDevice(),
       });
     }
   }));
@@ -33,17 +36,21 @@ const newValidationArray = async ({
 
 const newValidation = async ({
   wobjects, app, locale, countryCode, reqUserName, affiliateCodes,
-}) => wobjectHelper.processWobjects({
-  wobjects,
-  app,
-  hiveData: false,
-  returnArray: true,
-  locale,
-  fields: REQUIREDFILDS_WOBJ_LIST,
-  countryCode,
-  reqUserName,
+}) => makeAffiliateLinksOnList({
+  objects: await wobjectHelper.processWobjects({
+    wobjects,
+    app,
+    hiveData: false,
+    returnArray: true,
+    locale,
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    countryCode,
+    reqUserName,
+    affiliateCodes,
+    mobile: isMobileDevice(),
+  }),
   affiliateCodes,
-  mobile: isMobileDevice(),
+  countryCode,
 });
 
 const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
@@ -58,26 +65,6 @@ const getAffiliateCodes = async ({ app, creator, affiliateCodes }) => {
   if (userAffiliate.length) return userAffiliate;
 
   return affiliateCodes;
-};
-
-const singleObjectProcessor = async ({
-  data, app, req, countryCode, reqUserName, affiliateCodes, currentSchema,
-}) => {
-  const wobject = await wobjectHelper.processWobjects({
-    wobjects: [data],
-    app,
-    hiveData: true,
-    returnArray: false,
-    locale: req.headers.locale,
-    countryCode,
-    reqUserName,
-    affiliateCodes,
-    mobile: isMobileDevice(),
-  });
-  wobject.updatesCount = _.sumBy(wobject.exposedFields, 'value');
-  data = _.omit(wobject, ['fields']);
-
-  return data;
 };
 
 const case2ObjectProcessor = async ({
@@ -139,7 +126,6 @@ const case5ObjectProcessor = async ({
 const defaultObjectProcessor = async ({ data }) => data;
 
 const processors = {
-  case1: singleObjectProcessor,
   case2: case2ObjectProcessor,
   case3: case3ObjectProcessor,
   case4: case4ObjectProcessor,

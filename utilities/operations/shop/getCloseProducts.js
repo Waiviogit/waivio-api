@@ -11,6 +11,7 @@ const { checkForSocialSite } = require('../../helpers/sitesHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
 
 const searchObjectTypes = [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE];
 
@@ -135,14 +136,18 @@ const getRelated = async ({
     app,
     returnArray: true,
     locale,
-    countryCode,
     reqUserName: userName,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    wobjects: _.take(processed, limit),
+    wobjects: _.take(objectsWithCodes, limit),
     hasMore: response.length > limit,
   };
 };
@@ -234,14 +239,18 @@ const getSimilar = async ({
     app,
     returnArray: true,
     locale,
-    countryCode,
     reqUserName: userName,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    wobjects: _.take(processed, limit),
+    wobjects: _.take(objectsWithCodes, limit),
     hasMore: objectsForResponse.length > limit,
   };
 };
@@ -301,14 +310,18 @@ const getAddOn = async ({
     app,
     returnArray: true,
     locale,
-    countryCode,
     reqUserName: userName,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    wobjects: _.take(processed, limit),
+    wobjects: _.take(objectsWithCodes, limit),
     hasMore: similarObjects.length > limit,
   };
 };

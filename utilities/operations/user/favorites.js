@@ -11,6 +11,7 @@ const {
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const { SELECT_USER_CAMPAIGN_SHOP } = require('../../../constants/usersData');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
 
 const orderMap = new Map(FAVORITES_OBJECT_TYPES.map((value, index) => [value, index]));
 
@@ -83,16 +84,20 @@ const getFavorites = async ({
     reqUserName: follower,
     app,
     locale,
-    countryCode,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
   const { user } = await User.getOne(userName, SELECT_USER_CAMPAIGN_SHOP);
 
   await campaignsV2Helper.addNewCampaignsToObjects({ user, wobjects: processed });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    result: processed,
+    result: objectsWithCodes,
     hasMore: result.length > limit,
   };
 };

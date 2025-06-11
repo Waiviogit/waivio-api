@@ -10,6 +10,7 @@ const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
 const shopHelper = require('../../helpers/shopHelper');
 const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
+const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
 
 const BUSINESS_FIELDS = [
   FIELDS_NAMES.MERCHANT, FIELDS_NAMES.MANUFACTURER, FIELDS_NAMES.BRAND, FIELDS_NAMES.PUBLISHER,
@@ -96,7 +97,7 @@ const getAll = async ({
     ]);
     if (!wobjects?.length) continue;
 
-    referenceObject[referenceObjectType] = await wObjectHelper.processWobjects({
+    const processed = await wObjectHelper.processWobjects({
       wobjects,
       fields: [
         FIELDS_NAMES.NAME,
@@ -110,9 +111,13 @@ const getAll = async ({
       app,
       returnArray: true,
       locale,
-      affiliateCodes,
-      countryCode,
       mobile: isMobileDevice(),
+    });
+
+    referenceObject[referenceObjectType] = makeAffiliateLinksOnList({
+      objects: processed,
+      countryCode,
+      affiliateCodes,
     });
   }
 
@@ -158,14 +163,18 @@ const getByType = async ({
     app,
     returnArray: true,
     locale,
-    countryCode,
     reqUserName: userName,
-    affiliateCodes,
     mobile: isMobileDevice(),
   });
 
+  const objectsWithCodes = makeAffiliateLinksOnList({
+    objects: processed,
+    countryCode,
+    affiliateCodes,
+  });
+
   return {
-    wobjects: _.take(processed, limit),
+    wobjects: _.take(objectsWithCodes, limit),
     hasMore: wobjects.length > limit,
   };
 };
