@@ -200,6 +200,12 @@ const makeAffiliateLinks = ({
     if (!affiliate?.length) return acc;
     for (const affiliateCodeEl of affiliate) {
       if (usedAffiliate.some((used) => _.isEqual(used, affiliateCodeEl))) continue;
+      // in case if we have exact matched and then it filtered out with filterByIdType but we have similar types
+      const similar = usedAffiliate.find(
+        (u) => u.affiliateProductIdTypes
+          .some((t) => affiliateCodeEl.affiliateProductIdTypes.includes(t)),
+      );
+      if (similar) continue;
 
       if (objectType !== OBJECT_TYPES.RECIPE) usedAffiliate.push(affiliateCodeEl);
       const affiliateCode = getAffiliateCode(affiliateCodeEl.affiliateCode);
