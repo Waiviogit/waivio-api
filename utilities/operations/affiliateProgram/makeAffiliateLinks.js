@@ -17,6 +17,8 @@ const { parseJson } = require('../../helpers/jsonHelper');
 const { Wobj } = require('../../../models');
 const { processObjectsToAffiliateArray } = require('./processAffiliate');
 
+const DEFAULT_AFFILIATE_ID = 'affiliateId';
+
 const getAffiliateCode = (codesArr) => {
   if (!Array.isArray(codesArr) || codesArr.length < 2) return '';
 
@@ -71,7 +73,7 @@ const createAffiliateLink = ({
   affiliateUrlTemplate, productId, affiliateCode, removeCode = false,
 }) => affiliateUrlTemplate
   .replace('$productId', productId)
-  .replace('$affiliateCode', removeCode ? '' : affiliateCode);
+  .replace('$affiliateCode', removeCode ? DEFAULT_AFFILIATE_ID : affiliateCode);
 
 const makeFromExactMatched = ({
   affiliateCodes,
@@ -104,7 +106,7 @@ const makeFromExactMatched = ({
     acc.push({
       link,
       image: affiliate.affiliateButton,
-      affiliateCode: removeCode ? '' : affiliateCode,
+      affiliateCode: removeCode ? DEFAULT_AFFILIATE_ID : affiliateCode,
       type: el.productIdType,
     });
     return acc;
@@ -224,7 +226,7 @@ const makeAffiliateLinks = ({
       acc.push({
         link,
         image: affiliateCodeEl.affiliateButton,
-        affiliateCode: removeCode ? '' : affiliateCode,
+        affiliateCode: removeCode ? DEFAULT_AFFILIATE_ID : affiliateCode,
         type: el.productIdType,
       });
     }
