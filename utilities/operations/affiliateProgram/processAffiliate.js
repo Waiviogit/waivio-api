@@ -61,6 +61,7 @@ const makeFilterAppCondition = (app) => {
       $elemMatch: {
         name: FIELDS_NAMES.AFFILIATE_CODE,
         body: { $regex: regex },
+        weight: { $gt: 0 },
       },
     },
     ...(WAIVIO_AFFILIATE_HOSTS.includes(app?.host) && { 'authority.ownership': { $in: app?.authority } }),
@@ -117,6 +118,7 @@ const makeFilterUserCondition = ({ app, creator, usePersonal = false }) => {
       $elemMatch: {
         name: FIELDS_NAMES.AFFILIATE_CODE,
         body: { $regex: usePersonal ? regex : appRegex },
+        weight: { $gt: 0 },
         ...(usePersonal && { creator }),
       },
     },
