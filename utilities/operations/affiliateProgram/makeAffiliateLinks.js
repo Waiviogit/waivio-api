@@ -5,7 +5,10 @@ const {
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
 const jsonHelper = require('../../helpers/jsonHelper');
-const { AFFILIATE_NULL_TYPES } = require('../../../constants/wobjectsData');
+const {
+  AFFILIATE_NULL_TYPES,
+  REMOVE_OBJ_STATUSES,
+} = require('../../../constants/wobjectsData');
 const {
   COUNTRY_TO_CONTINENT,
   GLOBAL_GEOGRAPHY,
@@ -245,14 +248,20 @@ const reMakeAffiliateLinksOnList = async ({
       .map((el) => parseJson(el.body, {})?.productIdType))
     .filter(Boolean);
 
-  const { result } = await Wobj.find({
-    fields: {
-      $elemMatch: {
-        name: FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
-        body: { $in: idTypes },
+  const { result } = await Wobj.find(
+    {
+      object_type: OBJECT_TYPES.AFFILIATE,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
+          body: { $in: idTypes },
+        },
       },
     },
-  });
+    {},
+    { weight: -1 },
+  );
 
   const affiliateCodes = await processObjectsToAffiliateArray({
     wobjects: result,
