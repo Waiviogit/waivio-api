@@ -209,8 +209,8 @@ const processUserAffiliate = async ({
 const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
   const key = `${REDIS_KEYS.API_RES_CACHE}:processAppAffiliate:${app?.host}${locale}`;
 
-  // const cache = await getCachedData(key);
-  // if (cache) return jsonHelper.parseJson(cache, []);
+  const cache = await getCachedData(key);
+  if (cache) return jsonHelper.parseJson(cache, []);
 
   const { wobjects: result, error } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
