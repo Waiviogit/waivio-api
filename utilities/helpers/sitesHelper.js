@@ -315,6 +315,7 @@ exports.getSettings = async (host) => {
     objectControl,
     mapImportTag = '',
     disableOwnerAuthority = false,
+    verificationTags = [],
   } = app;
 
   const result = {
@@ -331,6 +332,7 @@ exports.getSettings = async (host) => {
     objectControl,
     mapImportTag,
     disableOwnerAuthority,
+    verificationTags,
   };
 
   return { result };

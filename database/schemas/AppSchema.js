@@ -170,6 +170,7 @@ const AppSchema = new Schema({
   billingType: { type: String, default: BILLING_TYPE.CRYPTO },
   trusted: { type: [String] },
   trustedAll: { type: [String] },
+  verificationTags: { type: [String] },
 }, { timestamps: true });
 
 AppSchema.pre('save', async function (next) {
