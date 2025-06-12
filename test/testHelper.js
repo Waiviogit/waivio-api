@@ -34,7 +34,7 @@ const dropDatabase = async () => {
   }
 };
 
-const dropRedisDb = async () => wobjRefsClient.FLUSHDB();
+const dropRedisDb = async () => wobjRefsClient.flushdb();
 
 module.exports = {
   ...require('utilities/helpers'),
