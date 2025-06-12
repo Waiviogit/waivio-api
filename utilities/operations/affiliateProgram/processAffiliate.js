@@ -35,10 +35,12 @@ const parseAffiliateFields = (objects) => objects.reduce((acc, el) => {
     affiliateGeoArea,
     affiliateUrlTemplate,
     affiliateCode,
+    author_permlink,
   } = el;
   const parsedCode = jsonHelper.parseJson(affiliateCode, null);
   if (!parsedCode) return acc;
   acc.push({
+    author_permlink,
     affiliateButton,
     affiliateUrlTemplate,
     affiliateCode: parsedCode,

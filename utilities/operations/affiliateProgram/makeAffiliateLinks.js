@@ -108,6 +108,7 @@ const makeFromExactMatched = ({
       image: affiliate.affiliateButton,
       affiliateCode: removeCode ? DEFAULT_AFFILIATE_ID : affiliateCode,
       type: el.productIdType,
+      author_permlink: affiliate.author_permlink,
     });
     return acc;
   }, []);
@@ -228,6 +229,7 @@ const makeAffiliateLinks = ({
         image: affiliateCodeEl.affiliateButton,
         affiliateCode: removeCode ? DEFAULT_AFFILIATE_ID : affiliateCode,
         type: el.productIdType,
+        author_permlink: affiliateCodeEl.author_permlink,
       });
     }
 
