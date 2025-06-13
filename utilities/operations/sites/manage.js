@@ -66,7 +66,5 @@ const getDailyCost = (websites) => _
   .reduce(websites, (acc, site) => {
     if (_.includes(INACTIVE_STATUSES, site.status)) return BigNumber(FEE.perInactive).plus(acc);
     if (site.billingType === BILLING_TYPE.PAYPAL_SUBSCRIPTION) return acc;
-    return site.averageDau < FEE.minimumValue / FEE.perUser
-      ? BigNumber(FEE.minimumValue).plus(acc)
-      : BigNumber(site.averageDau).multipliedBy(FEE.perUser).plus(acc);
+    return BigNumber(FEE.minimumValue).plus(acc);
   }, BigNumber(0));
