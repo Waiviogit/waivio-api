@@ -9,6 +9,8 @@ const {
   CampaignV2,
   SponsorsUpvote,
   blacklistModel,
+  Campaign,
+  botUpvoteModel,
 } = require('../../models');
 const { addCampaignsToWobjects } = require('./campaignsHelper');
 const { Post } = require('../../database').models;
@@ -456,6 +458,97 @@ const sponsorObligationsNewReview = async ({
   }
 };
 
+const oldCampaignsObligations = async (post, campaignId) => {
+  const { result: campaign } = await Campaign.findOne({ _id: campaignId });
+  if (!campaign) return;
+  // chek whether review is rejected
+  const isRejected = await checkUserStatus({
+    reviewPermlink: post.permlink,
+    sponsor: campaign.guideName,
+    userName: post.author,
+    campaign,
+  });
+  if (isRejected) return;
+
+  const beforeCashOut = new Date(post.cashout_time) > new Date();
+  const { result: bots } = await botUpvoteModel
+    .find({ author: post.root_author, permlink: post.permlink }, { botName: 1 });
+  const postPendingPayout = parseFloat(_.get(post, 'pending_payout_value', 0));
+  const postTotalPayout = parseFloat(_.get(post, 'total_payout_value', 0));
+  const postCuratorPayout = parseFloat(_.get(post, 'curator_payout_value', 0));
+  const totalPayout = beforeCashOut
+    ? postPendingPayout
+    : postTotalPayout + postCuratorPayout;
+  const voteRshares = _.reduce(
+    post.active_votes,
+    (a, b) => a + parseInt(b.rshares, 10),
+    0,
+  );
+  const ratio = voteRshares > 0 ? totalPayout / voteRshares : 0;
+
+  if (ratio) {
+    let likedSum = 0;
+    const registeredVotes = _.filter(post.active_votes, (v) => _.includes([..._.map(bots, 'botName'), campaign.guideName], v.voter));
+    for (const el of registeredVotes) {
+      likedSum += (ratio * parseInt(el.rshares, 10));
+    }
+    const sponsorPayout = campaign.reward - (likedSum / 2);
+    if (sponsorPayout <= 0) return;
+
+    // eslint-disable-next-line no-nested-ternary
+    beforeCashOut
+      ? post.pending_payout_value = (postPendingPayout + sponsorPayout).toFixed(3)
+      : !_.isEmpty(bots) && !postTotalPayout
+        ? post.total_payout_value = campaign.reward.toFixed(3)
+        : post.total_payout_value = (postTotalPayout + sponsorPayout).toFixed(3);
+
+    const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+    if (hasSponsor) {
+      if (hasSponsor.percent === 0) {
+        hasSponsor.percent = 100;
+        hasSponsor.fake = true;
+      }
+      hasSponsor.rshares = parseInt(hasSponsor.rshares, 10) + Math.round(sponsorPayout / ratio);
+      hasSponsor.sponsor = true;
+    } else {
+      post.active_votes.push({
+        voter: campaign.guideName,
+        rshares: Math.round(sponsorPayout / ratio),
+        sponsor: true,
+        fake: true,
+        percent: 10000,
+      });
+    }
+  } else {
+    beforeCashOut
+      ? post.pending_payout_value = campaign.reward
+      : post.total_payout_value = campaign.reward;
+    _.forEach(post.active_votes, (el) => {
+      el.rshares = 0;
+    });
+    const hasSponsor = _.find(post.active_votes, (el) => el.voter === campaign.guideName);
+    if (hasSponsor) {
+      if (hasSponsor.percent === 0) {
+        hasSponsor.percent = 100;
+        hasSponsor.fake = true;
+      }
+      hasSponsor.rshares = campaign.reward;
+      hasSponsor.sponsor = true;
+    } else {
+      post.active_votes.push({
+        voter: campaign.guideName,
+        rshares: campaign.reward,
+        sponsor: true,
+        fake: true,
+        percent: 10000,
+      });
+    }
+  }
+  post.net_rshares = _.reduce(post.active_votes, (acc, el) => acc + el.rshares, 0);
+
+  return post;
+};
+
 /**
  * Method calculate and add sponsor obligations to each post if it is review
  * @beforeCashOut checks either the cashout_time has passed or not
@@ -466,7 +559,13 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
   for (const post of posts) {
     if (!post) continue;
     const campaignReview = await CampaignPosts.findOneByPost(post);
-    if (campaignReview) await sponsorObligationsNewReview({ post, blacklist, requestUserName });
+    if (campaignReview) {
+      await sponsorObligationsNewReview({ post, blacklist, requestUserName });
+      continue;
+    }
+    const metadata = post.json_metadata ? jsonHelper.parseJson(post.json_metadata, null) : null;
+    const campaignId = _.get(metadata, 'campaignId');
+    if (campaignId) await oldCampaignsObligations(post, campaignId);
   }
   return posts;
 };
