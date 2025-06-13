@@ -460,7 +460,10 @@ const sponsorObligationsNewReview = async ({
 
 const oldCampaignsObligations = async (post, campaignId) => {
   const { result: campaign } = await Campaign.findOne({ _id: campaignId });
-  if (!campaign) return;
+  if (!campaign) {
+    console.log(`NO CAMPAIGN FOR' ${post.author}/${post.permlink} ${campaignId}`);
+    return;
+  }
   // chek whether review is rejected
   const isRejected = await checkUserStatus({
     reviewPermlink: post.permlink,
@@ -468,7 +471,10 @@ const oldCampaignsObligations = async (post, campaignId) => {
     userName: post.author,
     campaign,
   });
-  if (isRejected) return;
+  if (isRejected) {
+    console.log(`REJECTED FOR' ${post.author}/${post.permlink} ${campaignId}`);
+    return;
+  }
 
   const beforeCashOut = new Date(post.cashout_time) > new Date();
   const { result: bots } = await botUpvoteModel
@@ -566,6 +572,7 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
     const metadata = post.json_metadata ? jsonHelper.parseJson(post.json_metadata, null) : null;
     const campaignId = _.get(metadata, 'campaignId');
     if (campaignId) await oldCampaignsObligations(post, campaignId);
+    if (!campaignId) console.log(`NO campaignId FOR' ${post.author}/${post.permlink} ${campaignId}`);
   }
   return posts;
 };
