@@ -18,10 +18,10 @@ const {
 const wobjectHelper = require('../../helpers/wObjectHelper');
 const { getWobjectCanonical } = require('../../helpers/cannonicalHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
-const { WAIVIO_AFFILIATE_HOSTS } = require('../../../constants/affiliateData');
 const {
-  reMakeAffiliateLinksOnList,
   makeAffiliateLinks,
+  shouldRemakeAffiliateLinks,
+  reMakeAffiliateLinks,
 } = require('../affiliateProgram/makeAffiliateLinks');
 
 /**
@@ -325,6 +325,15 @@ const getListItems = async ({
       objectType: wobj.object_type,
     });
 
+    if (shouldRemakeAffiliateLinks({ object: wobj, app })) {
+      wobj.affiliateLinks = await reMakeAffiliateLinks({
+        object: wobj,
+        app,
+        locale,
+        countryCode,
+      });
+    }
+
     wobj.type = _.get(fieldInList, 'type');
     // caching of items count the most slow query // can't be done inside because of recursive fn
     const key = `${CACHE_KEY.LIST_ITEMS_COUNT}:${wobject.author_permlink}:${wobj.author_permlink}:${app?.host}`;
@@ -394,18 +403,13 @@ const getOne = async ({
     objectType: wobjectData.object_type,
   });
 
-  const conditionToRemakeLinks = !wobjectData?.affiliateLinks?.length
-    && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)
-    && wobjectData?.productId?.length;
-
-  if (conditionToRemakeLinks) {
-    const [object] = await reMakeAffiliateLinksOnList({
-      objects: [wobjectData],
+  if (shouldRemakeAffiliateLinks({ object: wobjectData, app })) {
+    wobjectData.affiliateLinks = await reMakeAffiliateLinks({
+      object: wobjectData,
       app,
       locale,
       countryCode,
     });
-    wobjectData = object;
   }
 
   wobjectData.canonical = await getWobjectCanonical({

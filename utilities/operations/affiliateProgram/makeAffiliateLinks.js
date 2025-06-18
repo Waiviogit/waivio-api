@@ -12,6 +12,7 @@ const {
 const {
   COUNTRY_TO_CONTINENT,
   GLOBAL_GEOGRAPHY,
+  WAIVIO_AFFILIATE_HOSTS,
 } = require('../../../constants/affiliateData');
 const { parseJson } = require('../../helpers/jsonHelper');
 const { Wobj } = require('../../../models');
@@ -240,6 +241,10 @@ const makeAffiliateLinks = ({
   return links;
 };
 
+const shouldRemakeAffiliateLinks = ({ object, app }) => !!(!object?.affiliateLinks?.length
+    && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)
+    && object?.productId?.length);
+
 // we need remove affiliate code from url here
 const reMakeAffiliateLinksOnList = async ({
   objects = [],
@@ -285,6 +290,44 @@ const reMakeAffiliateLinksOnList = async ({
   }));
 };
 
+const reMakeAffiliateLinks = async ({
+  object = {},
+  app,
+  locale,
+  countryCode,
+}) => {
+  const idTypes = object.productId.map((el) => parseJson(el.body, {})?.productIdType);
+
+  const { result } = await Wobj.find(
+    {
+      object_type: OBJECT_TYPES.AFFILIATE,
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+      fields: {
+        $elemMatch: {
+          name: FIELDS_NAMES.AFFILIATE_PRODUCT_ID_TYPES,
+          body: { $in: idTypes },
+        },
+      },
+    },
+    {},
+    { weight: -1 },
+  );
+
+  const affiliateCodes = await processObjectsToAffiliateArray({
+    wobjects: result,
+    app,
+    locale,
+  });
+
+  return makeAffiliateLinks({
+    productIds: object.productId,
+    affiliateCodes,
+    countryCode,
+    objectType: object.object_type,
+    removeCode: true,
+  });
+};
+
 // we can use this instead of processing inside processWobjects
 const makeAffiliateLinksOnList = ({
   objects = [],
@@ -304,4 +347,6 @@ module.exports = {
   reMakeAffiliateLinksOnList,
   makeAffiliateLinks,
   makeAffiliateLinksOnList,
+  shouldRemakeAffiliateLinks,
+  reMakeAffiliateLinks,
 };
