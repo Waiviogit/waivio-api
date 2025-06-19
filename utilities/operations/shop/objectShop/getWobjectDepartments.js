@@ -89,7 +89,7 @@ const getWobjectDepartments = async ({
   // or we can group in aggregation
 
   // excluded to pipe
-  const { wobjects: result } = await Wobj.fromAggregation(getPipe({
+  const { wobjects: result = [] } = await Wobj.fromAggregation(getPipe({
     condition: wobjectFilter,
     excluded,
   }));
