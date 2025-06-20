@@ -3,7 +3,10 @@ const moment = require('moment/moment');
 const _ = require('lodash');
 const { Wobj } = require('../../../models');
 const { redis, redisGetter, redisSetter } = require('../../redis');
-const { OBJECT_TYPES, FIELDS_NAMES } = require('../../../constants/wobjectsData');
+const {
+  OBJECT_TYPES, FIELDS_NAMES,
+  REMOVE_OBJ_STATUSES,
+} = require('../../../constants/wobjectsData');
 const { REDIS_KEYS, TTL_TIME } = require('../../../constants/common');
 const {
   getCachedData,
@@ -80,25 +83,13 @@ const checkLinkSafety = async ({ url }) => {
 
   const { result } = await Wobj.findOne({
     object_type: OBJECT_TYPES.LINK,
-    $and: [
-      {
-        fields: {
-          $elemMatch: {
-            name: 'rating',
-            body: 'Safety',
-            average_rating_weight: { $lte: 8 },
-          },
-        },
+    fields: {
+      $elemMatch: {
+        name: 'url',
+        body: { $regex: regex },
       },
-      {
-        fields: {
-          $elemMatch: {
-            name: 'url',
-            body: { $regex: regex },
-          },
-        },
-      },
-    ],
+    },
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
   }, { author_permlink: 1, fields: 1 });
 
   const rating = _.find(
@@ -107,7 +98,6 @@ const checkLinkSafety = async ({ url }) => {
   )?.average_rating_weight || 0;
 
   const response = {
-    dangerous: !!result,
     linkWaivio: result?.author_permlink || '',
     rating,
   };
