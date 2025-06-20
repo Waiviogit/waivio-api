@@ -1,7 +1,8 @@
 const _ = require('lodash');
+const { EXPOSED_FIELDS_FOR_OBJECT_TYPE, FIELDS_NAMES } = require('@waivio/objects-processor');
 const { Wobj, User, Department } = require('../../../models');
 const {
-  FIELDS_NAMES, REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST, OBJECT_TYPES,
+  REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST,
 } = require('../../../constants/wobjectsData');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const campaignsV2Helper = require('../../helpers/campaignsV2Helper');
@@ -13,9 +14,19 @@ const { getAppAuthorities } = require('../../helpers/appHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
 
-const searchObjectTypes = [OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK, OBJECT_TYPES.RECIPE];
+const getTypesForField = (fieldName) => {
+  const objectTypes = [];
+  for (const type of Object.keys(EXPOSED_FIELDS_FOR_OBJECT_TYPE)) {
+    if (EXPOSED_FIELDS_FOR_OBJECT_TYPE[type].includes(fieldName)) objectTypes.push(type);
+  }
+  return objectTypes;
+};
 
-const getDepartments = async ({ authorPermlink, app, locale }) => {
+const getDepartments = async ({
+  authorPermlink, app, locale, fieldName,
+}) => {
+  const objectTypes = getTypesForField(fieldName);
+
   const emptyDepartments = {
     departments: [],
     related: [],
@@ -24,7 +35,7 @@ const getDepartments = async ({ authorPermlink, app, locale }) => {
   const { result, error } = await Wobj
     .findOne({
       author_permlink: authorPermlink,
-      object_type: { $in: searchObjectTypes },
+      object_type: { $in: objectTypes },
     });
   if (!result || error) return emptyDepartments;
 
@@ -74,7 +85,12 @@ const getObjects = async ({ skip, limit, matchCondition }) => {
 const getRelated = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
-  const { departments, related } = await getDepartments({ authorPermlink, app, locale });
+  const { departments, related } = await getDepartments({
+    authorPermlink,
+    app,
+    locale,
+    fieldName: FIELDS_NAMES.RELATED,
+  });
 
   if (_.isEmpty(departments) && _.isEmpty(related)) return { wobjects: [], hasMore: false };
 
@@ -155,7 +171,12 @@ const getRelated = async ({
 const getSimilar = async ({
   authorPermlink, userName, app, locale, countryCode, skip, limit,
 }) => {
-  const { departments, similar } = await getDepartments({ authorPermlink, app, locale });
+  const { departments, similar } = await getDepartments({
+    authorPermlink,
+    app,
+    locale,
+    fieldName: FIELDS_NAMES.SIMILAR,
+  });
 
   if (_.isEmpty(departments) && _.isEmpty(similar)) return { wobjects: [], hasMore: false };
 
@@ -261,7 +282,7 @@ const getAddOn = async ({
   const { result, error } = await Wobj
     .findOne({
       author_permlink: authorPermlink,
-      object_type: { $in: searchObjectTypes },
+      object_type: { $in: getTypesForField(FIELDS_NAMES.ADD_ON) },
     });
   if (!result || error) return { wobjects: [], hasMore: false };
 
