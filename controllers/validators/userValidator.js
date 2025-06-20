@@ -106,7 +106,7 @@ exports.updateMetadataSchema = Joi.object().keys({
       }),
       hideFavoriteObjects: Joi.boolean().default(false),
       hideRecipeObjects: Joi.boolean().default(false),
-      exitPageSetting: Joi.boolean().default(false),
+      exitPageSetting: Joi.boolean().default(true),
       locale: Joi.string().valid(...LANGUAGES).default('auto'),
       postLocales: Joi.array().items(Joi.string().valid(...LANGUAGES)).default([]),
       nightmode: Joi.boolean().default(false),

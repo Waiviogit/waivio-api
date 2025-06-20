@@ -45,7 +45,7 @@ const UserMetadataSchema = new Schema({
   notifications_last_timestamp: { type: Number, default: 0 },
   settings: {
     // Enable this option to use the exit page when clicking on an external link.
-    exitPageSetting: { type: Boolean, default: false },
+    exitPageSetting: { type: Boolean, default: true },
     locale: { type: String, enum: [...LANGUAGES], default: 'auto' }, // which language use on waivio
     // in which language do you want read posts
     postLocales: { type: [{ type: String, enum: [...LANGUAGES] }], default: [] },
