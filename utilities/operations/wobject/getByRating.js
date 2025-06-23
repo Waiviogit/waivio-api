@@ -92,14 +92,16 @@ const checkLinkSafety = async ({ url }) => {
     'status.title': { $nin: REMOVE_OBJ_STATUSES },
   }, { author_permlink: 1, fields: 1 });
 
-  const rating = _.find(
+  const ratingField = _.find(
     result?.fields,
     (el) => el.name === FIELDS_NAMES.RATING && el.body === 'Safety',
-  )?.average_rating_weight || 0;
+  );
 
   const response = {
     linkWaivio: result?.author_permlink || '',
-    rating,
+    rating: ratingField?.average_rating_weight || 0,
+    fieldAuthor: ratingField?.author || '',
+    fieldPermlink: ratingField?.permlink || '',
   };
 
   if (result) {
