@@ -104,7 +104,7 @@ const checkLinkSafety = async ({ url }) => {
     fieldPermlink: ratingField?.permlink || '',
   };
 
-  if (ratingField) {
+  if (ratingField?.average_rating_weight) {
     await setCachedData({
       key, data: { result: response }, ttl: TTL_TIME.THIRTY_DAYS,
     });
