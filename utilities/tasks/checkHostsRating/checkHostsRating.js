@@ -128,7 +128,14 @@ const checkHostsRating = async () => {
       totalProcessedDomains += domains.length;
 
       if (ranked.length > 0) {
-        await PageRank.insertMany(ranked);
+        for (const rankedElement of ranked) {
+          try {
+            await PageRank.create(rankedElement);
+          } catch (err) {
+            console.log(err);
+            continue;
+          }
+        }
         console.log(`Processed ${ranked.length} domains successfully. Total processed: ${totalProcessedDomains}, API calls: ${totalApiCalls}`);
       } else {
         console.log(`No valid results for ${domains.length} domains. Total processed: ${totalProcessedDomains}, API calls: ${totalApiCalls}`);
