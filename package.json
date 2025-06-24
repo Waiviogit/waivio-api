@@ -27,7 +27,8 @@
     "addVectorStore": "node utilities/operations/assistant/migration/cliCustomStore.js",
     "addWobjectTokens": "node utilities/tasks/addWobjectTokens/run.js",
     "websiteStatisticConversion": "node utilities/tasks/websiteStatisticConversion/run.js",
-    "resetCampaignsCount": "node utilities/tasks/resetCampaignsCount/run.js"
+    "resetCampaignsCount": "node utilities/tasks/resetCampaignsCount/run.js",
+    "getLinksFromPosts": "node utilities/tasks/getLinksFromPosts/run.js"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.485.0",
