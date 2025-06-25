@@ -13,6 +13,8 @@ appRoutes.route('/app/:appName/experts')
   .get(reqTimeMonitor, AppController.experts);
 appRoutes.route('/app/:name/hashtags')
   .get(reqTimeMonitor, AppController.hashtags);
+appRoutes.route('/safe-links')
+  .get(reqTimeMonitor, AppController.getSafeLinks);
 appRoutes.route('/image')
   .post(reqTimeMonitor, ImageController.saveImage);
 appRoutes.route('/req-rates')

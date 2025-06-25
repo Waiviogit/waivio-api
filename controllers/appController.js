@@ -13,6 +13,7 @@ const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 const asyncLocalStorage = require('../middlewares/context/context');
 const authoriseUser = require('../utilities/authorization/authoriseUser');
+const { getSafeUrlData } = require('../utilities/operations/app/safeUrls');
 
 const show = async (req, res, next) => {
   const data = {
@@ -199,6 +200,12 @@ const placesImage = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const getSafeLinks = async (req, res, next) => {
+  const result = await getSafeUrlData();
+
+  return res.status(200).json(result);
+};
+
 module.exports = {
   show,
   experts,
@@ -211,4 +218,5 @@ module.exports = {
   placesObjects,
   placesImage,
   placesText,
+  getSafeLinks,
 };

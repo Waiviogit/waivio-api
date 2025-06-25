@@ -151,6 +151,7 @@ exports.REDIS_KEYS = {
   ADVANCED_REPORT: 'advanced_report_cache',
   INSTACART_LINKS: 'instacart_links',
   CHALLENGES_OBJECT_TYPES: 'challenges_object_types',
+  SAFE_SITE_PREFIX_DATA: 'safe_site_prefix_data',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {

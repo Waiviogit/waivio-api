@@ -557,4 +557,36 @@ module.exports = {
       },
     },
   },
+  '/api/safe-links': {
+    get: {
+      tags: [
+        'app',
+      ],
+      summary: 'Get safe links data',
+      description: 'Get safe links data',
+      produces: [
+        'application/json',
+      ],
+      parameters: [],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              data: {
+                type: 'string',
+              },
+              prefixLength: {
+                type: 'number',
+              },
+              count: {
+                type: 'number',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };
