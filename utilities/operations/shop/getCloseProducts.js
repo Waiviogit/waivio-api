@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const { EXPOSED_FIELDS_FOR_OBJECT_TYPE, FIELDS_NAMES } = require('@waivio/objects-processor');
+const { FIELDS_NAMES, getTypesForField } = require('@waivio/objects-processor');
 const { Wobj, User, Department } = require('../../../models');
 const {
   REMOVE_OBJ_STATUSES, REQUIREDFILDS_WOBJ_LIST,
@@ -13,14 +13,6 @@ const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 const { isMobileDevice } = require('../../../middlewares/context/contextHelper');
 const { makeAffiliateLinksOnList } = require('../affiliateProgram/makeAffiliateLinks');
-
-const getTypesForField = (fieldName) => {
-  const objectTypes = [];
-  for (const type of Object.keys(EXPOSED_FIELDS_FOR_OBJECT_TYPE)) {
-    if (EXPOSED_FIELDS_FOR_OBJECT_TYPE[type].includes(fieldName)) objectTypes.push(type);
-  }
-  return objectTypes;
-};
 
 const getDepartments = async ({
   authorPermlink, app, locale, fieldName,
