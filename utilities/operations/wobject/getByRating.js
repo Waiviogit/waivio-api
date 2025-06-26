@@ -19,19 +19,37 @@ const getHostFromUrl = (url) => {
 const checkLinkSafety = async ({ url }) => {
   const host = getHostFromUrl(url);
   if (!host) return { error: { status: 422, message: 'Invalid url' } };
-  const searchString = getEscapedUrl(host);
-  const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
 
-  const { result } = await Wobj.findOne({
-    object_type: OBJECT_TYPES.LINK,
-    fields: {
-      $elemMatch: {
-        name: 'url',
-        body: { $regex: regex },
+  const searchString = getEscapedUrl(host);
+  const fullUrl = getEscapedUrl(url);
+
+  const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
+  const regexFull = new RegExp(`^${fullUrl}`);
+
+  const [{ result: execMatch }, { result: hostMatch }] = await Promise.all([
+    Wobj.findOne({
+      object_type: OBJECT_TYPES.LINK,
+      fields: {
+        $elemMatch: {
+          name: 'url',
+          body: { $regex: regexFull },
+        },
       },
-    },
-    'status.title': { $nin: REMOVE_OBJ_STATUSES },
-  }, { author_permlink: 1, fields: 1 });
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    }, { author_permlink: 1, fields: 1 }),
+    Wobj.findOne({
+      object_type: OBJECT_TYPES.LINK,
+      fields: {
+        $elemMatch: {
+          name: 'url',
+          body: { $regex: regex },
+        },
+      },
+      'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    }, { author_permlink: 1, fields: 1 }),
+  ]);
+
+  const result = execMatch || hostMatch;
 
   const ratingField = _.find(
     result?.fields,
