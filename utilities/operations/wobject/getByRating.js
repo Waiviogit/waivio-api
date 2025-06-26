@@ -21,10 +21,7 @@ const checkLinkSafety = async ({ url }) => {
   if (!host) return { error: { status: 422, message: 'Invalid url' } };
 
   const searchString = getEscapedUrl(host);
-  const fullUrl = getEscapedUrl(url);
-
   const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
-  const regexFull = new RegExp(`^${fullUrl}`);
 
   const [{ result: execMatch }, { result: hostMatch }] = await Promise.all([
     Wobj.findOne({
@@ -32,7 +29,7 @@ const checkLinkSafety = async ({ url }) => {
       fields: {
         $elemMatch: {
           name: 'url',
-          body: { $regex: regexFull },
+          body: url,
         },
       },
       'status.title': { $nin: REMOVE_OBJ_STATUSES },
