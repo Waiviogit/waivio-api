@@ -7,6 +7,7 @@ const { checkBlackListedComment } = require('../../helpers/commentHelper');
 const engineOperations = require('../../hiveEngine/engineOperations');
 const { postsUtil } = require('../../hiveApi');
 const asyncLocalStorage = require('../../../middlewares/context/context');
+const config = require('../../../config');
 
 /**
  * Return single post/comment of steem blockchain (if it exist).
@@ -22,7 +23,16 @@ const asyncLocalStorage = require('../../../middlewares/context/context');
  */
 module.exports = async ({ author, permlink, userName }) => {
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(userName);
-  const { result: muted = [] } = await mutedUserModel.find({ condition: { mutedBy: userName } });
+
+  const { result: muted = [] } = await mutedUserModel.find({
+    condition: {
+      $or: [
+        { mutedBy: userName },
+        { mutedForApps: config.appHost },
+      ],
+    },
+  });
+
   const store = asyncLocalStorage.getStore();
   const host = store.get('host');
   const { result: app } = await App.findOne({ host });
@@ -46,6 +56,10 @@ module.exports = async ({ author, permlink, userName }) => {
 const getPost = async ({
   author, permlink, host, hiddenPosts, muted,
 }) => {
+  if (_.includes(muted, author)) {
+    return { error: { status: 404, message: 'Post not found!' } };
+  }
+
   // get post with specified author(ordinary post)
   const { result: dbPosts, error: dbError } = await Post.findByBothAuthors({ author, permlink });
 
@@ -60,26 +74,10 @@ const getPost = async ({
   if (_.includes(hiddenPosts, _.get(post, '_id', '').toString())) {
     return { error: { status: 404, message: 'Post not found!' } };
   }
-  if (_.includes(muted, _.get(post, 'author', ''))) {
-    return { error: { status: 404, message: 'Post not found!' } };
-  }
 
-  // const { post: steemPost } = await postsUtil.getPost(
-  //   { author: post ? post.root_author || post.author : author, permlink },
-  // );
-  //
-  // if (!steemPost || steemPost.parent_author) return { post: null };
-  //
-  // let resultPost = steemPost;
   const wobjsResult = await getPostObjects(_.get(post, 'wobjects'));
-  //
   post.wobjects = _.get(wobjsResult, 'wobjectPercents', []);
   post.fullObjects = _.get(wobjsResult, 'wObjectsData', []);
-  //
-  // resultPost = await mergePostData(resultPost, post);
-  //
-  // // if post requested with guest name as author -> return post with guest name as author
-  // resultPost.author = author;
 
   return { post };
 };
