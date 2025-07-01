@@ -27,8 +27,14 @@ module.exports = async ({ author, permlink, userName }) => {
   const { result: muted = [] } = await mutedUserModel.find({
     condition: {
       $or: [
-        { mutedBy: userName },
-        { mutedForApps: config.appHost },
+        {
+          mutedBy: userName,
+          userName: author,
+        },
+        {
+          userName: author,
+          mutedForApps: config.appHost,
+        },
       ],
     },
   });
