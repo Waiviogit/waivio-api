@@ -23,30 +23,68 @@ const checkLinkSafety = async ({ url }) => {
   const searchString = getEscapedUrl(host);
   const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
 
-  const [{ result: execMatch }, { result: hostMatch }] = await Promise.all([
-    Wobj.findOne({
-      object_type: OBJECT_TYPES.LINK,
-      fields: {
-        $elemMatch: {
-          name: 'url',
-          body: url,
+  const pipeline = [
+    {
+      $match: {
+        object_type: OBJECT_TYPES.LINK,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        $or: [
+          {
+            fields: {
+              $elemMatch: {
+                name: 'url',
+                body: url,
+              },
+            },
+          },
+          {
+            fields: {
+              $elemMatch: {
+                name: 'url',
+                body: { $regex: regex },
+              },
+            },
+          },
+        ],
+      },
+    },
+    {
+      $addFields: {
+        urlField: {
+          $filter: {
+            input: '$fields',
+            cond: { $eq: ['$$this.name', 'url'] },
+          },
         },
       },
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    }, { author_permlink: 1, fields: 1 }),
-    Wobj.findOne({
-      object_type: OBJECT_TYPES.LINK,
-      fields: {
-        $elemMatch: {
-          name: 'url',
-          body: { $regex: regex },
+    },
+    {
+      $addFields: {
+        urlLength: { $strLenCP: { $arrayElemAt: ['$urlField.body', 0] } },
+        isExactMatch: {
+          $eq: [{ $arrayElemAt: ['$urlField.body', 0] }, url],
         },
       },
-      'status.title': { $nin: REMOVE_OBJ_STATUSES },
-    }, { author_permlink: 1, fields: 1 }),
-  ]);
+    },
+    {
+      $sort: {
+        isExactMatch: -1,
+        urlLength: 1,
+      },
+    },
+    {
+      $limit: 1,
+    },
+    {
+      $project: {
+        author_permlink: 1,
+        fields: 1,
+      },
+    },
+  ];
 
-  const result = execMatch || hostMatch;
+  const { wobjects = [] } = await Wobj.fromAggregation(pipeline);
+  const result = wobjects[0];
 
   const ratingField = _.find(
     result?.fields,
