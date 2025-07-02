@@ -6,85 +6,70 @@ const {
   REMOVE_OBJ_STATUSES,
 } = require('../../../constants/wobjectsData');
 
-const getEscapedUrl = (url) => url.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+const makeUrls = (url) => {
+  if (url.endsWith('*')) url = url.replace(/\*$/, '');
+  const urls = [];
+  urls.push(url);
 
-const getHostFromUrl = (url) => {
-  try {
-    return new URL(url).host;
-  } catch (error) {
-    return '';
+  url = url.replace(/\/+$/, ''); // remove trailing slashes
+
+  const parts = url.split('/');
+  const base = `${parts[0]}//${parts[2]}`;
+  let current = base;
+
+  urls.push(base, `${base}/`);
+
+  for (let i = 3; i < parts.length; i++) {
+    current += `/${parts[i]}`;
+    urls.push(current, `${current}/`);
   }
+
+  return urls;
+};
+
+const findMostAppropriateObject = (objects, targetUrl) => {
+  const normalize = (url) => url.replace(/\/+$/, '');
+
+  const url = normalize(targetUrl);
+
+  for (const obj of objects) {
+    if (normalize(obj.url) === normalize(targetUrl)) return obj;
+  }
+
+  // Iteratively remove path segments and check
+  const parts = url.split('/');
+  while (parts.length > 3) { // keep protocol and domain
+    parts.pop();
+    const candidate = parts.join('/');
+    for (const obj of objects) if (normalize(obj.url) === candidate) return obj;
+  }
+
+  return null;
 };
 
 const checkLinkSafety = async ({ url }) => {
-  const host = getHostFromUrl(url);
-  if (!host) return { error: { status: 422, message: 'Invalid url' } };
+  const urls = makeUrls(url);
 
-  const searchString = getEscapedUrl(host);
-  const regex = new RegExp(`^(https:\\/\\/|http:\\/\\/|www\\.)${searchString}`);
+  const { result: objects } = await Wobj.find({
+    object_type: OBJECT_TYPES.LINK,
+    'status.title': { $nin: REMOVE_OBJ_STATUSES },
+    fields: {
+      $elemMatch: {
+        name: 'url',
+        body: { $in: urls },
+      },
+    },
+  }, {
+    fields: 1,
+    author_permlink: 1,
+  });
 
-  const pipeline = [
-    {
-      $match: {
-        object_type: OBJECT_TYPES.LINK,
-        'status.title': { $nin: REMOVE_OBJ_STATUSES },
-        $or: [
-          {
-            fields: {
-              $elemMatch: {
-                name: 'url',
-                body: url,
-              },
-            },
-          },
-          {
-            fields: {
-              $elemMatch: {
-                name: 'url',
-                body: { $regex: regex },
-              },
-            },
-          },
-        ],
-      },
-    },
-    {
-      $addFields: {
-        urlField: {
-          $filter: {
-            input: '$fields',
-            cond: { $eq: ['$$this.name', 'url'] },
-          },
-        },
-      },
-    },
-    {
-      $addFields: {
-        urlLength: { $strLenCP: { $arrayElemAt: ['$urlField.body', 0] } },
-        isExactMatch: {
-          $eq: [{ $arrayElemAt: ['$urlField.body', 0] }, url],
-        },
-      },
-    },
-    {
-      $sort: {
-        isExactMatch: -1,
-        urlLength: 1,
-      },
-    },
-    {
-      $limit: 1,
-    },
-    {
-      $project: {
-        author_permlink: 1,
-        fields: 1,
-      },
-    },
-  ];
+  const mapped = objects.map((el) => ({
+    ...el,
+    url: el.fields.find((f) => f.name === FIELDS_NAMES.URL)?.body,
+  }));
 
-  const { wobjects = [] } = await Wobj.fromAggregation(pipeline);
-  const result = wobjects[0];
+  const result = findMostAppropriateObject(mapped, url);
 
   const ratingField = _.find(
     result?.fields,
