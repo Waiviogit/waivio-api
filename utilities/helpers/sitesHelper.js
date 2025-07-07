@@ -412,7 +412,13 @@ exports.checkForSocialSite = (host = '') => SOCIAL_HOSTS.some((sh) => host.inclu
 
 exports.getAdSense = async ({ host }) => {
   const { result } = await App.findOne({ host });
-  return _.get(result, 'adSense', { code: '', level: '', txtFile: '' });
+
+  return {
+    code: result?.adSense?.code || '',
+    level: result?.adSense?.level || '',
+    txtFile: result?.adSense?.txtFile || '',
+    displayUnitCode: result?.adSense?.displayUnitCode || '',
+  };
 };
 
 exports.getDescription = async ({ app }) => {

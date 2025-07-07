@@ -13,6 +13,7 @@ const AdSense = new Schema({
   code: { type: String },
   level: { type: String },
   txtFile: { type: String },
+  displayUnitCode: { type: String },
 }, { _id: false });
 
 const topUsersSchema = new Schema({
