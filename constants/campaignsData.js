@@ -34,6 +34,8 @@ exports.CAMPAIGN_STATUSES = {
 
 exports.CAMPAIGN_TYPES = {
   REVIEWS: 'reviews',
+  MENTIONS: 'mentions',
+  GIVEAWAYS: 'giveaways',
 };
 
 exports.RESERVATION_STATUSES = {
