@@ -19,6 +19,7 @@ const {
   RESERVATION_STATUSES,
   PAYMENT_HISTORIES_TYPES,
   CAMPAIGN_TYPES,
+  CAMPAIGN_STATUSES,
 } = require('../../constants/campaignsData');
 const { getCurrentNames } = require('./wObjectHelper');
 const {
@@ -569,8 +570,12 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
     const activationPermlink = _.get(metadata, 'campaignActivationPermlink');
     if (campaignId) await oldCampaignsObligations(post, campaignId);
     if (activationPermlink) {
-      post.giveaway = await CampaignV2.findOne({
-        filter: { activationPermlink, type: CAMPAIGN_TYPES.GIVEAWAYS },
+      post.giveaway = (await CampaignV2.findOne({
+        filter: {
+          activationPermlink,
+          type: CAMPAIGN_TYPES.GIVEAWAYS,
+          status: CAMPAIGN_STATUSES.ACTIVE,
+        },
         projection: {
           giveawayRequirements: 1,
           userRequirements: 1,
@@ -580,7 +585,7 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
           currency: 1,
           payoutToken: 1,
         },
-      });
+      }))?.result;
     }
   }
   return posts;
