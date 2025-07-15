@@ -8,11 +8,11 @@ const {
 } = require('../../../models');
 const { captureException } = require('../../helpers/sentryHelper');
 const { transfer } = require('../../hiveApi/broadcastUtil');
-const redisGetter = require('../../redis/redisGetter');
 const { CACHE_KEY } = require('../../../constants/common');
 const { getGuestBalanceHistory } = require('./guestHiveWallet');
 const { PAYMENT_HISTORIES_TYPES } = require('../../../constants/campaignsData');
 const changellyAPI = require('../changellyAPI');
+const { redisGetter, redis, redisSetter } = require('../../redis');
 
 const HIVE_BANK_ACCOUNT = process.env.WALLET_ACC_NAME;
 const API_KEY = process.env.SIMPLESWAP_API_KEY;
@@ -69,15 +69,50 @@ const validateWithdrawAmount = async ({ amount, userName }) => {
   return { result: true };
 };
 
+const WITHDRAW_LOCK_KEY_HIVE = 'guest_withdraw_lock_hive:';
+
+const getWithdrawLock = async (account) => {
+  const { result } = await redisGetter.getAsync({
+    key: `${WITHDRAW_LOCK_KEY_HIVE}${account}`,
+    client: redis.processedPostClient,
+  });
+
+  return result;
+};
+const setLock = async (account) => {
+  await redisSetter.setEx({
+    key: `${WITHDRAW_LOCK_KEY_HIVE}${account}`,
+    client: redis.processedPostClient,
+    value: account,
+    ttl: 60 * 60 * 24,
+  });
+};
+const delWithdrawLock = async (account) => {
+  await redisSetter.deleteKey({
+    key: `${WITHDRAW_LOCK_KEY_HIVE}${account}`,
+    client: redis.processedPostClient,
+  });
+};
+
 const withdrawFromHive = async ({
   userName, address, outputCoinType, amount,
 }) => {
   if (process.env.NODE_ENV !== 'production') return { error: { status: 403, message: 'Forbidden' } };
+  const lock = await getWithdrawLock(userName);
+  if (lock) return { error: { status: 403, message: 'Forbidden' } };
+  await setLock(userName);
+
   const { user } = await User.getOne(userName, '+auth');
-  if (!user && !user.auth) return { error: ERROR_OBJ.NOT_FOUND };
+  if (!user && !user.auth) {
+    await delWithdrawLock(userName);
+    return { error: ERROR_OBJ.NOT_FOUND };
+  }
 
   const { result, error: balanceError } = await validateWithdrawAmount({ amount, userName });
-  if (balanceError) return { error: balanceError };
+  if (balanceError) {
+    await delWithdrawLock(userName);
+    return { error: balanceError };
+  }
   // validate funds amount
   const { result: exchange, error: createExchangeError } = await changellyAPI
     .createExchangeWrapper({
@@ -85,6 +120,7 @@ const withdrawFromHive = async ({
     });
 
   if (createExchangeError) {
+    await delWithdrawLock(userName);
     return { error: ERROR_OBJ.UNPROCESSABLE };
   }
 
@@ -107,7 +143,10 @@ const withdrawFromHive = async ({
     address,
     usdValue,
   });
-  if (createWithdrawErr) return { error: createWithdrawErr };
+  if (createWithdrawErr) {
+    await delWithdrawLock(userName);
+    return { error: createWithdrawErr };
+  }
 
   const { result: transaction, error: transactionError } = await transfer({
     amount,
@@ -118,6 +157,7 @@ const withdrawFromHive = async ({
   });
 
   if (transactionError) {
+    await delWithdrawLock(userName);
     await captureException(transactionError);
     return { error: transactionError };
   }
@@ -144,6 +184,7 @@ const withdrawFromHive = async ({
     memo: `Withdrawal transaction ID for the HIVE-${outputCoinType} pair via Changelly.com: https://changelly.com/track/${exchangeId}`,
     withdraw: withdraw._id,
   });
+  await delWithdrawLock(userName);
 
   return { result: exchangeId };
 };
