@@ -176,6 +176,12 @@ exports.blogSchema = Joi.object().keys({
   tagsArray: Joi.array().items(Joi.string()).default([]),
 });
 
+exports.blogTitleSchema = Joi.object().keys({
+  userName: Joi.string().required(),
+  limit: Joi.number().integer().min(0).default(5),
+  skip: Joi.number().integer().min(0).default(0),
+});
+
 exports.blogTagsSchema = Joi.object().keys({
   name: Joi.string().required(),
   limit: Joi.number().integer().min(0).default(20),

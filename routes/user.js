@@ -28,6 +28,8 @@ userRoutes.route('/user/:userName/feed')
   .post(reqTimeMonitor, UserController.feed);
 userRoutes.route('/user/:userName/blog')
   .post(reqTimeMonitor, UserController.blog);
+userRoutes.route('/user/:userName/blog/title')
+  .post(reqTimeMonitor, UserController.blogTitles);
 userRoutes.route('/user/:userName/blog-tags')
   .post(reqTimeMonitor, UserController.blogTags);
 userRoutes.route('/user/:userName/comments')

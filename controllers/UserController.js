@@ -13,6 +13,7 @@ const validators = require('./validators');
 const authoriseUser = require('../utilities/authorization/authoriseUser');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
 const { getWalletAdvancedReport } = require('../utilities/operations/user/getWalletAdvancedReport');
+const { getUserPostTitles } = require('../utilities/operations/user/getUserPostsProjection');
 const generatedReport = require('../utilities/operations/user/walletAdvancedReportGenerated');
 const { getAffiliateObjects } = require('../utilities/operations/affiliateProgram/getAffiliateObjects');
 const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
@@ -198,6 +199,18 @@ const blog = async (req, res, next) => {
     .execute({ tags, posts, hasMore }, req);
 
   return res.status(200).json(processedData);
+};
+
+const blogTitles = async (req, res, next) => {
+  const value = validators.validate({
+    userName: req.params.userName, ...req.body,
+  }, validators.user.blogTitleSchema, next);
+
+  if (!value) return;
+
+  const result = await getUserPostTitles(value);
+
+  return res.status(200).json(result);
 };
 
 const blogTags = async (req, res, next) => {
@@ -888,4 +901,5 @@ module.exports = {
   searchUsersByHost,
   withdrawHive,
   getIncomingRcDelegations,
+  blogTitles,
 };
