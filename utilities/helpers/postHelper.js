@@ -584,6 +584,7 @@ const additionalSponsorObligations = async (posts, userName, requestUserName) =>
           reward: 1,
           currency: 1,
           payoutToken: 1,
+          budget: 1,
         },
       }))?.result;
     }
