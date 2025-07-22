@@ -1,29 +1,8 @@
 const _ = require('lodash');
 const moment = require('moment');
 const { CampaignV2, CampaignPayments, mutedUserModel } = require('../../models');
-const redisGetter = require('../redis/redisGetter');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
-const { CACHE_KEY } = require('../../constants/common');
 const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
-
-const getExpertiseVariables = async () => {
-  const { result: rewardFund } = await redisGetter.getHashAll({
-    key: CACHE_KEY.REWARD_FUND,
-  });
-  const { result: median } = await redisGetter.getHashAll({
-    key: CACHE_KEY.CURRENT_MEDIAN_HISTORY_PRICE,
-  });
-  const recentClaims = parseFloat(_.get(rewardFund, 'recent_claims', '0'));
-  const rewardBalance = parseFloat(_.get(rewardFund, 'reward_balance', '0'));
-
-  const rate = parseFloat(_.get(median, 'base', '0'))
-    / parseFloat(_.get(median, 'quote', '0'));
-
-  return {
-    rewardBalanceTimesRate: rewardBalance * rate,
-    claims: recentClaims / 1000000,
-  };
-};
 
 const findAssignedMainObjects = async (userName) => {
   if (!userName) return [];
@@ -42,7 +21,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
   const currentDay = moment().format('dddd').toLowerCase();
   const userName = _.get(user, 'name');
   const assignedObjects = await findAssignedMainObjects(userName);
-  const { rewardBalanceTimesRate, claims } = await getExpertiseVariables();
   const mutedNames = await mutedUserModel.findMutedBy({ userName });
 
   const { result = [] } = await CampaignV2.aggregate([
@@ -58,14 +36,6 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
     },
     {
       $addFields: {
-        requiredExpertise: {
-          $divide: [
-            {
-              $multiply: ['$userRequirements.minExpertise', claims],
-            },
-            rewardBalanceTimesRate,
-          ],
-        },
         blacklist: {
           $setDifference: ['$blacklistUsers', '$whitelistUsers'],
         },
@@ -215,7 +185,7 @@ const getAggregatedCampaigns = async ({ user, permlinks }) => {
           $gte: [_.get(user, 'followers_count', 0), '$userRequirements.minFollowers'],
         },
         expertise: {
-          $gte: [_.get(user, 'wobjects_weight', 0), '$requiredExpertise'],
+          $gte: [_.get(user, 'wobjects_weight', 0), '$userRequirements.minExpertise'],
         },
         notAssigned: {
           $cond: [{ $in: ['$requiredObject', assignedObjects] }, false, true],
