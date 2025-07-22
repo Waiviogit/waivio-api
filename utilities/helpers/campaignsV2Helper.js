@@ -315,6 +315,7 @@ const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
     min_reward: minReward,
     max_reward: maxReward,
     newCampaigns: true,
+    campaignTypes: _.uniq(primaryCampaigns.map((el) => el.type)),
     notEligible,
   };
 };
