@@ -48,4 +48,9 @@ exports.schema = [
     method: 'POST',
     case: 3,
   },
+  {
+    path: '/posts/judge-posts',
+    method: 'POST',
+    case: 3,
+  },
 ];
