@@ -1,7 +1,7 @@
 const {
   getPostsByCategory, getSinglePost, getPostComments,
   getManyPosts, getPostSocialInfo, likePost,
-  cachePreview, getPostsByMention,
+  cachePreview, getPostsByMention, getJudgePosts,
 } = require('../utilities/operations').post;
 const validators = require('./validators');
 const authoriseUser = require('../utilities/authorization/authoriseUser');
@@ -147,6 +147,34 @@ exports.getPostsByMentions = async (req, res, next) => {
   if (!value) return;
 
   const { posts, hasMore, error } = await getPostsByMention({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  const pipeline = new RequestPipeline();
+  const processedData = await pipeline
+    .use(pipelineFunctions.fillPosts)
+    .use(pipelineFunctions.moderateObjects)
+    .use(pipelineFunctions.checkFollowers)
+    .use(pipelineFunctions.checkFollowings)
+    .execute({ posts, hasMore }, req);
+
+  return res.status(200).json(processedData);
+};
+
+exports.getJudgePosts = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      follower: req.headers.follower,
+    },
+    validators.post.judgePostsSchema,
+    next,
+  );
+
+  if (!value) return;
+
+  const { posts, hasMore, error } = await getJudgePosts
+    .getJudgePostsByPermlink({ ...value, app: req.appData });
 
   if (error) return next(error);
 

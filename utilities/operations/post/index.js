@@ -8,5 +8,6 @@ moduleExports.getManyPosts = require('./getManyPosts');
 moduleExports.getPostSocialInfo = require('./getPostSocialInfo');
 moduleExports.cachePreview = require('./cachePreview');
 moduleExports.getPostsByMention = require('./getPostsByMention');
+moduleExports.getJudgePosts = require('./getJudgePosts');
 
 module.exports = moduleExports;
