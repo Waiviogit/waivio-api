@@ -316,6 +316,43 @@ const getSortingStagesByHostSearch = ({ host }) => [{
 },
 ];
 
+const getField = async (author, permlink, authorPermlink, match) => {
+  try {
+    const fieldMatch = match?.$match || { author: author || /.*?/, permlink };
+    const wobject = await WObjectModel.findOne(
+      {
+        author_permlink: authorPermlink || /.*?/,
+        fields: { $elemMatch: fieldMatch },
+      },
+      { 'fields.$': 1 },
+    ).lean();
+
+    return { field: wobject?.fields?.[0] };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const updateOneWithArrayFilters = async ({
+  authorPermlink, updateData, arrayFilters,
+}) => {
+  try {
+    const result = await WObjectModel.updateOne(
+      {
+        author_permlink: authorPermlink,
+      },
+      updateData,
+      {
+        arrayFilters,
+      },
+    );
+
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
 module.exports = {
   countWobjectsByArea,
   fromAggregation,
@@ -333,4 +370,6 @@ module.exports = {
   getFavoritesByUsername,
   getSortingStagesByHost,
   getSortingStagesByHostSearch,
+  getField,
+  updateOneWithArrayFilters,
 };

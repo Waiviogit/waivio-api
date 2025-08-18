@@ -1971,4 +1971,91 @@ module.exports = {
       },
     },
   },
+  '/api/wobject/{authorPermlink}/vote-field': {
+    post: {
+      tags: [
+        'wobject',
+      ],
+      summary: 'Vote on wobject field update',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'access-token',
+          in: 'header',
+          description: 'Access token for authentication',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'authorPermlink',
+          in: 'path',
+          description: 'author_permlink of specified wobject',
+          required: true,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          description: 'Vote parameters for field update',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              author: {
+                type: 'string',
+                description: 'Author of the field update',
+              },
+              permlink: {
+                type: 'string',
+                description: 'Permlink of the field update',
+              },
+              voter: {
+                type: 'string',
+                description: 'Name of the voter',
+              },
+              weight: {
+                type: 'number',
+                description: 'Vote weight (0 to 10000)',
+                minimum: 0,
+                maximum: 10000,
+              },
+            },
+            required: ['author', 'permlink', 'voter', 'weight'],
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            $ref: '#/definitions/voteFieldResponse',
+          },
+        },
+        400: {
+          description: 'Bad Request',
+          schema: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+              },
+            },
+          },
+        },
+        401: {
+          description: 'Unauthorized',
+          schema: {
+            type: 'object',
+            properties: {
+              message: {
+                type: 'string',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
 };

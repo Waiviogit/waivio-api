@@ -13,6 +13,7 @@ const FieldsSchema = new Schema({
   id: { type: String },
   tagCategory: { type: String },
   weight: { type: Number, default: 1 },
+  weightWAIV: { type: Number },
   locale: { type: String, default: 'en-US' },
   creator: { type: String },
   author: String, //
@@ -23,6 +24,7 @@ const FieldsSchema = new Schema({
     type: [{
       voter: { type: String },
       weight: { type: Number },
+      weightWAIV: { type: Number },
       percent: { type: Number },
       rshares_weight: { type: Number },
     }],

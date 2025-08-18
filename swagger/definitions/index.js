@@ -3114,4 +3114,35 @@ module.exports = {
       },
     },
   },
+  voteFieldResponse: {
+    type: 'object',
+    properties: {
+      result: {
+        type: 'object',
+        properties: {
+          acknowledged: {
+            type: 'boolean',
+            description: 'Whether the operation was acknowledged',
+          },
+          modifiedCount: {
+            type: 'number',
+            description: 'Number of documents modified',
+          },
+          upsertedId: {
+            type: 'string',
+            description: 'ID of upserted document if any',
+            nullable: true,
+          },
+          upsertedCount: {
+            type: 'number',
+            description: 'Number of documents upserted',
+          },
+          matchedCount: {
+            type: 'number',
+            description: 'Number of documents matched',
+          },
+        },
+      },
+    },
+  },
 };

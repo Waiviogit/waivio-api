@@ -22,6 +22,8 @@ const { getCountryCodeFromIp } = require('../utilities/helpers/sitesHelper');
 const pipelineFunctions = require('../pipeline');
 const RequestPipeline = require('../pipeline/requestPipeline');
 const { getInstacartLinkByObject } = require('../utilities/operations/wobject/instacartLinkByObject');
+const authoriseUser = require('../utilities/authorization/authoriseUser');
+const { voteOnUpdate } = require('../utilities/operations/wobject/voteOnUpdate');
 
 const index = async (req, res, next) => {
   const value = validators.validate({
@@ -856,6 +858,23 @@ const getInstacartLink = async (req, res, next) => {
   return res.status(200).json({ result });
 };
 
+const voteOnUpdateC = async (req, res, next) => {
+  const value = validators.validate(
+    { authorPermlink: req.params.authorPermlink, ...req.body },
+    validators.wobject.voteOnUpdateScheme,
+    next,
+  );
+
+  const { error: authError } = await authoriseUser.authorise(value.voter);
+  if (authError) return next(authError);
+
+  const { result, error } = await voteOnUpdate(value);
+
+  if (error) return next(error);
+
+  return res.status(200).json({ result });
+};
+
 module.exports = {
   index,
   show,
@@ -900,4 +919,5 @@ module.exports = {
   getWobjectsWithCampaigns,
   getFeaturedObjects,
   getInstacartLink,
+  voteOnUpdateC,
 };

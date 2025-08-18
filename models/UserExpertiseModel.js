@@ -1,5 +1,21 @@
-const _ = require('lodash');
 const { UserExpertise } = require('../database').models;
+
+// object shares - user weight in specified wobject
+const checkForObjectShares = async (data) => {
+  try {
+    const userWobject = await UserExpertise.findOne({
+      user_name: data.name,
+      author_permlink: data.author_permlink,
+    }).lean();
+
+    if (!userWobject) {
+      return { error: { message: 'User have no weight in current object!' } };
+    }
+    return { weight: userWobject.weight };
+  } catch (error) {
+    return { error };
+  }
+};
 
 const aggregate = async (pipeline) => {
   try {
@@ -106,4 +122,5 @@ module.exports = {
   countDocuments,
   getExpertsWithoutMergingCollections,
   getExpertsByFollowersFromUserModel,
+  checkForObjectShares,
 };

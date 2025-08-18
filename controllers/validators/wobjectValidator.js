@@ -323,3 +323,15 @@ exports.getFeaturedObjectsScheme = Joi.object().keys({
 exports.instacartLinkScheme = Joi.object().keys({
   authorPermlink: Joi.string().required(),
 });
+
+exports.voteOnUpdateScheme = Joi.object().keys({
+  author: Joi.string().invalid('').required(),
+  permlink: Joi.string().invalid('').required(),
+  authorPermlink: Joi.string().invalid('').required(),
+  voter: Joi.string().invalid('').required(),
+  weight: Joi.number()
+    .integer()
+    .min(0)
+    .max(10000)
+    .required(),
+});
