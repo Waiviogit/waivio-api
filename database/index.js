@@ -6,10 +6,19 @@ const { cursorTimeout } = require('./plugins/timeoutPlugin');
 const URI = process.env.MONGO_URI_WAIVIO
   ? process.env.MONGO_URI_WAIVIO
   : `mongodb://${config.db.host}:${config.db.port}/${config.db.database}`;
-mongoose.connect(URI, {
+
+const connectionOptions = {
   maxPoolSize: 200,
   socketTimeoutMS: 60000,
-})
+  serverSelectionTimeoutMS: 5000,
+  heartbeatFrequencyMS: 10000,
+  bufferCommands: false,
+  minPoolSize: 5,
+  maxIdleTimeMS: 30000,
+  connectTimeoutMS: 10000,
+};
+
+mongoose.connect(URI, connectionOptions)
   .then(() => console.log(`${config.db.database} connected`))
   .catch((error) => console.log(error));
 
