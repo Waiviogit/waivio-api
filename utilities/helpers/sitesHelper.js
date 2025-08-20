@@ -57,7 +57,7 @@ exports.getParentsList = async () => {
     ? { canBeExtended: true, host: { $nin: TEST_DOMAINS } }
     : { canBeExtended: true };
 
-  const { result: parents, error } = await App.find(condition);
+  const { result: parents, error } = await App.find(condition, { host: -1 });
   if (error) return { error };
   return {
     parents: _.map(parents, (parent) => ({ domain: parent.host, _id: parent._id.toString() })),
