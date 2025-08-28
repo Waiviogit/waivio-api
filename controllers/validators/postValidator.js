@@ -60,3 +60,11 @@ exports.mentionsSchema = Joi.object().keys({
     .default(10),
   follower: Joi.string(),
 });
+
+exports.judgePostsSchema = Joi.object().keys({
+  judgeName: Joi.string().required(),
+  authorPermlink: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(0).max(50)
+    .default(10),
+});

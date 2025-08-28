@@ -21,5 +21,7 @@ postRoutes.route('/post/social-info')
   .get(reqTimeMonitor, PostController.getSocialInfo);
 postRoutes.route('/posts/mentions')
   .post(reqTimeMonitor, PostController.getPostsByMentions);
+postRoutes.route('/posts/judge-posts')
+  .post(reqTimeMonitor, PostController.getJudgePosts);
 
 module.exports = postRoutes;

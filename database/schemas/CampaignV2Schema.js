@@ -87,6 +87,8 @@ const campaignV2Schema = new mongoose.Schema(
     currency: { type: String },
     payoutToken: { type: String },
     payoutTokenRateUSD: { type: Number },
+    contestJudges: { type: [String] },
+    durationDays: { type: Number },
   },
   {
     timestamps: true,
