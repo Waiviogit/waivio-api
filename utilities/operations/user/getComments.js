@@ -32,17 +32,30 @@ const getGuestComments = async ({ name, skip, limit }) => {
 
 // eslint-disable-next-line camelcase
 const getSteemUserComments = async ({ start_author, start_permlink, limit }) => {
-  // eslint-disable-next-line camelcase
-  const cond = start_permlink
-    ? { start_author, start_permlink, limit: limit + 1 }
-    : { start_author, limit };
-  const { comments: steemComments } = await postsUtil.getUserComments(cond);
-  if (!steemComments) return { comments: [] };
-  if (steemComments.error) return { error: steemComments.error };
+  const comments = [];
+  let currentStartPermlink = start_permlink;
+
+  while (comments.length < limit) {
+    // eslint-disable-next-line camelcase
+    const cond = currentStartPermlink
+      ? { start_author, start_permlink: currentStartPermlink, limit: limit + 1 }
+      : { start_author, limit };
+
+    const { comments: steemComments, error } = await postsUtil.getUserComments(cond);
+    if (!steemComments?.length || error) break;
+    currentStartPermlink = steemComments[steemComments.length - 1].permlink;
+    const commentsToProcess = steemComments.slice(currentStartPermlink ? 1 : 0);
+    const filteredComments = commentsToProcess.filter((comment) => comment.parent_author !== 'leothreads');
+    if (filteredComments.length === 0) continue;
+    const remainingSlots = limit - comments.length;
+    comments.push(...filteredComments.slice(0, remainingSlots));
+    if (comments.length >= limit) break;
+  }
+
+  if (comments.length === 0) return { comments: [] };
 
   const mergedComments = await mergeSteemCommentsWithDB({
-    // eslint-disable-next-line camelcase
-    steemComments: steemComments.slice(start_permlink ? 1 : 0),
+    steemComments: comments,
   });
   await engineOperations.addWAIVToCommentsArray(mergedComments);
 
