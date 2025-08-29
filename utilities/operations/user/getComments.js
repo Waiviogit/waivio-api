@@ -45,7 +45,9 @@ const getSteemUserComments = async ({ start_author, start_permlink, limit }) => 
     if (!steemComments?.length || error) break;
     currentStartPermlink = steemComments[steemComments.length - 1].permlink;
     const commentsToProcess = steemComments.slice(currentStartPermlink ? 1 : 0);
-    const filteredComments = commentsToProcess.filter((comment) => comment.parent_author !== 'leothreads');
+    const filteredComments = commentsToProcess
+      .filter((comment) => comment.parent_author !== 'leothreads'
+        && !comment.parent_permlink.includes('leothread'));
     if (filteredComments.length === 0) continue;
     const remainingSlots = limit - comments.length;
     comments.push(...filteredComments.slice(0, remainingSlots));
