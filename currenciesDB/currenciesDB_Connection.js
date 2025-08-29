@@ -8,12 +8,12 @@ const URI = process.env.MONGO_URI_CURRENCIES
 const connectionOptions = {
   maxPoolSize: 50,
   socketTimeoutMS: 60000,
-  serverSelectionTimeoutMS: 5000,
+  serverSelectionTimeoutMS: 30000,
   heartbeatFrequencyMS: 10000,
   bufferCommands: false,
   minPoolSize: 2,
   maxIdleTimeMS: 30000,
-  connectTimeoutMS: 10000,
+  connectTimeoutMS: 30000,
 };
 
 const currenciesDb = mongoose.createConnection(URI, connectionOptions);
