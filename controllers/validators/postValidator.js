@@ -67,4 +67,5 @@ exports.judgePostsSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   limit: Joi.number().integer().min(0).max(50)
     .default(10),
+  follower: Joi.string(),
 });
