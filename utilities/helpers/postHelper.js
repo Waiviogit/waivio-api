@@ -340,10 +340,25 @@ const sponsorObligationsNewReview = async ({
 
   for (const campaign of campaigns) {
     const {
-      rewardInUSD, users, payoutToken, type, guideName, payoutTokenRateUSD, _id, name,
+      rewardInUSD,
+      users,
+      payoutToken,
+      type,
+      guideName,
+      payoutTokenRateUSD,
+      _id,
+      name,
+      contestRewards,
     } = campaign;
     const tokenRate = _.find(symbols, (el) => el.symbol === payoutToken)
       ?.tokenRate ?? payoutTokenRateUSD;
+
+    let rewardForCampaign = rewardInUSD;
+
+    if (contestRewards && contestRewards?.length) {
+      rewardForCampaign = _.find(contestRewards, (r) => r.place === users[0].place)?.rewardInUSD
+        || rewardInUSD;
+    }
 
     if (requestUserName === guideName) {
       post.campaigns.push({
@@ -356,7 +371,7 @@ const sponsorObligationsNewReview = async ({
       });
     }
 
-    const rewardInToken = new BigNumber(rewardInUSD)
+    const rewardInToken = new BigNumber(rewardForCampaign)
       .dividedBy(tokenRate).toNumber();
     const totalPayout = _.get(post, `total_payout_${payoutToken}`, 0);
     const voteRshares = _.get(post, `net_rshares_${payoutToken}`, 0);

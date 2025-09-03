@@ -43,6 +43,7 @@ const findCompletedByPost = async (post) => {
       guideName: 1,
       payoutTokenRateUSD: 1,
       name: 1,
+      contestRewards: 1,
     },
   });
 
