@@ -188,3 +188,23 @@ exports.getJudgePosts = async (req, res, next) => {
 
   return res.status(200).json(processedData);
 };
+
+exports.getJudgePostsLinks = async (req, res, next) => {
+  const value = validators.validate(
+    {
+      ...req.body,
+      follower: req.headers.follower,
+    },
+    validators.post.judgePostsSchema,
+    next,
+  );
+
+  if (!value) return;
+
+  const { posts, hasMore, error } = await getJudgePosts
+    .getJudgePostsLinksByPermlink({ ...value, app: req.appData });
+
+  if (error) return next(error);
+
+  return res.status(200).json({ posts, hasMore });
+};

@@ -23,5 +23,7 @@ postRoutes.route('/posts/mentions')
   .post(reqTimeMonitor, PostController.getPostsByMentions);
 postRoutes.route('/posts/judge-posts')
   .post(reqTimeMonitor, PostController.getJudgePosts);
+postRoutes.route('/posts/judge-posts/links')
+  .post(reqTimeMonitor, PostController.getJudgePostsLinks);
 
 module.exports = postRoutes;

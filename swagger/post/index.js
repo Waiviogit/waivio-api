@@ -300,6 +300,82 @@ module.exports = {
       },
     },
   },
+  '/api/posts/judge-posts/links': {
+    post: {
+      tags: [
+        'post',
+      ],
+      summary: 'Return list of posts links for a judge by author permlink',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'follower',
+          in: 'header',
+          description: 'user currently logged in',
+          required: false,
+          type: 'string',
+        },
+        {
+          in: 'body',
+          name: 'params',
+          required: true,
+          schema: {
+            type: 'object',
+            properties: {
+              judgeName: {
+                type: 'string',
+                description: 'Name of the judge',
+              },
+              authorPermlink: {
+                type: 'string',
+                description: 'Author permlink to filter posts',
+              },
+              skip: {
+                type: 'number',
+                description: 'Number of posts to skip',
+                default: 0,
+              },
+              limit: {
+                type: 'number',
+                description: 'Number of posts to return',
+                default: 10,
+              },
+            },
+            required: ['judgeName', 'authorPermlink'],
+          },
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              posts: {
+                type: 'array',
+                items: {
+                  type: 'object',
+                  properties: {
+                    author: {
+                      type: 'string',
+                    },
+                    permlink: {
+                      type: 'string',
+                    },
+                  },
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   '/api/posts/preview-cache': {
     post: {
       tags: [

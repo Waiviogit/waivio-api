@@ -28,9 +28,9 @@ const getCampaignCondition = async ({ judgeName, authorPermlink }) => {
   return condition;
 };
 
-const getJudgePostsByPermlink = async ({
-  judgeName, authorPermlink, skip, limit, app,
-}) => {
+const getJudgesCondition = async ({ judgeName, authorPermlink, app }) => {
+  const condition = await getCampaignCondition({ judgeName, authorPermlink });
+  if (!condition) return null;
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ mutedForApps: _.get(app, 'host') }, { mutedBy: judgeName }] },
   });
@@ -38,8 +38,18 @@ const getJudgePostsByPermlink = async ({
 
   const mutedNames = mutedUsers.map((el) => el.userName);
 
-  const condition = await getCampaignCondition({ judgeName, authorPermlink });
-  if (!condition) {
+  return {
+    ...(mutedNames?.length && { author: { $nin: mutedNames } }),
+    ...(hiddenPosts?.length && { _id: { $nin: hiddenPosts } }),
+    ...condition,
+  };
+};
+
+const getJudgePostsByPermlink = async ({
+  judgeName, authorPermlink, skip, limit, app,
+}) => {
+  const postsCondition = await getJudgesCondition({ judgeName, authorPermlink, app });
+  if (!postsCondition) {
     return {
       posts: [],
       hasMore: false,
@@ -47,12 +57,7 @@ const getJudgePostsByPermlink = async ({
   }
 
   const { result } = await Post.getPostsByCondition({
-    condition: {
-      ...(mutedNames?.length && { author: { $nin: mutedNames } }),
-
-      ...(hiddenPosts?.length && { _id: { $nin: hiddenPosts } }),
-      ...condition,
-    },
+    condition: postsCondition,
     skip,
     limit: limit + 1,
   });
@@ -64,6 +69,34 @@ const getJudgePostsByPermlink = async ({
   };
 };
 
+const getJudgePostsLinksByPermlink = async ({
+  judgeName, authorPermlink, skip, limit, app,
+}) => {
+  const postsCondition = await getJudgesCondition({ judgeName, authorPermlink, app });
+  if (!postsCondition) {
+    return {
+      posts: [],
+      hasMore: false,
+    };
+  }
+
+  const { result } = await Post.find({
+    filter: postsCondition,
+    projection: { author: 1, permlink: 1 },
+    options: {
+      skip,
+      limit: limit + 1,
+    },
+  });
+  if (!result?.length) return { posts: [], hasMore: false };
+
+  return {
+    posts: _.take(result, limit),
+    hasMore: result.length > limit,
+  };
+};
+
 module.exports = {
   getJudgePostsByPermlink,
+  getJudgePostsLinksByPermlink,
 };
