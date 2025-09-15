@@ -78,6 +78,7 @@ const voteOnUpdate = async ({
       rshares_weight: v.rshares_weight,
       weight: v.weight,
       weightWAIV: v.weightWAIV || 0,
+      _id: v._id,
     }));
 
   const fieldWeight = newVotes.reduce((acc, el) => acc + (el.weight || 0), 0);
