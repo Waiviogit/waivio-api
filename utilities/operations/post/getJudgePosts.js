@@ -6,10 +6,11 @@ const {
   Post,
   CampaignV2,
 } = require('../../../models');
+const { CAMPAIGN_STATUSES } = require('../../../constants/campaignsData');
 
 const getCampaignCondition = async ({ judgeName, authorPermlink }) => {
   const { result } = await CampaignV2.find({
-    filter: { contestJudges: judgeName, objects: authorPermlink },
+    filter: { contestJudges: judgeName, objects: authorPermlink, status: CAMPAIGN_STATUSES.ACTIVE },
     projection: { durationDays: 1 },
   });
   if (!result?.length) return null;
