@@ -56,6 +56,8 @@ const getJudgePostsByPermlink = async ({
     };
   }
 
+  console.log(JSON.stringify(postsCondition, null, 2));
+
   const { result } = await Post.getPostsByCondition({
     condition: postsCondition,
     skip,
