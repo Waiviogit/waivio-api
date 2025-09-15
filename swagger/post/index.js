@@ -264,6 +264,10 @@ module.exports = {
                 type: 'string',
                 description: 'Author permlink to filter posts',
               },
+              activationPermlink: {
+                type: 'string',
+                description: 'campaign activationPermlink',
+              },
               skip: {
                 type: 'number',
                 description: 'Number of posts to skip',
@@ -331,6 +335,10 @@ module.exports = {
               authorPermlink: {
                 type: 'string',
                 description: 'Author permlink to filter posts',
+              },
+              activationPermlink: {
+                type: 'string',
+                description: 'campaign activationPermlink',
               },
               skip: {
                 type: 'number',

@@ -8,14 +8,17 @@ const {
 } = require('../../../models');
 const { CAMPAIGN_STATUSES } = require('../../../constants/campaignsData');
 
-const getCampaignCondition = async ({ judgeName, authorPermlink }) => {
-  const { result } = await CampaignV2.find({
-    filter: { contestJudges: judgeName, objects: authorPermlink, status: CAMPAIGN_STATUSES.ACTIVE },
+const getCampaignCondition = async ({ judgeName, authorPermlink, activationPermlink }) => {
+  const { result } = await CampaignV2.findOne({
+    filter: {
+      contestJudges: judgeName,
+      status: CAMPAIGN_STATUSES.ACTIVE,
+      activationPermlink,
+    },
     projection: { durationDays: 1 },
   });
-  if (!result?.length) return null;
-  const daysAgo = _.maxBy(result, 'durationDays').durationDays;
-  console.log('daysAgo', daysAgo);
+  if (!result) return null;
+  const daysAgo = result.durationDays;
   const startDate = moment().subtract(daysAgo, 'days').toDate();
 
   const condition = {
@@ -30,8 +33,10 @@ const getCampaignCondition = async ({ judgeName, authorPermlink }) => {
   return condition;
 };
 
-const getJudgesCondition = async ({ judgeName, authorPermlink, app }) => {
-  const condition = await getCampaignCondition({ judgeName, authorPermlink });
+const getJudgesCondition = async ({
+  judgeName, authorPermlink, app, activationPermlink,
+}) => {
+  const condition = await getCampaignCondition({ judgeName, authorPermlink, activationPermlink });
   if (!condition) return null;
   const { result: mutedUsers } = await mutedUserModel.find({
     condition: { $or: [{ mutedForApps: _.get(app, 'host') }, { mutedBy: judgeName }] },
@@ -48,17 +53,17 @@ const getJudgesCondition = async ({ judgeName, authorPermlink, app }) => {
 };
 
 const getJudgePostsByPermlink = async ({
-  judgeName, authorPermlink, skip, limit, app,
+  judgeName, authorPermlink, skip, limit, app, activationPermlink,
 }) => {
-  const postsCondition = await getJudgesCondition({ judgeName, authorPermlink, app });
+  const postsCondition = await getJudgesCondition({
+    judgeName, authorPermlink, app, activationPermlink,
+  });
   if (!postsCondition) {
     return {
       posts: [],
       hasMore: false,
     };
   }
-
-  console.log(JSON.stringify(postsCondition, null, 2));
 
   const { result } = await Post.getPostsByCondition({
     condition: postsCondition,
@@ -74,9 +79,11 @@ const getJudgePostsByPermlink = async ({
 };
 
 const getJudgePostsLinksByPermlink = async ({
-  judgeName, authorPermlink, skip, limit, app,
+  judgeName, authorPermlink, skip, limit, app, activationPermlink,
 }) => {
-  const postsCondition = await getJudgesCondition({ judgeName, authorPermlink, app });
+  const postsCondition = await getJudgesCondition({
+    judgeName, authorPermlink, app, activationPermlink,
+  });
   if (!postsCondition) {
     return {
       posts: [],
