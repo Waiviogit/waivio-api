@@ -14,6 +14,7 @@ const getCampaignCondition = async ({ judgeName, authorPermlink }) => {
   });
   if (!result?.length) return null;
   const daysAgo = _.maxBy(result, 'durationDays').durationDays;
+  console.log('daysAgo', daysAgo);
   const startDate = moment().subtract(daysAgo, 'days').toDate();
 
   const condition = {
