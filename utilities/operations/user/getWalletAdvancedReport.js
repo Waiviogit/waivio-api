@@ -18,6 +18,7 @@ const { accountHistory } = require('../../hiveEngine/accountHistory');
 const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/currencyData');
 const { add } = require('../../helpers/calcHelper');
 const { cacheWrapperWithTTLRefresh, getCacheKey } = require('../../helpers/cacheHelper');
+const { createConfigurableRateLimiter, processWithRateLimit } = require('../../helpers/rateLimiter');
 
 // Timeout wrapper to prevent hanging requests
 const withTimeout = (promise, timeoutMs = 30000) => Promise.race([
@@ -141,11 +142,29 @@ const getWalletData = async ({
 const cachedGetWalletData = cacheWrapperWithTTLRefresh(getWalletData);
 const cachedGetSwapData = cacheWrapperWithTTLRefresh(EngineAccountHistory.find);
 
+// Global rate limiter instance for Hive Engine API - configured via environment
+const hiveEngineRateLimiter = createConfigurableRateLimiter('HIVE_API', 30);
+
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
 }) => {
-  // Use Promise.allSettled instead of Promise.all to handle partial failures gracefully
-  const results = await Promise.allSettled(accounts.map(async (account) => {
+  // Rate limiting configuration - can be overridden by environment variables
+  const rateLimitConfig = {
+    baseDelay: parseInt(process.env.HIVE_API_BASE_DELAY) || 150, // 150ms base delay between requests
+    maxDelay: parseInt(process.env.HIVE_API_MAX_DELAY) || 2000, // 2 second max delay
+    maxRetries: parseInt(process.env.HIVE_API_MAX_RETRIES) || 2, // Max retries for failed requests
+  };
+
+  // Calculate adaptive delay based on number of accounts
+  const delayMs = Math.min(
+    rateLimitConfig.baseDelay + (accounts.length * 15),
+    rateLimitConfig.maxDelay,
+  );
+
+  console.log(`Processing ${accounts.length} accounts sequentially with ${delayMs}ms delay between requests to prevent API overload`);
+
+  // Process accounts sequentially with rate limiting using the refactored rate limiter
+  const results = await processWithRateLimit(accounts, async (account) => {
     try {
     // cached requests with ttl ttl increase when requested with same key
 
@@ -220,9 +239,16 @@ const addWalletDataToAccounts = async ({
       });
       return { error: err };
     }
-  }));
+  }, {
+    delayMs,
+    maxRetries: rateLimitConfig.maxRetries,
+    rateLimiter: hiveEngineRateLimiter,
+    onProgress: (current, total, account, retryCount) => {
+      console.log(`Processing account ${current}/${total}: ${account.name}${retryCount > 0 ? ` (retry ${retryCount})` : ''}`);
+    },
+  });
 
-  // Process Promise.allSettled results
+  // Process rate-limited results
   const processedAccounts = [];
   for (const result of results) {
     if (result.status === 'fulfilled') {
