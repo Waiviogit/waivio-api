@@ -247,7 +247,7 @@ const addWalletDataToAccounts = async ({
   }, {
     delayMs,
     maxRetries: rateLimitConfig.maxRetries,
-    rateLimiter: hiveEngineRateLimiter,
+    // Removed global rate limiter - using only per-request delays for consistent timing
     onProgress: (current, total, account, retryCount) => {
       console.log(`Processing account ${current}/${total}: ${account.name}${retryCount > 0 ? ` (retry ${retryCount})` : ''}`);
     },
