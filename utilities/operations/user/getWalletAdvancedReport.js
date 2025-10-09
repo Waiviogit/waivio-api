@@ -32,8 +32,6 @@ exports.getWalletAdvancedReport = async ({
   const requestId = Math.random().toString(36).substr(2, 9);
 
   try {
-    console.log(`[${requestId}] getWalletAdvancedReport: Starting - Memory usage:`, process.memoryUsage());
-
     // Add timeout to prevent hanging requests
     accounts = await withTimeout(
       addWalletDataToAccounts({
@@ -42,10 +40,29 @@ exports.getWalletAdvancedReport = async ({
       25000, // 25 second timeout
     );
 
-    console.log(`[${requestId}] getWalletAdvancedReport: addWalletDataToAccounts completed in ${Date.now() - startTime}ms`);
-
     const error = _.find(accounts, (account) => account.error);
-    if (error) return { error };
+    if (error) {
+      // Handle third-party service errors properly
+      const actualError = error.error || error;
+
+      // If it's a 503 from external service, pass it through with proper status
+      if (actualError?.status === 503 || actualError?.response?.status === 503) {
+        const serviceError = new Error('External service temporarily unavailable');
+        serviceError.status = 503;
+        serviceError.originalError = actualError;
+        return { error: serviceError };
+      }
+
+      // For other external service errors, provide meaningful messages
+      if (actualError?.code === 'ERR_BAD_RESPONSE' || actualError?.response) {
+        const serviceError = new Error(`External service error: ${actualError.message || 'Service unavailable'}`);
+        serviceError.status = actualError.status || actualError.response?.status || 502;
+        serviceError.originalError = actualError;
+        return { error: serviceError };
+      }
+
+      return { error: actualError };
+    }
 
     const usersJointArr = _
       .chain(accounts)
@@ -87,14 +104,12 @@ exports.getWalletAdvancedReport = async ({
       ...depositWithdrawals,
     };
 
-    console.log(`[${requestId}] getWalletAdvancedReport: Completed successfully in ${Date.now() - startTime}ms`);
     return { result };
   } catch (err) {
     console.error(`[${requestId}] getWalletAdvancedReport: Unhandled error after ${Date.now() - startTime}ms:`, {
       message: err.message,
       stack: err.stack,
       name: err.name,
-      memoryUsage: process.memoryUsage(),
       params: {
         accounts: accounts?.length, startDate, endDate, limit, currency, symbol,
       },
