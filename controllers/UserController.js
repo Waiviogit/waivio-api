@@ -524,15 +524,7 @@ const getAdvancedReport = async (req, res, next) => {
 
   const { result, error } = await getWalletAdvancedReport(value);
 
-  if (error) {
-    console.error('getAdvancedReport: Error from getWalletAdvancedReport:', {
-      errorMessage: error.message,
-      errorStack: error.stack,
-      errorType: typeof error,
-      errorConstructor: error.constructor?.name,
-    });
-    return next(error);
-  }
+  if (error) return next(error);
 
   return res.status(200).json(result);
 };
