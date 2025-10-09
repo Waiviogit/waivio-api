@@ -1,7 +1,25 @@
+const Sentry = require('@sentry/node');
+
 const errorMiddleware = (err, req, res, next) => {
-  res.locals.message = err.message;
+  const message = err.message || 'Internal Server Error';
+  const status = err.status || 500;
+
+  res.locals.message = message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500).json({ message: err.message });
+
+  console.error('Error middleware caught:', {
+    message,
+    status,
+    stack: err.stack,
+    url: req.url,
+    method: req.method,
+  });
+
+  if (status >= 500) {
+    Sentry.captureException(err);
+  }
+
+  res.status(status).json({ message });
 };
 
 module.exports = errorMiddleware;
