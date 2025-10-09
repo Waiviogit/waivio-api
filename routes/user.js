@@ -74,6 +74,13 @@ userRoutes.route('/user/:userName/creation-date')
   .get(reqTimeMonitor, UserController.getCreationDate);
 userRoutes.route('/user/:userName/last-activity').get(reqTimeMonitor, UserController.getLastActivity);
 userRoutes.route('/user/advanced-report').post(reqTimeMonitor, UserController.getAdvancedReport);
+userRoutes.route('/user/debug/memory').get((req, res) => {
+  res.json({
+    memory: process.memoryUsage(),
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString()
+  });
+});
 
 userRoutes.route('/user/advanced-report/generated').post(reqTimeMonitor, UserController.generateAdvancedReport);
 userRoutes.route('/user/advanced-report/generated/progress').post(reqTimeMonitor, UserController.reportsInProgress);

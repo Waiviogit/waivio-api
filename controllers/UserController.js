@@ -524,10 +524,25 @@ const getAdvancedReport = async (req, res, next) => {
     if (!value) return;
 
     const { result, error } = await getWalletAdvancedReport(value);
-    if (error) return next(error);
+    
+    if (error) {
+      console.error('getAdvancedReport: Error from getWalletAdvancedReport:', {
+        errorMessage: error.message,
+        errorStack: error.stack,
+        errorType: typeof error,
+        errorConstructor: error.constructor?.name
+      });
+      return next(error);
+    }
 
     return res.status(200).json(result);
   } catch (err) {
+    console.error('getAdvancedReport: Caught exception:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+      type: typeof err
+    });
     return next(err);
   }
 };

@@ -19,13 +19,30 @@ const { STATISTIC_RECORD_TYPES, USD_PRECISION } = require('../../../constants/cu
 const { add } = require('../../helpers/calcHelper');
 const { cacheWrapperWithTTLRefresh, getCacheKey } = require('../../helpers/cacheHelper');
 
+// Timeout wrapper to prevent hanging requests
+const withTimeout = (promise, timeoutMs = 30000) => Promise.race([
+  promise,
+  new Promise((_, reject) => setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)),
+]);
+
 exports.getWalletAdvancedReport = async ({
   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol, addSwaps,
 }) => {
+  const startTime = Date.now();
+  const requestId = Math.random().toString(36).substr(2, 9);
+
   try {
-    accounts = await addWalletDataToAccounts({
-      filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
-    });
+    console.log(`[${requestId}] getWalletAdvancedReport: Starting - Memory usage:`, process.memoryUsage());
+
+    // Add timeout to prevent hanging requests
+    accounts = await withTimeout(
+      addWalletDataToAccounts({
+        filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
+      }),
+      25000, // 25 second timeout
+    );
+
+    console.log(`[${requestId}] getWalletAdvancedReport: addWalletDataToAccounts completed in ${Date.now() - startTime}ms`);
 
     const error = _.find(accounts, (account) => account.error);
     if (error) return { error };
@@ -70,12 +87,14 @@ exports.getWalletAdvancedReport = async ({
       ...depositWithdrawals,
     };
 
+    console.log(`[${requestId}] getWalletAdvancedReport: Completed successfully in ${Date.now() - startTime}ms`);
     return { result };
   } catch (err) {
-    console.error('getWalletAdvancedReport: Unhandled error:', {
+    console.error(`[${requestId}] getWalletAdvancedReport: Unhandled error after ${Date.now() - startTime}ms:`, {
       message: err.message,
       stack: err.stack,
       name: err.name,
+      memoryUsage: process.memoryUsage(),
       params: {
         accounts: accounts?.length, startDate, endDate, limit, currency, symbol,
       },
@@ -109,82 +128,98 @@ const cachedGetSwapData = cacheWrapperWithTTLRefresh(EngineAccountHistory.find);
 
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
-}) => Promise.all(accounts.map(async (account) => {
-  try {
+}) => {
+  // Use Promise.allSettled instead of Promise.all to handle partial failures gracefully
+  const results = await Promise.allSettled(accounts.map(async (account) => {
+    try {
     // cached requests with ttl ttl increase when requested with same key
 
-    const walletKey = getCacheKey({
-      name: account.name,
-      startDate,
-      endDate,
-      symbol,
-      limit,
-      offset: account.offset || 0,
-    });
-    const swapKey = getCacheKey({
-      name: account.name,
-      startDate,
-      endDate,
-      symbol,
-      limit,
-      addSwaps,
-      skip: account.offsetSwap || 0,
-    });
-
-    const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...Object.values(MARKET_OPERATIONS)] : ADVANCED_WALLET_TYPES;
-
-    const walletData = cachedGetWalletData({
-      types,
-      userName: account.name,
-      startDate,
-      endDate,
-      symbol,
-      limit,
-      offset: account.offset || 0,
-    })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${walletKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
-    const swapData = cachedGetSwapData({
-      condition: constructDbQuery({
-        account: account.name,
-        timestampEnd: moment(endDate).unix(),
-        timestampStart: moment(startDate).unix(),
+      const walletKey = getCacheKey({
+        name: account.name,
+        startDate,
+        endDate,
         symbol,
+        limit,
+        offset: account.offset || 0,
+      });
+      const swapKey = getCacheKey({
+        name: account.name,
+        startDate,
+        endDate,
+        symbol,
+        limit,
         addSwaps,
-      }),
-      sort: { timestamp: -1 },
-      limit,
-      skip: account.offsetSwap || 0,
-    })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${swapKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+        skip: account.offsetSwap || 0,
+      });
 
-    const responses = await Promise.all([walletData, swapData]);
-    const errorResponse = responses.find((v) => v?.error);
-    if (errorResponse) return { error: errorResponse.error };
+      const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...Object.values(MARKET_OPERATIONS)] : ADVANCED_WALLET_TYPES;
 
-    // Safely destructure responses with fallbacks
-    const walletResponse = responses[0] || {};
-    const swapResponse = responses[1] || {};
-    const wallet = walletResponse.wallet || [];
-    const result = swapResponse.result || [];
+      const walletData = cachedGetWalletData({
+        types,
+        userName: account.name,
+        startDate,
+        endDate,
+        symbol,
+        limit,
+        offset: account.offset || 0,
+      })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${walletKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+      const swapData = cachedGetSwapData({
+        condition: constructDbQuery({
+          account: account.name,
+          timestampEnd: moment(endDate).unix(),
+          timestampStart: moment(startDate).unix(),
+          symbol,
+          addSwaps,
+        }),
+        sort: { timestamp: -1 },
+        limit,
+        skip: account.offsetSwap || 0,
+      })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${swapKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
 
-    // we filter mutual transaction withdrawDeposit return empty string on mutual
-    account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
-      .reduce((acc, el) => {
-        const wd = withdrawDeposit({
-          type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
-        });
-        if (!wd) return acc;
-        return [...acc, { ...el, withdrawDeposit: wd }];
-      }, []);
-    account.hasMore = account.wallet.length >= limit;
+      const responses = await Promise.all([walletData, swapData]);
+      const errorResponse = responses.find((v) => v?.error);
+      if (errorResponse) return { error: errorResponse.error };
 
-    return account;
-  } catch (err) {
-    console.error('addWalletDataToAccounts: Error processing account:', account.name, {
-      message: err.message,
-      stack: err.stack,
-    });
-    return { error: err };
+      // Safely destructure responses with fallbacks
+      const walletResponse = responses[0] || {};
+      const swapResponse = responses[1] || {};
+      const wallet = walletResponse.wallet || [];
+      const result = swapResponse.result || [];
+
+      // we filter mutual transaction withdrawDeposit return empty string on mutual
+      account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
+        .reduce((acc, el) => {
+          const wd = withdrawDeposit({
+            type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
+          });
+          if (!wd) return acc;
+          return [...acc, { ...el, withdrawDeposit: wd }];
+        }, []);
+      account.hasMore = account.wallet.length >= limit;
+
+      return account;
+    } catch (err) {
+      console.error('addWalletDataToAccounts: Error processing account:', account.name, {
+        message: err.message,
+        stack: err.stack,
+      });
+      return { error: err };
+    }
+  }));
+
+  // Process Promise.allSettled results
+  const processedAccounts = [];
+  for (const result of results) {
+    if (result.status === 'fulfilled') {
+      processedAccounts.push(result.value);
+    } else {
+      console.error('addWalletDataToAccounts: Promise rejected:', result.reason);
+      processedAccounts.push({ error: result.reason });
+    }
   }
-}));
+
+  return processedAccounts;
+};
 
 const withdrawDeposit = ({
   type, record, filterAccounts, userName, symbol,
