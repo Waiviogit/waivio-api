@@ -7,18 +7,14 @@ const errorMiddleware = (err, req, res, next) => {
   res.locals.message = message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 
-  console.error('Error middleware caught:', {
-    message,
-    status,
-    stack: err.stack,
-    url: req.url,
-    method: req.method,
-    timestamp: new Date().toISOString(),
-  });
-
-  // Log additional details for 5xx errors
   if (status >= 500) {
     console.error('Server error details:', {
+      message,
+      status,
+      stack: err.stack,
+      url: req.url,
+      method: req.method,
+      timestamp: new Date().toISOString(),
       errorType: err.name || typeof err,
       errorConstructor: err.constructor?.name,
       originalError: err.originalError ? 'Present' : 'None',

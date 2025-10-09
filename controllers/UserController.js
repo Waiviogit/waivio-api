@@ -515,36 +515,26 @@ const getLastActivity = async (req, res, next) => {
 };
 
 const getAdvancedReport = async (req, res, next) => {
-  try {
-    const value = validators.validate(
-      { ...req.body },
-      validators.user.advancedWalletSchema,
-      next,
-    );
-    if (!value) return;
+  const value = validators.validate(
+    { ...req.body },
+    validators.user.advancedWalletSchema,
+    next,
+  );
+  if (!value) return;
 
-    const { result, error } = await getWalletAdvancedReport(value);
-    
-    if (error) {
-      console.error('getAdvancedReport: Error from getWalletAdvancedReport:', {
-        errorMessage: error.message,
-        errorStack: error.stack,
-        errorType: typeof error,
-        errorConstructor: error.constructor?.name
-      });
-      return next(error);
-    }
+  const { result, error } = await getWalletAdvancedReport(value);
 
-    return res.status(200).json(result);
-  } catch (err) {
-    console.error('getAdvancedReport: Caught exception:', {
-      message: err.message,
-      stack: err.stack,
-      name: err.name,
-      type: typeof err
+  if (error) {
+    console.error('getAdvancedReport: Error from getWalletAdvancedReport:', {
+      errorMessage: error.message,
+      errorStack: error.stack,
+      errorType: typeof error,
+      errorConstructor: error.constructor?.name,
     });
-    return next(err);
+    return next(error);
   }
+
+  return res.status(200).json(result);
 };
 
 const generateAdvancedReport = async (req, res, next) => {
