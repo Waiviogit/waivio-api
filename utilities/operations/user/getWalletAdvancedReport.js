@@ -33,12 +33,16 @@ exports.getWalletAdvancedReport = async ({
   const requestId = Math.random().toString(36).substr(2, 9);
 
   try {
+    // Dynamic timeout based on number of accounts (minimum 30s, +5s per account)
+    const timeoutMs = Math.max(30000, 30000 + (accounts.length * 5000));
+    console.log(`[${requestId}] Setting timeout to ${timeoutMs}ms for ${accounts.length} accounts`);
+
     // Add timeout to prevent hanging requests
     accounts = await withTimeout(
       addWalletDataToAccounts({
         filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
       }),
-      25000, // 25 second timeout
+      timeoutMs,
     );
 
     const error = _.find(accounts, (account) => account.error);
@@ -143,21 +147,22 @@ const cachedGetWalletData = cacheWrapperWithTTLRefresh(getWalletData);
 const cachedGetSwapData = cacheWrapperWithTTLRefresh(EngineAccountHistory.find);
 
 // Global rate limiter instance for Hive Engine API - configured via environment
-const hiveEngineRateLimiter = createConfigurableRateLimiter('HIVE_API', 30);
+// Increased from 30 to 45 requests per minute for better throughput
+const hiveEngineRateLimiter = createConfigurableRateLimiter('HIVE_API', 45);
 
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
 }) => {
   // Rate limiting configuration - can be overridden by environment variables
   const rateLimitConfig = {
-    baseDelay: parseInt(process.env.HIVE_API_BASE_DELAY) || 150, // 150ms base delay between requests
-    maxDelay: parseInt(process.env.HIVE_API_MAX_DELAY) || 2000, // 2 second max delay
+    baseDelay: parseInt(process.env.HIVE_API_BASE_DELAY) || 100, // Reduced from 150ms to 100ms
+    maxDelay: parseInt(process.env.HIVE_API_MAX_DELAY) || 1000, // Reduced from 2000ms to 1000ms
     maxRetries: parseInt(process.env.HIVE_API_MAX_RETRIES) || 2, // Max retries for failed requests
   };
 
-  // Calculate adaptive delay based on number of accounts
+  // Calculate adaptive delay based on number of accounts (reduced multiplier)
   const delayMs = Math.min(
-    rateLimitConfig.baseDelay + (accounts.length * 15),
+    rateLimitConfig.baseDelay + (accounts.length * 10), // Reduced from 15 to 10
     rateLimitConfig.maxDelay,
   );
 
