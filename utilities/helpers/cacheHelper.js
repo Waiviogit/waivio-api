@@ -26,12 +26,17 @@ const getCacheKey = (data = {}) => crypto
   .digest('hex');
 
 const getCachedData = async (key) => {
-  const { result: resp } = await redisGetter.getAsync({
-    key,
-    client: redis.mainFeedsCacheClient,
-  });
+  try {
+    const { result: resp } = await redisGetter.getAsync({
+      key,
+      client: redis.mainFeedsCacheClient,
+    });
 
-  return resp;
+    return resp;
+  } catch (err) {
+    console.error('getCachedData error:', err.message);
+    return null; // Return null if cache read fails
+  }
 };
 
 const getCache = async (key) => {
@@ -48,41 +53,79 @@ const setCachedData = async ({
   data,
   ttl,
 }) => {
-  await redisSetter.setEx({
-    key, value: JSON.stringify(data), ttl,
-  });
+  try {
+    await redisSetter.setEx({
+      key, value: JSON.stringify(data), ttl,
+    });
+  } catch (err) {
+    console.error('setCachedData error:', err.message);
+    throw err; // Re-throw so caller can handle
+  }
 };
 
 const cacheWrapper = (fn) => (...args) => async ({ key, ttl }) => {
-  const cache = await getCachedData(key);
-  if (cache) {
-    const parsed = jsonHelper.parseJson(cache, null);
-    if (parsed) return parsed;
-  }
-  const result = await fn(...args);
+  try {
+    const cache = await getCachedData(key);
+    if (cache) {
+      const parsed = jsonHelper.parseJson(cache, null);
+      if (parsed) return parsed;
+    }
+    const result = await fn(...args);
 
-  if (!result?.error) {
-    await setCachedData({ key, data: result, ttl });
+    if (!result?.error) {
+      try {
+        await setCachedData({ key, data: result, ttl });
+      } catch (setCacheError) {
+        console.error('Cache set error (non-critical):', setCacheError.message);
+        // Don't fail the request if cache set fails
+      }
+    }
+    return result;
+  } catch (err) {
+    console.error('cacheWrapper: Critical error, falling back to direct function call:', {
+      message: err.message,
+      stack: err.stack
+    });
+    // If cache operations fail completely, fall back to calling the function directly
+    return await fn(...args);
   }
-  return result;
 };
 
 const cacheWrapperWithTTLRefresh = (fn) => (...args) => async ({ key, ttl }) => {
-  const cache = await getCachedData(key);
-  if (cache) {
-    const parsed = jsonHelper.parseJson(cache, null);
-    if (parsed) {
-      console.log('FROM CACHE');
-      await redisSetter.expire({ key, ttl });
-      return parsed;
+  try {
+    const cache = await getCachedData(key);
+    if (cache) {
+      const parsed = jsonHelper.parseJson(cache, null);
+      if (parsed) {
+        // console.log('FROM CACHE'); // Commented out to reduce log noise
+        try {
+          await redisSetter.expire({ key, ttl });
+        } catch (expireError) {
+          console.error('Cache expire error (non-critical):', expireError.message);
+          // Don't fail the request if expire fails, just log it
+        }
+        return parsed;
+      }
     }
-  }
-  const result = await fn(...args);
+    const result = await fn(...args);
 
-  if (!result?.error) {
-    await setCachedData({ key, data: result, ttl });
+    if (!result?.error) {
+      try {
+        await setCachedData({ key, data: result, ttl });
+      } catch (setCacheError) {
+        console.error('Cache set error (non-critical):', setCacheError.message);
+        // Don't fail the request if cache set fails
+      }
+    }
+    return result;
+  } catch (err) {
+    console.error('cacheWrapperWithTTLRefresh: Critical error, falling back to direct function call:', {
+      message: err.message,
+      stack: err.stack
+    });
+    // If cache operations fail completely, fall back to calling the function directly
+    return await fn(...args);
   }
-  return result;
 };
 
 module.exports = {

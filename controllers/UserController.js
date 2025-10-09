@@ -523,6 +523,7 @@ const getAdvancedReport = async (req, res, next) => {
   if (!value) return;
 
   const { result, error } = await getWalletAdvancedReport(value);
+
   if (error) return next(error);
 
   return res.status(200).json(result);

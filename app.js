@@ -7,6 +7,26 @@ const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
 require('./utilities');
 
+// Add global error handlers to catch unhandled rejections
+process.on('unhandledRejection', (reason, promise) => {
+  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  console.error('Unhandled rejection details:', {
+    reason: reason?.message || reason,
+    stack: reason?.stack,
+    type: typeof reason,
+    constructor: reason?.constructor?.name,
+  });
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('Uncaught Exception:', error);
+  console.error('Uncaught exception details:', {
+    message: error.message,
+    stack: error.stack,
+    name: error.name,
+  });
+});
+
 const app = express();
 
 app.use(express.json());

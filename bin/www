@@ -15,12 +15,6 @@ app.set('port', port);
 const server = http.createServer(app);
 
 (async () => {
-  Sentry.setupExpressErrorHandler(app, {
-    shouldHandleError(error) {
-      return error.status >= 500;
-    },
-  });
-
   server.listen(port);
   server.on('error', onError);
   server.on('listening', onListening);

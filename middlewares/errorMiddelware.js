@@ -1,7 +1,31 @@
+const Sentry = require('@sentry/node');
+
 const errorMiddleware = (err, req, res, next) => {
-  res.locals.message = err.message;
+  const message = err.message || 'Internal Server Error';
+  const status = err.status || 500;
+
+  res.locals.message = message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
-  res.status(err.status || 500).json({ message: err.message });
+
+  if (status >= 500) {
+    console.error('Server error details:', {
+      message,
+      status,
+      stack: err.stack,
+      url: req.url,
+      method: req.method,
+      timestamp: new Date().toISOString(),
+      errorType: err.name || typeof err,
+      errorConstructor: err.constructor?.name,
+      originalError: err.originalError ? 'Present' : 'None',
+    });
+  }
+
+  if (status >= 500) {
+    Sentry.captureException(err);
+  }
+
+  res.status(status).json({ message });
 };
 
 module.exports = errorMiddleware;
