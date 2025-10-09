@@ -528,11 +528,6 @@ const getAdvancedReport = async (req, res, next) => {
 
     return res.status(200).json(result);
   } catch (err) {
-    console.error('getAdvancedReport: Unhandled error:', {
-      message: err.message,
-      stack: err.stack,
-      name: err.name
-    });
     return next(err);
   }
 };

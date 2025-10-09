@@ -22,54 +22,66 @@ const { cacheWrapperWithTTLRefresh, getCacheKey } = require('../../helpers/cache
 exports.getWalletAdvancedReport = async ({
   accounts, startDate, endDate, limit, filterAccounts, user, currency, symbol, addSwaps,
 }) => {
-  accounts = await addWalletDataToAccounts({
-    filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
-  });
+  try {
+    accounts = await addWalletDataToAccounts({
+      filterAccounts, startDate, accounts, endDate, limit, symbol, addSwaps,
+    });
 
-  const error = _.find(accounts, (account) => account.error);
-  if (error) return { error };
+    const error = _.find(accounts, (account) => account.error);
+    if (error) return { error };
 
-  const usersJointArr = _
-    .chain(accounts)
-    .reduce((acc, el) => _.concat(acc, el.wallet), [])
-    .orderBy(['timestamp', '_id'], ['desc', 'desc'])
-    .value();
-  const limitedWallet = _.take(usersJointArr, limit);
+    const usersJointArr = _
+      .chain(accounts)
+      .reduce((acc, el) => _.concat(acc, el.wallet), [])
+      .orderBy(['timestamp', '_id'], ['desc', 'desc'])
+      .value();
+    const limitedWallet = _.take(usersJointArr, limit);
 
-  const { rates } = await getCurrencyRates({
-    wallet: limitedWallet, pathTimestamp: 'timestamp', momentCallback: moment.unix,
-  });
+    const { rates } = await getCurrencyRates({
+      wallet: limitedWallet, pathTimestamp: 'timestamp', momentCallback: moment.unix,
+    });
 
-  await getExemptions({ user, wallet: limitedWallet });
+    await getExemptions({ user, wallet: limitedWallet });
 
-  const { walletWithTokenPrice, error: dbError } = await addTokenPrice({
-    wallet: limitedWallet, rates, currency, symbol,
-  });
-  if (dbError) return { error: dbError };
+    const { walletWithTokenPrice, error: dbError } = await addTokenPrice({
+      wallet: limitedWallet, rates, currency, symbol,
+    });
+    if (dbError) return { error: dbError };
 
-  const resultWallet = await addCurrencyToOperations({
-    walletWithTokenPrice, rates, currency, symbol,
-  });
+    const resultWallet = await addCurrencyToOperations({
+      walletWithTokenPrice, rates, currency, symbol,
+    });
 
-  const resAccounts = _.reduce(accounts, (acc, el) => (accumulateAcc({
-    resultArray: limitedWallet,
-    account: el,
-    acc,
-  })), []);
+    const resAccounts = _.reduce(accounts, (acc, el) => (accumulateAcc({
+      resultArray: limitedWallet,
+      account: el,
+      acc,
+    })), []);
 
-  const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
+    const depositWithdrawals = calcDepositWithdrawals({ operations: resultWallet, field: currency });
 
-  const hasMore = resultWallet.length >= limit
-    || _.some(accounts, (acc) => !!acc.hasMore);
+    const hasMore = resultWallet.length >= limit
+      || _.some(accounts, (acc) => !!acc.hasMore);
 
-  const result = {
-    wallet: resultWallet,
-    accounts: resAccounts,
-    hasMore,
-    ...depositWithdrawals,
-  };
+    const result = {
+      wallet: resultWallet,
+      accounts: resAccounts,
+      hasMore,
+      ...depositWithdrawals,
+    };
 
-  return { result };
+    return { result };
+  } catch (err) {
+    console.error('getWalletAdvancedReport: Unhandled error:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name,
+      params: {
+        accounts: accounts?.length, startDate, endDate, limit, currency, symbol,
+      },
+    });
+    return { error: err };
+  }
 };
 
 const getWalletData = async ({
@@ -98,67 +110,80 @@ const cachedGetSwapData = cacheWrapperWithTTLRefresh(EngineAccountHistory.find);
 const addWalletDataToAccounts = async ({
   accounts, startDate, endDate, limit, filterAccounts, symbol, addSwaps,
 }) => Promise.all(accounts.map(async (account) => {
-  // cached requests with ttl ttl increase when requested with same key
+  try {
+    // cached requests with ttl ttl increase when requested with same key
 
-  const walletKey = getCacheKey({
-    name: account.name,
-    startDate,
-    endDate,
-    symbol,
-    limit,
-    offset: account.offset || 0,
-  });
-  const swapKey = getCacheKey({
-    name: account.name,
-    startDate,
-    endDate,
-    symbol,
-    limit,
-    addSwaps,
-    skip: account.offsetSwap || 0,
-  });
-
-  const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...Object.values(MARKET_OPERATIONS)] : ADVANCED_WALLET_TYPES;
-
-  const walletData = cachedGetWalletData({
-    types,
-    userName: account.name,
-    startDate,
-    endDate,
-    symbol,
-    limit,
-    offset: account.offset || 0,
-  })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${walletKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
-  const swapData = cachedGetSwapData({
-    condition: constructDbQuery({
-      account: account.name,
-      timestampEnd: moment(endDate).unix(),
-      timestampStart: moment(startDate).unix(),
+    const walletKey = getCacheKey({
+      name: account.name,
+      startDate,
+      endDate,
       symbol,
+      limit,
+      offset: account.offset || 0,
+    });
+    const swapKey = getCacheKey({
+      name: account.name,
+      startDate,
+      endDate,
+      symbol,
+      limit,
       addSwaps,
-    }),
-    sort: { timestamp: -1 },
-    limit,
-    skip: account.offsetSwap || 0,
-  })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${swapKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+      skip: account.offsetSwap || 0,
+    });
 
-  const responses = await Promise.all([walletData, swapData]);
-  const errorResponse = responses.find((v) => v.error);
-  if (errorResponse) return { error: errorResponse.error };
-  const [{ wallet }, { result }] = responses;
+    const types = addSwaps ? [...ADVANCED_WALLET_TYPES, ...Object.values(MARKET_OPERATIONS)] : ADVANCED_WALLET_TYPES;
 
-  // we filter mutual transaction withdrawDeposit return empty string on mutual
-  account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
-    .reduce((acc, el) => {
-      const wd = withdrawDeposit({
-        type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
-      });
-      if (!wd) return acc;
-      return [...acc, { ...el, withdrawDeposit: wd }];
-    }, []);
-  account.hasMore = account.wallet.length >= limit;
+    const walletData = cachedGetWalletData({
+      types,
+      userName: account.name,
+      startDate,
+      endDate,
+      symbol,
+      limit,
+      offset: account.offset || 0,
+    })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${walletKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
+    const swapData = cachedGetSwapData({
+      condition: constructDbQuery({
+        account: account.name,
+        timestampEnd: moment(endDate).unix(),
+        timestampStart: moment(startDate).unix(),
+        symbol,
+        addSwaps,
+      }),
+      sort: { timestamp: -1 },
+      limit,
+      skip: account.offsetSwap || 0,
+    })({ key: `${REDIS_KEYS.ADVANCED_REPORT}:${swapKey}`, ttl: TTL_TIME.THIRTY_SECONDS });
 
-  return account;
+    const responses = await Promise.all([walletData, swapData]);
+    const errorResponse = responses.find((v) => v?.error);
+    if (errorResponse) return { error: errorResponse.error };
+
+    // Safely destructure responses with fallbacks
+    const walletResponse = responses[0] || {};
+    const swapResponse = responses[1] || {};
+    const wallet = walletResponse.wallet || [];
+    const result = swapResponse.result || [];
+
+    // we filter mutual transaction withdrawDeposit return empty string on mutual
+    account.wallet = [...wallet, ..._.map(result, (v) => ({ ...v, swDb: true }))]
+      .reduce((acc, el) => {
+        const wd = withdrawDeposit({
+          type: el.operation, record: el, userName: account.name, filterAccounts, symbol,
+        });
+        if (!wd) return acc;
+        return [...acc, { ...el, withdrawDeposit: wd }];
+      }, []);
+    account.hasMore = account.wallet.length >= limit;
+
+    return account;
+  } catch (err) {
+    console.error('addWalletDataToAccounts: Error processing account:', account.name, {
+      message: err.message,
+      stack: err.stack,
+    });
+    return { error: err };
+  }
 }));
 
 const withdrawDeposit = ({
