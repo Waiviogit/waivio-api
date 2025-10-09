@@ -515,17 +515,26 @@ const getLastActivity = async (req, res, next) => {
 };
 
 const getAdvancedReport = async (req, res, next) => {
-  const value = validators.validate(
-    { ...req.body },
-    validators.user.advancedWalletSchema,
-    next,
-  );
-  if (!value) return;
+  try {
+    const value = validators.validate(
+      { ...req.body },
+      validators.user.advancedWalletSchema,
+      next,
+    );
+    if (!value) return;
 
-  const { result, error } = await getWalletAdvancedReport(value);
-  if (error) return next(error);
+    const { result, error } = await getWalletAdvancedReport(value);
+    if (error) return next(error);
 
-  return res.status(200).json(result);
+    return res.status(200).json(result);
+  } catch (err) {
+    console.error('getAdvancedReport: Unhandled error:', {
+      message: err.message,
+      stack: err.stack,
+      name: err.name
+    });
+    return next(err);
+  }
 };
 
 const generateAdvancedReport = async (req, res, next) => {
