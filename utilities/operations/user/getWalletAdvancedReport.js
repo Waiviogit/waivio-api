@@ -86,7 +86,6 @@ exports.getWalletAdvancedReport = async ({
       wallet: limitedWallet, rates, currency, symbol,
     });
     if (dbError) return { error: dbError };
-
     const resultWallet = await addCurrencyToOperations({
       walletWithTokenPrice, rates, currency, symbol,
     });
