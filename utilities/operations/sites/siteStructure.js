@@ -2,7 +2,7 @@ const _ = require('lodash');
 const { Wobj } = require('../../../models');
 const { processWobjects } = require('../../helpers/wObjectHelper');
 const {
-  REQUIREDFIELDS,
+  REQUIREDFILDS_WOBJ_LIST,
 } = require('../../../constants/wobjectsData');
 const { parseJson } = require('../../helpers/jsonHelper');
 
@@ -36,13 +36,68 @@ const makeObjectSiteMenu = ({ object, parentNode, host }) => {
 
   return {
     id,
-    name: object.name,
-    link: `https://${host}/object`,
-    kind: 'menuItem',
+    name: object.menuName || object.name,
+    link: `https://${host}/object/${object.author_permlink}`,
+    kind: object.type,
     hasChildren,
     // children: [],
     // meta: {}
   };
+};
+
+const makeLinkSiteMenu = ({ object, parentNode }) => ({
+  id: `${parentNode.id}:${object.title}`,
+  name: object.title,
+  link: object.linkToWeb,
+  kind: 'linkToWeb',
+  hasChildren: false,
+});
+
+const makeFoldedStructure = async ({ object, host, app }) => {
+  // root
+  const parentNode = makeObjectSiteMenu({ object, host });
+  // {"title":string,"style":string,"linkToWeb":string}
+  // | {"style": string,"linkToObject":string,"objectType":string}
+  const mappedItems = object.menuItem
+    .map((el) => parseJson(el.body, null))
+    .filter((el) => !!el);
+
+  const objectLinks = mappedItems
+    .filter((el) => el.linkToObject)
+    .map((el) => el.linkToObject);
+
+  const { result: objects = [] } = await Wobj.findObjects({
+    filter: {
+      author_permlink: { $in: objectLinks },
+    },
+  });
+
+  const objectsProcessed = await processWobjects({
+    wobjects: objects,
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    app,
+  });
+
+  const children = mappedItems.map((el) => {
+    if (el.linkToWeb) {
+      return makeLinkSiteMenu({
+        parentNode,
+        host,
+        object: el,
+      });
+    }
+
+    const processedObject = objectsProcessed.find((o) => o.author_permlink === el.linkToObject);
+    if (!processedObject) return null;
+    return makeObjectSiteMenu({
+      object: { ...processedObject, menuName: el.title },
+      parentNode,
+      host,
+    });
+  }).filter((el) => !!el);
+
+  parentNode.children = children;
+  console.log();
 };
 
 const getSiteStructure = async ({ app }) => {
@@ -71,7 +126,7 @@ const getSiteStructure = async ({ app }) => {
   const mainObjectProcessed = await processWobjects({
     wobjects: [mainObject],
     returnArray: false,
-    fields: REQUIREDFIELDS,
+    fields: REQUIREDFILDS_WOBJ_LIST,
     app,
   });
 
@@ -83,16 +138,17 @@ const getSiteStructure = async ({ app }) => {
     ];
   }
 
-  // {"title":string,"style":string,"linkToWeb":string} | {"style": string,"linkToObject":string,"objectType":string}
-  const mappedItems = mainObjectProcessed.menuItem
-    .map((el) => parseJson(el.body, null))
-    .filter((el) => !!el);
+  return makeFoldedStructure({
+    object: mainObjectProcessed,
+    host,
+    app,
+  });
 };
 
 // (async () => {
 //   await getSiteStructure({
 //     app: {
-//       host: 'hivecooking.com/',
+//       host: 'hivecooking.com',
 //       configuration: {
 //         shopSettings: {
 //           type: 'object',
