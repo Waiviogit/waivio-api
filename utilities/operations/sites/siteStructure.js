@@ -29,7 +29,8 @@ const makeUserSiteMenu = (elementName, userName, host) => {
 };
 
 const makeObjectSiteMenu = ({ object, parentNode, host }) => {
-  const hasChildren = !!object.menuItem?.length;
+  const hasChildren = parentNode ? !!object?.listItem?.length : !!object.menuItem?.length;
+
   const id = parentNode
     ? `${parentNode.id}:${object.author_permlink}`
     : `root:${object.author_permlink}`;
@@ -37,9 +38,10 @@ const makeObjectSiteMenu = ({ object, parentNode, host }) => {
   return {
     id,
     name: object.menuName || object.name,
-    link: `https://${host}/object/${object.author_permlink}`,
-    kind: object.type,
+    link: parentNode ? `https://${host}/object/${object.author_permlink}` : `https://${host}`,
+    kind: object.object_type,
     hasChildren,
+    author_permlink: object?.author_permlink,
     // children: [],
     // meta: {}
   };
@@ -52,6 +54,25 @@ const makeLinkSiteMenu = ({ object, parentNode }) => ({
   kind: 'linkToWeb',
   hasChildren: false,
 });
+
+const getListChildren = async ({
+  object, host, app, parentNode,
+}) => {
+  const objectLinks = object.listItem.map((el) => el.body);
+  const { result: objects = [] } = await Wobj.findObjects({
+    filter: {
+      author_permlink: { $in: objectLinks },
+    },
+  });
+
+  const objectsProcessed = await processWobjects({
+    wobjects: objects,
+    fields: REQUIREDFILDS_WOBJ_LIST,
+    app,
+  });
+
+  return objectsProcessed.map((el) => makeObjectSiteMenu({ object: el, host, parentNode }));
+};
 
 const makeFoldedStructure = async ({ object, host, app }) => {
   // root
@@ -97,6 +118,21 @@ const makeFoldedStructure = async ({ object, host, app }) => {
   }).filter((el) => !!el);
 
   parentNode.children = children;
+
+  // here we finished first level; only for first level we use menuItem as children
+  // next we need use listItem
+  for (const child of children) {
+    if (child.hasChildren) {
+      const processedObject = objectsProcessed.find((o) => o.author_permlink === child.author_permlink);
+      child.children = await getListChildren({
+        object: processedObject,
+        host,
+        app,
+        parentNode: child,
+      });
+    }
+  }
+
   console.log();
 };
 
@@ -145,20 +181,20 @@ const getSiteStructure = async ({ app }) => {
   });
 };
 
-// (async () => {
-//   await getSiteStructure({
-//     app: {
-//       host: 'hivecooking.com',
-//       configuration: {
-//         shopSettings: {
-//           type: 'object',
-//           value: 'ecy-hive-cooking',
-//         },
-//       },
-//     },
-//   });
-//   console.log();
-// })();
+(async () => {
+  await getSiteStructure({
+    app: {
+      host: 'hivecooking.com',
+      configuration: {
+        shopSettings: {
+          type: 'object',
+          value: 'ecy-hive-cooking',
+        },
+      },
+    },
+  });
+  console.log();
+})();
 
 module.exports = {
   getSiteStructure,
