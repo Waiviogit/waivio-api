@@ -38,11 +38,9 @@ const makeObjectSiteMenu = ({ object, parentNode, host }) => {
   return {
     id,
     name: object.menuName || object.name,
-    link: parentNode ? `https://${host}/object/${object.author_permlink}` : `https://${host}`,
-    kind: object.object_type,
     hasChildren,
     author_permlink: object?.author_permlink,
-    // children: [],
+    children: [],
     // meta: {}
   };
 };
@@ -72,6 +70,69 @@ const getListChildren = async ({
   });
 
   return objectsProcessed.map((el) => makeObjectSiteMenu({ object: el, host, parentNode }));
+};
+
+const buildChildrenRecursively = async ({
+  children,
+  host,
+  app,
+  visited = new Set(),
+}) => {
+  // prepare batch to fetch all needed objects for this level
+  const permlinksToFetch = children
+    .filter((c) => c.hasChildren && c.author_permlink && !visited.has(c.author_permlink))
+    .map((c) => c.author_permlink);
+
+  let processedMap = new Map();
+  if (permlinksToFetch.length) {
+    const { result: objects = [] } = await Wobj.findObjects({
+      filter: { author_permlink: { $in: permlinksToFetch } },
+    });
+    const processed = await processWobjects({
+      wobjects: objects,
+      fields: REQUIREDFILDS_WOBJ_LIST,
+      app,
+    });
+    processedMap = new Map(processed.map((o) => [o.author_permlink, o]));
+  }
+
+  for (const child of children) {
+    if (child.hasChildren && child.author_permlink) {
+      if (visited.has(child.author_permlink)) {
+        console.warn(`Cycle detected for ${child.author_permlink}, skipping`);
+        child.hasChildren = false;
+        continue;
+      }
+
+      visited.add(child.author_permlink);
+
+      const processedObject = processedMap.get(child.author_permlink);
+
+      if (processedObject) {
+        child.children = await getListChildren({
+          object: processedObject,
+          host,
+          app,
+          parentNode: child,
+        });
+
+        await buildChildrenRecursively({
+          children: child.children,
+          host,
+          app,
+          visited: new Set(visited),
+        });
+
+        if (!child.children || !child.children.length) {
+          child.hasChildren = false;
+          child.children = [];
+        }
+      } else {
+        child.hasChildren = false;
+        child.children = [];
+      }
+    }
+  }
 };
 
 const makeFoldedStructure = async ({ object, host, app }) => {
@@ -119,21 +180,15 @@ const makeFoldedStructure = async ({ object, host, app }) => {
 
   parentNode.children = children;
 
-  // here we finished first level; only for first level we use menuItem as children
-  // next we need use listItem
-  for (const child of children) {
-    if (child.hasChildren) {
-      const processedObject = objectsProcessed.find((o) => o.author_permlink === child.author_permlink);
-      child.children = await getListChildren({
-        object: processedObject,
-        host,
-        app,
-        parentNode: child,
-      });
-    }
-  }
+  // Recursively build all levels with cycle detection
+  await buildChildrenRecursively({
+    children,
+    host,
+    app,
+    visited: new Set([object.author_permlink]), // Start with root to prevent cycles back to root
+  });
 
-  console.log();
+  return parentNode;
 };
 
 const getSiteStructure = async ({ app }) => {
@@ -180,21 +235,6 @@ const getSiteStructure = async ({ app }) => {
     app,
   });
 };
-
-(async () => {
-  await getSiteStructure({
-    app: {
-      host: 'hivecooking.com',
-      configuration: {
-        shopSettings: {
-          type: 'object',
-          value: 'ecy-hive-cooking',
-        },
-      },
-    },
-  });
-  console.log();
-})();
 
 module.exports = {
   getSiteStructure,
