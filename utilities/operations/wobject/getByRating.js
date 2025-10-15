@@ -5,6 +5,7 @@ const {
   FIELDS_NAMES,
   REMOVE_OBJ_STATUSES,
 } = require('../../../constants/wobjectsData');
+const { sitesHelper } = require('../../helpers');
 
 const makeUrls = (url) => {
   if (url.endsWith('*')) url = url.replace(/\*$/, '');
@@ -49,6 +50,21 @@ const findMostAppropriateObject = (objects, targetUrl) => {
 
 const checkLinkSafety = async ({ url }) => {
   const urls = makeUrls(url);
+
+  const { result: activeSites = [] } = await sitesHelper.getAllActiveSites();
+
+  for (const activeSite of activeSites) {
+    if (url.includes(activeSite.host)) {
+      return {
+        result: {
+          linkWaivio: '',
+          rating: 10,
+          fieldAuthor: '',
+          fieldPermlink: '',
+        },
+      };
+    }
+  }
 
   const { result: objects } = await Wobj.find({
     object_type: OBJECT_TYPES.LINK,
