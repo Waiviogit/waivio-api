@@ -18,13 +18,13 @@ const noroutineModules = [
   tokensContractENGINE,
 ];
 
-noroutine.init({
-  modules: noroutineModules,
-  pool: 2, // number of workers in thread pool
-  wait: 2000, // maximum delay to wait for a free thread
-  timeout: 6000, // maximum timeout for executing a functions
-  monitoring: 6000, // event loop utilization monitoring interval
-});
+// noroutine.init({
+//   modules: noroutineModules,
+//   pool: 2, // number of workers in thread pool
+//   wait: 2000, // maximum delay to wait for a free thread
+//   timeout: 6000, // maximum timeout for executing a functions
+//   monitoring: 6000, // event loop utilization monitoring interval
+// });
 
 // we use this because noroutine throw an error on timeout in wrapper
 // const wrapModule = (module) => {
