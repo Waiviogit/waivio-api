@@ -18,9 +18,9 @@ exports.VOTE_REGENERATION_DAYS = 5;
 exports.DOWNVOTE_REGENERATION_DAYS = 5;
 
 exports.HIVE_ENGINE_NODES = [
-  // 'https://engine.waivio.com',
   'https://api.primersion.com',
-  'https://herpc.kanibot.com',
-  'https://herpc.actifit.io',
-  'https://he.sourov.dev',
+  'https://api.hive-engine.com/rpc/',
+  'https://he.c0ff33a.uk',
+  'https://he.atexoras.com:2083',
+  'https://herpc.dtools.dev',
 ];
