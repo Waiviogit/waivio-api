@@ -3,6 +3,10 @@ const moment = require('moment');
 const { CampaignV2, CampaignPayments, mutedUserModel } = require('../../models');
 const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
 const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
+const {
+  getNextClosestDate,
+  getNextEventDate,
+} = require('./rruleHelper');
 
 const findAssignedMainObjects = async (userName) => {
   if (!userName) return [];
@@ -281,12 +285,19 @@ const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
   const notEligibleCampaigns = _.filter(primaryCampaigns, (c) => c.notEligible);
   const notEligible = notEligibleCampaigns.length === primaryCampaigns.length;
 
+  const nextEventDate = getNextClosestDate(
+    primaryCampaigns
+      .map((el) => el?.recurrenceRule)
+      .filter((el) => !!el),
+  );
+
   object.campaigns = {
     min_reward: minReward,
     max_reward: maxReward,
     newCampaigns: true,
     campaignTypes: _.uniq(primaryCampaigns.map((el) => el.type)),
     notEligible,
+    nextEventDate,
   };
 };
 
@@ -296,6 +307,7 @@ const addSecondaryCampaigns = ({ object, secondaryCampaigns }) => {
     'rewardInUSD',
   );
   proposition.reserved = false;
+  proposition.nextEventDate = getNextEventDate(proposition?.recurrenceRule);
   if (!_.isEmpty(proposition.assignedUser)) {
     proposition.reserved = _.get(proposition, 'assignedUser[0].objectPermlink') === object.author_permlink;
   }
