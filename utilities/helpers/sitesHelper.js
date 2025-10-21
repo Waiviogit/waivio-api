@@ -472,3 +472,5 @@ exports.checkOwnerBalance = async (owner) => {
 
   return { balance };
 };
+
+exports.isSSRRequest = (req) => !!req.headers['app-host'];

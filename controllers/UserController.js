@@ -8,7 +8,10 @@ const {
   getProfileImages, getUserRcDelegations,
 } = require('../utilities/operations/user');
 const { users: { searchUsers: searchByUsers, getSiteUsersByHost } } = require('../utilities/operations/search');
-const { getIpFromHeaders } = require('../utilities/helpers/sitesHelper');
+const {
+  getIpFromHeaders,
+  isSSRRequest,
+} = require('../utilities/helpers/sitesHelper');
 const validators = require('./validators');
 const authoriseUser = require('../utilities/authorization/authoriseUser');
 const { getUserLastActivity } = require('../utilities/operations/user/getUserLastActivity');
@@ -459,6 +462,14 @@ const getVoteValue = async (req, res, next) => {
 };
 
 const getEstimatedVote = async (req, res, next) => {
+
+  if (isSSRRequest(req)) {
+    return res.status(200).json({
+      estimatedHIVE: 0,
+      estimatedWAIV: 0,
+    });
+  }
+
   const result = await calcVoteValue.userInfoCalc(req.params);
 
   return res.status(200).json(result);
