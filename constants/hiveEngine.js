@@ -20,7 +20,8 @@ exports.DOWNVOTE_REGENERATION_DAYS = 5;
 exports.HIVE_ENGINE_NODES = [
   //'https://api.primersion.com',
   'https://api.hive-engine.com/rpc/',
-  'https://he.c0ff33a.uk',
-  'https://he.atexoras.com:2083',
   'https://herpc.dtools.dev',
+  'https://he.atexoras.com:2083',
+  'https://herpc.actifit.io',
+  'https://he.c0ff33a.uk',
 ];
