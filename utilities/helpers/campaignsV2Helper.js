@@ -1,7 +1,11 @@
 const _ = require('lodash');
 const moment = require('moment');
 const { CampaignV2, CampaignPayments, mutedUserModel } = require('../../models');
-const { CAMPAIGN_STATUSES, RESERVATION_STATUSES } = require('../../constants/campaignsData');
+const {
+  CAMPAIGN_STATUSES,
+  RESERVATION_STATUSES,
+  CAMPAIGN_TYPES,
+} = require('../../constants/campaignsData');
 const { CP_TRANSFER_TYPES } = require('../../constants/campaignsV2');
 const {
   getNextClosestDate,
@@ -278,10 +282,47 @@ const addTotalPayedToCampaigns = async (campaigns) => {
   return campaignsWithPayed;
 };
 
-const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
-  const minReward = (_.minBy(primaryCampaigns, 'rewardInUSD')).rewardInUSD;
-  const maxReward = (_.maxBy(primaryCampaigns, 'rewardInUSD')).rewardInUSD;
+const getMinMaxRewardForPrimary = (campaigns) => {
+  let minReward;
+  let maxReward;
 
+  const maxRewardCampaign = _.maxBy(campaigns, (campaign) => {
+    if (campaign.type === CAMPAIGN_TYPES.CONTESTS_OBJECT) {
+      return _.maxBy(campaign.contestRewards, 'rewardInUSD').rewardInUSD;
+    }
+    return campaign.rewardInUSD;
+  });
+  if (maxRewardCampaign.type === CAMPAIGN_TYPES.CONTESTS_OBJECT) {
+    maxReward = _.maxBy(maxRewardCampaign.contestRewards, 'rewardInUSD')?.rewardInUSD
+      || 0;
+  } else {
+    maxReward = maxRewardCampaign?.rewardInUSD || 0;
+  }
+
+  const guideName = maxRewardCampaign.guideName || '';
+
+  const minRewardCampaign = _.minBy(campaigns, (campaign) => {
+    if (campaign.type === CAMPAIGN_TYPES.CONTESTS_OBJECT) {
+      return _.minBy(campaign.contestRewards, 'rewardInUSD').rewardInUSD;
+    }
+    return campaign.rewardInUSD;
+  });
+
+  if (minRewardCampaign.type === CAMPAIGN_TYPES.CONTESTS_OBJECT) {
+    minReward = _.minBy(maxRewardCampaign.contestRewards, 'rewardInUSD')?.rewardInUSD
+      || 0;
+  } else {
+    minReward = maxRewardCampaign?.rewardInUSD || 0;
+  }
+
+  return {
+    minReward,
+    maxReward,
+    guideName,
+  };
+};
+
+const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
   const notEligibleCampaigns = _.filter(primaryCampaigns, (c) => c.notEligible);
   const notEligible = notEligibleCampaigns.length === primaryCampaigns.length;
 
@@ -291,9 +332,12 @@ const addPrimaryCampaign = ({ object, primaryCampaigns = [] }) => {
       .filter((el) => !!el),
   );
 
+  const { minReward, maxReward, guideName } = getMinMaxRewardForPrimary(primaryCampaigns);
+
   object.campaigns = {
     min_reward: minReward,
     max_reward: maxReward,
+    guideName,
     newCampaigns: true,
     campaignTypes: _.uniq(primaryCampaigns.map((el) => el.type)),
     notEligible,

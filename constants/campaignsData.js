@@ -36,6 +36,8 @@ exports.CAMPAIGN_TYPES = {
   REVIEWS: 'reviews',
   MENTIONS: 'mentions',
   GIVEAWAYS: 'giveaways',
+  GIVEAWAYS_OBJECT: 'giveaways_object',
+  CONTESTS_OBJECT: 'contests_object',
 };
 
 exports.RESERVATION_STATUSES = {
