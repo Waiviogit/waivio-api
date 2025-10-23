@@ -7,6 +7,7 @@ const { FIELDS_NAMES, OBJECT_TYPES, WALLET_ADDRESS_LINKED_TYPES } = require('../
 const { TOKEN } = require('../../../constants/common');
 const wObjectHelper = require('../../helpers/wObjectHelper');
 const jsonHelper = require('../../helpers/jsonHelper');
+const { parseJson } = require('../../helpers/jsonHelper');
 
 const getRelistedLinks = async (authorPermlink) => {
   const relisted = await Wobj.findRelistedObjectsByPermlink(authorPermlink);
@@ -72,6 +73,7 @@ module.exports = async (data) => {
       FIELDS_NAMES.REMOVE,
       FIELDS_NAMES.WALLET_ADDRESS,
       FIELDS_NAMES.LINK,
+      FIELDS_NAMES.WEBSITE,
     ],
     returnArray: false,
     app: data.app,
@@ -158,13 +160,18 @@ module.exports = async (data) => {
   return { posts };
 };
 
+const makeRegexFromLink = (link) => {
+  if (!link) return null;
+  const initialLink = link.endsWith('*') ? link.slice(0, -1) : link;
+  return makeEscapedRegex(initialLink);
+};
+
 const makeConditionForLink = ({ condition, wObject }) => {
   const urlField = wObject.fields?.find((el) => el.name === FIELDS_NAMES.URL);
   if (!urlField) return { condition };
   const { body } = urlField;
 
-  const initialLink = body.endsWith('*') ? body.slice(0, -1) : body;
-  const regex = makeEscapedRegex(initialLink);
+  const regex = makeRegexFromLink(body);
 
   return {
     condition: {
@@ -233,6 +240,13 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
   if (hiveWallets?.length) {
     condArray.push({
       mentions: { $in: _.uniq(hiveWallets) },
+    });
+  }
+  const website = parseJson(processedObj.website);
+  const regex = makeRegexFromLink(website?.link);
+  if (regex) {
+    condArray.push({
+      links: { $regex: regex },
     });
   }
 
