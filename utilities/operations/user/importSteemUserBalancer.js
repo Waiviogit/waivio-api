@@ -13,6 +13,14 @@ const { User } = require('../../../models');
  * result {ok:true} on success or error
  */
 exports.startImportUser = async (userName) => {
+  if (userName.includes('_')) {
+    return {
+      error: {
+        message: 'guest user',
+        status: 422,
+      },
+    };
+  }
   if (!(await validateCountImporting())) {
     return {
       error: {
