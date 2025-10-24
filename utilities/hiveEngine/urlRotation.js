@@ -44,6 +44,8 @@ class UrlRotationManager {
     const key = `${CACHE_PREFIX}${url}`;
     const pipeline = this.client.pipeline();
 
+    const exists = await this.client.exists(key);
+
     // Increment counters
     pipeline.hincrby(key, 'totalRequests', 1);
     if (hasError) {
@@ -51,8 +53,9 @@ class UrlRotationManager {
     }
     pipeline.hincrby(key, 'totalResponseTime', responseTime);
 
-    // Set TTL
-    pipeline.expire(key, CACHE_TTL);
+    if (!exists) {
+      pipeline.expire(key, CACHE_TTL);
+    }
 
     await pipeline.exec();
 
@@ -78,7 +81,6 @@ class UrlRotationManager {
     pipeline.hset(key, 'avgResponseTime', avgResponseTime);
     pipeline.hset(key, 'avgErrors', avgErrors);
     pipeline.hset(key, 'weight', weight);
-    pipeline.expire(key, CACHE_TTL);
 
     await pipeline.exec();
   }
@@ -121,25 +123,8 @@ class UrlRotationManager {
     return sortedUrls[0].url;
   }
 
-  async getNextUrl(currentUrl) {
-    const currentIndex = HIVE_ENGINE_NODES.indexOf(currentUrl);
-    const nextIndex = (currentIndex + 1) % HIVE_ENGINE_NODES.length;
-    return HIVE_ENGINE_NODES[nextIndex];
-  }
-
   async recordRequest(url, responseTime, hasError) {
     await this.updateUrlStats(url, responseTime, hasError);
-  }
-
-  async getAllStats() {
-    const stats = await Promise.all(
-      HIVE_ENGINE_NODES.map(async (url) => ({
-        url,
-        ...(await this.getUrlStats(url)),
-      })),
-    );
-
-    return _.orderBy(stats, ['weight'], ['desc']);
   }
 }
 
