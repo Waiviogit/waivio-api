@@ -242,12 +242,14 @@ const makeConditionForBusiness = ({ condition, processedObj }) => {
       mentions: { $in: _.uniq(hiveWallets) },
     });
   }
-  const website = parseJson(processedObj.website);
-  const regex = makeRegexFromLink(website?.link);
-  if (regex) {
-    condArray.push({
-      links: { $regex: regex },
-    });
+  const websites = _.map(processedObj.website, (el) => parseJson(el.body));
+  for (const website of websites) {
+    const regex = makeRegexFromLink(website?.link);
+    if (regex) {
+      condArray.push({
+        links: { $regex: regex },
+      });
+    }
   }
 
   return {
