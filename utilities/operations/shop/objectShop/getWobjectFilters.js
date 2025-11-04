@@ -26,6 +26,7 @@ const getObjects = async ({
   {
     $match: {
       'fields.tagCategory': tagCategory || { $exists: true },
+      'fields.weight': { $gte: 0 },
     },
   },
   {
