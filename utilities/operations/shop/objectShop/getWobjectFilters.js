@@ -31,8 +31,21 @@ const getObjects = async ({
   },
   {
     $group: {
-      _id: '$fields.tagCategory',
-      tags: { $addToSet: '$fields.body' },
+      _id: { tagCategory: '$fields.tagCategory', body: '$fields.body' },
+      maxWeight: { $max: '$fields.weight' },
+    },
+  },
+  {
+    $sort: {
+      '_id.tagCategory': 1,
+      maxWeight: -1,
+      '_id.body': 1,
+    },
+  },
+  {
+    $group: {
+      _id: '$_id.tagCategory',
+      tags: { $push: '$_id.body' },
     },
   },
   {
