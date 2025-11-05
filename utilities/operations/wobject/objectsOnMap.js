@@ -1,8 +1,13 @@
 const _ = require('lodash');
+const { FIELDS_NAMES } = require('@waivio/objects-processor');
 const { addCampaignsToWobjectsSites } = require('../../helpers/campaignsHelper');
-const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
+const {
+  REMOVE_OBJ_STATUSES,
+  REQUIREDFILDS_WOBJ_LIST,
+} = require('../../../constants/wobjectsData');
 const searchHelper = require('../../helpers/searchHelper');
-const { Wobj } = require('../../../models');
+const { Wobj, Post } = require('../../../models');
+const { processWobjects } = require('../../helpers/wObjectHelper');
 
 exports.getExpertsFromArea = async ({
   box, skip, limit, app,
@@ -31,8 +36,38 @@ exports.getLastPostOnObjectFromArea = async ({
     { wobjects, app },
   );
 
-  return {
+  const processed = await processWobjects({
     wobjects: _.take(wobjectsWithCampaigns, limit),
+    fields: [...REQUIREDFILDS_WOBJ_LIST, FIELDS_NAMES.REMOVE],
+    app,
+    returnArray: true,
+  });
+
+  await Promise.all(processed.map(async (processedElement) => {
+    let removeCondition = {};
+    if (processedElement?.remove?.length) {
+      removeCondition = _.reduce(processedElement?.remove, (acc, el) => {
+        const [author, permlink] = el.split('/');
+        acc.author.$nin.push(author);
+        acc.permlink.$nin.push(permlink);
+        return acc;
+      }, { author: { $nin: [] }, permlink: { $nin: [] } });
+    }
+
+    const { result: post } = await Post.findOne({
+      filter: {
+        'wobjects.author_permlink': processedElement.author_permlink,
+        ...removeCondition,
+      },
+      options: { sort: { _id: -1 } },
+    });
+    if (post) {
+      processedElement.post = post;
+    }
+  }));
+
+  return {
+    wobjects: processed,
     hasMore: wobjectsWithCampaigns.length > limit,
   };
 };

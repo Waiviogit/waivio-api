@@ -402,13 +402,7 @@ const getMapObjectLastPost = async (req, res, next) => {
   );
   if (error) return next(error);
 
-  const pipeline = new RequestPipeline();
-  const processedData = await pipeline
-    .use(pipelineFunctions.fillPosts)
-    .use(pipelineFunctions.moderateObjects)
-    .execute({ wobjects, hasMore }, req);
-
-  return res.status(200).json(processedData);
+  return res.status(200).json({ wobjects, hasMore });
 };
 
 const getWobjectsByRequiredObject = async (req, res, next) => {

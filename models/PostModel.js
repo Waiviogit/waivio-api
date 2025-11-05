@@ -327,6 +327,14 @@ exports.find = async ({ filter, projection, options }) => {
   }
 };
 
+exports.findOne = async ({ filter, projection, options }) => {
+  try {
+    return { result: await PostModel.findOne(filter, projection, options).lean() };
+  } catch (error) {
+    return { error };
+  }
+};
+
 exports.getProductLinksFromPosts = async ({ userName, names }) => {
   const { result } = await this.find({
     filter: {

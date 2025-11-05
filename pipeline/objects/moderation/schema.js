@@ -54,12 +54,6 @@ exports.schema = [
     case: 'case2',
   },
   {
-    path: '/wobjects/map/last-post',
-    method: 'POST',
-    case: 'case4',
-    wobjects_path: 'wobjects',
-  },
-  {
     path: '/wobjects/campaign/required-object',
     method: 'POST',
     case: 'case4',
