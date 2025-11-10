@@ -509,4 +509,5 @@ exports.FAVORITES_OBJECT_TYPES = [
   'map',
   'link',
   'group',
+  'html',
 ];
