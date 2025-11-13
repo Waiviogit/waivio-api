@@ -47,27 +47,30 @@ exports.getLastPostOnObjectFromArea = async ({
     returnArray: true,
   });
 
-  const { result } = await mutedUserModel
-    .find({ condition: { $or: [{ mutedForApps: app.host }, { mutedForApps: config.appHost }, { mutedBy: currentUser }] }, sort: { _id: -1 } });
+  const { result } = await mutedUserModel.find({
+    condition: {
+      $or: [
+        { mutedForApps: app.host },
+        { mutedForApps: config.appHost },
+        { mutedBy: currentUser },
+      ],
+    },
+    sort: { _id: -1 },
+  });
   const muted = _.uniq(_.map(result, 'userName'));
 
   await Promise.all(processed.map(async (processedElement) => {
-    let removeCondition = {};
-    if (processedElement?.remove?.length) {
-      removeCondition = _.reduce(processedElement?.remove, (acc, el) => {
+    const removeCondition = processedElement?.remove?.length
+      ? _.reduce(processedElement.remove, (acc, el) => {
         const [author, permlink] = el.split('/');
-        acc.author.$nin.push(author);
-        acc.permlink.$nin.push(permlink);
+        if (author) acc.author.$nin.push(author);
+        if (permlink) acc.permlink.$nin.push(permlink);
         return acc;
-      }, { author: { $nin: [] }, permlink: { $nin: [] } });
-    }
+      }, { author: { $nin: [] }, permlink: { $nin: [] } })
+      : { author: { $nin: [] }, permlink: { $nin: [] } };
 
     if (muted.length) {
-      if (removeCondition?.author?.$nin) {
-        removeCondition.author.$nin.push(...muted);
-      } else {
-        removeCondition.author.$nin = muted;
-      }
+      removeCondition.author.$nin.push(...muted);
     }
 
     const { result: post } = await Post.findOne({
