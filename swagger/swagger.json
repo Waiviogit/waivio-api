@@ -7418,6 +7418,12 @@
             "type": "string"
           },
           {
+            "name": "follower",
+            "in": "header",
+            "description": "currentUser",
+            "type": "string"
+          },
+          {
             "in": "body",
             "name": "params",
             "description": "**limit** - limit of returned users(by default - 30),\n**skip** - count of skipping users(for infinite scroll, default 0),\n**box** - map coordinates\n**objectType** -type of objects, default - restaurant",

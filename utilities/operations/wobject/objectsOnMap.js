@@ -6,7 +6,10 @@ const {
   REQUIREDFILDS_WOBJ_LIST,
 } = require('../../../constants/wobjectsData');
 const searchHelper = require('../../helpers/searchHelper');
-const { Wobj, Post } = require('../../../models');
+const {
+  Wobj, Post,
+  mutedUserModel,
+} = require('../../../models');
 const { processWobjects } = require('../../helpers/wObjectHelper');
 
 exports.getExpertsFromArea = async ({
@@ -25,7 +28,7 @@ exports.getExpertsFromArea = async ({
 };
 
 exports.getLastPostOnObjectFromArea = async ({
-  box, skip, limit, app, objectType,
+  box, skip, limit, app, objectType, currentUser,
 }) => {
   const pipe = await makeLastPostOnAreaPipe({
     box, skip, limit, app, objectType,
@@ -43,6 +46,10 @@ exports.getLastPostOnObjectFromArea = async ({
     returnArray: true,
   });
 
+  const { result } = await mutedUserModel
+    .find({ condition: { $or: [{ mutedForApps: app.host }, { mutedBy: currentUser }] }, sort: { _id: -1 } });
+  const muted = _.uniq(_.map(result, 'userName'));
+
   await Promise.all(processed.map(async (processedElement) => {
     let removeCondition = {};
     if (processedElement?.remove?.length) {
@@ -52,6 +59,14 @@ exports.getLastPostOnObjectFromArea = async ({
         acc.permlink.$nin.push(permlink);
         return acc;
       }, { author: { $nin: [] }, permlink: { $nin: [] } });
+    }
+
+    if (muted.length) {
+      if (removeCondition?.author?.$nin) {
+        removeCondition.author.$nin.push(...muted);
+      } else {
+        removeCondition.author.$nin = muted;
+      }
     }
 
     const { result: post } = await Post.findOne({

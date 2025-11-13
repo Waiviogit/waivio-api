@@ -391,7 +391,7 @@ const getMapObjectExperts = async (req, res, next) => {
 
 const getMapObjectLastPost = async (req, res, next) => {
   const value = validators.validate(
-    req.body,
+    { ...req.body, currentUser: req.headers.follower },
     validators.wobject.mapLastPostScheme,
     next,
   );
