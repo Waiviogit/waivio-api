@@ -11,6 +11,7 @@ const {
   mutedUserModel,
 } = require('../../../models');
 const { processWobjects } = require('../../helpers/wObjectHelper');
+const config = require('../../../config');
 
 exports.getExpertsFromArea = async ({
   box, skip, limit, app,
@@ -47,7 +48,7 @@ exports.getLastPostOnObjectFromArea = async ({
   });
 
   const { result } = await mutedUserModel
-    .find({ condition: { $or: [{ mutedForApps: app.host }, { mutedBy: currentUser }] }, sort: { _id: -1 } });
+    .find({ condition: { $or: [{ mutedForApps: app.host }, { mutedForApps: config.appHost }, { mutedBy: currentUser }] }, sort: { _id: -1 } });
   const muted = _.uniq(_.map(result, 'userName'));
 
   await Promise.all(processed.map(async (processedElement) => {
