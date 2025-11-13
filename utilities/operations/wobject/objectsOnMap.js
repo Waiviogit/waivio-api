@@ -184,19 +184,5 @@ const makeLastPostOnAreaPipe = async ({
     {
       $limit: limit + 1,
     },
-    {
-      $addFields: { lastPost: { $arrayElemAt: ['$latest_posts', 0] } },
-    },
-    {
-      $lookup: {
-        from: 'posts',
-        localField: 'lastPost',
-        foreignField: '_id',
-        as: 'post',
-      },
-    },
-    {
-      $addFields: { post: { $arrayElemAt: ['$post', 0] } },
-    },
   ];
 };
