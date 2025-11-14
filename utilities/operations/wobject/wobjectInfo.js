@@ -1,10 +1,10 @@
 const _ = require('lodash');
-const { FIELDS_NAMES } = require('@waivio/objects-processor');
+const { FIELDS_NAMES, OBJECT_TYPES, EXPOSED_FIELDS_FOR_OBJECT_TYPE } = require('@waivio/objects-processor');
 const {
   Wobj, Campaign, User, wobjectSubscriptions,
 } = require('../../../models');
 const {
-  REQUIREDFIELDS, OBJECT_TYPES, REMOVE_OBJ_STATUSES,
+  REQUIREDFIELDS, REMOVE_OBJ_STATUSES,
 } = require('../../../constants/wobjectsData');
 const { CACHE_KEY, TTL_TIME } = require('../../../constants/common');
 const { campaignsHelper, wObjectHelper } = require('../../helpers');
@@ -33,6 +33,11 @@ const {
  * @param app {String} Get app admins and wobj administrators in processWobjects
  * @returns {Promise<number>}
  */
+
+const OBJECT_TYPES_WITH_DEPARTMENTS = Object.entries(EXPOSED_FIELDS_FOR_OBJECT_TYPE)
+  .filter((el) => el[1].includes(FIELDS_NAMES.DEPARTMENTS))
+  .map((el) => el[0]);
+
 const getItemsCount = async ({
   authorPermlink, handledItems, app, recursive = false,
 }) => {
@@ -188,17 +193,24 @@ const getListDepartments = async ({
 
   const localDepartments = [...departments];
 
-  if ([OBJECT_TYPES.PRODUCT, OBJECT_TYPES.BOOK].includes(wobject.object_type)) {
-    const { result } = await Wobj.findObjects({
-      filter: {
-        metaGroupId: wobject.metaGroupId,
-      },
-      projection: { author_permlink: 1 },
-    });
-    if (result.length) {
+  if (OBJECT_TYPES_WITH_DEPARTMENTS.includes(wobject.object_type)) {
+    if (wobject.metaGroupId) {
+      const { result } = await Wobj.findObjects({
+        filter: {
+          metaGroupId: wobject.metaGroupId,
+        },
+        projection: { author_permlink: 1 },
+      });
+      if (result.length) {
+        handledItems.push({
+          departments: localDepartments,
+          objects: result.map((el) => el.author_permlink),
+        });
+      }
+    } else {
       handledItems.push({
         departments: localDepartments,
-        objects: result.map((el) => el.author_permlink),
+        objects: [wobject.author_permlink],
       });
     }
   }
