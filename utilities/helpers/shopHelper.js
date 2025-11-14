@@ -302,9 +302,13 @@ const getUniqArrayWithScore = (arr) => {
   return unique;
 };
 
-const getTagCategoriesForFilter = async () => {
+const getTagCategoriesForFilter = async (schema = SHOP_SCHEMA.SHOP) => {
+  const typesFilter = schema === SHOP_SCHEMA.SHOP
+    ? { $in: SHOP_OBJECT_TYPES }
+    : OBJECT_TYPES.RECIPE;
+
   const { result: objectTypes, error } = await ObjectType
-    .find({ filter: { name: { $in: SHOP_OBJECT_TYPES } } });
+    .find({ filter: { name: typesFilter } });
 
   if (_.isEmpty(objectTypes) || error) {
     return { error: new Error('Categories not found') };

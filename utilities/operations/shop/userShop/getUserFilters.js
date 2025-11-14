@@ -130,7 +130,7 @@ const getMoreTagFilters = async ({
 const getUserFilters = async ({
   userName, path, app, schema,
 }) => {
-  const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter();
+  const { result: tagCategories, error } = await shopHelper.getTagCategoriesForFilter(schema);
   if (error) return { error };
 
   const tags = await getUserObjects({
@@ -140,7 +140,6 @@ const getUserFilters = async ({
   const tagCategoryFilters = shopHelper
     .getFilteredTagCategories({ tags, tagCategories });
 
-  console.log();
   return {
     result: {
       rating: SHOP_ITEM_RATINGS,
