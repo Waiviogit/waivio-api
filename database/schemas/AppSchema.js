@@ -104,6 +104,7 @@ const Configuration = new Schema({
   tabsFilter: { type: [String] },
   tabsSorting: { type: [String] },
   advancedAI: { type: Boolean },
+  siteTemplate: { type: String },
 }, { _id: false });
 
 const AppSchema = new Schema({
