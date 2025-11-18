@@ -32,13 +32,13 @@ const getObjects = async ({
   {
     $group: {
       _id: { tagCategory: '$fields.tagCategory', body: '$fields.body' },
-      maxWeight: { $max: '$fields.weight' },
+      // maxWeight: { $max: '$fields.weight' },
     },
   },
   {
     $sort: {
       '_id.tagCategory': 1,
-      maxWeight: -1,
+      // maxWeight: -1,
       '_id.body': 1,
     },
   },
