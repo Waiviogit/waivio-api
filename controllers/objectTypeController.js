@@ -1,6 +1,12 @@
 const { searchObjectTypes } = require('../utilities/operations/search/searchTypes');
 const {
-  getAll, getOne, getExperts, showTags, getTagsForFilter,
+  getAll,
+  getOne,
+  getExperts,
+  showTags,
+  getTagsForFilter,
+  getCategoriesByObjectType,
+  getCategoryTagsByObjectType,
 } = require('../utilities/operations/objectType');
 const validators = require('./validators');
 const pipelineFunctions = require('../pipeline');
@@ -104,6 +110,55 @@ const tagsForFilter = async (req, res, next) => {
   return res.status(200).json(tags);
 };
 
+const tagCategories = async (req, res, next) => {
+  const value = validators.validate({
+    objectType: req.params.objectTypeName,
+    tagsLimit: req.query.tagsLimit,
+  }, validators.objectType.tagCategoriesSchema, next);
+  if (!value) return;
+  try {
+    const categories = await getCategoriesByObjectType({
+      objectType: value.objectType,
+      tagsLimit: value.tagsLimit,
+      app: req.appData,
+    });
+
+    return res.status(200).json(categories);
+  } catch (error) {
+    return next(error);
+  }
+};
+
+const tagCategoryDetails = async (req, res, next) => {
+  const value = validators.validate({
+    objectType: req.params.objectTypeName,
+    tagCategory: req.params.tagCategory,
+    skip: req.query.skip,
+    limit: req.query.limit,
+  }, validators.objectType.categoryTagsSchema, next);
+  if (!value) return;
+  try {
+    const response = await getCategoryTagsByObjectType({
+      objectType: value.objectType,
+      tagCategory: value.tagCategory,
+      skip: value.skip,
+      limit: value.limit,
+      app: req.appData,
+    });
+
+    return res.status(200).json(response);
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
-  index, search, show, expertise, showMoreTags, tagsForFilter,
+  index,
+  search,
+  show,
+  expertise,
+  showMoreTags,
+  tagsForFilter,
+  tagCategories,
+  tagCategoryDetails,
 };
