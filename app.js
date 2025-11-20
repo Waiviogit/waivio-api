@@ -6,7 +6,6 @@ const routes = require('./routes');
 const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
 require('./utilities');
-require('./utilities/operations/objectType/tagsForFilter');
 
 // Add global error handlers to catch unhandled rejections
 process.on('unhandledRejection', (reason, promise) => {
