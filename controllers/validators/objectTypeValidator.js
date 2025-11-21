@@ -53,3 +53,17 @@ exports.tagsForFilterSchema = Joi.object().keys({
   objectType: Joi.string().required(),
   wobjectLinks: Joi.array().items(Joi.string()).default([]),
 });
+
+exports.tagCategoriesSchema = Joi.object().keys({
+  objectType: Joi.string().required(),
+  tagsLimit: Joi.number().integer().min(1).max(100)
+    .default(3),
+});
+
+exports.categoryTagsSchema = Joi.object().keys({
+  objectType: Joi.string().required(),
+  tagCategory: Joi.string().required(),
+  skip: Joi.number().integer().min(0).default(0),
+  limit: Joi.number().integer().min(1).max(100)
+    .default(10),
+});

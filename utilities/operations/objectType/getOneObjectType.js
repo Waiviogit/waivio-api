@@ -74,18 +74,20 @@ const getWobjWithFilters = async ({
   if (_.get(filter, FIELDS_NAMES.TAG_CATEGORY)) {
     const condition = [];
     for (const category of filter.tagCategory) {
-      condition.push({
-        fields: {
-          $elemMatch: {
-            name: FIELDS_NAMES.CATEGORY_ITEM,
-            body: { $in: category.tags },
-            tagCategory: category.categoryName,
-            weight: { $gte: 0 },
+      for (const categoryItem of category.tags) {
+        condition.push({
+          fields: {
+            $elemMatch: {
+              name: FIELDS_NAMES.CATEGORY_ITEM,
+              body: categoryItem,
+              tagCategory: category.categoryName,
+              weight: { $gte: 0 },
+            },
           },
-        },
-      });
+        });
+      }
     }
-    if (condition.length)aggregationPipeline.push({ $match: { $or: condition } });
+    if (condition.length)aggregationPipeline.push({ $match: { $and: condition } });
     delete filter.tagCategory;
   }
 

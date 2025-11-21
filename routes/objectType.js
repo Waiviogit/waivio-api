@@ -14,6 +14,10 @@ objectTypeRoutes.route('/objectType/:objectTypeName/expertise')
   .get(reqTimeMonitor, ObjectTypeController.expertise);
 objectTypeRoutes.route('/objectType/showMoreTags')
   .get(reqTimeMonitor, ObjectTypeController.showMoreTags);
+objectTypeRoutes.route('/objectType/:objectTypeName/tag-categories')
+  .get(reqTimeMonitor, ObjectTypeController.tagCategories);
+objectTypeRoutes.route('/objectType/:objectTypeName/tag-categories/:tagCategory')
+  .get(reqTimeMonitor, ObjectTypeController.tagCategoryDetails);
 objectTypeRoutes.route('/objectTypes/tags-for-filter')
   .post(reqTimeMonitor, ObjectTypeController.tagsForFilter);
 

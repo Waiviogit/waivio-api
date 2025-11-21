@@ -312,4 +312,148 @@ module.exports = {
       },
     },
   },
+  '/api/objectType/{objectTypeName}/tag-categories': {
+    get: {
+      tags: [
+        'object_type',
+      ],
+      summary: 'Return tag categories with top tags',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'app',
+          in: 'header',
+          description: 'Specify app to enable waivio-wobject moderation',
+          required: false,
+          type: 'string',
+        },
+        {
+          name: 'objectTypeName',
+          in: 'path',
+          description: 'Name of Object Type',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'tagsLimit',
+          in: 'query',
+          description: 'How many tags to return per category (default 3)',
+          required: false,
+          type: 'integer',
+          default: 3,
+        },
+      ],
+      responses: {
+        200: {
+          description: 'succesfull operation',
+          schema: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                tagCategory: {
+                  type: 'string',
+                },
+                tags: {
+                  type: 'array',
+                  items: {
+                    type: 'string',
+                  },
+                },
+                hasMore: {
+                  type: 'boolean',
+                },
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Unprocessible Entity',
+          schema: {
+            $ref: '#/definitions/inline_response_400',
+          },
+        },
+      },
+    },
+  },
+  '/api/objectType/{objectTypeName}/tag-categories/{tagCategory}': {
+    get: {
+      tags: [
+        'object_type',
+      ],
+      summary: 'Return tags for specific tag category',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'app',
+          in: 'header',
+          description: 'Specify app to enable waivio-wobject moderation',
+          required: false,
+          type: 'string',
+        },
+        {
+          name: 'objectTypeName',
+          in: 'path',
+          description: 'Name of Object Type',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'tagCategory',
+          in: 'path',
+          description: 'Tag category to expand',
+          required: true,
+          type: 'string',
+        },
+        {
+          name: 'skip',
+          in: 'query',
+          description: 'Count of tags to skip',
+          required: false,
+          type: 'integer',
+          default: 0,
+        },
+        {
+          name: 'limit',
+          in: 'query',
+          description: 'Count of tags to return',
+          required: false,
+          type: 'integer',
+          default: 10,
+        },
+      ],
+      responses: {
+        200: {
+          description: 'succesfull operation',
+          schema: {
+            type: 'object',
+            properties: {
+              tagCategory: {
+                type: 'string',
+              },
+              tags: {
+                type: 'array',
+                items: {
+                  type: 'string',
+                },
+              },
+              hasMore: {
+                type: 'boolean',
+              },
+            },
+          },
+        },
+        422: {
+          description: 'Unprocessible Entity',
+          schema: {
+            $ref: '#/definitions/inline_response_400',
+          },
+        },
+      },
+    },
+  },
 };

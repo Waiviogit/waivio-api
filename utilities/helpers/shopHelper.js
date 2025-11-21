@@ -329,7 +329,7 @@ const getFilteredTagCategories = ({ tags = [], tagCategories }) => {
   for (const category of tagCategories) {
     const categoryTags = tags.find((el) => el?.tagCategory === category);
 
-    const tagsArr = _.take(categoryTags?.tags, 3);
+    const tagsArr = _.take(categoryTags?.tags, 10);
 
     tagCategoryFilters.push({
       tagCategory: category,
