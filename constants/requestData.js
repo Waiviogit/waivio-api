@@ -103,23 +103,19 @@ const HIVE_ON_BOARD = {
 };
 
 const PRODUCTION_REQUEST_NODES = [
-  'https://api.hive.blog',
   'https://api.deathwing.me',
+  'https://api.hive.blog',
   'https://api.openhive.network',
-  'https://techcoderx.com',
-  'https://anyx.io',
-  'https://hive-api.3speak.tv',
   'https://rpc.mahdiyari.info',
+  'https://hive-api.3speak.tv',
 ];
 
 const STAGING_REQUEST_NODES = [
-  'https://api.hive.blog',
   'https://api.deathwing.me',
+  'https://api.hive.blog',
   'https://api.openhive.network',
-  'https://techcoderx.com',
-  'https://anyx.io',
-  'https://hive-api.3speak.tv',
   'https://rpc.mahdiyari.info',
+  'https://hive-api.3speak.tv',
 ];
 
 const NODE_URLS = process.env.NODE_ENV === 'production'
