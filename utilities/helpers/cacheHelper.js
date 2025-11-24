@@ -8,6 +8,8 @@ const {
 } = require('../redis');
 const jsonHelper = require('./jsonHelper');
 
+const inFlightRefreshes = new Map();
+
 const cacheRewardFund = async () => {
   const { result, error } = await currencyUtil.getRewardFund();
   if (error) return;
@@ -84,7 +86,7 @@ const cacheWrapper = (fn) => (...args) => async ({ key, ttl }) => {
   } catch (err) {
     console.error('cacheWrapper: Critical error, falling back to direct function call:', {
       message: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
     // If cache operations fail completely, fall back to calling the function directly
     return await fn(...args);
@@ -121,11 +123,99 @@ const cacheWrapperWithTTLRefresh = (fn) => (...args) => async ({ key, ttl }) => 
   } catch (err) {
     console.error('cacheWrapperWithTTLRefresh: Critical error, falling back to direct function call:', {
       message: err.message,
-      stack: err.stack
+      stack: err.stack,
     });
     // If cache operations fail completely, fall back to calling the function directly
     return await fn(...args);
   }
+};
+
+const refreshCacheValue = async ({
+  key,
+  fetcher,
+  persistSeconds,
+}) => {
+  try {
+    const fresh = await fetcher();
+    if (!fresh?.error) {
+      await setCachedData({
+        key,
+        data: {
+          payload: fresh,
+          cachedAt: Date.now(),
+        },
+        ttl: persistSeconds,
+      });
+    }
+  } catch (err) {
+    console.error('staleWhileRevalidate refresh error:', err.message);
+  } finally {
+    inFlightRefreshes.delete(key);
+  }
+};
+
+const triggerBackgroundRefresh = ({
+  key,
+  fetcher,
+  persistSeconds,
+}) => {
+  if (inFlightRefreshes.has(key)) return;
+  const refreshPromise = refreshCacheValue({ key, fetcher, persistSeconds });
+  inFlightRefreshes.set(key, refreshPromise);
+};
+
+const staleWhileRevalidate = async ({
+  key,
+  ttlSeconds,
+  fetcher,
+  persistSeconds,
+}) => {
+  const now = Date.now();
+  const cacheRaw = await getCachedData(key);
+  const effectivePersistSeconds = Math.max(persistSeconds || ttlSeconds * 2, ttlSeconds);
+
+  if (cacheRaw) {
+    const parsed = jsonHelper.parseJson(cacheRaw, null);
+    if (parsed) {
+      const payload = Object.prototype.hasOwnProperty.call(parsed, 'payload')
+        ? parsed.payload
+        : parsed;
+      const cachedAt = parsed?.cachedAt || 0;
+      const isStale = cachedAt
+        ? (now - cachedAt) >= (ttlSeconds * 1000)
+        : false;
+
+      if (isStale) {
+        triggerBackgroundRefresh({
+          key,
+          fetcher,
+          persistSeconds: effectivePersistSeconds,
+        });
+      }
+
+      if (payload !== undefined) return payload;
+    }
+  }
+
+  const result = await fetcher();
+  if (!result?.error) {
+    try {
+      await setCachedData({
+        key,
+        data: {
+          payload: result,
+          cachedAt: now,
+        },
+        ttl: effectivePersistSeconds,
+      });
+      return result;
+    } catch (err) {
+      console.error('staleWhileRevalidate set cache error:', err.message);
+      return result;
+    }
+  }
+
+  return result;
 };
 
 module.exports = {
@@ -137,4 +227,5 @@ module.exports = {
   cacheWrapper,
   cacheWrapperWithTTLRefresh,
   getCache,
+  staleWhileRevalidate,
 };

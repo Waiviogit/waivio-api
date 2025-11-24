@@ -28,9 +28,6 @@ const fromAggregation = async (pipeline) => {
       .option({ maxTimeMS: AGGREGATION_MAX_TIME })
       .allowDiskUse(true);
 
-    if (!wobjects || _.isEmpty(wobjects)) {
-      return { error: { status: 404, message: 'Wobjects not found!' } };
-    }
     return { wobjects };
   } catch (error) {
     return { error };
