@@ -16,7 +16,7 @@ const buildCategoryMap = (result) => {
 };
 
 const getCategoriesByObjectType = async ({ app, objectType, tagsLimit = 3 }) => {
-  const { wobjects: result } = await Wobj.fromAggregation([
+  const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
         'authority.administrative': { $in: getAppAuthorities(app) },
@@ -39,16 +39,19 @@ const getCategoriesByObjectType = async ({ app, objectType, tagsLimit = 3 }) => 
       },
     },
   ]);
+  if (error) return { error };
 
   const myMap = buildCategoryMap(result);
-  return Array.from(
-    myMap,
-    ([tagCategory, tags]) => ({
-      tagCategory,
-      tags: sortAlphabetically(tags).slice(0, tagsLimit),
-      hasMore: tags.length > tagsLimit,
-    }),
-  );
+  return {
+    result: Array.from(
+      myMap,
+      ([tagCategory, tags]) => ({
+        tagCategory,
+        tags: sortAlphabetically(tags).slice(0, tagsLimit),
+        hasMore: tags.length > tagsLimit,
+      }),
+    ),
+  };
 };
 
 const getCategoryTagsByObjectType = async ({
@@ -58,7 +61,7 @@ const getCategoryTagsByObjectType = async ({
   skip = 0,
   limit = 10,
 }) => {
-  const { wobjects: result } = await Wobj.fromAggregation([
+  const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
         'authority.administrative': { $in: getAppAuthorities(app) },
@@ -79,13 +82,16 @@ const getCategoryTagsByObjectType = async ({
       },
     },
   ]);
+  if (error) return { error };
 
   const sortedTags = sortAlphabetically(result.map((item) => item._id));
   const pagedTags = sortedTags.slice(skip, skip + limit);
   return {
-    tagCategory,
-    tags: pagedTags,
-    hasMore: sortedTags.length > skip + limit,
+    result: {
+      tagCategory,
+      tags: pagedTags,
+      hasMore: sortedTags.length > skip + limit,
+    },
   };
 };
 

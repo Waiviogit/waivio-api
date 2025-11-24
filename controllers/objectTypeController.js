@@ -117,11 +117,12 @@ const tagCategories = async (req, res, next) => {
   }, validators.objectType.tagCategoriesSchema, next);
   if (!value) return;
   try {
-    const categories = await getCategoriesByObjectType({
+    const { result: categories, error } = await getCategoriesByObjectType({
       objectType: value.objectType,
       tagsLimit: value.tagsLimit,
       app: req.appData,
     });
+    if (error) return next(error);
 
     return res.status(200).json(categories);
   } catch (error) {
@@ -138,15 +139,16 @@ const tagCategoryDetails = async (req, res, next) => {
   }, validators.objectType.categoryTagsSchema, next);
   if (!value) return;
   try {
-    const response = await getCategoryTagsByObjectType({
+    const { result, error } = await getCategoryTagsByObjectType({
       objectType: value.objectType,
       tagCategory: value.tagCategory,
       skip: value.skip,
       limit: value.limit,
       app: req.appData,
     });
+    if (error) return next(error);
 
-    return res.status(200).json(response);
+    return res.status(200).json(result);
   } catch (error) {
     return next(error);
   }
