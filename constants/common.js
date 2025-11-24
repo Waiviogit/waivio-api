@@ -241,6 +241,6 @@ exports.GUEST_WALLET_TYPE = Object.freeze({
   WITHDRAW: 'guest_withdraw',
 });
 
-exports.AGGREGATION_MAX_TIME = 15000;
+exports.AGGREGATION_MAX_TIME = 30000;
 
 exports.WAIVIO_ADMINS_ENV = (process.env.WAIVIO_ADMINS && process.env.WAIVIO_ADMINS.split(',')) || [];
