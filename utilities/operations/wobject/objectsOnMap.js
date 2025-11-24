@@ -76,7 +76,9 @@ exports.getLastPostOnObjectFromArea = async ({
     const { result: post } = await Post.findOne({
       filter: {
         'wobjects.author_permlink': processedElement.author_permlink,
+        reblog_to: null,
         ...removeCondition,
+        blocked_for_apps: { $ne: app.host },
       },
       options: { sort: { _id: -1 } },
     });

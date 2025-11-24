@@ -1,6 +1,7 @@
 const { Wobj } = require('../../../models');
 const { getAppAuthorities } = require('../../helpers/appHelper');
 const { staleWhileRevalidate } = require('../../helpers/cacheHelper');
+const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 
 const sortAlphabetically = (arr) => arr.slice().sort((a, b) => a.localeCompare(b));
 
@@ -37,11 +38,13 @@ const buildCategoryTagsCacheKey = ({
 );
 
 const fetchCategoriesPayload = async ({ app, objectType }) => {
+  const waivioMain = !app.inherited && !app.canBeExtended;
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
-        'authority.administrative': { $in: getAppAuthorities(app) },
+        ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
         object_type: objectType,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
     }, {
       $unwind: {
@@ -50,6 +53,7 @@ const fetchCategoriesPayload = async ({ app, objectType }) => {
     }, {
       $match: {
         'fields.name': 'categoryItem',
+        'fields.weight': { $gte: 0 },
       },
     }, {
       $group: {
@@ -79,11 +83,14 @@ const fetchCategoryTagsPayload = async ({
   objectType,
   tagCategory,
 }) => {
+  const waivioMain = !app.inherited && !app.canBeExtended;
+
   const { wobjects: result, error } = await Wobj.fromAggregation([
     {
       $match: {
-        'authority.administrative': { $in: getAppAuthorities(app) },
+        ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
         object_type: objectType,
+        'status.title': { $nin: REMOVE_OBJ_STATUSES },
       },
     }, {
       $unwind: {
@@ -93,6 +100,7 @@ const fetchCategoryTagsPayload = async ({
       $match: {
         'fields.name': 'categoryItem',
         'fields.tagCategory': tagCategory,
+        'fields.weight': { $gte: 0 },
       },
     }, {
       $group: {
