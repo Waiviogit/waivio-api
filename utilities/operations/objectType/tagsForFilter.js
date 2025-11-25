@@ -4,6 +4,12 @@ const { staleWhileRevalidate } = require('../../helpers/cacheHelper');
 const { REMOVE_OBJ_STATUSES } = require('../../../constants/wobjectsData');
 
 const sortAlphabetically = (arr) => arr.slice().sort((a, b) => a.localeCompare(b));
+// eslint-disable-next-line no-useless-escape
+const SEARCH_SANITIZE_REGEX = /[.,%?+*|{}\[\]()<>“”^'"\\\-_=!&$:]/g;
+
+const sanitizeSearchString = (searchString) => (
+  searchString ? searchString.replace(SEARCH_SANITIZE_REGEX, '').trim() : ''
+);
 
 const buildCategoryMap = (result) => {
   const myMap = new Map();
@@ -25,21 +31,47 @@ const CACHE_NAMESPACE = {
 
 const getAppHost = (app) => app?.host || 'global';
 
-const buildCategoriesCacheKey = ({ app, objectType }) => (
-  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}`
+const getSearchKeySuffix = (searchString) => (
+  searchString ? `:search=${encodeURIComponent(searchString)}` : ''
+);
+
+const buildCategoriesCacheKey = ({ app, objectType, searchString }) => (
+  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}${getSearchKeySuffix(searchString)}`
 );
 
 const buildCategoryTagsCacheKey = ({
   app,
   objectType,
   tagCategory,
+  searchString,
 }) => (
-  `${CACHE_NAMESPACE.CATEGORY_TAGS}:${getAppHost(app)}:${objectType}:${tagCategory}`
+  `${CACHE_NAMESPACE.CATEGORY_TAGS}:${getAppHost(app)}:${objectType}:${tagCategory}${getSearchKeySuffix(searchString)}`
 );
 
-const fetchCategoriesPayload = async ({ app, objectType }) => {
+const buildSearchMatchStage = (searchString) => {
+  if (!searchString) return null;
+  const normalized = sanitizeSearchString(searchString);
+  if (!normalized) return null;
+
+  return {
+    $match: {
+      $or: [
+        { $text: { $search: `"${normalized}"` } },
+        {
+          author_permlink: {
+            $regex: `${searchString?.[3] === '-' ? `^${searchString}` : '_'}`,
+            $options: 'i',
+          },
+        },
+      ],
+    },
+  };
+};
+
+const fetchCategoriesPayload = async ({ app, objectType, searchString }) => {
   const waivioMain = !app.inherited && !app.canBeExtended;
-  const { wobjects: result, error } = await Wobj.fromAggregation([
+  const searchStage = buildSearchMatchStage(searchString);
+  const pipeline = [
     {
       $match: {
         ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
@@ -63,7 +95,10 @@ const fetchCategoriesPayload = async ({ app, objectType }) => {
         },
       },
     },
-  ]);
+  ];
+  if (searchStage) pipeline.unshift(searchStage);
+
+  const { wobjects: result, error } = await Wobj.fromAggregation(pipeline);
   if (error) return { error };
 
   const myMap = buildCategoryMap(result);
@@ -82,10 +117,12 @@ const fetchCategoryTagsPayload = async ({
   app,
   objectType,
   tagCategory,
+  searchString,
 }) => {
   const waivioMain = !app.inherited && !app.canBeExtended;
+  const searchStage = buildSearchMatchStage(searchString);
 
-  const { wobjects: result, error } = await Wobj.fromAggregation([
+  const pipeline = [
     {
       $match: {
         ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
@@ -107,7 +144,10 @@ const fetchCategoryTagsPayload = async ({
         _id: '$fields.body',
       },
     },
-  ]);
+  ];
+  if (searchStage) pipeline.unshift(searchStage);
+
+  const { wobjects: result, error } = await Wobj.fromAggregation(pipeline);
   if (error) return { error };
 
   return {
@@ -118,12 +158,14 @@ const fetchCategoryTagsPayload = async ({
   };
 };
 
-const getCategoriesByObjectType = async ({ app, objectType, tagsLimit = 3 }) => {
-  const cacheKey = buildCategoriesCacheKey({ app, objectType });
+const getCategoriesByObjectType = async ({
+  app, objectType, tagsLimit = 3, searchString,
+}) => {
+  const cacheKey = buildCategoriesCacheKey({ app, objectType, searchString });
   const basePayload = await staleWhileRevalidate({
     key: cacheKey,
     ttlSeconds: HOUR_IN_SECONDS,
-    fetcher: () => fetchCategoriesPayload({ app, objectType }),
+    fetcher: () => fetchCategoriesPayload({ app, objectType, searchString }),
   });
 
   if (basePayload?.error) return basePayload;
@@ -144,12 +186,20 @@ const getCategoryTagsByObjectType = async ({
   tagCategory,
   skip = 0,
   limit = 10,
+  searchString,
 }) => {
-  const cacheKey = buildCategoryTagsCacheKey({ app, objectType, tagCategory });
+  const cacheKey = buildCategoryTagsCacheKey({
+    app, objectType, tagCategory, searchString,
+  });
   const basePayload = await staleWhileRevalidate({
     key: cacheKey,
     ttlSeconds: HOUR_IN_SECONDS,
-    fetcher: () => fetchCategoryTagsPayload({ app, objectType, tagCategory }),
+    fetcher: () => fetchCategoryTagsPayload({
+      app,
+      objectType,
+      tagCategory,
+      searchString,
+    }),
   });
 
   if (basePayload?.error) return basePayload;

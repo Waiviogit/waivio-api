@@ -58,6 +58,7 @@ exports.tagCategoriesSchema = Joi.object().keys({
   objectType: Joi.string().required(),
   tagsLimit: Joi.number().integer().min(1).max(100)
     .default(3),
+  searchString: Joi.string().trim(),
 });
 
 exports.categoryTagsSchema = Joi.object().keys({
@@ -66,4 +67,5 @@ exports.categoryTagsSchema = Joi.object().keys({
   skip: Joi.number().integer().min(0).default(0),
   limit: Joi.number().integer().min(1).max(100)
     .default(10),
+  searchString: Joi.string().trim(),
 });

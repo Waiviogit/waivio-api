@@ -344,6 +344,13 @@ module.exports = {
           type: 'integer',
           default: 3,
         },
+        {
+          name: 'searchString',
+          in: 'query',
+          description: 'Optional search phrase to filter categories',
+          required: false,
+          type: 'string',
+        },
       ],
       responses: {
         200: {
@@ -424,6 +431,13 @@ module.exports = {
           required: false,
           type: 'integer',
           default: 10,
+        },
+        {
+          name: 'searchString',
+          in: 'query',
+          description: 'Optional search phrase to filter tags inside category',
+          required: false,
+          type: 'string',
         },
       ],
       responses: {

@@ -114,12 +114,14 @@ const tagCategories = async (req, res, next) => {
   const value = validators.validate({
     objectType: req.params.objectTypeName,
     tagsLimit: req.query.tagsLimit,
+    searchString: req.query.searchString,
   }, validators.objectType.tagCategoriesSchema, next);
   if (!value) return;
   try {
     const { result: categories, error } = await getCategoriesByObjectType({
       objectType: value.objectType,
       tagsLimit: value.tagsLimit,
+      searchString: value.searchString,
       app: req.appData,
     });
     if (error) return next(error);
@@ -136,6 +138,7 @@ const tagCategoryDetails = async (req, res, next) => {
     tagCategory: req.params.tagCategory,
     skip: req.query.skip,
     limit: req.query.limit,
+    searchString: req.query.searchString,
   }, validators.objectType.categoryTagsSchema, next);
   if (!value) return;
   try {
@@ -144,6 +147,7 @@ const tagCategoryDetails = async (req, res, next) => {
       tagCategory: value.tagCategory,
       skip: value.skip,
       limit: value.limit,
+      searchString: value.searchString,
       app: req.appData,
     });
     if (error) return next(error);
