@@ -296,7 +296,10 @@ const reMakeAffiliateLinks = async ({
   locale,
   countryCode,
 }) => {
-  const idTypes = object.productId.map((el) => parseJson(el.body, {})?.productIdType);
+  const idTypes = object.productId.map((el) => parseJson(el.body, {})?.productIdType)
+    .filter((el) => el !== 'instacart');
+  // instacart filter we want show it on waivio only for now
+  if (!idTypes?.length) return [];
 
   const { result } = await Wobj.find(
     {
