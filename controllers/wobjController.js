@@ -837,14 +837,16 @@ const getInstacartLink = async (req, res, next) => {
   const value = validators.validate(
     {
       ...req.params,
+      locale: req.headers.locale,
     },
     validators.wobject.instacartLinkScheme,
     next,
   );
   if (!value) return;
-
+  const countryCode = await getCountryCodeFromIp(getIpFromHeaders(req));
   const { result, error } = await getInstacartLinkByObject({
     app: req.appData,
+    countryCode,
     ...value,
   });
   if (error) return next(error);
