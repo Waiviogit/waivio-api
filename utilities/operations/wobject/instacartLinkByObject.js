@@ -90,7 +90,7 @@ const getInstacartLinkByObject = async ({
   const affiliatePart = getInstacartAffiliatePart({ affiliateLinks });
 
   const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
-  if (link) return { result: `${link}${affiliatePart}` };
+  if (link) return { result: link };
 
   const payload = {
     title: processed.name,
@@ -115,7 +115,7 @@ const getInstacartLinkByObject = async ({
     client: redis.mainFeedsCacheClient,
   });
 
-  return { result: `${result.products_link_url}${affiliatePart}` };
+  return { result: result.products_link_url };
 };
 
 module.exports = {
