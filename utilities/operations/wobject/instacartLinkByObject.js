@@ -7,8 +7,7 @@ const {
   TTL_TIME,
 } = require('../../../constants/common');
 const { wObjectHelper, jsonHelper } = require('../../helpers');
-const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
-const { makeAffiliateLinks } = require('../affiliateProgram/makeAffiliateLinks');
+const { promptWithJsonSchema } = require('../../openai/openaiClient');
 
 const INSTACART_HOST = process.env.INSTACART_HOST || 'connect.dev.instacart.tools';
 const { INSTACART_KEY } = process.env;
@@ -19,10 +18,77 @@ const instacartPayloadSchema = Joi.object().keys({
   link_type: Joi.string().required(),
   instructions: Joi.array().items(Joi.string()),
   ingredients: Joi.array()
-    .items(Joi.object().keys({ name: Joi.string().required() }))
+    .items(Joi.object().keys({
+      name: Joi.string().required(),
+      measurements: Joi.array().items(Joi.object().keys({
+        quantity: Joi.number().required(),
+        unit: Joi.string().required(),
+      })),
+    }))
     .min(1)
     .required(),
 });
+
+const instacartIngredientsSchema = {
+  name: 'instacart_ingredients_schema',
+  schema: {
+    type: 'object',
+    properties: {
+      ingredients: {
+        type: 'array',
+        description: 'List of product ingredients.',
+        items: {
+          type: 'object',
+          description: 'A single product ingredient.',
+          properties: {
+            name: {
+              type: 'string',
+              description: 'The product name. Instacart uses it as a search term.',
+              minLength: 1,
+            },
+            measurements: {
+              type: 'array',
+              description: 'Measurement units used to specify the ingredient quantity in multiple ways.',
+              items: {
+                type: 'object',
+                properties: {
+                  quantity: {
+                    type: 'number',
+                    description: 'The product quantity. Represents item count or measurement based on the unit. Defaults to 1.0. must be gt than 0',
+                  },
+                  unit: {
+                    type: 'string',
+                    description: "The unit of measurement. Examples: each, package, tablespoon, teaspoon, ounce, kilogram. Defaults to 'each'.",
+                  },
+                },
+              },
+            },
+          },
+          required: ['name', 'measurements'],
+        },
+      },
+    },
+    required: ['ingredients'],
+  },
+};
+
+const getRecipeIngredients = async (object) => {
+  if (process.env.NODE_ENV !== 'production') return jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el }));
+
+  const prompt = `Based on recipe description and ingredients format ingredients according to schema;
+  name: ${object.name}
+  description: ${object.description}
+  ingredients: ${object?.recipeIngredients}
+  if ingredients says this amount or that in terms of quantity pick one with bigger quantity
+  `;
+
+  const { result, error } = await promptWithJsonSchema({
+    prompt, jsonSchema: instacartIngredientsSchema,
+  });
+
+  if (error) return jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el }));
+  return result.ingredients;
+};
 
 const createRecipeInstacart = async (payload) => {
   const url = `https://${INSTACART_HOST}/idp/v1/products/recipe`;
@@ -39,7 +105,17 @@ const createRecipeInstacart = async (payload) => {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
+      // try to read JSON error first
+      let errorBody;
+      try {
+        errorBody = await response.json();
+      } catch (_) {
+        errorBody = await response.text(); // fallback when response is not JSON
+      }
+
+      throw new Error(
+        `HTTP ${response.status}: ${JSON.stringify(errorBody)}`,
+      );
     }
 
     const data = await response.json();
@@ -47,14 +123,6 @@ const createRecipeInstacart = async (payload) => {
   } catch (error) {
     return { error };
   }
-};
-
-const getInstacartAffiliatePart = ({ affiliateLinks }) => {
-  if (process.env.NODE_ENV !== 'production') return '';
-  const partnerId = affiliateLinks.find((el) => el.type === 'instacart')?.affiliateCode;
-  if (!partnerId) return '';
-
-  return `?utm_campaign=instacart-idp&utm_medium=affiliate&utm_source=instacart_idp&utm_term=partnertype-mediapartner&utm_content=campaignid-20313_partnerid-${partnerId}`;
 };
 
 const getInstacartLinkByObject = async ({
@@ -66,7 +134,9 @@ const getInstacartLinkByObject = async ({
   const { wObject, error } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.RECIPE);
   if (error) return { error };
 
-  const affiliateCodes = await processAppAffiliate({ app, locale });
+  const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
+  if (link) return { result: link };
+
   const processed = await wObjectHelper.processWobjects({
     fields: [
       FIELDS_NAMES.DESCRIPTION,
@@ -80,22 +150,12 @@ const getInstacartLinkByObject = async ({
     returnArray: false,
   });
 
-  const affiliateLinks = makeAffiliateLinks({
-    productIds: processed.productId,
-    affiliateCodes,
-    countryCode,
-    objectType: processed.object_type,
-  });
-
-  const affiliatePart = getInstacartAffiliatePart({ affiliateLinks });
-
-  const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
-  if (link) return { result: link };
+  const ingredients = await getRecipeIngredients(processed);
 
   const payload = {
     title: processed.name,
     link_type: 'recipe',
-    ingredients: jsonHelper.parseJson(processed.recipeIngredients).map((el) => ({ name: el })),
+    ingredients,
     ...(processed.avatar && { image_url: processed.avatar }),
     ...(processed.description && { instructions: [processed.description] }),
   };
