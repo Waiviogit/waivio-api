@@ -79,7 +79,8 @@ const getRecipeIngredients = async (object) => {
   name: ${object.name}
   description: ${object.description}
   ingredients: ${object?.recipeIngredients}
-  if ingredients says this amount or that in terms of quantity pick one with bigger quantity
+  if ingredients says this amount or that amount in terms of quantity pick one with bigger quantity
+  if description says use this ore that pick both
   `;
 
   const { result, error } = await promptWithJsonSchema({
