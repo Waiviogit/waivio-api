@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/post/{author}/{permlink}': {
     get: {
@@ -567,13 +569,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',

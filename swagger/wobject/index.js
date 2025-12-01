@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/wobjects/map/last-post': {
     post: {
@@ -1981,13 +1983,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Access token for authentication',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'authorPermlink',
           in: 'path',
