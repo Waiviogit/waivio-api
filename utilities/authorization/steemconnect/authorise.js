@@ -22,7 +22,7 @@ const authoriseRequest = async (token) => {
  * Authorise user using token of steemconnect
  * @param {string} token Valid token of steemconnect
  * @param {string} username User name for particular token
- * @returns {Boolean}  true if "token" valid for current "username", else false
+ * @returns Promise{Boolean}  true if "token" valid for current "username", else false
  */
 exports.authoriseUser = async (token = '', username = '') => {
   if (!token || token === '') return false;

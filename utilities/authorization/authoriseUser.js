@@ -1,6 +1,7 @@
 const { WAIVIO_ADMINS_ENV } = require('../../constants/common');
 const authoriseSteemconnect = require('./steemconnect/authorise');
 const waivioAuthorise = require('./waivioAuth/authorise');
+const keychainAuth = require('./keychain/authorise');
 const hiveAuthorise = require('./hiveAuth/authorise');
 const asyncLocalStorage = require('../../middlewares/context/context');
 
@@ -24,26 +25,21 @@ const authoriseResponse = (valid, username) => {
   return { error: { status: 401, message: 'The Waivio authorization token is invalid!' } };
 };
 
+const VALIDATION_METHOD = {
+  'hive-auth': hiveAuthorise.authorise,
+  'hive-signer': authoriseSteemconnect.authoriseUser,
+  'hive-keychain': keychainAuth.authorise,
+  'waivio-auth': waivioAuthorise.authorise,
+  default: () => false,
+};
+
 exports.authorise = async (username) => {
   const store = asyncLocalStorage.getStore();
-
   const accessToken = store.get('access-token');
-  const hiveAuth = store.get('hive-auth');
-  const isWaivioAuth = store.get('waivio-auth');
-
-  if (isWaivioAuth) {
-    const isValidToken = await waivioAuthorise.authorise(username, accessToken);
-    return authoriseResponse(isValidToken, username);
-  }
-  if (hiveAuth) {
-    const isValidToken = hiveAuthorise.authorise({ token: accessToken, username });
-    return authoriseResponse(isValidToken, username);
-  }
-  if (accessToken && !hiveAuth) {
-    const isValidToken = await authoriseSteemconnect.authoriseUser(accessToken, username);
-    return authoriseResponse(isValidToken, username);
-  }
-  return { error: { status: 401, message: 'The Waivio authorization token is invalid' } };
+  const authType = store.get('auth-type');
+  const validationMethod = VALIDATION_METHOD[authType] || VALIDATION_METHOD.default;
+  const isValidToken = await validationMethod(accessToken, username);
+  return authoriseResponse(isValidToken, username);
 };
 
 exports.checkAdmin = async (name) => {

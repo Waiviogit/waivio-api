@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/draft/post': {
     post: {
@@ -5,13 +7,7 @@ module.exports = {
       description: 'create/update draft',
       produces: ['application/json'],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -78,13 +74,7 @@ module.exports = {
       description: 'delete draft',
       produces: ['application/json'],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -183,13 +173,7 @@ module.exports = {
       description: 'create/update draft',
       produces: ['application/json'],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'user',
           in: 'body',
@@ -258,13 +242,7 @@ module.exports = {
       description: 'create/update draft',
       produces: ['application/json'],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'user',
           in: 'body',

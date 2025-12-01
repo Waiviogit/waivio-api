@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/admins': {
     get: {
@@ -39,12 +41,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -79,12 +76,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'skip',
           in: 'query',
@@ -139,12 +131,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -190,12 +177,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -257,12 +239,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -311,12 +288,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -364,12 +336,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -419,12 +386,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -479,12 +441,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -575,12 +532,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -652,12 +604,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
@@ -729,12 +676,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'name',
           in: 'path',
@@ -804,12 +746,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'body',
           in: 'body',
