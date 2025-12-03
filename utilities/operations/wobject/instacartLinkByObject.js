@@ -8,6 +8,8 @@ const {
 } = require('../../../constants/common');
 const { wObjectHelper, jsonHelper } = require('../../helpers');
 const { promptWithJsonSchema } = require('../../openai/openaiClient');
+const getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
+const getPostsByObject = require('./getPostsByWobject');
 
 const INSTACART_HOST = process.env.INSTACART_HOST || 'connect.dev.instacart.tools';
 const { INSTACART_KEY } = process.env;
@@ -126,6 +128,20 @@ const createRecipeInstacart = async (payload) => {
   }
 };
 
+const getRecipePreparationPost = async ({ authorPermlink, app }) => {
+  const { posts = [] } = await getWobjectPinnedPosts({
+    author_permlink: authorPermlink,
+    app,
+  });
+  if (posts[0]) return posts[0]?.body;
+
+  const { posts: feedPost } = await getPostsByObject({
+    author_permlink: authorPermlink, app, skip: 0, limit: 1,
+  });
+  if (feedPost[0]) return feedPost[0]?.body;
+  return '';
+};
+
 const getInstacartLinkByObject = async ({
   app, authorPermlink, locale, countryCode,
 }) => {
@@ -151,14 +167,19 @@ const getInstacartLinkByObject = async ({
     returnArray: false,
   });
 
-  const ingredients = await getRecipeIngredients(processed);
+  const [ingredients, preparationPost] = await Promise.all([
+    getRecipeIngredients(processed),
+    getRecipePreparationPost({ authorPermlink, app }),
+  ]);
+
+  const preparation = preparationPost || processed.description;
 
   const payload = {
     title: processed.name,
     link_type: 'recipe',
     ingredients,
     ...(processed.avatar && { image_url: processed.avatar }),
-    ...(processed.description && { instructions: [processed.description] }),
+    ...(preparation && { instructions: [preparation] }),
   };
   const { value, error: validationError } = instacartPayloadSchema.validate(payload);
 

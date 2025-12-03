@@ -42,7 +42,7 @@ const getPostRetriever = ({ data, wObject }) => {
   return postsQuery[POST_RETRIEVER.REGULAR];
 };
 
-module.exports = async (data) => {
+const getPostsByObject = async (data) => {
   const groupIdPermlinks = [];
   const { hiddenPosts = [] } = await hiddenPostModel.getHiddenPosts(data.userName);
   const { result: muted = [] } = await mutedUserModel
@@ -373,3 +373,5 @@ const getNewsFilterCondition = ({
 
   return { condition };
 };
+
+module.exports = getPostsByObject;
