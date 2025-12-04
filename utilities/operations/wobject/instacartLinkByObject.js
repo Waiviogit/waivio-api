@@ -69,28 +69,50 @@ const instacartIngredientsSchema = {
           required: ['name', 'measurements'],
         },
       },
+      instructions: {
+        type: 'array',
+        description: 'preparation instructions',
+        minLength: 1,
+        items: {
+          type: 'string',
+          description: 'preparation step',
+        },
+      },
     },
-    required: ['ingredients'],
+    required: ['ingredients', 'instructions'],
   },
 };
 
-const getRecipeIngredients = async (object) => {
-  if (process.env.NODE_ENV !== 'production') return jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el }));
+const getRecipeIngredients = async (object, preparation) => {
+  // if (process.env.NODE_ENV !== 'production') {
+  //   return {
+  //     ingredients: jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el })),
+  //     instructions: [preparation],
+  //   };
+  // }
 
   const prompt = `Based on recipe description and ingredients format ingredients according to schema;
   name: ${object.name}
   description: ${object.description}
   ingredients: ${object?.recipeIngredients}
   if ingredients says this amount or that amount in terms of quantity pick one with bigger quantity
-  if description says use this ore that make each as ingredient pick both
+  if description says use this ore that make each as ingredient pick both;
+  
+  Divide recipe preparation into steps: ${preparation}
   `;
 
   const { result, error } = await promptWithJsonSchema({
     prompt, jsonSchema: instacartIngredientsSchema,
   });
 
-  if (error) return jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el }));
-  return result.ingredients;
+  if (error || !result.ingredients || !result.instructions) {
+    return {
+      ingredients: jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el })),
+      instructions: [preparation],
+    };
+  }
+
+  return result;
 };
 
 const createRecipeInstacart = async (payload) => {
@@ -167,19 +189,16 @@ const getInstacartLinkByObject = async ({
     returnArray: false,
   });
 
-  const [ingredients, preparationPost] = await Promise.all([
-    getRecipeIngredients(processed),
-    getRecipePreparationPost({ authorPermlink, app }),
-  ]);
-
+  const preparationPost = await getRecipePreparationPost({ authorPermlink, app });
   const preparation = preparationPost || processed.description;
+  const { ingredients, instructions } = await getRecipeIngredients(processed, preparation);
 
   const payload = {
     title: processed.name,
     link_type: 'recipe',
     ingredients,
+    instructions,
     ...(processed.avatar && { image_url: processed.avatar }),
-    ...(preparation && { instructions: [preparation] }),
   };
   const { value, error: validationError } = instacartPayloadSchema.validate(payload);
 
