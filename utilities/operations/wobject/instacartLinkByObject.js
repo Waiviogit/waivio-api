@@ -84,12 +84,12 @@ const instacartIngredientsSchema = {
 };
 
 const getRecipeIngredients = async (object, preparation) => {
-  // if (process.env.NODE_ENV !== 'production') {
-  //   return {
-  //     ingredients: jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el })),
-  //     instructions: [preparation],
-  //   };
-  // }
+  if (process.env.NODE_ENV !== 'production') {
+    return {
+      ingredients: jsonHelper.parseJson(object.recipeIngredients).map((el) => ({ name: el })),
+      instructions: [preparation],
+    };
+  }
 
   const prompt = `Based on recipe description and ingredients format ingredients according to schema;
   name: ${object.name}
