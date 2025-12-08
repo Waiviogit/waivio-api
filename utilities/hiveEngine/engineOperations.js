@@ -1,5 +1,6 @@
 const _ = require('lodash');
 const BigNumber = require('bignumber.js');
+const moment = require('moment');
 const { redisGetter } = require('../redis');
 const { CACHE_KEY } = require('../../constants/common');
 const { captureException } = require('../helpers/sentryHelper');
@@ -128,8 +129,57 @@ exports.addWAIVToCommentsObject = async (content) => {
   }
 };
 
+exports.accountHistory = async (params) => {
+  try {
+    const url = new URL('https://history.hive-engine.com/accountHistory');
+    Object.keys(params || {}).forEach((key) => {
+      url.searchParams.append(key, params[key]);
+    });
+    const response = await fetch(url.toString());
+    const result = await response.json();
+    return { result };
+  } catch (error) {
+    return { error };
+  }
+};
+
+const getWaivRewardFromCommentAfterPayout = async (comment) => {
+  const timestampStart = moment(comment.created).add((24 * 6) + 23, 'h').unix();
+  const timestampEnd = moment(comment.created).add((24 * 7) + 5, 'h').unix();
+  const accounts = [comment.author, ...(comment.beneficiaries ?? []).map((el) => el.account)];
+  let total = 0;
+
+  for (const account of accounts) {
+    const query = {
+      ops: ['comments_authorReward', 'comments_beneficiaryReward'].toString(),
+      account,
+      timestampStart,
+      timestampEnd,
+      limit: 10,
+      symbol: 'WAIV',
+    };
+
+    const { result } = await this.accountHistory(query);
+    if (!result || !result?.length) continue;
+
+    const payout = result.find((el) => el.authorperm === `@${comment.author}/${comment.permlink}`)?.quantity;
+    if (!payout) continue;
+    total += parseFloat(payout);
+  }
+
+  return Number((total * 2).toFixed(8));
+};
+
 exports.addWAIVToSingleComment = async (content) => {
   if (!content && !content.author && !content.permlink) return;
+  const createdOverAWeek = moment().diff(moment(content.created), 'day') > 7;
+
+  if (createdOverAWeek) {
+    const reward = await getWaivRewardFromCommentAfterPayout(content);
+    content.total_payout_WAIV = reward;
+    return;
+  }
+
   const commentsWithWaiv = await getCommentsWithWaiv({
     query: { authorperm: `@${content.author}/${content.permlink}`, symbol: TOKEN_WAIV.SYMBOL, voteRshareSum: { $gt: '0' } },
   });
