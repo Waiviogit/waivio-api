@@ -164,6 +164,11 @@ const getRecipePreparationPost = async ({ authorPermlink, app }) => {
   return '';
 };
 
+const generateTrackIds = (host) => {
+  const uuid = crypto.randomUUID();
+  return `&subId1=${uuid}&subId2=${host}`;
+};
+
 const getInstacartLinkByObject = async ({
   app, authorPermlink, locale, countryCode,
 }) => {
@@ -174,7 +179,8 @@ const getInstacartLinkByObject = async ({
   if (error) return { error };
 
   const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
-  if (link) return { result: link };
+
+  if (link) return { result: `${link}${generateTrackIds(app.host)}` };
 
   const processed = await wObjectHelper.processWobjects({
     fields: [
@@ -216,7 +222,7 @@ const getInstacartLinkByObject = async ({
     client: redis.mainFeedsCacheClient,
   });
 
-  return { result: result.products_link_url };
+  return { result: `${result.products_link_url}${generateTrackIds(app.host)}` };
 };
 
 module.exports = {
