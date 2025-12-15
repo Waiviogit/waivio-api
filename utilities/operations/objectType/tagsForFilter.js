@@ -35,8 +35,14 @@ const getSearchKeySuffix = (searchString) => (
   searchString ? `:search=${encodeURIComponent(searchString)}` : ''
 );
 
-const buildCategoriesCacheKey = ({ app, objectType, searchString }) => (
-  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}${getSearchKeySuffix(searchString)}`
+const getSelectedTagsKeySuffix = (selectedTags) => (
+  selectedTags?.length ? `:tags=${selectedTags.sort().join(',')}` : ''
+);
+
+const buildCategoriesCacheKey = ({
+  app, objectType, searchString, selectedTags,
+}) => (
+  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}${getSearchKeySuffix(searchString)}${getSelectedTagsKeySuffix(selectedTags)}`
 );
 
 const buildCategoryTagsCacheKey = ({
@@ -44,8 +50,9 @@ const buildCategoryTagsCacheKey = ({
   objectType,
   tagCategory,
   searchString,
+  selectedTags,
 }) => (
-  `${CACHE_NAMESPACE.CATEGORY_TAGS}:${getAppHost(app)}:${objectType}:${tagCategory}${getSearchKeySuffix(searchString)}`
+  `${CACHE_NAMESPACE.CATEGORY_TAGS}:${getAppHost(app)}:${objectType}:${tagCategory}${getSearchKeySuffix(searchString)}${getSelectedTagsKeySuffix(selectedTags)}`
 );
 
 const buildSearchMatchStage = (searchString) => {
@@ -68,15 +75,29 @@ const buildSearchMatchStage = (searchString) => {
   };
 };
 
-const fetchCategoriesPayload = async ({ app, objectType, searchString }) => {
+const fetchCategoriesPayload = async ({
+  app, objectType, searchString, selectedTags,
+}) => {
   const waivioMain = !app.inherited && !app.canBeExtended;
   const searchStage = buildSearchMatchStage(searchString);
+
+  const selectedTagsCondition = {};
+
+  if (selectedTags?.length) {
+    selectedTagsCondition.$and = selectedTags.map((el) => ({
+      'fields.name': 'categoryItem',
+      'fields.body': el,
+      'fields.weight': { $gte: 0 },
+    }));
+  }
+
   const pipeline = [
     {
       $match: {
         ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
         object_type: objectType,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...selectedTagsCondition,
       },
     }, {
       $unwind: {
@@ -118,9 +139,21 @@ const fetchCategoryTagsPayload = async ({
   objectType,
   tagCategory,
   searchString,
+  selectedTags,
 }) => {
   const waivioMain = !app.inherited && !app.canBeExtended;
   const searchStage = buildSearchMatchStage(searchString);
+
+  const selectedTagsCondition = {};
+
+  if (selectedTags?.length) {
+    selectedTagsCondition.$and = selectedTags.map((el) => ({
+      'fields.name': 'categoryItem',
+      'fields.body': el,
+      'fields.tagCategory': tagCategory,
+      'fields.weight': { $gte: 0 },
+    }));
+  }
 
   const pipeline = [
     {
@@ -128,6 +161,7 @@ const fetchCategoryTagsPayload = async ({
         ...(!waivioMain && { 'authority.administrative': { $in: getAppAuthorities(app) } }),
         object_type: objectType,
         'status.title': { $nin: REMOVE_OBJ_STATUSES },
+        ...selectedTagsCondition,
       },
     }, {
       $unwind: {
@@ -159,13 +193,17 @@ const fetchCategoryTagsPayload = async ({
 };
 
 const getCategoriesByObjectType = async ({
-  app, objectType, tagsLimit = 3, searchString,
+  app, objectType, tagsLimit = 3, searchString, selectedTags,
 }) => {
-  const cacheKey = buildCategoriesCacheKey({ app, objectType, searchString });
+  const cacheKey = buildCategoriesCacheKey({
+    app, objectType, searchString, selectedTags,
+  });
   const basePayload = await staleWhileRevalidate({
     key: cacheKey,
     ttlSeconds: HOUR_IN_SECONDS,
-    fetcher: () => fetchCategoriesPayload({ app, objectType, searchString }),
+    fetcher: () => fetchCategoriesPayload({
+      app, objectType, searchString, selectedTags,
+    }),
   });
 
   if (basePayload?.error) return basePayload;
@@ -187,9 +225,10 @@ const getCategoryTagsByObjectType = async ({
   skip = 0,
   limit = 10,
   searchString,
+  selectedTags,
 }) => {
   const cacheKey = buildCategoryTagsCacheKey({
-    app, objectType, tagCategory, searchString,
+    app, objectType, tagCategory, searchString, selectedTags,
   });
   const basePayload = await staleWhileRevalidate({
     key: cacheKey,
@@ -199,6 +238,7 @@ const getCategoryTagsByObjectType = async ({
       objectType,
       tagCategory,
       searchString,
+      selectedTags,
     }),
   });
 

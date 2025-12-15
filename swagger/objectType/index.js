@@ -351,6 +351,17 @@ module.exports = {
           required: false,
           type: 'string',
         },
+        {
+          name: 'selectedTags',
+          in: 'query',
+          description: 'Array of already selected tags to filter objects',
+          required: false,
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+          collectionFormat: 'multi',
+        },
       ],
       responses: {
         200: {
@@ -438,6 +449,17 @@ module.exports = {
           description: 'Optional search phrase to filter tags inside category',
           required: false,
           type: 'string',
+        },
+        {
+          name: 'selectedTags',
+          in: 'query',
+          description: 'Array of already selected tags to filter objects',
+          required: false,
+          type: 'array',
+          items: {
+            type: 'string',
+          },
+          collectionFormat: 'multi',
         },
       ],
       responses: {

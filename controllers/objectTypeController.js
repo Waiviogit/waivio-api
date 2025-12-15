@@ -111,10 +111,17 @@ const tagsForFilter = async (req, res, next) => {
 };
 
 const tagCategories = async (req, res, next) => {
+  const selectedTags = req.query.selectedTags
+    ? Array.isArray(req.query.selectedTags)
+      ? req.query.selectedTags
+      : [req.query.selectedTags]
+    : [];
+
   const value = validators.validate({
     objectType: req.params.objectTypeName,
     tagsLimit: req.query.tagsLimit,
     searchString: req.query.searchString,
+    selectedTags,
   }, validators.objectType.tagCategoriesSchema, next);
   if (!value) return;
   try {
@@ -122,6 +129,7 @@ const tagCategories = async (req, res, next) => {
       objectType: value.objectType,
       tagsLimit: value.tagsLimit,
       searchString: value.searchString,
+      selectedTags: value.selectedTags,
       app: req.appData,
     });
     if (error) return next(error);
@@ -133,12 +141,19 @@ const tagCategories = async (req, res, next) => {
 };
 
 const tagCategoryDetails = async (req, res, next) => {
+  const selectedTags = req.query.selectedTags
+    ? Array.isArray(req.query.selectedTags)
+      ? req.query.selectedTags
+      : [req.query.selectedTags]
+    : [];
+
   const value = validators.validate({
     objectType: req.params.objectTypeName,
     tagCategory: req.params.tagCategory,
     skip: req.query.skip,
     limit: req.query.limit,
     searchString: req.query.searchString,
+    selectedTags,
   }, validators.objectType.categoryTagsSchema, next);
   if (!value) return;
   try {
@@ -148,6 +163,7 @@ const tagCategoryDetails = async (req, res, next) => {
       skip: value.skip,
       limit: value.limit,
       searchString: value.searchString,
+      selectedTags: value.selectedTags,
       app: req.appData,
     });
     if (error) return next(error);
