@@ -544,6 +544,9 @@ exports.setBuyAction = async (req, res, next) => {
   const host = req?.appData?.host;
   const userAgent = req.get('User-Agent');
 
+  console.log('x-forwarded-for', req.headers['x-forwarded-for']);
+  console.log('x-real-ip', req.headers['x-real-ip']);
+
   const { result, hasMore, error } = await sitesStatistic.setSiteAction({
     ip, host, userAgent,
   });
