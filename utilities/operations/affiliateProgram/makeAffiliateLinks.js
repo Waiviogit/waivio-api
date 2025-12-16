@@ -128,7 +128,6 @@ const chooseOneFromSimilar = ({ similar, countryCode }) => {
 };
 
 const filterByIdType = ({ affiliateCodes, countryCode, objectType }) => {
-  if (objectType === OBJECT_TYPES.RECIPE) return affiliateCodes;
   const filtered = [];
   const alreadyUsed = [];
 
@@ -171,7 +170,7 @@ const makeAffiliateLinks = ({
         && !AFFILIATE_NULL_TYPES.includes(p.productId)),
   );
 
-  if (exactMatched.length && objectType !== OBJECT_TYPES.RECIPE) {
+  if (exactMatched.length) {
     const ids = mappedProductIds
       .filter((el) => exactMatched
         .some((aff) => aff.affiliateUrlTemplate.includes(el.productIdType)
@@ -214,7 +213,7 @@ const makeAffiliateLinks = ({
       );
       if (similar) continue;
 
-      if (objectType !== OBJECT_TYPES.RECIPE) usedAffiliate.push(affiliateCodeEl);
+      usedAffiliate.push(affiliateCodeEl);
       const affiliateCode = getAffiliateCode(affiliateCodeEl.affiliateCode);
       if (!affiliateCode) continue;
 
