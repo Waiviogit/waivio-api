@@ -31,9 +31,9 @@ class UrlRotationManager {
     }
 
     return {
-      errors: parseInt(stats.errors) || 0,
-      totalRequests: parseInt(stats.totalRequests) || 0,
-      totalResponseTime: parseInt(stats.totalResponseTime) || 0,
+      errors: parseInt(stats.errors, 10) || 0,
+      totalRequests: parseInt(stats.totalRequests, 10) || 0,
+      totalResponseTime: parseInt(stats.totalResponseTime, 10) || 0,
       avgResponseTime: parseFloat(stats.avgResponseTime) || 0,
       avgErrors: parseFloat(stats.avgErrors) || 0,
       weight: parseFloat(stats.weight) || 1.0,

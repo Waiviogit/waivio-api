@@ -59,7 +59,10 @@ exports.tagCategoriesSchema = Joi.object().keys({
   tagsLimit: Joi.number().integer().min(1).max(100)
     .default(3),
   searchString: Joi.string().trim(),
-  selectedTags: Joi.array().items(Joi.string()).default([]),
+  tagCategory: Joi.array().items(Joi.object().keys({
+    categoryName: Joi.string().required(),
+    tags: Joi.array().items(Joi.string()).min(1).required(),
+  })).default([]),
 });
 
 exports.categoryTagsSchema = Joi.object().keys({

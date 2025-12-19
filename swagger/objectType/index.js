@@ -313,7 +313,7 @@ module.exports = {
     },
   },
   '/api/objectType/{objectTypeName}/tag-categories': {
-    get: {
+    post: {
       tags: [
         'object_type',
       ],
@@ -337,30 +337,24 @@ module.exports = {
           type: 'string',
         },
         {
-          name: 'tagsLimit',
-          in: 'query',
-          description: 'How many tags to return per category (default 3)',
+          in: 'body',
+          name: 'params',
+          description: '**tagsLimit** - How many tags to return per category (default 3)\n**searchString** - Optional search phrase to filter categories\n**tagCategory** - Array of selected tag categories with their tags',
           required: false,
-          type: 'integer',
-          default: 3,
-        },
-        {
-          name: 'searchString',
-          in: 'query',
-          description: 'Optional search phrase to filter categories',
-          required: false,
-          type: 'string',
-        },
-        {
-          name: 'selectedTags',
-          in: 'query',
-          description: 'Array of already selected tags to filter objects',
-          required: false,
-          type: 'array',
-          items: {
-            type: 'string',
+          schema: {
+            example: {
+              tagsLimit: 3,
+              searchString: 'cui',
+              tagCategory: [
+                {
+                  categoryName: 'Cuisine',
+                  tags: [
+                    'mexican',
+                  ],
+                },
+              ],
+            },
           },
-          collectionFormat: 'multi',
         },
       ],
       responses: {
