@@ -111,17 +111,9 @@ const tagsForFilter = async (req, res, next) => {
 };
 
 const tagCategories = async (req, res, next) => {
-  const selectedTags = req.query.selectedTags
-    ? Array.isArray(req.query.selectedTags)
-      ? req.query.selectedTags
-      : [req.query.selectedTags]
-    : [];
-
   const value = validators.validate({
     objectType: req.params.objectTypeName,
-    tagsLimit: req.query.tagsLimit,
-    searchString: req.query.searchString,
-    selectedTags,
+    ...req.body,
   }, validators.objectType.tagCategoriesSchema, next);
   if (!value) return;
   try {
@@ -129,7 +121,7 @@ const tagCategories = async (req, res, next) => {
       objectType: value.objectType,
       tagsLimit: value.tagsLimit,
       searchString: value.searchString,
-      selectedTags: value.selectedTags,
+      tagCategory: value.tagCategory,
       app: req.appData,
     });
     if (error) return next(error);
@@ -141,11 +133,12 @@ const tagCategories = async (req, res, next) => {
 };
 
 const tagCategoryDetails = async (req, res, next) => {
-  const selectedTags = req.query.selectedTags
-    ? Array.isArray(req.query.selectedTags)
+  let selectedTags = [];
+  if (req.query.selectedTags) {
+    selectedTags = Array.isArray(req.query.selectedTags)
       ? req.query.selectedTags
-      : [req.query.selectedTags]
-    : [];
+      : [req.query.selectedTags];
+  }
 
   const value = validators.validate({
     objectType: req.params.objectTypeName,
