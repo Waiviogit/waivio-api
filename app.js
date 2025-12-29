@@ -2,10 +2,17 @@ const morgan = require('morgan');
 const cors = require('cors');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
+const overloadProtection = require('overload-protection');
 const routes = require('./routes');
 const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
 require('./utilities');
+
+const overload = overloadProtection('express', {
+  maxEventLoopDelay: 70, // ms
+  maxHeapUsedBytes: 0.8 * 1024 * 1024 * 1024, // optional
+  maxRssBytes: 0.9 * 1024 * 1024 * 1024,
+});
 
 // Add global error handlers to catch unhandled rejections
 process.on('unhandledRejection', (reason, promise) => {
@@ -28,6 +35,7 @@ process.on('uncaughtException', (error) => {
 });
 
 const app = express();
+app.use(overload);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
