@@ -9,6 +9,7 @@ const swaggerDocument = require('./swagger');
 require('./utilities');
 
 const overload = overloadProtection('express', {
+  production: true,
   maxEventLoopDelay: 70, // ms
   maxHeapUsedBytes: 0.8 * 1024 * 1024 * 1024, // optional
   maxRssBytes: 0.9 * 1024 * 1024 * 1024,
