@@ -35,14 +35,37 @@ const getSearchKeySuffix = (searchString) => (
   searchString ? `:search=${encodeURIComponent(searchString)}` : ''
 );
 
-const getSelectedTagsKeySuffix = (selectedTags) => (
-  selectedTags?.length ? `:tags=${selectedTags.sort().join(',')}` : ''
+const normalizeTagCategories = (tagCategories = []) => (
+  tagCategories
+    .filter((item) => item && item.categoryName && Array.isArray(item.tags) && item.tags.length)
+    .map((item) => ({
+      categoryName: item.categoryName,
+      tags: item.tags
+        .filter((tag) => typeof tag === 'string' && tag.trim())
+        .map((tag) => tag.trim()),
+    }))
 );
 
+const getSelectedTagCategoriesKeySuffix = (tagCategories) => {
+  const normalized = normalizeTagCategories(tagCategories);
+  if (!normalized.length) return '';
+
+  const serialized = normalized
+    .sort((a, b) => a.categoryName.localeCompare(b.categoryName))
+    .map(({ categoryName, tags }) => `${encodeURIComponent(categoryName)}:${sortAlphabetically(tags).map(encodeURIComponent).join(',')}`)
+    .join(';');
+
+  return serialized ? `:tags=${serialized}` : '';
+};
+
 const buildCategoriesCacheKey = ({
-  app, objectType, searchString, selectedTags,
+  app, objectType, searchString, tagCategory,
 }) => (
-  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}${getSearchKeySuffix(searchString)}${getSelectedTagsKeySuffix(selectedTags)}`
+  `${CACHE_NAMESPACE.CATEGORIES}:${getAppHost(app)}:${objectType}${getSearchKeySuffix(searchString)}${getSelectedTagCategoriesKeySuffix(tagCategory)}`
+);
+
+const getSelectedTagsKeySuffix = (selectedTags) => (
+  selectedTags?.length ? `:tags=${selectedTags.slice().sort().join(',')}` : ''
 );
 
 const buildCategoryTagsCacheKey = ({
@@ -76,19 +99,27 @@ const buildSearchMatchStage = (searchString) => {
 };
 
 const fetchCategoriesPayload = async ({
-  app, objectType, searchString, selectedTags,
+  app, objectType, searchString, tagCategory,
 }) => {
   const waivioMain = !app.inherited && !app.canBeExtended;
   const searchStage = buildSearchMatchStage(searchString);
 
   const selectedTagsCondition = {};
 
-  if (selectedTags?.length) {
-    selectedTagsCondition.$and = selectedTags.map((el) => ({
-      'fields.name': 'categoryItem',
-      'fields.body': el,
-      'fields.weight': { $gte: 0 },
-    }));
+  const normalizedTags = normalizeTagCategories(tagCategory);
+  if (normalizedTags.length) {
+    const andConditions = [];
+    for (const { categoryName, tags } of normalizedTags) {
+      for (const tag of tags) {
+        andConditions.push({
+          'fields.name': 'categoryItem',
+          'fields.body': tag,
+          'fields.tagCategory': categoryName,
+          'fields.weight': { $gte: 0 },
+        });
+      }
+    }
+    if (andConditions.length) selectedTagsCondition.$and = andConditions;
   }
 
   const pipeline = [
@@ -126,8 +157,8 @@ const fetchCategoriesPayload = async ({
   return {
     result: Array.from(
       myMap,
-      ([tagCategory, tags]) => ({
-        tagCategory,
+      ([categoryName, tags]) => ({
+        tagCategory: categoryName,
         tags: sortAlphabetically(tags),
       }),
     ),
@@ -193,16 +224,16 @@ const fetchCategoryTagsPayload = async ({
 };
 
 const getCategoriesByObjectType = async ({
-  app, objectType, tagsLimit = 3, searchString, selectedTags,
+  app, objectType, tagsLimit = 3, searchString, tagCategory,
 }) => {
   const cacheKey = buildCategoriesCacheKey({
-    app, objectType, searchString, selectedTags,
+    app, objectType, searchString, tagCategory,
   });
   const basePayload = await staleWhileRevalidate({
     key: cacheKey,
     ttlSeconds: HOUR_IN_SECONDS,
     fetcher: () => fetchCategoriesPayload({
-      app, objectType, searchString, selectedTags,
+      app, objectType, searchString, tagCategory,
     }),
   });
 
@@ -210,8 +241,8 @@ const getCategoriesByObjectType = async ({
   if (!basePayload?.result) return { result: [] };
 
   return {
-    result: basePayload.result.map(({ tagCategory, tags }) => ({
-      tagCategory,
+    result: basePayload.result.map(({ tagCategory: categoryName, tags }) => ({
+      tagCategory: categoryName,
       tags: tags.slice(0, tagsLimit),
       hasMore: tags.length > tagsLimit,
     })),
