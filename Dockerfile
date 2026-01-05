@@ -1,8 +1,7 @@
-FROM node:24-alpine
+FROM node:24.12.0-alpine3.23
 
 RUN apk add --no-cache git
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
 COPY ./package.json ./

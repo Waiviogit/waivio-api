@@ -162,10 +162,9 @@ UserSchema.virtual('objects_shares_count', {
   count: true,
 });
 
-UserSchema.pre('findOneAndUpdate', async function (next) {
+UserSchema.pre('findOneAndUpdate', async function () {
   const doc = await this.model.findOne(this.getQuery());
   if (!doc) this.set({ auth: null });
-  next();
 });
 
 UserSchema.pre('aggregate', function () {
