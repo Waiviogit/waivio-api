@@ -35,7 +35,8 @@ app.use(cors());
 const morganFormat = process.env.MORGAN_FORMAT;
 if (morganFormat) {
   const resolvedFormat = {
-    custom: ':method :url :status :res[content-length] - :response-time ms',
+    custom:
+      '[:date[clf]] ":method :url" :status :res[content-length] - :response-time ms ":referrer" ":user-agent"',
     dev: 'dev',
     combined: 'combined',
     common: 'common',
