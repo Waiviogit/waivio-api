@@ -65,3 +65,4 @@ env/
 .next
 #vector storage
 lib.index
+package-lock.json
