@@ -1,14 +1,16 @@
-FROM node:24-alpine
+FROM node:24.12.0-bookworm-slim
 
-RUN apk add --no-cache git
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends git \
+  && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p /usr/src/app
 WORKDIR /usr/src/app
 
-COPY ./package.json ./
+COPY package.json package-lock.json* ./
+RUN npm ci
 
-RUN npm install
 COPY . .
 
 CMD ["npm", "run", "start"]
+
 

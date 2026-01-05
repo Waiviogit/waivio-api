@@ -11,9 +11,8 @@ const blacklistSchema = new Schema({
   followLists: { type: [String], default: [] },
 });
 
-blacklistSchema.pre('save', function (next) {
+blacklistSchema.pre('save', function () {
   this.whiteList = [this.user];
-  next();
 });
 
 blacklistSchema.post('findOne', async function (doc) {

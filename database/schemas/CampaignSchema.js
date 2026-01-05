@@ -113,19 +113,14 @@ campaignSchema.virtual('canAssign')
     return countAssigns > filterUsers.length;
   });
 
-campaignSchema.pre('save', function (next) {
+campaignSchema.pre('save', function () {
   if (this.reward > this.budget) {
-    const error = new Error('Reward more than budget');
-
-    return next(error);
+    throw new Error('Reward more than budget');
   }
   if (this.match_bots && this.match_bots.length > 5) {
-    const error = new Error('Match bots limited');
-
-    return next(error);
+    throw new Error('Match bots limited');
   }
   if (this.map && (!this.map.type || this.map.coordinates === [])) this.map = undefined;
-  next();
 });
 
 const campaignModel = mongoose.model('Campaign', campaignSchema);

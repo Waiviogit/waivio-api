@@ -32,8 +32,18 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());
-if (process.env.NODE_ENV === 'development') app.use(morgan('dev'));
-if (process.env.NODE_ENV === 'staging') app.use(morgan(':method :url :status :res[content-length] - :response-time ms'));
+const morganFormat = process.env.MORGAN_FORMAT;
+if (morganFormat) {
+  const resolvedFormat = {
+    custom: ':method :url :status :res[content-length] - :response-time ms',
+    dev: 'dev',
+    combined: 'combined',
+    common: 'common',
+    short: 'short',
+    tiny: 'tiny',
+  }[morganFormat] || morganFormat;
+  app.use(morgan(resolvedFormat));
+}
 app.use(middlewares.contextMiddleware);
 app.use(middlewares.reqRates.incrRate);
 app.use(middlewares.siteUserStatistics.saveUserIp);
