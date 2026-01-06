@@ -5,6 +5,8 @@ const swaggerUi = require('swagger-ui-express');
 const routes = require('./routes');
 const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
+const healthRoutes = require('./routes/health');
+const eventLoopMonitor = require('./utilities/eventLoopMonitor');
 require('./utilities');
 
 // Add global error handlers to catch unhandled rejections
@@ -28,6 +30,12 @@ process.on('uncaughtException', (error) => {
 });
 
 const app = express();
+
+// Start Event Loop Delay monitoring
+eventLoopMonitor.start();
+
+// Health endpoints - mounted before other middleware for fast response
+app.use(healthRoutes);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
