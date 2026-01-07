@@ -10,6 +10,8 @@ const { wObjectHelper, jsonHelper } = require('../../helpers');
 const { promptWithJsonSchema } = require('../../openai/openaiClient');
 const getWobjectPinnedPosts = require('./getWobjectPinnedPosts');
 const getPostsByObject = require('./getPostsByWobject');
+const { processAppAffiliate } = require('../affiliateProgram/processAffiliate');
+const { makeAffiliateLinks } = require('../affiliateProgram/makeAffiliateLinks');
 
 const INSTACART_HOST = process.env.INSTACART_HOST || 'connect.dev.instacart.tools';
 const { INSTACART_KEY } = process.env;
@@ -164,23 +166,27 @@ const getRecipePreparationPost = async ({ authorPermlink, app }) => {
   return '';
 };
 
+const getInstacartAffiliatePart = ({ affiliateLinks, host }) => {
+  if (process.env.NODE_ENV !== 'production') return '';
+  const partnerId = affiliateLinks.find((el) => el.type === 'instacart')?.affiliateCode;
+  if (!partnerId) return '';
+
+  return `?utm_campaign=instacart-idp&utm_medium=affiliate&utm_source=instacart_idp&utm_term=partnertype-mediapartner&utm_content=campaignid-20313_partnerid-${partnerId}${generateTrackIds(host)}`;
+};
+
 const generateTrackIds = (host) => {
   const uuid = crypto.randomUUID();
   return `&subId1=${uuid}&subId2=${host}`;
 };
 
+const removeQueryParams = (url) => url.split('?')[0];
+
 const getInstacartLinkByObject = async ({
   app, authorPermlink, locale, countryCode,
 }) => {
   if (!app.host) return { error: { status: 422, message: 'App not found' } };
-  const key = `${REDIS_KEYS.INSTACART_LINKS}:${authorPermlink}`;
-
   const { wObject, error } = await Wobj.getOne(authorPermlink, OBJECT_TYPES.RECIPE);
-  if (error) return { error };
-
-  const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
-
-  if (link) return { result: `${link}${generateTrackIds(app.host)}` };
+  const affiliateCodes = await processAppAffiliate({ app, locale });
 
   const processed = await wObjectHelper.processWobjects({
     fields: [
@@ -194,6 +200,24 @@ const getInstacartLinkByObject = async ({
     app,
     returnArray: false,
   });
+
+  const affiliateLinks = makeAffiliateLinks({
+    productIds: processed.productId,
+    affiliateCodes,
+    countryCode,
+    objectType: processed.object_type,
+  });
+  const affiliatePart = getInstacartAffiliatePart({ affiliateLinks, host: app.host });
+
+  const key = `${REDIS_KEYS.INSTACART_LINKS}:${authorPermlink}`;
+  if (error) return { error };
+
+  const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
+
+  if (link) {
+    const result = `${removeQueryParams(link)}${affiliatePart}`;
+    return { result };
+  }
 
   const preparationPost = await getRecipePreparationPost({ authorPermlink, app });
   const preparation = preparationPost || processed.description;
@@ -222,7 +246,7 @@ const getInstacartLinkByObject = async ({
     client: redis.mainFeedsCacheClient,
   });
 
-  return { result: `${result.products_link_url}${generateTrackIds(app.host)}` };
+  return { result: `${removeQueryParams(result.products_link_url)}${affiliatePart}` };
 };
 
 module.exports = {
