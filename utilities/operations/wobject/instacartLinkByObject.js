@@ -175,8 +175,8 @@ const getInstacartAffiliatePart = ({ affiliateLinks, host }) => {
 };
 
 const generateTrackIds = (host) => {
-  const uuid = crypto.randomUUID();
-  return `&subId1=${uuid}&subId2=${host}`;
+  const uuid = crypto.randomUUID().replace(/-/g, '');
+  return `&subId1=${uuid}&subId2=${host.replace(/\./g, '')}`;
 };
 
 const removeQueryParams = (url) => url.split('?')[0];
