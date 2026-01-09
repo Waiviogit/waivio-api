@@ -212,11 +212,11 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
   const cache = await getCachedData(key);
   if (cache) return jsonHelper.parseJson(cache, []);
 
-  const { wobjects: result, error } = await Wobj.fromAggregation(
+  const { wobjects: result } = await Wobj.fromAggregation(
     makeFilterAppCondition(app),
   );
 
-  if (error && app?.owner && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
+  if (!result?.length && app?.owner && !WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
     // return user personal codes if the site doesn't have its own
     const response = await processUserAffiliate({
       app,
@@ -231,7 +231,7 @@ const processAppAffiliate = async ({ app, locale = 'en-US' }) => {
     return response;
   }
 
-  if (error) return [];
+  if (!result?.length) return [];
 
   if (!WAIVIO_AFFILIATE_HOSTS.includes(app?.host)) {
     for (const resultElement of result) {
