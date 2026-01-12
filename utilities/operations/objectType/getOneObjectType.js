@@ -117,8 +117,17 @@ const getWobjWithFilters = async ({
     });
   }
 
+  let sortStage;
+  if (sort === 'newestFirst') {
+    sortStage = { $sort: { _id: -1 } };
+  } else if (sort === 'oldestFirst') {
+    sortStage = { $sort: { _id: 1 } };
+  } else {
+    sortStage = { $sort: { [sort]: sort !== 'proximity' ? -1 : 1, _id: 1 } };
+  }
+
   aggregationPipeline.push(
-    { $sort: { [sort]: sort !== 'proximity' ? -1 : 1, _id: 1 } },
+    sortStage,
     { $skip: skip },
     { $limit: limit },
   );

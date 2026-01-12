@@ -66,7 +66,7 @@ module.exports = {
         {
           in: 'body',
           name: 'params',
-          description: '**simplified** - boolean flag for simply result for map\n**userName** - name of user, who make request\n**wobjects_count** - Count of wobjects to return (*default* 30),\n**wobjects_skip** - Count of skipping object(for infinite scroll),\n**filter** - advanced filter for *wobjects* current *Object Type*,\n**filter.map** - composite param, to find wobjects in radius\n**filter.map.coordinates** - coordinates of point to search([**latitude, longitude**])\n**filter.map.radius** - radius around of point to search(**meters**)\n**sort** - Sort by "weight" or "proximity" *(if use proximity, require to use **map** filter)*\n',
+          description: '**simplified** - boolean flag for simply result for map\n**userName** - name of user, who make request\n**wobjects_count** - Count of wobjects to return (*default* 30),\n**wobjects_skip** - Count of skipping object(for infinite scroll),\n**filter** - advanced filter for *wobjects* current *Object Type*,\n**filter.map** - composite param, to find wobjects in radius\n**filter.map.coordinates** - coordinates of point to search([**latitude, longitude**])\n**filter.map.radius** - radius around of point to search(**meters**)\n**sort** - Sort by "weight" (default), "proximity" *(if use proximity, require to use **map** filter)*, "newestFirst" (sort by _id descending) or "oldestFirst" (sort by _id ascending)\n',
           required: false,
           schema: {
             $ref: '#/definitions/params_15',
