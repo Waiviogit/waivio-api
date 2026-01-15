@@ -206,6 +206,30 @@ const getSafeLinks = async (req, res, next) => {
   return res.status(200).json(result);
 };
 
+const exportAll = async (req, res) => res.status(204).send();
+
+const exportStatistic = async (req, res, next) => {
+  const key = req?.query?.key;
+
+  if (key !== process.env.REQ_TIME_KEY) return res.status(401).send();
+
+  const date = req?.query?.date || getCurrentDateString();
+  try {
+    const botsKey = `${REDIS_KEYS.EXPORT_HONEYPOT_BOTS}:${date}`;
+    const usersKey = `${REDIS_KEYS.EXPORT_HONEYPOT_USERS}:${date}`;
+
+    const bots = await redisGetter.getSiteActiveUser(botsKey);
+    const users = await redisGetter.getSiteActiveUser(usersKey);
+
+    return res.status(200).json({
+      bots: bots || [],
+      users: users || [],
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   show,
   experts,
@@ -219,4 +243,6 @@ module.exports = {
   placesImage,
   placesText,
   getSafeLinks,
+  exportAll,
+  exportStatistic,
 };

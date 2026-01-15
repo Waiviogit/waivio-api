@@ -1,5 +1,6 @@
+const { isbot } = require('isbot');
 const {
-  URL,
+  URL, REDIS_KEYS, TTL_TIME,
 } = require('../../constants/common');
 const config = require('../../config');
 const { App } = require('../../models');
@@ -9,6 +10,8 @@ const { checkForSocialSite } = require('../../utilities/helpers/sitesHelper');
 const { REPLACE_ORIGIN } = require('../../constants/regExp');
 const asyncLocalStorage = require('../context/context');
 const { setSiteActiveUser } = require('../../utilities/operations/sites/sitesStatistic');
+const { getCurrentDateString } = require('../../utilities/helpers/dateHelper');
+const { redisSetter, redis } = require('../../utilities/redis');
 
 const getHost = (req) => {
   const store = asyncLocalStorage.getStore();
@@ -46,5 +49,21 @@ exports.saveUserIp = async (req, res, next) => {
   req.appData = result;
   if (!ip) return next();
   await setSiteActiveUser({ host: originalHost, ip, userAgent: req.get('User-Agent') });
+  next();
+};
+
+exports.saveExportHoneypotIp = async (req, res, next) => {
+  const ip = getIpFromHeaders(req);
+  if (!ip) return next();
+
+  const userAgent = req.get('User-Agent');
+  const bot = isbot(userAgent);
+  const date = getCurrentDateString();
+  const key = bot
+    ? `${REDIS_KEYS.EXPORT_HONEYPOT_BOTS}:${date}`
+    : `${REDIS_KEYS.EXPORT_HONEYPOT_USERS}:${date}`;
+
+  await redisSetter.addSiteActiveUser(key, ip);
+  await redisSetter.expire({ key, ttl: TTL_TIME.THIRTY_DAYS, client: redis.appUsersStatistics });
   next();
 };

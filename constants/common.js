@@ -152,6 +152,8 @@ exports.REDIS_KEYS = {
   INSTACART_LINKS: 'instacart_links',
   CHALLENGES_OBJECT_TYPES: 'challenges_object_types',
   SAFE_SITE_PREFIX_DATA: 'safe_site_prefix_data',
+  EXPORT_HONEYPOT_BOTS: 'export_honeypot_bots',
+  EXPORT_HONEYPOT_USERS: 'export_honeypot_users',
 };
 
 exports.SERVICE_NOTIFICATION_TYPES = {
