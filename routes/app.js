@@ -40,5 +40,7 @@ appRoutes.route('/export/all')
   .get(saveExportHoneypotIp, AppController.exportAll);
 appRoutes.route('/export/statistic')
   .get(reqTimeMonitor, AppController.exportStatistic);
+appRoutes.route('/visit-statistic')
+  .get(reqTimeMonitor, AppController.getVisitStatistic);
 
 module.exports = appRoutes;

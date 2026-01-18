@@ -230,6 +230,36 @@ const exportStatistic = async (req, res, next) => {
   }
 };
 
+const getVisitStatistic = async (req, res, next) => {
+  const key = req?.query?.key;
+
+  if (key !== process.env.REQ_TIME_KEY) return res.status(401).send();
+
+  const host = req?.query?.host;
+  if (!host) return res.status(400).json({ error: 'host is required' });
+
+  const date = req?.query?.date || getCurrentDateString();
+  const type = req?.query?.type || 'user';
+
+  try {
+    const redisKey = `${REDIS_KEYS.API_VISIT_STATISTIC}:${date}:${host}:${type}`;
+    const { appUsersStatistics } = require('../utilities/redis/redis');
+
+    const members = await redisGetter.zrangeWithScores({
+      key: redisKey,
+      start: 0,
+      end: -1,
+      client: appUsersStatistics,
+    });
+
+    const users = members.map((item) => item.value);
+
+    return res.status(200).json(users || []);
+  } catch (error) {
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+};
+
 module.exports = {
   show,
   experts,
@@ -245,4 +275,5 @@ module.exports = {
   getSafeLinks,
   exportAll,
   exportStatistic,
+  getVisitStatistic,
 };
