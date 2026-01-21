@@ -181,6 +181,13 @@ const generateTrackIds = (host) => {
 
 const removeQueryParams = (url) => url.split('?')[0];
 
+const adjustDomainForCountry = (url, countryCode) => {
+  if (countryCode === 'CA') {
+    return url.replace(/\.com/g, '.ca');
+  }
+  return url;
+};
+
 const getInstacartLinkByObject = async ({
   app, authorPermlink, locale, countryCode,
 }) => {
@@ -215,7 +222,8 @@ const getInstacartLinkByObject = async ({
   const { result: link } = await redisGetter.getAsync({ key, client: redis.mainFeedsCacheClient });
 
   if (link) {
-    const result = `${removeQueryParams(link)}${affiliatePart}`;
+    const baseLink = adjustDomainForCountry(removeQueryParams(link), countryCode);
+    const result = `${baseLink}${affiliatePart}`;
     return { result };
   }
 
@@ -246,7 +254,8 @@ const getInstacartLinkByObject = async ({
     client: redis.mainFeedsCacheClient,
   });
 
-  return { result: `${removeQueryParams(result.products_link_url)}${affiliatePart}` };
+  const baseLink = adjustDomainForCountry(removeQueryParams(result.products_link_url), countryCode);
+  return { result: `${baseLink}${affiliatePart}` };
 };
 
 module.exports = {
