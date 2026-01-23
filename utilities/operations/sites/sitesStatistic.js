@@ -10,10 +10,26 @@ const {
   TTL_TIME,
 } = require('../../../constants/common');
 const { getCurrentDateString } = require('../../helpers/dateHelper');
-const { redisSetter, redis } = require('../../redis');
+const { redisSetter, redis, redisGetter } = require('../../redis');
 const { redisStatisticsKey } = require('../../../constants/sitesConstants');
 
-const setSiteActiveUser = async ({ userAgent, host, ip }) => {
+const addIpToSuspicious = async ({ ip }) => {
+  const key = `${REDIS_KEYS.API_BOT_DETECTION}:${getCurrentDateString()}`;
+  await redisSetter.saddAsync({
+    key,
+    values: ip,
+    client: redis.appUsersStatistics,
+  });
+  await redisSetter.expire({
+    key,
+    ttl: TTL_TIME.SEVEN_DAYS,
+    client: redis.appUsersStatistics,
+  });
+};
+
+const setSiteActiveUser = async ({
+  userAgent, host, ip, aid,
+}) => {
   const bot = isbot(userAgent);
   const key = `${REDIS_KEYS.API_VISIT_STATISTIC}:${getCurrentDateString()}:${host}:${bot ? 'bot' : 'user'}`;
 
@@ -22,7 +38,17 @@ const setSiteActiveUser = async ({ userAgent, host, ip }) => {
   });
 
   if (bot) return;
+  // old collection todo remove
   await redisSetter.addSiteActiveUser(`${redisStatisticsKey}:${host}`, ip);
+
+  if (!aid) {
+    await addIpToSuspicious({ ip });
+    return;
+  }
+  const isActiveUser = await redisGetter.getAsync({ key: `aid_active:${aid}` });
+  if (isActiveUser) return;
+
+  await addIpToSuspicious({ ip });
 };
 
 const setSiteAction = async ({ userAgent, host, ip }) => {

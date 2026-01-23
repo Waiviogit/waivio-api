@@ -140,6 +140,7 @@ exports.REDIS_KEYS = {
   API_RES_CACHE: 'api_res_cache',
   API_VISIT_STATISTIC: 'api_visit_statistic',
   API_RATE_LIMIT_BOTS: 'api_rate_limit_bots',
+  API_BOT_DETECTION: 'api_bot_detection',
   API_RATE_LIMIT_COUNTER: 'api_rate_limit_counter',
   ASSISTANT: 'assistant',
   DYNAMIC_GLOBAL_PROPERTIES: 'get_dynamic_global_properties',

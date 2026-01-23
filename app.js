@@ -2,6 +2,7 @@ const morgan = require('morgan');
 const cors = require('cors');
 const express = require('express');
 const swaggerUi = require('swagger-ui-express');
+const cookieParser = require('cookie-parser');
 const routes = require('./routes');
 const middlewares = require('./middlewares');
 const swaggerDocument = require('./swagger');
@@ -37,6 +38,7 @@ eventLoopMonitor.start();
 // Health endpoints - mounted before other middleware for fast response
 app.use(healthRoutes);
 
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cors());

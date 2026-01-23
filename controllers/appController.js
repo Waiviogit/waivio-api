@@ -215,16 +215,10 @@ const exportStatistic = async (req, res, next) => {
 
   const date = req?.query?.date || getCurrentDateString();
   try {
-    const botsKey = `${REDIS_KEYS.EXPORT_HONEYPOT_BOTS}:${date}`;
-    const usersKey = `${REDIS_KEYS.EXPORT_HONEYPOT_USERS}:${date}`;
+    const redisKey = `${REDIS_KEYS.API_BOT_DETECTION}:${date}`;
+    const result = await redisGetter.getSiteActiveUser(redisKey);
 
-    const bots = await redisGetter.getSiteActiveUser(botsKey);
-    const users = await redisGetter.getSiteActiveUser(usersKey);
-
-    return res.status(200).json({
-      bots: bots || [],
-      users: users || [],
-    });
+    return res.status(200).json(result || []);
   } catch (error) {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
