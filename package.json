@@ -46,6 +46,7 @@
     "axios": "^1.6.2",
     "bignumber.js": "^9.0.1",
     "cls-hooked": "^4.2.2",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.4",
     "cron": "^2.0.0",
     "crypto-js": "^4.2.0",

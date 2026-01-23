@@ -1,7 +1,5 @@
 const { Router } = require('express');
 const { reqTimeMonitor } = require('../middlewares/statistics/reqRates');
-const { saveExportHoneypotIp } = require('../middlewares/statistics/siteUserStatistics');
-
 const AppController = require('../controllers/appController');
 const ImageController = require('../controllers/imageController');
 const GlobalSearchController = require('../controllers/globalSearchController');
@@ -36,8 +34,6 @@ appRoutes.route('/places-api/objects')
   .post(reqTimeMonitor, AppController.placesObjects);
 appRoutes.route('/places-api/text')
   .post(reqTimeMonitor, AppController.placesText);
-appRoutes.route('/export/all')
-  .get(saveExportHoneypotIp, AppController.exportAll);
 appRoutes.route('/export/statistic')
   .get(reqTimeMonitor, AppController.exportStatistic);
 appRoutes.route('/visit-statistic')
