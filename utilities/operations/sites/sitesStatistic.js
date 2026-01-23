@@ -45,7 +45,7 @@ const setSiteActiveUser = async ({
     await addIpToSuspicious({ ip });
     return;
   }
-  const isActiveUser = await redisGetter.getAsync({ key: `aid_active:${aid}` });
+  const { result: isActiveUser } = await redisGetter.getAsync({ key: `aid_active:${aid}` });
   if (isActiveUser) return;
 
   await addIpToSuspicious({ ip });
