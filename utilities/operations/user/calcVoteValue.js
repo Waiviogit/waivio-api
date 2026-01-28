@@ -233,16 +233,16 @@ exports.getMinReject = async ({
     { author_permlink: authorPermlink, fields: { $elemMatch: { author, permlink } } },
     { 'fields.$': 1 },
   );
-  if (error) return MAX_REJECT_WEIGHT;
+  if (error) return { result: MAX_REJECT_WEIGHT };
 
   const field = result.fields[0];
   if (!field) return MAX_REJECT_WEIGHT;
   const { weight, active_votes: activeVotes } = field;
   if (activeVotes.length === 1 && activeVotes.find((el) => el.voter === userName)) {
-    return 1;
+    return { result: 1 };
   }
   if (!activeVotes.length && weight === 1) {
-    return 1;
+    return { result: 1 };
   }
 
   const weightToReject = await findWeightToReject({
