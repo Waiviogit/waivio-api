@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const { OBJECT_TYPES } = require('@waivio/objects-processor');
 const { LOW_PRIORITY_STATUS_FLAGS, FIELDS_NAMES } = require('../../../constants/wobjectsData');
 const {
   Wobj, ObjectType, User,
@@ -119,6 +120,15 @@ const getWobjWithFilters = async ({
 
   let sortStage;
   if (sort === 'newestFirst') {
+    if (objectType === OBJECT_TYPES.RECIPE) {
+      aggregationPipeline.push({
+        $match: {
+          count_posts: { $gt: 0 },
+        },
+      });
+    }
+    sortStage = { $sort: { _id: -1 } };
+  } else if (sort === 'newestFirstAll') {
     sortStage = { $sort: { _id: -1 } };
   } else if (sort === 'oldestFirst') {
     sortStage = { $sort: { _id: 1 } };
