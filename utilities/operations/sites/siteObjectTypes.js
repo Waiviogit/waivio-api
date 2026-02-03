@@ -21,6 +21,7 @@ const TYPES_FOR_SITE = [
   OBJECT_TYPES.DRINK,
   OBJECT_TYPES.BOOK,
   OBJECT_TYPES.BUSINESS,
+  OBJECT_TYPES.HASHTAG,
 ];
 
 const getObjectTypes = async (app) => {
