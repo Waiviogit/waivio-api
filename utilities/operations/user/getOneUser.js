@@ -1,6 +1,8 @@
 const _ = require('lodash');
 const { startImportUser } = require('./importSteemUserBalancer');
-const { Subscriptions, mutedUserModel, User } = require('../../../models');
+const {
+  Subscriptions, mutedUserModel, User, SpamUserModel,
+} = require('../../../models');
 
 const { getUserCanonical } = require('../../helpers/cannonicalHelper');
 
@@ -18,6 +20,7 @@ const getOne = async ({
     return { error: dbError || { status: 404, message: `User ${name} not found!` } };
   }
 
+  user.restricted = await SpamUserModel.isRestricted(name);
   user.id = user._id.toString(); // for front (was user to json) to render guest users
   if (_.get(user, 'auth.provider')) user.provider = user.auth.provider;
   if (withFollowings) {
