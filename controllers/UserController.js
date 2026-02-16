@@ -101,14 +101,14 @@ const updateUserMetadata = async (req, res, next) => {
 const getUserMetadata = async (req, res, next) => {
   const {
     user_metadata: userMetadata,
-    error, privateEmail,
-  } = await getMetadata(req.params.userName);
+    error, privateEmail, muted,
+  } = await getMetadata({ userName: req.params.userName, app: req.appData });
 
   if (error) return next(error);
 
   if (req.query.onlyEmail) return res.status(200).json({ privateEmail });
 
-  return res.status(200).json({ user_metadata: userMetadata, privateEmail });
+  return res.status(200).json({ user_metadata: userMetadata, privateEmail, muted });
 };
 
 const objectsFollow = async (req, res, next) => {
@@ -462,7 +462,6 @@ const getVoteValue = async (req, res, next) => {
 };
 
 const getEstimatedVote = async (req, res, next) => {
-
   if (isSSRRequest(req)) {
     return res.status(200).json({
       estimatedHIVE: 0,
