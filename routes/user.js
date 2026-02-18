@@ -51,6 +51,8 @@ userRoutes.route('/users/search/host')
 userRoutes.route('/user/:userName/userMetadata')
   .put(reqTimeMonitor, UserController.updateUserMetadata)
   .get(reqTimeMonitor, UserController.getUserMetadata);
+userRoutes.route('/user/:userName/muted')
+  .get(reqTimeMonitor, UserController.checkUserMuted);
 userRoutes.route('/user/:userName/following_updates')
   .get(reqTimeMonitor, UserController.followingUpdates);
 userRoutes.route('/user/:userName/following_users_updates')

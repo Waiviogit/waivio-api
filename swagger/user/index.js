@@ -175,6 +175,41 @@ module.exports = {
       },
     },
   },
+  '/api/user/{userName}/muted': {
+    get: {
+      tags: [
+        'user',
+      ],
+      summary: 'Check if user is muted',
+      description: 'Returns whether the specified user is muted (restricted or muted by admins or for specific app)',
+      produces: [
+        'application/json',
+      ],
+      parameters: [
+        {
+          name: 'userName',
+          in: 'path',
+          description: 'Name of user to check muted status',
+          required: true,
+          type: 'string',
+        },
+      ],
+      responses: {
+        200: {
+          description: 'successful operation',
+          schema: {
+            type: 'object',
+            properties: {
+              muted: {
+                type: 'boolean',
+                description: 'true if user is muted, false otherwise',
+              },
+            },
+          },
+        },
+      },
+    },
+  },
   '/api/user/{username}': {
     get: {
       tags: [

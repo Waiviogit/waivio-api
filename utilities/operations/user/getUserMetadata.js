@@ -28,7 +28,7 @@ const checkMuted = async ({
   return !!mutedUser;
 };
 
-module.exports = async ({
+const getUserMetadata = async ({
   userName,
   app,
 }) => {
@@ -44,3 +44,6 @@ module.exports = async ({
     muted,
   };
 };
+
+module.exports = getUserMetadata;
+module.exports.checkMuted = checkMuted;

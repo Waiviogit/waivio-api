@@ -111,6 +111,15 @@ const getUserMetadata = async (req, res, next) => {
   return res.status(200).json({ user_metadata: userMetadata, privateEmail, muted });
 };
 
+const checkUserMuted = async (req, res, next) => {
+  const muted = await getMetadata.checkMuted({
+    userName: req.params.userName,
+    app: req.appData,
+  });
+
+  return res.status(200).json({ muted });
+};
+
 const objectsFollow = async (req, res, next) => {
   const value = validators.validate({
     name: req.params.userName,
@@ -865,6 +874,7 @@ module.exports = {
   searchUsers,
   updateUserMetadata,
   getUserMetadata,
+  checkUserMuted,
   blog,
   followingUpdates,
   followingUsersUpdates,
