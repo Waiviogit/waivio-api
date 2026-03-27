@@ -21,8 +21,7 @@ const contextMiddleware = (req, res, next) => {
       store.set('requestId', req.headers['x-request-id']);
       store.set('host', appHost || config.appHost);
       store.set('access-token', req.headers['access-token']);
-      store.set('hive-auth', req.headers['hive-auth'] === 'true');
-      store.set('waivio-auth', req.headers['waivio-auth'] === 'true');
+      store.set('auth-type', req.headers['auth-type']);
       store.set('device', device);
 
       res.on('finish', () => {

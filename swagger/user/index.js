@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/users': {
     get: {
@@ -77,13 +79,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'SteemConnect Access Token to identify user identity',
-          required: false,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -114,13 +110,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'SteemConnect Access Token to identify user identity',
-          required: false,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           in: 'body',
           name: 'data',
@@ -1653,13 +1643,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',
@@ -1803,13 +1787,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',
@@ -1926,13 +1904,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',
@@ -1987,13 +1959,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',
@@ -2048,13 +2014,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'waivio-auth',
           in: 'header',
@@ -2214,11 +2174,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'user',
           in: 'path',
@@ -2284,11 +2240,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'user',
           in: 'path',
@@ -2346,13 +2298,7 @@ module.exports = {
         required: true,
         type: 'boolean',
       },
-      {
-        name: 'access-token',
-        in: 'header',
-        description: 'SteemConnect Access Token to identify user identity',
-        required: true,
-        type: 'string',
-      },
+      ...AUTH_HEADERS,
       {
         name: 'params',
         in: 'body',
@@ -2411,13 +2357,7 @@ module.exports = {
         required: true,
         type: 'boolean',
       },
-      {
-        name: 'access-token',
-        in: 'header',
-        description: 'Access Token to identify user identity',
-        required: true,
-        type: 'string',
-      },
+      ...AUTH_HEADERS,
       {
         name: 'params',
         in: 'body',

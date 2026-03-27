@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/vip-tickets': {
     get: {
@@ -9,13 +11,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'userName',
           in: 'query',
@@ -109,13 +105,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',

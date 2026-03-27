@@ -1,3 +1,5 @@
+const { AUTH_HEADERS } = require('../headers');
+
 module.exports = {
   '/api/sites': {
     get: {
@@ -10,13 +12,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'userName',
           in: 'query',
@@ -98,13 +94,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -210,13 +200,7 @@ module.exports = {
             },
           },
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'Hive user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -424,13 +408,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
       ],
       responses: {
         200: {
@@ -532,13 +510,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -673,13 +645,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -814,13 +780,7 @@ module.exports = {
           type: 'string',
           enum: ['USD', 'CAD', 'EUR', 'AUD', 'MXN', 'GBP', 'JPY', 'CNY', 'RUB', 'UAH', 'CHF'],
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -880,13 +840,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -939,13 +893,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -998,13 +946,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -1106,13 +1048,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -1171,13 +1107,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1244,13 +1174,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'user access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'userName',
           in: 'query',
@@ -1356,13 +1280,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'userName',
           in: 'query',
@@ -1520,13 +1438,7 @@ module.exports = {
           required: true,
           type: 'string',
         },
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1626,13 +1538,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'host',
           in: 'query',
@@ -1673,13 +1579,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1789,13 +1689,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1838,13 +1732,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1904,13 +1792,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -1970,13 +1852,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -2016,13 +1892,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -2062,13 +1932,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access-token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',
@@ -2223,13 +2087,7 @@ module.exports = {
         'application/json',
       ],
       parameters: [
-        {
-          name: 'access-token',
-          in: 'header',
-          description: 'access token',
-          required: true,
-          type: 'string',
-        },
+        ...AUTH_HEADERS,
         {
           name: 'params',
           in: 'body',

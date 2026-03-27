@@ -13,7 +13,7 @@ const decryptText = (ciphertext) => {
   }
 };
 
-const authorise = ({ token, username }) => {
+const authorise = (token, username) => {
   const message = decryptText(token);
   const json = parseJson(message);
 

@@ -1,4 +1,4 @@
-exports.USER_OPERATIONS_TYPES = {
+const USER_OPERATIONS_TYPES = {
   TRANSFER: 'transfer',
   TRANSFER_TO_VESTING: 'transfer_to_vesting',
   CLAIM_REWARD_BALANCE: 'claim_reward_balance',
@@ -21,19 +21,29 @@ exports.USER_OPERATIONS_TYPES = {
   CUSTOM_JSON: 'custom_json',
 };
 
-exports.USER_OPERATIONS = Object.keys(this.USER_OPERATIONS_TYPES)
-  .map((key) => this.USER_OPERATIONS_TYPES[key]);
+const USER_OPERATIONS = Object.keys(USER_OPERATIONS_TYPES)
+  .map((key) => USER_OPERATIONS_TYPES[key]);
 
-exports.USER_IDENTIFIERS = {
+const USER_IDENTIFIERS = {
   VOTER: 'voter',
   FROM: 'from',
   AUTHOR: 'author',
 };
 
-exports.SELECT_USER_CAMPAIGN_SHOP = {
+const SELECT_USER_CAMPAIGN_SHOP = {
   user_metadata: 1,
   name: 1,
   count_posts: 1,
   followers_count: 1,
   wobjects_weight: 1,
+};
+
+const AUTH_TYPES = ['hive-auth', 'hive-signer', 'hive-keychain', 'waivio-auth'];
+
+module.exports = {
+  SELECT_USER_CAMPAIGN_SHOP,
+  USER_IDENTIFIERS,
+  USER_OPERATIONS,
+  USER_OPERATIONS_TYPES,
+  AUTH_TYPES,
 };
