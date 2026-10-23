@@ -1,4 +1,4 @@
-FROM node:24.12.0-alpine3.23
+FROM node:24.22.1-alpine3.23
 
 RUN apk add --no-cache git wget
 
